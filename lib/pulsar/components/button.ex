@@ -18,17 +18,17 @@ defmodule Pulsar.Components.Button do
 
       # Basic usage
       <.button variant="primary">Save Changes</.button>
-      
+
       # With size and loading state
       <.button variant="success" size="lg" loading={@saving}>
         Submit Form
       </.button>
-      
+
       # Navigation button
       <.button variant="outline" navigate={~p"/dashboard"}>
         Go to Dashboard
       </.button>
-      
+
       # Custom styling
       <.button variant="primary" class="w-full justify-start">
         <.icon name="hero-plus" class="mr-2 h-4 w-4" />
@@ -39,7 +39,7 @@ defmodule Pulsar.Components.Button do
 
   This component wraps Stellar.Components.Button and passes through all its props:
   - `:as` - Render as button, a, or div
-  - `:loading`, `:disabled`, `:pressed` - Interactive states  
+  - `:loading`, `:disabled`, `:pressed` - Interactive states
   - `:navigate`, `:href`, `:patch` - Navigation options
   - `:controls`, `:expanded` - ARIA attributes
   - All Phoenix LiveView attributes (phx-click, etc.)
@@ -55,75 +55,75 @@ defmodule Pulsar.Components.Button do
     doc: "Visual style variant of the button"
 
   attr :size, :string,
-    default: "md", 
+    default: "md",
     values: ~w(sm md lg icon),
     doc: "Size of the button"
 
   # Stellar button attributes - copied from Stellar.Components.Button
-  attr :as, :atom, 
-    values: [:button, :a, :div], 
+  attr :as, :atom,
+    values: [:button, :a, :div],
     default: :button,
     doc: "Element type to render as"
 
-  attr :type, :string, 
-    values: ~w(button submit reset), 
+  attr :type, :string,
+    values: ~w(button submit reset),
     default: "button",
     doc: "Button type attribute"
 
   # Navigation (mutually exclusive)
-  attr :href, :string, 
+  attr :href, :string,
     default: nil,
     doc: "External URL to navigate to"
 
-  attr :navigate, :string, 
+  attr :navigate, :string,
     default: nil,
     doc: "Phoenix route to navigate to"
 
-  attr :patch, :string, 
+  attr :patch, :string,
     default: nil,
     doc: "Phoenix route to patch navigate to"
 
   # State
-  attr :loading, :boolean, 
+  attr :loading, :boolean,
     default: false,
     doc: "Show loading state"
 
-  attr :disabled, :boolean, 
+  attr :disabled, :boolean,
     default: false,
     doc: "Disable the button"
 
-  attr :pressed, :atom, 
-    values: [true, false, nil], 
+  attr :pressed, :atom,
+    values: [true, false, nil],
     default: nil,
     doc: "Toggle button pressed state"
 
-  attr :expanded, :any, 
+  attr :expanded, :any,
     default: nil,
     doc: "Disclosure/dropdown expanded state"
 
-  attr :controls, :string, 
+  attr :controls, :string,
     default: nil,
     doc: "ID of element controlled by this button"
 
   # ARIA
-  attr :haspopup, :string, 
-    values: ~w(menu listbox tree grid dialog false), 
+  attr :haspopup, :string,
+    values: ~w(menu listbox tree grid dialog false),
     default: "false",
     doc: "ARIA haspopup value"
 
   # Core
-  attr :id, :string, 
+  attr :id, :string,
     default: nil,
     doc: "Button ID"
 
-  attr :class, :string, 
+  attr :class, :string,
     default: "",
     doc: "Additional CSS classes"
 
   attr :rest, :global,
     doc: "Additional HTML attributes"
 
-  slot :inner_block, 
+  slot :inner_block,
     required: true,
     doc: "Button content"
 
@@ -205,7 +205,7 @@ defmodule Pulsar.Components.Button do
     """
     bg-warning-500 text-warning-900 shadow-sm
     hover:bg-warning-600 active:bg-warning-700
-    dark:bg-warning-400 dark:text-warning-900 
+    dark:bg-warning-400 dark:text-warning-900
     dark:hover:bg-warning-300 dark:active:bg-warning-500
     """
   end
