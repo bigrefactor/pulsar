@@ -199,7 +199,10 @@ defmodule Pulsar.Components.Button do
   
   defp button_base(_other) do
     """
-    inline-flex items-center justify-center font-medium transition-colors cursor-pointer
+    inline-flex items-center justify-center font-medium cursor-pointer
+    transition-all duration-200 ease-in-out
+    hover:scale-[1.02] active:scale-[0.98]
+    motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none
     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
     focus-visible:ring-ring dark:focus-visible:ring-dark-ring
     disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed
@@ -210,11 +213,11 @@ defmodule Pulsar.Components.Button do
 
   # Variant and color combination styles
   defp variant_classes("solid", color) do
-    solid_color_classes(color) <> " shadow-sm"
+    solid_color_classes(color) <> " shadow-sm hover:shadow-md transition-shadow duration-200"
   end
 
   defp variant_classes("outline", color) do
-    outline_color_classes(color) <> " border-2 shadow-sm"
+    outline_color_classes(color) <> " border-2 shadow-sm hover:shadow-md transition-shadow duration-200"
   end
 
   defp variant_classes("ghost", color) do
