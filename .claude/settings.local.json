@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_console_messages",
+      "mcp__playwright__browser_network_requests",
+      "WebFetch(domain:phoenixframework.org)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_snapshot",
+      "Bash(grep:*)",
+      "Bash(mix deps.get:*)",
+      "mcp__playwright__browser_evaluate"
+    ],
+    "deny": [],
+    "ask": [],
+    "additionalDirectories": [
+      "/Users/guitsaru/code/bigrefactor/pulsar/stellar/"
+    ]
+  }
+}
