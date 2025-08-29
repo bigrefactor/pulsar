@@ -9,30 +9,35 @@ defmodule Pulsar.Components.Button do
   ## Features
 
   - **Stellar Foundation**: Built on Stellar's accessible button component
-  - **Semantic Variants**: primary, secondary, success, error, warning, ghost, outline, link
-  - **Multiple Sizes**: sm, md, lg, icon
+  - **Variants**: solid, outline, ghost, link with semantic styling
+  - **Colors**: neutral, primary, secondary, success, danger, warning for consistent theming
+  - **Multiple Sizes**: xs, sm, md, lg, xl for complete range
   - **Dark Mode**: Automatic light/dark mode support
   - **Full Stellar API**: All Stellar button props are supported
 
   ## Examples
 
       # Basic usage
-      <.button variant="primary">Save Changes</.button>
+      <.button variant="solid" color="primary">Save Changes</.button>
 
       # With size and loading state
-      <.button variant="success" size="lg" loading={@saving}>
+      <.button variant="solid" color="success" size="lg" loading={@saving}>
         Submit Form
       </.button>
 
       # Navigation button
-      <.button variant="outline" navigate={~p"/dashboard"}>
+      <.button variant="outline" color="primary" navigate={~p"/dashboard"}>
         Go to Dashboard
       </.button>
 
+      # Icon-only button with accessibility
+      <.button variant="solid" color="primary" size="sm" class="w-8 p-0" aria_label="Add item">
+        +
+      </.button>
+
       # Custom styling
-      <.button variant="primary" class="w-full justify-start">
-        <.icon name="hero-plus" class="mr-2 h-4 w-4" />
-        Add Item
+      <.button variant="solid" color="primary" class="w-full justify-start">
+        <span>📁</span> Add Item
       </.button>
 
   ## Stellar Integration
@@ -127,6 +132,10 @@ defmodule Pulsar.Components.Button do
     default: "",
     doc: "Additional CSS classes"
 
+  attr :aria_label, :string,
+    default: nil,
+    doc: "Accessible label for icon-only buttons"
+
   attr :rest, :global, doc: "Additional HTML attributes"
 
   slot :inner_block,
@@ -141,22 +150,19 @@ defmodule Pulsar.Components.Button do
   on the `:variant` and `:size` attributes.
   """
   def button(assigns) do
-    # Check for icon-only accessibility
-    if needs_aria_label?(assigns) and !has_aria_label?(assigns.rest) do
-      raise ArgumentError, "Icon buttons must include aria-label (e.g., aria-label=\"Save\")"
-    end
-    
     # Build complete class string using TailwindMerge
     # Skip size classes for link variant to behave like real text links
     size = if assigns.variant == "link", do: "", else: size_classes(assigns.size)
     
-    merged_classes =
-      merge([
-        button_base(assigns.variant),
-        variant_classes(assigns.variant, assigns.color),
-        size,
-        assigns.class
-      ])
+    assigns =
+      assign(assigns, :merged_classes,
+        merge([
+          button_base(assigns.variant),
+          variant_classes(assigns.variant, assigns.color),
+          size,
+          assigns.class
+        ])
+      )
 
     ~H"""
     <StellarButton.button
@@ -172,7 +178,8 @@ defmodule Pulsar.Components.Button do
       controls={@controls}
       haspopup={@haspopup}
       id={@id}
-      class={merged_classes}
+      class={@merged_classes}
+      aria-label={@aria_label}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -182,7 +189,12 @@ defmodule Pulsar.Components.Button do
 
   # Base button styles by variant
   defp button_base("link") do
-    "inline font-medium focus-visible:outline-none"
+    """
+    inline font-medium cursor-pointer focus-visible:outline-none
+    disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed
+    data-[loading=true]:pointer-events-none data-[loading=true]:opacity-50 data-[loading=true]:cursor-wait
+    data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[disabled=true]:cursor-not-allowed
+    """
   end
   
   defp button_base(_other) do
@@ -240,7 +252,7 @@ defmodule Pulsar.Components.Button do
 
   # Outline variant color styles
   defp outline_color_classes("neutral") do
-    "border-border dark:border-dark-border bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary active:bg-gray-100 dark:active:bg-gray-800"
+    "border-border dark:border-dark-border bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary active:bg-surface-active dark:active:bg-dark-surface-active"
   end
 
   defp outline_color_classes("primary") do
@@ -265,7 +277,7 @@ defmodule Pulsar.Components.Button do
 
   # Ghost variant color styles
   defp ghost_color_classes("neutral") do
-    "text-foreground dark:text-dark-foreground hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary active:bg-gray-200 dark:active:bg-gray-700"
+    "text-foreground dark:text-dark-foreground hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary active:bg-surface-active dark:active:bg-dark-surface-active"
   end
 
   defp ghost_color_classes("primary") do
@@ -334,25 +346,4 @@ defmodule Pulsar.Components.Button do
     "h-14 px-8 text-xl gap-3 rounded-lg"
   end
 
-  # Helper functions for accessibility
-  
-  defp needs_aria_label?(assigns) do
-    # Check if inner_block contains only non-text content (like emojis/icons)
-    case assigns.inner_block do
-      [%{inner_block: inner} | _] when is_list(inner) ->
-        content = inner |> Enum.map_join("", &to_string/1) |> String.trim()
-        # Consider it icon-only if content is very short (1-3 chars) and contains emoji/symbols
-        String.length(content) <= 3 and content =~ ~r/[\p{So}\p{Sm}]/u
-      _ -> false
-    end
-  end
-
-  defp has_aria_label?(rest) do
-    rest
-    |> List.wrap()
-    |> Enum.any?(fn
-      {:"aria-label", v} when is_binary(v) and v != "" -> true
-      _ -> false
-    end)
-  end
 end
