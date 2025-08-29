@@ -150,18 +150,44 @@ JS.add_class("border-red-500", to: "#field-#{field}")
 |> JS.show(to: "#error-#{field}")
 ```
 
+## Storybook Development
+
+Pulsar includes a **Phoenix LiveView storybook** at `lib/pulsar/storybook/catalog_live.ex` for component development and showcasing. The storybook provides:
+
+- **Live component preview** with all variants, sizes, and states
+- **Dark/light mode toggle** for testing theme support
+- **Usage examples** with code snippets
+- **Interactive testing** of component behavior
+
+### Storybook Requirements
+
+**All new components MUST include a storybook page** that demonstrates:
+1. **All variants** (primary, secondary, success, error, etc.)
+2. **All sizes** (sm, md, lg, icon, etc.)
+3. **All states** (normal, loading, disabled, etc.)
+4. **Usage examples** with realistic code snippets
+5. **Dark mode compatibility** for theme switching
+
+To add a component to the storybook:
+1. Add component entry to `@components` list in `catalog_live.ex`
+2. Create showcase function (e.g., `button_showcase/1`)
+3. Add route pattern to handle the component path
+4. Include comprehensive examples and documentation
+
 ## Contributing Guidelines
 
 When adding new components:
 1. Create generator in `lib/pulsar/generators/`
 2. Add template in `priv/templates/`
-3. Write comprehensive tests
-4. Document usage patterns
-5. Ensure accessibility compliance
-6. Test with various Tailwind themes
+3. **Add storybook page** with all variants, states, and examples
+4. Write comprehensive tests
+5. Document usage patterns
+6. Ensure accessibility compliance
+7. Test with various Tailwind themes
 
 When modifying existing components:
 1. Update both generator and template
-2. Maintain backwards compatibility where possible
-3. Update documentation and examples
-4. Test generation in sample Phoenix app
+2. **Update storybook examples** to reflect changes
+3. Maintain backwards compatibility where possible
+4. Update documentation and examples
+5. Test generation in sample Phoenix app
