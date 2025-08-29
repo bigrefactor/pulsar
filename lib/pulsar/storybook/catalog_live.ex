@@ -18,12 +18,13 @@ defmodule Pulsar.Storybook.CatalogLive do
   ]
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket,
-      components: @components,
-      selected_component: "button",
-      dark_mode: false,
-      page_title: "Pulsar Component Catalog"
-    )}
+    {:ok,
+     assign(socket,
+       components: @components,
+       selected_component: "button",
+       dark_mode: false,
+       page_title: "Pulsar Component Catalog"
+     )}
   end
 
   def handle_params(%{"component" => component}, _uri, socket) do
@@ -40,7 +41,8 @@ defmodule Pulsar.Storybook.CatalogLive do
 
   def handle_event("toggle_dark_mode", _params, socket) do
     new_dark_mode = !socket.assigns.dark_mode
-    {:noreply, 
+
+    {:noreply,
      socket
      |> assign(dark_mode: new_dark_mode)
      |> push_event("toggle_theme", %{dark: new_dark_mode})}
@@ -57,14 +59,14 @@ defmodule Pulsar.Storybook.CatalogLive do
                 <h1 class="text-xl font-bold">Pulsar Component Catalog</h1>
               </div>
               <div class="flex items-center space-x-4">
-                <.button 
-                  variant="ghost" 
-                  size="sm" 
+                <.button
+                  variant="ghost"
+                  size="sm"
                   phx-click="toggle_dark_mode"
                 >
                   <span :if={!@dark_mode}>🌙</span>
                   <span :if={@dark_mode}>☀️</span>
-                  <span class="ml-2"><%= if @dark_mode, do: "Light", else: "Dark" %></span>
+                  <span class="ml-2">{if @dark_mode, do: "Light", else: "Dark"}</span>
                 </.button>
               </div>
             </div>
@@ -75,7 +77,7 @@ defmodule Pulsar.Storybook.CatalogLive do
           <aside class="w-64 border-r border-border dark:border-dark-border bg-surface dark:bg-dark-surface min-h-screen">
             <nav class="p-4 space-y-2">
               <h2 class="font-semibold text-sm text-muted dark:text-dark-muted mb-4">Components</h2>
-              
+
               <div :for={component <- @components} class="space-y-1">
                 <button
                   type="button"
@@ -85,11 +87,12 @@ defmodule Pulsar.Storybook.CatalogLive do
                     "w-full text-left px-3 py-2 rounded-lg text-sm transition-colors",
                     if(@selected_component == component.id,
                       do: "bg-primary-100 dark:bg-primary-900 text-primary-900 dark:text-primary-100",
-                      else: "text-foreground dark:text-dark-foreground hover:bg-gray-100 dark:hover:bg-gray-800"
+                      else:
+                        "text-foreground dark:text-dark-foreground hover:bg-gray-100 dark:hover:bg-gray-800"
                     )
                   ]}
                 >
-                  <%= component.name %>
+                  {component.name}
                 </button>
               </div>
             </nav>
@@ -134,7 +137,7 @@ defmodule Pulsar.Storybook.CatalogLive do
             <.button variant="error">Error</.button>
             <.button variant="warning">Warning</.button>
           </div>
-          
+
           <div class="flex flex-wrap gap-3 mt-3">
             <.button variant="ghost">Ghost</.button>
             <.button variant="outline">Outline</.button>
@@ -183,8 +186,7 @@ defmodule Pulsar.Storybook.CatalogLive do
             <div class="p-4 border border-border dark:border-dark-border rounded-lg">
               <h3 class="font-medium mb-2">With Custom Classes</h3>
               <.button variant="primary" class="w-full justify-start">
-                <span>📁</span>
-                Full Width with Icon
+                <span>📁</span> Full Width with Icon
               </.button>
               <pre class="mt-2 text-sm bg-surface-secondary dark:bg-dark-surface-secondary p-2 rounded text-muted dark:text-dark-muted"><code>&lt;.button variant="primary" class="w-full justify-start"&gt;
                 &lt;span&gt;📁&lt;/span&gt;

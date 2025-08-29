@@ -48,6 +48,8 @@ defmodule Pulsar.Components.Button do
   use Phoenix.Component
   alias Stellar.Components.Button, as: StellarButton
 
+  import TailwindMerge, only: [merge: 1]
+
   # Pulsar-specific styling attributes
   attr :variant, :string,
     default: "primary",
@@ -120,8 +122,7 @@ defmodule Pulsar.Components.Button do
     default: "",
     doc: "Additional CSS classes"
 
-  attr :rest, :global,
-    doc: "Additional HTML attributes"
+  attr :rest, :global, doc: "Additional HTML attributes"
 
   slot :inner_block,
     required: true,
@@ -136,22 +137,24 @@ defmodule Pulsar.Components.Button do
   """
   def button(assigns) do
     # Build complete class string using TailwindMerge
-    merged_classes = TailwindMerge.merge([
-      button_base(),
-      variant_classes(assigns.variant),
-      size_classes(assigns.size),
-      assigns.class
-    ])
+    merged_classes =
+      merge([
+        button_base(),
+        variant_classes(assigns.variant),
+        size_classes(assigns.size),
+        assigns.class
+      ])
 
     # Update class and remove Pulsar-specific attrs
-    assigns = assigns
+    assigns =
+      assigns
       |> assign(:class, merged_classes)
       |> assign(:variant, nil)
       |> assign(:size, nil)
 
     ~H"""
     <StellarButton.button {assigns}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </StellarButton.button>
     """
   end

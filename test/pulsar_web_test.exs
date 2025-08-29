@@ -1,16 +1,16 @@
 defmodule PulsarWebTest do
   use ExUnit.Case
-  
+
   describe "use PulsarWeb, :components" do
     test "imports all component functions" do
       # Create a test module that uses PulsarWeb
       defmodule TestComponents do
         use PulsarWeb, :components
       end
-      
+
       # Check that component functions are available
       exported_functions = TestComponents.__info__(:functions)
-      
+
       # Should have button function imported
       assert Keyword.has_key?(exported_functions, :button)
     end
@@ -21,9 +21,9 @@ defmodule PulsarWebTest do
       defmodule TestButton do
         use PulsarWeb, :button
       end
-      
+
       exported_functions = TestButton.__info__(:functions)
-      
+
       # Should have button function
       assert Keyword.has_key?(exported_functions, :button)
     end

@@ -1,14 +1,14 @@
 defmodule Mix.Tasks.Pulsar.Gen.ButtonTest do
   use ExUnit.Case
-  
+
   import ExUnit.CaptureIO
-  
+
   alias Mix.Tasks.Pulsar.Gen.Button
 
   describe "info/2" do
     test "returns task info" do
       info = Button.info([], nil)
-      
+
       assert info.group == :pulsar
       assert info.example == "mix pulsar.gen.button"
       assert is_list(info.positional)

@@ -1,6 +1,6 @@
 defmodule Mix.Tasks.Pulsar.Install do
   @shortdoc "Installs Pulsar components library"
-  
+
   @moduledoc """
   Installs Pulsar components library in a Phoenix application.
 
@@ -26,12 +26,12 @@ defmodule Mix.Tasks.Pulsar.Install do
   ### Dependencies
   - `stellar` - Headless component library
   - `tailwind_merge` - Intelligent CSS class merging
-  
+
   ### Files  
   - Theme CSS file in assets/css/themes/
   - Updated app.css with theme import
   - Example component usage
-  
+
   ### Configuration
   - Tailwind CSS configured for dark mode
   - Content paths updated for component files
@@ -55,19 +55,23 @@ defmodule Mix.Tasks.Pulsar.Install do
     }
   end
 
-  @impl Igniter.Mix.Task  
+  @impl Igniter.Mix.Task
   def igniter(igniter) do
     argv = igniter.args
-    {options, _argv} = OptionParser.parse!(argv, strict: [
-      theme: :string,
-      skip_deps: :boolean, 
-      skip_css: :boolean
-    ])
-    
+
+    {options, _argv} =
+      OptionParser.parse!(argv,
+        strict: [
+          theme: :string,
+          skip_deps: :boolean,
+          skip_css: :boolean
+        ]
+      )
+
     theme = Keyword.get(options, :theme, "pulsar")
     skip_deps = Keyword.get(options, :skip_deps, false)
     skip_css = Keyword.get(options, :skip_css, false)
-    
+
     igniter
     |> maybe_add_dependencies(skip_deps)
     |> maybe_install_theme(theme, skip_css)
@@ -78,6 +82,7 @@ defmodule Mix.Tasks.Pulsar.Install do
 
   # Add required dependencies unless skipped
   defp maybe_add_dependencies(igniter, true = _skip), do: igniter
+
   defp maybe_add_dependencies(igniter, false = _skip) do
     igniter
     |> Igniter.Project.Deps.add_dep({:pulsar, "~> 0.1"})
@@ -87,6 +92,7 @@ defmodule Mix.Tasks.Pulsar.Install do
 
   # Install theme CSS unless skipped
   defp maybe_install_theme(igniter, _theme, true = _skip), do: igniter
+
   defp maybe_install_theme(igniter, theme, false = _skip) do
     igniter
     |> install_theme_css(theme)
@@ -96,19 +102,21 @@ defmodule Mix.Tasks.Pulsar.Install do
   # Install the theme CSS file
   defp install_theme_css(igniter, theme) do
     # Source theme file from Pulsar
-    source_theme_path = Path.join([__DIR__, "..", "..", "..", "..", "priv", "static", "themes", "#{theme}.css"])
-    
+    source_theme_path =
+      Path.join([__DIR__, "..", "..", "..", "..", "priv", "static", "themes", "#{theme}.css"])
+
     # Target path in user's app
     target_theme_path = Path.join(["assets", "css", "themes", "#{theme}.css"])
-    
+
     case File.read(source_theme_path) do
       {:ok, theme_content} ->
         igniter
         |> Igniter.create_new_file(target_theme_path, theme_content)
-        
+
       {:error, _reason} ->
         # Generate a minimal theme if source not found
         minimal_theme = generate_minimal_theme()
+
         igniter
         |> Igniter.create_new_file(target_theme_path, minimal_theme)
     end
@@ -118,9 +126,9 @@ defmodule Mix.Tasks.Pulsar.Install do
   defp generate_minimal_theme do
     """
     /* Pulsar Theme - Minimal */
-    
+
     @import "tailwindcss";
-    
+
     @theme inline {
       /* Primary - Blue */
       --color-primary-500: var(--color-blue-500);
@@ -139,22 +147,22 @@ defmodule Mix.Tasks.Pulsar.Install do
   defp update_app_css(igniter, theme) do
     app_css_path = Path.join(["assets", "css", "app.css"])
     theme_import = "@import \"./themes/#{theme}.css\";\n"
-    
+
     case Igniter.exists?(igniter, app_css_path) do
       true ->
         igniter
         |> Igniter.update_file(app_css_path, fn content ->
           # Add theme import at the top, after any existing imports
           lines = String.split(content, "\n")
-          
+
           # Find where to insert (after existing @import statements)
           {imports, rest} = Enum.split_while(lines, &String.starts_with?(&1, "@import"))
-          
+
           # Reassemble with our import added
           (imports ++ [String.trim(theme_import)] ++ rest)
           |> Enum.join("\n")
         end)
-        
+
       false ->
         # Create basic app.css if it doesn't exist
         basic_css = """
@@ -163,7 +171,7 @@ defmodule Mix.Tasks.Pulsar.Install do
         @tailwind components;
         @tailwind utilities;
         """
-        
+
         igniter
         |> Igniter.create_new_file(app_css_path, basic_css)
     end
@@ -172,11 +180,11 @@ defmodule Mix.Tasks.Pulsar.Install do
   # Configure Tailwind for dark mode and content paths
   defp configure_tailwind(igniter) do
     tailwind_config_path = "tailwind.config.js"
-    
+
     case Igniter.exists?(igniter, tailwind_config_path) do
       true ->
         update_tailwind_config(igniter, tailwind_config_path)
-        
+
       false ->
         create_tailwind_config(igniter, tailwind_config_path)
     end
@@ -207,7 +215,7 @@ defmodule Mix.Tasks.Pulsar.Install do
       plugins: [],
     }
     """
-    
+
     igniter
     |> Igniter.create_new_file(config_path, config_content)
   end
@@ -232,7 +240,7 @@ defmodule Mix.Tasks.Pulsar.Install do
       "./lib/**/*.{ex,heex}",
       "./assets/css/themes/*.css"
     ]
-    
+
     # This is a simple check - in a real implementation you'd parse the JS
     Enum.reduce(required_paths, content, fn path, acc ->
       if String.contains?(acc, path) do
@@ -248,9 +256,9 @@ defmodule Mix.Tasks.Pulsar.Install do
   defp create_example_usage(igniter) do
     app_name = Igniter.Project.Application.app_name(igniter)
     web_module = Igniter.Libs.Phoenix.web_module(igniter)
-    
+
     example_path = Path.join(["lib", "#{app_name}_web", "components", "pulsar_examples.ex"])
-    
+
     example_content = """
     defmodule #{web_module}.Components.PulsarExamples do
       @moduledoc \"\"\"
@@ -294,7 +302,7 @@ defmodule Mix.Tasks.Pulsar.Install do
       end
     end
     """
-    
+
     igniter
     |> Igniter.create_new_file(example_path, example_content)
   end
@@ -302,32 +310,32 @@ defmodule Mix.Tasks.Pulsar.Install do
   # Add success message
   defp add_success_message(igniter, theme) do
     message = """
-    
+
     ✨ Pulsar installed successfully!
-    
+
     Theme: #{theme}
-    
+
     What was installed:
     ✓ Dependencies (stellar, tailwind_merge)
     ✓ Theme CSS (assets/css/themes/#{theme}.css)
     ✓ Updated app.css with theme import
     ✓ Configured Tailwind for dark mode
     ✓ Created example components
-    
+
     Next steps:
     1. Run `mix deps.get` to fetch dependencies
     2. Import components: `use PulsarWeb, :components`  
     3. Or generate individual components: `mix pulsar.gen.button`
     4. Try dark mode by adding `class="dark"` to your <html> element
-    
+
     Example usage:
       <.button variant="primary" size="lg">
         Get Started
       </.button>
-    
+
     Happy building! 🚀
     """
-    
+
     Igniter.add_notice(igniter, message)
   end
 end
