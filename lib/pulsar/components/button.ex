@@ -52,13 +52,18 @@ defmodule Pulsar.Components.Button do
 
   # Pulsar-specific styling attributes
   attr :variant, :string,
-    default: "primary",
-    values: ~w(primary secondary success error warning ghost outline link),
+    default: "solid",
+    values: ~w(solid outline ghost link),
     doc: "Visual style variant of the button"
+
+  attr :color, :string,
+    default: "primary",
+    values: ~w(neutral primary secondary success danger warning),
+    doc: "Color scheme of the button"
 
   attr :size, :string,
     default: "md",
-    values: ~w(sm md lg icon),
+    values: ~w(xs sm md lg xl),
     doc: "Size of the button"
 
   # Stellar button attributes - copied from Stellar.Components.Button
@@ -136,31 +141,51 @@ defmodule Pulsar.Components.Button do
   on the `:variant` and `:size` attributes.
   """
   def button(assigns) do
+    # Check for icon-only accessibility
+    if needs_aria_label?(assigns) and !has_aria_label?(assigns.rest) do
+      raise ArgumentError, "Icon buttons must include aria-label (e.g., aria-label=\"Save\")"
+    end
+    
     # Build complete class string using TailwindMerge
+    # Skip size classes for link variant to behave like real text links
+    size = if assigns.variant == "link", do: "", else: size_classes(assigns.size)
+    
     merged_classes =
       merge([
-        button_base(),
-        variant_classes(assigns.variant),
-        size_classes(assigns.size),
+        button_base(assigns.variant),
+        variant_classes(assigns.variant, assigns.color),
+        size,
         assigns.class
       ])
 
-    # Update class and remove Pulsar-specific attrs
-    assigns =
-      assigns
-      |> assign(:class, merged_classes)
-      |> assign(:variant, nil)
-      |> assign(:size, nil)
-
     ~H"""
-    <StellarButton.button {assigns}>
+    <StellarButton.button
+      as={@as}
+      type={@type}
+      href={@href}
+      navigate={@navigate}
+      patch={@patch}
+      loading={@loading}
+      disabled={@disabled}
+      pressed={@pressed}
+      expanded={@expanded}
+      controls={@controls}
+      haspopup={@haspopup}
+      id={@id}
+      class={merged_classes}
+      {@rest}
+    >
       {render_slot(@inner_block)}
     </StellarButton.button>
     """
   end
 
-  # Base button styles applied to all variants
-  defp button_base do
+  # Base button styles by variant
+  defp button_base("link") do
+    "inline font-medium focus-visible:outline-none"
+  end
+  
+  defp button_base(_other) do
     """
     inline-flex items-center justify-center font-medium transition-colors cursor-pointer
     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
@@ -171,76 +196,128 @@ defmodule Pulsar.Components.Button do
     """
   end
 
-  # Variant-specific styles
-  defp variant_classes("primary") do
-    """
-    bg-primary-500 text-white shadow-sm
-    hover:bg-primary-600 active:bg-primary-700
-    dark:bg-primary-600 dark:hover:bg-primary-500 dark:active:bg-primary-700
-    """
+  # Variant and color combination styles
+  defp variant_classes("solid", color) do
+    solid_color_classes(color) <> " shadow-sm"
   end
 
-  defp variant_classes("secondary") do
-    """
-    bg-secondary-500 text-white shadow-sm
-    hover:bg-secondary-600 active:bg-secondary-700
-    dark:bg-secondary-600 dark:hover:bg-secondary-500 dark:active:bg-secondary-700
-    """
+  defp variant_classes("outline", color) do
+    outline_color_classes(color) <> " border-2 shadow-sm"
   end
 
-  defp variant_classes("success") do
-    """
-    bg-success-500 text-white shadow-sm
-    hover:bg-success-600 active:bg-success-700
-    dark:bg-success-600 dark:hover:bg-success-500 dark:active:bg-success-700
-    """
+  defp variant_classes("ghost", color) do
+    ghost_color_classes(color)
   end
 
-  defp variant_classes("error") do
-    """
-    bg-error-500 text-white shadow-sm
-    hover:bg-error-600 active:bg-error-700
-    dark:bg-error-600 dark:hover:bg-error-500 dark:active:bg-error-700
-    """
+  defp variant_classes("link", color) do
+    link_color_classes(color) <> " underline-offset-4 hover:underline focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:underline"
   end
 
-  defp variant_classes("warning") do
-    """
-    bg-warning-500 text-warning-900 shadow-sm
-    hover:bg-warning-600 active:bg-warning-700
-    dark:bg-warning-400 dark:text-warning-900
-    dark:hover:bg-warning-300 dark:active:bg-warning-500
-    """
+  # Solid variant color styles
+  defp solid_color_classes("neutral") do
+    "bg-gray-600 text-white hover:bg-gray-700 active:bg-gray-800 dark:bg-gray-500 dark:hover:bg-gray-400 dark:active:bg-gray-600"
   end
 
-  defp variant_classes("ghost") do
-    """
-    text-foreground dark:text-dark-foreground
-    hover:bg-gray-100 active:bg-gray-200
-    dark:hover:bg-gray-800 dark:active:bg-gray-700
-    """
+  defp solid_color_classes("primary") do
+    "bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 dark:bg-primary-600 dark:hover:bg-primary-500 dark:active:bg-primary-700"
   end
 
-  defp variant_classes("outline") do
-    """
-    border-2 border-border dark:border-dark-border
-    bg-background dark:bg-dark-background
-    text-foreground dark:text-dark-foreground shadow-sm
-    hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary
-    active:bg-gray-200 dark:active:bg-gray-700
-    """
+  defp solid_color_classes("secondary") do
+    "bg-secondary-500 text-white hover:bg-secondary-600 active:bg-secondary-700 dark:bg-secondary-600 dark:hover:bg-secondary-500 dark:active:bg-secondary-700"
   end
 
-  defp variant_classes("link") do
-    """
-    text-primary-500 dark:text-primary-400
-    underline-offset-4 hover:underline
-    focus-visible:ring-0 focus-visible:ring-offset-0
-    focus-visible:underline
-    """
+  defp solid_color_classes("success") do
+    "bg-success-500 text-white hover:bg-success-600 active:bg-success-700 dark:bg-success-600 dark:hover:bg-success-500 dark:active:bg-success-700"
+  end
+
+  defp solid_color_classes("danger") do
+    "bg-danger-500 text-white hover:bg-danger-600 active:bg-danger-700 dark:bg-danger-600 dark:hover:bg-danger-500 dark:active:bg-danger-700"
+  end
+
+  defp solid_color_classes("warning") do
+    "bg-warning-500 text-warning-900 hover:bg-warning-600 active:bg-warning-700 dark:bg-warning-400 dark:text-warning-900 dark:hover:bg-warning-300 dark:active:bg-warning-500"
+  end
+
+  # Outline variant color styles
+  defp outline_color_classes("neutral") do
+    "border-border dark:border-dark-border bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary active:bg-gray-100 dark:active:bg-gray-800"
+  end
+
+  defp outline_color_classes("primary") do
+    "border-primary-500 bg-background text-primary-600 hover:bg-primary-50 active:bg-primary-100 dark:border-primary-400 dark:bg-dark-background dark:text-primary-400 dark:hover:bg-primary-900/20 dark:active:bg-primary-900/40"
+  end
+
+  defp outline_color_classes("secondary") do
+    "border-secondary-500 bg-background text-secondary-600 hover:bg-secondary-50 active:bg-secondary-100 dark:border-secondary-400 dark:bg-dark-background dark:text-secondary-400 dark:hover:bg-secondary-900/20 dark:active:bg-secondary-900/40"
+  end
+
+  defp outline_color_classes("success") do
+    "border-success-500 bg-background text-success-600 hover:bg-success-50 active:bg-success-100 dark:border-success-400 dark:bg-dark-background dark:text-success-400 dark:hover:bg-success-900/20 dark:active:bg-success-900/40"
+  end
+
+  defp outline_color_classes("danger") do
+    "border-danger-500 bg-background text-danger-600 hover:bg-danger-50 active:bg-danger-100 dark:border-danger-400 dark:bg-dark-background dark:text-danger-400 dark:hover:bg-danger-900/20 dark:active:bg-danger-900/40"
+  end
+
+  defp outline_color_classes("warning") do
+    "border-warning-500 bg-background text-warning-600 hover:bg-warning-50 active:bg-warning-100 dark:border-warning-400 dark:bg-dark-background dark:text-warning-400 dark:hover:bg-warning-900/20 dark:active:bg-warning-900/40"
+  end
+
+  # Ghost variant color styles
+  defp ghost_color_classes("neutral") do
+    "text-foreground dark:text-dark-foreground hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary active:bg-gray-200 dark:active:bg-gray-700"
+  end
+
+  defp ghost_color_classes("primary") do
+    "text-primary-600 hover:bg-primary-100 active:bg-primary-200 dark:text-primary-400 dark:hover:bg-primary-900/20 dark:active:bg-primary-900/40"
+  end
+
+  defp ghost_color_classes("secondary") do
+    "text-secondary-600 hover:bg-secondary-100 active:bg-secondary-200 dark:text-secondary-400 dark:hover:bg-secondary-900/20 dark:active:bg-secondary-900/40"
+  end
+
+  defp ghost_color_classes("success") do
+    "text-success-600 hover:bg-success-100 active:bg-success-200 dark:text-success-400 dark:hover:bg-success-900/20 dark:active:bg-success-900/40"
+  end
+
+  defp ghost_color_classes("danger") do
+    "text-danger-600 hover:bg-danger-100 active:bg-danger-200 dark:text-danger-400 dark:hover:bg-danger-900/20 dark:active:bg-danger-900/40"
+  end
+
+  defp ghost_color_classes("warning") do
+    "text-warning-600 hover:bg-warning-100 active:bg-warning-200 dark:text-warning-400 dark:hover:bg-warning-900/20 dark:active:bg-warning-900/40"
+  end
+
+  # Link variant color styles
+  defp link_color_classes("neutral") do
+    "text-muted dark:text-dark-muted hover:text-foreground dark:hover:text-dark-foreground"
+  end
+
+  defp link_color_classes("primary") do
+    "text-primary-600 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-200"
+  end
+
+  defp link_color_classes("secondary") do
+    "text-secondary-600 hover:text-secondary-800 dark:text-secondary-400 dark:hover:text-secondary-200"
+  end
+
+  defp link_color_classes("success") do
+    "text-success-600 hover:text-success-800 dark:text-success-400 dark:hover:text-success-200"
+  end
+
+  defp link_color_classes("danger") do
+    "text-danger-600 hover:text-danger-800 dark:text-danger-400 dark:hover:text-danger-200"
+  end
+
+  defp link_color_classes("warning") do
+    "text-warning-600 hover:text-warning-800 dark:text-warning-400 dark:hover:text-warning-200"
   end
 
   # Size-specific styles
+  defp size_classes("xs") do
+    "h-6 px-2 text-xs gap-1 rounded-md"
+  end
+
   defp size_classes("sm") do
     "h-8 px-3 text-sm gap-1.5 rounded-md"
   end
@@ -253,7 +330,29 @@ defmodule Pulsar.Components.Button do
     "h-12 px-6 text-lg gap-2.5 rounded-lg"
   end
 
-  defp size_classes("icon") do
-    "h-10 w-10 p-0 rounded-lg"
+  defp size_classes("xl") do
+    "h-14 px-8 text-xl gap-3 rounded-lg"
+  end
+
+  # Helper functions for accessibility
+  
+  defp needs_aria_label?(assigns) do
+    # Check if inner_block contains only non-text content (like emojis/icons)
+    case assigns.inner_block do
+      [%{inner_block: inner} | _] when is_list(inner) ->
+        content = inner |> Enum.map_join("", &to_string/1) |> String.trim()
+        # Consider it icon-only if content is very short (1-3 chars) and contains emoji/symbols
+        String.length(content) <= 3 and content =~ ~r/[\p{So}\p{Sm}]/u
+      _ -> false
+    end
+  end
+
+  defp has_aria_label?(rest) do
+    rest
+    |> List.wrap()
+    |> Enum.any?(fn
+      {:"aria-label", v} when is_binary(v) and v != "" -> true
+      _ -> false
+    end)
   end
 end

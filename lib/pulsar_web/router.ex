@@ -16,6 +16,7 @@ defmodule PulsarWeb.Router do
 
     live "/", Pulsar.Storybook.CatalogLive
     live "/catalog", Pulsar.Storybook.CatalogLive
+    live "/catalog/button", Pulsar.Storybook.ButtonLive
     live "/catalog/:component", Pulsar.Storybook.CatalogLive
   end
 end

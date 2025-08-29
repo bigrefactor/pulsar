@@ -10,6 +10,13 @@ const ThemeToggle = {
     // Initialize theme on mount based on localStorage or system preference
     this.initializeTheme()
     
+    // Handle click events on the button
+    this.el.addEventListener("click", () => {
+      const currentTheme = document.documentElement.getAttribute("data-theme")
+      const newTheme = currentTheme === "dark" ? "light" : "dark"
+      this.setTheme(newTheme)
+    })
+    
     this.handleEvent("toggle_theme", ({dark}) => {
       this.setTheme(dark ? "dark" : "light")
     })
@@ -20,12 +27,13 @@ const ThemeToggle = {
       (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)
       ? "dark" : "light"
     
-    this.applyTheme(theme === "dark")
+    this.setTheme(theme)
   },
   
   setTheme(theme) {
     localStorage.theme = theme
     this.applyTheme(theme === "dark")
+    this.updateUI(theme === "dark")
   },
   
   applyTheme(isDark) {
@@ -33,6 +41,21 @@ const ThemeToggle = {
       document.documentElement.setAttribute("data-theme", "dark")
     } else {
       document.documentElement.removeAttribute("data-theme")
+    }
+  },
+  
+  updateUI(isDark) {
+    const icon = document.getElementById('theme-icon')
+    const text = document.getElementById('theme-text')
+    
+    if (icon && text) {
+      if (isDark) {
+        icon.textContent = '☀️'
+        text.textContent = 'Light'
+      } else {
+        icon.textContent = '🌙'
+        text.textContent = 'Dark'
+      }
     }
   }
 }
