@@ -36,6 +36,21 @@ priv/templates/           # Template files for code generation
 
 ## Development Patterns
 
+### Generator Architecture
+
+Pulsar uses the **Igniter** library for sophisticated code generation and project modification. This allows generators to:
+
+- **Smart File Creation**: Creates files only if they don't exist
+- **Dependency Management**: Automatically adds required dependencies to mix.exs
+- **Import Updates**: Modifies existing files to add component imports
+- **Conflict Resolution**: Handles module naming and path conflicts
+- **Rollback Safety**: Can undo changes if generation fails
+
+**Key Files:**
+- `lib/mix/tasks/pulsar/gen/*.ex` - Generator task implementations
+- `lib/pulsar/components/*.ex` - Source components that get copied
+- Uses Igniter for all file system operations
+
 ### Generator Implementation
 Generators follow Mix task conventions:
 ```elixir
@@ -76,10 +91,74 @@ end
 ```
 
 ### Theme System
-Components use semantic color naming with Tailwind:
-- `bg-light-primary dark:bg-dark-primary` instead of hardcoded colors
-- Variants map to theme color combinations
-- Users customize via Tailwind config, not component props
+
+Pulsar uses a sophisticated semantic color system built on CSS custom properties that reference Tailwind's color palette. This allows for flexible theming while maintaining the utility-first approach.
+
+#### How It Works
+
+**1. CSS Custom Properties Layer**
+```css
+/* priv/static/themes/pulsar.css */
+@theme inline {
+  /* Semantic aliases pointing to Tailwind colors */
+  --color-primary-500: var(--color-blue-500);
+  --color-secondary-500: var(--color-violet-500);
+  --color-success-500: var(--color-green-500);
+  
+  /* Surface colors for light/dark modes */
+  --color-background: var(--color-white);
+  --color-dark-background: var(--color-gray-950);
+}
+```
+
+**2. Tailwind Integration**
+Components use semantic names that automatically resolve to the theme:
+```elixir
+# Component code uses semantic names
+"bg-primary-500 text-white dark:bg-primary-600"
+```
+
+**3. Dark Mode Strategy**
+- Uses `data-theme="dark"` attribute (not class-based)
+- Custom variant: `@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *))`
+- Separate dark- prefixed colors for optimal contrast
+
+#### Theme Customization
+
+**Change Primary Color:**
+```css
+@theme inline {
+  /* Change from blue to indigo */
+  --color-primary-500: var(--color-indigo-500);
+  --color-primary-600: var(--color-indigo-600);
+  /* etc. */
+}
+```
+
+**Create Brand Theme:**
+```css
+@theme inline {
+  /* Use custom brand colors */
+  --color-primary-500: #1e40af;  /* Custom brand blue */
+  --color-secondary-500: #7c3aed; /* Custom brand purple */
+}
+```
+
+#### Dark Mode Toggle
+
+Toggle dark mode by setting the data attribute:
+```javascript
+document.documentElement.dataset.theme = 'dark'; // Enable
+document.documentElement.dataset.theme = 'light'; // Disable
+```
+
+#### Benefits
+
+- **Semantic**: Colors have meaning (primary, success) not just appearance (blue, green)
+- **Consistent**: All components use the same color tokens
+- **Flexible**: Change entire theme by updating CSS custom properties
+- **Tailwind Compatible**: Still get all Tailwind utilities and PurgeCSS benefits
+- **Runtime Themeable**: Can switch themes without rebuilding CSS
 
 ## Quality Standards
 
@@ -96,9 +175,25 @@ Components use semantic color naming with Tailwind:
 - Screen reader announcements for state changes
 
 ### Testing
-- Generator tests verify correct file creation
-- Generated component tests for rendering and interaction
-- Accessibility tests for ARIA attributes and keyboard navigation
+- **Unit Tests**: ExUnit tests for component rendering, variants, and interaction
+- **Generator Tests**: Verify correct file creation and code generation
+- **Visual Tests**: Playwright-MCP for component appearance and responsive behavior
+- **Accessibility Tests**: ARIA attributes, keyboard navigation, and screen reader compatibility
+
+## Dependencies
+
+### Core Dependencies
+- **Stellar**: Headless components for accessibility and behavior (`path: "../stellar"`)
+- **TailwindMerge**: Class conflict resolution for dynamic styling 
+- **Igniter**: Code generation and project modification toolkit
+- **Phoenix LiveView**: Component system and reactivity
+
+### Development Dependencies
+- **Phoenix**: Web framework for storybook
+- **Bandit**: HTTP server for development
+- **Tailwind/ESBuild**: Asset compilation for storybook
+
+**Note**: Stellar and TailwindMerge are currently path dependencies for local development. These should be published to Hex or use git dependencies for production use.
 
 ## Commands
 
@@ -108,6 +203,7 @@ mix compile              # Compile the generator
 mix test                # Run all tests
 mix dialyzer            # Type checking
 mix credo               # Code quality
+mix phx.server          # Start storybook server
 ```
 
 ### Generator Usage (in user apps)
@@ -116,6 +212,151 @@ mix pulsar.gen.button    # Generate button component
 mix pulsar.gen.form      # Generate form components
 mix pulsar.gen.modal     # Generate modal component
 ```
+
+## Testing Strategy
+
+Pulsar uses a multi-layered testing approach to ensure component quality, accessibility, and visual consistency.
+
+### Unit Testing with ExUnit
+
+**Component Functionality Tests:**
+```elixir
+# test/pulsar/components/button_test.exs
+describe "button/1 basic functionality" do
+  test "renders button with default props" do
+    html = rendered_to_string(~H"<Button.button>Click me</Button.button>")
+    assert html =~ ~s(<button)
+    assert html =~ "bg-primary-500"  # Theme color
+    assert html =~ "h-10"            # Default size
+  end
+end
+```
+
+**Variant Testing:**
+- Tests all variant combinations (solid, outline, ghost, link)
+- Verifies color applications for each variant
+- Validates size classes and responsive behavior
+- Checks state handling (loading, disabled, pressed)
+
+**TailwindMerge Integration:**
+- Tests class conflict resolution
+- Validates custom class overrides
+- Ensures proper class deduplication
+
+### Visual Testing with Playwright-MCP
+
+**Component Appearance Testing:**
+```bash
+# Start the storybook for visual testing
+mix phx.server
+
+# Test components visually using Claude Code's browser tools
+# Screenshots are automatically saved to .playwright-mcp/
+```
+
+**Visual Test Coverage:**
+- **Spacing and Layout**: Button automatic spacing, gap handling
+- **Theme Switching**: Light/dark mode transitions and colors
+- **Responsive Behavior**: Component appearance across breakpoints
+- **State Visualization**: Loading, disabled, and interactive states
+- **Icon Integration**: Icon button alignment and sizing
+
+**Screenshot Artifacts:**
+- `button-automatic-spacing.png` - Layout and spacing validation
+- `dark-mode-enabled.png` - Dark theme appearance
+- `icon-button-spacing.png` - Icon button layout consistency
+
+### Accessibility Testing
+
+**ARIA Compliance:**
+```elixir
+test "includes focus ring classes" do
+  html = rendered_to_string(~H"<Button.button>Focus test</Button.button>")
+  assert html =~ "focus-visible:outline-none"
+  assert html =~ "focus-visible:ring-2"
+end
+
+test "supports aria-label for icon-only buttons" do
+  html = rendered_to_string(~H"<Button.button aria_label=\"Add item\">+</Button.button>")
+  assert html =~ ~s(aria-label="Add item")
+end
+```
+
+**Keyboard Navigation:**
+- Tab order and focus management
+- Enter/Space key activation
+- Escape key handling for dismissible components
+- Arrow key navigation for grouped components
+
+**Screen Reader Support:**
+- Proper semantic markup (`button`, `a`, `div` as appropriate)
+- State announcements for loading/disabled states
+- Role and property attributes for complex components
+
+### Generator Testing
+
+**File Generation Tests:**
+```elixir
+# test/mix/tasks/pulsar/gen/button_test.exs
+test "generates button component with correct content" do
+  # Test file creation, module naming, and import updates
+end
+```
+
+**Code Generation Validation:**
+- Verifies correct file paths and module names
+- Tests dependency injection (stellar, tailwind_merge)
+- Validates component import updates
+- Checks error handling for edge cases
+
+### Storybook Integration Testing
+
+**Component Showcase Validation:**
+- All variants rendered correctly
+- Interactive examples function properly
+- Code snippets match actual implementation
+- Dark/light mode toggle works across all components
+
+**Development Workflow:**
+1. **Component Development**: Build component with comprehensive ExUnit tests
+2. **Visual Validation**: Use Playwright-MCP to capture screenshots and verify appearance
+3. **Storybook Update**: Add comprehensive examples and usage patterns
+4. **Accessibility Audit**: Test keyboard navigation and screen reader compatibility
+5. **Generator Testing**: Ensure code generation works in target projects
+
+### Testing Commands
+
+```bash
+# Run all unit tests
+mix test
+
+# Run specific component tests  
+mix test test/pulsar/components/button_test.exs
+
+# Run generator tests
+mix test test/mix/tasks/pulsar/gen/
+
+# Start storybook for visual testing
+mix phx.server
+
+# Test with coverage
+mix test --cover
+```
+
+### Testing Guidelines
+
+**When Adding New Components:**
+1. Write comprehensive unit tests covering all variants
+2. Add accessibility tests for ARIA attributes and keyboard nav
+3. Create storybook page with all examples
+4. Use Playwright-MCP to capture visual validation screenshots
+5. Test generator functionality in a sample Phoenix app
+
+**Visual Test Maintenance:**
+- Screenshots are gitignored but can be regenerated for validation
+- Use consistent naming: `{component}-{feature}.png`
+- Test both light and dark themes
+- Capture responsive breakpoints for complex layouts
 
 ## Integration Patterns
 
@@ -131,12 +372,29 @@ Components integrate seamlessly with LiveView:
 </.simple_form>
 ```
 
-### Tailwind CSS
-All styling through Tailwind utilities:
-- No custom CSS files
-- PurgeCSS compatible  
-- Dark mode via Tailwind's dark: prefix
-- Responsive design with Tailwind breakpoints
+### Tailwind CSS & TailwindMerge
+All styling through Tailwind utilities with intelligent class merging:
+
+**TailwindMerge Integration:**
+```elixir
+# Components use TailwindMerge for class conflict resolution
+assigns = assign(assigns, :merged_classes,
+  merge([
+    button_base(@variant),           # Base component classes
+    variant_classes(@variant, @color), # Variant-specific classes
+    size_classes(@size),             # Size-specific classes
+    @class                          # User-provided custom classes
+  ])
+)
+```
+
+**Benefits:**
+- **Conflict Resolution**: Custom classes override component defaults intelligently
+- **No Duplicate Classes**: Removes redundant utilities automatically  
+- **Predictable Styling**: Last-in-wins for conflicting properties
+- **PurgeCSS Compatible**: All classes are still standard Tailwind utilities
+- **Dark Mode**: Automatic dark: prefix handling
+- **Responsive Design**: Full Tailwind breakpoint support
 
 ### Phoenix.JS Commands
 All interactions use Phoenix's built-in JavaScript:
@@ -150,18 +408,44 @@ JS.add_class("border-red-500", to: "#field-#{field}")
 |> JS.show(to: "#error-#{field}")
 ```
 
+## Storybook Development
+
+Pulsar includes a **Phoenix LiveView storybook** at `lib/pulsar/storybook/catalog_live.ex` for component development and showcasing. The storybook provides:
+
+- **Live component preview** with all variants, sizes, and states
+- **Dark/light mode toggle** for testing theme support
+- **Usage examples** with code snippets
+- **Interactive testing** of component behavior
+
+### Storybook Requirements
+
+**All new components MUST include a storybook page** that demonstrates:
+1. **All variants** (primary, secondary, success, error, etc.)
+2. **All sizes** (sm, md, lg, icon, etc.)
+3. **All states** (normal, loading, disabled, etc.)
+4. **Usage examples** with realistic code snippets
+5. **Dark mode compatibility** for theme switching
+
+To add a component to the storybook:
+1. Add component entry to `@components` list in `catalog_live.ex`
+2. Create showcase function (e.g., `button_showcase/1`)
+3. Add route pattern to handle the component path
+4. Include comprehensive examples and documentation
+
 ## Contributing Guidelines
 
 When adding new components:
 1. Create generator in `lib/pulsar/generators/`
 2. Add template in `priv/templates/`
-3. Write comprehensive tests
-4. Document usage patterns
-5. Ensure accessibility compliance
-6. Test with various Tailwind themes
+3. **Add storybook page** with all variants, states, and examples
+4. Write comprehensive tests
+5. Document usage patterns
+6. Ensure accessibility compliance
+7. Test with various Tailwind themes
 
 When modifying existing components:
 1. Update both generator and template
-2. Maintain backwards compatibility where possible
-3. Update documentation and examples
-4. Test generation in sample Phoenix app
+2. **Update storybook examples** to reflect changes
+3. Maintain backwards compatibility where possible
+4. Update documentation and examples
+5. Test generation in sample Phoenix app

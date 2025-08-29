@@ -21,3 +21,27 @@ pulsar-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Claude Code configuration and cache
+/.claude/
+.claude/settings.local.json
+
+# Playwright browser automation cache
+/.playwright-mcp/
+*.png
+
+# Generated assets (should be built, not committed)
+/priv/static/assets/
+/priv/static/themes/
+
+# ElixirLS language server
+/.elixir_ls/
+
+# Editor artifacts
+.DS_Store
+*.swp
+*.swo
+
+# Environment files
+.env
+.env.local
