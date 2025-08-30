@@ -63,7 +63,7 @@ defmodule Pulsar.Components.Button do
 
   attr :color, :string,
     default: "primary",
-    values: ~w(neutral primary secondary success danger warning),
+    values: ~w(neutral primary secondary success danger warning info),
     doc: "Color scheme of the button"
 
   attr :size, :string,
@@ -253,6 +253,10 @@ defmodule Pulsar.Components.Button do
     "bg-warning-500 text-warning-900 hover:bg-warning-600 active:bg-warning-700 dark:bg-warning-400 dark:text-warning-900 dark:hover:bg-warning-300 dark:active:bg-warning-500"
   end
 
+  defp solid_color_classes("info") do
+    "bg-info-500 text-white hover:bg-info-600 active:bg-info-700 dark:bg-info-600 dark:hover:bg-info-500 dark:active:bg-info-700"
+  end
+
   # Outline variant color styles
   defp outline_color_classes("neutral") do
     "border-border dark:border-dark-border bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary active:bg-surface-active dark:active:bg-dark-surface-active"
@@ -276,6 +280,10 @@ defmodule Pulsar.Components.Button do
 
   defp outline_color_classes("warning") do
     "border-warning-500 bg-background text-warning-600 hover:bg-warning-50 active:bg-warning-100 dark:border-warning-400 dark:bg-dark-background dark:text-warning-400 dark:hover:bg-warning-900/20 dark:active:bg-warning-900/40"
+  end
+
+  defp outline_color_classes("info") do
+    "border-info-500 bg-background text-info-600 hover:bg-info-50 active:bg-info-100 dark:border-info-400 dark:bg-dark-background dark:text-info-400 dark:hover:bg-info-900/20 dark:active:bg-info-900/40"
   end
 
   # Ghost variant color styles
@@ -303,6 +311,10 @@ defmodule Pulsar.Components.Button do
     "text-warning-600 hover:bg-warning-100 active:bg-warning-200 dark:text-warning-400 dark:hover:bg-warning-900/20 dark:active:bg-warning-900/40"
   end
 
+  defp ghost_color_classes("info") do
+    "text-info-600 hover:bg-info-100 active:bg-info-200 dark:text-info-400 dark:hover:bg-info-900/20 dark:active:bg-info-900/40"
+  end
+
   # Link variant color styles
   defp link_color_classes("neutral") do
     "text-muted dark:text-dark-muted hover:text-foreground dark:hover:text-dark-foreground"
@@ -326,6 +338,10 @@ defmodule Pulsar.Components.Button do
 
   defp link_color_classes("warning") do
     "text-warning-600 hover:text-warning-800 dark:text-warning-400 dark:hover:text-warning-200"
+  end
+
+  defp link_color_classes("info") do
+    "text-info-600 hover:text-info-800 dark:text-info-400 dark:hover:text-info-200"
   end
 
   # Size-specific styles

@@ -37,7 +37,7 @@ defmodule Pulsar.Storybook.ButtonLive do
             <div :for={variant <- ["solid", "outline", "ghost", "link"]}>
               <h3 class="text-lg font-medium mb-4 capitalize">{variant} Variant</h3>
               <div class="flex flex-wrap gap-3">
-                <.button :for={color <- ["neutral", "primary", "secondary", "success", "danger", "warning"]} 
+                <.button :for={color <- ["neutral", "primary", "secondary", "success", "danger", "warning", "info"]} 
                   variant={variant} 
                   color={color}
                 >

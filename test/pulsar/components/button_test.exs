@@ -34,6 +34,47 @@ defmodule Pulsar.Components.ButtonTest do
       assert html =~ "Success"
     end
 
+    test "renders with info color variant" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Button.button color="info">Info</Button.button>
+        """)
+
+      assert html =~ "bg-info-500"
+      assert html =~ "Info"
+    end
+
+    test "renders info color with different variants" do
+      assigns = %{}
+
+      # Test outline variant with info color
+      html_outline =
+        rendered_to_string(~H"""
+        <Button.button variant="outline" color="info">Info Outline</Button.button>
+        """)
+
+      assert html_outline =~ "border-info-500"
+      assert html_outline =~ "text-info-600"
+
+      # Test ghost variant with info color
+      html_ghost =
+        rendered_to_string(~H"""
+        <Button.button variant="ghost" color="info">Info Ghost</Button.button>
+        """)
+
+      assert html_ghost =~ "text-info-600"
+
+      # Test link variant with info color
+      html_link =
+        rendered_to_string(~H"""
+        <Button.button variant="link" color="info">Info Link</Button.button>
+        """)
+
+      assert html_link =~ "text-info-600"
+    end
+
     test "renders with custom size" do
       assigns = %{}
 
@@ -78,12 +119,12 @@ defmodule Pulsar.Components.ButtonTest do
   describe "variants" do
     test "renders solid variant with all colors" do
       colors = ~w(neutral primary secondary success danger warning)
-      assigns = %{}
 
       for color <- colors do
+        assigns = %{color: color}
         html =
           rendered_to_string(~H"""
-          <Button.button variant="solid" color={color}>Test</Button.button>
+          <Button.button variant="solid" color={@color}>Test</Button.button>
           """)
 
         case color do
@@ -102,12 +143,12 @@ defmodule Pulsar.Components.ButtonTest do
 
     test "renders outline variant with all colors" do
       colors = ~w(neutral primary secondary success danger warning)
-      assigns = %{}
 
       for color <- colors do
+        assigns = %{color: color}
         html =
           rendered_to_string(~H"""
-          <Button.button variant="outline" color={color}>Test</Button.button>
+          <Button.button variant="outline" color={@color}>Test</Button.button>
           """)
 
         case color do
@@ -127,12 +168,12 @@ defmodule Pulsar.Components.ButtonTest do
 
     test "renders ghost variant with all colors" do
       colors = ~w(neutral primary secondary success danger warning)
-      assigns = %{}
 
       for color <- colors do
+        assigns = %{color: color}
         html =
           rendered_to_string(~H"""
-          <Button.button variant="ghost" color={color}>Test</Button.button>
+          <Button.button variant="ghost" color={@color}>Test</Button.button>
           """)
 
         case color do
@@ -152,12 +193,12 @@ defmodule Pulsar.Components.ButtonTest do
 
     test "renders link variant with all colors" do
       colors = ~w(neutral primary secondary success danger warning)
-      assigns = %{}
 
       for color <- colors do
+        assigns = %{color: color}
         html =
           rendered_to_string(~H"""
-          <Button.button variant="link" color={color}>Test</Button.button>
+          <Button.button variant="link" color={@color}>Test</Button.button>
           """)
 
         case color do
@@ -181,12 +222,12 @@ defmodule Pulsar.Components.ButtonTest do
   describe "sizes" do
     test "renders all available sizes correctly" do
       sizes = ~w(xs sm md lg xl)
-      assigns = %{}
 
       for size <- sizes do
+        assigns = %{size: size}
         html =
           rendered_to_string(~H"""
-          <Button.button size={size}>Test</Button.button>
+          <Button.button size={@size}>Test</Button.button>
           """)
 
         case size do
