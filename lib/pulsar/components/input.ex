@@ -148,6 +148,24 @@ defmodule Pulsar.Components.Input do
 
   Error states automatically override the color prop when using Phoenix forms.
   """
+  # Optimize hidden inputs: render Stellar input directly without container/decorators
+  def input(%{type: "hidden"} = assigns) do
+    ~H"""
+    <StellarInput.input
+      type="hidden"
+      field={@field}
+      id={@id}
+      name={@name}
+      value={@value}
+      required={@required}
+      disabled={@disabled}
+      readonly={@readonly}
+      class={@class}
+      {@rest}
+    />
+    """
+  end
+
   def input(assigns) do
     # Detect errors and compute effective color
     has_errors =

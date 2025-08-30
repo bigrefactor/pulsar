@@ -213,11 +213,11 @@ defmodule Pulsar.Components.Button do
 
   # Variant and color combination styles
   defp variant_classes("solid", color) do
-    solid_color_classes(color) <> " shadow-sm hover:shadow-md transition-shadow duration-200"
+    solid_color_classes(color) <> " shadow-sm hover:shadow-md transition-all duration-200"
   end
 
   defp variant_classes("outline", color) do
-    outline_color_classes(color) <> " border-2 shadow-sm hover:shadow-md transition-shadow duration-200"
+    outline_color_classes(color) <> " border-2 shadow-sm hover:shadow-md transition-all duration-200"
   end
 
   defp variant_classes("ghost", color) do

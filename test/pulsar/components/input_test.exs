@@ -420,11 +420,16 @@ defmodule Pulsar.Components.InputTest do
           """)
 
         assert html =~ ~s(type="#{type}")
-        assert html =~ ~s(<div)  # All inputs have container in Pulsar
+        if type == "hidden" do
+          # Hidden inputs render directly without container/decorators
+          refute html =~ ~s(<div)
+        else
+          assert html =~ ~s(<div)
+        end
       end
     end
 
-    test "hidden input renders within container like other types" do
+    test "hidden input renders without container for minimal DOM" do
       assigns = %{}
 
       html =
@@ -432,14 +437,12 @@ defmodule Pulsar.Components.InputTest do
         <Input.input name="test" type="hidden" value="secret" />
         """)
 
-      # In our Pulsar implementation, hidden inputs still get the container
-      # The Stellar component handles the hidden input logic internally
       assert html =~ ~s(type="hidden")
       assert html =~ ~s(name="test")
       assert html =~ ~s(value="secret")
-      # Will still have container div with data attributes
-      assert html =~ ~s(data-variant)
-      assert html =~ "flex group"
+      # No container div or group data attributes
+      refute html =~ ~s(data-variant)
+      refute html =~ "flex group"
     end
   end
 

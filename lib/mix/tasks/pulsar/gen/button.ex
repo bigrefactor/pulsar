@@ -56,7 +56,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Button do
   end
 
   @impl Igniter.Mix.Task
-  def igniter(igniter) do
+  def igniter(igniter, _composing_task) do
     argv = igniter.args
     {options, _argv} = OptionParser.parse!(argv, strict: [path: :string, module: :string])
 

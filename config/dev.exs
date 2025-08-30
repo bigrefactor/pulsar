@@ -1,5 +1,8 @@
 import Config
 
+# Start Pulsar's endpoint in development by default
+config :pulsar, start_endpoint: true
+
 # Configure the endpoint for development
 config :pulsar, PulsarWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4000],

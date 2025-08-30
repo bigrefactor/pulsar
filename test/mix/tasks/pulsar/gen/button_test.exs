@@ -1,8 +1,6 @@
 defmodule Mix.Tasks.Pulsar.Gen.ButtonTest do
   use ExUnit.Case
 
-  import ExUnit.CaptureIO
-
   alias Mix.Tasks.Pulsar.Gen.Button
 
   describe "info/2" do
@@ -13,21 +11,23 @@ defmodule Mix.Tasks.Pulsar.Gen.ButtonTest do
       assert info.example == "mix pulsar.gen.button"
       assert info.positional == []
       assert info.composes == []
-      
+
       # Should support path and module options
       schema = Keyword.keys(info.schema)
       assert :path in schema
       assert :module in schema
-      
+
       # Should have aliases
       aliases = Keyword.keys(info.aliases)
-      assert :p in aliases  # for :path
-      assert :m in aliases  # for :module
+      # for :path
+      assert :p in aliases
+      # for :module
+      assert :m in aliases
     end
 
     test "returns proper schema types" do
       info = Button.info([], nil)
-      
+
       assert info.schema[:path] == :string
       assert info.schema[:module] == :string
       assert info.aliases[:p] == :path
@@ -46,7 +46,7 @@ defmodule Mix.Tasks.Pulsar.Gen.ButtonTest do
       # Test module documentation
       assert Button.__info__(:attributes)[:moduledoc] != nil
       assert Button.__info__(:attributes)[:shortdoc] != nil
-      
+
       shortdoc = Button.__info__(:attributes)[:shortdoc] |> List.first()
       assert is_binary(shortdoc)
       assert shortdoc =~ "Button"
@@ -57,17 +57,17 @@ defmodule Mix.Tasks.Pulsar.Gen.ButtonTest do
     test "ensure_button_filename adds .ex extension when missing" do
       # Use module introspection to test private function behavior through public interface
       # Since these are private functions, we test them indirectly through the public API
-      
+
       # This tests that the logic works correctly by testing the overall behavior
       # rather than the private function directly
       assert function_exported?(Button, :igniter, 2)
     end
   end
 
-  describe "component code customization" do 
+  describe "component code customization" do
     # Note: Since customize_component_code is private, we test its effects
     # through the overall generator behavior
-    
+
     test "generator handles missing source file gracefully" do
       # The generator should handle cases where the source component can't be read
       # This is tested indirectly through the public igniter function
