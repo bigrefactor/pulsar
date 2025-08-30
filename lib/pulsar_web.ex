@@ -47,6 +47,7 @@ defmodule PulsarWeb do
   def components do
     quote do
       import Pulsar.Components.Button
+      import Pulsar.Components.Input
       # More components will be added here as they're implemented
     end
   end

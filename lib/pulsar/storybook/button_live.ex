@@ -101,8 +101,8 @@ defmodule Pulsar.Storybook.ButtonLive do
                 Visit Site
               </.button>
               <pre class="mt-2 text-sm bg-surface-secondary dark:bg-dark-surface-secondary p-2 rounded text-muted dark:text-dark-muted"><code>&lt;.button variant="outline" color="primary" as={:a} href="https://example.com"&gt;
-  Visit Site
-&lt;/.button&gt;</code></pre>
+                Visit Site
+              &lt;/.button&gt;</code></pre>
             </div>
 
             <div class="p-4 border border-border dark:border-dark-border rounded-lg">
@@ -111,9 +111,8 @@ defmodule Pulsar.Storybook.ButtonLive do
                 <span>📁</span> Full Width with Icon
               </.button>
               <pre class="mt-2 text-sm bg-surface-secondary dark:bg-dark-surface-secondary p-2 rounded text-muted dark:text-dark-muted"><code>&lt;.button variant="solid" color="primary" class="w-full justify-start"&gt;
-  &lt;span&gt;📁&lt;/span&gt;
-  Full Width with Icon
-&lt;/.button&gt;</code></pre>
+                &lt;span&gt;📁&lt;/span&gt; Full Width with Icon
+              &lt;/.button&gt;</code></pre>
             </div>
           </div>
         </div>

@@ -7,13 +7,17 @@ defmodule Pulsar.Storybook.CatalogLayout do
   """
 
   use Phoenix.Component
-  import Pulsar.Components.Button
 
   @components [
     %{
       name: "Button",
       id: "button",
       description: "Interactive button component with multiple variants and sizes"
+    },
+    %{
+      name: "Input",
+      id: "input",
+      description: "Accessible input component with decorator support and Phoenix form integration"
     }
   ]
 

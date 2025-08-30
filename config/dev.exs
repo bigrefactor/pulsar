@@ -11,6 +11,14 @@ config :pulsar, PulsarWeb.Endpoint,
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:pulsar, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:pulsar, ~w(--watch)]}
+  ],
+  live_reload: [
+    patterns: [
+      ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
+      ~r"priv/gettext/.*(po)$",
+      ~r"lib/pulsar_web/(controllers|live|components)/.*(ex|heex)$",
+      ~r"lib/pulsar/.*(ex)$"
+    ]
   ]
 
 # Do not include metadata nor timestamps in development logs

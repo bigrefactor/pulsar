@@ -64,8 +64,10 @@ const ThemeToggle = {
 let hooks = {ThemeToggle}
 try {
   const colocatedHooks = await import("phoenix-colocated/pulsar")
+  console.log(colocatedHooks)
   hooks = {...hooks, ...colocatedHooks.hooks}
 } catch (e) {
+  console.log("No colocated hooks found, proceeding without them.")
   // Colocated hooks not available yet, that's ok
 }
 
