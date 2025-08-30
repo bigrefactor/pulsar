@@ -11,32 +11,47 @@ defmodule Pulsar.Storybook.InputLive do
   import Pulsar.Storybook.CatalogLayout
 
   def mount(_params, _session, socket) do
-    # Create form changeset for demonstration
-    form =
-      to_form(
-        %{
-          "email" => "",
-          "password" => "",
-          "website" => "",
-          "amount" => "",
-          "search" => "",
-          "phone" => "",
-          "username" => "",
-          "bio" => "",
-          "location" => "",
-          "price" => "",
-          "discount" => "",
-          "api_key" => "",
-          "error_field" => ""
-        },
-        as: "demo"
-      )
+    # Create form changeset for demonstration with validation errors
+    form_data = %{
+      "email" => "",
+      "password" => "",
+      "website" => "",
+      "amount" => "",
+      "search" => "",
+      "phone" => "",
+      "username" => "",
+      "bio" => "",
+      "location" => "",
+      "price" => "",
+      "discount" => "",
+      "api_key" => "",
+      "error_field" => "invalid value",
+      "required_email" => "",
+      "required_password" => "",
+      "required_name" => ""
+    }
+
+    form = to_form(form_data, as: "demo")
+    
+    # Simulate form with errors for demonstration
+    error_form = to_form(
+      form_data
+      |> Map.put("email", "invalid-email")
+      |> Map.put("password", "short"),
+      as: "error_demo",
+      errors: [
+        email: {"must be a valid email format", []},
+        password: {"must be at least 8 characters", []}
+      ]
+    )
 
     {:ok,
      assign(socket,
        selected_component: "input",
        page_title: "Input Component",
-       form: form
+       form: form,
+       error_form: error_form,
+       show_dark_mode: false
      )}
   end
 
@@ -831,6 +846,265 @@ defmodule Pulsar.Storybook.InputLive do
 
                   <.input variant="ghost" color="danger" name="danger_blocked" placeholder="Access denied">
                     <:start_decorator>🚫</:start_decorator>
+                  </.input>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+    <!-- Error States Section -->
+        <section class="space-y-8">
+          <div>
+            <h2 class="text-xl font-semibold mb-6">Error States & Validation</h2>
+            <div class="space-y-4">
+              <div>
+                <h3 class="text-lg font-medium mb-2">Validation Errors with Phoenix Forms</h3>
+                <p class="text-muted dark:text-dark-muted mb-4">
+                  These inputs demonstrate automatic error styling when using Phoenix forms with validation errors. 
+                  The Stellar component provides <code>data-invalid="true"</code> attributes that our CSS targets.
+                </p>
+                <div class="space-y-3">
+                  <.input field={@error_form[:email]} type="email" placeholder="Email address" />
+                  <.input field={@error_form[:password]} type="password" placeholder="Password" />
+                </div>
+              </div>
+
+              <div>
+                <h3 class="text-lg font-medium mb-2">Error States with Decorators</h3>
+                <div class="space-y-3">
+                  <.input field={@error_form[:email]} type="email" placeholder="Enter email">
+                    <:start_decorator>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        class="w-5 h-5"
+                      >
+                        <path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z" />
+                        <path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z" />
+                      </svg>
+                    </:start_decorator>
+                  </.input>
+
+                  <.input field={@error_form[:password]} type="password" placeholder="Enter password">
+                    <:start_decorator>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        class="w-5 h-5"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </:start_decorator>
+                    <:end_decorator>
+                      <button
+                        type="button"
+                        class="text-muted hover:text-foreground dark:text-dark-muted dark:hover:text-dark-foreground"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          class="w-5 h-5"
+                        >
+                          <path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
+                          <path
+                            fill-rule="evenodd"
+                            d="M.664 10.59a1.651 1.651 0 010-1.186A10.004 10.004 0 0110 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0110 17c-4.257 0-7.893-2.66-9.336-6.41zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                            clip-rule="evenodd"
+                          />
+                        </svg>
+                      </button>
+                    </:end_decorator>
+                  </.input>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="text-lg font-medium mb-2">Required Field Indicators</h3>
+                <p class="text-muted dark:text-dark-muted mb-4">
+                  Required fields show enhanced focus rings and validation styling. 
+                  The Stellar component provides <code>data-required="true"</code> attributes.
+                </p>
+                <div class="space-y-3">
+                  <.input name="required_name" placeholder="Full name (required)" required={true} />
+                  <.input name="required_email_field" type="email" placeholder="Email address (required)" required={true}>
+                    <:start_decorator>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        class="w-5 h-5"
+                      >
+                        <path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z" />
+                        <path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z" />
+                      </svg>
+                    </:start_decorator>
+                  </.input>
+                  <.input name="required_phone_field" type="tel" placeholder="Phone number (required)" required={true}>
+                    <:start_decorator>+1</:start_decorator>
+                  </.input>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+    <!-- Data Attributes Showcase -->
+        <section class="space-y-8">
+          <div>
+            <h2 class="text-xl font-semibold mb-6">Data Attributes & CSS Targeting</h2>
+            <div class="space-y-4">
+              <div>
+                <h3 class="text-lg font-medium mb-2">State-Based Styling</h3>
+                <p class="text-muted dark:text-dark-muted mb-4">
+                  Pulsar leverages data attributes from Stellar for state-based styling. These attributes allow CSS to target specific states without JavaScript.
+                </p>
+                <div class="bg-surface dark:bg-dark-surface p-4 rounded-lg border">
+                  <div class="space-y-2 text-sm">
+                    <div><strong>Available Data Attributes:</strong></div>
+                    <ul class="space-y-1 text-muted dark:text-dark-muted">
+                      <li><code>data-variant="solid|outline|ghost"</code> - Visual variant</li>
+                      <li><code>data-color="primary|secondary|info|success|warning|danger"</code> - Color scheme</li>
+                      <li><code>data-size="xs|sm|md|lg|xl"</code> - Size variant</li>
+                      <li><code>data-invalid="true|false"</code> - Error state from Phoenix forms</li>
+                      <li><code>data-required="true|false"</code> - Required field indicator</li>
+                      <li><code>data-disabled="true|false"</code> - Disabled state</li>
+                      <li><code>data-readonly="true|false"</code> - Read-only state</li>
+                      <li><code>data-has-start-decorator</code> - Has start decorator slot</li>
+                      <li><code>data-has-end-decorator</code> - Has end decorator slot</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="text-lg font-medium mb-2">CSS Targeting Examples</h3>
+                <div class="bg-surface dark:bg-dark-surface p-4 rounded-lg border">
+                  <pre class="text-sm text-muted dark:text-dark-muted">                    /* Target error states */
+                    .input-container[data-invalid="true"] &#123;
+                      &#64;apply border-danger-500 text-danger-700;
+                    &#125;
+
+                    /* Target specific variant + color combinations */
+                    .input-container[data-variant="outline"][data-color="primary"] &#123;
+                      &#64;apply border-primary-300 focus-within:ring-primary-500/50;
+                    &#125;
+
+                    /* Target decorators in error state */
+                    .decorator[data-invalid="true"] &#123;
+                      &#64;apply bg-danger-50 text-danger-700;
+                    &#125;</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+    <!-- Performance & HTML Output -->
+        <section class="space-y-8">
+          <div>
+            <h2 class="text-xl font-semibold mb-6">Performance & HTML Output</h2>
+            <div class="space-y-4">
+              <div>
+                <h3 class="text-lg font-medium mb-2">Optimized Class Generation</h3>
+                <p class="text-muted dark:text-dark-muted mb-4">
+                  The refactored component generates cleaner, more maintainable HTML with significantly reduced class strings through pattern-matched Elixir functions.
+                </p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div class="bg-surface dark:bg-dark-surface p-4 rounded-lg border">
+                    <div class="text-sm font-medium mb-2 text-danger-600 dark:text-danger-400">Before (34+ classes)</div>
+                    <pre class="text-xs text-muted dark:text-dark-muted overflow-x-auto">                      class="flex group overflow-hidden rounded-lg 
+                      bg-gray-50 dark:bg-gray-800 text-gray-800 
+                      dark:text-gray-200 border border-gray-300 
+                      dark:border-gray-600 focus-within:ring-2 
+                      focus-within:ring-gray-500/50 transition-all 
+                      duration-200 ease-in-out hover:bg-gray-100 
+                      dark:hover:bg-gray-700 active:bg-gray-200 
+                      dark:active:bg-gray-600 cursor-text h-10 
+                      data-[invalid=true]:border-danger-500 
+                      data-[invalid=true]:text-danger-700..."</pre>
+                  </div>
+                  <div class="bg-surface dark:bg-dark-surface p-4 rounded-lg border">
+                    <div class="text-sm font-medium mb-2 text-success-600 dark:text-success-400">After (10-12 classes)</div>
+                    <pre class="text-xs text-muted dark:text-dark-muted overflow-x-auto">                      class="flex group overflow-hidden rounded-lg 
+                      bg-gray-50 dark:bg-gray-800 text-gray-800 
+                      dark:text-gray-200 focus-within:ring-2 
+                      focus-within:ring-gray-500/50 h-10 
+                      cursor-text transition-colors 
+                      data-[invalid=true]:border-danger-500"</pre>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="text-lg font-medium mb-2">Function-Based Architecture</h3>
+                <div class="bg-surface dark:bg-dark-surface p-4 rounded-lg border">
+                  <pre class="text-sm text-muted dark:text-dark-muted">                    # Pattern-matched functions for clean code organization
+                    defp get_classes("solid", "primary", size) do
+                      [
+                        "flex group overflow-hidden rounded-lg",
+                        "bg-primary-50 dark:bg-primary-900/30",
+                        "text-primary-800 dark:text-primary-200",
+                        "focus-within:ring-2 focus-within:ring-primary-500/50",
+                        get_size_classes(size),
+                        get_error_classes()
+                      ] |> Enum.join(" ")
+                    end</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+    <!-- Accessibility Features -->
+        <section class="space-y-8">
+          <div>
+            <h2 class="text-xl font-semibold mb-6">Accessibility Features</h2>
+            <div class="space-y-4">
+              <div>
+                <h3 class="text-lg font-medium mb-2">Built-in Accessibility</h3>
+                <p class="text-muted dark:text-dark-muted mb-4">
+                  Pulsar components inherit comprehensive accessibility features from Stellar, ensuring WCAG 2.1 AA compliance.
+                </p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div class="bg-surface dark:bg-dark-surface p-4 rounded-lg border">
+                    <div class="text-sm font-medium mb-2">Keyboard Navigation</div>
+                    <ul class="text-sm text-muted dark:text-dark-muted space-y-1">
+                      <li>• Tab navigation with focus indicators</li>
+                      <li>• Arrow key navigation within groups</li>
+                      <li>• Enter/Space activation support</li>
+                      <li>• Escape key handling for dismissible states</li>
+                    </ul>
+                  </div>
+                  <div class="bg-surface dark:bg-dark-surface p-4 rounded-lg border">
+                    <div class="text-sm font-medium mb-2">Screen Reader Support</div>
+                    <ul class="text-sm text-muted dark:text-dark-muted space-y-1">
+                      <li>• Semantic HTML structure</li>
+                      <li>• ARIA labels and descriptions</li>
+                      <li>• State announcements</li>
+                      <li>• Error message association</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="text-lg font-medium mb-2">Focus Management</h3>
+                <div class="space-y-3">
+                  <.input name="focus_demo_1" placeholder="Click to focus - notice the ring" />
+                  <.input variant="outline" color="primary" name="focus_demo_2" placeholder="Primary focus ring">
+                    <:start_decorator>🎯</:start_decorator>
+                  </.input>
+                  <.input variant="ghost" name="focus_demo_3" placeholder="Ghost focus behavior">
+                    <:start_decorator>👻</:start_decorator>
+                    <:end_decorator>✨</:end_decorator>
                   </.input>
                 </div>
               </div>
