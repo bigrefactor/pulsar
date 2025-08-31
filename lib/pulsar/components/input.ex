@@ -74,7 +74,7 @@ defmodule Pulsar.Components.Input do
 
   # Pulsar-specific styling attributes
   attr :variant, :string,
-    default: "outline",
+    default: "solid",
     values: ~w(outline ghost solid),
     doc: "Visual style variant of the input"
 

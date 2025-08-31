@@ -15,11 +15,11 @@ defmodule Pulsar.Components.InputTest do
         """)
 
       assert html =~ ~s(<div)
-      assert html =~ ~s(data-variant="outline")
+      assert html =~ ~s(data-variant="solid")
       assert html =~ ~s(data-color="neutral")
       assert html =~ ~s(data-size="md")
-      # Default outline variant with neutral color
-      assert html =~ "border-border"
+      # Default solid variant with neutral color
+      assert html =~ "bg-neutral/10"
       # Default size (md)
       assert html =~ "min-h-10"
     end
@@ -73,7 +73,7 @@ defmodule Pulsar.Components.InputTest do
         """)
 
       # Should contain both component classes and custom classes
-      assert html =~ "border-border"     # Component class
+      assert html =~ "bg-neutral/10"     # Component class
       assert html =~ "w-full"            # Custom class
       assert html =~ "custom-class"      # Custom class
     end
@@ -273,7 +273,7 @@ defmodule Pulsar.Components.InputTest do
         """)
 
       assert html =~ "focus-within:ring-2"
-      assert html =~ "focus-within:ring-ring"
+      assert html =~ "focus-within:ring-neutral/60"
     end
   end
 
@@ -297,10 +297,10 @@ defmodule Pulsar.Components.InputTest do
         """)
 
       # Should show danger styling automatically
-      assert html =~ "border-danger-400"
-      assert html =~ "dark:border-danger-800"
-      assert html =~ "text-danger-700"
-      assert html =~ "dark:text-danger-300"
+      assert html =~ "bg-danger/10"
+      assert html =~ "dark:bg-dark-danger/20"
+      assert html =~ "text-danger"
+      assert html =~ "dark:text-dark-danger"
 
       # Should have data attributes for invalid state
       assert html =~ ~s(data-invalid="true")
@@ -326,8 +326,8 @@ defmodule Pulsar.Components.InputTest do
         """)
 
       # Should use neutral color
-      assert html =~ "border-border"
-      assert html =~ "text-foreground"
+      assert html =~ "bg-neutral/10"
+      assert html =~ "text-neutral"
 
       # Should have data attributes for valid state
       assert html =~ ~s(data-invalid="false")
@@ -355,12 +355,12 @@ defmodule Pulsar.Components.InputTest do
         """)
 
       # Decorators should also show danger styling
-      assert html =~ "bg-danger-400"
-      assert html =~ "dark:bg-danger-800"
-      assert html =~ "text-danger-900"
-      assert html =~ "dark:text-danger-300"
+      assert html =~ "bg-danger"
+      assert html =~ "dark:bg-dark-danger"
+      assert html =~ "text-danger-foreground"
+      assert html =~ "dark:text-dark-danger-foreground"
       assert html =~ "border-r"
-      assert html =~ "border-danger-400"
+      assert html =~ "border-danger"
     end
   end
 
@@ -443,7 +443,7 @@ defmodule Pulsar.Components.InputTest do
       # Should include both original and custom classes
       assert html =~ "w-full"
       assert html =~ "shadow-lg"
-      assert html =~ "border-border"   # Original border preserved
+      assert html =~ "bg-neutral/10"   # Original background preserved
       assert html =~ "min-h-10"        # Original height preserved
     end
   end

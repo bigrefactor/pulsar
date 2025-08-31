@@ -298,6 +298,24 @@ When creating Pulsar components:
 6. **Test accessibility**
 7. **Include usage examples**
 
+## 11. Consistent Variant Defaults
+**All Pulsar components default to the `solid` variant for predictable developer experience.**
+
+Every Pulsar component uses `solid` as the default variant, providing the most substantial/primary presentation:
+
+| Component | Default Variant | Default Color | Result |
+|-----------|----------------|---------------|---------|
+| Button    | solid          | primary       | Filled blue button |
+| Input     | solid          | neutral       | Subtle filled input |
+| Link      | solid          | primary       | Blue text, no underline |
+
+This creates a consistent mental model:
+- **Predictable**: "Pulsar defaults to solid" applies everywhere
+- **Meaningful**: "Solid" means the most substantial version of each component
+- **Contextual colors**: While variants are consistent, colors adapt to component purpose
+
+*Example: All components are immediately usable with sensible defaults, but you can override the variant for different presentations.*
+
 ---
 
 *Pulsar bridges the gap between Tailwind's utility-first CSS and Phoenix's component-first architecture, giving you the best of both worlds.*

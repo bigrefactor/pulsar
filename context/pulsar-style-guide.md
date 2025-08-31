@@ -568,6 +568,34 @@ module.exports = {
 }
 ```
 
+## Link vs Button Link Variant
+
+Choose the right component for different use cases:
+
+### Use `Link.a` for Navigation
+```elixir
+# Navigation to other pages/routes
+<Link.a navigate={~p"/dashboard"}>Dashboard</Link.a>
+<Link.a href="/profile">View Profile</Link.a>
+<Link.a href="https://docs.example.com" external>Documentation</Link.a>
+
+# Different variants for different contexts
+<Link.a href="/help" variant="ghost" color="muted">Help Center</Link.a>
+<Link.a href="/docs" variant="outline">API Docs</Link.a>
+```
+
+### Use Button with `variant="link"` for Actions
+```elixir
+# Actions that look like links but are semantically buttons
+<.button variant="link" phx-click="delete_item">Delete</.button>
+<.button variant="link" phx-click="show_more">Show More</.button>
+<.button variant="link" phx-click="toggle_detail">View Details</.button>
+```
+
+### Key Differences
+- **Link.a**: Semantic `<a>` element, for navigation, supports external links with security
+- **Button link variant**: Semantic `<button>` element, for actions, supports loading states
+
 ---
 
 *This style guide ensures consistency across all Pulsar components while maintaining full compatibility with Tailwind CSS's utility-first approach.*
