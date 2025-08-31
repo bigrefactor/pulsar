@@ -13,12 +13,12 @@ Order classes consistently:
 8. States (hover, focus)
 
 ### Using Theme Colors
-Always use semantic theme colors instead of Tailwind's default colors:
+Always use semantic theme tokens instead of hard-coded Tailwind colors:
 
 ```elixir
-# Good: Theme colors
-<div class="bg-light-background dark:bg-dark-background">
-<button class="bg-light-primary dark:bg-dark-primary">
+# Good: Semantic tokens
+<div class="bg-background text-foreground">
+<button class="bg-primary text-primary-foreground">
 
 # Avoid: Hard-coded Tailwind colors
 <div class="bg-white dark:bg-gray-900">
@@ -46,18 +46,18 @@ class="p-8 sm:p-6 xs:p-4"
 ```
 
 ### Theme Consistency
-Use theme colors consistently across components:
+Use semantic tokens consistently across components:
 
 ```elixir
-# Good: Consistent theme usage
-<.card class="bg-light-card dark:bg-dark-card">
-  <.button class="bg-light-primary dark:bg-dark-primary">
+# Good: Consistent semantic usage
+<.card class="bg-surface-1">
+  <.button class="bg-primary text-primary-foreground">
     Action
   </.button>
 </.card>
 
 # Avoid: Mixing theme and non-theme colors
-<.card class="bg-light-card dark:bg-dark-card">
+<.card class="bg-surface-1">
   <.button class="bg-blue-600">  # Breaking theme consistency
     Action
   </.button>
@@ -68,52 +68,32 @@ A comprehensive guide to building interfaces with Pulsar components and Tailwind
 
 ## Theme System
 
-### Setting Up Themes
-Pulsar uses a simple, static theme system through Tailwind configuration:
+### Dark Mode Strategy
+Pulsar uses Tailwind’s `dark` variant with overrides defined in the theme via `@variant dark`. Consumers configure their strategy per Tailwind docs: media, `.dark` class, or a custom selector. In this repo we support both `.dark` and `[data-theme="dark"]`.
 
-```javascript
-// tailwind.config.js
-const lofi = require('@pulsar/themes/lofi')
-const dracula = require('@pulsar/themes/dracula')
-
-module.exports = {
-  darkMode: 'class',
-  theme: {
-    extend: {
-      colors: {
-        light: lofi.colors,
-        dark: dracula.colors
-      }
-    }
-  }
-}
-```
-
-### Using Theme Colors
-All Pulsar components use semantic color names with `light-` and `dark-` prefixes:
+### Using Semantic Tokens
+All Pulsar components use semantic tokens that flip automatically with dark mode:
 
 ```html
 <!-- Backgrounds -->
-<div class="bg-light-background dark:bg-dark-background">
+<div class="bg-background">
 
 <!-- Text -->
-<p class="text-light-foreground dark:text-dark-foreground">
+<p class="text-foreground">
 
 <!-- Borders -->
-<div class="border border-light-border dark:border-dark-border">
+<div class="border border-border">
 
 <!-- Interactive elements -->
-<button class="bg-light-primary dark:bg-dark-primary 
-               text-light-primary-foreground dark:text-dark-primary-foreground">
+<button class="bg-primary text-primary-foreground">
 ```
 
-### Available Semantic Colors
-Every Pulsar theme provides these semantic colors:
+### Available Semantic Tokens
+Every Pulsar theme provides these key semantic tokens:
 
 - `background` - Main background color
 - `foreground` - Main text color
-- `card` - Card/surface background
-- `card-foreground` - Text on cards
+- `surface-0…3` - Surface elevation scale (0 canvas → 3 modal)
 - `primary` - Primary brand color
 - `primary-foreground` - Text on primary
 - `secondary` - Secondary brand color
@@ -122,35 +102,14 @@ Every Pulsar theme provides these semantic colors:
 - `accent-foreground` - Text on accent
 - `muted` - Muted backgrounds
 - `muted-foreground` - Muted text
-- `destructive` - Error/danger color
-- `destructive-foreground` - Text on destructive
+- `danger` - Error/danger color
+- `danger-foreground` - Text on danger
 - `border` - Border color
 - `input` - Input border/background
 - `ring` - Focus ring color
 
 ### Switching Themes
-To change themes, simply import different theme packages:
-
-```javascript
-// From cupcake + synthwave
-const cupcake = require('@pulsar/themes/cupcake')
-const synthwave = require('@pulsar/themes/synthwave')
-
-// To corporate + night
-const corporate = require('@pulsar/themes/corporate')
-const night = require('@pulsar/themes/night')
-
-module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        light: corporate.colors,  // Just change the import
-        dark: night.colors        // Components automatically update
-      }
-    }
-  }
-}
-```
+End‑users override tokens in their own theme CSS. Override brand palettes (`--color-primary-*`) or semantic tokens (`--color-background`, `--color-surface-*`, etc.). Components update automatically.
 
 ## Typography with Tailwind
 
@@ -169,9 +128,9 @@ Use Tailwind's text scale consistently:
 <h4 class="text-lg font-medium">Card Title</h4>
 
 # Body
-<p class="text-base text-gray-600 dark:text-gray-400">Body text</p>
-<p class="text-sm text-gray-500 dark:text-gray-500">Secondary text</p>
-<p class="text-xs text-gray-400 dark:text-gray-600">Caption</p>
+<p class="text-base text-foreground/80">Body text</p>
+<p class="text-sm text-muted-foreground">Secondary text</p>
+<p class="text-xs text-muted-foreground">Caption</p>
 ```
 
 ### Font Weights
@@ -239,24 +198,20 @@ Standard button styles using theme colors:
 
 ```elixir
 # Primary
-<.button class="bg-light-primary dark:bg-dark-primary 
-                text-light-primary-foreground dark:text-dark-primary-foreground
-                hover:bg-light-primary/90 dark:hover:bg-dark-primary/90
-                focus:outline-none focus:ring-2 focus:ring-light-ring dark:focus:ring-dark-ring" />
+<.button class="bg-primary text-primary-foreground
+                hover:bg-primary/90 dark:hover:bg-dark-primary/90
+                focus:outline-none focus:ring-2 focus:ring-ring" />
 
 # Secondary  
-<.button class="bg-light-secondary dark:bg-dark-secondary
-                text-light-secondary-foreground dark:text-dark-secondary-foreground
-                hover:bg-light-secondary/80 dark:hover:bg-dark-secondary/80" />
+<.button class="bg-secondary text-secondary-foreground
+                hover:bg-secondary-600 dark:hover:bg-secondary-300" />
 
 # Ghost
-<.button class="text-light-foreground dark:text-dark-foreground
-                hover:bg-light-accent/10 dark:hover:bg-dark-accent/10" />
+<.button class="text-foreground hover:bg-surface-1-hover" />
 
 # Destructive
-<.button class="bg-light-destructive dark:bg-dark-destructive
-                text-light-destructive-foreground dark:text-dark-destructive-foreground
-                hover:bg-light-destructive/90 dark:hover:bg-dark-destructive/90" />
+<.button class="bg-danger text-danger-foreground
+                hover:bg-danger-600 dark:hover:bg-danger-300" />
 
 # Sizes with Tailwind classes
 <.button class="px-2.5 py-1.5 text-xs" />  # xs
@@ -270,11 +225,11 @@ Standard button styles using theme colors:
 Using theme colors for cards:
 
 ```elixir
-<.card class="bg-light-card dark:bg-dark-card shadow rounded-lg">
-  <:header class="px-6 py-4 border-b border-light-border dark:border-dark-border">
-    <h3 class="text-lg font-medium text-light-foreground dark:text-dark-foreground">Title</h3>
+<.card class="bg-surface-1 shadow rounded-lg">
+  <:header class="px-6 py-4 border-b border-border">
+    <h3 class="text-lg font-medium text-foreground">Title</h3>
   </:header>
-  <:body class="px-6 py-4 text-light-card-foreground dark:text-dark-card-foreground">
+  <:body class="px-6 py-4 text-foreground/90">
     Content
   </:body>
 </.card>
@@ -286,25 +241,21 @@ Form styling with theme colors:
 ```elixir
 # Input fields
 <.input class="block w-full rounded-md 
-               border-light-input dark:border-dark-input
-               bg-light-background dark:bg-dark-background
-               text-light-foreground dark:text-dark-foreground
-               focus:border-light-primary dark:focus:border-dark-primary
-               focus:ring-light-ring dark:focus:ring-dark-ring" />
+               border-input bg-background text-foreground
+               focus:border-primary focus:ring-ring" />
 
 # Labels
-<.label class="block text-sm font-medium 
-               text-light-foreground dark:text-dark-foreground">
+<.label class="block text-sm font-medium text-foreground">
   Email
 </.label>
 
 # Help text
-<p class="mt-1 text-sm text-light-muted-foreground dark:text-dark-muted-foreground">
+<p class="mt-1 text-sm text-muted-foreground">
   We'll never share your email.
 </p>
 
 # Error messages
-<p class="mt-1 text-sm text-light-destructive dark:text-dark-destructive">
+<p class="mt-1 text-sm text-danger-600 dark:text-danger-400">
   This field is required
 </p>
 ```
@@ -344,25 +295,24 @@ Standard responsive containers:
 
 ## Dark Mode
 
-### Theme-Based Dark Mode
-Dark mode is handled through the theme system with `dark:` prefixes:
+### Dark Mode
+Dark mode is handled through the theme system with `@variant dark` token overrides. Utilities reference the same token names in both modes:
 
 ```elixir
 # Backgrounds automatically adapt
-"bg-light-background dark:bg-dark-background"
+"bg-background"
 
 # Text colors adapt
-"text-light-foreground dark:text-dark-foreground"
+"text-foreground"
 
 # Borders adapt
-"border-light-border dark:border-dark-border"
+"border-border"
 ```
 
 ### Component Dark Mode Example
 ```elixir
-<.card class="bg-light-card dark:bg-dark-card 
-              border border-light-border dark:border-dark-border">
-  <:body class="text-light-card-foreground dark:text-dark-card-foreground">
+<.card class="bg-surface-1 border border-border">
+  <:body class="text-foreground/90">
     Content adapts to theme automatically
   </:body>
 </.card>
@@ -512,7 +462,7 @@ Tailwind's ARIA modifiers:
 ```elixir
 "aria-expanded:rotate-180"           # Rotating chevrons
 "aria-selected:bg-primary-50"        # Selected items
-"aria-checked:bg-primary-600"        # Checked states
+"aria-checked:bg-primary"        # Checked states
 "aria-disabled:opacity-50"           # Disabled elements
 ```
 
@@ -617,6 +567,34 @@ module.exports = {
   }
 }
 ```
+
+## Link vs Button Link Variant
+
+Choose the right component for different use cases:
+
+### Use `Link.a` for Navigation
+```elixir
+# Navigation to other pages/routes
+<Link.a navigate={~p"/dashboard"}>Dashboard</Link.a>
+<Link.a href="/profile">View Profile</Link.a>
+<Link.a href="https://docs.example.com" external>Documentation</Link.a>
+
+# Different variants for different contexts
+<Link.a href="/help" variant="ghost" color="muted">Help Center</Link.a>
+<Link.a href="/docs" variant="outline">API Docs</Link.a>
+```
+
+### Use Button with `variant="link"` for Actions
+```elixir
+# Actions that look like links but are semantically buttons
+<.button variant="link" phx-click="delete_item">Delete</.button>
+<.button variant="link" phx-click="show_more">Show More</.button>
+<.button variant="link" phx-click="toggle_detail">View Details</.button>
+```
+
+### Key Differences
+- **Link.a**: Semantic `<a>` element, for navigation, supports external links with security
+- **Button link variant**: Semantic `<button>` element, for actions, supports loading states
 
 ---
 

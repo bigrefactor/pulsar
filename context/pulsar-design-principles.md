@@ -71,33 +71,15 @@ Pulsar extends Tailwind CSS's utility-first approach into the LiveView ecosystem
 
 *Example: Modals trap focus, announce themselves, and handle Escape—no configuration needed.*
 
-## 6. Theme System Through Tailwind Config
-**Themes are just Tailwind color configurations.**
+## 6. Theme System via Semantic Tokens
+**Themes use CSS custom properties exposed through Tailwind’s `@theme` and `@variant dark`.**
 
-- Themes defined as simple JavaScript objects
-- Light and dark themes configured in Tailwind config
-- No runtime switching, no CSS variables
-- Components use `light-` and `dark-` prefixed colors
-- Switch themes by changing imports
+- Semantic tokens (background, foreground, surface-*, primary, etc.) are defined in CSS
+- Dark mode handled by Tailwind’s `dark` variant; consumers choose media/class/custom selector
+- Components reference semantic utilities like `bg-background`, `text-foreground`, `bg-primary`
+- Brands override tokens in their theme file; components update automatically
 
-*Example: Change from a minimalist theme to a colorful theme by just changing which theme file you import in tailwind.config.js.*
-
-```javascript
-// Simple theme switching
-const lofi = require('@pulsar/themes/lofi')
-const dracula = require('@pulsar/themes/dracula')
-
-module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        light: lofi.colors,
-        dark: dracula.colors
-      }
-    }
-  }
-}
-```
+*Example: Switch brand colors by overriding `--color-primary-*` and `--color-primary` tokens.*
 
 ## 7. Responsive by Design
 **Mobile-first, just like Tailwind.**
@@ -134,16 +116,25 @@ module.exports = {
 
 *Example: Modals use `JS.show()` and `JS.hide()` with CSS transitions, falling back to server-side navigation if JS is disabled.*
 
-## 10. Copy-Paste Friendly
-**Following the shadcn/ui model.**
+## 10. Generator-Only Architecture
+**Following the shadcn/ui model - no dependencies, just generators.**
 
 - Components generated into your app
-- Full source control
-- Modify without fear
-- No version lock-in
-- Learn by reading
+- Full source control over generated code
+- Modify without fear of breaking updates
+- No version lock-in or dependency management
+- Learn by reading the generated code
+- No plugin mode or hex packages to manage
 
-*Example: `mix pulsar.gen.component button` creates `components/ui/button.ex` in your project.*
+*Example: `mix pulsar.gen.button` creates `lib/my_app_web/components/button.ex` in your project that you own completely.*
+
+**Why Generator-Only?**
+- **Tailwind Purging**: Generated classes in your codebase are detected automatically
+- **Minimal Dependencies**: Only Stellar (behavior) + TailwindMerge (styling) needed
+- **Complete Control**: Modify generated components however you need
+- **Simpler Builds**: No complex safelist configurations required
+- **Better DX**: All component code is visible and searchable in your project
+- **No Version Lock-in**: No Pulsar package to maintain or upgrade
 
 ## Design Token Integration
 
@@ -152,8 +143,7 @@ We use semantic color names that adapt to themes:
 
 ```elixir
 # Component uses semantic colors
-<.button class="bg-light-primary dark:bg-dark-primary 
-                text-light-primary-foreground dark:text-dark-primary-foreground">
+<.button class="bg-primary text-primary-foreground">
 
 # Actual colors depend on theme choice:
 # lofi theme: black button with white text
@@ -161,15 +151,11 @@ We use semantic color names that adapt to themes:
 # corporate theme: blue button with white text
 ```
 
-### Required Semantic Colors
-Every theme must provide:
-- `background` / `foreground` - Main colors
-- `card` / `card-foreground` - Surface colors
-- `primary` / `primary-foreground` - Brand colors
-- `secondary` / `secondary-foreground` - Supporting colors
-- `accent` / `accent-foreground` - Highlight colors
-- `muted` / `muted-foreground` - De-emphasized colors
-- `destructive` / `destructive-foreground` - Error/danger colors
+### Required Semantic Tokens
+Every theme provides:
+- `background`, `foreground` - Main colors
+- `surface-0…3`, `muted` / `muted-foreground` - Surfaces and subdued text
+- `primary` / `primary-foreground`, `secondary` / `secondary-foreground`, `info`, `success`, `warning`, `danger`
 - `border`, `input`, `ring` - UI element colors
 
 ### Theme Flexibility
@@ -205,17 +191,16 @@ colors: {
    ```
 
 ### Class Composition Strategy
-Components use semantic theme colors:
+Components use semantic tokens:
 
 ```elixir
 # Base component definition
 def button(assigns) do
   ~H"""
   <button class={[
-    # Semantic theme colors
-    "bg-light-primary dark:bg-dark-primary",
-    "text-light-primary-foreground dark:text-dark-primary-foreground",
-    "hover:bg-light-primary/90 dark:hover:bg-dark-primary/90",
+    # Semantic colors
+    "bg-primary text-primary-foreground",
+    "hover:bg-primary/90 active:bg-primary/80 dark:hover:bg-dark-primary/90 dark:active:bg-dark-primary/80",
     
     # Standard Tailwind utilities
     "px-4 py-2 rounded-md font-medium",
@@ -312,6 +297,24 @@ When creating Pulsar components:
 5. **Provide variant presets**
 6. **Test accessibility**
 7. **Include usage examples**
+
+## 11. Consistent Variant Defaults
+**All Pulsar components default to the `solid` variant for predictable developer experience.**
+
+Every Pulsar component uses `solid` as the default variant, providing the most substantial/primary presentation:
+
+| Component | Default Variant | Default Color | Result |
+|-----------|----------------|---------------|---------|
+| Button    | solid          | primary       | Filled blue button |
+| Input     | solid          | neutral       | Subtle filled input |
+| Link      | solid          | primary       | Blue text, no underline |
+
+This creates a consistent mental model:
+- **Predictable**: "Pulsar defaults to solid" applies everywhere
+- **Meaningful**: "Solid" means the most substantial version of each component
+- **Contextual colors**: While variants are consistent, colors adapt to component purpose
+
+*Example: All components are immediately usable with sensible defaults, but you can override the variant for different presentations.*
 
 ---
 

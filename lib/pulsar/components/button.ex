@@ -63,13 +63,13 @@ defmodule Pulsar.Components.Button do
 
   attr :color, :string,
     default: "primary",
-    values: ~w(neutral primary secondary success danger warning),
+    values: ~w(neutral primary secondary success danger warning info),
     doc: "Color scheme of the button"
 
   attr :size, :string,
     default: "md",
     values: ~w(xs sm md lg xl),
-    doc: "Size of the button"
+    doc: "Size of the button. Note: link variant ignores size to preserve natural text flow"
 
   # Stellar button attributes - copied from Stellar.Components.Button
   attr :as, :atom,
@@ -136,30 +136,48 @@ defmodule Pulsar.Components.Button do
     default: nil,
     doc: "Accessible label for icon-only buttons"
 
+  attr :show_loading_spinner, :boolean,
+    default: true,
+    doc: "Show automatic spinner when loading (can be disabled for custom loading content)"
+
   attr :rest, :global, doc: "Additional HTML attributes"
 
   slot :inner_block,
     required: true,
     doc: "Button content"
 
+  slot :loading_content,
+    required: false,
+    doc: "Custom loading content that replaces inner_block when button is loading"
+
   @doc """
   Renders a styled button component.
 
   This function wraps Stellar.Components.Button with Pulsar's styling system.
-  All Stellar props are passed through, with additional styling applied based
-  on the `:variant` and `:size` attributes.
+  All Stellar props are passed through, with styling controlled via data attributes
+  for better maintainability and smaller class strings.
+
+  ## Size Behavior
+  - **solid, outline, ghost variants**: Size controls height, padding, and text size
+  - **link variant**: Size is ignored to preserve natural text flow. Links adapt to surrounding text.
+
+  ## Examples
+
+      # Link buttons ignore size - they flow with surrounding text
+      <.button variant="link" size="lg">Download</.button>  # size ignored
+      
+      # Other variants respect size
+      <.button variant="solid" size="lg">Download</.button>  # h-12, px-6, text-lg
   """
   def button(assigns) do
-    # Build complete class string using TailwindMerge
-    # Skip size classes for link variant to behave like real text links
-    size = if assigns.variant == "link", do: "", else: size_classes(assigns.size)
-    
+    # Build complete class string using TailwindMerge - only include needed classes
     assigns =
       assign(assigns, :merged_classes,
         merge([
-          button_base(assigns.variant),
-          variant_classes(assigns.variant, assigns.color),
-          size,
+          base_button_classes(),
+          variant_classes(assigns.variant),
+          (if assigns.variant == "link", do: "", else: size_classes(assigns.size)),
+          color_classes(assigns.variant, assigns.color),
           assigns.class
         ])
       )
@@ -182,28 +200,25 @@ defmodule Pulsar.Components.Button do
       aria-label={@aria_label}
       {@rest}
     >
-      {render_slot(@inner_block)}
+      <div :if={@loading && @variant != "link" && @loading_content != []}>
+        {render_slot(@loading_content)}
+      </div>
+      <svg :if={@loading && @show_loading_spinner && @variant != "link" && (@loading_content == [])} aria-hidden="true" class={spinner_size_classes(@size)} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
+        <path fill="currentColor" class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <div :if={!@loading || @loading_content == []}>
+        {render_slot(@inner_block)}
+      </div>
     </StellarButton.button>
     """
   end
 
-  # Base button styles by variant
-  defp button_base("link") do
+  # Base styles shared by all buttons
+  defp base_button_classes do
     """
-    inline font-medium cursor-pointer focus-visible:outline-none
-    disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed
-    data-[loading=true]:pointer-events-none data-[loading=true]:opacity-50 data-[loading=true]:cursor-wait
-    data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[disabled=true]:cursor-not-allowed
-    """
-  end
-  
-  defp button_base(_other) do
-    """
-    inline-flex items-center justify-center font-medium cursor-pointer
-    transition-all duration-200 ease-in-out
-    hover:scale-[1.02] active:scale-[0.98]
-    motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none
-    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+    font-medium cursor-pointer transition-shadow transition-transform duration-200 ease-in-out
+    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 
     focus-visible:ring-ring dark:focus-visible:ring-dark-ring
     disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed
     data-[loading=true]:pointer-events-none data-[loading=true]:opacity-50 data-[loading=true]:cursor-wait
@@ -211,142 +226,64 @@ defmodule Pulsar.Components.Button do
     """
   end
 
-  # Variant and color combination styles
-  defp variant_classes("solid", color) do
-    solid_color_classes(color) <> " shadow-sm hover:shadow-md transition-shadow duration-200"
+  # Variant-specific layout and behavior
+  defp variant_classes("link") do
+    "inline underline-offset-4 hover:underline focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:underline"
   end
 
-  defp variant_classes("outline", color) do
-    outline_color_classes(color) <> " border-2 shadow-sm hover:shadow-md transition-shadow duration-200"
+  defp variant_classes(_other) do
+    """
+    inline-flex items-center justify-center shadow-sm hover:shadow-md
+    hover:scale-[1.02] active:scale-[0.98]
+    motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none
+    """
   end
 
-  defp variant_classes("ghost", color) do
-    ghost_color_classes(color)
-  end
+  # Size classes
+  defp size_classes("xs"), do: "h-6 px-2 text-xs gap-1 rounded-md"
+  defp size_classes("sm"), do: "h-8 px-3 text-sm gap-1 rounded-md"
+  defp size_classes("md"), do: "h-10 px-4 gap-2 rounded-lg"
+  defp size_classes("lg"), do: "h-12 px-6 text-lg gap-2 rounded-lg"
+  defp size_classes("xl"), do: "h-14 px-8 text-xl gap-3 rounded-xl"
 
-  defp variant_classes("link", color) do
-    link_color_classes(color) <> " underline-offset-4 hover:underline focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:underline"
-  end
+  # Color classes by variant
+  defp color_classes("solid", "neutral"), do: "bg-neutral text-neutral-foreground hover:bg-neutral/90 active:bg-neutral/80 dark:bg-dark-neutral dark:text-dark-neutral-foreground dark:hover:bg-dark-neutral/90 dark:active:bg-dark-neutral/80"
+  defp color_classes("solid", "primary"), do: "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 dark:bg-dark-primary dark:text-dark-primary-foreground dark:hover:bg-dark-primary/90 dark:active:bg-dark-primary/80"
+  defp color_classes("solid", "secondary"), do: "bg-secondary text-secondary-foreground hover:bg-secondary/90 active:bg-secondary/80 dark:bg-dark-secondary dark:text-dark-secondary-foreground dark:hover:bg-dark-secondary/90 dark:active:bg-dark-secondary/80"
+  defp color_classes("solid", "success"), do: "bg-success text-success-foreground hover:bg-success/90 active:bg-success/80 dark:bg-dark-success dark:text-dark-success-foreground dark:hover:bg-dark-success/90 dark:active:bg-dark-success/80"
+  defp color_classes("solid", "danger"), do: "bg-danger text-danger-foreground hover:bg-danger/90 active:bg-danger/80 dark:bg-dark-danger dark:text-dark-danger-foreground dark:hover:bg-dark-danger/90 dark:active:bg-dark-danger/80"
+  defp color_classes("solid", "warning"), do: "bg-warning text-warning-foreground hover:bg-warning/90 active:bg-warning/80 dark:bg-dark-warning dark:text-dark-warning-foreground dark:hover:bg-dark-warning/90 dark:active:bg-dark-warning/80"
+  defp color_classes("solid", "info"), do: "bg-info text-info-foreground hover:bg-info/90 active:bg-info/80 dark:bg-dark-info dark:text-dark-info-foreground dark:hover:bg-dark-info/90 dark:active:bg-dark-info/80"
 
-  # Solid variant color styles
-  defp solid_color_classes("neutral") do
-    "bg-gray-600 text-white hover:bg-gray-700 active:bg-gray-800 dark:bg-gray-500 dark:hover:bg-gray-400 dark:active:bg-gray-600"
-  end
+  defp color_classes("outline", "neutral"), do: "border-2 border-border dark:border-dark-border bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover active:bg-surface-1-active dark:active:bg-dark-surface-1-active"
+  defp color_classes("outline", "primary"), do: "border-2 border-primary bg-background text-primary hover:bg-primary/5 active:bg-primary/10 dark:border-dark-primary dark:bg-dark-background dark:text-dark-primary dark:hover:bg-dark-primary/10 dark:active:bg-dark-primary/20"
+  defp color_classes("outline", "secondary"), do: "border-2 border-secondary bg-background text-secondary hover:bg-secondary/5 active:bg-secondary/10 dark:border-dark-secondary dark:bg-dark-background dark:text-dark-secondary dark:hover:bg-dark-secondary/10 dark:active:bg-dark-secondary/20"
+  defp color_classes("outline", "success"), do: "border-2 border-success bg-background text-success hover:bg-success/5 active:bg-success/10 dark:border-dark-success dark:bg-dark-background dark:text-dark-success dark:hover:bg-dark-success/10 dark:active:bg-dark-success/20"
+  defp color_classes("outline", "danger"), do: "border-2 border-danger bg-background text-danger hover:bg-danger/5 active:bg-danger/10 dark:border-dark-danger dark:bg-dark-background dark:text-dark-danger dark:hover:bg-dark-danger/10 dark:active:bg-dark-danger/20"
+  defp color_classes("outline", "warning"), do: "border-2 border-warning bg-background text-warning hover:bg-warning/5 active:bg-warning/10 dark:border-dark-warning dark:bg-dark-background dark:text-dark-warning dark:hover:bg-dark-warning/10 dark:active:bg-dark-warning/20"
+  defp color_classes("outline", "info"), do: "border-2 border-info bg-background text-info hover:bg-info/5 active:bg-info/10 dark:border-dark-info dark:bg-dark-background dark:text-dark-info dark:hover:bg-dark-info/10 dark:active:bg-dark-info/20"
 
-  defp solid_color_classes("primary") do
-    "bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 dark:bg-primary-600 dark:hover:bg-primary-500 dark:active:bg-primary-700"
-  end
+  defp color_classes("ghost", "neutral"), do: "text-foreground dark:text-dark-foreground hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover active:bg-surface-1-active dark:active:bg-dark-surface-1-active"
+  defp color_classes("ghost", "primary"), do: "text-primary hover:bg-primary/10 active:bg-primary/20 dark:text-dark-primary dark:hover:bg-dark-primary/10 dark:active:bg-dark-primary/20"
+  defp color_classes("ghost", "secondary"), do: "text-secondary hover:bg-secondary/10 active:bg-secondary/20 dark:text-dark-secondary dark:hover:bg-dark-secondary/10 dark:active:bg-dark-secondary/20"
+  defp color_classes("ghost", "success"), do: "text-success hover:bg-success/10 active:bg-success/20 dark:text-dark-success dark:hover:bg-dark-success/10 dark:active:bg-dark-success/20"
+  defp color_classes("ghost", "danger"), do: "text-danger hover:bg-danger/10 active:bg-danger/20 dark:text-dark-danger dark:hover:bg-dark-danger/10 dark:active:bg-dark-danger/20"
+  defp color_classes("ghost", "warning"), do: "text-warning hover:bg-warning/10 active:bg-warning/20 dark:text-dark-warning dark:hover:bg-dark-warning/10 dark:active:bg-dark-warning/20"
+  defp color_classes("ghost", "info"), do: "text-info hover:bg-info/10 active:bg-info/20 dark:text-dark-info dark:hover:bg-dark-info/10 dark:active:bg-dark-info/20"
 
-  defp solid_color_classes("secondary") do
-    "bg-secondary-500 text-white hover:bg-secondary-600 active:bg-secondary-700 dark:bg-secondary-600 dark:hover:bg-secondary-500 dark:active:bg-secondary-700"
-  end
+  defp color_classes("link", "neutral"), do: "text-muted-foreground dark:text-dark-muted-foreground hover:text-foreground dark:hover:text-dark-foreground"
+  defp color_classes("link", "primary"), do: "text-primary hover:text-primary/80 dark:text-dark-primary dark:hover:text-dark-primary/80"
+  defp color_classes("link", "secondary"), do: "text-secondary hover:text-secondary/80 dark:text-dark-secondary dark:hover:text-dark-secondary/80"
+  defp color_classes("link", "success"), do: "text-success hover:text-success/80 dark:text-dark-success dark:hover:text-dark-success/80"
+  defp color_classes("link", "danger"), do: "text-danger hover:text-danger/80 dark:text-dark-danger dark:hover:text-dark-danger/80"
+  defp color_classes("link", "warning"), do: "text-warning hover:text-warning/80 dark:text-dark-warning dark:hover:text-dark-warning/80"
+  defp color_classes("link", "info"), do: "text-info hover:text-info/80 dark:text-dark-info dark:hover:text-dark-info/80"
 
-  defp solid_color_classes("success") do
-    "bg-success-500 text-white hover:bg-success-600 active:bg-success-700 dark:bg-success-600 dark:hover:bg-success-500 dark:active:bg-success-700"
-  end
-
-  defp solid_color_classes("danger") do
-    "bg-danger-500 text-white hover:bg-danger-600 active:bg-danger-700 dark:bg-danger-600 dark:hover:bg-danger-500 dark:active:bg-danger-700"
-  end
-
-  defp solid_color_classes("warning") do
-    "bg-warning-500 text-warning-900 hover:bg-warning-600 active:bg-warning-700 dark:bg-warning-400 dark:text-warning-900 dark:hover:bg-warning-300 dark:active:bg-warning-500"
-  end
-
-  # Outline variant color styles
-  defp outline_color_classes("neutral") do
-    "border-border dark:border-dark-border bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary active:bg-surface-active dark:active:bg-dark-surface-active"
-  end
-
-  defp outline_color_classes("primary") do
-    "border-primary-500 bg-background text-primary-600 hover:bg-primary-50 active:bg-primary-100 dark:border-primary-400 dark:bg-dark-background dark:text-primary-400 dark:hover:bg-primary-900/20 dark:active:bg-primary-900/40"
-  end
-
-  defp outline_color_classes("secondary") do
-    "border-secondary-500 bg-background text-secondary-600 hover:bg-secondary-50 active:bg-secondary-100 dark:border-secondary-400 dark:bg-dark-background dark:text-secondary-400 dark:hover:bg-secondary-900/20 dark:active:bg-secondary-900/40"
-  end
-
-  defp outline_color_classes("success") do
-    "border-success-500 bg-background text-success-600 hover:bg-success-50 active:bg-success-100 dark:border-success-400 dark:bg-dark-background dark:text-success-400 dark:hover:bg-success-900/20 dark:active:bg-success-900/40"
-  end
-
-  defp outline_color_classes("danger") do
-    "border-danger-500 bg-background text-danger-600 hover:bg-danger-50 active:bg-danger-100 dark:border-danger-400 dark:bg-dark-background dark:text-danger-400 dark:hover:bg-danger-900/20 dark:active:bg-danger-900/40"
-  end
-
-  defp outline_color_classes("warning") do
-    "border-warning-500 bg-background text-warning-600 hover:bg-warning-50 active:bg-warning-100 dark:border-warning-400 dark:bg-dark-background dark:text-warning-400 dark:hover:bg-warning-900/20 dark:active:bg-warning-900/40"
-  end
-
-  # Ghost variant color styles
-  defp ghost_color_classes("neutral") do
-    "text-foreground dark:text-dark-foreground hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary active:bg-surface-active dark:active:bg-dark-surface-active"
-  end
-
-  defp ghost_color_classes("primary") do
-    "text-primary-600 hover:bg-primary-100 active:bg-primary-200 dark:text-primary-400 dark:hover:bg-primary-900/20 dark:active:bg-primary-900/40"
-  end
-
-  defp ghost_color_classes("secondary") do
-    "text-secondary-600 hover:bg-secondary-100 active:bg-secondary-200 dark:text-secondary-400 dark:hover:bg-secondary-900/20 dark:active:bg-secondary-900/40"
-  end
-
-  defp ghost_color_classes("success") do
-    "text-success-600 hover:bg-success-100 active:bg-success-200 dark:text-success-400 dark:hover:bg-success-900/20 dark:active:bg-success-900/40"
-  end
-
-  defp ghost_color_classes("danger") do
-    "text-danger-600 hover:bg-danger-100 active:bg-danger-200 dark:text-danger-400 dark:hover:bg-danger-900/20 dark:active:bg-danger-900/40"
-  end
-
-  defp ghost_color_classes("warning") do
-    "text-warning-600 hover:bg-warning-100 active:bg-warning-200 dark:text-warning-400 dark:hover:bg-warning-900/20 dark:active:bg-warning-900/40"
-  end
-
-  # Link variant color styles
-  defp link_color_classes("neutral") do
-    "text-muted dark:text-dark-muted hover:text-foreground dark:hover:text-dark-foreground"
-  end
-
-  defp link_color_classes("primary") do
-    "text-primary-600 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-200"
-  end
-
-  defp link_color_classes("secondary") do
-    "text-secondary-600 hover:text-secondary-800 dark:text-secondary-400 dark:hover:text-secondary-200"
-  end
-
-  defp link_color_classes("success") do
-    "text-success-600 hover:text-success-800 dark:text-success-400 dark:hover:text-success-200"
-  end
-
-  defp link_color_classes("danger") do
-    "text-danger-600 hover:text-danger-800 dark:text-danger-400 dark:hover:text-danger-200"
-  end
-
-  defp link_color_classes("warning") do
-    "text-warning-600 hover:text-warning-800 dark:text-warning-400 dark:hover:text-warning-200"
-  end
-
-  # Size-specific styles
-  defp size_classes("xs") do
-    "h-6 px-2 text-xs gap-1 rounded-md"
-  end
-
-  defp size_classes("sm") do
-    "h-8 px-3 text-sm gap-1.5 rounded-md"
-  end
-
-  defp size_classes("md") do
-    "h-10 px-4 py-2 gap-2 rounded-lg"
-  end
-
-  defp size_classes("lg") do
-    "h-12 px-6 text-lg gap-2.5 rounded-lg"
-  end
-
-  defp size_classes("xl") do
-    "h-14 px-8 text-xl gap-3 rounded-lg"
-  end
+  # Spinner size classes based on button size
+  defp spinner_size_classes("xs"), do: "h-3 w-3 animate-spin"
+  defp spinner_size_classes("sm"), do: "h-4 w-4 animate-spin"
+  defp spinner_size_classes("md"), do: "h-4 w-4 animate-spin"
+  defp spinner_size_classes("lg"), do: "h-5 w-5 animate-spin"
+  defp spinner_size_classes("xl"), do: "h-6 w-6 animate-spin"
 
 end

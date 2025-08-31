@@ -66,10 +66,10 @@ defmodule Pulsar do
   use Application
 
   def start(_type, _args) do
-    children = [
-      {Phoenix.PubSub, name: Pulsar.PubSub},
-      PulsarWeb.Endpoint
-    ]
+    children =
+      [
+        {Phoenix.PubSub, name: Pulsar.PubSub}
+      ] ++ if start_endpoint?(), do: [PulsarWeb.Endpoint], else: []
 
     opts = [strategy: :one_for_one, name: Pulsar.Supervisor]
     Supervisor.start_link(children, opts)
@@ -87,5 +87,9 @@ defmodule Pulsar do
   def config_change(changed, _new, removed) do
     PulsarWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  defp start_endpoint? do
+    Application.get_env(:pulsar, :start_endpoint, false)
   end
 end

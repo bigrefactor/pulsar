@@ -33,6 +33,7 @@ defmodule Pulsar.MixProject do
       {:igniter, "~> 0.6"},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
+      {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:file_system, "~> 1.0", only: [:dev, :test]},
 
       # Dev/test dependencies

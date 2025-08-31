@@ -32,7 +32,6 @@ pulsar-*.tar
 
 # Generated assets (should be built, not committed)
 /priv/static/assets/
-/priv/static/themes/
 
 # ElixirLS language server
 /.elixir_ls/

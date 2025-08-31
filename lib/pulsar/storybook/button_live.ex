@@ -24,7 +24,7 @@ defmodule Pulsar.Storybook.ButtonLive do
       <div class="max-w-4xl mx-auto space-y-12">
         <div>
           <h1 class="text-3xl font-bold mb-2">Button</h1>
-          <p class="text-muted dark:text-dark-muted">
+          <p class="text-muted-foreground dark:text-dark-muted-foreground">
             Interactive button component with multiple variants, sizes, and states.
             Built on Stellar's accessible button foundation.
           </p>
@@ -37,7 +37,7 @@ defmodule Pulsar.Storybook.ButtonLive do
             <div :for={variant <- ["solid", "outline", "ghost", "link"]}>
               <h3 class="text-lg font-medium mb-4 capitalize">{variant} Variant</h3>
               <div class="flex flex-wrap gap-3">
-                <.button :for={color <- ["neutral", "primary", "secondary", "success", "danger", "warning"]} 
+                <.button :for={color <- ["neutral", "primary", "secondary", "success", "danger", "warning", "info"]} 
                   variant={variant} 
                   color={color}
                 >
@@ -61,7 +61,7 @@ defmodule Pulsar.Storybook.ButtonLive do
 
         <div>
           <h2 class="text-xl font-semibold mb-4">Icon Buttons</h2>
-          <p class="text-muted dark:text-dark-muted mb-4">
+          <p class="text-muted-foreground mb-4">
             For icon-only buttons, use regular sizes with custom classes for square aspect ratio.
           </p>
           <div class="flex flex-wrap items-end gap-3">
@@ -87,12 +87,57 @@ defmodule Pulsar.Storybook.ButtonLive do
         </div>
 
         <div>
+          <h2 class="text-xl font-semibold mb-6">Loading Features</h2>
+          <p class="text-muted-foreground mb-6">
+            Buttons automatically show a spinner when loading. Use the loading slot for custom loading content.
+          </p>
+          <div class="space-y-6">
+            <div>
+              <h3 class="text-lg font-medium mb-4">Automatic Loading Spinner</h3>
+              <div class="flex flex-wrap gap-3 mb-4">
+                <.button variant="solid" color="primary" loading={true}>Save Changes</.button>
+                <.button variant="outline" color="secondary" loading={true}>Upload File</.button>
+                <.button variant="ghost" color="success" loading={true}>Submit Form</.button>
+              </div>
+              <pre class="text-sm bg-surface-1 dark:bg-dark-surface-1 p-3 rounded text-muted-foreground dark:text-dark-muted-foreground overflow-x-auto"><code>&lt;.button variant="solid" color="primary" loading={true}&gt;Save Changes&lt;/.button&gt;</code></pre>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-medium mb-4">Custom Loading Content</h3>
+              <div class="flex flex-wrap gap-3 mb-4">
+                <.button variant="solid" color="primary" loading={true}>
+                  Save Changes
+                  <:loading_content>Saving...</:loading_content>
+                </.button>
+                <.button variant="outline" color="info" loading={true}>
+                  Process
+                  <:loading_content>⏳ Processing...</:loading_content>
+                </.button>
+              </div>
+              <pre class="text-sm bg-surface-1 dark:bg-dark-surface-1 p-3 rounded text-muted-foreground dark:text-dark-muted-foreground overflow-x-auto"><code>&lt;.button variant="solid" color="primary" loading={true}&gt;
+                Save Changes
+                &lt;:loading_content&gt;Saving...&lt;/:loading_content&gt;
+              &lt;/.button&gt;</code></pre>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-medium mb-4">Disable Automatic Spinner</h3>
+              <div class="flex flex-wrap gap-3 mb-4">
+                <.button variant="solid" color="primary" loading={true} show_loading_spinner={false}>Save Changes</.button>
+                <.button variant="outline" color="danger" loading={true} show_loading_spinner={false}>Delete Item</.button>
+              </div>
+              <pre class="text-sm bg-surface-1 dark:bg-dark-surface-1 p-3 rounded text-muted-foreground dark:text-dark-muted-foreground overflow-x-auto"><code>&lt;.button loading={true} show_loading_spinner={false}&gt;Save Changes&lt;/.button&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div>
           <h2 class="text-xl font-semibold mb-4">Usage Examples</h2>
           <div class="space-y-4">
-            <div class="p-4 border border-border dark:border-dark-border rounded-lg">
+              <div class="p-4 border border-border dark:border-dark-border rounded-lg">
               <h3 class="font-medium mb-2">Basic Button</h3>
               <.button variant="solid" color="primary">Save Changes</.button>
-              <pre class="mt-2 text-sm bg-surface-secondary dark:bg-dark-surface-secondary p-2 rounded text-muted dark:text-dark-muted"><code>&lt;.button variant="solid" color="primary"&gt;Save Changes&lt;/.button&gt;</code></pre>
+              <pre class="mt-2 text-sm bg-surface-1 dark:bg-dark-surface-1 p-2 rounded text-muted-foreground dark:text-dark-muted-foreground"><code>&lt;.button variant="solid" color="primary"&gt;Save Changes&lt;/.button&gt;</code></pre>
             </div>
 
             <div class="p-4 border border-border dark:border-dark-border rounded-lg">
@@ -100,9 +145,9 @@ defmodule Pulsar.Storybook.ButtonLive do
               <.button variant="outline" color="primary" as={:a} href="https://example.com" target="_blank">
                 Visit Site
               </.button>
-              <pre class="mt-2 text-sm bg-surface-secondary dark:bg-dark-surface-secondary p-2 rounded text-muted dark:text-dark-muted"><code>&lt;.button variant="outline" color="primary" as={:a} href="https://example.com"&gt;
-  Visit Site
-&lt;/.button&gt;</code></pre>
+              <pre class="mt-2 text-sm bg-surface-1 dark:bg-dark-surface-1 p-2 rounded text-muted-foreground dark:text-dark-muted-foreground"><code>&lt;.button variant="outline" color="primary" as={:a} href="https://example.com"&gt;
+                Visit Site
+              &lt;/.button&gt;</code></pre>
             </div>
 
             <div class="p-4 border border-border dark:border-dark-border rounded-lg">
@@ -110,10 +155,9 @@ defmodule Pulsar.Storybook.ButtonLive do
               <.button variant="solid" color="primary" class="w-full justify-start">
                 <span>📁</span> Full Width with Icon
               </.button>
-              <pre class="mt-2 text-sm bg-surface-secondary dark:bg-dark-surface-secondary p-2 rounded text-muted dark:text-dark-muted"><code>&lt;.button variant="solid" color="primary" class="w-full justify-start"&gt;
-  &lt;span&gt;📁&lt;/span&gt;
-  Full Width with Icon
-&lt;/.button&gt;</code></pre>
+              <pre class="mt-2 text-sm bg-surface-1 dark:bg-dark-surface-1 p-2 rounded text-muted-foreground dark:text-dark-muted-foreground"><code>&lt;.button variant="solid" color="primary" class="w-full justify-start"&gt;
+                &lt;span&gt;📁&lt;/span&gt; Full Width with Icon
+              &lt;/.button&gt;</code></pre>
             </div>
           </div>
         </div>

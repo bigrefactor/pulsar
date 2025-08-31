@@ -37,7 +37,7 @@ defmodule PulsarWeb do
       import Pulsar.Components.Card
   """
 
-  def __using__(which) when is_atom(which) do
+  defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])
   end
 
@@ -47,7 +47,13 @@ defmodule PulsarWeb do
   def components do
     quote do
       import Pulsar.Components.Button
+      import Pulsar.Components.Input
       # More components will be added here as they're implemented
+
+      # Define forwarding functions so component functions are available
+      # on the using module (helps introspection and ergonomics)
+      def button(assigns), do: Pulsar.Components.Button.button(assigns)
+      def input(assigns), do: Pulsar.Components.Input.input(assigns)
     end
   end
 
@@ -85,6 +91,9 @@ defmodule PulsarWeb do
   def button do
     quote do
       import Pulsar.Components.Button
+
+      # Define a forwarding function to expose :button on the caller
+      def button(assigns), do: Pulsar.Components.Button.button(assigns)
     end
   end
 

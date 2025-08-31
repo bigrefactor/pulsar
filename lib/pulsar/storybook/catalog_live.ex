@@ -29,10 +29,10 @@ defmodule Pulsar.Storybook.CatalogLive do
     ~H"""
     <.catalog_layout selected_component={@selected_component}>
       <div class="text-center py-12">
-        <h2 class="text-2xl font-bold text-muted dark:text-dark-muted">
+        <h2 class="text-2xl font-bold text-muted-foreground">
           Select a component from the sidebar
         </h2>
-        <p class="text-muted dark:text-dark-muted mt-2">
+        <p class="text-muted-foreground mt-2">
           Choose a component to view its documentation and examples
         </p>
       </div>

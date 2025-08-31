@@ -6,6 +6,36 @@ Beautiful, production-ready Phoenix LiveView components that enhance and replace
 
 Pulsar provides styled, accessible components that are drop-in replacements for Phoenix's generated core components, plus essential additions for building modern web applications. Every component is built with Tailwind CSS and uses Phoenix.LiveView.JS for interactions.
 
+**Generator-Only Architecture**: Following the shadcn/ui model, Pulsar generates components directly into your Phoenix application instead of providing them as dependencies. This gives you full control, easier customization, and better Tailwind integration.
+
+## Installation
+
+### 1. Setup (One-Time)
+```bash
+# Install the generator and setup your project
+mix pulsar.install
+```
+
+This installs the Pulsar theme CSS and configures Tailwind - no dependencies are added.
+
+### 2. Generate Components
+```bash
+# Generate individual components as needed
+mix pulsar.gen.button
+mix pulsar.gen.input
+mix pulsar.gen.modal
+```
+
+Components are generated into `lib/your_app_web/components/` and you own them completely.
+
+### 3. Use Components
+```elixir
+# Use the generated components in your templates
+<.button variant="solid" color="primary">
+  Save Changes
+</.button>
+```
+
 ## Component Categories
 
 ### Core Components (Phoenix Replacements)

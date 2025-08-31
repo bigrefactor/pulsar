@@ -12,9 +12,8 @@ const ThemeToggle = {
     
     // Handle click events on the button
     this.el.addEventListener("click", () => {
-      const currentTheme = document.documentElement.getAttribute("data-theme")
-      const newTheme = currentTheme === "dark" ? "light" : "dark"
-      this.setTheme(newTheme)
+      const isDark = document.documentElement.classList.contains("dark")
+      this.setTheme(isDark ? "light" : "dark")
     })
     
     this.handleEvent("toggle_theme", ({dark}) => {
@@ -37,11 +36,7 @@ const ThemeToggle = {
   },
   
   applyTheme(isDark) {
-    if (isDark) {
-      document.documentElement.setAttribute("data-theme", "dark")
-    } else {
-      document.documentElement.removeAttribute("data-theme")
-    }
+    document.documentElement.classList.toggle("dark", isDark)
   },
   
   updateUI(isDark) {
@@ -64,8 +59,14 @@ const ThemeToggle = {
 let hooks = {ThemeToggle}
 try {
   const colocatedHooks = await import("phoenix-colocated/pulsar")
-  hooks = {...hooks, ...colocatedHooks.hooks}
+  if (colocatedHooks?.hooks && typeof colocatedHooks.hooks === "object") {
+    console.debug("[pulsar] colocated hooks loaded", Object.keys(colocatedHooks.hooks))
+    hooks = {...hooks, ...colocatedHooks.hooks}
+  } else {
+    console.debug("[pulsar] No colocated hooks export; skipping merge")
+  }
 } catch (e) {
+  console.debug("[pulsar] No colocated hooks found; proceeding without them.")
   // Colocated hooks not available yet, that's ok
 }
 
