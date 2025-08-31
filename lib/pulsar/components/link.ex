@@ -63,7 +63,8 @@ defmodule Pulsar.Components.Link do
   attr :variant, :string,
     default: "solid",
     values: ~w(solid ghost outline),
-    doc: "Visual style variant of the link. solid=no underline, ghost=hover underline, outline=always underline"
+    doc:
+      "Visual style variant of the link. solid=no underline, ghost=hover underline, outline=always underline"
 
   attr :color, :string,
     default: "primary",
@@ -130,9 +131,12 @@ defmodule Pulsar.Components.Link do
   def a(assigns) do
     # Build complete class string using TailwindMerge - only include needed classes  
     assigns =
-      assign(assigns, :merged_classes,
+      assign(
+        assigns,
+        :merged_classes,
         merge([
-          "group",  # Enable group-data selectors for external icon handling
+          # Enable group-data selectors for external icon handling
+          "group inline-flex items-center",
           base_link_classes(),
           variant_classes(assigns.variant),
           color_classes(assigns.color),
@@ -163,9 +167,23 @@ defmodule Pulsar.Components.Link do
       </span>
       {render_slot(@inner_block)}
       <!-- Automatic external icon - shown only for external links without custom end_icon -->
-      <span :if={@end_icon == []} class="hidden group-data-[external=true]:inline-flex items-center ml-1" aria-hidden="true">
-        <svg class="w-[1em] h-[1em]" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+      <span
+        :if={@end_icon == []}
+        class="hidden group-data-[external=true]:inline-flex items-center ml-1"
+        aria-hidden="true"
+      >
+        <svg
+          class="w-[1em] h-[1em]"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+          />
         </svg>
       </span>
       <!-- Custom end icon - shown when provided -->
@@ -187,17 +205,39 @@ defmodule Pulsar.Components.Link do
 
   # Variant-specific border behavior
   defp variant_classes("solid"), do: "no-underline"
-  defp variant_classes("ghost"), do: "no-underline border-b-2 border-transparent hover:border-current pb-0.5"
+
+  defp variant_classes("ghost"),
+    do: "no-underline border-b-2 border-transparent hover:border-current pb-0.5"
+
   defp variant_classes("outline"), do: "no-underline border-b-2 border-current pb-0.5"
 
   # Color classes using semantic tokens + opacity
-  defp color_classes("primary"), do: "text-primary hover:text-primary/80 dark:text-dark-primary dark:hover:text-dark-primary/80"
-  defp color_classes("secondary"), do: "text-secondary hover:text-secondary/80 dark:text-dark-secondary dark:hover:text-dark-secondary/80"
-  defp color_classes("muted"), do: "text-muted-foreground hover:text-muted-foreground/70 dark:text-dark-muted-foreground dark:hover:text-dark-muted-foreground/70"
-  defp color_classes("danger"), do: "text-danger hover:text-danger/80 dark:text-dark-danger dark:hover:text-dark-danger/80"
-  defp color_classes("success"), do: "text-success hover:text-success/80 dark:text-dark-success dark:hover:text-dark-success/80"
-  defp color_classes("warning"), do: "text-warning hover:text-warning/80 dark:text-dark-warning dark:hover:text-dark-warning/80"
-  defp color_classes("info"), do: "text-info hover:text-info/80 dark:text-dark-info dark:hover:text-dark-info/80"
+  defp color_classes("primary"),
+    do:
+      "text-primary hover:text-primary/80 dark:text-dark-primary dark:hover:text-dark-primary/80"
+
+  defp color_classes("secondary"),
+    do:
+      "text-secondary hover:text-secondary/80 dark:text-dark-secondary dark:hover:text-dark-secondary/80"
+
+  defp color_classes("muted"),
+    do:
+      "text-muted-foreground hover:text-muted-foreground/70 dark:text-dark-muted-foreground dark:hover:text-dark-muted-foreground/70"
+
+  defp color_classes("danger"),
+    do: "text-danger hover:text-danger/80 dark:text-dark-danger dark:hover:text-dark-danger/80"
+
+  defp color_classes("success"),
+    do:
+      "text-success hover:text-success/80 dark:text-dark-success dark:hover:text-dark-success/80"
+
+  defp color_classes("warning"),
+    do:
+      "text-warning hover:text-warning/80 dark:text-dark-warning dark:hover:text-dark-warning/80"
+
+  defp color_classes("info"),
+    do: "text-info hover:text-info/80 dark:text-dark-info dark:hover:text-dark-info/80"
+
   defp color_classes("inherit"), do: "text-inherit"
 
   # Size classes
@@ -207,5 +247,5 @@ defmodule Pulsar.Components.Link do
   defp size_classes("lg"), do: "text-lg"
   defp size_classes("xl"), do: "text-xl"
   defp size_classes("inherit"), do: ""
-
 end
+
