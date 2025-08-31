@@ -14,11 +14,14 @@ defmodule PulsarWeb.Layouts do
         <script>
           // Prevent FOUC by setting theme before CSS loads
           (function() {
-            const isDark = localStorage.theme === 'dark' || 
-              (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-            if (isDark) {
-              document.documentElement.setAttribute('data-theme', 'dark');
-            }
+            // Only honor explicit user choice for testing; default to light
+            try {
+              if (localStorage.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+              } else {
+                document.documentElement.classList.remove('dark');
+              }
+            } catch (_) {}
           })();
         </script>
         <link rel="stylesheet" href="/assets/app.css" />

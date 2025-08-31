@@ -5,6 +5,7 @@ module.exports = {
     "../lib/pulsar_web/**/*.*ex",
     "../lib/pulsar/**/*.*ex"
   ],
-  darkMode: 'class',
+  // Support both `.dark` class and data-theme="dark" attribute
+  darkMode: ['class', '[data-theme="dark"]'],
   plugins: [],
 }

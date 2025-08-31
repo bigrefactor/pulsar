@@ -205,7 +205,7 @@ defmodule Pulsar.Components.ButtonTest do
           """)
 
         case color do
-          "neutral" -> assert html =~ "text-muted"
+          "neutral" -> assert html =~ "text-muted-foreground"
           "primary" -> assert html =~ "text-primary-600"
           "secondary" -> assert html =~ "text-secondary-600"
           "success" -> assert html =~ "text-success-600"
@@ -447,10 +447,11 @@ defmodule Pulsar.Components.ButtonTest do
         <Button.button variant="solid" color="primary">Dark</Button.button>
         """)
 
-      # Should include dark mode variants
+      # Should include dark mode variants for numeric shades
       assert html =~ "dark:bg-primary-600"
       assert html =~ "dark:hover:bg-primary-500"
-      assert html =~ "dark:focus-visible:ring-dark-ring"
+      # Focus ring uses semantic token without dark- duplication
+      assert html =~ "focus-visible:ring-ring"
     end
   end
 

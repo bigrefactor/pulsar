@@ -49,7 +49,7 @@ defmodule Pulsar.Storybook.InputLive do
       <div class="max-w-4xl mx-auto space-y-12">
         <div>
           <h1 class="text-3xl font-bold mb-2">Input</h1>
-          <p class="text-muted dark:text-dark-muted">
+          <p class="text-muted-foreground dark:text-dark-muted-foreground">
             Accessible input component with full variant and color support, decorator system, and automatic error handling.
           </p>
         </div>
@@ -58,7 +58,7 @@ defmodule Pulsar.Storybook.InputLive do
         <section class="space-y-8">
           <div>
             <h2 class="text-xl font-semibold mb-6">Variants & Colors</h2>
-            <p class="text-muted dark:text-dark-muted mb-6">
+            <p class="text-muted-foreground dark:text-dark-muted-foreground mb-6">
               Three variants with full color palette support. Error states automatically override colors.
             </p>
             
@@ -129,7 +129,7 @@ defmodule Pulsar.Storybook.InputLive do
         <section class="space-y-8">
           <div>
             <h2 class="text-xl font-semibold mb-6">Decorators</h2>
-            <p class="text-muted dark:text-dark-muted mb-4">
+            <p class="text-muted-foreground dark:text-dark-muted-foreground mb-4">
               Add icons, text, or interactive elements to inputs.
             </p>
             <div class="space-y-6">
@@ -201,7 +201,7 @@ defmodule Pulsar.Storybook.InputLive do
         <section class="space-y-8">
           <div>
             <h2 class="text-xl font-semibold mb-6">Phoenix Form Integration</h2>
-            <p class="text-muted dark:text-dark-muted mb-4">
+            <p class="text-muted-foreground dark:text-dark-muted-foreground mb-4">
               Inputs automatically show error states when used with Phoenix forms.
             </p>
             <div class="space-y-4">
@@ -287,8 +287,8 @@ defmodule Pulsar.Storybook.InputLive do
             <div class="space-y-6">
               <div>
                 <h3 class="text-lg font-medium mb-2">Basic Usage</h3>
-                <div class="bg-surface dark:bg-dark-surface p-4 rounded-lg border">
-                  <pre class="text-sm text-muted dark:text-dark-muted overflow-x-auto"><code>                    # Basic input
+                <div class="bg-surface-1 dark:bg-dark-surface-1 p-4 rounded-lg border border-border dark:border-dark-border">
+                  <pre class="text-sm text-muted-foreground dark:text-dark-muted-foreground overflow-x-auto"><code>                    # Basic input
                     &lt;.input name="email" placeholder="Enter email" /&gt;
 
                     # With Phoenix form field (automatic error handling)
@@ -304,21 +304,21 @@ defmodule Pulsar.Storybook.InputLive do
 
               <div>
                 <h3 class="text-lg font-medium mb-2">Available Props</h3>
-                <div class="bg-surface dark:bg-dark-surface p-4 rounded-lg border">
+                <div class="bg-surface-1 dark:bg-dark-surface-1 p-4 rounded-lg border border-border dark:border-dark-border">
                   <div class="space-y-2 text-sm">
                     <div><strong>Styling:</strong></div>
-                    <ul class="space-y-1 text-muted dark:text-dark-muted ml-4">
+                    <ul class="space-y-1 text-muted-foreground dark:text-dark-muted-foreground ml-4">
                       <li><code>variant</code> - "outline" (default) | "ghost"</li>
                       <li><code>size</code> - "xs" | "sm" | "md" | "lg" | "xl"</li>
                     </ul>
                     <div class="mt-4"><strong>Behavior:</strong></div>
-                    <ul class="space-y-1 text-muted dark:text-dark-muted ml-4">
+                    <ul class="space-y-1 text-muted-foreground dark:text-dark-muted-foreground ml-4">
                       <li><code>field</code> - Phoenix form field (automatic error detection)</li>
                       <li><code>type</code> - HTML input type</li>
                       <li><code>disabled</code>, <code>readonly</code>, <code>required</code> - Boolean states</li>
                     </ul>
                     <div class="mt-4"><strong>Note:</strong></div>
-                    <p class="text-muted dark:text-dark-muted">No color prop needed - colors are automatic based on state!</p>
+                    <p class="text-muted-foreground dark:text-dark-muted-foreground">No color prop needed - colors are automatic based on state!</p>
                   </div>
                 </div>
               </div>

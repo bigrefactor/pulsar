@@ -20,7 +20,6 @@ defmodule Pulsar.Components.InputTest do
       assert html =~ ~s(data-size="md")
       # Default outline variant with neutral color
       assert html =~ "border-border"
-      assert html =~ "dark:border-dark-border"
       # Default size (md)
       assert html =~ "min-h-10"
     end
@@ -91,9 +90,7 @@ defmodule Pulsar.Components.InputTest do
 
       assert html =~ "border-2"
       assert html =~ "border-border"
-      assert html =~ "dark:border-dark-border"
       assert html =~ "bg-background"
-      assert html =~ "dark:bg-dark-background"
     end
 
     test "renders ghost variant" do
@@ -107,7 +104,6 @@ defmodule Pulsar.Components.InputTest do
       assert html =~ "bg-transparent"
       refute html =~ "border-2"  # Ghost doesn't have border
       assert html =~ "text-foreground"
-      assert html =~ "dark:text-dark-foreground"
     end
   end
 
@@ -200,7 +196,6 @@ defmodule Pulsar.Components.InputTest do
 
       # Outline decorators have border background
       assert html =~ "bg-border"
-      assert html =~ "dark:bg-dark-border"
       assert html =~ "border-r"
     end
 
@@ -216,8 +211,7 @@ defmodule Pulsar.Components.InputTest do
         """)
 
       # Ghost decorators are minimal
-      assert html =~ "text-muted"
-      assert html =~ "dark:text-dark-muted"
+      assert html =~ "text-muted-foreground"
       # Ghost decorators use size-based padding from get_decorator_padding, no extra pr/pl classes
       assert html =~ "px-3 py-1.5"  # md size decorator padding
     end
@@ -333,9 +327,7 @@ defmodule Pulsar.Components.InputTest do
 
       # Should use neutral color
       assert html =~ "border-border"
-      assert html =~ "dark:border-dark-border"
       assert html =~ "text-foreground"
-      assert html =~ "dark:text-dark-foreground"
 
       # Should have data attributes for valid state
       assert html =~ ~s(data-invalid="false")

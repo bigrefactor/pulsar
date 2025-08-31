@@ -71,33 +71,15 @@ Pulsar extends Tailwind CSS's utility-first approach into the LiveView ecosystem
 
 *Example: Modals trap focus, announce themselves, and handle Escape—no configuration needed.*
 
-## 6. Theme System Through Tailwind Config
-**Themes are just Tailwind color configurations.**
+## 6. Theme System via Semantic Tokens
+**Themes use CSS custom properties exposed through Tailwind’s `@theme` and `@variant dark`.**
 
-- Themes defined as simple JavaScript objects
-- Light and dark themes configured in Tailwind config
-- No runtime switching, no CSS variables
-- Components use `light-` and `dark-` prefixed colors
-- Switch themes by changing imports
+- Semantic tokens (background, foreground, surface-*, primary, etc.) are defined in CSS
+- Dark mode handled by Tailwind’s `dark` variant; consumers choose media/class/custom selector
+- Components reference semantic utilities like `bg-background`, `text-foreground`, `bg-primary`
+- Brands override tokens in their theme file; components update automatically
 
-*Example: Change from a minimalist theme to a colorful theme by just changing which theme file you import in tailwind.config.js.*
-
-```javascript
-// Simple theme switching
-const lofi = require('@pulsar/themes/lofi')
-const dracula = require('@pulsar/themes/dracula')
-
-module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        light: lofi.colors,
-        dark: dracula.colors
-      }
-    }
-  }
-}
-```
+*Example: Switch brand colors by overriding `--color-primary-*` and `--color-primary` tokens.*
 
 ## 7. Responsive by Design
 **Mobile-first, just like Tailwind.**
@@ -161,8 +143,7 @@ We use semantic color names that adapt to themes:
 
 ```elixir
 # Component uses semantic colors
-<.button class="bg-light-primary dark:bg-dark-primary 
-                text-light-primary-foreground dark:text-dark-primary-foreground">
+<.button class="bg-primary text-primary-foreground">
 
 # Actual colors depend on theme choice:
 # lofi theme: black button with white text
@@ -170,15 +151,11 @@ We use semantic color names that adapt to themes:
 # corporate theme: blue button with white text
 ```
 
-### Required Semantic Colors
-Every theme must provide:
-- `background` / `foreground` - Main colors
-- `card` / `card-foreground` - Surface colors
-- `primary` / `primary-foreground` - Brand colors
-- `secondary` / `secondary-foreground` - Supporting colors
-- `accent` / `accent-foreground` - Highlight colors
-- `muted` / `muted-foreground` - De-emphasized colors
-- `destructive` / `destructive-foreground` - Error/danger colors
+### Required Semantic Tokens
+Every theme provides:
+- `background`, `foreground` - Main colors
+- `surface-0…3`, `muted` / `muted-foreground` - Surfaces and subdued text
+- `primary` / `primary-foreground`, `secondary` / `secondary-foreground`, `info`, `success`, `warning`, `danger`
 - `border`, `input`, `ring` - UI element colors
 
 ### Theme Flexibility
@@ -214,17 +191,16 @@ colors: {
    ```
 
 ### Class Composition Strategy
-Components use semantic theme colors:
+Components use semantic tokens:
 
 ```elixir
 # Base component definition
 def button(assigns) do
   ~H"""
   <button class={[
-    # Semantic theme colors
-    "bg-light-primary dark:bg-dark-primary",
-    "text-light-primary-foreground dark:text-dark-primary-foreground",
-    "hover:bg-light-primary/90 dark:hover:bg-dark-primary/90",
+    # Semantic colors
+    "bg-primary text-primary-foreground",
+    "hover:bg-primary/90 active:bg-primary/80 dark:hover:bg-dark-primary/90 dark:active:bg-dark-primary/80",
     
     # Standard Tailwind utilities
     "px-4 py-2 rounded-md font-medium",
