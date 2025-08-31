@@ -41,10 +41,16 @@ priv/templates/           # Template files for code generation
 Pulsar uses the **Igniter** library for sophisticated code generation and project modification. This allows generators to:
 
 - **Smart File Creation**: Creates files only if they don't exist
-- **Dependency Management**: Automatically adds required dependencies to mix.exs
+- **No Dependency Management**: Components are generated directly - no external dependencies added
 - **Import Updates**: Modifies existing files to add component imports
 - **Conflict Resolution**: Handles module naming and path conflicts
 - **Rollback Safety**: Can undo changes if generation fails
+
+**Generator-Only Benefits:**
+- **Tailwind Purging**: Generated classes in user's codebase are detected automatically
+- **Zero Dependencies**: No external packages to manage or version conflicts
+- **Complete Control**: Users own generated code and can modify freely
+- **Simpler Builds**: No complex safelist configurations needed
 
 **Key Files:**
 - `lib/mix/tasks/pulsar/gen/*.ex` - Generator task implementations
@@ -182,18 +188,24 @@ document.documentElement.dataset.theme = 'light'; // Disable
 
 ## Dependencies
 
-### Core Dependencies
+### Generator Development Dependencies
 - **Stellar**: Headless components for accessibility and behavior (`path: "../stellar"`)
 - **TailwindMerge**: Class conflict resolution for dynamic styling 
 - **Igniter**: Code generation and project modification toolkit
 - **Phoenix LiveView**: Component system and reactivity
 
-### Development Dependencies
+### Storybook Dependencies (Development Only)
 - **Phoenix**: Web framework for storybook
 - **Bandit**: HTTP server for development
 - **Tailwind/ESBuild**: Asset compilation for storybook
 
-**Note**: Stellar and TailwindMerge are currently path dependencies for local development. These should be published to Hex or use git dependencies for production use.
+**Important**: Generated components depend on **Stellar** and **TailwindMerge** as the only required dependencies. No Pulsar package dependency is needed.
+
+**Generated Components Include:**
+- Complete component implementation using Stellar for behavior
+- TailwindMerge integration for intelligent class composition  
+- All styling and interaction code
+- Full accessibility features via Stellar
 
 ## Commands
 
@@ -305,7 +317,7 @@ end
 
 **Code Generation Validation:**
 - Verifies correct file paths and module names
-- Tests dependency injection (stellar, tailwind_merge)
+- Tests code generation (stellar, tailwind_merge code embedded)
 - Validates component import updates
 - Checks error handling for edge cases
 

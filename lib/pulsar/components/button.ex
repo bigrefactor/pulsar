@@ -69,7 +69,7 @@ defmodule Pulsar.Components.Button do
   attr :size, :string,
     default: "md",
     values: ~w(xs sm md lg xl),
-    doc: "Size of the button"
+    doc: "Size of the button. Note: link variant ignores size to preserve natural text flow"
 
   # Stellar button attributes - copied from Stellar.Components.Button
   attr :as, :atom,
@@ -156,6 +156,18 @@ defmodule Pulsar.Components.Button do
   This function wraps Stellar.Components.Button with Pulsar's styling system.
   All Stellar props are passed through, with styling controlled via data attributes
   for better maintainability and smaller class strings.
+
+  ## Size Behavior
+  - **solid, outline, ghost variants**: Size controls height, padding, and text size
+  - **link variant**: Size is ignored to preserve natural text flow. Links adapt to surrounding text.
+
+  ## Examples
+
+      # Link buttons ignore size - they flow with surrounding text
+      <.button variant="link" size="lg">Download</.button>  # size ignored
+      
+      # Other variants respect size
+      <.button variant="solid" size="lg">Download</.button>  # h-12, px-6, text-lg
   """
   def button(assigns) do
     # Build complete class string using TailwindMerge - only include needed classes
@@ -164,7 +176,7 @@ defmodule Pulsar.Components.Button do
         merge([
           base_button_classes(),
           variant_classes(assigns.variant),
-          size_classes(assigns.size),
+          (if assigns.variant == "link", do: "", else: size_classes(assigns.size)),
           color_classes(assigns.variant, assigns.color),
           assigns.class
         ])

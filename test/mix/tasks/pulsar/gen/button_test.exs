@@ -38,18 +38,21 @@ defmodule Mix.Tasks.Pulsar.Gen.ButtonTest do
   describe "task functionality" do
     test "implements required Igniter.Mix.Task behaviour" do
       # Test that the module implements the Igniter.Mix.Task behaviour
-      assert function_exported?(Button, :igniter, 2)
+      assert function_exported?(Button, :igniter, 1)
       assert function_exported?(Button, :info, 2)
     end
 
     test "has proper module attributes" do
-      # Test module documentation
-      assert Button.__info__(:attributes)[:moduledoc] != nil
+      # Test shortdoc which is stored in attributes
       assert Button.__info__(:attributes)[:shortdoc] != nil
 
       shortdoc = Button.__info__(:attributes)[:shortdoc] |> List.first()
       assert is_binary(shortdoc)
       assert shortdoc =~ "Button"
+      
+      # Test that module has documentation (moduledoc is not stored in attributes but can be accessed)
+      {:docs_v1, _, _, _, module_doc, _, _} = Code.fetch_docs(Button)
+      assert module_doc != :none
     end
   end
 
@@ -60,7 +63,7 @@ defmodule Mix.Tasks.Pulsar.Gen.ButtonTest do
 
       # This tests that the logic works correctly by testing the overall behavior
       # rather than the private function directly
-      assert function_exported?(Button, :igniter, 2)
+      assert function_exported?(Button, :igniter, 1)
     end
   end
 
@@ -71,7 +74,7 @@ defmodule Mix.Tasks.Pulsar.Gen.ButtonTest do
     test "generator handles missing source file gracefully" do
       # The generator should handle cases where the source component can't be read
       # This is tested indirectly through the public igniter function
-      assert function_exported?(Button, :igniter, 2)
+      assert function_exported?(Button, :igniter, 1)
     end
   end
 
@@ -79,7 +82,7 @@ defmodule Mix.Tasks.Pulsar.Gen.ButtonTest do
     test "includes required dependencies" do
       # The generator should ensure stellar and tailwind_merge are added as dependencies
       # This is tested through the public interface
-      assert function_exported?(Button, :igniter, 2)
+      assert function_exported?(Button, :igniter, 1)
     end
   end
 
@@ -87,19 +90,19 @@ defmodule Mix.Tasks.Pulsar.Gen.ButtonTest do
     test "generates appropriate success messages" do
       # The generator should provide helpful success messages
       # This behavior is part of the igniter implementation
-      assert function_exported?(Button, :igniter, 2)
+      assert function_exported?(Button, :igniter, 1)
     end
 
     test "handles component file creation" do
       # The generator should create component files in the correct location
       # This is part of the igniter implementation
-      assert function_exported?(Button, :igniter, 2)
+      assert function_exported?(Button, :igniter, 1)
     end
 
     test "manages component imports" do
       # The generator should update component imports appropriately  
       # This is part of the igniter implementation
-      assert function_exported?(Button, :igniter, 2)
+      assert function_exported?(Button, :igniter, 1)
     end
   end
 
@@ -107,19 +110,19 @@ defmodule Mix.Tasks.Pulsar.Gen.ButtonTest do
     test "parses command line options correctly" do
       # Test that the generator can handle command line arguments
       # This is done through the igniter interface
-      assert function_exported?(Button, :igniter, 2)
+      assert function_exported?(Button, :igniter, 1)
     end
 
     test "provides sensible defaults" do
       # The generator should work without any options provided
       # This is tested through the igniter implementation
-      assert function_exported?(Button, :igniter, 2)
+      assert function_exported?(Button, :igniter, 1)
     end
 
     test "handles custom paths and modules" do
       # The generator should support custom paths and module names
       # This is part of the igniter implementation
-      assert function_exported?(Button, :igniter, 2)
+      assert function_exported?(Button, :igniter, 1)
     end
   end
 
@@ -127,13 +130,13 @@ defmodule Mix.Tasks.Pulsar.Gen.ButtonTest do
     test "handles malformed options gracefully" do
       # The generator should handle invalid options appropriately
       # This is part of the igniter implementation
-      assert function_exported?(Button, :igniter, 2)
+      assert function_exported?(Button, :igniter, 1)
     end
 
     test "provides helpful error messages" do
       # When things go wrong, the generator should provide useful feedback
       # This is part of the igniter implementation
-      assert function_exported?(Button, :igniter, 2)
+      assert function_exported?(Button, :igniter, 1)
     end
   end
 
@@ -141,13 +144,13 @@ defmodule Mix.Tasks.Pulsar.Gen.ButtonTest do
     test "integrates with Phoenix app structure" do
       # The generator should work with standard Phoenix application structure
       # This is tested through the igniter implementation
-      assert function_exported?(Button, :igniter, 2)
+      assert function_exported?(Button, :igniter, 1)
     end
 
     test "respects Phoenix naming conventions" do
       # Generated components should follow Phoenix naming patterns
       # This is part of the igniter implementation
-      assert function_exported?(Button, :igniter, 2)
+      assert function_exported?(Button, :igniter, 1)
     end
   end
 

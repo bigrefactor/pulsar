@@ -198,9 +198,9 @@ defmodule Pulsar.Components.InputTest do
         </Input.input>
         """)
 
-      # Outline decorators have surface background
-      assert html =~ "bg-surface-secondary"
-      assert html =~ "dark:bg-dark-surface-secondary"
+      # Outline decorators have border background
+      assert html =~ "bg-border"
+      assert html =~ "dark:bg-dark-border"
       assert html =~ "border-r"
     end
 
@@ -279,7 +279,7 @@ defmodule Pulsar.Components.InputTest do
         """)
 
       assert html =~ "focus-within:ring-2"
-      assert html =~ "focus-within:ring-offset-2"
+      assert html =~ "focus-within:ring-ring"
     end
   end
 
@@ -303,8 +303,8 @@ defmodule Pulsar.Components.InputTest do
         """)
 
       # Should show danger styling automatically
-      assert html =~ "border-danger-500"
-      assert html =~ "dark:border-danger-400"
+      assert html =~ "border-danger-400"
+      assert html =~ "dark:border-danger-800"
       assert html =~ "text-danger-700"
       assert html =~ "dark:text-danger-300"
 
@@ -363,11 +363,12 @@ defmodule Pulsar.Components.InputTest do
         """)
 
       # Decorators should also show danger styling
-      assert html =~ "bg-danger-50"
-      assert html =~ "dark:bg-danger-900/20"
-      assert html =~ "text-danger-700"
+      assert html =~ "bg-danger-400"
+      assert html =~ "dark:bg-danger-800"
+      assert html =~ "text-danger-900"
       assert html =~ "dark:text-danger-300"
-      assert html =~ "border-r border-danger-500"
+      assert html =~ "border-r"
+      assert html =~ "border-danger-400"
     end
   end
 

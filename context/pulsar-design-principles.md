@@ -134,16 +134,25 @@ module.exports = {
 
 *Example: Modals use `JS.show()` and `JS.hide()` with CSS transitions, falling back to server-side navigation if JS is disabled.*
 
-## 10. Copy-Paste Friendly
-**Following the shadcn/ui model.**
+## 10. Generator-Only Architecture
+**Following the shadcn/ui model - no dependencies, just generators.**
 
 - Components generated into your app
-- Full source control
-- Modify without fear
-- No version lock-in
-- Learn by reading
+- Full source control over generated code
+- Modify without fear of breaking updates
+- No version lock-in or dependency management
+- Learn by reading the generated code
+- No plugin mode or hex packages to manage
 
-*Example: `mix pulsar.gen.component button` creates `components/ui/button.ex` in your project.*
+*Example: `mix pulsar.gen.button` creates `lib/my_app_web/components/button.ex` in your project that you own completely.*
+
+**Why Generator-Only?**
+- **Tailwind Purging**: Generated classes in your codebase are detected automatically
+- **Minimal Dependencies**: Only Stellar (behavior) + TailwindMerge (styling) needed
+- **Complete Control**: Modify generated components however you need
+- **Simpler Builds**: No complex safelist configurations required
+- **Better DX**: All component code is visible and searchable in your project
+- **No Version Lock-in**: No Pulsar package to maintain or upgrade
 
 ## Design Token Integration
 

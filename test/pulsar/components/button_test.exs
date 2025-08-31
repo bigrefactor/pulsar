@@ -118,7 +118,7 @@ defmodule Pulsar.Components.ButtonTest do
 
   describe "variants" do
     test "renders solid variant with all colors" do
-      colors = ~w(neutral primary secondary success danger warning)
+      colors = ~w(neutral primary secondary success danger warning info)
 
       for color <- colors do
         assigns = %{color: color}
@@ -128,12 +128,13 @@ defmodule Pulsar.Components.ButtonTest do
           """)
 
         case color do
-          "neutral" -> assert html =~ "bg-gray-600"
+          "neutral" -> assert html =~ "bg-neutral-500"
           "primary" -> assert html =~ "bg-primary-500"
           "secondary" -> assert html =~ "bg-secondary-500"
           "success" -> assert html =~ "bg-success-500"
           "danger" -> assert html =~ "bg-danger-500"
           "warning" -> assert html =~ "bg-warning-500"
+          "info" -> assert html =~ "bg-info-500"
         end
 
         # All solid variants should have shadow
@@ -142,7 +143,7 @@ defmodule Pulsar.Components.ButtonTest do
     end
 
     test "renders outline variant with all colors" do
-      colors = ~w(neutral primary secondary success danger warning)
+      colors = ~w(neutral primary secondary success danger warning info)
 
       for color <- colors do
         assigns = %{color: color}
@@ -158,6 +159,7 @@ defmodule Pulsar.Components.ButtonTest do
           "success" -> assert html =~ "border-success-500"
           "danger" -> assert html =~ "border-danger-500"
           "warning" -> assert html =~ "border-warning-500"
+          "info" -> assert html =~ "border-info-500"
         end
 
         # All outline variants should have border and shadow
@@ -167,7 +169,7 @@ defmodule Pulsar.Components.ButtonTest do
     end
 
     test "renders ghost variant with all colors" do
-      colors = ~w(neutral primary secondary success danger warning)
+      colors = ~w(neutral primary secondary success danger warning info)
 
       for color <- colors do
         assigns = %{color: color}
@@ -183,16 +185,17 @@ defmodule Pulsar.Components.ButtonTest do
           "success" -> assert html =~ "text-success-600"
           "danger" -> assert html =~ "text-danger-600"
           "warning" -> assert html =~ "text-warning-600"
+          "info" -> assert html =~ "text-info-600"
         end
 
-        # Ghost variants should not have border or shadow
+        # Ghost variants should not have border but do have shadow
         refute html =~ "border-2"
-        refute html =~ "shadow-sm"
+        assert html =~ "shadow-sm"
       end
     end
 
     test "renders link variant with all colors" do
-      colors = ~w(neutral primary secondary success danger warning)
+      colors = ~w(neutral primary secondary success danger warning info)
 
       for color <- colors do
         assigns = %{color: color}
@@ -208,6 +211,7 @@ defmodule Pulsar.Components.ButtonTest do
           "success" -> assert html =~ "text-success-600"
           "danger" -> assert html =~ "text-danger-600"
           "warning" -> assert html =~ "text-warning-600"
+          "info" -> assert html =~ "text-info-600"
         end
 
         # Link variants should have underline classes
@@ -235,32 +239,36 @@ defmodule Pulsar.Components.ButtonTest do
             assert html =~ "h-6"
             assert html =~ "px-2" 
             assert html =~ "text-xs"
+            assert html =~ "gap-1"
             assert html =~ "rounded-md"
           "sm" -> 
             assert html =~ "h-8"
             assert html =~ "px-3"
             assert html =~ "text-sm"
+            assert html =~ "gap-1"
             assert html =~ "rounded-md"
           "md" -> 
             assert html =~ "h-10"
             assert html =~ "px-4"
-            assert html =~ "py-2"
+            assert html =~ "gap-2"
             assert html =~ "rounded-lg"
           "lg" -> 
             assert html =~ "h-12"
             assert html =~ "px-6"
             assert html =~ "text-lg"
+            assert html =~ "gap-2"
             assert html =~ "rounded-lg"
           "xl" -> 
             assert html =~ "h-14"
             assert html =~ "px-8"
             assert html =~ "text-xl"
-            assert html =~ "rounded-lg"
+            assert html =~ "gap-3"
+            assert html =~ "rounded-xl"
         end
       end
     end
 
-    test "link variant ignores size classes" do
+    test "link variant ignores size classes to preserve natural text flow" do
       assigns = %{}
 
       html =
@@ -268,11 +276,14 @@ defmodule Pulsar.Components.ButtonTest do
         <Button.button variant="link" size="lg">Link</Button.button>
         """)
 
-      # Should not include size-specific height/padding classes
-      refute html =~ "h-12"
-      refute html =~ "px-6"
-      # But should still include link-specific classes
+      # Link variants should behave like text links, not buttons
+      refute html =~ "h-12"      # No fixed height
+      refute html =~ "px-6"      # No fixed padding  
+      refute html =~ "text-lg"   # No forced text size
+      
+      # But should have link-specific classes
       assert html =~ "underline-offset-4"
+      assert html =~ "hover:underline"
     end
   end
 
