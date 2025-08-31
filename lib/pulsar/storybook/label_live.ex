@@ -248,6 +248,65 @@ defmodule Pulsar.Storybook.LabelLive do
           &lt;/.label&gt;</code></pre>
         </section>
 
+        <!-- Internationalization -->
+        <section>
+          <h2 class="text-2xl font-semibold mb-6">Internationalization (i18n)</h2>
+          <p class="text-muted-foreground mb-4">
+            Labels support internationalization through the <code class="text-xs bg-surface-1 dark:bg-dark-surface-1 px-2 py-1 rounded">sr_required_text</code> prop for screen reader accessibility.
+          </p>
+          
+          <div class="space-y-6">
+            <div>
+              <h3 class="text-lg font-medium mb-3">Default English</h3>
+              <div class="space-y-2">
+                <.label for="en-email" required>Email Address</.label>
+                <.input id="en-email" type="email" placeholder="Enter your email" />
+                <p class="text-sm text-muted-foreground">
+                  Screen readers announce: "Email Address (required)"
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-medium mb-3">Custom Languages</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                  <.label for="es-email" required sr_required_text="(obligatorio)">Dirección de Correo</.label>
+                  <.input id="es-email" type="email" placeholder="Ingresa tu correo" />
+                  <p class="text-xs text-muted-foreground">Spanish: "(obligatorio)"</p>
+                </div>
+                
+                <div class="space-y-2">
+                  <.label for="fr-email" required sr_required_text="(requis)">Adresse Email</.label>
+                  <.input id="fr-email" type="email" placeholder="Entrez votre email" />
+                  <p class="text-xs text-muted-foreground">French: "(requis)"</p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-medium mb-3">Gettext Integration</h3>
+              <p class="text-muted-foreground mb-3">
+                For Phoenix applications using Gettext, you can integrate seamlessly:
+              </p>
+              <div class="bg-surface-1 dark:bg-dark-surface-1 rounded-lg p-4">
+                <h4 class="font-medium mb-2">Code Example</h4>
+                <p class="text-sm text-muted-foreground mb-3">
+                  Pass gettext functions to both the label content and sr_required_text:
+                </p>
+                <code class="text-xs block">
+                  &lt;.label for="email" required sr_required_text=&#123;gettext("(required)")&#125;&gt;<br/>
+                  &nbsp;&nbsp;&lt;%= gettext("Email Address") %&gt;<br/>
+                  &lt;/.label&gt;
+                </code>
+              </div>
+              <p class="text-sm text-muted-foreground mt-3">
+                This allows both the label text and screen reader text to be translated together.
+              </p>
+            </div>
+          </div>
+        </section>
+
         <!-- API Reference -->
         <section>
           <h2 class="text-2xl font-semibold mb-6">API Reference</h2>
@@ -287,6 +346,12 @@ defmodule Pulsar.Storybook.LabelLive do
                     <td class="py-2 pr-4 text-muted-foreground">string</td>
                     <td class="py-2 pr-4 text-muted-foreground">"md"</td>
                     <td class="py-2">Size variant: xs, sm, md, lg, xl</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2 pr-4 font-mono text-xs">sr_required_text</td>
+                    <td class="py-2 pr-4 text-muted-foreground">string</td>
+                    <td class="py-2 pr-4 text-muted-foreground">"(required)"</td>
+                    <td class="py-2">Screen reader text for required fields</td>
                   </tr>
                   <tr>
                     <td class="py-2 pr-4 font-mono text-xs">class</td>

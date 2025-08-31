@@ -159,6 +159,34 @@ defmodule Pulsar.Components.LabelTest do
       assert html =~ "text-danger dark:text-dark-danger"
       assert html =~ ~s(aria-hidden="true")
     end
+
+    test "supports custom sr_required_text for i18n" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Label.label for="field" required sr_required_text="(obligatorio)">Spanish Required</Label.label>
+        """)
+
+      assert html =~ "Spanish Required"
+      # Should pass through custom text to Stellar (visible in sr-only span)
+      assert html =~ "(obligatorio)"
+      assert html =~ ~s(class="sr-only")
+    end
+
+    test "uses default sr_required_text when not specified" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Label.label for="field" required>Default Required</Label.label>
+        """)
+
+      assert html =~ "Default Required" 
+      # Should use default "(required)" text
+      assert html =~ "(required)"
+      assert html =~ ~s(class="sr-only")
+    end
   end
 
   describe "label/1 default state" do

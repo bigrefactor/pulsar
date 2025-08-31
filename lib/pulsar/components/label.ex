@@ -32,6 +32,11 @@ defmodule Pulsar.Components.Label do
         Document Title
       </.label>
 
+      # With internationalized required text
+      <.label for="email" required sr_required_text={gettext("(required)")}>
+        Email Address
+      </.label>
+
   ## Error State Handling
 
   When a label is in an error state (typically when the associated form field has 
@@ -73,6 +78,10 @@ defmodule Pulsar.Components.Label do
     values: ~w(xs sm md lg xl),
     doc: "Size of the label text"
 
+  attr :sr_required_text, :string, 
+    default: "(required)", 
+    doc: "Screen reader text for required fields. Use with i18n: gettext(\"(required)\")"
+
   attr :class, :string, default: "", doc: "Additional CSS classes"
 
   attr :rest, :global,
@@ -89,6 +98,7 @@ defmodule Pulsar.Components.Label do
     <StellarLabel.label
       for={@for}
       required={@required}
+      sr_required_text={@sr_required_text}
       class={@computed_classes}
       {@rest}
     >
