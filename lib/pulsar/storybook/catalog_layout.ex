@@ -20,6 +20,11 @@ defmodule Pulsar.Storybook.CatalogLayout do
       description: "Accessible input component with decorator support and Phoenix form integration"
     },
     %{
+      name: "Label",
+      id: "label",
+      description: "Styled label component with typography variants and required indicators"
+    },
+    %{
       name: "Link",
       id: "link",
       description: "Styled link component for navigation with semantic variants"
