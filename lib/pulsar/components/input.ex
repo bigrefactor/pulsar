@@ -148,6 +148,11 @@ defmodule Pulsar.Components.Input do
   Error states automatically apply danger styling when using Phoenix forms.
   """
   def input(%{type: "hidden"} = assigns) do
+    # Validate required attributes
+    if is_nil(assigns[:field]) and is_nil(assigns[:name]) do
+      raise ArgumentError, "Input component requires either :field or :name attribute"
+    end
+
     ~H"""
     <StellarInput.input
       type="hidden"
@@ -165,6 +170,11 @@ defmodule Pulsar.Components.Input do
   end
 
   def input(assigns) do
+    # Validate required attributes
+    if is_nil(assigns[:field]) and is_nil(assigns[:name]) do
+      raise ArgumentError, "Input component requires either :field or :name attribute"
+    end
+
     # Detect errors and compute automatic color
     has_errors =
       case assigns[:field] do
