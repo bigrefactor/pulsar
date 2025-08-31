@@ -158,18 +158,18 @@ defmodule Pulsar.Components.Link do
       aria_current={@aria_current}
       {@rest}
     >
-      <span :if={@start_icon != []} class="inline-flex items-center" aria-hidden="true">
+      <span :if={@start_icon != []} class="inline-flex items-center mr-1" aria-hidden="true">
         {render_slot(@start_icon)}
       </span>
       {render_slot(@inner_block)}
       <!-- Automatic external icon - shown only for external links without custom end_icon -->
       <span :if={@end_icon == []} class="hidden group-data-[external=true]:inline-flex items-center ml-1" aria-hidden="true">
-        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <svg class="w-[1em] h-[1em]" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
         </svg>
       </span>
       <!-- Custom end icon - shown when provided -->
-      <span :if={@end_icon != []} class="inline-flex items-center" aria-hidden="true">
+      <span :if={@end_icon != []} class="inline-flex items-center ml-1" aria-hidden="true">
         {render_slot(@end_icon)}
       </span>
     </StellarLink.a>
@@ -187,7 +187,7 @@ defmodule Pulsar.Components.Link do
 
   # Variant-specific border behavior
   defp variant_classes("solid"), do: "no-underline"
-  defp variant_classes("ghost"), do: "no-underline hover:border-b-2 hover:border-current hover:pb-0.5"
+  defp variant_classes("ghost"), do: "no-underline border-b-2 border-transparent hover:border-current pb-0.5"
   defp variant_classes("outline"), do: "no-underline border-b-2 border-current pb-0.5"
 
   # Color classes using semantic tokens + opacity

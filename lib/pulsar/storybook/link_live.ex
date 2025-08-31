@@ -207,6 +207,207 @@ defmodule Pulsar.Storybook.LinkLive do
         </div>
 
         <div>
+          <h2 class="text-xl font-semibold mb-4">Size Scaling with Icons</h2>
+          <p class="text-muted-foreground dark:text-dark-muted-foreground mb-6">
+            Icons automatically scale with text size using em-based sizing for perfect proportional scaling.
+          </p>
+          <div class="space-y-4">
+            <div>
+              <h3 class="text-lg font-medium mb-2">External Icon Scaling</h3>
+              <div class="space-y-3">
+                <div class="text-xs"><Link.a href="https://example.com" size="xs">Extra Small Link</Link.a></div>
+                <div class="text-sm"><Link.a href="https://example.com" size="sm">Small Link</Link.a></div>
+                <div class="text-base"><Link.a href="https://example.com" size="md">Medium Link</Link.a></div>
+                <div class="text-lg"><Link.a href="https://example.com" size="lg">Large Link</Link.a></div>
+                <div class="text-xl"><Link.a href="https://example.com" size="xl">Extra Large Link</Link.a></div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-medium mb-2">Custom Icon Scaling</h3>
+              <div class="space-y-3">
+                <div class="text-xs">
+                  <Link.a href="#" size="xs">
+                    <:start_icon>📝</:start_icon>
+                    Extra Small with Start Icon
+                  </Link.a>
+                </div>
+                <div class="text-sm">
+                  <Link.a href="#" size="sm">
+                    <:start_icon>🔍</:start_icon>
+                    Small with Start Icon
+                  </Link.a>
+                </div>
+                <div class="text-base">
+                  <Link.a href="#" size="md">
+                    <:start_icon>⚙️</:start_icon>
+                    Medium with Start Icon
+                  </Link.a>
+                </div>
+                <div class="text-lg">
+                  <Link.a href="#" size="lg">
+                    <:start_icon>📊</:start_icon>
+                    Large with Start Icon
+                  </Link.a>
+                </div>
+                <div class="text-xl">
+                  <Link.a href="#" size="xl">
+                    <:start_icon>🎯</:start_icon>
+                    Extra Large with Start Icon
+                  </Link.a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold mb-4">Layout Shift Demo</h2>
+          <p class="text-muted-foreground dark:text-dark-muted-foreground mb-6">
+            Ghost variant uses transparent borders to prevent layout shift on hover.
+          </p>
+          <div class="space-y-4">
+            <div>
+              <h3 class="text-lg font-medium mb-2">No Layout Shift</h3>
+              <div class="space-y-2">
+                <p>Hover these ghost links - notice no jumping:</p>
+                <div><Link.a href="#" variant="ghost">First ghost link</Link.a></div>
+                <div><Link.a href="#" variant="ghost">Second ghost link</Link.a></div>
+                <div><Link.a href="#" variant="ghost">Third ghost link</Link.a></div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-medium mb-2">Mixed Content</h3>
+              <div class="space-y-2">
+                <p>
+                  This paragraph contains multiple <Link.a href="#" variant="ghost">ghost links</Link.a> that should not 
+                  cause layout shift when you <Link.a href="#" variant="ghost">hover over them</Link.a> in the middle of text flow.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold mb-4">Icon Spacing Examples</h2>
+          <p class="text-muted-foreground dark:text-dark-muted-foreground mb-6">
+            Consistent spacing between text and icons using margin utilities.
+          </p>
+          <div class="space-y-4">
+            <div>
+              <h3 class="text-lg font-medium mb-2">Start Icon Spacing</h3>
+              <div class="space-y-2">
+                <div><Link.a href="#"><:start_icon>📁</:start_icon>Documents</Link.a></div>
+                <div><Link.a href="#"><:start_icon>🔧</:start_icon>Settings</Link.a></div>
+                <div><Link.a href="#"><:start_icon>👤</:start_icon>Profile</Link.a></div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-medium mb-2">End Icon Spacing</h3>
+              <div class="space-y-2">
+                <div><Link.a href="#">Downloads<:end_icon>📥</:end_icon></Link.a></div>
+                <div><Link.a href="#">Export<:end_icon>📤</:end_icon></Link.a></div>
+                <div><Link.a href="#">Share<:end_icon>🔗</:end_icon></Link.a></div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-medium mb-2">Both Icons Spacing</h3>
+              <div class="space-y-2">
+                <div>
+                  <Link.a href="#">
+                    <:start_icon>🔍</:start_icon>
+                    Search Results
+                    <:end_icon>📊</:end_icon>
+                  </Link.a>
+                </div>
+                <div>
+                  <Link.a href="#">
+                    <:start_icon>💼</:start_icon>
+                    Business Plan
+                    <:end_icon>📈</:end_icon>
+                  </Link.a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold mb-4">Edge Cases</h2>
+          <p class="text-muted-foreground dark:text-dark-muted-foreground mb-6">
+            Testing various edge cases and combinations to ensure robustness.
+          </p>
+          <div class="space-y-4">
+            <div>
+              <h3 class="text-lg font-medium mb-2">External Link Override</h3>
+              <div class="space-y-2">
+                <p>External links with custom end icons don't show automatic icon:</p>
+                <div>
+                  <Link.a href="https://github.com">
+                    GitHub
+                    <:end_icon>🐙</:end_icon>
+                  </Link.a>
+                </div>
+                <div>
+                  <Link.a href="https://docs.example.com">
+                    Documentation
+                    <:end_icon>📚</:end_icon>
+                  </Link.a>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-medium mb-2">Color Inheritance</h3>
+              <div class="space-y-2">
+                <p class="text-success dark:text-dark-success">
+                  Links with inherit color: <Link.a href="#" color="inherit">inherit parent color</Link.a>
+                </p>
+                <p class="text-warning dark:text-dark-warning">
+                  Another example: <Link.a href="#" color="inherit">matches this warning text</Link.a>
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-medium mb-2">Long Text Wrapping</h3>
+              <div class="max-w-xs">
+                <Link.a href="#" variant="outline">
+                  This is a very long link text that should wrap nicely and maintain proper spacing
+                </Link.a>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-medium mb-2">Complex Icon Content</h3>
+              <div class="space-y-2">
+                <div>
+                  <Link.a href="#">
+                    <:start_icon>
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                    </:start_icon>
+                    Custom SVG Icon
+                  </Link.a>
+                </div>
+                <div>
+                  <Link.a href="#">
+                    <:start_icon>
+                      <span class="text-green-500">✓</span>
+                    </:start_icon>
+                    Styled Icon Element
+                  </Link.a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
           <h2 class="text-xl font-semibold mb-4">Usage Examples</h2>
           <div class="space-y-6">
             <div class="bg-surface-1 dark:bg-dark-surface-1 p-4 rounded-lg border border-border dark:border-dark-border">
