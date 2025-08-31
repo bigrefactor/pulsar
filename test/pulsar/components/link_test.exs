@@ -43,20 +43,22 @@ defmodule Pulsar.Components.LinkTest do
       refute html =~ ~r/\s+underline(\s|")/  # Check for standalone "underline" class (not "no-underline")
     end
 
-    test "renders ghost variant with hover underline" do
+    test "renders ghost variant with hover border" do
       assigns = %{}
       html = rendered_to_string(~H"<Link.a href='/test' variant='ghost'>Link</Link.a>")
       
       assert html =~ "no-underline"
-      assert html =~ "hover:underline"
+      assert html =~ "hover:border-b-2"
+      assert html =~ "hover:border-current"
     end
 
-    test "renders outline variant with permanent underline" do
+    test "renders outline variant with permanent border" do
       assigns = %{}
       html = rendered_to_string(~H"<Link.a href='/test' variant='outline'>Link</Link.a>")
       
-      assert html =~ ~r/\bunderline(\s|"|$)/  # Check for standalone "underline" class
-      refute html =~ "no-underline"
+      assert html =~ "border-b-2"
+      assert html =~ "border-current"  
+      assert html =~ "no-underline"  # Still has no-underline, plus border
     end
   end
 
@@ -315,20 +317,20 @@ defmodule Pulsar.Components.LinkTest do
       assert html =~ "no-underline"
     end
 
-    test "ghost muted - hover underline, muted color" do
+    test "ghost muted - hover border, muted color" do
       assigns = %{}
       html = rendered_to_string(~H"<Link.a href='/test' variant='ghost' color='muted'>Link</Link.a>")
       
       assert html =~ "text-muted-foreground"
-      assert html =~ "hover:underline"
+      assert html =~ "hover:border-b-2"
     end
 
-    test "outline danger - always underlined, danger color" do
+    test "outline danger - always bordered, danger color" do
       assigns = %{}
       html = rendered_to_string(~H"<Link.a href='/test' variant='outline' color='danger'>Link</Link.a>")
       
       assert html =~ "text-danger"
-      assert html =~ ~r/\bunderline(\s|"|$)/
+      assert html =~ "border-b-2"
     end
   end
 end

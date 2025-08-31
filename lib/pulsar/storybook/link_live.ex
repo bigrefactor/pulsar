@@ -1,15 +1,27 @@
 defmodule Pulsar.Storybook.LinkLive do
+  @moduledoc """
+  Phoenix LiveView component for showcasing Pulsar link components.
+  
+  Demonstrates all variants, colors, sizes, and states of the link component
+  with interactive examples and code snippets.
+  """
+
   use Phoenix.LiveView
+  import Pulsar.Storybook.CatalogLayout
 
   alias Pulsar.Components.Link
 
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok,
+     assign(socket,
+       selected_component: "link",
+       page_title: "Link Component"
+     )}
   end
 
   def render(assigns) do
     ~H"""
-    <div class="p-8">
+    <.catalog_layout selected_component={@selected_component}>
       <div class="max-w-4xl mx-auto space-y-12">
         <div>
           <h1 class="text-3xl font-bold mb-2">Link</h1>
@@ -241,7 +253,7 @@ defmodule Pulsar.Storybook.LinkLive do
           </div>
         </div>
       </div>
-    </div>
+    </.catalog_layout>
     """
   end
 end
