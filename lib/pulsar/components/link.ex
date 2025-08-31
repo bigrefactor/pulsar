@@ -29,7 +29,7 @@ defmodule Pulsar.Components.Link do
       <Link.a href="/settings" color="muted">Settings</Link.a>
 
       # External link with automatic icon and security attributes
-      <Link.a href="https://example.com" external>Visit External Site</Link.a>
+      <Link.a href="https://example.com">Visit External Site</Link.a>
 
       # With Phoenix navigation
       <Link.a navigate={~p"/dashboard"}>Go to Dashboard</Link.a>
@@ -82,7 +82,6 @@ defmodule Pulsar.Components.Link do
   attr :patch, :string, default: nil, doc: "Phoenix route to patch navigate to"
   attr :replace, :boolean, default: false, doc: "Replace current history entry"
   attr :method, :string, default: nil, doc: "HTTP method for the link"
-  attr :external, :boolean, default: nil, doc: "Manual override for external link detection"
   attr :target, :string, default: nil, doc: "Link target attribute (auto-set for external)"
   attr :rel, :string, default: nil, doc: "Link relationship (auto-set for external)"
 
@@ -152,7 +151,6 @@ defmodule Pulsar.Components.Link do
       patch={@patch}
       replace={@replace}
       method={@method}
-      external={@external}
       target={@target}
       rel={@rel}
       id={@id}
@@ -166,10 +164,10 @@ defmodule Pulsar.Components.Link do
         {render_slot(@start_icon)}
       </span>
       {render_slot(@inner_block)}
-      <!-- Automatic external icon - shown only for external links without custom end_icon -->
+      <!-- Automatic external icon - shown only for links that open in new tab without custom end_icon -->
       <span
         :if={@end_icon == []}
-        class="hidden group-data-[external=true]:inline-flex items-center ml-1"
+        class="hidden group-data-[target=_blank]:inline-flex items-center ml-1"
         aria-hidden="true"
       >
         <svg
