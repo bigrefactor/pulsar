@@ -1,7 +1,0 @@
-@import "tailwindcss";
-
-/* Define dark variant using the .dark class container (Tailwind v4) */
-@custom-variant dark (&:where(.dark, .dark *));
-
-/* Import Pulsar theme */
-@import "../../priv/static/themes/pulsar.css";

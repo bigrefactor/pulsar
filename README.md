@@ -122,25 +122,20 @@ Dark mode works automatically with Tailwind's `dark:` variant:
 
 ## Development
 
-### Storybook
+### Component Showcase
 
-Browse and test components interactively:
+See all components in action in the standalone storybook app:
 
 ```bash
-mix pulsar.storybook
+# Navigate to storybook directory
+cd ../storybook
+
+# Install dependencies and run
+mix deps.get
+mix phx.server
 ```
 
-Then add to your Phoenix router:
-
-```elixir
-# router.ex (development only)
-if Mix.env() == :dev do
-  import Pulsar.Storybook.Router
-  pulsar_storybook "/storybook"  
-end
-```
-
-Visit `http://localhost:4000/storybook` to browse components.
+Visit `http://localhost:4000` to browse components with interactive examples.
 
 ### Testing
 

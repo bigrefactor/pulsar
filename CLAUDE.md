@@ -194,10 +194,8 @@ document.documentElement.dataset.theme = 'light'; // Disable
 - **Igniter**: Code generation and project modification toolkit
 - **Phoenix LiveView**: Component system and reactivity
 
-### Storybook Dependencies (Development Only)
-- **Phoenix**: Web framework for storybook
-- **Bandit**: HTTP server for development
-- **Tailwind/ESBuild**: Asset compilation for storybook
+### Component Showcase
+Component examples and interactive testing are available in the standalone storybook app located at `../storybook/`. This is a separate Phoenix application that imports Pulsar as a dependency.
 
 **Important**: Generated components depend on **Stellar** and **TailwindMerge** as the only required dependencies. No Pulsar package dependency is needed.
 
@@ -215,7 +213,7 @@ mix compile              # Compile the generator
 mix test                # Run all tests
 mix dialyzer            # Type checking
 mix credo               # Code quality
-mix phx.server          # Start storybook server
+# No server - Pulsar is generator-only
 ```
 
 ### Generator Usage (in user apps)
@@ -259,7 +257,7 @@ end
 
 **Component Appearance Testing:**
 ```bash
-# Start the storybook for visual testing
+# Start the showcase app for visual testing (in ../storybook/)
 mix phx.server
 
 # Test components visually using Claude Code's browser tools
@@ -321,7 +319,7 @@ end
 - Validates component import updates
 - Checks error handling for edge cases
 
-### Storybook Integration Testing
+### Showcase App Integration Testing
 
 **Component Showcase Validation:**
 - All variants rendered correctly
@@ -332,7 +330,7 @@ end
 **Development Workflow:**
 1. **Component Development**: Build component with comprehensive ExUnit tests
 2. **Visual Validation**: Use Playwright-MCP to capture screenshots and verify appearance
-3. **Storybook Update**: Add comprehensive examples and usage patterns
+3. **Showcase Update**: Add comprehensive examples and usage patterns in the storybook app
 4. **Accessibility Audit**: Test keyboard navigation and screen reader compatibility
 5. **Generator Testing**: Ensure code generation works in target projects
 
@@ -348,7 +346,7 @@ mix test test/pulsar/components/button_test.exs
 # Run generator tests
 mix test test/mix/tasks/pulsar/gen/
 
-# Start storybook for visual testing
+# Start showcase app for visual testing (in ../storybook/)
 mix phx.server
 
 # Test with coverage
@@ -420,36 +418,36 @@ JS.add_class("border-red-500", to: "#field-#{field}")
 |> JS.show(to: "#error-#{field}")
 ```
 
-## Storybook Development
+## Component Showcase Development
 
-Pulsar includes a **Phoenix LiveView storybook** at `lib/pulsar/storybook/catalog_live.ex` for component development and showcasing. The storybook provides:
+Component examples are developed in the standalone storybook app located at `../storybook/`. The storybook provides:
 
 - **Live component preview** with all variants, sizes, and states
 - **Dark/light mode toggle** for testing theme support
 - **Usage examples** with code snippets
 - **Interactive testing** of component behavior
 
-### Storybook Requirements
+### Showcase Requirements
 
-**All new components MUST include a storybook page** that demonstrates:
+**All new components should have showcase pages** that demonstrate:
 1. **All variants** (primary, secondary, success, error, etc.)
 2. **All sizes** (sm, md, lg, icon, etc.)
 3. **All states** (normal, loading, disabled, etc.)
 4. **Usage examples** with realistic code snippets
 5. **Dark mode compatibility** for theme switching
 
-To add a component to the storybook:
-1. Add component entry to `@components` list in `catalog_live.ex`
-2. Create showcase function (e.g., `button_showcase/1`)
-3. Add route pattern to handle the component path
-4. Include comprehensive examples and documentation
+To add a component to the showcase:
+1. Navigate to `../storybook/` directory
+2. Add component to the showcase app's LiveView pages
+3. Import Pulsar component and create comprehensive examples
+4. Test all variants and states
 
 ## Contributing Guidelines
 
 When adding new components:
 1. Create generator in `lib/pulsar/generators/`
 2. Add template in `priv/templates/`
-3. **Add storybook page** with all variants, states, and examples
+3. **Add showcase page** in the storybook app with all variants, states, and examples
 4. Write comprehensive tests
 5. Document usage patterns
 6. Ensure accessibility compliance
@@ -457,7 +455,7 @@ When adding new components:
 
 When modifying existing components:
 1. Update both generator and template
-2. **Update storybook examples** to reflect changes
+2. **Update showcase examples** in the storybook app to reflect changes
 3. Maintain backwards compatibility where possible
 4. Update documentation and examples
 5. Test generation in sample Phoenix app

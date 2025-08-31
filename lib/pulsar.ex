@@ -63,33 +63,10 @@ defmodule Pulsar do
   See the theme file at `priv/static/themes/pulsar.css` for all available tokens.
   """
 
-  use Application
-
-  def start(_type, _args) do
-    children =
-      [
-        {Phoenix.PubSub, name: Pulsar.PubSub}
-      ] ++ if start_endpoint?(), do: [PulsarWeb.Endpoint], else: []
-
-    opts = [strategy: :one_for_one, name: Pulsar.Supervisor]
-    Supervisor.start_link(children, opts)
-  end
-
   @doc """
   Returns the version of Pulsar.
   """
   def version do
     Application.spec(:pulsar, :vsn) |> to_string()
-  end
-
-  # Tell Phoenix to update the endpoint configuration
-  # whenever the application is updated.
-  def config_change(changed, _new, removed) do
-    PulsarWeb.Endpoint.config_change(changed, removed)
-    :ok
-  end
-
-  defp start_endpoint? do
-    Application.get_env(:pulsar, :start_endpoint, false)
   end
 end
