@@ -213,13 +213,23 @@ defmodule Pulsar.Storybook.InputLive do
               <div>
                 <label class="block text-sm font-medium mb-2">Email (With Error)</label>
                 <.input field={@error_form[:email]} placeholder="Enter your email" />
-                <p class="text-sm text-danger-600 mt-1">must be a valid email format</p>
+                <p class="text-sm text-danger-600 mt-1 flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zM10 15a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                  </svg>
+                  must be a valid email format
+                </p>
               </div>
               
               <div>
                 <label class="block text-sm font-medium mb-2">Password (With Error)</label>
                 <.input field={@error_form[:password]} type="password" placeholder="Enter password" />
-                <p class="text-sm text-danger-600 mt-1">must be at least 8 characters</p>
+                <p class="text-sm text-danger-600 mt-1 flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zM10 15a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                  </svg>
+                  must be at least 8 characters
+                </p>
               </div>
             </div>
           </div>
