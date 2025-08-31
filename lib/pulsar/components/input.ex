@@ -10,8 +10,8 @@ defmodule Pulsar.Components.Input do
 
   - **Stellar Foundation**: Built on Stellar's accessible input component
   - **Decorator System**: Start/end decorators for icons, text, or interactive elements
-  - **Simplified Variants**: Only outline and ghost variants for predictable UX
-  - **Automatic Colors**: Neutral by default, danger for errors - no manual color prop
+  - **Multiple Variants**: outline, ghost, and solid for different use cases
+  - **Full Color Palette**: All semantic colors with automatic error override
   - **Multiple Sizes**: xs, sm, md, lg, xl matching button component sizes
   - **Dark Mode**: Automatic light/dark mode support
   - **Phoenix Integration**: Automatic error styling when used with Phoenix forms
@@ -22,19 +22,19 @@ defmodule Pulsar.Components.Input do
       # Basic input
       <.input field={@form[:email]} />
 
-      # With decorators
-      <.input field={@form[:amount]} variant="outline">
+      # With decorators and color
+      <.input field={@form[:amount]} variant="outline" color="success">
         <:start_decorator>$</:start_decorator>
         <:end_decorator>USD</:end_decorator>
       </.input>
 
       # URL input with protocol decorator
-      <.input field={@form[:website]} type="url">
+      <.input field={@form[:website]} type="url" color="primary">
         <:start_decorator>https://</:start_decorator>
       </.input>
 
-      # Search input with icon and button
-      <.input field={@form[:search]} variant="ghost">
+      # Search input with solid variant
+      <.input field={@form[:search]} variant="solid" color="secondary">
         <:start_decorator>
           <.icon name="hero-magnifying-glass" />
         </:start_decorator>
@@ -75,8 +75,13 @@ defmodule Pulsar.Components.Input do
   # Pulsar-specific styling attributes
   attr :variant, :string,
     default: "outline",
-    values: ~w(outline ghost),
+    values: ~w(outline ghost solid),
     doc: "Visual style variant of the input"
+
+  attr :color, :string,
+    default: "neutral",
+    values: ~w(neutral primary secondary success danger warning info),
+    doc: "Color scheme of the input (overridden by error state)"
 
   attr :size, :string,
     default: "md",
@@ -167,7 +172,7 @@ defmodule Pulsar.Components.Input do
         _ -> false
       end
 
-    effective_color = if has_errors, do: "danger", else: "neutral"
+    effective_color = if has_errors, do: "danger", else: assigns.color
 
     class = merge([
       get_classes(assigns.variant, effective_color, assigns.size),
@@ -269,56 +274,50 @@ defmodule Pulsar.Components.Input do
     """
   end
 
-  # Simplified styling for only outline/ghost variants with automatic colors
-
-  # Outline variant - default neutral styling
-  defp get_classes("outline", "neutral", size) do
-    [
-      "flex group overflow-hidden border-2 rounded-lg",
-      "border-border dark:border-dark-border",
-      "bg-background dark:bg-dark-background",
-      "text-foreground dark:text-dark-foreground",
-      "focus-within:ring-2 focus-within:ring-primary-500/60 focus-within:ring-offset-2",
-      "hover:border-primary-300 dark:hover:border-primary-600",
+  # Modular styling system supporting all variants and colors
+  defp get_classes(variant, color, size) do
+    merge([
+      base_input_classes(),
+      variant_classes(variant),
+      color_classes(variant, color),
       get_size_classes(size)
-    ] |> Enum.join(" ")
+    ])
   end
 
-  # Outline variant - danger styling for errors  
-  defp get_classes("outline", "danger", size) do
-    [
-      "flex group overflow-hidden border-2 rounded-lg",
-      "border-danger-500 dark:border-danger-400",
-      "bg-background dark:bg-dark-background", 
-      "text-danger-700 dark:text-danger-300",
-      "focus-within:ring-2 focus-within:ring-danger-500/60 focus-within:ring-offset-2",
-      get_size_classes(size)
-    ] |> Enum.join(" ")
+  # Base styles shared by all input variants
+  defp base_input_classes do
+    "flex group overflow-hidden transition-all duration-200 ease-in-out focus-within:ring-2 focus-within:ring-offset-2"
   end
 
-  # Ghost variant - minimal neutral styling
-  defp get_classes("ghost", "neutral", size) do
-    [
-      "flex group overflow-hidden rounded-lg",
-      "bg-transparent",
-      "text-foreground dark:text-dark-foreground",
-      "focus-within:ring-2 focus-within:ring-primary-500/60 focus-within:ring-offset-2",
-      "hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary",
-      get_size_classes(size)
-    ] |> Enum.join(" ")
-  end
+  # Variant-specific layout and structure
+  defp variant_classes("outline"), do: "border-2 rounded-lg"
+  defp variant_classes("ghost"), do: "rounded-lg"
+  defp variant_classes("solid"), do: "border-2 rounded-lg"
 
-  # Ghost variant - danger styling for errors
-  defp get_classes("ghost", "danger", size) do
-    [
-      "flex group overflow-hidden rounded-lg", 
-      "bg-transparent",
-      "text-danger-700 dark:text-danger-300",
-      "focus-within:ring-2 focus-within:ring-danger-500/60 focus-within:ring-offset-2",
-      "hover:bg-danger-50 dark:hover:bg-danger-900/20",
-      get_size_classes(size)
-    ] |> Enum.join(" ")
-  end
+  # Color classes by variant
+  defp color_classes("outline", "neutral"), do: "border-border dark:border-dark-border bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground focus-within:ring-ring dark:focus-within:ring-dark-ring hover:border-primary-300 dark:hover:border-primary-600"
+  defp color_classes("outline", "primary"), do: "border-primary-500 dark:border-primary-400 bg-background dark:bg-dark-background text-primary-700 dark:text-primary-300 focus-within:ring-primary-500/60 hover:border-primary-600 dark:hover:border-primary-300"
+  defp color_classes("outline", "secondary"), do: "border-secondary-500 dark:border-secondary-400 bg-background dark:bg-dark-background text-secondary-700 dark:text-secondary-300 focus-within:ring-secondary-500/60 hover:border-secondary-600 dark:hover:border-secondary-300"
+  defp color_classes("outline", "success"), do: "border-success-500 dark:border-success-400 bg-background dark:bg-dark-background text-success-700 dark:text-success-300 focus-within:ring-success-500/60 hover:border-success-600 dark:hover:border-success-300"
+  defp color_classes("outline", "danger"), do: "border-danger-500 dark:border-danger-400 bg-background dark:bg-dark-background text-danger-700 dark:text-danger-300 focus-within:ring-danger-500/60"
+  defp color_classes("outline", "warning"), do: "border-warning-500 dark:border-warning-400 bg-background dark:bg-dark-background text-warning-700 dark:text-warning-300 focus-within:ring-warning-500/60 hover:border-warning-600 dark:hover:border-warning-300"
+  defp color_classes("outline", "info"), do: "border-info-500 dark:border-info-400 bg-background dark:bg-dark-background text-info-700 dark:text-info-300 focus-within:ring-info-500/60 hover:border-info-600 dark:hover:border-info-300"
+
+  defp color_classes("ghost", "neutral"), do: "bg-transparent text-foreground dark:text-dark-foreground focus-within:ring-ring dark:focus-within:ring-dark-ring hover:bg-surface-secondary dark:hover:bg-dark-surface-secondary"
+  defp color_classes("ghost", "primary"), do: "bg-transparent text-primary-700 dark:text-primary-300 focus-within:ring-primary-500/60 hover:bg-primary-50 dark:hover:bg-primary-900/20"
+  defp color_classes("ghost", "secondary"), do: "bg-transparent text-secondary-700 dark:text-secondary-300 focus-within:ring-secondary-500/60 hover:bg-secondary-50 dark:hover:bg-secondary-900/20"
+  defp color_classes("ghost", "success"), do: "bg-transparent text-success-700 dark:text-success-300 focus-within:ring-success-500/60 hover:bg-success-50 dark:hover:bg-success-900/20"
+  defp color_classes("ghost", "danger"), do: "bg-transparent text-danger-700 dark:text-danger-300 focus-within:ring-danger-500/60 hover:bg-danger-50 dark:hover:bg-danger-900/20"
+  defp color_classes("ghost", "warning"), do: "bg-transparent text-warning-700 dark:text-warning-300 focus-within:ring-warning-500/60 hover:bg-warning-50 dark:hover:bg-warning-900/20"
+  defp color_classes("ghost", "info"), do: "bg-transparent text-info-700 dark:text-info-300 focus-within:ring-info-500/60 hover:bg-info-50 dark:hover:bg-info-900/20"
+
+  defp color_classes("solid", "neutral"), do: "border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 focus-within:ring-neutral-500/60 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+  defp color_classes("solid", "primary"), do: "border-primary-200 dark:border-primary-700 bg-primary-50 dark:bg-primary-900 text-primary-900 dark:text-primary-100 focus-within:ring-primary-500/60 hover:bg-primary-100 dark:hover:bg-primary-800"
+  defp color_classes("solid", "secondary"), do: "border-secondary-200 dark:border-secondary-700 bg-secondary-50 dark:bg-secondary-900 text-secondary-900 dark:text-secondary-100 focus-within:ring-secondary-500/60 hover:bg-secondary-100 dark:hover:bg-secondary-800"
+  defp color_classes("solid", "success"), do: "border-success-200 dark:border-success-700 bg-success-50 dark:bg-success-900 text-success-900 dark:text-success-100 focus-within:ring-success-500/60 hover:bg-success-100 dark:hover:bg-success-800"
+  defp color_classes("solid", "danger"), do: "border-danger-200 dark:border-danger-700 bg-danger-50 dark:bg-danger-900 text-danger-900 dark:text-danger-100 focus-within:ring-danger-500/60"
+  defp color_classes("solid", "warning"), do: "border-warning-200 dark:border-warning-700 bg-warning-50 dark:bg-warning-900 text-warning-900 dark:text-warning-100 focus-within:ring-warning-500/60 hover:bg-warning-100 dark:hover:bg-warning-800"
+  defp color_classes("solid", "info"), do: "border-info-200 dark:border-info-700 bg-info-50 dark:bg-info-900 text-info-900 dark:text-info-100 focus-within:ring-info-500/60 hover:bg-info-100 dark:hover:bg-info-800"
 
   # Helper functions for reusable parts
   defp get_size_classes("xs"), do: "min-h-6 text-xs"
@@ -348,64 +347,40 @@ defmodule Pulsar.Components.Input do
     |> Enum.join(" ")
   end
 
-  # Simplified decorator functions for outline/ghost variants only
-
-  # Start decorators - outline variant (neutral/danger only)
-  defp get_decorator_classes("start", "outline", "neutral", size) do
-    [
-      "#{get_decorator_padding(size)} flex items-center justify-center",
-      "bg-surface-secondary dark:bg-dark-surface-secondary",
-      "text-muted dark:text-dark-muted",
-      "border-r border-border dark:border-dark-border",
-      get_decorator_font_size(size)
-    ] |> Enum.filter(&(&1 != "")) |> Enum.join(" ")
+  # Decorator functions supporting all variants and colors
+  defp get_decorator_classes(position, variant, color, size) do
+    merge([
+      base_decorator_classes(size),
+      decorator_position_classes(position, variant),
+      decorator_color_classes(variant, color)
+    ])
   end
 
-  defp get_decorator_classes("start", "outline", "danger", size) do
-    [
-      "#{get_decorator_padding(size)} flex items-center justify-center",
-      "bg-danger-50 dark:bg-danger-900/20",
-      "text-danger-700 dark:text-danger-300",
-      "border-r border-danger-500 dark:border-danger-400",
-      get_decorator_font_size(size)
-    ] |> Enum.filter(&(&1 != "")) |> Enum.join(" ")
+  defp base_decorator_classes(size) do
+    "#{get_decorator_padding(size)} flex items-center justify-center #{get_decorator_font_size(size)}"
   end
 
-  # End decorators - outline variant (neutral/danger only)  
-  defp get_decorator_classes("end", "outline", "neutral", size) do
-    [
-      "#{get_decorator_padding(size)} flex items-center justify-center",
-      "bg-surface-secondary dark:bg-dark-surface-secondary",
-      "text-muted dark:text-dark-muted",
-      "border-l border-border dark:border-dark-border",
-      get_decorator_font_size(size)
-    ] |> Enum.filter(&(&1 != "")) |> Enum.join(" ")
-  end
+  defp decorator_position_classes("start", "outline"), do: "border-r"
+  defp decorator_position_classes("end", "outline"), do: "border-l"
+  defp decorator_position_classes("start", "solid"), do: "border-r"
+  defp decorator_position_classes("end", "solid"), do: "border-l"
+  defp decorator_position_classes(_, "ghost"), do: ""
 
-  defp get_decorator_classes("end", "outline", "danger", size) do
-    [
-      "#{get_decorator_padding(size)} flex items-center justify-center",
-      "bg-danger-50 dark:bg-danger-900/20",
-      "text-danger-700 dark:text-danger-300",
-      "border-l border-danger-500 dark:border-danger-400",
-      get_decorator_font_size(size)
-    ] |> Enum.filter(&(&1 != "")) |> Enum.join(" ")
-  end
+  defp decorator_color_classes("outline", "neutral"), do: "bg-surface-secondary dark:bg-dark-surface-secondary text-muted dark:text-dark-muted border-border dark:border-dark-border"
+  defp decorator_color_classes("outline", "primary"), do: "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 border-primary-500 dark:border-primary-400"
+  defp decorator_color_classes("outline", "secondary"), do: "bg-secondary-50 dark:bg-secondary-900/20 text-secondary-700 dark:text-secondary-300 border-secondary-500 dark:border-secondary-400"
+  defp decorator_color_classes("outline", "success"), do: "bg-success-50 dark:bg-success-900/20 text-success-700 dark:text-success-300 border-success-500 dark:border-success-400"
+  defp decorator_color_classes("outline", "danger"), do: "bg-danger-50 dark:bg-danger-900/20 text-danger-700 dark:text-danger-300 border-danger-500 dark:border-danger-400"
+  defp decorator_color_classes("outline", "warning"), do: "bg-warning-50 dark:bg-warning-900/20 text-warning-700 dark:text-warning-300 border-warning-500 dark:border-warning-400"
+  defp decorator_color_classes("outline", "info"), do: "bg-info-50 dark:bg-info-900/20 text-info-700 dark:text-info-300 border-info-500 dark:border-info-400"
 
-  # Ghost decorators - minimal styling
-  defp get_decorator_classes("start", "ghost", _color, size) do
-    [
-      "#{get_decorator_padding(size)} flex items-center justify-center",
-      "text-muted dark:text-dark-muted",
-      get_decorator_font_size(size)
-    ] |> Enum.filter(&(&1 != "")) |> Enum.join(" ")
-  end
+  defp decorator_color_classes("solid", "neutral"), do: "bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700"
+  defp decorator_color_classes("solid", "primary"), do: "bg-primary-100 dark:bg-primary-800 text-primary-700 dark:text-primary-300 border-primary-200 dark:border-primary-700"
+  defp decorator_color_classes("solid", "secondary"), do: "bg-secondary-100 dark:bg-secondary-800 text-secondary-700 dark:text-secondary-300 border-secondary-200 dark:border-secondary-700"
+  defp decorator_color_classes("solid", "success"), do: "bg-success-100 dark:bg-success-800 text-success-700 dark:text-success-300 border-success-200 dark:border-success-700"
+  defp decorator_color_classes("solid", "danger"), do: "bg-danger-100 dark:bg-danger-800 text-danger-700 dark:text-danger-300 border-danger-200 dark:border-danger-700"
+  defp decorator_color_classes("solid", "warning"), do: "bg-warning-100 dark:bg-warning-800 text-warning-700 dark:text-warning-300 border-warning-200 dark:border-warning-700"
+  defp decorator_color_classes("solid", "info"), do: "bg-info-100 dark:bg-info-800 text-info-700 dark:text-info-300 border-info-200 dark:border-info-700"
 
-  defp get_decorator_classes("end", "ghost", _color, size) do
-    [
-      "#{get_decorator_padding(size)} flex items-center justify-center",
-      "text-muted dark:text-dark-muted",
-      get_decorator_font_size(size)
-    ] |> Enum.filter(&(&1 != "")) |> Enum.join(" ")
-  end
+  defp decorator_color_classes("ghost", _color), do: "text-muted dark:text-dark-muted"
 end
