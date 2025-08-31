@@ -203,7 +203,7 @@ defmodule Pulsar.Components.Button do
       <div :if={@loading && @variant != "link" && @loading_content != []}>
         {render_slot(@loading_content)}
       </div>
-      <svg :if={@loading && @show_loading_spinner && @variant != "link" && (@loading_content == [])} class={spinner_size_classes(@size)} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg :if={@loading && @show_loading_spinner && @variant != "link" && (@loading_content == [])} aria-hidden="true" class={spinner_size_classes(@size)} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
         <path fill="currentColor" class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
       </svg>
@@ -217,7 +217,7 @@ defmodule Pulsar.Components.Button do
   # Base styles shared by all buttons
   defp base_button_classes do
     """
-    font-medium cursor-pointer transition-all duration-200 ease-in-out
+    font-medium cursor-pointer transition-shadow transition-transform duration-200 ease-in-out
     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 
     focus-visible:ring-ring dark:focus-visible:ring-dark-ring
     disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed

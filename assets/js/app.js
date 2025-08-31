@@ -59,10 +59,14 @@ const ThemeToggle = {
 let hooks = {ThemeToggle}
 try {
   const colocatedHooks = await import("phoenix-colocated/pulsar")
-  console.log(colocatedHooks)
-  hooks = {...hooks, ...colocatedHooks.hooks}
+  if (colocatedHooks?.hooks && typeof colocatedHooks.hooks === "object") {
+    console.debug("[pulsar] colocated hooks loaded", Object.keys(colocatedHooks.hooks))
+    hooks = {...hooks, ...colocatedHooks.hooks}
+  } else {
+    console.debug("[pulsar] No colocated hooks export; skipping merge")
+  }
 } catch (e) {
-  console.log("No colocated hooks found, proceeding without them.")
+  console.debug("[pulsar] No colocated hooks found; proceeding without them.")
   // Colocated hooks not available yet, that's ok
 }
 
