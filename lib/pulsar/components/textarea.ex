@@ -212,9 +212,9 @@ defmodule Pulsar.Components.Textarea do
       <StellarTextarea.textarea
         class={@class}
         field={@field}
-        {if assigns[:id], do: [id: assigns[:id]], else: []}
-        {if assigns[:name], do: [name: assigns[:name]], else: []}
-        {if assigns[:value], do: [value: assigns[:value]], else: []}
+        id={@id}
+        name={@name}
+        value={@value}
         rows={@rows}
         cols={@cols}
         wrap={@wrap}
@@ -242,7 +242,7 @@ defmodule Pulsar.Components.Textarea do
         character_count={@data_character_count}
         max_length={@data_max_length}
         chars_remaining={@data_chars_remaining}
-        over_limit={@data_over_limit == "true"}
+        over_limit={@data_over_limit}
       />
     </div>
     """
@@ -261,7 +261,7 @@ defmodule Pulsar.Components.Textarea do
     assigns = assign(assigns, :count_color_class, count_color_class)
 
     ~H"""
-    <div class="flex justify-between items-center text-sm">
+    <div class="flex justify-between items-center text-sm" aria-hidden="true">
       <div class={@count_color_class}>
         <%= @character_count %><%= if @max_length != nil, do: "/#{@max_length}" %>
         <%= if @over_limit and @chars_remaining != nil do %>
@@ -296,7 +296,7 @@ defmodule Pulsar.Components.Textarea do
     
     case styles do
       [] -> nil
-      styles -> Enum.join(styles, "; ")
+      styles -> Enum.join(styles, "; ") <> ";"
     end
   end
 
@@ -399,20 +399,20 @@ defmodule Pulsar.Components.Textarea do
         |> assign(:data_character_count, count)
         |> assign(:data_max_length, max)
         |> assign(:data_chars_remaining, remaining)
-        |> assign(:data_over_limit, if(over_limit, do: "true", else: "false"))
+        |> assign(:data_over_limit, over_limit)
       else
         assigns
         |> assign(:data_character_count, count)
         |> assign(:data_max_length, nil)
         |> assign(:data_chars_remaining, nil)
-        |> assign(:data_over_limit, "false")
+        |> assign(:data_over_limit, false)
       end
     else
       assigns
       |> assign(:data_character_count, nil)
       |> assign(:data_max_length, nil)
       |> assign(:data_chars_remaining, nil)
-      |> assign(:data_over_limit, "false")
+      |> assign(:data_over_limit, false)
     end
   end
 end

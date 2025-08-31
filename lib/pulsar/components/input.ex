@@ -150,7 +150,7 @@ defmodule Pulsar.Components.Input do
   def input(%{type: "hidden"} = assigns) do
     # Validate required attributes
     if is_nil(assigns[:field]) and is_nil(assigns[:name]) do
-      raise ArgumentError, "Input component requires either :field or :name attribute"
+      raise ArgumentError, "Input component requires :name when :field is not provided"
     end
 
     ~H"""
@@ -172,7 +172,7 @@ defmodule Pulsar.Components.Input do
   def input(assigns) do
     # Validate required attributes
     if is_nil(assigns[:field]) and is_nil(assigns[:name]) do
-      raise ArgumentError, "Input component requires either :field or :name attribute"
+      raise ArgumentError, "Input component requires :name when :field is not provided"
     end
 
     # Detect errors and compute automatic color
