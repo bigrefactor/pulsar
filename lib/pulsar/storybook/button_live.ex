@@ -87,6 +87,51 @@ defmodule Pulsar.Storybook.ButtonLive do
         </div>
 
         <div>
+          <h2 class="text-xl font-semibold mb-6">Loading Features</h2>
+          <p class="text-muted dark:text-dark-muted mb-6">
+            Buttons automatically show a spinner when loading. Use the loading slot for custom loading content.
+          </p>
+          <div class="space-y-6">
+            <div>
+              <h3 class="text-lg font-medium mb-4">Automatic Loading Spinner</h3>
+              <div class="flex flex-wrap gap-3 mb-4">
+                <.button variant="solid" color="primary" loading={true}>Save Changes</.button>
+                <.button variant="outline" color="secondary" loading={true}>Upload File</.button>
+                <.button variant="ghost" color="success" loading={true}>Submit Form</.button>
+              </div>
+              <pre class="text-sm bg-surface-secondary dark:bg-dark-surface-secondary p-3 rounded text-muted dark:text-dark-muted overflow-x-auto"><code>&lt;.button variant="solid" color="primary" loading={true}&gt;Save Changes&lt;/.button&gt;</code></pre>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-medium mb-4">Custom Loading Content</h3>
+              <div class="flex flex-wrap gap-3 mb-4">
+                <.button variant="solid" color="primary" loading={true}>
+                  Save Changes
+                  <:loading_content>Saving...</:loading_content>
+                </.button>
+                <.button variant="outline" color="info" loading={true}>
+                  Process
+                  <:loading_content>⏳ Processing...</:loading_content>
+                </.button>
+              </div>
+              <pre class="text-sm bg-surface-secondary dark:bg-dark-surface-secondary p-3 rounded text-muted dark:text-dark-muted overflow-x-auto"><code>&lt;.button variant="solid" color="primary" loading={true}&gt;
+                Save Changes
+                &lt;:loading_content&gt;Saving...&lt;/:loading_content&gt;
+              &lt;/.button&gt;</code></pre>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-medium mb-4">Disable Automatic Spinner</h3>
+              <div class="flex flex-wrap gap-3 mb-4">
+                <.button variant="solid" color="primary" loading={true} show_loading_spinner={false}>Save Changes</.button>
+                <.button variant="outline" color="danger" loading={true} show_loading_spinner={false}>Delete Item</.button>
+              </div>
+              <pre class="text-sm bg-surface-secondary dark:bg-dark-surface-secondary p-3 rounded text-muted dark:text-dark-muted overflow-x-auto"><code>&lt;.button loading={true} show_loading_spinner={false}&gt;Save Changes&lt;/.button&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div>
           <h2 class="text-xl font-semibold mb-4">Usage Examples</h2>
           <div class="space-y-4">
             <div class="p-4 border border-border dark:border-dark-border rounded-lg">

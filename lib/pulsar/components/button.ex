@@ -136,11 +136,19 @@ defmodule Pulsar.Components.Button do
     default: nil,
     doc: "Accessible label for icon-only buttons"
 
+  attr :show_loading_spinner, :boolean,
+    default: true,
+    doc: "Show automatic spinner when loading (can be disabled for custom loading content)"
+
   attr :rest, :global, doc: "Additional HTML attributes"
 
   slot :inner_block,
     required: true,
     doc: "Button content"
+
+  slot :loading_content,
+    required: false,
+    doc: "Custom loading content that replaces inner_block when button is loading"
 
   @doc """
   Renders a styled button component.
@@ -180,7 +188,16 @@ defmodule Pulsar.Components.Button do
       aria-label={@aria_label}
       {@rest}
     >
-      {render_slot(@inner_block)}
+      <div :if={@loading && @loading_content != []}>
+        {render_slot(@loading_content)}
+      </div>
+      <svg :if={@loading && @show_loading_spinner && (@loading_content == [])} class={spinner_size_classes(@size)} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
+        <path fill="currentColor" class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <div :if={!@loading || @loading_content == []}>
+        {render_slot(@inner_block)}
+      </div>
     </StellarButton.button>
     """
   end
@@ -250,5 +267,11 @@ defmodule Pulsar.Components.Button do
   defp color_classes("link", "warning"), do: "text-warning-600 hover:text-warning-800 dark:text-warning-400 dark:hover:text-warning-200"
   defp color_classes("link", "info"), do: "text-info-600 hover:text-info-800 dark:text-info-400 dark:hover:text-info-200"
 
+  # Spinner size classes based on button size
+  defp spinner_size_classes("xs"), do: "h-3 w-3 animate-spin"
+  defp spinner_size_classes("sm"), do: "h-4 w-4 animate-spin"
+  defp spinner_size_classes("md"), do: "h-4 w-4 animate-spin"
+  defp spinner_size_classes("lg"), do: "h-5 w-5 animate-spin"
+  defp spinner_size_classes("xl"), do: "h-6 w-6 animate-spin"
 
 end
