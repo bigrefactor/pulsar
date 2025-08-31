@@ -93,6 +93,8 @@ defmodule Pulsar.Components.Label do
     assigns =
       assigns
       |> assign(:computed_classes, compute_label_classes(assigns))
+      |> assign(:data_error, data_boolean(assigns.error))
+      |> assign(:data_size, assigns.size)
 
     ~H"""
     <StellarLabel.label
@@ -100,6 +102,8 @@ defmodule Pulsar.Components.Label do
       required={@required}
       sr_required_text={@sr_required_text}
       class={@computed_classes}
+      data-error={@data_error}
+      data-size={@data_size}
       {@rest}
     >
       <%= render_slot(@inner_block) %>
@@ -145,4 +149,9 @@ defmodule Pulsar.Components.Label do
   defp required_indicator_classes("md"), do: "text-danger dark:text-dark-danger ml-1 text-base"
   defp required_indicator_classes("lg"), do: "text-danger dark:text-dark-danger ml-1 text-lg"
   defp required_indicator_classes("xl"), do: "text-danger dark:text-dark-danger ml-1 text-xl"
+
+  # Convert boolean to data attribute string
+  defp data_boolean(true), do: "true"
+  defp data_boolean(false), do: "false"
+  defp data_boolean(_), do: "false"
 end

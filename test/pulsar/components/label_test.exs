@@ -1,5 +1,5 @@
 defmodule Pulsar.Components.LabelTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   import Phoenix.LiveViewTest
   import Phoenix.Component
 
@@ -348,6 +348,58 @@ defmodule Pulsar.Components.LabelTest do
       assert html =~ ~s(data-required="true")
       # Should include screen reader text from Stellar
       assert html =~ ~s(class="sr-only")
+    end
+  end
+
+  describe "label/1 data attributes" do
+    test "includes data-error attribute" do
+      assigns = %{}
+
+      # Test error state
+      html_error =
+        rendered_to_string(~H"""
+        <Label.label for="field" error>Error Label</Label.label>
+        """)
+
+      assert html_error =~ ~s(data-error="true")
+
+      # Test normal state
+      html_normal =
+        rendered_to_string(~H"""
+        <Label.label for="field">Normal Label</Label.label>
+        """)
+
+      assert html_normal =~ ~s(data-error="false")
+    end
+
+    test "includes data-size attribute" do
+      # Test different sizes
+      sizes = ["xs", "sm", "md", "lg", "xl"]
+
+      for size <- sizes do
+        assigns = %{test_size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <Label.label for="field" size={@test_size}>Size Label</Label.label>
+          """)
+
+        assert html =~ ~s(data-size="#{size}")
+      end
+    end
+
+    test "data attributes can be used for external styling hooks" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Label.label for="field" error size="lg" required>Styled Label</Label.label>
+        """)
+
+      # Should have all data attributes for external CSS targeting
+      assert html =~ ~s(data-error="true")
+      assert html =~ ~s(data-size="lg")
+      assert html =~ ~s(data-required="true")  # From Stellar
     end
   end
 end
