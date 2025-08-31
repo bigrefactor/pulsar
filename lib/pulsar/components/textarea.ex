@@ -201,6 +201,7 @@ defmodule Pulsar.Components.Textarea do
 
     assigns =
       assigns
+      |> normalize_field_attributes()
       |> assign(:class, class)
       |> assign(:effective_color, effective_color)
       |> assign(:invalid, has_errors)
@@ -225,8 +226,8 @@ defmodule Pulsar.Components.Textarea do
         disabled={@disabled}
         readonly={@readonly}
         auto_resize={@auto_resize}
-        data_character_count={@data_character_count}
-        data_max_length={@data_max_length}
+        character_count={@data_character_count}
+        max_length={@data_max_length}
         style={build_custom_height_styles(@min_height, @max_height)}
         data-variant={@variant}
         data-size={@size}
@@ -286,6 +287,21 @@ defmodule Pulsar.Components.Textarea do
       remaining && remaining <= 10 -> "text-warning dark:text-dark-warning font-medium"
       true -> "text-muted-foreground dark:text-dark-muted-foreground"
     end
+  end
+
+  # Normalize field attributes to ensure id, name, value are always present
+  defp normalize_field_attributes(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
+    assigns
+    |> assign_new(:id, fn -> field.id end)
+    |> assign_new(:name, fn -> field.name end)
+    |> assign_new(:value, fn -> field.value end)
+  end
+
+  defp normalize_field_attributes(assigns) do
+    assigns
+    |> assign_new(:id, fn -> assigns[:id] || assigns[:name] end)
+    |> assign_new(:name, fn -> assigns[:name] end)
+    |> assign_new(:value, fn -> assigns[:value] end)
   end
 
   # Build custom height styles for min/max constraints

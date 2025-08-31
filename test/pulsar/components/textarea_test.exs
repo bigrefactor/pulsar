@@ -307,7 +307,7 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" min_height="80px" />
         """)
 
-      assert html =~ ~s(style="min-height: 80px")
+      assert html =~ ~s(style="min-height: 80px;")
       # Should not include default max height classes
       refute html =~ "max-h-64"
     end
@@ -320,7 +320,7 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" max_height="500px" />
         """)
 
-      assert html =~ ~s(style="max-height: 500px")
+      assert html =~ ~s(style="max-height: 500px;")
       # Should not include default max height classes
       refute html =~ "max-h-64"
     end
