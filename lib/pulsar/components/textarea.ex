@@ -234,6 +234,7 @@ defmodule Pulsar.Components.Textarea do
         data-color={@effective_color}
         data-invalid={@invalid}
         data-required={@required_attr}
+        aria-invalid={@invalid}
         {@rest}
       />
 

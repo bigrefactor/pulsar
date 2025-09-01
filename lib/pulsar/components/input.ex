@@ -153,6 +153,15 @@ defmodule Pulsar.Components.Input do
       raise ArgumentError, "Input component requires :name when :field is not provided"
     end
 
+    # Detect errors for aria-invalid attribute
+    has_errors =
+      case assigns[:field] do
+        %Phoenix.HTML.FormField{errors: errs} when errs != [] -> true
+        _ -> false
+      end
+
+    assigns = assign(assigns, :has_errors, has_errors)
+
     ~H"""
     <StellarInput.input
       type="hidden"
@@ -164,6 +173,7 @@ defmodule Pulsar.Components.Input do
       disabled={@disabled}
       readonly={@readonly}
       class={@class}
+      aria-invalid={@has_errors}
       {@rest}
     />
     """
@@ -199,6 +209,7 @@ defmodule Pulsar.Components.Input do
       |> assign(:decorator_color, effective_color)
       |> assign(:invalid, has_errors)
       |> assign(:required_attr, assigns.required)
+      |> assign(:has_errors, has_errors)
 
     ~H"""
     <div
@@ -238,6 +249,7 @@ defmodule Pulsar.Components.Input do
         required={@required}
         disabled={@disabled}
         readonly={@readonly}
+        aria-invalid={@has_errors}
         {@rest}
       />
 
