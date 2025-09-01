@@ -71,7 +71,14 @@ defmodule Pulsar.Components.TextareaTest do
 
       html =
         rendered_to_string(~H"""
-        <Textarea.textarea name="test" rows={6} cols={50} required={true} disabled={true} placeholder="Enter text" />
+        <Textarea.textarea
+          name="test"
+          rows={6}
+          cols={50}
+          required={true}
+          disabled={true}
+          placeholder="Enter text"
+        />
         """)
 
       assert html =~ ~s(rows="6")
@@ -90,9 +97,12 @@ defmodule Pulsar.Components.TextareaTest do
         """)
 
       # Should contain both component classes and custom classes
-      assert html =~ "bg-neutral/10"     # Component class
-      assert html =~ "w-full"            # Custom class
-      assert html =~ "custom-class"      # Custom class
+      # Component class
+      assert html =~ "bg-neutral/10"
+      # Custom class
+      assert html =~ "w-full"
+      # Custom class
+      assert html =~ "custom-class"
     end
   end
 
@@ -143,32 +153,39 @@ defmodule Pulsar.Components.TextareaTest do
 
       for color <- colors do
         assigns = %{color: color}
+
         html =
           rendered_to_string(~H"""
           <Textarea.textarea name="test" variant="outline" color={@color} />
           """)
 
         case color do
-          "neutral" -> 
+          "neutral" ->
             assert html =~ "border-border"
             assert html =~ "bg-background"
             assert html =~ "text-foreground"
-          "primary" -> 
+
+          "primary" ->
             assert html =~ "border-primary/60"
             assert html =~ "text-primary"
-          "secondary" -> 
+
+          "secondary" ->
             assert html =~ "border-secondary/60"
             assert html =~ "text-secondary"
-          "success" -> 
+
+          "success" ->
             assert html =~ "border-success/60"
             assert html =~ "text-success"
-          "danger" -> 
+
+          "danger" ->
             assert html =~ "border-danger/60"
             assert html =~ "text-danger"
-          "warning" -> 
+
+          "warning" ->
             assert html =~ "border-warning/60"
             assert html =~ "text-warning"
-          "info" -> 
+
+          "info" ->
             assert html =~ "border-info/60"
             assert html =~ "text-info"
         end
@@ -180,31 +197,38 @@ defmodule Pulsar.Components.TextareaTest do
 
       for color <- colors do
         assigns = %{color: color}
+
         html =
           rendered_to_string(~H"""
           <Textarea.textarea name="test" variant="solid" color={@color} />
           """)
 
         case color do
-          "neutral" -> 
+          "neutral" ->
             assert html =~ "bg-neutral/10"
             assert html =~ "text-neutral"
-          "primary" -> 
+
+          "primary" ->
             assert html =~ "bg-primary/10"
             assert html =~ "text-primary"
-          "secondary" -> 
+
+          "secondary" ->
             assert html =~ "bg-secondary/10"
             assert html =~ "text-secondary"
-          "success" -> 
+
+          "success" ->
             assert html =~ "bg-success/10"
             assert html =~ "text-success"
-          "danger" -> 
+
+          "danger" ->
             assert html =~ "bg-danger/10"
             assert html =~ "text-danger"
-          "warning" -> 
+
+          "warning" ->
             assert html =~ "bg-warning/10"
             assert html =~ "text-warning"
-          "info" -> 
+
+          "info" ->
             assert html =~ "bg-info/10"
             assert html =~ "text-info"
         end
@@ -216,31 +240,38 @@ defmodule Pulsar.Components.TextareaTest do
 
       for color <- colors do
         assigns = %{color: color}
+
         html =
           rendered_to_string(~H"""
           <Textarea.textarea name="test" variant="ghost" color={@color} />
           """)
 
         case color do
-          "neutral" -> 
+          "neutral" ->
             assert html =~ "bg-transparent"
             assert html =~ "text-foreground"
-          "primary" -> 
+
+          "primary" ->
             assert html =~ "bg-transparent"
             assert html =~ "text-primary"
-          "secondary" -> 
+
+          "secondary" ->
             assert html =~ "bg-transparent"
             assert html =~ "text-secondary"
-          "success" -> 
+
+          "success" ->
             assert html =~ "bg-transparent"
             assert html =~ "text-success"
-          "danger" -> 
+
+          "danger" ->
             assert html =~ "bg-transparent"
             assert html =~ "text-danger"
-          "warning" -> 
+
+          "warning" ->
             assert html =~ "bg-transparent"
             assert html =~ "text-warning"
-          "info" -> 
+
+          "info" ->
             assert html =~ "bg-transparent"
             assert html =~ "text-info"
         end
@@ -254,28 +285,33 @@ defmodule Pulsar.Components.TextareaTest do
 
       for size <- sizes do
         assigns = %{size: size}
+
         html =
           rendered_to_string(~H"""
           <Textarea.textarea name="test" size={@size} />
           """)
 
         case size do
-          "xs" -> 
+          "xs" ->
             assert html =~ "min-h-16"
             assert html =~ "text-xs"
             assert html =~ "max-h-32"
-          "sm" -> 
+
+          "sm" ->
             assert html =~ "min-h-20"
             assert html =~ "text-sm"
             assert html =~ "max-h-40"
-          "md" -> 
+
+          "md" ->
             assert html =~ "min-h-24"
             assert html =~ "max-h-64"
-          "lg" -> 
+
+          "lg" ->
             assert html =~ "min-h-32"
             assert html =~ "text-lg"
             assert html =~ "max-h-80"
-          "xl" -> 
+
+          "xl" ->
             assert html =~ "min-h-40"
             assert html =~ "text-xl"
             assert html =~ "max-h-96"
@@ -333,8 +369,10 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" size="lg" />
         """)
 
-      assert html =~ "max-h-80"  # Default for lg size
-      refute html =~ "style="  # No custom style attribute
+      # Default for lg size
+      assert html =~ "max-h-80"
+      # No custom style attribute
+      refute html =~ "style="
     end
   end
 
@@ -347,8 +385,10 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" character_count max_length={100} value="Hello" />
         """)
 
-      assert html =~ "5/100"  # Shows current count / max
-      assert html =~ "text-muted-foreground"  # Normal state color
+      # Shows current count / max
+      assert html =~ "5<span>/100</span>"
+      # Normal state color
+      assert html =~ "text-muted-foreground"
     end
 
     test "shows warning color when approaching limit" do
@@ -359,7 +399,7 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" character_count max_length={100} value={@long_text} />
         """)
 
-      assert html =~ "95/100"
+      assert html =~ "95<span>/100</span>"
       assert html =~ "text-warning"
       assert html =~ "5 remaining"
     end
@@ -372,7 +412,7 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" character_count max_length={100} value={@at_limit_text} />
         """)
 
-      assert html =~ "100/100"
+      assert html =~ "100<span>/100</span>"
       assert html =~ "text-danger"
       assert html =~ "font-medium"
     end
@@ -385,7 +425,7 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" character_count max_length={100} value={@over_limit_text} />
         """)
 
-      assert html =~ "105/100"
+      assert html =~ "105<span>/100</span>"
       assert html =~ "text-danger"
       assert html =~ "5 over"
     end
@@ -398,8 +438,10 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" character_count value="Hello World" />
         """)
 
-      assert html =~ "11"  # Just shows count
-      refute html =~ "11/" # No max length display format
+      # Just shows count
+      assert html =~ "11"
+      # No max length display format
+      refute html =~ "11/"
     end
 
     test "handles empty value" do
@@ -410,7 +452,7 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" character_count max_length={100} />
         """)
 
-      assert html =~ "0/100"
+      assert html =~ "0<span>/100</span>"
     end
 
     test "counts Unicode characters correctly" do
@@ -421,7 +463,8 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" character_count max_length={100} value="👋🌍" />
         """)
 
-      assert html =~ "2/100"  # Emoji should count as individual characters
+      # Emoji should count as individual characters
+      assert html =~ "2<span>/100</span>"
     end
   end
 
@@ -499,6 +542,29 @@ defmodule Pulsar.Components.TextareaTest do
       assert html =~ "focus:ring-2"
       assert html =~ "focus:ring-neutral/60"
     end
+
+    test "sets aria-invalid attribute when invalid is true" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Textarea.textarea name="test" invalid={true} />
+        """)
+
+      assert html =~ ~s(aria-invalid="true")
+    end
+
+    test "sets aria-invalid to 'false' when invalid is false" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Textarea.textarea name="test" invalid={false} />
+        """)
+
+      assert html =~ ~s(aria-invalid="false")
+      refute html =~ ~s(aria-invalid="true")
+    end
   end
 
   describe "automatic error state handling" do
@@ -527,7 +593,8 @@ defmodule Pulsar.Components.TextareaTest do
       assert html =~ "dark:text-dark-danger"
 
       # Should have data attributes for invalid state
-      assert html =~ ~s(data-invalid="true")
+      assert html =~ ~r/data-invalid(?=[^=])/
+      assert html =~ ~s(aria-invalid="true")
       assert html =~ ~s(data-color="danger")
     end
 
@@ -554,7 +621,8 @@ defmodule Pulsar.Components.TextareaTest do
       assert html =~ "text-primary"
 
       # Should have data attributes for valid state
-      assert html =~ ~s(data-invalid="false")
+      refute html =~ "data-invalid"
+      assert html =~ ~s(aria-invalid="false")
       assert html =~ ~s(data-color="primary")
     end
 
@@ -577,7 +645,7 @@ defmodule Pulsar.Components.TextareaTest do
         """)
 
       # Character count should show with normal color (not error color since not at limit)
-      assert html =~ "5/100"
+      assert html =~ "5<span>/100</span>"
       assert html =~ "text-muted-foreground"
     end
   end
@@ -622,7 +690,8 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea field={@field} character_count max_length={50} />
         """)
 
-      assert html =~ "11/50"  # Count from field value
+      # Count from field value
+      assert html =~ "11<span>/50</span>"
     end
   end
 
@@ -636,8 +705,10 @@ defmodule Pulsar.Components.TextareaTest do
         """)
 
       # TailwindMerge should resolve conflicts
-      assert html =~ "border-red-500"  # Custom border should override
-      assert html =~ "min-h-20"        # Custom height should override
+      # Custom border should override
+      assert html =~ "border-red-500"
+      # Custom height should override
+      assert html =~ "min-h-20"
     end
 
     test "preserves non-conflicting classes" do
@@ -652,7 +723,8 @@ defmodule Pulsar.Components.TextareaTest do
       assert html =~ "w-full"
       assert html =~ "shadow-lg"
       assert html =~ "font-mono"
-      assert html =~ "bg-neutral/10"   # Original background preserved
+      # Original background preserved
+      assert html =~ "bg-neutral/10"
     end
   end
 
@@ -672,7 +744,12 @@ defmodule Pulsar.Components.TextareaTest do
 
       html =
         rendered_to_string(~H"""
-        <Textarea.textarea name="test" phx-change="validate" phx-debounce="300" data-testid="test-textarea" />
+        <Textarea.textarea
+          name="test"
+          phx-change="validate"
+          phx-debounce="300"
+          data-testid="test-textarea"
+        />
         """)
 
       assert html =~ ~s(phx-change="validate")
@@ -688,7 +765,8 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" value={nil} character_count />
         """)
 
-      assert html =~ "0"  # Should show 0 count for nil value
+      # Should show 0 count for nil value
+      assert html =~ "0"
       refute html =~ "nil"
     end
 
@@ -701,7 +779,7 @@ defmodule Pulsar.Components.TextareaTest do
         """)
 
       # Should not show character count display
-      refute html =~ "5/100"
+      refute html =~ "5<span>/100</span>"
       refute html =~ "text-muted-foreground"
     end
 

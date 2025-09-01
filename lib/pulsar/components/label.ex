@@ -78,8 +78,8 @@ defmodule Pulsar.Components.Label do
     values: ~w(xs sm md lg xl),
     doc: "Size of the label text"
 
-  attr :sr_required_text, :string, 
-    default: "(required)", 
+  attr :sr_required_text, :string,
+    default: "(required)",
     doc: "Screen reader text for required fields. Use with i18n: gettext(\"(required)\")"
 
   attr :class, :string, default: "", doc: "Additional CSS classes"
@@ -106,7 +106,7 @@ defmodule Pulsar.Components.Label do
       data-size={@data_size}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
       <span :if={@required} class={required_indicator_classes(@size)} aria-hidden="true">*</span>
     </StellarLabel.label>
     """

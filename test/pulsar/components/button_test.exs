@@ -106,13 +106,18 @@ defmodule Pulsar.Components.ButtonTest do
 
       html =
         rendered_to_string(~H"""
-        <Button.button variant="solid" color="primary" class="w-full custom-class">Full width</Button.button>
+        <Button.button variant="solid" color="primary" class="w-full custom-class">
+          Full width
+        </Button.button>
         """)
 
       # Should contain both component classes and custom classes
-      assert html =~ "bg-primary"  # Component class
-      assert html =~ "w-full"          # Custom class
-      assert html =~ "custom-class"    # Custom class
+      # Component class
+      assert html =~ "bg-primary"
+      # Custom class
+      assert html =~ "w-full"
+      # Custom class
+      assert html =~ "custom-class"
     end
   end
 
@@ -122,6 +127,7 @@ defmodule Pulsar.Components.ButtonTest do
 
       for color <- colors do
         assigns = %{color: color}
+
         html =
           rendered_to_string(~H"""
           <Button.button variant="solid" color={@color}>Test</Button.button>
@@ -147,6 +153,7 @@ defmodule Pulsar.Components.ButtonTest do
 
       for color <- colors do
         assigns = %{color: color}
+
         html =
           rendered_to_string(~H"""
           <Button.button variant="outline" color={@color}>Test</Button.button>
@@ -173,6 +180,7 @@ defmodule Pulsar.Components.ButtonTest do
 
       for color <- colors do
         assigns = %{color: color}
+
         html =
           rendered_to_string(~H"""
           <Button.button variant="ghost" color={@color}>Test</Button.button>
@@ -199,6 +207,7 @@ defmodule Pulsar.Components.ButtonTest do
 
       for color <- colors do
         assigns = %{color: color}
+
         html =
           rendered_to_string(~H"""
           <Button.button variant="link" color={@color}>Test</Button.button>
@@ -229,36 +238,41 @@ defmodule Pulsar.Components.ButtonTest do
 
       for size <- sizes do
         assigns = %{size: size}
+
         html =
           rendered_to_string(~H"""
           <Button.button size={@size}>Test</Button.button>
           """)
 
         case size do
-          "xs" -> 
+          "xs" ->
             assert html =~ "h-6"
-            assert html =~ "px-2" 
+            assert html =~ "px-2"
             assert html =~ "text-xs"
             assert html =~ "gap-1"
             assert html =~ "rounded-md"
-          "sm" -> 
+
+          "sm" ->
             assert html =~ "h-8"
             assert html =~ "px-3"
             assert html =~ "text-sm"
             assert html =~ "gap-1"
             assert html =~ "rounded-md"
-          "md" -> 
+
+          "md" ->
             assert html =~ "h-10"
             assert html =~ "px-4"
             assert html =~ "gap-2"
             assert html =~ "rounded-lg"
-          "lg" -> 
+
+          "lg" ->
             assert html =~ "h-12"
             assert html =~ "px-6"
             assert html =~ "text-lg"
             assert html =~ "gap-2"
             assert html =~ "rounded-lg"
-          "xl" -> 
+
+          "xl" ->
             assert html =~ "h-14"
             assert html =~ "px-8"
             assert html =~ "text-xl"
@@ -277,10 +291,13 @@ defmodule Pulsar.Components.ButtonTest do
         """)
 
       # Link variants should behave like text links, not buttons
-      refute html =~ "h-12"      # No fixed height
-      refute html =~ "px-6"      # No fixed padding  
-      refute html =~ "text-lg"   # No forced text size
-      
+      # No fixed height
+      refute html =~ "h-12"
+      # No fixed padding  
+      refute html =~ "px-6"
+      # No forced text size
+      refute html =~ "text-lg"
+
       # But should have link-specific classes
       assert html =~ "underline-offset-4"
       assert html =~ "hover:underline"
@@ -338,8 +355,9 @@ defmodule Pulsar.Components.ButtonTest do
         """)
 
       assert html =~ "focus-visible:outline-none"
-      assert html =~ "focus-visible:ring-2" 
+      assert html =~ "focus-visible:ring-2"
       assert html =~ "focus-visible:ring-ring"
+
       # Note: ring-offset-2 is in the component but may be stripped by TailwindMerge or not showing in output
       # The key focus functionality is present
     end
@@ -432,7 +450,7 @@ defmodule Pulsar.Components.ButtonTest do
       assert html =~ "font-medium"
       assert html =~ "cursor-pointer"
       assert html =~ "focus-visible:outline-none"
-      
+
       # Should not include flex classes since it's inline
       refute html =~ "inline-flex"
       refute html =~ "items-center"
@@ -465,9 +483,11 @@ defmodule Pulsar.Components.ButtonTest do
         """)
 
       # TailwindMerge should resolve conflicts, keeping the custom classes
-      assert html =~ "bg-red-500"  # Custom background should be present
-      assert html =~ "h-16"        # Custom height should be present
-      
+      # Custom background should be present
+      assert html =~ "bg-red-500"
+      # Custom height should be present
+      assert html =~ "h-16"
+
       # Note: TailwindMerge puts conflicting classes later in the string so they take precedence
       # The presence of both is expected - CSS cascade will apply the later one
     end
@@ -483,8 +503,10 @@ defmodule Pulsar.Components.ButtonTest do
       # Should include both original and custom classes
       assert html =~ "w-full"
       assert html =~ "border-4"
-      assert html =~ "bg-primary"  # Original background preserved
-      assert html =~ "h-10"            # Original height preserved
+      # Original background preserved
+      assert html =~ "bg-primary"
+      # Original height preserved
+      assert html =~ "h-10"
     end
   end
 

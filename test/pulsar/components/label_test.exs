@@ -182,7 +182,7 @@ defmodule Pulsar.Components.LabelTest do
         <Label.label for="field" required>Default Required</Label.label>
         """)
 
-      assert html =~ "Default Required" 
+      assert html =~ "Default Required"
       # Should use default "(required)" text
       assert html =~ "(required)"
       assert html =~ ~s(class="sr-only")
@@ -320,7 +320,6 @@ defmodule Pulsar.Components.LabelTest do
 
       assert html =~ "dark:text-dark-danger"
     end
-
   end
 
   describe "label/1 accessibility" do
@@ -399,7 +398,8 @@ defmodule Pulsar.Components.LabelTest do
       # Should have all data attributes for external CSS targeting
       assert html =~ ~s(data-error="true")
       assert html =~ ~s(data-size="lg")
-      assert html =~ ~s(data-required="true")  # From Stellar
+      # From Stellar
+      assert html =~ ~s(data-required="true")
     end
   end
 end
