@@ -36,7 +36,7 @@ jobs:
 
       - name: Validate version matches mix.exs
         run: |
-          MIX_VERSION=$(grep -E 'version:.*".*"' mix.exs | sed -E 's/.*version: "(.*)".*/\1/')
+          MIX_VERSION=$(mix run -e 'IO.puts(Mix.Project.config()[:version])' --no-start)
           TAG_VERSION="${{ steps.version.outputs.version }}"
           
           if [ "$MIX_VERSION" != "$TAG_VERSION" ]; then
@@ -44,7 +44,6 @@ jobs:
             exit 1
           fi
           echo "Version validation passed: $TAG_VERSION"
-
       - name: Extract changelog entry
         id: changelog
         run: |
