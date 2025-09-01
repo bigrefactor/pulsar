@@ -36,11 +36,11 @@ defmodule Mix.Tasks.Pulsar.Install do
   ### Configuration
   - Tailwind CSS configured for dark mode
   - Content paths updated for generated component files
-  
+
   ## After installation
-  
+
   Generate individual components as needed:
-  
+
       mix pulsar.gen.button
       mix pulsar.gen.input
       mix pulsar.gen.modal
@@ -261,7 +261,6 @@ defmodule Mix.Tasks.Pulsar.Install do
     end)
   end
 
-
   # Add success message
   defp add_success_message(igniter, theme) do
     message = """
@@ -282,7 +281,7 @@ defmodule Mix.Tasks.Pulsar.Install do
        mix pulsar.gen.button
        mix pulsar.gen.input
        mix pulsar.gen.modal
-    
+
     3. Try dark mode by adding `data-theme="dark"` to your <html> element
 
     4. Components will be generated in lib/your_app_web/components/

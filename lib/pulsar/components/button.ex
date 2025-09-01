@@ -172,11 +172,13 @@ defmodule Pulsar.Components.Button do
   def button(assigns) do
     # Build complete class string using TailwindMerge - only include needed classes
     assigns =
-      assign(assigns, :merged_classes,
+      assign(
+        assigns,
+        :merged_classes,
         merge([
           base_button_classes(),
           variant_classes(assigns.variant),
-          (if assigns.variant == "link", do: "", else: size_classes(assigns.size)),
+          if(assigns.variant == "link", do: "", else: size_classes(assigns.size)),
           color_classes(assigns.variant, assigns.color),
           assigns.class
         ])
@@ -203,9 +205,22 @@ defmodule Pulsar.Components.Button do
       <div :if={@loading && @variant != "link" && @loading_content != []}>
         {render_slot(@loading_content)}
       </div>
-      <svg :if={@loading && @show_loading_spinner && @variant != "link" && (@loading_content == [])} aria-hidden="true" class={spinner_size_classes(@size)} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
-        <path fill="currentColor" class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      <svg
+        :if={@loading && @show_loading_spinner && @variant != "link" && @loading_content == []}
+        aria-hidden="true"
+        class={spinner_size_classes(@size)}
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25">
+        </circle>
+        <path
+          fill="currentColor"
+          class="opacity-75"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        >
+        </path>
       </svg>
       <div :if={!@loading || @loading_content == []}>
         {render_slot(@inner_block)}
@@ -247,37 +262,115 @@ defmodule Pulsar.Components.Button do
   defp size_classes("xl"), do: "h-14 px-8 text-xl gap-3 rounded-xl"
 
   # Color classes by variant
-  defp color_classes("solid", "neutral"), do: "bg-neutral text-neutral-foreground hover:bg-neutral/90 active:bg-neutral/80 dark:bg-dark-neutral dark:text-dark-neutral-foreground dark:hover:bg-dark-neutral/90 dark:active:bg-dark-neutral/80"
-  defp color_classes("solid", "primary"), do: "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 dark:bg-dark-primary dark:text-dark-primary-foreground dark:hover:bg-dark-primary/90 dark:active:bg-dark-primary/80"
-  defp color_classes("solid", "secondary"), do: "bg-secondary text-secondary-foreground hover:bg-secondary/90 active:bg-secondary/80 dark:bg-dark-secondary dark:text-dark-secondary-foreground dark:hover:bg-dark-secondary/90 dark:active:bg-dark-secondary/80"
-  defp color_classes("solid", "success"), do: "bg-success text-success-foreground hover:bg-success/90 active:bg-success/80 dark:bg-dark-success dark:text-dark-success-foreground dark:hover:bg-dark-success/90 dark:active:bg-dark-success/80"
-  defp color_classes("solid", "danger"), do: "bg-danger text-danger-foreground hover:bg-danger/90 active:bg-danger/80 dark:bg-dark-danger dark:text-dark-danger-foreground dark:hover:bg-dark-danger/90 dark:active:bg-dark-danger/80"
-  defp color_classes("solid", "warning"), do: "bg-warning text-warning-foreground hover:bg-warning/90 active:bg-warning/80 dark:bg-dark-warning dark:text-dark-warning-foreground dark:hover:bg-dark-warning/90 dark:active:bg-dark-warning/80"
-  defp color_classes("solid", "info"), do: "bg-info text-info-foreground hover:bg-info/90 active:bg-info/80 dark:bg-dark-info dark:text-dark-info-foreground dark:hover:bg-dark-info/90 dark:active:bg-dark-info/80"
+  defp color_classes("solid", "neutral"),
+    do:
+      "bg-neutral text-neutral-foreground hover:bg-neutral/90 active:bg-neutral/80 dark:bg-dark-neutral dark:text-dark-neutral-foreground dark:hover:bg-dark-neutral/90 dark:active:bg-dark-neutral/80"
 
-  defp color_classes("outline", "neutral"), do: "border-2 border-border dark:border-dark-border bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover active:bg-surface-1-active dark:active:bg-dark-surface-1-active"
-  defp color_classes("outline", "primary"), do: "border-2 border-primary bg-background text-primary hover:bg-primary/5 active:bg-primary/10 dark:border-dark-primary dark:bg-dark-background dark:text-dark-primary dark:hover:bg-dark-primary/10 dark:active:bg-dark-primary/20"
-  defp color_classes("outline", "secondary"), do: "border-2 border-secondary bg-background text-secondary hover:bg-secondary/5 active:bg-secondary/10 dark:border-dark-secondary dark:bg-dark-background dark:text-dark-secondary dark:hover:bg-dark-secondary/10 dark:active:bg-dark-secondary/20"
-  defp color_classes("outline", "success"), do: "border-2 border-success bg-background text-success hover:bg-success/5 active:bg-success/10 dark:border-dark-success dark:bg-dark-background dark:text-dark-success dark:hover:bg-dark-success/10 dark:active:bg-dark-success/20"
-  defp color_classes("outline", "danger"), do: "border-2 border-danger bg-background text-danger hover:bg-danger/5 active:bg-danger/10 dark:border-dark-danger dark:bg-dark-background dark:text-dark-danger dark:hover:bg-dark-danger/10 dark:active:bg-dark-danger/20"
-  defp color_classes("outline", "warning"), do: "border-2 border-warning bg-background text-warning hover:bg-warning/5 active:bg-warning/10 dark:border-dark-warning dark:bg-dark-background dark:text-dark-warning dark:hover:bg-dark-warning/10 dark:active:bg-dark-warning/20"
-  defp color_classes("outline", "info"), do: "border-2 border-info bg-background text-info hover:bg-info/5 active:bg-info/10 dark:border-dark-info dark:bg-dark-background dark:text-dark-info dark:hover:bg-dark-info/10 dark:active:bg-dark-info/20"
+  defp color_classes("solid", "primary"),
+    do:
+      "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 dark:bg-dark-primary dark:text-dark-primary-foreground dark:hover:bg-dark-primary/90 dark:active:bg-dark-primary/80"
 
-  defp color_classes("ghost", "neutral"), do: "text-foreground dark:text-dark-foreground hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover active:bg-surface-1-active dark:active:bg-dark-surface-1-active"
-  defp color_classes("ghost", "primary"), do: "text-primary hover:bg-primary/10 active:bg-primary/20 dark:text-dark-primary dark:hover:bg-dark-primary/10 dark:active:bg-dark-primary/20"
-  defp color_classes("ghost", "secondary"), do: "text-secondary hover:bg-secondary/10 active:bg-secondary/20 dark:text-dark-secondary dark:hover:bg-dark-secondary/10 dark:active:bg-dark-secondary/20"
-  defp color_classes("ghost", "success"), do: "text-success hover:bg-success/10 active:bg-success/20 dark:text-dark-success dark:hover:bg-dark-success/10 dark:active:bg-dark-success/20"
-  defp color_classes("ghost", "danger"), do: "text-danger hover:bg-danger/10 active:bg-danger/20 dark:text-dark-danger dark:hover:bg-dark-danger/10 dark:active:bg-dark-danger/20"
-  defp color_classes("ghost", "warning"), do: "text-warning hover:bg-warning/10 active:bg-warning/20 dark:text-dark-warning dark:hover:bg-dark-warning/10 dark:active:bg-dark-warning/20"
-  defp color_classes("ghost", "info"), do: "text-info hover:bg-info/10 active:bg-info/20 dark:text-dark-info dark:hover:bg-dark-info/10 dark:active:bg-dark-info/20"
+  defp color_classes("solid", "secondary"),
+    do:
+      "bg-secondary text-secondary-foreground hover:bg-secondary/90 active:bg-secondary/80 dark:bg-dark-secondary dark:text-dark-secondary-foreground dark:hover:bg-dark-secondary/90 dark:active:bg-dark-secondary/80"
 
-  defp color_classes("link", "neutral"), do: "text-muted-foreground dark:text-dark-muted-foreground hover:text-foreground dark:hover:text-dark-foreground"
-  defp color_classes("link", "primary"), do: "text-primary hover:text-primary/80 dark:text-dark-primary dark:hover:text-dark-primary/80"
-  defp color_classes("link", "secondary"), do: "text-secondary hover:text-secondary/80 dark:text-dark-secondary dark:hover:text-dark-secondary/80"
-  defp color_classes("link", "success"), do: "text-success hover:text-success/80 dark:text-dark-success dark:hover:text-dark-success/80"
-  defp color_classes("link", "danger"), do: "text-danger hover:text-danger/80 dark:text-dark-danger dark:hover:text-dark-danger/80"
-  defp color_classes("link", "warning"), do: "text-warning hover:text-warning/80 dark:text-dark-warning dark:hover:text-dark-warning/80"
-  defp color_classes("link", "info"), do: "text-info hover:text-info/80 dark:text-dark-info dark:hover:text-dark-info/80"
+  defp color_classes("solid", "success"),
+    do:
+      "bg-success text-success-foreground hover:bg-success/90 active:bg-success/80 dark:bg-dark-success dark:text-dark-success-foreground dark:hover:bg-dark-success/90 dark:active:bg-dark-success/80"
+
+  defp color_classes("solid", "danger"),
+    do:
+      "bg-danger text-danger-foreground hover:bg-danger/90 active:bg-danger/80 dark:bg-dark-danger dark:text-dark-danger-foreground dark:hover:bg-dark-danger/90 dark:active:bg-dark-danger/80"
+
+  defp color_classes("solid", "warning"),
+    do:
+      "bg-warning text-warning-foreground hover:bg-warning/90 active:bg-warning/80 dark:bg-dark-warning dark:text-dark-warning-foreground dark:hover:bg-dark-warning/90 dark:active:bg-dark-warning/80"
+
+  defp color_classes("solid", "info"),
+    do:
+      "bg-info text-info-foreground hover:bg-info/90 active:bg-info/80 dark:bg-dark-info dark:text-dark-info-foreground dark:hover:bg-dark-info/90 dark:active:bg-dark-info/80"
+
+  defp color_classes("outline", "neutral"),
+    do:
+      "border-2 border-border dark:border-dark-border bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover active:bg-surface-1-active dark:active:bg-dark-surface-1-active"
+
+  defp color_classes("outline", "primary"),
+    do:
+      "border-2 border-primary bg-background text-primary hover:bg-primary/5 active:bg-primary/10 dark:border-dark-primary dark:bg-dark-background dark:text-dark-primary dark:hover:bg-dark-primary/10 dark:active:bg-dark-primary/20"
+
+  defp color_classes("outline", "secondary"),
+    do:
+      "border-2 border-secondary bg-background text-secondary hover:bg-secondary/5 active:bg-secondary/10 dark:border-dark-secondary dark:bg-dark-background dark:text-dark-secondary dark:hover:bg-dark-secondary/10 dark:active:bg-dark-secondary/20"
+
+  defp color_classes("outline", "success"),
+    do:
+      "border-2 border-success bg-background text-success hover:bg-success/5 active:bg-success/10 dark:border-dark-success dark:bg-dark-background dark:text-dark-success dark:hover:bg-dark-success/10 dark:active:bg-dark-success/20"
+
+  defp color_classes("outline", "danger"),
+    do:
+      "border-2 border-danger bg-background text-danger hover:bg-danger/5 active:bg-danger/10 dark:border-dark-danger dark:bg-dark-background dark:text-dark-danger dark:hover:bg-dark-danger/10 dark:active:bg-dark-danger/20"
+
+  defp color_classes("outline", "warning"),
+    do:
+      "border-2 border-warning bg-background text-warning hover:bg-warning/5 active:bg-warning/10 dark:border-dark-warning dark:bg-dark-background dark:text-dark-warning dark:hover:bg-dark-warning/10 dark:active:bg-dark-warning/20"
+
+  defp color_classes("outline", "info"),
+    do:
+      "border-2 border-info bg-background text-info hover:bg-info/5 active:bg-info/10 dark:border-dark-info dark:bg-dark-background dark:text-dark-info dark:hover:bg-dark-info/10 dark:active:bg-dark-info/20"
+
+  defp color_classes("ghost", "neutral"),
+    do:
+      "text-foreground dark:text-dark-foreground hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover active:bg-surface-1-active dark:active:bg-dark-surface-1-active"
+
+  defp color_classes("ghost", "primary"),
+    do:
+      "text-primary hover:bg-primary/10 active:bg-primary/20 dark:text-dark-primary dark:hover:bg-dark-primary/10 dark:active:bg-dark-primary/20"
+
+  defp color_classes("ghost", "secondary"),
+    do:
+      "text-secondary hover:bg-secondary/10 active:bg-secondary/20 dark:text-dark-secondary dark:hover:bg-dark-secondary/10 dark:active:bg-dark-secondary/20"
+
+  defp color_classes("ghost", "success"),
+    do:
+      "text-success hover:bg-success/10 active:bg-success/20 dark:text-dark-success dark:hover:bg-dark-success/10 dark:active:bg-dark-success/20"
+
+  defp color_classes("ghost", "danger"),
+    do:
+      "text-danger hover:bg-danger/10 active:bg-danger/20 dark:text-dark-danger dark:hover:bg-dark-danger/10 dark:active:bg-dark-danger/20"
+
+  defp color_classes("ghost", "warning"),
+    do:
+      "text-warning hover:bg-warning/10 active:bg-warning/20 dark:text-dark-warning dark:hover:bg-dark-warning/10 dark:active:bg-dark-warning/20"
+
+  defp color_classes("ghost", "info"),
+    do:
+      "text-info hover:bg-info/10 active:bg-info/20 dark:text-dark-info dark:hover:bg-dark-info/10 dark:active:bg-dark-info/20"
+
+  defp color_classes("link", "neutral"),
+    do:
+      "text-muted-foreground dark:text-dark-muted-foreground hover:text-foreground dark:hover:text-dark-foreground"
+
+  defp color_classes("link", "primary"),
+    do:
+      "text-primary hover:text-primary/80 dark:text-dark-primary dark:hover:text-dark-primary/80"
+
+  defp color_classes("link", "secondary"),
+    do:
+      "text-secondary hover:text-secondary/80 dark:text-dark-secondary dark:hover:text-dark-secondary/80"
+
+  defp color_classes("link", "success"),
+    do:
+      "text-success hover:text-success/80 dark:text-dark-success dark:hover:text-dark-success/80"
+
+  defp color_classes("link", "danger"),
+    do: "text-danger hover:text-danger/80 dark:text-dark-danger dark:hover:text-dark-danger/80"
+
+  defp color_classes("link", "warning"),
+    do:
+      "text-warning hover:text-warning/80 dark:text-dark-warning dark:hover:text-dark-warning/80"
+
+  defp color_classes("link", "info"),
+    do: "text-info hover:text-info/80 dark:text-dark-info dark:hover:text-dark-info/80"
 
   # Spinner size classes based on button size
   defp spinner_size_classes("xs"), do: "h-3 w-3 animate-spin"
@@ -285,5 +378,4 @@ defmodule Pulsar.Components.Button do
   defp spinner_size_classes("md"), do: "h-4 w-4 animate-spin"
   defp spinner_size_classes("lg"), do: "h-5 w-5 animate-spin"
   defp spinner_size_classes("xl"), do: "h-6 w-6 animate-spin"
-
 end

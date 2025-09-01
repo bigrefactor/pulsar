@@ -246,4 +246,3 @@ defmodule Pulsar.Components.Link do
   defp size_classes("xl"), do: "text-xl"
   defp size_classes("inherit"), do: ""
 end
-

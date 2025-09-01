@@ -33,5 +33,4 @@ defmodule Pulsar.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end
-
 end
