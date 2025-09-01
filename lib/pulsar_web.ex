@@ -52,8 +52,11 @@ defmodule PulsarWeb do
 
       # Define forwarding functions so component functions are available
       # on the using module (helps introspection and ergonomics)
-      def button(assigns), do: Pulsar.Components.Button.button(assigns)
-      def input(assigns), do: Pulsar.Components.Input.input(assigns)
+      alias Pulsar.Components.Button
+      alias Pulsar.Components.Input
+
+      def button(assigns), do: Button.button(assigns)
+      def input(assigns), do: Input.input(assigns)
     end
   end
 
@@ -63,15 +66,15 @@ defmodule PulsarWeb do
   def html do
     quote do
       use Phoenix.Component
+      use PhoenixHTMLHelpers
 
       import Phoenix.HTML
       import Phoenix.HTML.Form
-      use PhoenixHTMLHelpers
 
       # Import basic rendering functionality (render, render_layout, etc)
       import Phoenix.View
-
       import PulsarWeb.Layouts
+
       unquote(verified_routes())
     end
   end
@@ -92,8 +95,10 @@ defmodule PulsarWeb do
     quote do
       import Pulsar.Components.Button
 
+      alias Pulsar.Components.Button
+
       # Define a forwarding function to expose :button on the caller
-      def button(assigns), do: Pulsar.Components.Button.button(assigns)
+      def button(assigns), do: Button.button(assigns)
     end
   end
 

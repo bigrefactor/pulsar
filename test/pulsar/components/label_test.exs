@@ -1,7 +1,8 @@
 defmodule Pulsar.Components.LabelTest do
   use ExUnit.Case, async: true
-  import Phoenix.LiveViewTest
+
   import Phoenix.Component
+  import Phoenix.LiveViewTest
 
   alias Pulsar.Components.Label
 

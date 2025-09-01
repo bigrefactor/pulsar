@@ -62,9 +62,10 @@ defmodule Pulsar.Components.Label do
   """
 
   use Phoenix.Component
-  alias Stellar.Components.Label, as: StellarLabel
 
   import TailwindMerge, only: [merge: 1]
+
+  alias Stellar.Components.Label, as: StellarLabel
 
   @doc """
   Renders a styled label component with typography variants and visual indicators.
@@ -84,8 +85,7 @@ defmodule Pulsar.Components.Label do
 
   attr :class, :string, default: "", doc: "Additional CSS classes"
 
-  attr :rest, :global,
-    doc: "Additional HTML attributes passed through to the underlying label element"
+  attr :rest, :global, doc: "Additional HTML attributes passed through to the underlying label element"
 
   slot :inner_block, required: true, doc: "Label text content"
 

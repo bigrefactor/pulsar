@@ -55,16 +55,16 @@ defmodule Pulsar.Components.Link do
   """
 
   use Phoenix.Component
-  alias Stellar.Components.Link, as: StellarLink
 
   import TailwindMerge, only: [merge: 1]
+
+  alias Stellar.Components.Link, as: StellarLink
 
   # Pulsar-specific styling attributes
   attr :variant, :string,
     default: "solid",
     values: ~w(solid ghost outline),
-    doc:
-      "Visual style variant of the link. solid=no underline, ghost=hover underline, outline=always underline"
+    doc: "Visual style variant of the link. solid=no underline, ghost=hover underline, outline=always underline"
 
   attr :color, :string,
     default: "primary",
@@ -204,19 +204,16 @@ defmodule Pulsar.Components.Link do
   # Variant-specific border behavior
   defp variant_classes("solid"), do: "no-underline"
 
-  defp variant_classes("ghost"),
-    do: "no-underline border-b-2 border-transparent hover:border-current pb-0.5"
+  defp variant_classes("ghost"), do: "no-underline border-b-2 border-transparent hover:border-current pb-0.5"
 
   defp variant_classes("outline"), do: "no-underline border-b-2 border-current pb-0.5"
 
   # Color classes using semantic tokens + opacity
   defp color_classes("primary"),
-    do:
-      "text-primary hover:text-primary/80 dark:text-dark-primary dark:hover:text-dark-primary/80"
+    do: "text-primary hover:text-primary/80 dark:text-dark-primary dark:hover:text-dark-primary/80"
 
   defp color_classes("secondary"),
-    do:
-      "text-secondary hover:text-secondary/80 dark:text-dark-secondary dark:hover:text-dark-secondary/80"
+    do: "text-secondary hover:text-secondary/80 dark:text-dark-secondary dark:hover:text-dark-secondary/80"
 
   defp color_classes("muted"),
     do:
@@ -226,15 +223,12 @@ defmodule Pulsar.Components.Link do
     do: "text-danger hover:text-danger/80 dark:text-dark-danger dark:hover:text-dark-danger/80"
 
   defp color_classes("success"),
-    do:
-      "text-success hover:text-success/80 dark:text-dark-success dark:hover:text-dark-success/80"
+    do: "text-success hover:text-success/80 dark:text-dark-success dark:hover:text-dark-success/80"
 
   defp color_classes("warning"),
-    do:
-      "text-warning hover:text-warning/80 dark:text-dark-warning dark:hover:text-dark-warning/80"
+    do: "text-warning hover:text-warning/80 dark:text-dark-warning dark:hover:text-dark-warning/80"
 
-  defp color_classes("info"),
-    do: "text-info hover:text-info/80 dark:text-dark-info dark:hover:text-dark-info/80"
+  defp color_classes("info"), do: "text-info hover:text-info/80 dark:text-dark-info dark:hover:text-dark-info/80"
 
   defp color_classes("inherit"), do: "text-inherit"
 

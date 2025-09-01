@@ -50,19 +50,22 @@ defmodule Mix.Tasks.Pulsar.Install do
 
   use Igniter.Mix.Task
 
+  alias Igniter.Mix.Task.Info
+  alias Igniter.Project.Deps
+
   @impl Igniter.Mix.Task
   def info(_argv, _composing_task) do
-    %Igniter.Mix.Task.Info{
-      group: :pulsar,
-      example: "mix pulsar.install",
-      positional: [],
+    %Info{
+      aliases: [],
       composes: [],
+      example: "mix pulsar.install",
+      group: :pulsar,
+      positional: [],
       schema: [
         theme: :string,
         skip_deps: :boolean,
         skip_css: :boolean
-      ],
-      aliases: []
+      ]
     }
   end
 
@@ -95,8 +98,8 @@ defmodule Mix.Tasks.Pulsar.Install do
 
   defp maybe_add_dependencies(igniter, false = _skip) do
     igniter
-    |> Igniter.Project.Deps.add_dep({:stellar, "~> 0.1"})
-    |> Igniter.Project.Deps.add_dep({:tailwind_merge, "~> 0.1"})
+    |> Deps.add_dep({:stellar, "~> 0.1"})
+    |> Deps.add_dep({:tailwind_merge, "~> 0.1"})
   end
 
   # Install theme CSS unless skipped

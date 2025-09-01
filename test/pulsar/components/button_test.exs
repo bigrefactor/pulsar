@@ -1,7 +1,8 @@
 defmodule Pulsar.Components.ButtonTest do
   use ExUnit.Case
-  import Phoenix.LiveViewTest
+
   import Phoenix.Component
+  import Phoenix.LiveViewTest
 
   alias Pulsar.Components.Button
 

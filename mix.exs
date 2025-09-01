@@ -1,6 +1,12 @@
 defmodule Pulsar.MixProject do
   use Mix.Project
 
+  alias Pulsar.Components.Button
+  alias Pulsar.Components.Input
+  alias Pulsar.Components.Label
+  alias Pulsar.Components.Link
+  alias Pulsar.Components.Textarea
+
   @version "0.1.0"
   @source_url "https://github.com/bigrefactor/pulsar"
 
@@ -12,14 +18,14 @@ defmodule Pulsar.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases(),
-      
+
       # Hex.pm package configuration
       description: description(),
       package: package(),
-      
+
       # Documentation configuration
       docs: docs(),
-      
+
       # Test configuration
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
@@ -29,7 +35,7 @@ defmodule Pulsar.MixProject do
         "coveralls.html": :test,
         "coveralls.cobertura": :test
       ],
-      
+
       # Dialyzer configuration
       dialyzer: [
         plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
@@ -104,8 +110,8 @@ defmodule Pulsar.MixProject do
       maintainers: ["Your Name"],
       licenses: ["MIT"],
       links: %{
-        "GitHub" => @source_url,
         "Changelog" => "#{@source_url}/blob/main/CHANGELOG.md",
+        "GitHub" => @source_url,
         "Sponsor" => "https://github.com/sponsors/bigrefactor"
       },
       files: ~w(
@@ -128,15 +134,15 @@ defmodule Pulsar.MixProject do
       extras: [
         "README.md",
         "CHANGELOG.md": [title: "Changelog"],
-        "LICENSE": [title: "License"]
+        LICENSE: [title: "License"]
       ],
       groups_for_modules: [
         Components: [
-          Pulsar.Components.Button,
-          Pulsar.Components.Input,
-          Pulsar.Components.Label,
-          Pulsar.Components.Link,
-          Pulsar.Components.Textarea
+          Button,
+          Input,
+          Label,
+          Link,
+          Textarea
         ],
         Generators: [
           Mix.Tasks.Pulsar.Gen.Button,

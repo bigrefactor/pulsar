@@ -1,5 +1,6 @@
 defmodule Pulsar.Components.LinkTest do
   use ExUnit.Case, async: true
+
   import Phoenix.Component, only: [sigil_H: 2]
   import Phoenix.LiveViewTest, only: [rendered_to_string: 1]
 
@@ -274,9 +275,7 @@ defmodule Pulsar.Components.LinkTest do
       assigns = %{}
 
       html =
-        rendered_to_string(
-          ~H"<Link.a href=\"/test\" aria_label=\"Go to profile\">Profile</Link.a>"
-        )
+        rendered_to_string(~H"<Link.a href=\"/test\" aria_label=\"Go to profile\">Profile</Link.a>")
 
       assert html =~ ~s(aria-label="Go to profile")
     end
@@ -285,9 +284,7 @@ defmodule Pulsar.Components.LinkTest do
       assigns = %{}
 
       html =
-        rendered_to_string(
-          ~H"<Link.a href=\"/test\" aria_describedby=\"help-text\">Link</Link.a>"
-        )
+        rendered_to_string(~H"<Link.a href=\"/test\" aria_describedby=\"help-text\">Link</Link.a>")
 
       assert html =~ ~s(aria-describedby="help-text")
     end
@@ -305,9 +302,7 @@ defmodule Pulsar.Components.LinkTest do
       assigns = %{}
 
       html =
-        rendered_to_string(
-          ~H"<Link.a href=\"/test\" class=\"custom-class font-bold\">Link</Link.a>"
-        )
+        rendered_to_string(~H"<Link.a href=\"/test\" class=\"custom-class font-bold\">Link</Link.a>")
 
       assert html =~ "custom-class"
       assert html =~ "font-bold"
@@ -343,9 +338,7 @@ defmodule Pulsar.Components.LinkTest do
       assigns = %{}
 
       html =
-        rendered_to_string(
-          ~H"<Link.a href=\"/test\" variant=\"ghost\" color=\"muted\">Link</Link.a>"
-        )
+        rendered_to_string(~H"<Link.a href=\"/test\" variant=\"ghost\" color=\"muted\">Link</Link.a>")
 
       assert html =~ "text-muted-foreground"
       assert html =~ "border-b-2"
@@ -356,9 +349,7 @@ defmodule Pulsar.Components.LinkTest do
       assigns = %{}
 
       html =
-        rendered_to_string(
-          ~H"<Link.a href=\"/test\" variant=\"outline\" color=\"danger\">Link</Link.a>"
-        )
+        rendered_to_string(~H"<Link.a href=\"/test\" variant=\"outline\" color=\"danger\">Link</Link.a>")
 
       assert html =~ "text-danger"
       assert html =~ "border-b-2"

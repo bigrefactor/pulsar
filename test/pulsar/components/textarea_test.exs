@@ -1,8 +1,11 @@
 defmodule Pulsar.Components.TextareaTest do
   use ExUnit.Case
-  import Phoenix.LiveViewTest
-  import Phoenix.Component
 
+  import Phoenix.Component
+  import Phoenix.LiveViewTest
+
+  alias Phoenix.HTML.Form
+  alias Phoenix.HTML.FormField
   alias Pulsar.Components.Textarea
 
   describe "textarea/1 basic functionality" do
@@ -570,10 +573,10 @@ defmodule Pulsar.Components.TextareaTest do
   describe "automatic error state handling" do
     test "error state overrides to danger styling" do
       # Create a form field with errors
-      field = %Phoenix.HTML.FormField{
+      field = %FormField{
         errors: [{"is too short", []}],
         field: :description,
-        form: %Phoenix.HTML.Form{},
+        form: %Form{},
         id: "user_description",
         name: "user[description]",
         value: ""
@@ -600,10 +603,10 @@ defmodule Pulsar.Components.TextareaTest do
 
     test "no error state uses specified color" do
       # Create a form field without errors
-      field = %Phoenix.HTML.FormField{
+      field = %FormField{
         errors: [],
         field: :description,
-        form: %Phoenix.HTML.Form{},
+        form: %Form{},
         id: "user_description",
         name: "user[description]",
         value: "Some content"
@@ -628,10 +631,10 @@ defmodule Pulsar.Components.TextareaTest do
 
     test "character count reflects error color" do
       # Create a form field with errors
-      field = %Phoenix.HTML.FormField{
+      field = %FormField{
         errors: [{"is too short", []}],
         field: :description,
-        form: %Phoenix.HTML.Form{},
+        form: %Form{},
         id: "user_description",
         name: "user[description]",
         value: "Short"
@@ -652,10 +655,10 @@ defmodule Pulsar.Components.TextareaTest do
 
   describe "Phoenix form integration" do
     test "accepts field attribute for form integration" do
-      field = %Phoenix.HTML.FormField{
+      field = %FormField{
         errors: [],
         field: :description,
-        form: %Phoenix.HTML.Form{},
+        form: %Form{},
         id: "user_description",
         name: "user[description]",
         value: "Test content"
@@ -674,10 +677,10 @@ defmodule Pulsar.Components.TextareaTest do
     end
 
     test "character count works with field values" do
-      field = %Phoenix.HTML.FormField{
+      field = %FormField{
         errors: [],
         field: :description,
-        form: %Phoenix.HTML.Form{},
+        form: %Form{},
         id: "user_description",
         name: "user[description]",
         value: "Hello World"

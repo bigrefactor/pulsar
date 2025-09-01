@@ -37,20 +37,24 @@ defmodule Mix.Tasks.Pulsar.Gen.Button do
 
   use Igniter.Mix.Task
 
+  alias Igniter.Libs.Phoenix
+  alias Igniter.Mix.Task.Info
+  alias Igniter.Project.Deps
+
   @impl Igniter.Mix.Task
   def info(_argv, _composing_task) do
-    %Igniter.Mix.Task.Info{
-      group: :pulsar,
-      example: "mix pulsar.gen.button",
-      positional: [],
-      composes: [],
-      schema: [
-        path: :string,
-        module: :string
-      ],
+    %Info{
       aliases: [
         p: :path,
         m: :module
+      ],
+      composes: [],
+      example: "mix pulsar.gen.button",
+      group: :pulsar,
+      positional: [],
+      schema: [
+        path: :string,
+        module: :string
       ]
     }
   end
@@ -61,7 +65,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Button do
     {options, _argv} = OptionParser.parse!(argv, strict: [path: :string, module: :string])
 
     app_name = Igniter.Project.Application.app_name(igniter)
-    web_module = Igniter.Libs.Phoenix.web_module(igniter)
+    web_module = Phoenix.web_module(igniter)
 
     # Determine paths and module names
     {component_path, component_module} = get_component_info(app_name, web_module, options)
@@ -104,8 +108,8 @@ defmodule Mix.Tasks.Pulsar.Gen.Button do
   # Ensure required dependencies are added
   defp ensure_dependencies(igniter) do
     igniter
-    |> Igniter.Project.Deps.add_dep({:stellar, "~> 0.1"})
-    |> Igniter.Project.Deps.add_dep({:tailwind_merge, "~> 0.1"})
+    |> Deps.add_dep({:stellar, "~> 0.1"})
+    |> Deps.add_dep({:tailwind_merge, "~> 0.1"})
   end
 
   # Create the button component file

@@ -68,9 +68,12 @@ defmodule Pulsar.Components.Input do
   """
 
   use Phoenix.Component
-  alias Stellar.Components.Input, as: StellarInput
 
   import TailwindMerge, only: [merge: 1]
+
+  alias Phoenix.HTML.FormField
+  alias Phoenix.LiveView.Rendered
+  alias Stellar.Components.Input, as: StellarInput
 
   # Pulsar-specific styling attributes
   attr :variant, :string,
@@ -90,12 +93,11 @@ defmodule Pulsar.Components.Input do
 
   # Stellar input attributes - copied from Stellar.Components.Input
   attr :type, :string,
-    values:
-      ~w(text email password number tel url search date time datetime-local month week color range file hidden),
+    values: ~w(text email password number tel url search date time datetime-local month week color range file hidden),
     default: "text",
     doc: "Input type"
 
-  attr :field, Phoenix.HTML.FormField, default: nil, doc: "Phoenix form field"
+  attr :field, FormField, default: nil, doc: "Phoenix form field"
 
   # Core attributes
   attr :id, :string,
@@ -152,7 +154,7 @@ defmodule Pulsar.Components.Input do
 
   Error states automatically apply danger styling when using Phoenix forms.
   """
-  @spec input(map()) :: Phoenix.LiveView.Rendered.t()
+  @spec input(map()) :: Rendered.t()
   def input(%{type: "hidden"} = assigns) do
     # Validate required attributes for hidden inputs too
     if is_nil(assigns[:field]) and is_nil(assigns[:name]) do
@@ -467,8 +469,7 @@ defmodule Pulsar.Components.Input do
   defp decorator_position_classes(_, "ghost"), do: ""
 
   defp decorator_color_classes("outline", "neutral"),
-    do:
-      "bg-border dark:bg-dark-border text-neutral-700 dark:text-neutral-300 border-border dark:border-dark-border"
+    do: "bg-border dark:bg-dark-border text-neutral-700 dark:text-neutral-300 border-border dark:border-dark-border"
 
   defp decorator_color_classes("outline", "primary"),
     do:
@@ -519,16 +520,12 @@ defmodule Pulsar.Components.Input do
       "bg-warning/20 dark:bg-dark-warning/30 text-warning dark:text-dark-warning border-warning/30 dark:border-dark-warning/40"
 
   defp decorator_color_classes("solid", "info"),
-    do:
-      "bg-info/20 dark:bg-dark-info/30 text-info dark:text-dark-info border-info/30 dark:border-dark-info/40"
+    do: "bg-info/20 dark:bg-dark-info/30 text-info dark:text-dark-info border-info/30 dark:border-dark-info/40"
 
-  defp decorator_color_classes("ghost", _color),
-    do: "text-muted-foreground dark:text-dark-muted-foreground"
+  defp decorator_color_classes("ghost", _color), do: "text-muted-foreground dark:text-dark-muted-foreground"
 
   # Keep local and private - helper for error detection
-  defp has_field_errors(%{field: %Phoenix.HTML.FormField{errors: errs}})
-       when is_list(errs) and errs != [],
-       do: true
+  defp has_field_errors(%{field: %FormField{errors: errs}}) when is_list(errs) and errs != [], do: true
 
   defp has_field_errors(_), do: false
 end
