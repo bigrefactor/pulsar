@@ -58,7 +58,7 @@ defmodule Pulsar.MixProject do
       {:phoenix_live_view, "~> 1.1"},
       {:phoenix_html, "~> 4.0"},
       {:stellar, github: "bigrefactor/stellar"},
-      {:tailwind_merge, github: "guitsaru/tailwind_merge"},
+      {:tailwind_merge, github: "bigrefactor/tailwind_merge"},
       {:igniter, "~> 0.6"},
 
       # Quality tools

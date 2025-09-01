@@ -43,6 +43,9 @@ jobs:
           path: _build
           key: ${{ runner.os }}-build-docs-${{ hashFiles('mix.lock') }}
 
+      - name: Configure Git for private repos
+        run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
+
       - name: Install dependencies
         run: mix deps.get
 
@@ -91,6 +94,9 @@ jobs:
         with:
           path: deps
           key: ${{ runner.os }}-deps-validate-${{ hashFiles('mix.lock') }}
+
+      - name: Configure Git for private repos
+        run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
 
       - name: Install dependencies
         run: mix deps.get

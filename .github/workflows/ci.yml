@@ -60,6 +60,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-plt-${{ matrix.elixir }}-${{ matrix.otp }}-
 
+      - name: Configure Git for private repos
+        run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
+
       - name: Install dependencies
         run: |
           mix deps.get
@@ -115,6 +118,9 @@ jobs:
           path: deps
           key: ${{ runner.os }}-deps-security-${{ hashFiles('mix.lock') }}
 
+      - name: Configure Git for private repos
+        run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
+
       - name: Install dependencies
         run: mix deps.get
 
@@ -140,6 +146,9 @@ jobs:
         with:
           path: deps
           key: ${{ runner.os }}-deps-package-${{ hashFiles('mix.lock') }}
+
+      - name: Configure Git for private repos
+        run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
 
       - name: Install dependencies
         run: mix deps.get
