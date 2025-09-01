@@ -274,15 +274,13 @@ defmodule Pulsar.Components.Textarea do
     <div class="flex justify-between items-center text-sm" aria-hidden="true">
       <div class={@count_color_class}>
         {@character_count}{if @max_length != nil, do: "/#{@max_length}"}
-        <%= if @over_limit and @chars_remaining != nil do %>
+        <span :if={@over_limit and @chars_remaining != nil}>
           ({abs(@chars_remaining)} over)
-        <% end %>
+        </span>
       </div>
-      <%= if @max_length != nil and @chars_remaining != nil and @chars_remaining <= (@max_length * 0.1) and @chars_remaining > 0 do %>
-        <div class="text-warning dark:text-dark-warning">
-          {@chars_remaining} remaining
-        </div>
-      <% end %>
+      <div :if={@max_length != nil and @chars_remaining != nil and @chars_remaining <= (@max_length * 0.1) and @chars_remaining > 0} class="text-warning dark:text-dark-warning">
+        {@chars_remaining} remaining
+      </div>
     </div>
     """
   end
