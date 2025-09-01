@@ -50,8 +50,15 @@ jobs:
           VERSION="${{ steps.version.outputs.version }}"
           
           if [ -f CHANGELOG.md ]; then
-            # Extract changelog section for this version
-            CHANGELOG=$(sed -n "/^## \[$VERSION\]/,/^## \[/p" CHANGELOG.md | head -n -1 | tail -n +2)
+            # Extract lines from the header for VERSION up to the next header or EOF
+            CHANGELOG=$(awk -v ver="$VERSION" '
+              BEGIN{p=0}
+              /^## \[/{
+                if (p==1) { exit }                     # next header → stop
+                if ($0 ~ "^## \\[" ver "\\]") { p=1; next }
+              }
+              p==1 { print }
+            ' CHANGELOG.md)
             
             if [ -z "$CHANGELOG" ]; then
               echo "No changelog entry found for version $VERSION"
@@ -67,7 +74,6 @@ jobs:
           CHANGELOG="${CHANGELOG//$'\n'/'%0A'}"
           CHANGELOG="${CHANGELOG//$'\r'/'%0D'}"
           echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
-
       - name: Cache deps
         id: cache-deps-release-validate
         uses: actions/cache@v4
