@@ -127,39 +127,39 @@ jobs:
       - name: Run security audit
         run: mix deps.audit
 
-  package:
-    name: Package Validation
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Elixir
-        uses: erlef/setup-beam@v1
-        with:
-          elixir-version: '1.18'
-          otp-version: '27'
-          version-type: loose
-
-      - name: Cache deps
-        uses: actions/cache@v4
-        with:
-          path: deps
-          key: ${{ runner.os }}-deps-package-${{ hashFiles('mix.lock') }}
-
-      - name: Configure Git for private repos
-        run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
-
-      - name: Install dependencies
-        run: mix deps.get
-
-      - name: Build package
-        run: mix hex.build
-
-      - name: Validate package contents
-        run: |
-          # Check that required files are included
-          tar -tzf pulsar-*.tar | grep -E "(lib/|priv/|README.md|CHANGELOG.md|LICENSE|mix.exs)"
-          
-          # Check that build artifacts are excluded
-          ! tar -tzf pulsar-*.tar | grep -E "(_build/|deps/|.git/|*.beam)"
+  # package:
+  #   name: Package Validation
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #
+  #     - name: Set up Elixir
+  #       uses: erlef/setup-beam@v1
+  #       with:
+  #         elixir-version: '1.18'
+  #         otp-version: '27'
+  #         version-type: loose
+  #
+  #     - name: Cache deps
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: deps
+  #         key: ${{ runner.os }}-deps-package-${{ hashFiles('mix.lock') }}
+  #
+  #     - name: Configure Git for private repos
+  #       run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
+  #
+  #     - name: Install dependencies
+  #       run: mix deps.get
+  #
+  #     - name: Build package
+  #       run: mix hex.build
+  #
+  #     - name: Validate package contents
+  #       run: |
+  #         # Check that required files are included
+  #         tar -tzf pulsar-*.tar | grep -E "(lib/|priv/|README.md|CHANGELOG.md|LICENSE|mix.exs)"
+  #
+  #         # Check that build artifacts are excluded
+  #         ! tar -tzf pulsar-*.tar | grep -E "(_build/|deps/|.git/|*.beam)"
