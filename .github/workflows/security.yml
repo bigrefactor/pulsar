@@ -262,18 +262,7 @@ jobs:
       - name: Run security-focused Credo checks
         run: |
           echo "Running security-focused static analysis..."
-          
-          # Run Credo with focus on security-related checks
-          mix credo --checks-without-tag documentation \
-                    --checks-without-tag readability \
-                    --checks-with-tag security 2>&1 | tee credo_security.log
-          
-          if grep -q "warning\|error" credo_security.log; then
-            echo "🔴 Security-related code issues found!"
-            exit 1
-          else
-            echo "✅ No security-related issues found"
-          fi
+          mix credo --strict --only security
 
   secrets-detection:
     name: Detect Hardcoded Secrets
