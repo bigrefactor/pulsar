@@ -65,16 +65,17 @@ jobs:
 
       - name: Run dependency security audit
         run: |
+          set -o pipefail
           echo "Running security audit..."
-          mix deps.audit 2>&1 | tee security_audit.log
           
-          # Check if audit found any vulnerabilities
-          if grep -q "Found vulnerable" security_audit.log; then
+          # Run audit and tee output to log file, relying on exit code for failure detection
+          if mix deps.audit 2>&1 | tee security_audit.log; then
+            echo "✅ No security vulnerabilities found"
+          else
             echo "🔴 Security vulnerabilities found!"
+            echo "Full audit log:"
             cat security_audit.log
             exit 1
-          else
-            echo "✅ No security vulnerabilities found"
           fi
 
       - name: Check for outdated dependencies
@@ -274,6 +275,7 @@ jobs:
 
       - name: Scan for hardcoded secrets
         run: |
+          set -euo pipefail
           echo "Scanning for potential hardcoded secrets..."
           
           # Common secret patterns
@@ -290,8 +292,12 @@ jobs:
           
           SECRETS_FOUND=false
           
+          # Scan repository root excluding build and vendor directories
+          EXCLUDE_DIRS=".git,_build,deps,node_modules,vendor,coverage,tmp,priv/static"
+          
           for pattern in "${SECRET_PATTERNS[@]}"; do
-            if grep -r -i -E "$pattern" lib/ test/ 2>/dev/null; then
+            echo "Checking pattern: $pattern"
+            if grep -r -i -E "$pattern" . --exclude-dir={$EXCLUDE_DIRS} --exclude="*.log" --exclude="*.lock" 2>/dev/null | head -10; then
               echo "🔴 Potential hardcoded secret found matching pattern: $pattern"
               SECRETS_FOUND=true
             fi
@@ -302,6 +308,23 @@ jobs:
             exit 1
           else
             echo "✅ No hardcoded secrets detected"
+          fi
+
+      - name: Advanced secret scanning with Gitleaks
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          echo "Running advanced secret detection with Gitleaks..."
+          
+          # Install gitleaks
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks_linux_x64.tar.gz | tar -xz
+          sudo mv gitleaks /usr/local/bin/
+          
+          # Run gitleaks scan
+          if gitleaks detect --source . --verbose --no-banner --exit-code 1; then
+            echo "✅ Gitleaks: No secrets detected"
+          else
+            echo "⚠️ Gitleaks detected potential secrets (non-blocking for now)"
           fi
 
   report:
