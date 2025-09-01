@@ -1,8 +1,11 @@
 defmodule Pulsar.Components.TextareaTest do
   use ExUnit.Case
-  import Phoenix.LiveViewTest
-  import Phoenix.Component
 
+  import Phoenix.Component
+  import Phoenix.LiveViewTest
+
+  alias Phoenix.HTML.Form
+  alias Phoenix.HTML.FormField
   alias Pulsar.Components.Textarea
 
   describe "textarea/1 basic functionality" do
@@ -382,11 +385,11 @@ defmodule Pulsar.Components.TextareaTest do
 
       html =
         rendered_to_string(~H"""
-        <Textarea.textarea name="test" character_count max_length={100} value="Hello" />
+        <Textarea.textarea name="test" show_character_count max_length={100} value="Hello" />
         """)
 
       # Shows current count / max
-      assert html =~ "5<span>/100</span>"
+      assert html =~ "<span>5</span><span>/100</span>"
       # Normal state color
       assert html =~ "text-muted-foreground"
     end
@@ -396,10 +399,10 @@ defmodule Pulsar.Components.TextareaTest do
 
       html =
         rendered_to_string(~H"""
-        <Textarea.textarea name="test" character_count max_length={100} value={@long_text} />
+        <Textarea.textarea name="test" show_character_count max_length={100} value={@long_text} />
         """)
 
-      assert html =~ "95<span>/100</span>"
+      assert html =~ "<span>95</span><span>/100</span>"
       assert html =~ "text-warning"
       assert html =~ "5 remaining"
     end
@@ -409,10 +412,10 @@ defmodule Pulsar.Components.TextareaTest do
 
       html =
         rendered_to_string(~H"""
-        <Textarea.textarea name="test" character_count max_length={100} value={@at_limit_text} />
+        <Textarea.textarea name="test" show_character_count max_length={100} value={@at_limit_text} />
         """)
 
-      assert html =~ "100<span>/100</span>"
+      assert html =~ "<span>100</span><span>/100</span>"
       assert html =~ "text-danger"
       assert html =~ "font-medium"
     end
@@ -422,10 +425,10 @@ defmodule Pulsar.Components.TextareaTest do
 
       html =
         rendered_to_string(~H"""
-        <Textarea.textarea name="test" character_count max_length={100} value={@over_limit_text} />
+        <Textarea.textarea name="test" show_character_count max_length={100} value={@over_limit_text} />
         """)
 
-      assert html =~ "105<span>/100</span>"
+      assert html =~ "<span>105</span><span>/100</span>"
       assert html =~ "text-danger"
       assert html =~ "5 over"
     end
@@ -435,7 +438,7 @@ defmodule Pulsar.Components.TextareaTest do
 
       html =
         rendered_to_string(~H"""
-        <Textarea.textarea name="test" character_count value="Hello World" />
+        <Textarea.textarea name="test" show_character_count value="Hello World" />
         """)
 
       # Just shows count
@@ -449,10 +452,10 @@ defmodule Pulsar.Components.TextareaTest do
 
       html =
         rendered_to_string(~H"""
-        <Textarea.textarea name="test" character_count max_length={100} />
+        <Textarea.textarea name="test" show_character_count max_length={100} />
         """)
 
-      assert html =~ "0<span>/100</span>"
+      assert html =~ "<span>0</span><span>/100</span>"
     end
 
     test "counts Unicode characters correctly" do
@@ -460,11 +463,11 @@ defmodule Pulsar.Components.TextareaTest do
 
       html =
         rendered_to_string(~H"""
-        <Textarea.textarea name="test" character_count max_length={100} value="👋🌍" />
+        <Textarea.textarea name="test" show_character_count max_length={100} value="👋🌍" />
         """)
 
       # Emoji should count as individual characters
-      assert html =~ "2<span>/100</span>"
+      assert html =~ "<span>2</span><span>/100</span>"
     end
   end
 
@@ -570,10 +573,10 @@ defmodule Pulsar.Components.TextareaTest do
   describe "automatic error state handling" do
     test "error state overrides to danger styling" do
       # Create a form field with errors
-      field = %Phoenix.HTML.FormField{
+      field = %FormField{
         errors: [{"is too short", []}],
         field: :description,
-        form: %Phoenix.HTML.Form{},
+        form: %Form{},
         id: "user_description",
         name: "user[description]",
         value: ""
@@ -600,10 +603,10 @@ defmodule Pulsar.Components.TextareaTest do
 
     test "no error state uses specified color" do
       # Create a form field without errors
-      field = %Phoenix.HTML.FormField{
+      field = %FormField{
         errors: [],
         field: :description,
-        form: %Phoenix.HTML.Form{},
+        form: %Form{},
         id: "user_description",
         name: "user[description]",
         value: "Some content"
@@ -628,10 +631,10 @@ defmodule Pulsar.Components.TextareaTest do
 
     test "character count reflects error color" do
       # Create a form field with errors
-      field = %Phoenix.HTML.FormField{
+      field = %FormField{
         errors: [{"is too short", []}],
         field: :description,
-        form: %Phoenix.HTML.Form{},
+        form: %Form{},
         id: "user_description",
         name: "user[description]",
         value: "Short"
@@ -641,21 +644,21 @@ defmodule Pulsar.Components.TextareaTest do
 
       html =
         rendered_to_string(~H"""
-        <Textarea.textarea field={@field} character_count max_length={100} />
+        <Textarea.textarea field={@field} show_character_count max_length={100} />
         """)
 
-      # Character count should show with normal color (not error color since not at limit)
-      assert html =~ "5<span>/100</span>"
-      assert html =~ "text-muted-foreground"
+      # Character count should reflect error color to match textarea styling
+      assert html =~ "<span>5</span><span>/100</span>"
+      assert html =~ "text-danger"
     end
   end
 
   describe "Phoenix form integration" do
     test "accepts field attribute for form integration" do
-      field = %Phoenix.HTML.FormField{
+      field = %FormField{
         errors: [],
         field: :description,
-        form: %Phoenix.HTML.Form{},
+        form: %Form{},
         id: "user_description",
         name: "user[description]",
         value: "Test content"
@@ -674,10 +677,10 @@ defmodule Pulsar.Components.TextareaTest do
     end
 
     test "character count works with field values" do
-      field = %Phoenix.HTML.FormField{
+      field = %FormField{
         errors: [],
         field: :description,
-        form: %Phoenix.HTML.Form{},
+        form: %Form{},
         id: "user_description",
         name: "user[description]",
         value: "Hello World"
@@ -687,11 +690,11 @@ defmodule Pulsar.Components.TextareaTest do
 
       html =
         rendered_to_string(~H"""
-        <Textarea.textarea field={@field} character_count max_length={50} />
+        <Textarea.textarea field={@field} show_character_count max_length={50} />
         """)
 
       # Count from field value
-      assert html =~ "11<span>/50</span>"
+      assert html =~ "<span>11</span><span>/50</span>"
     end
   end
 

@@ -1,8 +1,11 @@
 defmodule Pulsar.Components.InputTest do
   use ExUnit.Case
-  import Phoenix.LiveViewTest
-  import Phoenix.Component
 
+  import Phoenix.Component
+  import Phoenix.LiveViewTest
+
+  alias Phoenix.HTML.Form
+  alias Phoenix.HTML.FormField
   alias Pulsar.Components.Input
 
   describe "input/1 basic functionality" do
@@ -289,10 +292,10 @@ defmodule Pulsar.Components.InputTest do
   describe "automatic error state handling" do
     test "error state overrides to danger styling" do
       # Create a form field with errors
-      field = %Phoenix.HTML.FormField{
+      field = %FormField{
         errors: [{"is required", []}],
         field: :email,
-        form: %Phoenix.HTML.Form{},
+        form: %Form{},
         id: "user_email",
         name: "user[email]",
         value: ""
@@ -318,10 +321,10 @@ defmodule Pulsar.Components.InputTest do
 
     test "no error state uses neutral color" do
       # Create a form field without errors
-      field = %Phoenix.HTML.FormField{
+      field = %FormField{
         errors: [],
         field: :email,
-        form: %Phoenix.HTML.Form{},
+        form: %Form{},
         id: "user_email",
         name: "user[email]",
         value: "test@example.com"
@@ -339,16 +342,16 @@ defmodule Pulsar.Components.InputTest do
       assert html =~ "text-neutral"
 
       # Should have data attributes for valid state
-      refute html =~ ~s(data-invalid)
+      assert html =~ ~s(data-invalid="false")
       assert html =~ ~s(data-color="neutral")
     end
 
     test "sets aria-invalid to 'true' when field has errors" do
       # Create a form field with errors
-      field = %Phoenix.HTML.FormField{
+      field = %FormField{
         errors: [{"is required", []}],
         field: :email,
-        form: %Phoenix.HTML.Form{},
+        form: %Form{},
         id: "user_email",
         name: "user[email]",
         value: ""
@@ -368,10 +371,10 @@ defmodule Pulsar.Components.InputTest do
 
     test "sets aria-invalid to 'false' when field has no errors" do
       # Create a form field without errors
-      field = %Phoenix.HTML.FormField{
+      field = %FormField{
         errors: [],
         field: :email,
-        form: %Phoenix.HTML.Form{},
+        form: %Form{},
         id: "user_email",
         name: "user[email]",
         value: "test@example.com"
@@ -404,10 +407,10 @@ defmodule Pulsar.Components.InputTest do
 
     test "error state affects decorators too" do
       # Create a form field with errors
-      field = %Phoenix.HTML.FormField{
+      field = %FormField{
         errors: [{"is required", []}],
         field: :email,
-        form: %Phoenix.HTML.Form{},
+        form: %Form{},
         id: "user_email",
         name: "user[email]",
         value: ""

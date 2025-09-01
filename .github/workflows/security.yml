@@ -1,0 +1,375 @@
+name: Security Scan
+
+on:
+  schedule:
+    # Run every Monday at 9 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'mix.exs'
+      - 'mix.lock'
+
+jobs:
+  security-audit:
+    name: Security Vulnerability Audit
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.18'
+          otp-version: '27'
+          version-type: loose
+
+      - name: Cache deps
+        id: cache-deps-security-audit
+        uses: actions/cache@v4
+        with:
+          path: deps
+          key: ${{ runner.os }}-deps-security-audit-dev-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-security-audit-dev-
+            ${{ runner.os }}-deps-security-dev-
+            ${{ runner.os }}-deps-dev-
+            ${{ runner.os }}-deps-
+
+      - name: Cache _build
+        id: cache-build-security-audit
+        uses: actions/cache@v4
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-security-audit-dev-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-security-audit-dev-
+            ${{ runner.os }}-build-security-dev-
+            ${{ runner.os }}-build-dev-
+            ${{ runner.os }}-build-
+
+      - name: Configure Git for private repos
+        run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Cache Status Report
+        run: |
+          echo "Cache status for security audit:"
+          echo "- Deps cache hit: ${{ steps.cache-deps-security-audit.outputs.cache-hit || 'false' }}"
+          echo "- Build cache hit: ${{ steps.cache-build-security-audit.outputs.cache-hit || 'false' }}"
+
+      - name: Run dependency security audit
+        run: |
+          set -o pipefail
+          echo "Running security audit..."
+          
+          # Run audit and tee output to log file, relying on exit code for failure detection
+          if mix deps.audit 2>&1 | tee security_audit.log; then
+            echo "✅ No security vulnerabilities found"
+          else
+            echo "🔴 Security vulnerabilities found!"
+            echo "Full audit log:"
+            cat security_audit.log
+            exit 1
+          fi
+
+      - name: Check for outdated dependencies
+        run: |
+          echo "Checking for outdated dependencies..."
+          mix hex.outdated --all 2>&1 | tee outdated_deps.log
+          
+          # Report outdated dependencies but don't fail the build
+          if grep -q "outdated" outdated_deps.log; then
+            echo "📋 Some dependencies are outdated (consider updating):"
+            cat outdated_deps.log
+          else
+            echo "✅ All dependencies are up to date"
+          fi
+
+      - name: Check for retired packages
+        run: |
+          echo "Checking for retired Hex packages..."
+          mix hex.audit 2>&1 | tee hex_audit.log
+          
+          if grep -q "RETIRED" hex_audit.log; then
+            echo "⚠️ Found retired packages:"
+            cat hex_audit.log
+            # Don't fail for retired packages, just warn
+          else
+            echo "✅ No retired packages found"
+          fi
+
+  license-compliance:
+    name: License Compliance Check
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.18'
+          otp-version: '27'
+          version-type: loose
+
+      - name: Cache deps
+        id: cache-deps-license-compliance
+        uses: actions/cache@v4
+        with:
+          path: deps
+          key: ${{ runner.os }}-deps-license-compliance-dev-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-license-compliance-dev-
+            ${{ runner.os }}-deps-license-dev-
+            ${{ runner.os }}-deps-dev-
+            ${{ runner.os }}-deps-
+
+      - name: Cache _build
+        id: cache-build-license-compliance
+        uses: actions/cache@v4
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-license-compliance-dev-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-license-compliance-dev-
+            ${{ runner.os }}-build-license-dev-
+            ${{ runner.os }}-build-dev-
+            ${{ runner.os }}-build-
+
+      - name: Configure Git for private repos
+        run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Cache Status Report
+        run: |
+          echo "Cache status for license compliance:"
+          echo "- Deps cache hit: ${{ steps.cache-deps-license-compliance.outputs.cache-hit || 'false' }}"
+          echo "- Build cache hit: ${{ steps.cache-build-license-compliance.outputs.cache-hit || 'false' }}"
+
+      - name: Check dependency licenses
+        run: |
+          echo "Checking dependency licenses..."
+          
+          # Create a script to extract licenses from dependencies
+          cat > check_licenses.exs << 'EOF'
+          deps = Mix.Dep.loaded([])
+          
+          IO.puts("Dependency License Report")
+          IO.puts("========================")
+          
+          for dep <- deps do
+            app_path = dep.opts[:dest] || "deps/#{dep.app}"
+            mix_file = Path.join(app_path, "mix.exs")
+            
+            licenses = if File.exists?(mix_file) do
+              try do
+                {mod, _} = Code.eval_file(mix_file)
+                project = apply(mod, :project, [])
+                get_in(project, [:package, :licenses]) || ["Unknown"]
+              rescue
+                _ -> ["Unknown"]
+              end
+            else
+              ["Unknown"]
+            end
+            
+            IO.puts("#{dep.app}: #{Enum.join(licenses, ", ")}")
+          end
+          EOF
+          
+          elixir check_licenses.exs > license_report.txt
+          cat license_report.txt
+          
+          # Check for problematic licenses (GPL, LGPL, etc.)
+          if grep -iE "(gpl|lgpl|agpl)" license_report.txt; then
+            echo "⚠️ Found potentially problematic copyleft licenses"
+            echo "Please review the license compatibility for your use case"
+            # Don't fail for licenses, just warn
+          else
+            echo "✅ No problematic licenses detected"
+          fi
+
+  security-credo:
+    name: Security-Focused Static Analysis
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.18'
+          otp-version: '27'
+          version-type: loose
+
+      - name: Cache deps
+        id: cache-deps-security-credo
+        uses: actions/cache@v4
+        with:
+          path: deps
+          key: ${{ runner.os }}-deps-security-credo-dev-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-security-credo-dev-
+            ${{ runner.os }}-deps-security-dev-
+            ${{ runner.os }}-deps-dev-
+            ${{ runner.os }}-deps-
+
+      - name: Cache _build
+        id: cache-build-security-credo
+        uses: actions/cache@v4
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-security-credo-dev-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-security-credo-dev-
+            ${{ runner.os }}-build-security-dev-
+            ${{ runner.os }}-build-dev-
+            ${{ runner.os }}-build-
+
+      - name: Cache Dialyzer PLT
+        id: cache-plt-security-credo
+        uses: actions/cache@v4
+        with:
+          path: priv/plts
+          key: ${{ runner.os }}-plt-1.18-27-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-plt-1.18-27-
+            ${{ runner.os }}-plt-
+
+      - name: Configure Git for private repos
+        run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Cache Status Report
+        run: |
+          echo "Cache status for security Credo checks:"
+          echo "- Deps cache hit: ${{ steps.cache-deps-security-credo.outputs.cache-hit || 'false' }}"
+          echo "- Build cache hit: ${{ steps.cache-build-security-credo.outputs.cache-hit || 'false' }}"
+          echo "- PLT cache hit: ${{ steps.cache-plt-security-credo.outputs.cache-hit || 'false' }}"
+
+      - name: Run security-focused Credo checks
+        run: |
+          echo "Running security-focused static analysis..."
+          mix credo --strict --only security
+
+  secrets-detection:
+    name: Detect Hardcoded Secrets
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Scan for hardcoded secrets
+        run: |
+          set -euo pipefail
+          echo "Scanning for potential hardcoded secrets..."
+          
+          # Common secret patterns
+          SECRET_PATTERNS=(
+            "password.*=.*['\"][^'\"]{8,}['\"]"
+            "api_key.*=.*['\"][^'\"]{20,}['\"]"
+            "secret.*=.*['\"][^'\"]{16,}['\"]"
+            "token.*=.*['\"][^'\"]{20,}['\"]"
+            "private_key"
+            "-----BEGIN.*PRIVATE KEY-----"
+            "sk_live_[a-zA-Z0-9]{24,}"
+            "pk_live_[a-zA-Z0-9]{24,}"
+          )
+          
+          SECRETS_FOUND=false
+          
+          # Scan repository root excluding build and vendor directories
+          EXCLUDE_DIRS=".git,_build,deps,node_modules,vendor,coverage,tmp,priv/static"
+          
+          for pattern in "${SECRET_PATTERNS[@]}"; do
+            echo "Checking pattern: $pattern"
+            if grep -r -i -E "$pattern" . --exclude-dir={$EXCLUDE_DIRS} --exclude="*.log" --exclude="*.lock" 2>/dev/null | head -10; then
+              echo "🔴 Potential hardcoded secret found matching pattern: $pattern"
+              SECRETS_FOUND=true
+            fi
+          done
+          
+          if [ "$SECRETS_FOUND" = true ]; then
+            echo "❌ Hardcoded secrets detected!"
+            exit 1
+          else
+            echo "✅ No hardcoded secrets detected"
+          fi
+
+      - name: Advanced secret scanning with Gitleaks
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          echo "Running advanced secret detection with Gitleaks..."
+          
+          # Install gitleaks
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks_linux_x64.tar.gz | tar -xz
+          sudo mv gitleaks /usr/local/bin/
+          
+          # Run gitleaks scan
+          if gitleaks detect --source . --verbose --no-banner --exit-code 1; then
+            echo "✅ Gitleaks: No secrets detected"
+          else
+            echo "⚠️ Gitleaks detected potential secrets (non-blocking for now)"
+          fi
+
+  report:
+    name: Security Report Summary
+    runs-on: ubuntu-22.04
+    needs: [security-audit, license-compliance, security-credo, secrets-detection]
+    if: always()
+    
+    steps:
+      - name: Generate Security Report
+        run: |
+          echo "# Security Scan Summary"
+          echo "Date: $(date -u)"
+          echo ""
+          
+          if [ "${{ needs.security-audit.result }}" = "success" ]; then
+            echo "✅ Dependency Security Audit: PASSED"
+          else
+            echo "❌ Dependency Security Audit: FAILED"
+          fi
+          
+          if [ "${{ needs.license-compliance.result }}" = "success" ]; then
+            echo "✅ License Compliance Check: PASSED"
+          else
+            echo "⚠️ License Compliance Check: WARNINGS"
+          fi
+          
+          if [ "${{ needs.security-credo.result }}" = "success" ]; then
+            echo "✅ Security Static Analysis: PASSED"
+          else
+            echo "❌ Security Static Analysis: FAILED"
+          fi
+          
+          if [ "${{ needs.secrets-detection.result }}" = "success" ]; then
+            echo "✅ Secrets Detection: PASSED"
+          else
+            echo "❌ Secrets Detection: FAILED"
+          fi
+          
+          echo ""
+          echo "For detailed results, check individual job logs."
+
+      - name: Fail if critical security issues found
+        if: needs.security-audit.result == 'failure' || needs.secrets-detection.result == 'failure'
+        run: |
+          echo "❌ Critical security issues detected!"
+          echo "Please review the security scan results and address any vulnerabilities."
+          exit 1

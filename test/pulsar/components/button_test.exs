@@ -1,7 +1,8 @@
 defmodule Pulsar.Components.ButtonTest do
   use ExUnit.Case
-  import Phoenix.LiveViewTest
+
   import Phoenix.Component
+  import Phoenix.LiveViewTest
 
   alias Pulsar.Components.Button
 
@@ -293,7 +294,7 @@ defmodule Pulsar.Components.ButtonTest do
       # Link variants should behave like text links, not buttons
       # No fixed height
       refute html =~ "h-12"
-      # No fixed padding  
+      # No fixed padding
       refute html =~ "px-6"
       # No forced text size
       refute html =~ "text-lg"

@@ -1,0 +1,288 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+env:
+  MIX_ENV: prod
+
+jobs:
+  validate:
+    name: Validate Release
+    runs-on: ubuntu-22.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      changelog: ${{ steps.changelog.outputs.changelog }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.18'
+          otp-version: '27'
+          version-type: loose
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION"
+
+      - name: Validate version matches mix.exs
+        run: |
+          MIX_VERSION=$(mix run -e 'IO.puts(Mix.Project.config()[:version])' --no-start)
+          TAG_VERSION="${{ steps.version.outputs.version }}"
+          
+          if [ "$MIX_VERSION" != "$TAG_VERSION" ]; then
+            echo "Version mismatch: mix.exs shows $MIX_VERSION but tag is $TAG_VERSION"
+            exit 1
+          fi
+          echo "Version validation passed: $TAG_VERSION"
+      - name: Extract changelog entry
+        id: changelog
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          
+          if [ -f CHANGELOG.md ]; then
+            # Extract lines from the header for VERSION up to the next header or EOF
+            CHANGELOG=$(awk -v ver="$VERSION" '
+              BEGIN{p=0}
+              /^## \[/{
+                if (p==1) { exit }                     # next header → stop
+                if ($0 ~ "^## \\[" ver "\\]") { p=1; next }
+              }
+              p==1 { print }
+            ' CHANGELOG.md)
+            
+            if [ -z "$CHANGELOG" ]; then
+              echo "No changelog entry found for version $VERSION"
+              CHANGELOG="Release $VERSION"
+            fi
+          else
+            echo "No CHANGELOG.md found"
+            CHANGELOG="Release $VERSION"
+          fi
+          
+          # Escape for GitHub output
+          CHANGELOG="${CHANGELOG//'%'/'%25'}"
+          CHANGELOG="${CHANGELOG//$'\n'/'%0A'}"
+          CHANGELOG="${CHANGELOG//$'\r'/'%0D'}"
+          echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
+      - name: Cache deps
+        id: cache-deps-release-validate
+        uses: actions/cache@v4
+        with:
+          path: deps
+          key: ${{ runner.os }}-deps-release-validate-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-release-validate-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-release-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-
+
+      - name: Cache _build
+        id: cache-build-release-validate
+        uses: actions/cache@v4
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-release-validate-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-release-validate-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-release-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-
+
+      - name: Cache Dialyzer PLT
+        id: cache-plt-release-validate
+        uses: actions/cache@v4
+        with:
+          path: priv/plts
+          key: ${{ runner.os }}-plt-1.18-27-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-plt-1.18-27-
+            ${{ runner.os }}-plt-
+
+      - name: Configure Git for private repos
+        run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Cache Status Report
+        run: |
+          echo "Cache status for release validation:"
+          echo "- Deps cache hit: ${{ steps.cache-deps-release-validate.outputs.cache-hit || 'false' }}"
+          echo "- Build cache hit: ${{ steps.cache-build-release-validate.outputs.cache-hit || 'false' }}"
+          echo "- PLT cache hit: ${{ steps.cache-plt-release-validate.outputs.cache-hit || 'false' }}"
+
+      - name: Run full quality pipeline
+        run: mix check.ci
+
+  publish-hex:
+    name: Publish to Hex.pm
+    runs-on: ubuntu-22.04
+    needs: validate
+    environment:
+      name: hex-pm
+      url: https://hex.pm/packages/pulsar
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.18'
+          otp-version: '27'
+          version-type: loose
+
+      - name: Cache deps
+        id: cache-deps-release-publish
+        uses: actions/cache@v4
+        with:
+          path: deps
+          key: ${{ runner.os }}-deps-release-publish-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-release-publish-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-release-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-
+
+      - name: Cache _build
+        id: cache-build-release-publish
+        uses: actions/cache@v4
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-release-publish-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-release-publish-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-release-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-
+
+      - name: Configure Git for private repos
+        run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Cache Status Report
+        run: |
+          echo "Cache status for hex publishing:"
+          echo "- Deps cache hit: ${{ steps.cache-deps-release-publish.outputs.cache-hit || 'false' }}"
+          echo "- Build cache hit: ${{ steps.cache-build-release-publish.outputs.cache-hit || 'false' }}"
+
+      - name: Build package
+        run: mix hex.build
+
+      - name: Publish to Hex.pm
+        run: mix hex.publish --yes
+        env:
+          HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
+
+  publish-docs:
+    name: Publish Documentation to Hex.pm
+    runs-on: ubuntu-22.04
+    needs: [validate, publish-hex]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.18'
+          otp-version: '27'
+          version-type: loose
+
+      - name: Cache deps
+        id: cache-deps-release-docs
+        uses: actions/cache@v4
+        with:
+          path: deps
+          key: ${{ runner.os }}-deps-release-docs-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-release-docs-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-release-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-
+
+      - name: Cache _build
+        id: cache-build-release-docs
+        uses: actions/cache@v4
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-release-docs-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-release-docs-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-release-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-
+
+      - name: Configure Git for private repos
+        run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Cache Status Report
+        run: |
+          echo "Cache status for docs publishing:"
+          echo "- Deps cache hit: ${{ steps.cache-deps-release-docs.outputs.cache-hit || 'false' }}"
+          echo "- Build cache hit: ${{ steps.cache-build-release-docs.outputs.cache-hit || 'false' }}"
+
+      - name: Generate and publish docs
+        run: mix hex.publish docs --yes
+        env:
+          HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
+
+  create-github-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-22.04
+    needs: [validate, publish-hex]
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: v${{ needs.validate.outputs.version }}
+          name: Release v${{ needs.validate.outputs.version }}
+          body: ${{ needs.validate.outputs.changelog }}
+          draft: false
+          prerelease: ${{ contains(needs.validate.outputs.version, '-') }}
+
+  notify:
+    name: Post-Release Notifications
+    runs-on: ubuntu-22.04
+    needs: [validate, publish-hex, publish-docs, create-github-release]
+    if: always()
+    
+    steps:
+      - name: Report Success
+        if: needs.publish-hex.result == 'success' && needs.publish-docs.result == 'success'
+        run: |
+          echo "✅ Successfully released Pulsar v${{ needs.validate.outputs.version }}"
+          echo "📦 Hex.pm: https://hex.pm/packages/pulsar"
+          echo "📚 Documentation: https://hexdocs.pm/pulsar"
+          echo "🏷️ GitHub Release: ${{ github.server_url }}/${{ github.repository }}/releases/tag/v${{ needs.validate.outputs.version }}"
+
+      - name: Report Failure
+        if: needs.publish-hex.result == 'failure' || needs.publish-docs.result == 'failure'
+        run: |
+          echo "❌ Release failed for Pulsar v${{ needs.validate.outputs.version }}"
+          echo "Check the workflow logs for details"
+          exit 1

@@ -1,5 +1,6 @@
 defmodule Pulsar.Components.LinkTest do
   use ExUnit.Case, async: true
+
   import Phoenix.Component, only: [sigil_H: 2]
   import Phoenix.LiveViewTest, only: [rendered_to_string: 1]
 
@@ -8,7 +9,11 @@ defmodule Pulsar.Components.LinkTest do
   describe "Link.a/1 basic functionality" do
     test "renders link with default props (solid variant, primary color)" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/test\">Test Link</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test">Test Link</Link.a>
+        """)
 
       assert html =~ ~s(href="/test")
       assert html =~ "Test Link"
@@ -19,7 +24,11 @@ defmodule Pulsar.Components.LinkTest do
 
     test "renders with custom href" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/profile\">Profile</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/profile">Profile</Link.a>
+        """)
 
       assert html =~ ~s(href="/profile")
       assert html =~ "Profile"
@@ -27,7 +36,11 @@ defmodule Pulsar.Components.LinkTest do
 
     test "accepts inner_block content" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/test\">Custom Content</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test">Custom Content</Link.a>
+        """)
 
       assert html =~ "Custom Content"
     end
@@ -36,7 +49,11 @@ defmodule Pulsar.Components.LinkTest do
   describe "Link.a/1 variants" do
     test "renders solid variant (default)" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/test\">Link</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test">Link</Link.a>
+        """)
 
       assert html =~ "no-underline"
       refute html =~ "hover:underline"
@@ -46,7 +63,11 @@ defmodule Pulsar.Components.LinkTest do
 
     test "renders ghost variant with transparent border" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/test\" variant=\"ghost\">Link</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test" variant="ghost">Link</Link.a>
+        """)
 
       assert html =~ "no-underline"
       assert html =~ "border-b-2"
@@ -56,7 +77,11 @@ defmodule Pulsar.Components.LinkTest do
 
     test "renders outline variant with permanent border" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/test\" variant=\"outline\">Link</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test" variant="outline">Link</Link.a>
+        """)
 
       assert html =~ "border-b-2"
       assert html =~ "border-current"
@@ -68,7 +93,11 @@ defmodule Pulsar.Components.LinkTest do
   describe "Link.a/1 colors" do
     test "renders primary color (default)" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/test\">Link</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test">Link</Link.a>
+        """)
 
       assert html =~ "text-primary"
       assert html =~ "hover:text-primary/80"
@@ -77,7 +106,11 @@ defmodule Pulsar.Components.LinkTest do
 
     test "renders secondary color" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/test\" color=\"secondary\">Link</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test" color="secondary">Link</Link.a>
+        """)
 
       assert html =~ "text-secondary"
       assert html =~ "hover:text-secondary/80"
@@ -86,7 +119,11 @@ defmodule Pulsar.Components.LinkTest do
 
     test "renders muted color" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/test\" color=\"muted\">Link</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test" color="muted">Link</Link.a>
+        """)
 
       assert html =~ "text-muted-foreground"
       assert html =~ "hover:text-muted-foreground/70"
@@ -95,7 +132,11 @@ defmodule Pulsar.Components.LinkTest do
 
     test "renders danger color" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/test\" color=\"danger\">Link</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test" color="danger">Link</Link.a>
+        """)
 
       assert html =~ "text-danger"
       assert html =~ "hover:text-danger/80"
@@ -104,7 +145,11 @@ defmodule Pulsar.Components.LinkTest do
 
     test "renders success color" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/test\" color=\"success\">Link</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test" color="success">Link</Link.a>
+        """)
 
       assert html =~ "text-success"
       assert html =~ "hover:text-success/80"
@@ -112,7 +157,11 @@ defmodule Pulsar.Components.LinkTest do
 
     test "renders warning color" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/test\" color=\"warning\">Link</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test" color="warning">Link</Link.a>
+        """)
 
       assert html =~ "text-warning"
       assert html =~ "hover:text-warning/80"
@@ -120,7 +169,11 @@ defmodule Pulsar.Components.LinkTest do
 
     test "renders info color" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/test\" color=\"info\">Link</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test" color="info">Link</Link.a>
+        """)
 
       assert html =~ "text-info"
       assert html =~ "hover:text-info/80"
@@ -128,7 +181,11 @@ defmodule Pulsar.Components.LinkTest do
 
     test "renders inherit color" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/test\" color=\"inherit\">Link</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test" color="inherit">Link</Link.a>
+        """)
 
       assert html =~ "text-inherit"
       refute html =~ "hover:"
@@ -138,7 +195,11 @@ defmodule Pulsar.Components.LinkTest do
   describe "Link.a/1 sizes" do
     test "renders inherit size (default)" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/test\">Link</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test">Link</Link.a>
+        """)
 
       refute html =~ "text-xs"
       refute html =~ "text-sm"
@@ -158,7 +219,12 @@ defmodule Pulsar.Components.LinkTest do
 
       for {size, expected_class} <- sizes do
         assigns = %{size: size}
-        html = rendered_to_string(~H"<Link.a href=\"/test\" size={@size}>Link</Link.a>")
+
+        html =
+          rendered_to_string(~H"""
+          <Link.a href="/test" size={@size}>Link</Link.a>
+          """)
+
         assert html =~ expected_class, "Expected #{expected_class} for size #{size}"
       end
     end
@@ -167,7 +233,11 @@ defmodule Pulsar.Components.LinkTest do
   describe "Link.a/1 external links (automatic detection)" do
     test "treats internal paths as internal" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/internal\">Internal</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/internal">Internal</Link.a>
+        """)
 
       assert html =~ ~s(href="/internal")
       # Should not have data-external attribute for internal links
@@ -178,7 +248,11 @@ defmodule Pulsar.Components.LinkTest do
   describe "Link.a/1 Phoenix navigation" do
     test "renders with navigate attribute" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a navigate=\"/dashboard\">Dashboard</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a navigate="/dashboard">Dashboard</Link.a>
+        """)
 
       assert html =~ ~s(data-phx-link="redirect")
       assert html =~ ~s(data-phx-link-state="push")
@@ -187,7 +261,11 @@ defmodule Pulsar.Components.LinkTest do
 
     test "renders with patch attribute" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a patch=\"/current\">Current</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a patch="/current">Current</Link.a>
+        """)
 
       assert html =~ ~s(data-phx-link="patch")
       assert html =~ ~s(data-phx-link-state="push")
@@ -196,14 +274,22 @@ defmodule Pulsar.Components.LinkTest do
 
     test "renders with replace flag" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a navigate=\"/dashboard\" replace>Dashboard</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a navigate="/dashboard" replace>Dashboard</Link.a>
+        """)
 
       assert html =~ ~s(data-phx-link-state="replace")
     end
 
     test "renders with method attribute" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/delete\" method=\"delete\">Delete</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/delete" method="delete">Delete</Link.a>
+        """)
 
       assert html =~ ~s(data-method="delete")
     end
@@ -263,7 +349,11 @@ defmodule Pulsar.Components.LinkTest do
   describe "Link.a/1 accessibility" do
     test "includes focus ring classes" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/test\">Link</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test">Link</Link.a>
+        """)
 
       assert html =~ "focus-visible:outline-none"
       assert html =~ "focus-visible:ring-2"
@@ -274,9 +364,9 @@ defmodule Pulsar.Components.LinkTest do
       assigns = %{}
 
       html =
-        rendered_to_string(
-          ~H"<Link.a href=\"/test\" aria_label=\"Go to profile\">Profile</Link.a>"
-        )
+        rendered_to_string(~H"""
+        <Link.a href="/test" aria_label="Go to profile">Profile</Link.a>
+        """)
 
       assert html =~ ~s(aria-label="Go to profile")
     end
@@ -285,16 +375,20 @@ defmodule Pulsar.Components.LinkTest do
       assigns = %{}
 
       html =
-        rendered_to_string(
-          ~H"<Link.a href=\"/test\" aria_describedby=\"help-text\">Link</Link.a>"
-        )
+        rendered_to_string(~H"""
+        <Link.a href="/test" aria_describedby="help-text">Link</Link.a>
+        """)
 
       assert html =~ ~s(aria-describedby="help-text")
     end
 
     test "supports aria-current attribute" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/test\" aria_current=\"page\">Current</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test" aria_current="page">Current</Link.a>
+        """)
 
       assert html =~ ~s(aria-current="page")
     end
@@ -305,9 +399,9 @@ defmodule Pulsar.Components.LinkTest do
       assigns = %{}
 
       html =
-        rendered_to_string(
-          ~H"<Link.a href=\"/test\" class=\"custom-class font-bold\">Link</Link.a>"
-        )
+        rendered_to_string(~H"""
+        <Link.a href="/test" class="custom-class font-bold">Link</Link.a>
+        """)
 
       assert html =~ "custom-class"
       assert html =~ "font-bold"
@@ -317,14 +411,22 @@ defmodule Pulsar.Components.LinkTest do
 
     test "supports id attribute" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/test\" id=\"my-link\">Link</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test" id="my-link">Link</Link.a>
+        """)
 
       assert html =~ ~s(id="my-link")
     end
 
     test "passes through rest attributes" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/test\" data-test=\"link-test\">Link</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test" data-test="link-test">Link</Link.a>
+        """)
 
       assert html =~ ~s(data-test="link-test")
     end
@@ -333,7 +435,11 @@ defmodule Pulsar.Components.LinkTest do
   describe "Link.a/1 variant and color combinations" do
     test "solid primary (default) - no underline, primary color" do
       assigns = %{}
-      html = rendered_to_string(~H"<Link.a href=\"/test\">Link</Link.a>")
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test">Link</Link.a>
+        """)
 
       assert html =~ "text-primary"
       assert html =~ "no-underline"
@@ -343,9 +449,9 @@ defmodule Pulsar.Components.LinkTest do
       assigns = %{}
 
       html =
-        rendered_to_string(
-          ~H"<Link.a href=\"/test\" variant=\"ghost\" color=\"muted\">Link</Link.a>"
-        )
+        rendered_to_string(~H"""
+        <Link.a href="/test" variant="ghost" color="muted">Link</Link.a>
+        """)
 
       assert html =~ "text-muted-foreground"
       assert html =~ "border-b-2"
@@ -356,9 +462,9 @@ defmodule Pulsar.Components.LinkTest do
       assigns = %{}
 
       html =
-        rendered_to_string(
-          ~H"<Link.a href=\"/test\" variant=\"outline\" color=\"danger\">Link</Link.a>"
-        )
+        rendered_to_string(~H"""
+        <Link.a href="/test" variant="outline" color="danger">Link</Link.a>
+        """)
 
       assert html =~ "text-danger"
       assert html =~ "border-b-2"

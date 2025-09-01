@@ -1,5 +1,6 @@
 defmodule PulsarTest do
   use ExUnit.Case
+
   doctest Pulsar
 
   describe "version/0" do

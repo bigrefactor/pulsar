@@ -4,6 +4,11 @@
 # If you run "mix test --cover", coverage assets end up here.
 /cover/
 
+# ExCoveralls coverage reports
+/coverage/
+coverage.json
+excoveralls.json
+
 # The directory Mix downloads your dependencies sources to.
 /deps/
 
@@ -18,6 +23,11 @@ erl_crash.dump
 
 # Ignore package tarball (built via "mix hex.build").
 pulsar-*.tar
+
+# Dialyzer PLT files (built locally and in CI)
+/priv/plts/
+*.plt
+*.plt.hash
 
 # Temporary files, for example, from tests.
 /tmp/

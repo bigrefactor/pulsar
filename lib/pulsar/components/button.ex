@@ -51,9 +51,10 @@ defmodule Pulsar.Components.Button do
   """
 
   use Phoenix.Component
-  alias Stellar.Components.Button, as: StellarButton
 
   import TailwindMerge, only: [merge: 1]
+
+  alias Stellar.Components.Button, as: StellarButton
 
   # Pulsar-specific styling attributes
   attr :variant, :string,
@@ -213,8 +214,7 @@ defmodule Pulsar.Components.Button do
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25">
-        </circle>
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
         <path
           fill="currentColor"
           class="opacity-75"
@@ -347,27 +347,22 @@ defmodule Pulsar.Components.Button do
       "text-info hover:bg-info/10 active:bg-info/20 dark:text-dark-info dark:hover:bg-dark-info/10 dark:active:bg-dark-info/20"
 
   defp color_classes("link", "neutral"),
-    do:
-      "text-muted-foreground dark:text-dark-muted-foreground hover:text-foreground dark:hover:text-dark-foreground"
+    do: "text-muted-foreground dark:text-dark-muted-foreground hover:text-foreground dark:hover:text-dark-foreground"
 
   defp color_classes("link", "primary"),
-    do:
-      "text-primary hover:text-primary/80 dark:text-dark-primary dark:hover:text-dark-primary/80"
+    do: "text-primary hover:text-primary/80 dark:text-dark-primary dark:hover:text-dark-primary/80"
 
   defp color_classes("link", "secondary"),
-    do:
-      "text-secondary hover:text-secondary/80 dark:text-dark-secondary dark:hover:text-dark-secondary/80"
+    do: "text-secondary hover:text-secondary/80 dark:text-dark-secondary dark:hover:text-dark-secondary/80"
 
   defp color_classes("link", "success"),
-    do:
-      "text-success hover:text-success/80 dark:text-dark-success dark:hover:text-dark-success/80"
+    do: "text-success hover:text-success/80 dark:text-dark-success dark:hover:text-dark-success/80"
 
   defp color_classes("link", "danger"),
     do: "text-danger hover:text-danger/80 dark:text-dark-danger dark:hover:text-dark-danger/80"
 
   defp color_classes("link", "warning"),
-    do:
-      "text-warning hover:text-warning/80 dark:text-dark-warning dark:hover:text-dark-warning/80"
+    do: "text-warning hover:text-warning/80 dark:text-dark-warning dark:hover:text-dark-warning/80"
 
   defp color_classes("link", "info"),
     do: "text-info hover:text-info/80 dark:text-dark-info dark:hover:text-dark-info/80"
