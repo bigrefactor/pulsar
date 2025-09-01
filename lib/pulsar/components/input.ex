@@ -147,7 +147,12 @@ defmodule Pulsar.Components.Input do
 
   Error states automatically apply danger styling when using Phoenix forms.
   """
+  @spec input(map()) :: Phoenix.LiveView.Rendered.t()
   def input(%{type: "hidden"} = assigns) do
+    # Validate required attributes for hidden inputs too
+    if is_nil(assigns[:field]) and is_nil(assigns[:name]) do
+      raise ArgumentError, "Input component requires :name when :field is not provided"
+    end
     ~H"""
     <StellarInput.input
       type="hidden"
@@ -171,12 +176,7 @@ defmodule Pulsar.Components.Input do
     end
 
     # Detect errors and compute automatic color
-    has_errors =
-      case assigns[:field] do
-        %Phoenix.HTML.FormField{errors: errs} when errs != [] -> true
-        _ -> false
-      end
-
+    has_errors = has_field_errors(assigns)
     effective_color = if has_errors, do: "danger", else: assigns.color
 
     class =
@@ -239,7 +239,7 @@ defmodule Pulsar.Components.Input do
         required={@required}
         disabled={@disabled}
         readonly={@readonly}
-        aria-invalid={if @invalid, do: "true", else: "false"}
+        aria-invalid={@invalid && "true"}
         {@rest}
       />
 
@@ -517,4 +517,8 @@ defmodule Pulsar.Components.Input do
 
   defp decorator_color_classes("ghost", _color),
     do: "text-muted-foreground dark:text-dark-muted-foreground"
+
+  # Keep local and private - helper for error detection
+  defp has_field_errors(%{field: %Phoenix.HTML.FormField{errors: errs}}) when errs != [], do: true
+  defp has_field_errors(_), do: false
 end

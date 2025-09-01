@@ -67,8 +67,8 @@ defmodule Pulsar.Components.Textarea do
   - Phoenix form integration with automatic error detection
   - Character counting with data attributes
   - Auto-resize functionality
-  - Accessibility features and ARIA attributes
-  - Validation error handling with `aria-describedby`
+  - Accessibility features and ARIA attributes (including `aria-invalid`)
+  - Validation error signaling via `aria-invalid` (Stellar no longer sets `aria-describedby`)
   - All standard HTML attributes
 
   ## Character Count Display
@@ -180,6 +180,7 @@ defmodule Pulsar.Components.Textarea do
 
   Error states automatically apply danger styling when using Phoenix forms.
   """
+  @spec textarea(map()) :: Phoenix.LiveView.Rendered.t()
   def textarea(assigns) do
     # Validate required attributes
     if is_nil(assigns[:field]) and is_nil(assigns[:name]) do
@@ -233,7 +234,7 @@ defmodule Pulsar.Components.Textarea do
         disabled={@disabled}
         readonly={@readonly}
         auto_resize={@auto_resize}
-        character_count={@data_character_count}
+        character_count={@character_count}
         max_length={@data_max_length}
         style={build_custom_height_styles(@min_height, @max_height)}
         data-variant={@variant}
@@ -472,7 +473,7 @@ defmodule Pulsar.Components.Textarea do
 
     if custom_min || custom_max do
       # Let CSS style handle custom constraints
-      ""
+      nil
     else
       default_constraints
     end
