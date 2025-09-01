@@ -294,7 +294,7 @@ defmodule Pulsar.Components.ButtonTest do
       # Link variants should behave like text links, not buttons
       # No fixed height
       refute html =~ "h-12"
-      # No fixed padding  
+      # No fixed padding
       refute html =~ "px-6"
       # No forced text size
       refute html =~ "text-lg"

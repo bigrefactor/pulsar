@@ -100,7 +100,6 @@
              max_line_count: 100
            ]},
           {Credo.Check.Refactor.MatchInCondition, []},
-          {Credo.Check.Refactor.MapInto, []},
           {Credo.Check.Refactor.NegatedConditionsInUnless, []},
           {Credo.Check.Refactor.NegatedConditionsWithElse, []},
           {Credo.Check.Refactor.Nesting,
@@ -117,7 +116,6 @@
           {Credo.Check.Warning.ExpensiveEmptyEnumCheck, []},
           {Credo.Check.Warning.IExPry, []},
           {Credo.Check.Warning.IoInspect, []},
-          {Credo.Check.Warning.LazyLogging, []},
           {Credo.Check.Warning.MixEnv, []},
           {Credo.Check.Warning.OperationOnSameValues, []},
           {Credo.Check.Warning.OperationWithConstantResult, []},
@@ -141,7 +139,13 @@
           {Credo.Check.Design.DuplicatedCode, []},
 
           # Disabled because Phoenix.Component uses them extensively
-          {Credo.Check.Readability.StrictModuleLayout, []}
+          {Credo.Check.Readability.StrictModuleLayout, []},
+
+          # Disabled due to Elixir version incompatibility (requires < 1.8.0)
+          {Credo.Check.Refactor.MapInto, []},
+
+          # Disabled due to Elixir version incompatibility (requires < 1.7.0)
+          {Credo.Check.Warning.LazyLogging, []}
         ]
       }
     }

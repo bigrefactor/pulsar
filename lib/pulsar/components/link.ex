@@ -128,7 +128,7 @@ defmodule Pulsar.Components.Link do
       <Link.a href="/profile" size="lg">Large Profile Link</Link.a>
   """
   def a(assigns) do
-    # Build complete class string using TailwindMerge - only include needed classes  
+    # Build complete class string using TailwindMerge - only include needed classes
     assigns =
       assign(
         assigns,

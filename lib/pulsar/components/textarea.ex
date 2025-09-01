@@ -26,7 +26,7 @@ defmodule Pulsar.Components.Textarea do
       <.textarea 
         field={@form[:comment]} 
         auto_resize 
-        character_count 
+        show_character_count 
         max_length={500}
         placeholder="Share your thoughts..."
       />
@@ -38,7 +38,7 @@ defmodule Pulsar.Components.Textarea do
         color="primary" 
         size="lg"
         auto_resize
-        character_count
+        show_character_count
         max_length={1000}
       />
 
@@ -51,7 +51,7 @@ defmodule Pulsar.Components.Textarea do
         min_height="120px"
         max_height="300px"
         auto_resize
-        character_count
+        show_character_count
         max_length={800}
       />
 
@@ -73,7 +73,7 @@ defmodule Pulsar.Components.Textarea do
 
   ## Character Count Display
 
-  When `character_count` is enabled, a visual character counter appears below the textarea
+  When `show_character_count` is enabled, a visual character counter appears below the textarea
   with theme-appropriate colors:
   - Normal state: muted text color
   - Near limit (≤10%): warning color
@@ -160,7 +160,7 @@ defmodule Pulsar.Components.Textarea do
 
   # Feature flags
   attr :auto_resize, :boolean, default: false, doc: "Enable automatic height adjustment"
-  attr :character_count, :boolean, default: false, doc: "Enable character counting"
+  attr :show_character_count, :boolean, default: false, doc: "Enable character counting display"
 
   attr :max_length, :integer,
     default: nil,
@@ -238,7 +238,7 @@ defmodule Pulsar.Components.Textarea do
         readonly={@readonly}
         auto_resize={@auto_resize}
         character_count={@character_count}
-        max_length={@data_max_length}
+        max_length={@max_length_display}
         style={build_custom_height_styles(@min_height, @max_height)}
         data-variant={@variant}
         data-size={@size}
@@ -250,12 +250,12 @@ defmodule Pulsar.Components.Textarea do
       />
 
       <.character_count_display
-        :if={@character_count and @data_character_count != nil}
+        :if={@show_character_count and @character_count != nil}
         color={@effective_color}
-        character_count={@data_character_count}
-        max_length={@data_max_length}
-        chars_remaining={@data_chars_remaining}
-        over_limit={@data_over_limit}
+        character_count={@character_count}
+        max_length={@max_length_display}
+        chars_remaining={@chars_remaining}
+        over_limit={@over_limit}
       />
     </div>
     """
@@ -314,7 +314,7 @@ defmodule Pulsar.Components.Textarea do
   defp get_normal_character_count_color("secondary"), do: "text-secondary dark:text-dark-secondary"
 
   defp get_normal_character_count_color("success"), do: "text-success dark:text-dark-success"
-  defp get_normal_character_count_color("danger"), do: "text-danger dark:text-dark-danger"
+  defp get_normal_character_count_color("danger"), do: "text-danger dark:text-dark-danger font-medium"
   defp get_normal_character_count_color("warning"), do: "text-warning dark:text-dark-warning"
   defp get_normal_character_count_color("info"), do: "text-info dark:text-dark-info"
 
@@ -487,7 +487,7 @@ defmodule Pulsar.Components.Textarea do
   end
 
   defp assign_character_counts(assigns) do
-    if assigns.character_count do
+    if assigns.show_character_count do
       # Get the current value from field or direct value
       current_value =
         case assigns[:field] do
@@ -504,23 +504,23 @@ defmodule Pulsar.Components.Textarea do
         over_limit = count > max
 
         assigns
-        |> assign(:data_character_count, count)
-        |> assign(:data_max_length, max)
-        |> assign(:data_chars_remaining, remaining)
-        |> assign(:data_over_limit, over_limit)
+        |> assign(:character_count, count)
+        |> assign(:max_length_display, max)
+        |> assign(:chars_remaining, remaining)
+        |> assign(:over_limit, over_limit)
       else
         assigns
-        |> assign(:data_character_count, count)
-        |> assign(:data_max_length, nil)
-        |> assign(:data_chars_remaining, nil)
-        |> assign(:data_over_limit, false)
+        |> assign(:character_count, count)
+        |> assign(:max_length_display, nil)
+        |> assign(:chars_remaining, nil)
+        |> assign(:over_limit, false)
       end
     else
       assigns
-      |> assign(:data_character_count, nil)
-      |> assign(:data_max_length, nil)
-      |> assign(:data_chars_remaining, nil)
-      |> assign(:data_over_limit, false)
+      |> assign(:character_count, nil)
+      |> assign(:max_length_display, nil)
+      |> assign(:chars_remaining, nil)
+      |> assign(:over_limit, false)
     end
   end
 end

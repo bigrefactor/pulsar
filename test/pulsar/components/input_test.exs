@@ -342,7 +342,7 @@ defmodule Pulsar.Components.InputTest do
       assert html =~ "text-neutral"
 
       # Should have data attributes for valid state
-      refute html =~ ~s(data-invalid)
+      assert html =~ ~s(data-invalid="false")
       assert html =~ ~s(data-color="neutral")
     end
 
