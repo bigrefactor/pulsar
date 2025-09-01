@@ -32,22 +32,40 @@ jobs:
           version-type: loose
 
       - name: Cache deps
+        id: cache-deps-docs-build
         uses: actions/cache@v4
         with:
           path: deps
-          key: ${{ runner.os }}-deps-docs-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-deps-docs-build-dev-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-docs-build-dev-
+            ${{ runner.os }}-deps-docs-dev-
+            ${{ runner.os }}-deps-dev-
+            ${{ runner.os }}-deps-
 
       - name: Cache _build
+        id: cache-build-docs-build
         uses: actions/cache@v4
         with:
           path: _build
-          key: ${{ runner.os }}-build-docs-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-build-docs-build-dev-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-docs-build-dev-
+            ${{ runner.os }}-build-docs-dev-
+            ${{ runner.os }}-build-dev-
+            ${{ runner.os }}-build-
 
       - name: Configure Git for private repos
         run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
 
       - name: Install dependencies
         run: mix deps.get
+
+      - name: Cache Status Report
+        run: |
+          echo "Cache status for docs build:"
+          echo "- Deps cache hit: ${{ steps.cache-deps-docs-build.outputs.cache-hit || 'false' }}"
+          echo "- Build cache hit: ${{ steps.cache-build-docs-build.outputs.cache-hit || 'false' }}"
 
       - name: Compile
         run: mix compile
@@ -90,16 +108,40 @@ jobs:
           version-type: loose
 
       - name: Cache deps
+        id: cache-deps-docs-validate
         uses: actions/cache@v4
         with:
           path: deps
-          key: ${{ runner.os }}-deps-validate-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-deps-docs-validate-dev-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-docs-validate-dev-
+            ${{ runner.os }}-deps-docs-dev-
+            ${{ runner.os }}-deps-dev-
+            ${{ runner.os }}-deps-
+
+      - name: Cache _build
+        id: cache-build-docs-validate
+        uses: actions/cache@v4
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-docs-validate-dev-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-docs-validate-dev-
+            ${{ runner.os }}-build-docs-dev-
+            ${{ runner.os }}-build-dev-
+            ${{ runner.os }}-build-
 
       - name: Configure Git for private repos
         run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
 
       - name: Install dependencies
         run: mix deps.get
+
+      - name: Cache Status Report
+        run: |
+          echo "Cache status for docs validation:"
+          echo "- Deps cache hit: ${{ steps.cache-deps-docs-validate.outputs.cache-hit || 'false' }}"
+          echo "- Build cache hit: ${{ steps.cache-build-docs-validate.outputs.cache-hit || 'false' }}"
 
       - name: Compile
         run: mix compile

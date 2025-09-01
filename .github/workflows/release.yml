@@ -70,16 +70,51 @@ jobs:
           echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
 
       - name: Cache deps
+        id: cache-deps-release-validate
         uses: actions/cache@v4
         with:
           path: deps
-          key: ${{ runner.os }}-deps-release-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-deps-release-validate-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-release-validate-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-release-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-
+
+      - name: Cache _build
+        id: cache-build-release-validate
+        uses: actions/cache@v4
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-release-validate-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-release-validate-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-release-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-
+
+      - name: Cache Dialyzer PLT
+        id: cache-plt-release-validate
+        uses: actions/cache@v4
+        with:
+          path: priv/plts
+          key: ${{ runner.os }}-plt-1.18-27-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-plt-1.18-27-
+            ${{ runner.os }}-plt-
 
       - name: Configure Git for private repos
         run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
 
       - name: Install dependencies
         run: mix deps.get
+
+      - name: Cache Status Report
+        run: |
+          echo "Cache status for release validation:"
+          echo "- Deps cache hit: ${{ steps.cache-deps-release-validate.outputs.cache-hit || 'false' }}"
+          echo "- Build cache hit: ${{ steps.cache-build-release-validate.outputs.cache-hit || 'false' }}"
+          echo "- PLT cache hit: ${{ steps.cache-plt-release-validate.outputs.cache-hit || 'false' }}"
 
       - name: Run full quality pipeline
         run: mix check.ci
@@ -104,16 +139,40 @@ jobs:
           version-type: loose
 
       - name: Cache deps
+        id: cache-deps-release-publish
         uses: actions/cache@v4
         with:
           path: deps
-          key: ${{ runner.os }}-deps-publish-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-deps-release-publish-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-release-publish-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-release-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-
+
+      - name: Cache _build
+        id: cache-build-release-publish
+        uses: actions/cache@v4
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-release-publish-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-release-publish-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-release-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-
 
       - name: Configure Git for private repos
         run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
 
       - name: Install dependencies
         run: mix deps.get
+
+      - name: Cache Status Report
+        run: |
+          echo "Cache status for hex publishing:"
+          echo "- Deps cache hit: ${{ steps.cache-deps-release-publish.outputs.cache-hit || 'false' }}"
+          echo "- Build cache hit: ${{ steps.cache-build-release-publish.outputs.cache-hit || 'false' }}"
 
       - name: Build package
         run: mix hex.build
@@ -140,16 +199,40 @@ jobs:
           version-type: loose
 
       - name: Cache deps
+        id: cache-deps-release-docs
         uses: actions/cache@v4
         with:
           path: deps
-          key: ${{ runner.os }}-deps-docs-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-deps-release-docs-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-release-docs-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-release-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-
+
+      - name: Cache _build
+        id: cache-build-release-docs
+        uses: actions/cache@v4
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-release-docs-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-release-docs-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-release-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-
 
       - name: Configure Git for private repos
         run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
 
       - name: Install dependencies
         run: mix deps.get
+
+      - name: Cache Status Report
+        run: |
+          echo "Cache status for docs publishing:"
+          echo "- Deps cache hit: ${{ steps.cache-deps-release-docs.outputs.cache-hit || 'false' }}"
+          echo "- Build cache hit: ${{ steps.cache-build-release-docs.outputs.cache-hit || 'false' }}"
 
       - name: Generate and publish docs
         run: mix hex.publish docs --yes

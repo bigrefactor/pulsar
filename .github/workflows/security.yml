@@ -28,16 +28,40 @@ jobs:
           version-type: loose
 
       - name: Cache deps
+        id: cache-deps-security-audit
         uses: actions/cache@v4
         with:
           path: deps
-          key: ${{ runner.os }}-deps-security-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-deps-security-audit-dev-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-security-audit-dev-
+            ${{ runner.os }}-deps-security-dev-
+            ${{ runner.os }}-deps-dev-
+            ${{ runner.os }}-deps-
+
+      - name: Cache _build
+        id: cache-build-security-audit
+        uses: actions/cache@v4
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-security-audit-dev-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-security-audit-dev-
+            ${{ runner.os }}-build-security-dev-
+            ${{ runner.os }}-build-dev-
+            ${{ runner.os }}-build-
 
       - name: Configure Git for private repos
         run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
 
       - name: Install dependencies
         run: mix deps.get
+
+      - name: Cache Status Report
+        run: |
+          echo "Cache status for security audit:"
+          echo "- Deps cache hit: ${{ steps.cache-deps-security-audit.outputs.cache-hit || 'false' }}"
+          echo "- Build cache hit: ${{ steps.cache-build-security-audit.outputs.cache-hit || 'false' }}"
 
       - name: Run dependency security audit
         run: |
@@ -95,16 +119,40 @@ jobs:
           version-type: loose
 
       - name: Cache deps
+        id: cache-deps-license-compliance
         uses: actions/cache@v4
         with:
           path: deps
-          key: ${{ runner.os }}-deps-license-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-deps-license-compliance-dev-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-license-compliance-dev-
+            ${{ runner.os }}-deps-license-dev-
+            ${{ runner.os }}-deps-dev-
+            ${{ runner.os }}-deps-
+
+      - name: Cache _build
+        id: cache-build-license-compliance
+        uses: actions/cache@v4
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-license-compliance-dev-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-license-compliance-dev-
+            ${{ runner.os }}-build-license-dev-
+            ${{ runner.os }}-build-dev-
+            ${{ runner.os }}-build-
 
       - name: Configure Git for private repos
         run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
 
       - name: Install dependencies
         run: mix deps.get
+
+      - name: Cache Status Report
+        run: |
+          echo "Cache status for license compliance:"
+          echo "- Deps cache hit: ${{ steps.cache-deps-license-compliance.outputs.cache-hit || 'false' }}"
+          echo "- Build cache hit: ${{ steps.cache-build-license-compliance.outputs.cache-hit || 'false' }}"
 
       - name: Check dependency licenses
         run: |
@@ -165,22 +213,51 @@ jobs:
           version-type: loose
 
       - name: Cache deps
+        id: cache-deps-security-credo
         uses: actions/cache@v4
         with:
           path: deps
-          key: ${{ runner.os }}-deps-credo-security-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-deps-security-credo-dev-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-security-credo-dev-
+            ${{ runner.os }}-deps-security-dev-
+            ${{ runner.os }}-deps-dev-
+            ${{ runner.os }}-deps-
 
       - name: Cache _build
+        id: cache-build-security-credo
         uses: actions/cache@v4
         with:
           path: _build
-          key: ${{ runner.os }}-build-credo-security-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-build-security-credo-dev-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-security-credo-dev-
+            ${{ runner.os }}-build-security-dev-
+            ${{ runner.os }}-build-dev-
+            ${{ runner.os }}-build-
+
+      - name: Cache Dialyzer PLT
+        id: cache-plt-security-credo
+        uses: actions/cache@v4
+        with:
+          path: priv/plts
+          key: ${{ runner.os }}-plt-1.18-27-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-plt-1.18-27-
+            ${{ runner.os }}-plt-
 
       - name: Configure Git for private repos
         run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
 
       - name: Install dependencies
         run: mix deps.get
+
+      - name: Cache Status Report
+        run: |
+          echo "Cache status for security Credo checks:"
+          echo "- Deps cache hit: ${{ steps.cache-deps-security-credo.outputs.cache-hit || 'false' }}"
+          echo "- Build cache hit: ${{ steps.cache-build-security-credo.outputs.cache-hit || 'false' }}"
+          echo "- PLT cache hit: ${{ steps.cache-plt-security-credo.outputs.cache-hit || 'false' }}"
 
       - name: Run security-focused Credo checks
         run: |

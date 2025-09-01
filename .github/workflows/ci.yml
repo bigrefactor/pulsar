@@ -37,28 +37,38 @@ jobs:
           version-type: loose
 
       - name: Cache deps
+        id: cache-deps
         uses: actions/cache@v4
         with:
           path: deps
-          key: ${{ runner.os }}-deps-${{ matrix.elixir }}-${{ matrix.otp }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-deps-quality-${{ matrix.elixir }}-${{ matrix.otp }}-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
           restore-keys: |
+            ${{ runner.os }}-deps-quality-${{ matrix.elixir }}-${{ matrix.otp }}-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-${{ matrix.elixir }}-${{ matrix.otp }}-${{ env.MIX_ENV }}-
             ${{ runner.os }}-deps-${{ matrix.elixir }}-${{ matrix.otp }}-
+            ${{ runner.os }}-deps-
 
       - name: Cache _build
+        id: cache-build
         uses: actions/cache@v4
         with:
           path: _build
-          key: ${{ runner.os }}-build-${{ matrix.elixir }}-${{ matrix.otp }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-build-quality-${{ matrix.elixir }}-${{ matrix.otp }}-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
           restore-keys: |
+            ${{ runner.os }}-build-quality-${{ matrix.elixir }}-${{ matrix.otp }}-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-${{ matrix.elixir }}-${{ matrix.otp }}-${{ env.MIX_ENV }}-
             ${{ runner.os }}-build-${{ matrix.elixir }}-${{ matrix.otp }}-
+            ${{ runner.os }}-build-
 
       - name: Cache Dialyzer PLT
+        id: cache-plt
         uses: actions/cache@v4
         with:
           path: priv/plts
           key: ${{ runner.os }}-plt-${{ matrix.elixir }}-${{ matrix.otp }}-${{ hashFiles('mix.lock') }}
           restore-keys: |
             ${{ runner.os }}-plt-${{ matrix.elixir }}-${{ matrix.otp }}-
+            ${{ runner.os }}-plt-
 
       - name: Configure Git for private repos
         run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
@@ -67,6 +77,13 @@ jobs:
         run: |
           mix deps.get
           mix deps.compile
+
+      - name: Cache Status Report
+        run: |
+          echo "Cache status for quality job (Elixir ${{ matrix.elixir }}/OTP ${{ matrix.otp }}):"
+          echo "- Deps cache hit: ${{ steps.cache-deps.outputs.cache-hit || 'false' }}"
+          echo "- Build cache hit: ${{ steps.cache-build.outputs.cache-hit || 'false' }}"
+          echo "- PLT cache hit: ${{ steps.cache-plt.outputs.cache-hit || 'false' }}"
 
       - name: Check formatting
         if: matrix.check_formatted
@@ -113,16 +130,38 @@ jobs:
           version-type: loose
 
       - name: Cache deps
+        id: cache-deps-security
         uses: actions/cache@v4
         with:
           path: deps
-          key: ${{ runner.os }}-deps-security-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-deps-security-test-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-security-test-
+            ${{ runner.os }}-deps-test-
+            ${{ runner.os }}-deps-
+
+      - name: Cache _build
+        id: cache-build-security
+        uses: actions/cache@v4
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-security-test-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-security-test-
+            ${{ runner.os }}-build-test-
+            ${{ runner.os }}-build-
 
       - name: Configure Git for private repos
         run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
 
       - name: Install dependencies
         run: mix deps.get
+
+      - name: Cache Status Report
+        run: |
+          echo "Cache status for security audit:"
+          echo "- Deps cache hit: ${{ steps.cache-deps-security.outputs.cache-hit || 'false' }}"
+          echo "- Build cache hit: ${{ steps.cache-build-security.outputs.cache-hit || 'false' }}"
 
       - name: Run security audit
         run: mix deps.audit
