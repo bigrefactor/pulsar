@@ -153,5 +153,4 @@ defmodule Pulsar.Components.Label do
   # Convert boolean to data attribute string
   defp data_boolean(true), do: "true"
   defp data_boolean(false), do: "false"
-  defp data_boolean(_), do: "false"
 end
