@@ -122,14 +122,11 @@ defmodule Pulsar.Components.Textarea do
   attr :field, Phoenix.HTML.FormField, default: nil, doc: "Phoenix form field"
 
   # Core attributes
-  attr :id, :string,
-    doc: "Textarea ID (auto-generated if not provided)"
+  attr :id, :string, doc: "Textarea ID (auto-generated if not provided)"
 
-  attr :name, :string,
-    doc: "Textarea name (from field if not provided)"
+  attr :name, :string, doc: "Textarea name (from field if not provided)"
 
-  attr :value, :any,
-    doc: "Textarea value (from field if not provided)"
+  attr :value, :any, doc: "Textarea value (from field if not provided)"
 
   # Textarea-specific attributes
   attr :rows, :integer, default: 4, doc: "Number of visible text lines"
@@ -154,10 +151,17 @@ defmodule Pulsar.Components.Textarea do
     default: false,
     doc: "Make textarea read-only"
 
+  attr :invalid, :boolean,
+    default: false,
+    doc: "Mark textarea as invalid (overridden by form field errors)"
+
   # Feature flags
   attr :auto_resize, :boolean, default: false, doc: "Enable automatic height adjustment"
   attr :character_count, :boolean, default: false, doc: "Enable character counting"
-  attr :max_length, :integer, default: nil, doc: "Maximum characters for display counting (different from maxlength)"
+
+  attr :max_length, :integer,
+    default: nil,
+    doc: "Maximum characters for display counting (different from maxlength)"
 
   # Styling
   attr :class, :string,
@@ -189,22 +193,25 @@ defmodule Pulsar.Components.Textarea do
         _ -> false
       end
 
-    effective_color = if has_errors, do: "danger", else: assigns.color
+    # Use explicit invalid prop if provided, otherwise use has_errors
+    is_invalid = assigns[:invalid] || has_errors
 
+    effective_color = if is_invalid, do: "danger", else: assigns.color
 
-    class = merge([
-      get_classes(assigns.variant, effective_color, assigns.size),
-      get_state_classes(assigns.disabled, assigns.readonly),
-      get_height_constraints(assigns.size, assigns.min_height, assigns.max_height),
-      assigns.class
-    ])
+    class =
+      merge([
+        get_classes(assigns.variant, effective_color, assigns.size),
+        get_state_classes(assigns.disabled, assigns.readonly),
+        get_height_constraints(assigns.size, assigns.min_height, assigns.max_height),
+        assigns.class
+      ])
 
     assigns =
       assigns
       |> normalize_field_attributes()
       |> assign(:class, class)
       |> assign(:effective_color, effective_color)
-      |> assign(:invalid, has_errors)
+      |> assign(:invalid, is_invalid)
       |> assign(:required_attr, assigns.required)
       |> assign_character_counts()
 
@@ -238,7 +245,7 @@ defmodule Pulsar.Components.Textarea do
         {@rest}
       />
 
-      <.character_count_display 
+      <.character_count_display
         :if={@character_count and @data_character_count != nil}
         color={@effective_color}
         character_count={@data_character_count}
@@ -258,27 +265,27 @@ defmodule Pulsar.Components.Textarea do
   attr :over_limit, :boolean, default: false
 
   defp character_count_display(assigns) do
-    count_color_class = get_character_count_color_class(assigns.chars_remaining, assigns.over_limit, assigns.color)
-    
+    count_color_class =
+      get_character_count_color_class(assigns.chars_remaining, assigns.over_limit, assigns.color)
+
     assigns = assign(assigns, :count_color_class, count_color_class)
 
     ~H"""
     <div class="flex justify-between items-center text-sm" aria-hidden="true">
       <div class={@count_color_class}>
-        <%= @character_count %><%= if @max_length != nil, do: "/#{@max_length}" %>
+        {@character_count}{if @max_length != nil, do: "/#{@max_length}"}
         <%= if @over_limit and @chars_remaining != nil do %>
-          (<%= abs(@chars_remaining) %> over)
+          ({abs(@chars_remaining)} over)
         <% end %>
       </div>
       <%= if @max_length != nil and @chars_remaining != nil and @chars_remaining <= (@max_length * 0.1) and @chars_remaining > 0 do %>
         <div class="text-warning dark:text-dark-warning">
-          <%= @chars_remaining %> remaining
+          {@chars_remaining} remaining
         </div>
       <% end %>
     </div>
     """
   end
-
 
   # Get character count display color based on state
   defp get_character_count_color_class(remaining, over_limit, _color) do
@@ -310,7 +317,7 @@ defmodule Pulsar.Components.Textarea do
     styles = []
     styles = if min_height, do: ["min-height: #{min_height}" | styles], else: styles
     styles = if max_height, do: ["max-height: #{max_height}" | styles], else: styles
-    
+
     case styles do
       [] -> nil
       styles -> Enum.join(styles, "; ") <> ";"
@@ -338,29 +345,89 @@ defmodule Pulsar.Components.Textarea do
   defp variant_classes("solid"), do: "rounded-lg border-transparent"
 
   # Color classes by variant - consistent with Input component
-  defp color_classes("outline", "neutral"), do: "border-border dark:border-dark-border bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground focus:ring-ring dark:focus:ring-dark-ring hover:border-primary/50 dark:hover:border-dark-primary/50"
-  defp color_classes("outline", "primary"), do: "border-primary/60 dark:border-dark-primary/60 bg-background dark:bg-dark-background text-primary dark:text-dark-primary placeholder:text-primary/70 dark:placeholder:text-dark-primary/70 focus:ring-primary/60 hover:border-primary dark:hover:border-dark-primary"
-  defp color_classes("outline", "secondary"), do: "border-secondary/60 dark:border-dark-secondary/60 bg-background dark:bg-dark-background text-secondary dark:text-dark-secondary placeholder:text-secondary/70 dark:placeholder:text-dark-secondary/70 focus:ring-secondary/60 hover:border-secondary dark:hover:border-dark-secondary"
-  defp color_classes("outline", "success"), do: "border-success/60 dark:border-dark-success/60 bg-background dark:bg-dark-background text-success dark:text-dark-success placeholder:text-success/70 dark:placeholder:text-dark-success/70 focus:ring-success/60 hover:border-success dark:hover:border-dark-success"
-  defp color_classes("outline", "danger"), do: "border-danger/60 dark:border-dark-danger/60 bg-background dark:bg-dark-background text-danger dark:text-dark-danger placeholder:text-danger/70 dark:placeholder:text-dark-danger/70 focus:ring-danger/60 hover:border-danger dark:hover:border-dark-danger"
-  defp color_classes("outline", "warning"), do: "border-warning/60 dark:border-dark-warning/60 bg-background dark:bg-dark-background text-warning dark:text-dark-warning placeholder:text-warning/70 dark:placeholder:text-dark-warning/70 focus:ring-warning/60 hover:border-warning dark:hover:border-dark-warning"
-  defp color_classes("outline", "info"), do: "border-info/60 dark:border-dark-info/60 bg-background dark:bg-dark-background text-info dark:text-dark-info placeholder:text-info/70 dark:placeholder:text-dark-info/70 focus:ring-info/60 hover:border-info dark:hover:border-dark-info"
+  defp color_classes("outline", "neutral"),
+    do:
+      "border-border dark:border-dark-border bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground focus:ring-ring dark:focus:ring-dark-ring hover:border-primary/50 dark:hover:border-dark-primary/50"
 
-  defp color_classes("ghost", "neutral"), do: "bg-transparent text-foreground dark:text-dark-foreground focus:ring-ring dark:focus:ring-dark-ring hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover"
-  defp color_classes("ghost", "primary"), do: "bg-transparent text-primary dark:text-dark-primary placeholder:text-primary/70 dark:placeholder:text-dark-primary/70 focus:ring-primary/60 hover:bg-primary/5 dark:hover:bg-dark-primary/10"
-  defp color_classes("ghost", "secondary"), do: "bg-transparent text-secondary dark:text-dark-secondary placeholder:text-secondary/70 dark:placeholder:text-dark-secondary/70 focus:ring-secondary/60 hover:bg-secondary/5 dark:hover:bg-dark-secondary/10"
-  defp color_classes("ghost", "success"), do: "bg-transparent text-success dark:text-dark-success placeholder:text-success/70 dark:placeholder:text-dark-success/70 focus:ring-success/60 hover:bg-success/5 dark:hover:bg-dark-success/10"
-  defp color_classes("ghost", "danger"), do: "bg-transparent text-danger dark:text-dark-danger placeholder:text-danger/70 dark:placeholder:text-dark-danger/70 focus:ring-danger/60 hover:bg-danger/5 dark:hover:bg-dark-danger/10"
-  defp color_classes("ghost", "warning"), do: "bg-transparent text-warning dark:text-dark-warning placeholder:text-warning/70 dark:placeholder:text-dark-warning/70 focus:ring-warning/60 hover:bg-warning/5 dark:hover:bg-dark-warning/10"
-  defp color_classes("ghost", "info"), do: "bg-transparent text-info dark:text-dark-info placeholder:text-info/70 dark:placeholder:text-dark-info/70 focus:ring-info/60 hover:bg-info/5 dark:hover:bg-dark-info/10"
+  defp color_classes("outline", "primary"),
+    do:
+      "border-primary/60 dark:border-dark-primary/60 bg-background dark:bg-dark-background text-primary dark:text-dark-primary placeholder:text-primary/70 dark:placeholder:text-dark-primary/70 focus:ring-primary/60 hover:border-primary dark:hover:border-dark-primary"
 
-  defp color_classes("solid", "neutral"), do: "bg-neutral/10 dark:bg-dark-neutral/20 text-neutral dark:text-dark-neutral placeholder:text-neutral/70 dark:placeholder:text-dark-neutral/70 focus:ring-neutral/60 hover:bg-neutral/20 dark:hover:bg-dark-neutral/30"
-  defp color_classes("solid", "primary"), do: "bg-primary/10 dark:bg-dark-primary/20 text-primary dark:text-dark-primary placeholder:text-primary/70 dark:placeholder:text-dark-primary/70 focus:ring-primary/60 hover:bg-primary/20 dark:hover:bg-dark-primary/30"
-  defp color_classes("solid", "secondary"), do: "bg-secondary/10 dark:bg-dark-secondary/20 text-secondary dark:text-dark-secondary placeholder:text-secondary/70 dark:placeholder:text-dark-secondary/70 focus:ring-secondary/60 hover:bg-secondary/20 dark:hover:bg-dark-secondary/30"
-  defp color_classes("solid", "success"), do: "bg-success/10 dark:bg-dark-success/20 text-success dark:text-dark-success placeholder:text-success/70 dark:placeholder:text-dark-success/70 focus:ring-success/60 hover:bg-success/20 dark:hover:bg-dark-success/30"
-  defp color_classes("solid", "danger"), do: "bg-danger/10 dark:bg-dark-danger/20 text-danger dark:text-dark-danger placeholder:text-danger/70 dark:placeholder:text-dark-danger/70 focus:ring-danger/60 hover:bg-danger/20 dark:hover:bg-dark-danger/30"
-  defp color_classes("solid", "warning"), do: "bg-warning/10 dark:bg-dark-warning/20 text-warning dark:text-dark-warning placeholder:text-warning/70 dark:placeholder:text-dark-warning/70 focus:ring-warning/60 hover:bg-warning/20 dark:hover:bg-dark-warning/30"
-  defp color_classes("solid", "info"), do: "bg-info/10 dark:bg-dark-info/20 text-info dark:text-dark-info placeholder:text-info/70 dark:placeholder:text-dark-info/70 focus:ring-info/60 hover:bg-info/20 dark:hover:bg-dark-info/30"
+  defp color_classes("outline", "secondary"),
+    do:
+      "border-secondary/60 dark:border-dark-secondary/60 bg-background dark:bg-dark-background text-secondary dark:text-dark-secondary placeholder:text-secondary/70 dark:placeholder:text-dark-secondary/70 focus:ring-secondary/60 hover:border-secondary dark:hover:border-dark-secondary"
+
+  defp color_classes("outline", "success"),
+    do:
+      "border-success/60 dark:border-dark-success/60 bg-background dark:bg-dark-background text-success dark:text-dark-success placeholder:text-success/70 dark:placeholder:text-dark-success/70 focus:ring-success/60 hover:border-success dark:hover:border-dark-success"
+
+  defp color_classes("outline", "danger"),
+    do:
+      "border-danger/60 dark:border-dark-danger/60 bg-background dark:bg-dark-background text-danger dark:text-dark-danger placeholder:text-danger/70 dark:placeholder:text-dark-danger/70 focus:ring-danger/60 hover:border-danger dark:hover:border-dark-danger"
+
+  defp color_classes("outline", "warning"),
+    do:
+      "border-warning/60 dark:border-dark-warning/60 bg-background dark:bg-dark-background text-warning dark:text-dark-warning placeholder:text-warning/70 dark:placeholder:text-dark-warning/70 focus:ring-warning/60 hover:border-warning dark:hover:border-dark-warning"
+
+  defp color_classes("outline", "info"),
+    do:
+      "border-info/60 dark:border-dark-info/60 bg-background dark:bg-dark-background text-info dark:text-dark-info placeholder:text-info/70 dark:placeholder:text-dark-info/70 focus:ring-info/60 hover:border-info dark:hover:border-dark-info"
+
+  defp color_classes("ghost", "neutral"),
+    do:
+      "bg-transparent text-foreground dark:text-dark-foreground focus:ring-ring dark:focus:ring-dark-ring hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover"
+
+  defp color_classes("ghost", "primary"),
+    do:
+      "bg-transparent text-primary dark:text-dark-primary placeholder:text-primary/70 dark:placeholder:text-dark-primary/70 focus:ring-primary/60 hover:bg-primary/5 dark:hover:bg-dark-primary/10"
+
+  defp color_classes("ghost", "secondary"),
+    do:
+      "bg-transparent text-secondary dark:text-dark-secondary placeholder:text-secondary/70 dark:placeholder:text-dark-secondary/70 focus:ring-secondary/60 hover:bg-secondary/5 dark:hover:bg-dark-secondary/10"
+
+  defp color_classes("ghost", "success"),
+    do:
+      "bg-transparent text-success dark:text-dark-success placeholder:text-success/70 dark:placeholder:text-dark-success/70 focus:ring-success/60 hover:bg-success/5 dark:hover:bg-dark-success/10"
+
+  defp color_classes("ghost", "danger"),
+    do:
+      "bg-transparent text-danger dark:text-dark-danger placeholder:text-danger/70 dark:placeholder:text-dark-danger/70 focus:ring-danger/60 hover:bg-danger/5 dark:hover:bg-dark-danger/10"
+
+  defp color_classes("ghost", "warning"),
+    do:
+      "bg-transparent text-warning dark:text-dark-warning placeholder:text-warning/70 dark:placeholder:text-dark-warning/70 focus:ring-warning/60 hover:bg-warning/5 dark:hover:bg-dark-warning/10"
+
+  defp color_classes("ghost", "info"),
+    do:
+      "bg-transparent text-info dark:text-dark-info placeholder:text-info/70 dark:placeholder:text-dark-info/70 focus:ring-info/60 hover:bg-info/5 dark:hover:bg-dark-info/10"
+
+  defp color_classes("solid", "neutral"),
+    do:
+      "bg-neutral/10 dark:bg-dark-neutral/20 text-neutral dark:text-dark-neutral placeholder:text-neutral/70 dark:placeholder:text-dark-neutral/70 focus:ring-neutral/60 hover:bg-neutral/20 dark:hover:bg-dark-neutral/30"
+
+  defp color_classes("solid", "primary"),
+    do:
+      "bg-primary/10 dark:bg-dark-primary/20 text-primary dark:text-dark-primary placeholder:text-primary/70 dark:placeholder:text-dark-primary/70 focus:ring-primary/60 hover:bg-primary/20 dark:hover:bg-dark-primary/30"
+
+  defp color_classes("solid", "secondary"),
+    do:
+      "bg-secondary/10 dark:bg-dark-secondary/20 text-secondary dark:text-dark-secondary placeholder:text-secondary/70 dark:placeholder:text-dark-secondary/70 focus:ring-secondary/60 hover:bg-secondary/20 dark:hover:bg-dark-secondary/30"
+
+  defp color_classes("solid", "success"),
+    do:
+      "bg-success/10 dark:bg-dark-success/20 text-success dark:text-dark-success placeholder:text-success/70 dark:placeholder:text-dark-success/70 focus:ring-success/60 hover:bg-success/20 dark:hover:bg-dark-success/30"
+
+  defp color_classes("solid", "danger"),
+    do:
+      "bg-danger/10 dark:bg-dark-danger/20 text-danger dark:text-dark-danger placeholder:text-danger/70 dark:placeholder:text-dark-danger/70 focus:ring-danger/60 hover:bg-danger/20 dark:hover:bg-dark-danger/30"
+
+  defp color_classes("solid", "warning"),
+    do:
+      "bg-warning/10 dark:bg-dark-warning/20 text-warning dark:text-dark-warning placeholder:text-warning/70 dark:placeholder:text-dark-warning/70 focus:ring-warning/60 hover:bg-warning/20 dark:hover:bg-dark-warning/30"
+
+  defp color_classes("solid", "info"),
+    do:
+      "bg-info/10 dark:bg-dark-info/20 text-info dark:text-dark-info placeholder:text-info/70 dark:placeholder:text-dark-info/70 focus:ring-info/60 hover:bg-info/20 dark:hover:bg-dark-info/30"
 
   # Size-specific classes with appropriate min heights for textarea
   defp get_size_classes("xs"), do: "min-h-16 text-xs px-2 py-1"
@@ -372,16 +439,18 @@ defmodule Pulsar.Components.Textarea do
   # Height constraints based on size defaults
   defp get_height_constraints(size, custom_min, custom_max) do
     # Only add default constraints if no custom ones provided
-    default_constraints = case size do
-      "xs" -> "max-h-32"
-      "sm" -> "max-h-40"
-      "md" -> "max-h-64"
-      "lg" -> "max-h-80"
-      "xl" -> "max-h-96"
-    end
+    default_constraints =
+      case size do
+        "xs" -> "max-h-32"
+        "sm" -> "max-h-40"
+        "md" -> "max-h-64"
+        "lg" -> "max-h-80"
+        "xl" -> "max-h-96"
+      end
 
     if custom_min || custom_max do
-      "" # Let CSS style handle custom constraints
+      # Let CSS style handle custom constraints
+      ""
     else
       default_constraints
     end
@@ -392,26 +461,27 @@ defmodule Pulsar.Components.Textarea do
       disabled && "cursor-not-allowed opacity-50 pointer-events-none",
       readonly && "cursor-default"
     ]
-    |> Enum.filter(&(&1))
+    |> Enum.filter(& &1)
     |> Enum.join(" ")
   end
 
   defp assign_character_counts(assigns) do
     if assigns.character_count do
       # Get the current value from field or direct value
-      current_value = case assigns[:field] do
-        %Phoenix.HTML.FormField{value: value} -> to_string(value || "")
-        _ -> to_string(assigns[:value] || "")
-      end
-      
+      current_value =
+        case assigns[:field] do
+          %Phoenix.HTML.FormField{value: value} -> to_string(value || "")
+          _ -> to_string(assigns[:value] || "")
+        end
+
       count = current_value |> String.graphemes() |> length()
       max = assigns.max_length
-      
+
       # Only calculate remaining and over_limit if we have max_length
       if max do
         remaining = max - count
         over_limit = count > max
-        
+
         assigns
         |> assign(:data_character_count, count)
         |> assign(:data_max_length, max)
