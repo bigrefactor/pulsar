@@ -471,7 +471,7 @@ defmodule Pulsar.Components.Textarea do
         "xl" -> "max-h-96"
       end
 
-    if !(custom_min || custom_max) do
+    if is_nil(custom_min) and is_nil(custom_max) do
       # Let CSS style handle custom constraints
       default_constraints
     end

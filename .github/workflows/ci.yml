@@ -162,4 +162,4 @@ jobs:
   #         tar -tzf pulsar-*.tar | grep -E "(lib/|priv/|README.md|CHANGELOG.md|LICENSE|mix.exs)"
   #
   #         # Check that build artifacts are excluded
-  #         ! tar -tzf pulsar-*.tar | grep -E "(_build/|deps/|.git/|*.beam)"
+   #         ! tar -tzf pulsar-*.tar | grep -E "(_build/|deps/|\.git/|\.beam$)"
