@@ -111,7 +111,7 @@ jobs:
 
       - name: Run tests with coverage (latest version only)
         if: matrix.elixir == '1.18' && matrix.otp == '27'
-        run: mix coveralls.github
+        run: mix test --cover
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
