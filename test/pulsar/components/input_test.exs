@@ -34,7 +34,8 @@ defmodule Pulsar.Components.InputTest do
 
       assert html =~ ~s(data-variant="ghost")
       assert html =~ "bg-transparent"
-      refute html =~ "border-2"  # Ghost doesn't have border
+      # Ghost doesn't have border
+      refute html =~ "border-2"
     end
 
     test "renders with custom size" do
@@ -73,9 +74,12 @@ defmodule Pulsar.Components.InputTest do
         """)
 
       # Should contain both component classes and custom classes
-      assert html =~ "bg-neutral/10"     # Component class
-      assert html =~ "w-full"            # Custom class
-      assert html =~ "custom-class"      # Custom class
+      # Component class
+      assert html =~ "bg-neutral/10"
+      # Custom class
+      assert html =~ "w-full"
+      # Custom class
+      assert html =~ "custom-class"
     end
   end
 
@@ -102,7 +106,8 @@ defmodule Pulsar.Components.InputTest do
         """)
 
       assert html =~ "bg-transparent"
-      refute html =~ "border-2"  # Ghost doesn't have border
+      # Ghost doesn't have border
+      refute html =~ "border-2"
       assert html =~ "text-foreground"
     end
   end
@@ -113,24 +118,29 @@ defmodule Pulsar.Components.InputTest do
 
       for size <- sizes do
         assigns = %{size: size}
+
         html =
           rendered_to_string(~H"""
           <Input.input name="test" size={@size} />
           """)
 
         case size do
-          "xs" -> 
+          "xs" ->
             assert html =~ "min-h-6"
             assert html =~ "text-xs"
-          "sm" -> 
+
+          "sm" ->
             assert html =~ "min-h-8"
             assert html =~ "text-sm"
-          "md" -> 
+
+          "md" ->
             assert html =~ "min-h-10"
-          "lg" -> 
+
+          "lg" ->
             assert html =~ "min-h-12"
             assert html =~ "text-lg"
-          "xl" -> 
+
+          "xl" ->
             assert html =~ "min-h-14"
             assert html =~ "text-xl"
         end
@@ -213,7 +223,8 @@ defmodule Pulsar.Components.InputTest do
       # Ghost decorators are minimal
       assert html =~ "text-muted-foreground"
       # Ghost decorators use size-based padding from get_decorator_padding, no extra pr/pl classes
-      assert html =~ "px-3 py-1.5"  # md size decorator padding
+      # md size decorator padding
+      assert html =~ "px-3 py-1.5"
     end
   end
 
@@ -226,12 +237,11 @@ defmodule Pulsar.Components.InputTest do
         <Input.input name="test" disabled={true} />
         """)
 
-
       assert html =~ ~s(disabled)
       assert html =~ "cursor-not-allowed"
       assert html =~ "opacity-50"
       assert html =~ "pointer-events-none"
-      
+
       # Verify the input element itself also has cursor-not-allowed
       assert html =~ ~r/<input[^>]*class="[^"]*cursor-not-allowed[^"]*"[^>]*disabled/
     end
@@ -244,10 +254,9 @@ defmodule Pulsar.Components.InputTest do
         <Input.input name="test" readonly={true} />
         """)
 
-
       assert html =~ ~s(readonly)
       assert html =~ "cursor-default"
-      
+
       # Verify the input element itself also has cursor-default
       assert html =~ ~r/<input[^>]*class="[^"]*cursor-default[^"]*"[^>]*readonly/
     end
@@ -303,7 +312,7 @@ defmodule Pulsar.Components.InputTest do
       assert html =~ "dark:text-dark-danger"
 
       # Should have data attributes for invalid state
-      assert html =~ ~s(data-invalid="true")
+      assert html =~ ~s(data-invalid)
       assert html =~ ~s(data-color="danger")
     end
 
@@ -330,7 +339,7 @@ defmodule Pulsar.Components.InputTest do
       assert html =~ "text-neutral"
 
       # Should have data attributes for valid state
-      assert html =~ ~s(data-invalid="false")
+      refute html =~ ~s(data-invalid)
       assert html =~ ~s(data-color="neutral")
     end
 
@@ -382,16 +391,19 @@ defmodule Pulsar.Components.InputTest do
 
   describe "input types" do
     test "supports all HTML5 input types" do
-      types = ~w(text email password number tel url search date time datetime-local month week color range file hidden)
+      types =
+        ~w(text email password number tel url search date time datetime-local month week color range file hidden)
 
       for type <- types do
         assigns = %{type: type}
+
         html =
           rendered_to_string(~H"""
           <Input.input name="test" type={@type} />
           """)
 
         assert html =~ ~s(type="#{type}")
+
         if type == "hidden" do
           # Hidden inputs render directly without container/decorators
           refute html =~ ~s(<div)
@@ -428,8 +440,10 @@ defmodule Pulsar.Components.InputTest do
         """)
 
       # TailwindMerge should resolve conflicts
-      assert html =~ "border-red-500"  # Custom border should override
-      assert html =~ "min-h-16"        # Custom height should override
+      # Custom border should override
+      assert html =~ "border-red-500"
+      # Custom height should override
+      assert html =~ "min-h-16"
     end
 
     test "preserves non-conflicting classes" do
@@ -443,8 +457,10 @@ defmodule Pulsar.Components.InputTest do
       # Should include both original and custom classes
       assert html =~ "w-full"
       assert html =~ "shadow-lg"
-      assert html =~ "bg-neutral/10"   # Original background preserved
-      assert html =~ "min-h-10"        # Original height preserved
+      # Original background preserved
+      assert html =~ "bg-neutral/10"
+      # Original height preserved
+      assert html =~ "min-h-10"
     end
   end
 
