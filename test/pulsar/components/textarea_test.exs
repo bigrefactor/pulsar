@@ -386,7 +386,7 @@ defmodule Pulsar.Components.TextareaTest do
         """)
 
       # Shows current count / max
-      assert html =~ "5/100"
+      assert html =~ "5<span>/100</span>"
       # Normal state color
       assert html =~ "text-muted-foreground"
     end
@@ -399,7 +399,7 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" character_count max_length={100} value={@long_text} />
         """)
 
-      assert html =~ "95/100"
+      assert html =~ "95<span>/100</span>"
       assert html =~ "text-warning"
       assert html =~ "5 remaining"
     end
@@ -412,7 +412,7 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" character_count max_length={100} value={@at_limit_text} />
         """)
 
-      assert html =~ "100/100"
+      assert html =~ "100<span>/100</span>"
       assert html =~ "text-danger"
       assert html =~ "font-medium"
     end
@@ -425,7 +425,7 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" character_count max_length={100} value={@over_limit_text} />
         """)
 
-      assert html =~ "105/100"
+      assert html =~ "105<span>/100</span>"
       assert html =~ "text-danger"
       assert html =~ "5 over"
     end
@@ -452,7 +452,7 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" character_count max_length={100} />
         """)
 
-      assert html =~ "0/100"
+      assert html =~ "0<span>/100</span>"
     end
 
     test "counts Unicode characters correctly" do
@@ -464,7 +464,7 @@ defmodule Pulsar.Components.TextareaTest do
         """)
 
       # Emoji should count as individual characters
-      assert html =~ "2/100"
+      assert html =~ "2<span>/100</span>"
     end
   end
 
@@ -551,10 +551,10 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" invalid={true} />
         """)
 
-      assert html =~ ~r/aria-invalid(?=[^=])/
+      assert html =~ ~s(aria-invalid="true")
     end
 
-    test "does not set aria-invalid attribute when invalid is false" do
+    test "sets aria-invalid to 'false' when invalid is false" do
       assigns = %{}
 
       html =
@@ -562,7 +562,8 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" invalid={false} />
         """)
 
-      refute html =~ "aria-invalid"
+      assert html =~ ~s(aria-invalid="false")
+      refute html =~ ~s(aria-invalid="true")
     end
   end
 
@@ -593,7 +594,7 @@ defmodule Pulsar.Components.TextareaTest do
 
       # Should have data attributes for invalid state
       assert html =~ ~r/data-invalid(?=[^=])/
-      assert html =~ ~r/aria-invalid(?=[^=])/
+      assert html =~ ~s(aria-invalid="true")
       assert html =~ ~s(data-color="danger")
     end
 
@@ -621,7 +622,7 @@ defmodule Pulsar.Components.TextareaTest do
 
       # Should have data attributes for valid state
       refute html =~ "data-invalid"
-      refute html =~ "aria-invalid"
+      assert html =~ ~s(aria-invalid="false")
       assert html =~ ~s(data-color="primary")
     end
 
@@ -644,7 +645,7 @@ defmodule Pulsar.Components.TextareaTest do
         """)
 
       # Character count should show with normal color (not error color since not at limit)
-      assert html =~ "5/100"
+      assert html =~ "5<span>/100</span>"
       assert html =~ "text-muted-foreground"
     end
   end
@@ -690,7 +691,7 @@ defmodule Pulsar.Components.TextareaTest do
         """)
 
       # Count from field value
-      assert html =~ "11/50"
+      assert html =~ "11<span>/50</span>"
     end
   end
 
@@ -778,7 +779,7 @@ defmodule Pulsar.Components.TextareaTest do
         """)
 
       # Should not show character count display
-      refute html =~ "5/100"
+      refute html =~ "5<span>/100</span>"
       refute html =~ "text-muted-foreground"
     end
 

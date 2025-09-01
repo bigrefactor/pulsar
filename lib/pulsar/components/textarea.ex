@@ -241,7 +241,7 @@ defmodule Pulsar.Components.Textarea do
         data-color={@effective_color}
         data-invalid={@invalid}
         data-required={@required_attr}
-        aria-invalid={@invalid}
+        aria-invalid={if @invalid, do: "true", else: "false"}
         {@rest}
       />
 
@@ -273,7 +273,7 @@ defmodule Pulsar.Components.Textarea do
     ~H"""
     <div class="flex justify-between items-center text-sm" aria-hidden="true">
       <div class={@count_color_class}>
-        {@character_count}{if @max_length != nil, do: "/#{@max_length}"}
+        {@character_count}<span :if={@max_length}>/{@max_length}</span>
         <span :if={@over_limit and @chars_remaining != nil}>
           ({abs(@chars_remaining)} over)
         </span>

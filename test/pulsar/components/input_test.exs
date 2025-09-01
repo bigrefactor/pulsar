@@ -343,6 +343,65 @@ defmodule Pulsar.Components.InputTest do
       assert html =~ ~s(data-color="neutral")
     end
 
+    test "sets aria-invalid to 'true' when field has errors" do
+      # Create a form field with errors
+      field = %Phoenix.HTML.FormField{
+        errors: [{"is required", []}],
+        field: :email,
+        form: %Phoenix.HTML.Form{},
+        id: "user_email",
+        name: "user[email]",
+        value: ""
+      }
+
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Input.input field={@field} />
+        """)
+
+      # Should have aria-invalid="true" when field has errors
+      assert html =~ ~s(aria-invalid="true")
+      refute html =~ ~s(aria-invalid="false")
+    end
+
+    test "sets aria-invalid to 'false' when field has no errors" do
+      # Create a form field without errors
+      field = %Phoenix.HTML.FormField{
+        errors: [],
+        field: :email,
+        form: %Phoenix.HTML.Form{},
+        id: "user_email",
+        name: "user[email]",
+        value: "test@example.com"
+      }
+
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Input.input field={@field} />
+        """)
+
+      # Should have aria-invalid="false" when field has no errors
+      assert html =~ ~s(aria-invalid="false")
+      refute html =~ ~s(aria-invalid="true")
+    end
+
+    test "sets aria-invalid to 'false' when no field is provided" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Input.input name="test" />
+        """)
+
+      # Should have aria-invalid="false" when no field provided
+      assert html =~ ~s(aria-invalid="false")
+      refute html =~ ~s(aria-invalid="true")
+    end
+
     test "error state affects decorators too" do
       # Create a form field with errors
       field = %Phoenix.HTML.FormField{
