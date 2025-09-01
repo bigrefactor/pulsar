@@ -1,0 +1,192 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+env:
+  MIX_ENV: prod
+
+jobs:
+  validate:
+    name: Validate Release
+    runs-on: ubuntu-22.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      changelog: ${{ steps.changelog.outputs.changelog }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.18'
+          otp-version: '27'
+          version-type: loose
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION"
+
+      - name: Validate version matches mix.exs
+        run: |
+          MIX_VERSION=$(grep -E 'version:.*".*"' mix.exs | sed -E 's/.*version: "(.*)".*/\1/')
+          TAG_VERSION="${{ steps.version.outputs.version }}"
+          
+          if [ "$MIX_VERSION" != "$TAG_VERSION" ]; then
+            echo "Version mismatch: mix.exs shows $MIX_VERSION but tag is $TAG_VERSION"
+            exit 1
+          fi
+          echo "Version validation passed: $TAG_VERSION"
+
+      - name: Extract changelog entry
+        id: changelog
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          
+          if [ -f CHANGELOG.md ]; then
+            # Extract changelog section for this version
+            CHANGELOG=$(sed -n "/^## \[$VERSION\]/,/^## \[/p" CHANGELOG.md | head -n -1 | tail -n +2)
+            
+            if [ -z "$CHANGELOG" ]; then
+              echo "No changelog entry found for version $VERSION"
+              CHANGELOG="Release $VERSION"
+            fi
+          else
+            echo "No CHANGELOG.md found"
+            CHANGELOG="Release $VERSION"
+          fi
+          
+          # Escape for GitHub output
+          CHANGELOG="${CHANGELOG//'%'/'%25'}"
+          CHANGELOG="${CHANGELOG//$'\n'/'%0A'}"
+          CHANGELOG="${CHANGELOG//$'\r'/'%0D'}"
+          echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
+
+      - name: Cache deps
+        uses: actions/cache@v4
+        with:
+          path: deps
+          key: ${{ runner.os }}-deps-release-${{ hashFiles('mix.lock') }}
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Run full quality pipeline
+        run: mix check.ci
+
+  publish-hex:
+    name: Publish to Hex.pm
+    runs-on: ubuntu-22.04
+    needs: validate
+    environment:
+      name: hex-pm
+      url: https://hex.pm/packages/pulsar
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.18'
+          otp-version: '27'
+          version-type: loose
+
+      - name: Cache deps
+        uses: actions/cache@v4
+        with:
+          path: deps
+          key: ${{ runner.os }}-deps-publish-${{ hashFiles('mix.lock') }}
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Build package
+        run: mix hex.build
+
+      - name: Publish to Hex.pm
+        run: mix hex.publish --yes
+        env:
+          HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
+
+  publish-docs:
+    name: Publish Documentation to Hex.pm
+    runs-on: ubuntu-22.04
+    needs: [validate, publish-hex]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.18'
+          otp-version: '27'
+          version-type: loose
+
+      - name: Cache deps
+        uses: actions/cache@v4
+        with:
+          path: deps
+          key: ${{ runner.os }}-deps-docs-${{ hashFiles('mix.lock') }}
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Generate and publish docs
+        run: mix hex.publish docs --yes
+        env:
+          HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
+
+  create-github-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-22.04
+    needs: [validate, publish-hex]
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release v${{ needs.validate.outputs.version }}
+          body: ${{ needs.validate.outputs.changelog }}
+          draft: false
+          prerelease: ${{ contains(needs.validate.outputs.version, '-') }}
+
+  notify:
+    name: Post-Release Notifications
+    runs-on: ubuntu-22.04
+    needs: [validate, publish-hex, publish-docs, create-github-release]
+    if: always()
+    
+    steps:
+      - name: Report Success
+        if: needs.publish-hex.result == 'success' && needs.publish-docs.result == 'success'
+        run: |
+          echo "✅ Successfully released Pulsar v${{ needs.validate.outputs.version }}"
+          echo "📦 Hex.pm: https://hex.pm/packages/pulsar"
+          echo "📚 Documentation: https://hexdocs.pm/pulsar"
+          echo "🏷️ GitHub Release: ${{ github.server_url }}/${{ github.repository }}/releases/tag/v${{ needs.validate.outputs.version }}"
+
+      - name: Report Failure
+        if: needs.publish-hex.result == 'failure' || needs.publish-docs.result == 'failure'
+        run: |
+          echo "❌ Release failed for Pulsar v${{ needs.validate.outputs.version }}"
+          echo "Check the workflow logs for details"
+          exit 1

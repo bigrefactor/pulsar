@@ -89,9 +89,12 @@ defmodule Pulsar.Components.Textarea do
   """
 
   use Phoenix.Component
-  alias Stellar.Components.Textarea, as: StellarTextarea
 
   import TailwindMerge, only: [merge: 1]
+
+  alias Phoenix.HTML.FormField
+  alias Phoenix.LiveView.Rendered
+  alias Stellar.Components.Textarea, as: StellarTextarea
 
   # Pulsar-specific styling attributes
   attr :variant, :string,
@@ -119,7 +122,7 @@ defmodule Pulsar.Components.Textarea do
     doc: "Maximum height (CSS value like '300px' or '20rem')"
 
   # Stellar textarea attributes - copied from Stellar.Components.Textarea
-  attr :field, Phoenix.HTML.FormField, default: nil, doc: "Phoenix form field"
+  attr :field, FormField, default: nil, doc: "Phoenix form field"
 
   # Core attributes
   attr :id, :string, doc: "Textarea ID (auto-generated if not provided)"
@@ -180,7 +183,7 @@ defmodule Pulsar.Components.Textarea do
 
   Error states automatically apply danger styling when using Phoenix forms.
   """
-  @spec textarea(map()) :: Phoenix.LiveView.Rendered.t()
+  @spec textarea(map()) :: Rendered.t()
   def textarea(assigns) do
     # Validate required attributes
     if is_nil(assigns[:field]) and is_nil(assigns[:name]) do
@@ -190,7 +193,7 @@ defmodule Pulsar.Components.Textarea do
     # Detect errors and compute automatic color
     has_errors =
       case assigns[:field] do
-        %Phoenix.HTML.FormField{errors: errs} when errs != [] -> true
+        %FormField{errors: errs} when errs != [] -> true
         _ -> false
       end
 
@@ -293,9 +296,9 @@ defmodule Pulsar.Components.Textarea do
   end
 
   # Get character count display color based on state
-  defp get_character_count_color_class(remaining, over_limit, color, max_length \\ nil) do
+  defp get_character_count_color_class(remaining, over_limit, color, max_length) do
     warning_threshold = if max_length, do: max(1, round(max_length * 0.1)), else: 10
-    
+
     cond do
       over_limit || (remaining && remaining == 0) -> get_normal_character_count_color("danger")
       remaining && remaining <= warning_threshold -> get_normal_character_count_color("warning")
@@ -304,24 +307,21 @@ defmodule Pulsar.Components.Textarea do
   end
 
   # Get color for normal character count state (not over/near limit)
-  defp get_normal_character_count_color("neutral"),
-    do: "text-muted-foreground dark:text-dark-muted-foreground"
+  defp get_normal_character_count_color("neutral"), do: "text-muted-foreground dark:text-dark-muted-foreground"
 
   defp get_normal_character_count_color("primary"), do: "text-primary dark:text-dark-primary"
 
-  defp get_normal_character_count_color("secondary"),
-    do: "text-secondary dark:text-dark-secondary"
+  defp get_normal_character_count_color("secondary"), do: "text-secondary dark:text-dark-secondary"
 
   defp get_normal_character_count_color("success"), do: "text-success dark:text-dark-success"
   defp get_normal_character_count_color("danger"), do: "text-danger dark:text-dark-danger"
   defp get_normal_character_count_color("warning"), do: "text-warning dark:text-dark-warning"
   defp get_normal_character_count_color("info"), do: "text-info dark:text-dark-info"
 
-  defp get_normal_character_count_color(_),
-    do: "text-muted-foreground dark:text-dark-muted-foreground"
+  defp get_normal_character_count_color(_), do: "text-muted-foreground dark:text-dark-muted-foreground"
 
   # Normalize field attributes to ensure id, name, value are always present
-  defp normalize_field_attributes(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
+  defp normalize_field_attributes(%{field: %FormField{} = field} = assigns) do
     assigns
     |> assign_new(:id, fn -> field.id end)
     |> assign_new(:name, fn -> field.name end)
@@ -471,10 +471,8 @@ defmodule Pulsar.Components.Textarea do
         "xl" -> "max-h-96"
       end
 
-    if custom_min || custom_max do
+    if !(custom_min || custom_max) do
       # Let CSS style handle custom constraints
-      nil
-    else
       default_constraints
     end
   end
@@ -493,7 +491,7 @@ defmodule Pulsar.Components.Textarea do
       # Get the current value from field or direct value
       current_value =
         case assigns[:field] do
-          %Phoenix.HTML.FormField{value: value} -> to_string(value || "")
+          %FormField{value: value} -> to_string(value || "")
           _ -> to_string(assigns[:value] || "")
         end
 

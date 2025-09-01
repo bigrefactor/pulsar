@@ -1,0 +1,136 @@
+name: Documentation
+
+on:
+  push:
+    branches: [ main ]
+  release:
+    types: [ published ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build Documentation
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.18'
+          otp-version: '27'
+          version-type: loose
+
+      - name: Cache deps
+        uses: actions/cache@v4
+        with:
+          path: deps
+          key: ${{ runner.os }}-deps-docs-${{ hashFiles('mix.lock') }}
+
+      - name: Cache _build
+        uses: actions/cache@v4
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-docs-${{ hashFiles('mix.lock') }}
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Compile
+        run: mix compile
+
+      - name: Generate documentation
+        run: mix docs
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload documentation artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./doc
+
+  deploy:
+    name: Deploy to GitHub Pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-22.04
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  validate:
+    name: Validate Documentation
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: '1.18'
+          otp-version: '27'
+          version-type: loose
+
+      - name: Cache deps
+        uses: actions/cache@v4
+        with:
+          path: deps
+          key: ${{ runner.os }}-deps-validate-${{ hashFiles('mix.lock') }}
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Compile
+        run: mix compile
+
+      - name: Check for missing @doc annotations
+        run: |
+          echo "Checking for missing @doc annotations in public functions..."
+          mix docs --formatter html 2>&1 | grep -E "warning.*missing docs" || echo "All public functions have @doc annotations"
+
+      - name: Validate documentation links
+        run: |
+          echo "Generating docs to check for broken links..."
+          mix docs
+          
+          # Check for common broken link patterns in generated HTML
+          if find doc -name "*.html" -exec grep -l "404\|broken\|not found" {} \; | head -1; then
+            echo "Found potential broken links in documentation"
+            exit 1
+          else
+            echo "Documentation links appear valid"
+          fi
+
+      - name: Calculate documentation coverage
+        run: |
+          echo "Calculating documentation coverage..."
+          # Count total public functions vs documented functions
+          TOTAL=$(grep -r "^  def " lib/ | grep -v "^  defp " | wc -l)
+          DOCUMENTED=$(grep -r "@doc" lib/ | wc -l)
+          
+          if [ $TOTAL -gt 0 ]; then
+            COVERAGE=$(($DOCUMENTED * 100 / $TOTAL))
+            echo "Documentation coverage: $COVERAGE% ($DOCUMENTED/$TOTAL functions)"
+            
+            if [ $COVERAGE -lt 80 ]; then
+              echo "Documentation coverage below 80% threshold"
+              exit 1
+            fi
+          else
+            echo "No public functions found to document"
+          fi

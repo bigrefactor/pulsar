@@ -1,24 +1,51 @@
 defmodule Pulsar.MixProject do
   use Mix.Project
 
+  @version "0.1.0"
+  @source_url "https://github.com/bigrefactor/pulsar"
+
   def project do
     [
       app: :pulsar,
-      version: "0.1.0",
-      elixir: "~> 1.18",
+      version: @version,
+      elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      aliases: aliases(),
+      
+      # Hex.pm package configuration
+      description: description(),
+      package: package(),
+      
+      # Documentation configuration
+      docs: docs(),
+      
+      # Test configuration
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test,
+        "coveralls.cobertura": :test
+      ],
+      
+      # Dialyzer configuration
+      dialyzer: [
+        plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
+        plt_add_apps: [:ex_unit, :mix],
+        list_unused_filters: true,
+        ignore_warnings: ".dialyzer_ignore.exs"
+      ]
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
       extra_applications: [:logger]
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
       {:phoenix, "~> 1.8"},
@@ -28,9 +55,99 @@ defmodule Pulsar.MixProject do
       {:tailwind_merge, path: "../tailwind_merge"},
       {:igniter, "~> 0.6"},
 
-      # Dev/test dependencies
+      # Quality tools
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:quokka, "~> 2.11", only: [:dev, :test], runtime: false},
+      {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
+
+      # Documentation and testing
       {:ex_doc, "~> 0.34", only: :dev, runtime: false},
-      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
+      {:excoveralls, "~> 0.18", only: :test}
+    ]
+  end
+
+  defp aliases do
+    [
+      setup: ["deps.get", "compile"],
+      check: [
+        "compile --warnings-as-errors",
+        "format --check-formatted",
+        "credo --strict",
+        "dialyzer",
+        "test",
+        "deps.audit"
+      ],
+      "check.ci": [
+        "format --check-formatted",
+        "deps.unlock --check-unused",
+        "compile --warnings-as-errors",
+        "credo --strict",
+        "dialyzer",
+        "test --cover",
+        "deps.audit"
+      ]
+    ]
+  end
+
+  defp description do
+    """
+    Beautiful, accessible Phoenix LiveView components built on Stellar.
+    Generator-based component system providing production-ready, styled components
+    with full accessibility and behavior from Stellar's headless components.
+    """
+  end
+
+  defp package do
+    [
+      name: "pulsar",
+      maintainers: ["Your Name"],
+      licenses: ["MIT"],
+      links: %{
+        "GitHub" => @source_url,
+        "Changelog" => "#{@source_url}/blob/main/CHANGELOG.md",
+        "Sponsor" => "https://github.com/sponsors/bigrefactor"
+      },
+      files: ~w(
+        lib
+        priv
+        .formatter.exs
+        mix.exs
+        README.md
+        CHANGELOG.md
+        LICENSE
+      )
+    ]
+  end
+
+  defp docs do
+    [
+      main: "readme",
+      source_ref: "v#{@version}",
+      source_url: @source_url,
+      extras: [
+        "README.md",
+        "CHANGELOG.md": [title: "Changelog"],
+        "LICENSE": [title: "License"]
+      ],
+      groups_for_modules: [
+        Components: [
+          Pulsar.Components.Button,
+          Pulsar.Components.Input,
+          Pulsar.Components.Label,
+          Pulsar.Components.Link,
+          Pulsar.Components.Textarea
+        ],
+        Generators: [
+          Mix.Tasks.Pulsar.Gen.Button,
+          Mix.Tasks.Pulsar.Install
+        ]
+      ],
+      groups_for_docs: [
+        Components: &(&1[:section] == :components),
+        Generators: &(&1[:section] == :generators),
+        "Mix Tasks": &(&1[:section] == :mix_tasks)
+      ]
     ]
   end
 end

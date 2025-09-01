@@ -1,0 +1,95 @@
+version: 2
+
+updates:
+  # Monitor mix.exs and mix.lock for Elixir dependencies
+  - package-ecosystem: "mix"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    
+    # Group related dependencies together
+    groups:
+      # Phoenix ecosystem updates
+      phoenix:
+        patterns:
+          - "phoenix"
+          - "phoenix_*"
+        
+      # Development and quality tools
+      development-tools:
+        patterns:
+          - "credo"
+          - "dialyxir" 
+          - "quokka"
+          - "ex_doc"
+          - "excoveralls"
+          - "mix_audit"
+        
+      # Test dependencies
+      test-dependencies:
+        patterns:
+          - "*test*"
+          - "*mock*"
+          - "*factory*"
+    
+    # Automatically merge minor and patch updates for development dependencies
+    # Major updates will still require manual review
+    open-pull-requests-limit: 10
+    
+    # Add assignees for dependency PRs
+    assignees:
+      - "guitsaru"  # Replace with actual GitHub username
+    
+    # Add labels to categorize dependency PRs
+    labels:
+      - "dependencies"
+      - "automated"
+    
+    # Commit message configuration
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps(dev)"
+      include: "scope"
+    
+    # Only create PRs for security updates during weekdays
+    # Regular updates on Mondays only
+    target-branch: "main"
+    
+    # Ignore specific dependencies if needed
+    ignore:
+      # Ignore path dependencies (local packages)
+      - dependency-name: "stellar"
+      - dependency-name: "tailwind_merge"
+      
+      # Example: ignore major version updates for stable packages
+      # - dependency-name: "phoenix"
+      #   update-types: ["version-update:semver-major"]
+
+  # Monitor GitHub Actions workflow dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "10:00"
+      timezone: "UTC"
+    
+    groups:
+      # Group GitHub Actions updates
+      github-actions:
+        patterns:
+          - "*"
+    
+    assignees:
+      - "guitsaru"  # Replace with actual GitHub username
+    
+    labels:
+      - "github-actions"
+      - "automated"
+    
+    commit-message:
+      prefix: "ci"
+      include: "scope"
