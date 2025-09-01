@@ -273,12 +273,18 @@ defmodule Pulsar.Components.Textarea do
     ~H"""
     <div class="flex justify-between items-center text-sm" aria-hidden="true">
       <div class={@count_color_class}>
-        {@character_count}<span :if={@max_length}>/{@max_length}</span>
+        <span>{@character_count}</span><span :if={@max_length}>/{@max_length}</span>
         <span :if={@over_limit and @chars_remaining != nil}>
           ({abs(@chars_remaining)} over)
         </span>
       </div>
-      <div :if={@max_length != nil and @chars_remaining != nil and @chars_remaining <= (@max_length * 0.1) and @chars_remaining > 0} class="text-warning dark:text-dark-warning">
+      <div
+        :if={
+          @max_length != nil and @chars_remaining != nil and @chars_remaining <= @max_length * 0.1 and
+            @chars_remaining > 0
+        }
+        class="text-warning dark:text-dark-warning"
+      >
         {@chars_remaining} remaining
       </div>
     </div>
@@ -286,14 +292,30 @@ defmodule Pulsar.Components.Textarea do
   end
 
   # Get character count display color based on state
-  defp get_character_count_color_class(remaining, over_limit, _color) do
+  defp get_character_count_color_class(remaining, over_limit, color) do
     cond do
-      over_limit -> "text-danger dark:text-dark-danger font-medium"
-      remaining && remaining == 0 -> "text-danger dark:text-dark-danger font-medium"
-      remaining && remaining <= 10 -> "text-warning dark:text-dark-warning font-medium"
-      true -> "text-muted-foreground dark:text-dark-muted-foreground"
+      over_limit || (remaining && remaining == 0) -> get_normal_character_count_color("danger")
+      remaining && remaining <= 10 -> get_normal_character_count_color("warning")
+      true -> get_normal_character_count_color(color)
     end
   end
+
+  # Get color for normal character count state (not over/near limit)
+  defp get_normal_character_count_color("neutral"),
+    do: "text-muted-foreground dark:text-dark-muted-foreground"
+
+  defp get_normal_character_count_color("primary"), do: "text-primary dark:text-dark-primary"
+
+  defp get_normal_character_count_color("secondary"),
+    do: "text-secondary dark:text-dark-secondary"
+
+  defp get_normal_character_count_color("success"), do: "text-success dark:text-dark-success"
+  defp get_normal_character_count_color("danger"), do: "text-danger dark:text-dark-danger"
+  defp get_normal_character_count_color("warning"), do: "text-warning dark:text-dark-warning"
+  defp get_normal_character_count_color("info"), do: "text-info dark:text-dark-info"
+
+  defp get_normal_character_count_color(_),
+    do: "text-muted-foreground dark:text-dark-muted-foreground"
 
   # Normalize field attributes to ensure id, name, value are always present
   defp normalize_field_attributes(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
