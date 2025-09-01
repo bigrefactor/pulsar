@@ -266,7 +266,7 @@ defmodule Pulsar.Components.Textarea do
 
   defp character_count_display(assigns) do
     count_color_class =
-      get_character_count_color_class(assigns.chars_remaining, assigns.over_limit, assigns.color)
+      get_character_count_color_class(assigns.chars_remaining, assigns.over_limit, assigns.color, assigns.max_length)
 
     assigns = assign(assigns, :count_color_class, count_color_class)
 
@@ -292,10 +292,12 @@ defmodule Pulsar.Components.Textarea do
   end
 
   # Get character count display color based on state
-  defp get_character_count_color_class(remaining, over_limit, color) do
+  defp get_character_count_color_class(remaining, over_limit, color, max_length \\ nil) do
+    warning_threshold = if max_length, do: max(1, round(max_length * 0.1)), else: 10
+    
     cond do
       over_limit || (remaining && remaining == 0) -> get_normal_character_count_color("danger")
-      remaining && remaining <= 10 -> get_normal_character_count_color("warning")
+      remaining && remaining <= warning_threshold -> get_normal_character_count_color("warning")
       true -> get_normal_character_count_color(color)
     end
   end
