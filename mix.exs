@@ -69,7 +69,7 @@ defmodule Pulsar.MixProject do
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
 
       # Documentation and testing
-      {:ex_doc, "~> 0.34", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.36", only: :dev, runtime: false},
       {:excoveralls, "~> 0.18", only: :test}
     ]
   end

@@ -149,7 +149,7 @@ jobs:
       - name: Check for missing @doc annotations
         run: |
           echo "Checking for missing @doc annotations in public functions..."
-          mix docs --formatter html 2>&1 | grep -E "warning.*missing docs" || echo "All public functions have @doc annotations"
+          mix docs --warnings-as-errors
 
       - name: Validate documentation links
         run: |
