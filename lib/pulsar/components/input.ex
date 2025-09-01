@@ -239,7 +239,7 @@ defmodule Pulsar.Components.Input do
         required={@required}
         disabled={@disabled}
         readonly={@readonly}
-        aria-invalid={@invalid && "true"}
+        aria-invalid={if @invalid, do: "true", else: "false"}
         {@rest}
       />
 
