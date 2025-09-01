@@ -53,8 +53,8 @@ defmodule Pulsar.Components.Input do
   This component wraps Stellar.Components.Input and passes through all its props:
   - All HTML5 input types (text, email, password, number, etc.)
   - Phoenix form integration with automatic error detection
-  - Accessibility features and ARIA attributes (including `aria-invalid`)
-  - Validation error signaling via `aria-invalid`
+  - ARIA support: Pulsar emits `aria-invalid`; additional ARIA attrs (e.g., `aria-describedby`) pass through via `:rest`
+  - Validation error signaling via Pulsar-managed `aria-invalid` (Stellar no longer manages errors)
   - Mobile keyboard optimization
   - All standard HTML attributes
 
