@@ -123,6 +123,11 @@ defmodule Pulsar.Components.Input do
     default: false,
     doc: "Make input read-only"
 
+  # State override (optional)
+  attr :invalid, :boolean,
+    default: nil,
+    doc: "Force invalid state; defaults to Phoenix field errors when nil"
+
   # Styling
   attr :class, :string,
     default: "",
@@ -153,6 +158,7 @@ defmodule Pulsar.Components.Input do
     if is_nil(assigns[:field]) and is_nil(assigns[:name]) do
       raise ArgumentError, "Input component requires :name when :field is not provided"
     end
+
     ~H"""
     <StellarInput.input
       type="hidden"
@@ -160,7 +166,6 @@ defmodule Pulsar.Components.Input do
       id={@id}
       name={@name}
       value={@value}
-      required={@required}
       disabled={@disabled}
       readonly={@readonly}
       class={@class}
@@ -177,7 +182,9 @@ defmodule Pulsar.Components.Input do
 
     # Detect errors and compute automatic color
     has_errors = has_field_errors(assigns)
-    effective_color = if has_errors, do: "danger", else: assigns.color
+    user_invalid = Map.get(assigns, :invalid)
+    invalid = if is_nil(user_invalid), do: has_errors, else: user_invalid
+    effective_color = if invalid, do: "danger", else: assigns.color
 
     class =
       merge([
@@ -193,7 +200,7 @@ defmodule Pulsar.Components.Input do
       |> assign(:has_end_decorator, assigns.end_decorator != [])
       |> assign(:decorator_variant, assigns.variant)
       |> assign(:decorator_color, effective_color)
-      |> assign(:invalid, has_errors)
+      |> assign(:invalid, invalid)
       |> assign(:required_attr, assigns.required)
 
     ~H"""
@@ -204,7 +211,7 @@ defmodule Pulsar.Components.Input do
       data-color={@decorator_color}
       data-has-start-decorator={@has_start_decorator}
       data-has-end-decorator={@has_end_decorator}
-      data-invalid={@invalid}
+      data-invalid={if @invalid, do: "true", else: "false"}
       data-required={@required_attr}
     >
       <.start_decorator
@@ -519,6 +526,9 @@ defmodule Pulsar.Components.Input do
     do: "text-muted-foreground dark:text-dark-muted-foreground"
 
   # Keep local and private - helper for error detection
-  defp has_field_errors(%{field: %Phoenix.HTML.FormField{errors: errs}}) when errs != [], do: true
+  defp has_field_errors(%{field: %Phoenix.HTML.FormField{errors: errs}})
+       when is_list(errs) and errs != [],
+       do: true
+
   defp has_field_errors(_), do: false
 end
