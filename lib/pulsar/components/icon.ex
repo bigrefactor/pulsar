@@ -14,7 +14,7 @@ defmodule Pulsar.Components.Icon do
 
   ## Examples
 
-      # Basic outline icon
+      # Basic outline icon (decorative by default)
       <.icon name="hero-check" />
 
       # Solid variant with color
@@ -25,6 +25,9 @@ defmodule Pulsar.Components.Icon do
 
       # Current color (inherits from parent)
       <.icon name="hero-information-circle" color="current" />
+
+      # Informative icon with accessible label
+      <.icon name="hero-exclamation-triangle" color="warning" aria_label="Warning" />
 
   ## Size and Scaling
 
@@ -39,6 +42,21 @@ defmodule Pulsar.Components.Icon do
 
   Uses Pulsar's semantic color tokens with automatic dark mode support.
   The `current` color inherits the text color from the parent element.
+
+  ## Accessibility
+
+  Icons are decorative by default with `aria-hidden="true"`. For informative icons
+  that convey meaning, provide an `aria_label`:
+
+      # Decorative icon (default)
+      <.icon name="hero-star" />
+      # Renders: <span aria-hidden="true" ... />
+
+      # Informative icon
+      <.icon name="hero-exclamation-triangle" aria_label="Warning" />
+      # Renders: <span role="img" aria-label="Warning" ... />
+
+  You can override the default behavior by setting `aria-hidden` in the rest attributes.
   """
 
   use Phoenix.Component
@@ -64,6 +82,14 @@ defmodule Pulsar.Components.Icon do
     values: ~w(current neutral primary secondary success danger warning info),
     doc: "Icon color using semantic color tokens"
 
+  attr :aria_label, :string,
+    default: nil,
+    doc: "Accessible label for informative icons. When provided, icon becomes informative with role='img'"
+
+  attr :aria_hidden, :string,
+    default: nil,
+    doc: "Override default aria-hidden behavior. Set to 'false' to make decorative icons visible to screen readers"
+
   attr :class, :string,
     default: "",
     doc: "Additional CSS classes"
@@ -77,22 +103,13 @@ defmodule Pulsar.Components.Icon do
   applies the correct Heroicon class name, size scaling, and semantic colors.
   """
   def icon(assigns) do
-    # Build the Heroicon class name
-    heroicon_class = build_heroicon_class(assigns.name, assigns.variant)
-
-    # Merge all classes
-    class =
-      merge([
-        heroicon_class,
-        get_size_classes(assigns.size),
-        get_color_classes(assigns.color),
-        assigns.class
-      ])
-
-    assigns = assign(assigns, :class, class)
+    assigns =
+      assigns
+      |> assign_classes()
+      |> assign_aria_attributes()
 
     ~H"""
-    <span class={@class} {@rest} />
+    <span class={@class} role={@role} aria-label={@computed_aria_label} aria-hidden={@computed_aria_hidden} {@rest} />
     """
   end
 
@@ -124,4 +141,45 @@ defmodule Pulsar.Components.Icon do
   defp get_color_classes("danger"), do: "text-danger dark:text-dark-danger"
   defp get_color_classes("warning"), do: "text-warning dark:text-dark-warning"
   defp get_color_classes("info"), do: "text-info dark:text-dark-info"
+
+  # Assign CSS classes with TailwindMerge
+  defp assign_classes(assigns) do
+    heroicon_class = build_heroicon_class(assigns.name, assigns.variant)
+
+    class =
+      merge([
+        heroicon_class,
+        get_size_classes(assigns.size),
+        get_color_classes(assigns.color),
+        assigns.class
+      ])
+
+    assign(assigns, :class, class)
+  end
+
+  # Assign computed ARIA attributes based on whether icon is decorative or informative
+  defp assign_aria_attributes(assigns) do
+    cond do
+      # User explicitly set aria-hidden - respect their choice
+      assigns.aria_hidden != nil ->
+        assigns
+        |> assign(:computed_aria_hidden, assigns.aria_hidden)
+        |> assign(:computed_aria_label, assigns.aria_label)
+        |> assign(:role, nil)
+
+      # Has accessible label - make it informative
+      assigns.aria_label != nil ->
+        assigns
+        |> assign(:computed_aria_hidden, nil)
+        |> assign(:computed_aria_label, assigns.aria_label)
+        |> assign(:role, "img")
+
+      # Default - decorative icon
+      true ->
+        assigns
+        |> assign(:computed_aria_hidden, "true")
+        |> assign(:computed_aria_label, nil)
+        |> assign(:role, nil)
+    end
+  end
 end
