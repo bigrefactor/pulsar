@@ -20,7 +20,8 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ ~s(<select)
       assert html =~ ~s(name="test")
       # Should include custom arrow styling
-      assert html =~ "appearance-none pr-10"
+      assert html =~ "appearance-none"
+      assert html =~ "pr-10"
       # Should have custom arrow icon
       assert html =~ ~s(<svg)
       assert html =~ "M19 9l-7 7-7-7"
@@ -391,6 +392,26 @@ defmodule Pulsar.Components.SelectTest do
       # Should not show badges container when empty
       refute html =~ ~s(class="flex flex-wrap gap-2")
     end
+
+    test "badge close buttons have aria-label for accessibility" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select
+          name="skills"
+          options={[{"Elixir", "elixir"}, {"Phoenix", "phoenix"}]}
+          value={["elixir"]}
+          multiple={true}
+        />
+        """)
+
+      # Should have aria-label on close button
+      assert html =~ ~s(aria-label="Remove")
+      # Should still have remove button
+      assert html =~ ~s(phx-click="remove_selection")
+      assert html =~ ~s(phx-value-option="elixir")
+    end
   end
 
   describe "states and accessibility" do
@@ -406,6 +427,19 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ "cursor-not-allowed"
       assert html =~ "opacity-50"
       assert html =~ "pointer-events-none"
+    end
+
+    test "disabled arrow has reduced opacity" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select name="test" options={["A", "B", "C"]} disabled={true} />
+        """)
+
+      # Should have arrow container with opacity-50 when disabled
+      assert html =~
+               ~s(class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-neutral dark:text-dark-neutral opacity-50")
     end
 
     test "handles required state" do

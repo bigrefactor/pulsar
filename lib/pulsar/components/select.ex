@@ -94,10 +94,6 @@ defmodule Pulsar.Components.Select do
   attr :field, FormField, default: nil, doc: "Phoenix form field"
 
   # Core attributes
-  attr :id, :string,
-    default: nil,
-    doc: "Select ID (auto-generated if not provided)"
-
   attr :name, :string,
     default: nil,
     doc: "Select name (from field if not provided)"
@@ -205,11 +201,10 @@ defmodule Pulsar.Components.Select do
             [
               @class,
               # Custom arrow positioning
-              "appearance-none pr-10"
+              "pr-10"
             ]
           }
           field={@field}
-          id={@id}
           name={@name}
           value={@value}
           options={@options}
@@ -225,7 +220,8 @@ defmodule Pulsar.Components.Select do
     <!-- Custom arrow icon -->
         <div class={[
           "absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none",
-          get_arrow_classes(@variant, @effective_color)
+          get_arrow_classes(@variant, @effective_color),
+          @disabled && "opacity-50"
         ]}>
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -261,6 +257,7 @@ defmodule Pulsar.Components.Select do
         :if={@removable}
         type="button"
         class="ml-1.5 -mr-1 hover:bg-black hover:bg-opacity-10 rounded-full p-0.5 focus:outline-none focus:ring-1 focus:ring-current"
+        aria-label="Remove"
       >
         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
           <path
@@ -286,7 +283,7 @@ defmodule Pulsar.Components.Select do
 
   # Base styles shared by all select variants
   defp base_select_classes do
-    "block w-full transition-all duration-200 ease-in-out focus:ring-2 focus:ring-offset-2 focus:outline-none"
+    "block w-full appearance-none transition-all duration-200 ease-in-out focus:ring-2 focus:ring-offset-2 focus:outline-none"
   end
 
   # Variant-specific layout and structure
