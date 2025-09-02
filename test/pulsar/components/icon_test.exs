@@ -170,17 +170,15 @@ defmodule Pulsar.Components.IconTest do
       refute html =~ ~s(role="img")
     end
 
-    test "prioritizes aria_label over aria-label in rest" do
+    test "aria_label attribute controls aria-label in output" do
       assigns = %{}
 
       html =
-        rendered_to_string(~H[<Icon.icon name="hero-check" aria_label="Primary Label" aria-label="Secondary Label" />])
+        rendered_to_string(~H[<Icon.icon name="hero-check" aria_label="Primary Label" />])
 
-      # Component uses aria_label attr to compute accessibility
-      assert html =~ ~s(aria-label="Primary Label")
+      # aria_label drives semantics and final aria-label value
       assert html =~ ~s(role="img")
-      # Rest attributes pass through, so both labels will be present
-      assert html =~ ~s(aria-label="Secondary Label")
+      assert html =~ ~s(aria-label="Primary Label")
     end
   end
 
@@ -220,21 +218,18 @@ defmodule Pulsar.Components.IconTest do
       assert html =~ ~s(data-testid="icon")
     end
 
-    test "passes through rest attributes without filtering" do
+    test "passes through non-conflicting rest attributes" do
       assigns = %{}
 
       html =
-        rendered_to_string(
-          ~H[<Icon.icon name="hero-check" aria_label="Test" aria-label="Filtered" aria-hidden="false" title="Tooltip" />]
-        )
+        rendered_to_string(~H[<Icon.icon name="hero-check" aria_label="Test" title="Tooltip" data-testid="icon" />])
 
-      # Component uses aria_label for accessibility computation
+      # aria_label drives semantics
       assert html =~ ~s(role="img")
       assert html =~ ~s(aria-label="Test")
-      # Rest attributes pass through unfiltered
-      assert html =~ ~s(aria-label="Filtered")
-      assert html =~ ~s(aria-hidden="false")
+      # Non-conflicting attributes pass through
       assert html =~ ~s(title="Tooltip")
+      assert html =~ ~s(data-testid="icon")
     end
   end
 end

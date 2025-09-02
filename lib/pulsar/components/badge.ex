@@ -79,6 +79,10 @@ defmodule Pulsar.Components.Badge do
     default: false,
     doc: "Add remove button to badge"
 
+  attr :remove_aria_label, :string,
+    default: "Remove badge",
+    doc: "Accessible label for the remove button"
+
   attr :on_remove, :any,
     default: nil,
     doc: "Phoenix.LiveView.JS command for removal, or event name string"
@@ -129,8 +133,8 @@ defmodule Pulsar.Components.Badge do
       <button
         :if={@removable}
         type="button"
-        class="ml-1.5 -mr-1 hover:bg-black/10 dark:hover:bg-white/10 rounded-full p-0.5 focus:outline-none focus:ring-1 focus:ring-current transition-colors"
-        aria-label="Remove item"
+        class="ml-1.5 -mr-1 hover:bg-black/10 dark:hover:bg-white/10 rounded-full p-0.5 focus:outline-none focus:ring-1 focus:ring-current transition-colors cursor-pointer"
+        aria-label={@remove_aria_label}
         phx-click={@remove_js}
       >
         <.icon name="hero-x-mark" variant="micro" size={@remove_icon_size} color="current" aria-hidden="true" />

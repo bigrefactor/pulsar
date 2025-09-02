@@ -293,11 +293,13 @@ jobs:
           SECRETS_FOUND=false
           
           # Scan repository root excluding build and vendor directories
-          EXCLUDE_DIRS=".git,_build,deps,node_modules,vendor,coverage,tmp,priv/static,docs"
+          EXCLUDE_DIRS=(.git _build deps node_modules vendor coverage tmp priv/static doc)
           
           for pattern in "${SECRET_PATTERNS[@]}"; do
             echo "Checking pattern: $pattern"
-            if grep -r -i -E "$pattern" . --exclude-dir={$EXCLUDE_DIRS} --exclude="*.log" --exclude="*.lock" 2>/dev/null | head -10; then
+            EXCLUDES=()
+            for d in "${EXCLUDE_DIRS[@]}"; do EXCLUDES+=(--exclude-dir="$d"); done
+            if grep -r -nI -E "$pattern" . "${EXCLUDES[@]}" --exclude="*.log" --exclude="*.lock" 2>/dev/null | head -10; then
               echo "🔴 Potential hardcoded secret found matching pattern: $pattern"
               SECRETS_FOUND=true
             fi

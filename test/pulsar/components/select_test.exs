@@ -407,7 +407,7 @@ defmodule Pulsar.Components.SelectTest do
         """)
 
       # Should have aria-label on close button
-      assert html =~ ~s(aria-label="Remove item")
+      assert html =~ ~s(aria-label="Remove badge")
       # Should still have remove button (now uses JS command structure)
       assert html =~ ~s(phx-click="[[&quot;push&quot;,{&quot;event&quot;:&quot;remove_selection&quot;}]]")
       assert html =~ ~s(phx-value-option="elixir")

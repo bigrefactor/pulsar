@@ -175,10 +175,13 @@ defmodule Pulsar.Components.Select do
     invalid = if is_nil(user_invalid), do: has_errors, else: user_invalid
     effective_color = if invalid, do: "danger", else: assigns.color
 
+    # Resolve current value from explicit :value or Phoenix form field
+    current_value = value_or_field(assigns.value, assigns.field)
+
     # For multi-select, extract selected values for badge display
     selected_options =
       if assigns.multiple do
-        extract_selected_options(assigns.value, assigns.options)
+        extract_selected_options(current_value, assigns.options)
       else
         []
       end
@@ -187,6 +190,7 @@ defmodule Pulsar.Components.Select do
       merge([
         get_select_classes(assigns.variant, effective_color, assigns.size),
         get_state_classes(assigns.disabled),
+        "pr-10",
         assigns.class
       ])
 
@@ -218,13 +222,7 @@ defmodule Pulsar.Components.Select do
     <!-- Select wrapper with custom arrow -->
       <div class="relative">
         <StellarSelect.select
-          class={
-            [
-              @class,
-              # Custom arrow positioning
-              "pr-10"
-            ]
-          }
+          class={@class}
           field={@field}
           name={@name}
           value={@value}
@@ -431,4 +429,9 @@ defmodule Pulsar.Components.Select do
   # Keep local and private - helper for error detection
   defp has_field_errors(%{field: %FormField{errors: errs}}) when is_list(errs) and errs != [], do: true
   defp has_field_errors(_), do: false
+
+  # Resolve value precedence: explicit :value over Phoenix form field
+  defp value_or_field(nil, %FormField{value: v}), do: v
+  defp value_or_field(nil, _), do: nil
+  defp value_or_field(v, _), do: v
 end

@@ -1,7 +1,9 @@
 defmodule Pulsar.MixProject do
   use Mix.Project
 
+  alias Pulsar.Components.Badge
   alias Pulsar.Components.Button
+  alias Pulsar.Components.Icon
   alias Pulsar.Components.Input
   alias Pulsar.Components.Label
   alias Pulsar.Components.Link
@@ -140,7 +142,9 @@ defmodule Pulsar.MixProject do
       ],
       groups_for_modules: [
         Components: [
+          Badge,
           Button,
+          Icon,
           Input,
           Label,
           Link,

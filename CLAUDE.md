@@ -200,7 +200,9 @@ Component examples and interactive testing are available in the standalone story
 **Important**: Generated components depend on **Stellar** and **TailwindMerge** as the only required dependencies. No Pulsar package dependency is needed.
 
 **Generated Components Include:**
+- **Badge**: Flexible labels with variants/sizes, removable option, and action slot
 - **Button**: Multiple variants (solid, outline, ghost, link) with full color palette
+- **Icon**: Centralized icon component (Heroicons; outline/solid/mini/micro, sizes, accessibility)
 - **Input**: Text inputs with decorator system (start/end icons, text, buttons)
 - **Label**: Typography variants with required indicators and helper text
 - **Link**: Link component with button-like styling options

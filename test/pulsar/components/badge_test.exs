@@ -121,7 +121,7 @@ defmodule Pulsar.Components.BadgeTest do
       html = rendered_to_string(~H[<Badge.badge>Non-removable</Badge.badge>])
 
       refute html =~ ~s(<button)
-      refute html =~ ~s(aria-label="Remove item")
+      refute html =~ ~s(aria-label="Remove badge")
     end
 
     test "renders remove button when removable=true" do
@@ -129,7 +129,7 @@ defmodule Pulsar.Components.BadgeTest do
       html = rendered_to_string(~H[<Badge.badge removable>Removable</Badge.badge>])
 
       assert html =~ ~s(<button)
-      assert html =~ ~s(aria-label="Remove item")
+      assert html =~ ~s(aria-label="Remove badge")
       assert html =~ ~s(hero-x-mark-micro)
       assert html =~ ~s(phx-click=)
     end
@@ -146,7 +146,7 @@ defmodule Pulsar.Components.BadgeTest do
       html = rendered_to_string(~H[<Badge.badge removable>Accessible</Badge.badge>])
 
       assert html =~ ~s(type="button")
-      assert html =~ ~s(aria-label="Remove item")
+      assert html =~ ~s(aria-label="Remove badge")
       assert html =~ ~s(hover:bg-black/10 dark:hover:bg-white/10)
       assert html =~ ~s(focus:outline-none focus:ring-1)
     end
@@ -220,7 +220,7 @@ defmodule Pulsar.Components.BadgeTest do
         """)
 
       assert html =~ "Complex"
-      assert html =~ ~s(aria-label="Remove item")
+      assert html =~ ~s(aria-label="Remove badge")
       assert html =~ ~s(<span>Extra</span>)
     end
   end
