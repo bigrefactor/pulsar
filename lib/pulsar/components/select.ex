@@ -199,11 +199,21 @@ defmodule Pulsar.Components.Select do
       |> assign(:class, class)
       |> assign(:effective_color, effective_color)
       |> assign(:invalid, invalid)
+      |> assign(:value, current_value)
       |> assign(:selected_options, selected_options)
       |> assign(:show_badges, assigns.multiple and not Enum.empty?(selected_options))
 
     ~H"""
-    <div class="space-y-2">
+    <div
+      class="space-y-2"
+      data-variant={@variant}
+      data-color={@effective_color}
+      data-size={@size}
+      data-invalid={@invalid}
+      data-required={@required}
+      data-multiple={@multiple}
+      data-has-badges={@show_badges}
+    >
       <!-- Multi-select badges -->
       <div :if={@show_badges} class="flex flex-wrap gap-2">
         <Badge.badge
@@ -272,7 +282,7 @@ defmodule Pulsar.Components.Select do
   # Color classes by variant - matching Input component patterns
   defp color_classes("outline", "neutral"),
     do:
-      "border-border dark:border-dark-border bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground focus:ring-ring dark:focus:ring-dark-ring hover:border-primary/50 dark:hover:border-dark-primary/50"
+      "border-border dark:border-dark-border bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground focus:ring-ring dark:focus:ring-dark-ring hover:border-border/80 dark:hover:border-dark-border/80"
 
   defp color_classes("outline", "primary"),
     do:
@@ -418,7 +428,7 @@ defmodule Pulsar.Components.Select do
         group_map = build_option_map(group_options)
         Map.merge(acc, group_map)
 
-      value, acc when is_binary(value) or is_atom(value) ->
+      value, acc when is_binary(value) or is_atom(value) or is_integer(value) ->
         Map.put(acc, to_string(value), to_string(value))
 
       _, acc ->

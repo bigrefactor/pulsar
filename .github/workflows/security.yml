@@ -15,7 +15,7 @@ jobs:
   security-audit:
     name: Security Vulnerability Audit
     runs-on: ubuntu-22.04
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -67,7 +67,7 @@ jobs:
         run: |
           set -o pipefail
           echo "Running security audit..."
-          
+
           # Run audit and tee output to log file, relying on exit code for failure detection
           if mix deps.audit 2>&1 | tee security_audit.log; then
             echo "✅ No security vulnerabilities found"
@@ -82,7 +82,7 @@ jobs:
         run: |
           echo "Checking for outdated dependencies..."
           mix hex.outdated --all 2>&1 | tee outdated_deps.log
-          
+
           # Report outdated dependencies but don't fail the build
           if grep -q "outdated" outdated_deps.log; then
             echo "📋 Some dependencies are outdated (consider updating):"
@@ -95,7 +95,7 @@ jobs:
         run: |
           echo "Checking for retired Hex packages..."
           mix hex.audit 2>&1 | tee hex_audit.log
-          
+
           if grep -q "RETIRED" hex_audit.log; then
             echo "⚠️ Found retired packages:"
             cat hex_audit.log
@@ -107,7 +107,7 @@ jobs:
   license-compliance:
     name: License Compliance Check
     runs-on: ubuntu-22.04
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -158,18 +158,18 @@ jobs:
       - name: Check dependency licenses
         run: |
           echo "Checking dependency licenses..."
-          
+
           # Create a script to extract licenses from dependencies
           cat > check_licenses.exs << 'EOF'
           deps = Mix.Dep.loaded([])
-          
+
           IO.puts("Dependency License Report")
           IO.puts("========================")
-          
+
           for dep <- deps do
             app_path = dep.opts[:dest] || "deps/#{dep.app}"
             mix_file = Path.join(app_path, "mix.exs")
-            
+
             licenses = if File.exists?(mix_file) do
               try do
                 {mod, _} = Code.eval_file(mix_file)
@@ -181,14 +181,14 @@ jobs:
             else
               ["Unknown"]
             end
-            
+
             IO.puts("#{dep.app}: #{Enum.join(licenses, ", ")}")
           end
           EOF
-          
+
           elixir check_licenses.exs > license_report.txt
           cat license_report.txt
-          
+
           # Check for problematic licenses (GPL, LGPL, etc.)
           if grep -iE "(gpl|lgpl|agpl)" license_report.txt; then
             echo "⚠️ Found potentially problematic copyleft licenses"
@@ -201,7 +201,7 @@ jobs:
   security-credo:
     name: Security-Focused Static Analysis
     runs-on: ubuntu-22.04
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -268,7 +268,7 @@ jobs:
   secrets-detection:
     name: Detect Hardcoded Secrets
     runs-on: ubuntu-22.04
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -277,7 +277,7 @@ jobs:
         run: |
           set -euo pipefail
           echo "Scanning for potential hardcoded secrets..."
-          
+
           # Common secret patterns
           SECRET_PATTERNS=(
             "password.*=.*['\"][^'\"]{8,}['\"]"
@@ -289,12 +289,12 @@ jobs:
             "sk_live_[a-zA-Z0-9]{24,}"
             "pk_live_[a-zA-Z0-9]{24,}"
           )
-          
+
           SECRETS_FOUND=false
-          
+
           # Scan repository root excluding build and vendor directories
           EXCLUDE_DIRS=(.git _build deps node_modules vendor coverage tmp priv/static doc)
-          
+
           for pattern in "${SECRET_PATTERNS[@]}"; do
             echo "Checking pattern: $pattern"
             EXCLUDES=()
@@ -304,7 +304,7 @@ jobs:
               SECRETS_FOUND=true
             fi
           done
-          
+
           if [ "$SECRETS_FOUND" = true ]; then
             echo "❌ Hardcoded secrets detected!"
             exit 1
@@ -317,11 +317,11 @@ jobs:
         run: |
           set -euo pipefail
           echo "Running advanced secret detection with Gitleaks..."
-          
+
           # Install gitleaks
           curl -sSfL https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks_linux_x64.tar.gz | tar -xz
           sudo mv gitleaks /usr/local/bin/
-          
+
           # Run gitleaks scan
           if gitleaks detect --source . --verbose --no-banner --exit-code 1; then
             echo "✅ Gitleaks: No secrets detected"
@@ -334,38 +334,38 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [security-audit, license-compliance, security-credo, secrets-detection]
     if: always()
-    
+
     steps:
       - name: Generate Security Report
         run: |
           echo "# Security Scan Summary"
           echo "Date: $(date -u)"
           echo ""
-          
+
           if [ "${{ needs.security-audit.result }}" = "success" ]; then
             echo "✅ Dependency Security Audit: PASSED"
           else
             echo "❌ Dependency Security Audit: FAILED"
           fi
-          
+
           if [ "${{ needs.license-compliance.result }}" = "success" ]; then
             echo "✅ License Compliance Check: PASSED"
           else
             echo "⚠️ License Compliance Check: WARNINGS"
           fi
-          
+
           if [ "${{ needs.security-credo.result }}" = "success" ]; then
             echo "✅ Security Static Analysis: PASSED"
           else
             echo "❌ Security Static Analysis: FAILED"
           fi
-          
+
           if [ "${{ needs.secrets-detection.result }}" = "success" ]; then
             echo "✅ Secrets Detection: PASSED"
           else
             echo "❌ Secrets Detection: FAILED"
           fi
-          
+
           echo ""
           echo "For detailed results, check individual job logs."
 
