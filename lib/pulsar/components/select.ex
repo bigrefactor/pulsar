@@ -242,7 +242,7 @@ defmodule Pulsar.Components.Select do
           auto_name_array={@auto_name_array}
           required={@required}
           disabled={@disabled}
-          aria-invalid={if @invalid, do: "true", else: "false"}
+          aria-invalid={@invalid && "true"}
           {@rest}
         />
         
@@ -379,9 +379,7 @@ defmodule Pulsar.Components.Select do
   end
 
   # Custom arrow styling
-  defp get_arrow_classes("outline", color), do: get_arrow_color_classes(color)
-  defp get_arrow_classes("ghost", color), do: get_arrow_color_classes(color)
-  defp get_arrow_classes("solid", color), do: get_arrow_color_classes(color)
+  defp get_arrow_classes(_variant, color), do: get_arrow_color_classes(color)
 
   defp get_arrow_color_classes("neutral"), do: "text-neutral dark:text-dark-neutral"
   defp get_arrow_color_classes("primary"), do: "text-primary dark:text-dark-primary"

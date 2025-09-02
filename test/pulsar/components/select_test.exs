@@ -556,7 +556,7 @@ defmodule Pulsar.Components.SelectTest do
       refute html =~ ~s(aria-invalid="false")
     end
 
-    test "sets aria-invalid to 'false' when field has no errors" do
+    test "omits aria-invalid when field has no errors (reduces noise)" do
       # Create a form field without errors
       field = %FormField{
         errors: [],
@@ -574,12 +574,12 @@ defmodule Pulsar.Components.SelectTest do
         <Select.select field={@field} options={[{"US", "us"}, {"CA", "ca"}]} />
         """)
 
-      # Should have aria-invalid="false" when field has no errors
-      assert html =~ ~s(aria-invalid="false")
+      # Should not have aria-invalid when field has no errors (reduces noise)
+      refute html =~ ~s(aria-invalid="false")
       refute html =~ ~s(aria-invalid="true")
     end
 
-    test "sets aria-invalid to 'false' when no field is provided" do
+    test "omits aria-invalid when no field is provided (reduces noise)" do
       assigns = %{}
 
       html =
@@ -587,8 +587,8 @@ defmodule Pulsar.Components.SelectTest do
         <Select.select name="test" options={[{"US", "us"}, {"CA", "ca"}]} />
         """)
 
-      # Should have aria-invalid="false" when no field provided
-      assert html =~ ~s(aria-invalid="false")
+      # Should not have aria-invalid when no field provided (reduces noise)
+      refute html =~ ~s(aria-invalid="false")
       refute html =~ ~s(aria-invalid="true")
     end
   end
