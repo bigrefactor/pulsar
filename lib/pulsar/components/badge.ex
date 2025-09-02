@@ -133,7 +133,7 @@ defmodule Pulsar.Components.Badge do
         aria-label="Remove item"
         phx-click={@remove_js}
       >
-        <Icon.icon name="hero-x-mark" variant="micro" size={@remove_icon_size} color="current" />
+        <Icon.icon name="hero-x-mark" variant="micro" size={@remove_icon_size} color="current" aria-hidden="true" />
       </button>
       
     <!-- Custom action slot -->
@@ -146,11 +146,11 @@ defmodule Pulsar.Components.Badge do
   defp default_remove_js do
     JS.transition(
       "transition-all transform ease-out duration-200",
-      to: ".badge",
+      to: :target,
       time: 200
     )
-    |> JS.add_class("scale-95 opacity-0")
-    |> JS.hide(time: 200)
+    |> JS.add_class("scale-95 opacity-0", to: :target)
+    |> JS.hide(time: 200, to: :target)
   end
 
   # Modular badge styling system
@@ -165,7 +165,7 @@ defmodule Pulsar.Components.Badge do
 
   # Base styles shared by all badge variants
   defp base_badge_classes do
-    "inline-flex items-center font-medium transition-colors focus-within:outline-none focus-within:ring-2 focus-within:ring-ring dark:focus-within:ring-dark-ring focus-within:ring-offset-2"
+    "inline-flex items-center font-medium transition-colors focus-within:outline-none focus-within:ring-2 focus-within:ring-current focus-within:ring-offset-2"
   end
 
   # Variant-specific structure and borders
