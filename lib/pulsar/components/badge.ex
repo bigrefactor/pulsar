@@ -55,10 +55,10 @@ defmodule Pulsar.Components.Badge do
 
   use Phoenix.Component
 
+  import Pulsar.Components.Icon, only: [icon: 1]
   import TailwindMerge, only: [merge: 1]
 
   alias Phoenix.LiveView.JS
-  alias Pulsar.Components.Icon
 
   attr :variant, :string,
     default: "solid",
@@ -133,7 +133,7 @@ defmodule Pulsar.Components.Badge do
         aria-label="Remove item"
         phx-click={@remove_js}
       >
-        <Icon.icon name="hero-x-mark" variant="micro" size={@remove_icon_size} color="current" aria-hidden="true" />
+        <.icon name="hero-x-mark" variant="micro" size={@remove_icon_size} color="current" aria-hidden="true" />
       </button>
       
     <!-- Custom action slot -->
@@ -165,7 +165,7 @@ defmodule Pulsar.Components.Badge do
 
   # Base styles shared by all badge variants
   defp base_badge_classes do
-    "inline-flex items-center font-medium transition-colors focus-within:outline-none focus-within:ring-2 focus-within:ring-current focus-within:ring-offset-2"
+    "inline-flex items-center font-medium transition-colors duration-200 focus-within:outline-none focus-within:ring-2 focus-within:ring-current focus-within:ring-offset-2"
   end
 
   # Variant-specific structure and borders
