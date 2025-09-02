@@ -1,0 +1,227 @@
+defmodule Pulsar.Components.BadgeTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.Component
+  import Phoenix.LiveViewTest
+
+  alias Pulsar.Components.Badge
+
+  describe "badge/1 basic functionality" do
+    test "renders basic badge with defaults" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge>New</Badge.badge>])
+
+      assert html =~ ~s(<span)
+      assert html =~ "New"
+      assert html =~ ~s(bg-neutral)
+      assert html =~ ~s(text-sm px-2.5 py-0.5)
+    end
+
+    test "renders badge content correctly" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge>Phoenix Framework</Badge.badge>])
+
+      assert html =~ "Phoenix Framework"
+    end
+  end
+
+  describe "badge variants" do
+    test "renders solid variant (default)" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge variant="solid">Solid</Badge.badge>])
+
+      assert html =~ ~s(rounded-md)
+      assert html =~ ~s(bg-neutral)
+    end
+
+    test "renders outline variant" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge variant="outline">Outline</Badge.badge>])
+
+      assert html =~ ~s(rounded-md border)
+      assert html =~ ~s(border-border)
+      assert html =~ ~s(bg-background)
+    end
+
+    test "renders ghost variant" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge variant="ghost">Ghost</Badge.badge>])
+
+      assert html =~ ~s(rounded-md)
+      assert html =~ ~s(hover:bg-neutral/10)
+    end
+  end
+
+  describe "badge colors" do
+    test "renders primary color" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge color="primary">Primary</Badge.badge>])
+
+      assert html =~ ~s(bg-primary text-primary-foreground)
+      assert html =~ ~s(dark:bg-dark-primary dark:text-dark-primary-foreground)
+    end
+
+    test "renders danger color" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge color="danger">Error</Badge.badge>])
+
+      assert html =~ ~s(bg-danger text-danger-foreground)
+      assert html =~ ~s(dark:bg-dark-danger dark:text-dark-danger-foreground)
+    end
+
+    test "renders success color" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge color="success">Success</Badge.badge>])
+
+      assert html =~ ~s(bg-success text-success-foreground)
+      assert html =~ ~s(dark:bg-dark-success dark:text-dark-success-foreground)
+    end
+  end
+
+  describe "badge sizes" do
+    test "renders xs size" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge size="xs">XS</Badge.badge>])
+
+      assert html =~ ~s(text-xs px-2 py-0.5)
+    end
+
+    test "renders sm size" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge size="sm">SM</Badge.badge>])
+
+      assert html =~ ~s(text-sm px-2 py-0.5)
+    end
+
+    test "renders md size (default)" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge size="md">MD</Badge.badge>])
+
+      assert html =~ ~s(text-sm px-2.5 py-0.5)
+    end
+
+    test "renders lg size" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge size="lg">LG</Badge.badge>])
+
+      assert html =~ ~s(text-base px-3 py-1)
+    end
+
+    test "renders xl size" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge size="xl">XL</Badge.badge>])
+
+      assert html =~ ~s(text-lg px-3.5 py-1)
+    end
+  end
+
+  describe "removable badges" do
+    test "does not render remove button by default" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge>Non-removable</Badge.badge>])
+
+      refute html =~ ~s(<button)
+      refute html =~ ~s(aria-label="Remove item")
+    end
+
+    test "renders remove button when removable=true" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge removable>Removable</Badge.badge>])
+
+      assert html =~ ~s(<button)
+      assert html =~ ~s(aria-label="Remove item")
+      assert html =~ ~s(hero-x-mark-micro)
+      assert html =~ ~s(phx-click=)
+    end
+
+    test "uses custom removal handler" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge removable on_remove="custom_remove">Custom</Badge.badge>])
+
+      assert html =~ ~s(phx-click="[[&quot;push&quot;,{&quot;event&quot;:&quot;custom_remove&quot;}]]")
+    end
+
+    test "remove button has proper styling and accessibility" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge removable>Accessible</Badge.badge>])
+
+      assert html =~ ~s(type="button")
+      assert html =~ ~s(aria-label="Remove item")
+      assert html =~ ~s(hover:bg-black/10 dark:hover:bg-white/10)
+      assert html =~ ~s(focus:outline-none focus:ring-1)
+    end
+  end
+
+  describe "badge customization" do
+    test "accepts custom CSS classes" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge class="custom-class">Custom</Badge.badge>])
+
+      assert html =~ ~s(custom-class)
+    end
+
+    test "accepts global attributes" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge id="my-badge" data-testid="badge">Global</Badge.badge>])
+
+      assert html =~ ~s(id="my-badge")
+      assert html =~ ~s(data-testid="badge")
+    end
+  end
+
+  describe "variant and color combinations" do
+    test "outline variant with primary color" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge variant="outline" color="primary">Outlined</Badge.badge>])
+
+      assert html =~ ~s(border-primary dark:border-dark-primary)
+      assert html =~ ~s(text-primary dark:text-dark-primary)
+      assert html =~ ~s(bg-background dark:bg-dark-background)
+    end
+
+    test "ghost variant with danger color" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge variant="ghost" color="danger">Ghost Danger</Badge.badge>])
+
+      assert html =~ ~s(text-danger dark:text-dark-danger)
+      assert html =~ ~s(hover:bg-danger/10 dark:hover:bg-dark-danger/10)
+    end
+  end
+
+  describe "badge with action slot" do
+    test "renders custom action slot" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Badge.badge>
+          With Action
+          <:action>
+            <button type="button">Custom</button>
+          </:action>
+        </Badge.badge>
+        """)
+
+      assert html =~ "With Action"
+      assert html =~ ~s(<button type="button">Custom</button>)
+    end
+
+    test "can have both removable and action slot" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Badge.badge removable>
+          Complex
+          <:action>
+            <span>Extra</span>
+          </:action>
+        </Badge.badge>
+        """)
+
+      assert html =~ "Complex"
+      assert html =~ ~s(aria-label="Remove item")
+      assert html =~ ~s(<span>Extra</span>)
+    end
+  end
+end

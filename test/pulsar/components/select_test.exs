@@ -354,8 +354,8 @@ defmodule Pulsar.Components.SelectTest do
       # Should display selected badges
       assert html =~ "Elixir"
       assert html =~ "Phoenix"
-      # Should have remove buttons
-      assert html =~ ~s(phx-click="remove_selection")
+      # Should have remove buttons (now uses JS command structure)
+      assert html =~ ~s(phx-click="[[&quot;push&quot;,{&quot;event&quot;:&quot;remove_selection&quot;}]]")
       assert html =~ ~s(phx-value-option="elixir")
       assert html =~ ~s(phx-value-option="phoenix")
     end
@@ -407,9 +407,9 @@ defmodule Pulsar.Components.SelectTest do
         """)
 
       # Should have aria-label on close button
-      assert html =~ ~s(aria-label="Remove")
-      # Should still have remove button
-      assert html =~ ~s(phx-click="remove_selection")
+      assert html =~ ~s(aria-label="Remove item")
+      # Should still have remove button (now uses JS command structure)
+      assert html =~ ~s(phx-click="[[&quot;push&quot;,{&quot;event&quot;:&quot;remove_selection&quot;}]]")
       assert html =~ ~s(phx-value-option="elixir")
     end
   end
@@ -761,12 +761,12 @@ defmodule Pulsar.Components.SelectTest do
           options={[{"Elixir", "elixir"}, {"Phoenix", "phoenix"}]}
           value={["elixir"]}
           multiple={true}
-          phx-click-badge="custom_remove"
+          on_remove_badge="custom_remove"
         />
         """)
 
-      # Should use custom badge event
-      assert html =~ ~s(phx-click="custom_remove")
+      # Should use custom badge event (now uses JS command structure)
+      assert html =~ ~s(phx-click="[[&quot;push&quot;,{&quot;event&quot;:&quot;custom_remove&quot;}]]")
       assert html =~ ~s(phx-value-option="elixir")
     end
   end

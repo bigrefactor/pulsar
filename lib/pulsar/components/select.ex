@@ -6,13 +6,18 @@ defmodule Pulsar.Components.Select do
   All styling is applied via Tailwind CSS utilities with semantic color tokens 
   supporting both light and dark modes.
 
+  ## Dependencies
+
+  This component requires:
+  - `Pulsar.Components.Badge` - for multi-select badge display
+
   ## Features
 
   - **Stellar Foundation**: Built on Stellar's accessible select component
   - **Multiple Variants**: outline, ghost, and solid for different use cases
   - **Full Color Palette**: All semantic colors with automatic error override
   - **Multiple Sizes**: xs, sm, md, lg, xl matching button and input components
-  - **Multi-Select Badges**: Display selected options as removable badges
+  - **Multi-Select Badges**: Display selected options as removable badges using Badge component
   - **Custom Arrow**: Styled dropdown arrow matching theme colors
   - **Option Groups**: Consistent styling for grouped options
   - **Dark Mode**: Automatic light/dark mode support
@@ -27,8 +32,16 @@ defmodule Pulsar.Components.Select do
       # With variant and color
       <.select field={@form[:priority]} options={@priorities} variant="outline" color="primary" />
 
-      # Multi-select with badges
+      # Multi-select with badges (requires Badge component)
       <.select field={@form[:skills]} options={@skills} multiple />
+
+      # Custom badge removal handler
+      <.select 
+        field={@form[:tags]} 
+        options={@tags} 
+        multiple 
+        on_remove_badge={JS.push("remove_tag")}
+      />
 
       # Select with option groups
       <.select
@@ -72,6 +85,7 @@ defmodule Pulsar.Components.Select do
 
   alias Phoenix.HTML.FormField
   alias Phoenix.LiveView.Rendered
+  alias Pulsar.Components.Badge
   alias Stellar.Components.Select, as: StellarSelect
 
   # Pulsar-specific styling attributes
@@ -122,6 +136,11 @@ defmodule Pulsar.Components.Select do
   attr :invalid, :boolean,
     default: nil,
     doc: "Force invalid state; defaults to Phoenix field errors when nil"
+
+  # Multi-select badge removal
+  attr :on_remove_badge, :any,
+    default: nil,
+    doc: "Event handler for removing badges in multi-select mode (JS command or event name)"
 
   # Styling
   attr :class, :string,
@@ -181,17 +200,17 @@ defmodule Pulsar.Components.Select do
     <div class="space-y-2">
       <!-- Multi-select badges -->
       <div :if={@show_badges} class="flex flex-wrap gap-2">
-        <.badge
+        <Badge.badge
           :for={option <- @selected_options}
-          variant="solid"
+          variant={@variant}
           color={@effective_color}
           size={get_badge_size(@size)}
           removable
-          phx-click={@rest[:"phx-click-badge"] || "remove_selection"}
+          on_remove={@on_remove_badge || "remove_selection"}
           phx-value-option={option.value}
         >
           {option.label}
-        </.badge>
+        </Badge.badge>
       </div>
       
     <!-- Select wrapper with custom arrow -->
@@ -229,45 +248,6 @@ defmodule Pulsar.Components.Select do
         </div>
       </div>
     </div>
-    """
-  end
-
-  # Badge component for multi-select display
-  attr :variant, :string, default: "solid"
-  attr :color, :string, default: "neutral"
-  attr :size, :string, default: "sm"
-  attr :removable, :boolean, default: false
-  attr :class, :string, default: ""
-  attr :rest, :global
-  slot :inner_block, required: true
-
-  defp badge(assigns) do
-    class =
-      merge([
-        get_badge_classes(assigns.variant, assigns.color, assigns.size),
-        assigns.class
-      ])
-
-    assigns = assign(assigns, :class, class)
-
-    ~H"""
-    <span class={@class} {@rest}>
-      {render_slot(@inner_block)}
-      <button
-        :if={@removable}
-        type="button"
-        class="ml-1.5 -mr-1 hover:bg-black hover:bg-opacity-10 rounded-full p-0.5 focus:outline-none focus:ring-1 focus:ring-current"
-        aria-label="Remove"
-      >
-        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-          <path
-            fill-rule="evenodd"
-            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </button>
-    </span>
     """
   end
 
@@ -402,48 +382,6 @@ defmodule Pulsar.Components.Select do
   defp get_arrow_color_classes("danger"), do: "text-danger dark:text-dark-danger"
   defp get_arrow_color_classes("warning"), do: "text-warning dark:text-dark-warning"
   defp get_arrow_color_classes("info"), do: "text-info dark:text-dark-info"
-
-  # Badge styling
-  defp get_badge_classes(variant, color, size) do
-    merge([
-      base_badge_classes(size),
-      badge_variant_classes(variant),
-      badge_color_classes(variant, color)
-    ])
-  end
-
-  defp base_badge_classes("xs"), do: "inline-flex items-center text-xs font-medium rounded-md"
-  defp base_badge_classes("sm"), do: "inline-flex items-center text-sm font-medium rounded-md"
-  defp base_badge_classes("md"), do: "inline-flex items-center text-sm font-medium rounded-lg"
-  defp base_badge_classes("lg"), do: "inline-flex items-center text-base font-medium rounded-lg"
-  defp base_badge_classes("xl"), do: "inline-flex items-center text-lg font-medium rounded-lg"
-
-  defp badge_variant_classes("solid"), do: "px-2.5 py-0.5"
-  defp badge_variant_classes("outline"), do: "px-2.5 py-0.5 border"
-  defp badge_variant_classes("ghost"), do: "px-2.5 py-0.5"
-
-  defp badge_color_classes("solid", "neutral"),
-    do: "bg-neutral text-neutral-foreground dark:bg-dark-neutral dark:text-dark-neutral-foreground"
-
-  defp badge_color_classes("solid", "primary"),
-    do: "bg-primary text-primary-foreground dark:bg-dark-primary dark:text-dark-primary-foreground"
-
-  defp badge_color_classes("solid", "secondary"),
-    do: "bg-secondary text-secondary-foreground dark:bg-dark-secondary dark:text-dark-secondary-foreground"
-
-  defp badge_color_classes("solid", "success"),
-    do: "bg-success text-success-foreground dark:bg-dark-success dark:text-dark-success-foreground"
-
-  defp badge_color_classes("solid", "danger"),
-    do: "bg-danger text-danger-foreground dark:bg-dark-danger dark:text-dark-danger-foreground"
-
-  defp badge_color_classes("solid", "warning"),
-    do: "bg-warning text-warning-foreground dark:bg-dark-warning dark:text-dark-warning-foreground"
-
-  defp badge_color_classes("solid", "info"),
-    do: "bg-info text-info-foreground dark:bg-dark-info dark:text-dark-info-foreground"
-
-  defp badge_color_classes(_, color), do: badge_color_classes("solid", color)
 
   defp get_badge_size("xs"), do: "xs"
   defp get_badge_size("sm"), do: "xs"
