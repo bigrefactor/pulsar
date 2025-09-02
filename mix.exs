@@ -5,6 +5,7 @@ defmodule Pulsar.MixProject do
   alias Pulsar.Components.Input
   alias Pulsar.Components.Label
   alias Pulsar.Components.Link
+  alias Pulsar.Components.Select
   alias Pulsar.Components.Textarea
 
   @version "0.1.0"
@@ -143,6 +144,7 @@ defmodule Pulsar.MixProject do
           Input,
           Label,
           Link,
+          Select,
           Textarea
         ],
         Generators: [
