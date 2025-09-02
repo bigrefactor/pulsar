@@ -22,9 +22,9 @@ defmodule Pulsar.Components.SelectTest do
       # Should include custom arrow styling
       assert html =~ "appearance-none"
       assert html =~ "pr-10"
-      # Should have custom arrow icon
-      assert html =~ ~s(<svg)
-      assert html =~ "M19 9l-7 7-7-7"
+      # Should have custom arrow icon using Icon component
+      assert html =~ "hero-chevron-down"
+      assert html =~ "w-4 h-4"
     end
 
     test "renders with solid variant by default" do
@@ -477,8 +477,8 @@ defmodule Pulsar.Components.SelectTest do
       # Should have arrow container
       assert html =~ "absolute inset-y-0 right-0"
       assert html =~ "pointer-events-none"
-      # Should have arrow icon
-      assert html =~ "M19 9l-7 7-7-7"
+      # Should have arrow icon using Icon component
+      assert html =~ "hero-chevron-down"
       # Should have color styling for arrow
       assert html =~ "text-primary"
     end

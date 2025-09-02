@@ -10,6 +10,7 @@ defmodule Pulsar.Components.Select do
 
   This component requires:
   - `Pulsar.Components.Badge` - for multi-select badge display
+  - `Pulsar.Components.Icon` - for dropdown arrow display
 
   ## Features
 
@@ -86,6 +87,7 @@ defmodule Pulsar.Components.Select do
   alias Phoenix.HTML.FormField
   alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Badge
+  alias Pulsar.Components.Icon
   alias Stellar.Components.Select, as: StellarSelect
 
   # Pulsar-specific styling attributes
@@ -242,9 +244,7 @@ defmodule Pulsar.Components.Select do
           get_arrow_classes(@variant, @effective_color),
           @disabled && "opacity-50"
         ]}>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
+          <Icon.icon name="hero-chevron-down" size="sm" color="current" />
         </div>
       </div>
     </div>

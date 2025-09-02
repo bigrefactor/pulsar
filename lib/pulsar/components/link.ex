@@ -6,6 +6,11 @@ defmodule Pulsar.Components.Link do
   All styling is applied via Tailwind CSS utilities with semantic color tokens that
   support both light and dark modes.
 
+  ## Dependencies
+
+  This component requires:
+  - `Pulsar.Components.Icon` - for external link indicators
+
   ## Features
 
   - **Stellar Foundation**: Built on Stellar's accessible link component
@@ -58,6 +63,7 @@ defmodule Pulsar.Components.Link do
 
   import TailwindMerge, only: [merge: 1]
 
+  alias Pulsar.Components.Icon
   alias Stellar.Components.Link, as: StellarLink
 
   # Pulsar-specific styling attributes
@@ -170,19 +176,7 @@ defmodule Pulsar.Components.Link do
         class="hidden group-data-[target=_blank]:inline-flex items-center ml-1"
         aria-hidden="true"
       >
-        <svg
-          class="w-[1em] h-[1em]"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-          />
-        </svg>
+        <Icon.icon name="hero-arrow-top-right-on-square" class="w-[1em] h-[1em]" color="current" />
       </span>
       <!-- Custom end icon - shown when provided -->
       <span :if={@end_icon != []} class="inline-flex items-center ml-1" aria-hidden="true">
