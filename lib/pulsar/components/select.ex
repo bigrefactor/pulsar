@@ -178,10 +178,18 @@ defmodule Pulsar.Components.Select do
     # Resolve current value from explicit :value or Phoenix form field
     current_value = value_or_field(assigns.value, assigns.field)
 
+    # For multi-select, normalize current_value to always be a list to prevent HTML/JS desync
+    normalized_value =
+      if assigns.multiple do
+        List.wrap(current_value)
+      else
+        current_value
+      end
+
     # For multi-select, extract selected values for badge display
     selected_options =
       if assigns.multiple do
-        extract_selected_options(current_value, assigns.options)
+        extract_selected_options(normalized_value, assigns.options)
       else
         []
       end
@@ -199,7 +207,7 @@ defmodule Pulsar.Components.Select do
       |> assign(:class, class)
       |> assign(:effective_color, effective_color)
       |> assign(:invalid, invalid)
-      |> assign(:value, current_value)
+      |> assign(:value, normalized_value)
       |> assign(:selected_options, selected_options)
       |> assign(:show_badges, assigns.multiple and not Enum.empty?(selected_options))
 
