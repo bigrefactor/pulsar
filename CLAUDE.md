@@ -200,6 +200,14 @@ Component examples and interactive testing are available in the standalone story
 **Important**: Generated components depend on **Stellar** and **TailwindMerge** as the only required dependencies. No Pulsar package dependency is needed.
 
 **Generated Components Include:**
+- **Badge**: Flexible labels with variants/sizes, removable option, and action slot
+- **Button**: Multiple variants (solid, outline, ghost, link) with full color palette
+- **Icon**: Centralized icon component (Heroicons; outline/solid/mini/micro, sizes, accessibility)
+- **Input**: Text inputs with decorator system (start/end icons, text, buttons)
+- **Label**: Typography variants with required indicators and helper text
+- **Link**: Link component with button-like styling options
+- **Select**: Native select with custom arrow, multi-select badges, and option groups
+- **Textarea**: Multi-line input with consistent styling
 - Complete component implementation using Stellar for behavior
 - TailwindMerge integration for intelligent class composition  
 - All styling and interaction code
@@ -379,6 +387,7 @@ Components integrate seamlessly with LiveView:
 
 <.simple_form for={@form} phx-change="validate" phx-submit="save">
   <.input field={@form[:email]} type="email" />
+  <.select field={@form[:country]} options={@countries} />
 </.simple_form>
 ```
 

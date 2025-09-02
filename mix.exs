@@ -1,10 +1,13 @@
 defmodule Pulsar.MixProject do
   use Mix.Project
 
+  alias Pulsar.Components.Badge
   alias Pulsar.Components.Button
+  alias Pulsar.Components.Icon
   alias Pulsar.Components.Input
   alias Pulsar.Components.Label
   alias Pulsar.Components.Link
+  alias Pulsar.Components.Select
   alias Pulsar.Components.Textarea
 
   @version "0.1.0"
@@ -139,10 +142,13 @@ defmodule Pulsar.MixProject do
       ],
       groups_for_modules: [
         Components: [
+          Badge,
           Button,
+          Icon,
           Input,
           Label,
           Link,
+          Select,
           Textarea
         ],
         Generators: [
