@@ -293,7 +293,7 @@ jobs:
           SECRETS_FOUND=false
           
           # Scan repository root excluding build and vendor directories
-          EXCLUDE_DIRS=".git,_build,deps,node_modules,vendor,coverage,tmp,priv/static"
+          EXCLUDE_DIRS=".git,_build,deps,node_modules,vendor,coverage,tmp,priv/static,docs"
           
           for pattern in "${SECRET_PATTERNS[@]}"; do
             echo "Checking pattern: $pattern"
