@@ -235,15 +235,16 @@ defmodule Pulsar.Components.RadioGroup do
     current_value = assigns[:value] || (assigns[:field] && assigns.field.value)
     computed_id = assigns[:id] || (assigns[:field] && assigns.field.id)
 
-    # Build class string for radio group container
+    # Build class string for radio group container with incremental approach
     container_class =
-      merge([
-        base_container_classes(),
+      [
+        container_base_classes(),
         layout_classes(assigns.layout, assigns.orientation),
         layout_grid_classes(assigns.layout, assigns.columns),
-        card_size_classes(assigns.card, assigns.size),
         assigns.class
-      ])
+      ]
+      |> Enum.filter(&(&1 != ""))
+      |> merge()
 
     assigns =
       assigns
@@ -256,6 +257,7 @@ defmodule Pulsar.Components.RadioGroup do
 
     ~H"""
     <StellarRadioGroup.radio_group
+      :let={group}
       field={@field}
       id={@computed_id}
       name={@computed_name}
@@ -266,16 +268,10 @@ defmodule Pulsar.Components.RadioGroup do
       required={@required}
       error_message={@error_message}
       class={@container_class}
-      data-card={@card && "true" || "false"}
-      data-variant={@variant}
-      data-color={@effective_color}
-      data-size={@size}
-      data-hide-radios={@hide_radios && "true" || "false"}
       {@rest}
-      :let={group}
     >
       <%= for option <- @option do %>
-        <%= render_radio_option(assigns, option, group) %>
+        {render_radio_option(assigns, option, group)}
       <% end %>
     </StellarRadioGroup.radio_group>
     """
@@ -311,6 +307,16 @@ defmodule Pulsar.Components.RadioGroup do
 
   # Standard radio with label
   defp render_default_radio(assigns) do
+    # Build radio input classes
+    radio_input_class =
+      if assigns.hide_radios do
+        "sr-only"
+      else
+        radio_input_classes(assigns.effective_color, assigns.size)
+      end
+
+    assigns = assign(assigns, :radio_input_class, radio_input_class)
+
     ~H"""
     <div class={radio_option_base_classes()}>
       <input
@@ -322,10 +328,10 @@ defmodule Pulsar.Components.RadioGroup do
         required={@group.required}
         disabled={@option_disabled}
         aria-invalid={@group.invalid && "true"}
-        class={merge([radio_input_base_classes(), if(@hide_radios, do: "sr-only", else: nil)])}
+        class={@radio_input_class}
       />
       <label for={@radio_id} class={radio_label_classes()}>
-        <%= render_slot(@option) %>
+        {render_slot(@option)}
       </label>
     </div>
     """
@@ -333,15 +339,22 @@ defmodule Pulsar.Components.RadioGroup do
 
   # Card-style radio (matching checkbox card pattern)
   defp render_card_radio(assigns) do
+    # Build card container classes
     container_class =
-      merge([
-        card_base_classes(),
+      [
+        card_base_classes(assigns.effective_color, assigns.size),
         card_variant_classes(assigns.variant, assigns.effective_color),
-        card_size_text_classes(assigns.size),
         card_state_classes(assigns.option_disabled, assigns.invalid)
-      ])
+      ]
+      |> Enum.join(" ")
 
-    radio_class = if assigns.hide_radios, do: "sr-only", else: radio_input_base_classes()
+    # Build radio input classes
+    radio_class =
+      if assigns.hide_radios do
+        "sr-only"
+      else
+        radio_input_classes(assigns.effective_color, assigns.size)
+      end
 
     assigns =
       assigns
@@ -349,11 +362,11 @@ defmodule Pulsar.Components.RadioGroup do
       |> assign(:radio_class, radio_class)
 
     ~H"""
-    <label 
+    <label
       for={@radio_id}
       class={@container_class}
-      data-checked={@option_checked && "true" || "false"}
-      data-disabled={@option_disabled && "true" || "false"}
+      data-checked={(@option_checked && "true") || "false"}
+      data-disabled={(@option_disabled && "true") || "false"}
     >
       <input
         type="radio"
@@ -368,33 +381,149 @@ defmodule Pulsar.Components.RadioGroup do
         class={@radio_class}
       />
       <div class="flex-1 min-w-0" id={"#{@radio_id}-content"}>
-        <%= render_slot(@option) %>
+        {render_slot(@option)}
       </div>
     </label>
     """
   end
 
-  # Base styles for radio group container with CSS variables
-  @spec base_container_classes() :: String.t()
-  defp base_container_classes do
-    """
-    [--radio-color:theme(colors.primary)] [--radio-color-foreground:theme(colors.primary-foreground)]
-    [--radio-border:theme(colors.border)] [--radio-background:theme(colors.background)]
-    dark:[--radio-color:theme(colors.dark-primary)] dark:[--radio-color-foreground:theme(colors.dark-primary-foreground)]
-    dark:[--radio-border:theme(colors.dark-border)] dark:[--radio-background:theme(colors.dark-background)]
-    data-[color=neutral]:[--radio-color:theme(colors.neutral)] data-[color=neutral]:[--radio-color-foreground:theme(colors.neutral-foreground)]
-    data-[color=secondary]:[--radio-color:theme(colors.secondary)] data-[color=secondary]:[--radio-color-foreground:theme(colors.secondary-foreground)]
-    data-[color=success]:[--radio-color:theme(colors.success)] data-[color=success]:[--radio-color-foreground:theme(colors.success-foreground)]
-    data-[color=danger]:[--radio-color:theme(colors.danger)] data-[color=danger]:[--radio-color-foreground:theme(colors.danger-foreground)]
-    data-[color=warning]:[--radio-color:theme(colors.warning)] data-[color=warning]:[--radio-color-foreground:theme(colors.warning-foreground)]
-    data-[color=info]:[--radio-color:theme(colors.info)] data-[color=info]:[--radio-color-foreground:theme(colors.info-foreground)]
-    dark:data-[color=neutral]:[--radio-color:theme(colors.dark-neutral)] dark:data-[color=neutral]:[--radio-color-foreground:theme(colors.dark-neutral-foreground)]
-    dark:data-[color=secondary]:[--radio-color:theme(colors.dark-secondary)] dark:data-[color=secondary]:[--radio-color-foreground:theme(colors.dark-secondary-foreground)]
-    dark:data-[color=success]:[--radio-color:theme(colors.dark-success)] dark:data-[color=success]:[--radio-color-foreground:theme(colors.dark-success-foreground)]
-    dark:data-[color=danger]:[--radio-color:theme(colors.dark-danger)] dark:data-[color=danger]:[--radio-color-foreground:theme(colors.dark-danger-foreground)]
-    dark:data-[color=warning]:[--radio-color:theme(colors.dark-warning)] dark:data-[color=warning]:[--radio-color-foreground:theme(colors.dark-warning-foreground)]
-    dark:data-[color=info]:[--radio-color:theme(colors.dark-info)] dark:data-[color=info]:[--radio-color-foreground:theme(colors.dark-info-foreground)]
-    """
+  # Base styles for radio group container
+  @spec container_base_classes() :: String.t()
+  defp container_base_classes do
+    ""
+  end
+
+  # Radio color classes - only generates needed classes for the selected color
+  @spec radio_color_classes(String.t()) :: String.t()
+  defp radio_color_classes(color) do
+    [
+      radio_border_classes(color),
+      radio_background_classes(color),
+      radio_ring_classes(color),
+      radio_foreground_classes(color)
+    ]
+    |> List.flatten()
+    |> Enum.join(" ")
+  end
+
+  # Radio border classes for each color
+  @spec radio_border_classes(String.t()) :: String.t()
+  defp radio_border_classes("neutral") do
+    "border-border dark:border-dark-border checked:border-neutral dark:checked:border-dark-neutral"
+  end
+
+  defp radio_border_classes("primary") do
+    "border-border dark:border-dark-border checked:border-primary dark:checked:border-dark-primary"
+  end
+
+  defp radio_border_classes("secondary") do
+    "border-border dark:border-dark-border checked:border-secondary dark:checked:border-dark-secondary"
+  end
+
+  defp radio_border_classes("success") do
+    "border-border dark:border-dark-border checked:border-success dark:checked:border-dark-success"
+  end
+
+  defp radio_border_classes("danger") do
+    "border-border dark:border-dark-border checked:border-danger dark:checked:border-dark-danger"
+  end
+
+  defp radio_border_classes("warning") do
+    "border-border dark:border-dark-border checked:border-warning dark:checked:border-dark-warning"
+  end
+
+  defp radio_border_classes("info") do
+    "border-border dark:border-dark-border checked:border-info dark:checked:border-dark-info"
+  end
+
+  # Radio background classes for each color
+  @spec radio_background_classes(String.t()) :: String.t()
+  defp radio_background_classes("neutral") do
+    "bg-background dark:bg-dark-background checked:bg-neutral dark:checked:bg-dark-neutral"
+  end
+
+  defp radio_background_classes("primary") do
+    "bg-background dark:bg-dark-background checked:bg-primary dark:checked:bg-dark-primary"
+  end
+
+  defp radio_background_classes("secondary") do
+    "bg-background dark:bg-dark-background checked:bg-secondary dark:checked:bg-dark-secondary"
+  end
+
+  defp radio_background_classes("success") do
+    "bg-background dark:bg-dark-background checked:bg-success dark:checked:bg-dark-success"
+  end
+
+  defp radio_background_classes("danger") do
+    "bg-background dark:bg-dark-background checked:bg-danger dark:checked:bg-dark-danger"
+  end
+
+  defp radio_background_classes("warning") do
+    "bg-background dark:bg-dark-background checked:bg-warning dark:checked:bg-dark-warning"
+  end
+
+  defp radio_background_classes("info") do
+    "bg-background dark:bg-dark-background checked:bg-info dark:checked:bg-dark-info"
+  end
+
+  # Radio ring classes for focus states
+  @spec radio_ring_classes(String.t()) :: String.t()
+  defp radio_ring_classes("neutral") do
+    "focus-visible:ring-neutral dark:focus-visible:ring-dark-neutral"
+  end
+
+  defp radio_ring_classes("primary") do
+    "focus-visible:ring-primary dark:focus-visible:ring-dark-primary"
+  end
+
+  defp radio_ring_classes("secondary") do
+    "focus-visible:ring-secondary dark:focus-visible:ring-dark-secondary"
+  end
+
+  defp radio_ring_classes("success") do
+    "focus-visible:ring-success dark:focus-visible:ring-dark-success"
+  end
+
+  defp radio_ring_classes("danger") do
+    "focus-visible:ring-danger dark:focus-visible:ring-dark-danger"
+  end
+
+  defp radio_ring_classes("warning") do
+    "focus-visible:ring-warning dark:focus-visible:ring-dark-warning"
+  end
+
+  defp radio_ring_classes("info") do
+    "focus-visible:ring-info dark:focus-visible:ring-dark-info"
+  end
+
+  # Radio foreground classes for the before pseudo-element (the inner dot)
+  @spec radio_foreground_classes(String.t()) :: String.t()
+  defp radio_foreground_classes("neutral") do
+    "before:bg-neutral-foreground dark:before:bg-dark-neutral-foreground"
+  end
+
+  defp radio_foreground_classes("primary") do
+    "before:bg-primary-foreground dark:before:bg-dark-primary-foreground"
+  end
+
+  defp radio_foreground_classes("secondary") do
+    "before:bg-secondary-foreground dark:before:bg-dark-secondary-foreground"
+  end
+
+  defp radio_foreground_classes("success") do
+    "before:bg-success-foreground dark:before:bg-dark-success-foreground"
+  end
+
+  defp radio_foreground_classes("danger") do
+    "before:bg-danger-foreground dark:before:bg-dark-danger-foreground"
+  end
+
+  defp radio_foreground_classes("warning") do
+    "before:bg-warning-foreground dark:before:bg-dark-warning-foreground"
+  end
+
+  defp radio_foreground_classes("info") do
+    "before:bg-info-foreground dark:before:bg-dark-info-foreground"
   end
 
   # Layout-specific classes (independent of card)
@@ -421,29 +550,29 @@ defmodule Pulsar.Components.RadioGroup do
 
   defp layout_grid_classes(_layout, _columns), do: ""
 
-  # Size classes for cards (only applied when card=true)
-  @spec card_size_classes(boolean(), String.t()) :: String.t()
-  defp card_size_classes(false, _size), do: ""
+  # Radio size classes - direct size application
+  @spec radio_size_classes(String.t()) :: String.t()
+  defp radio_size_classes("xs"), do: "w-3 h-3"
+  defp radio_size_classes("sm"), do: "w-4 h-4"
+  defp radio_size_classes("md"), do: "w-5 h-5"
+  defp radio_size_classes("lg"), do: "w-6 h-6"
+  defp radio_size_classes("xl"), do: "w-7 h-7"
 
-  defp card_size_classes(true, "xs"),
-    do:
-      "[--radio-card-padding:theme(spacing.2)] [--radio-card-gap:theme(spacing.2)] [--radio-card-text:theme(fontSize.xs)]"
+  # Radio size classes for the ::before pseudo-element
+  @spec radio_before_size_classes(String.t()) :: String.t()
+  defp radio_before_size_classes("xs"), do: "before:inset-0.5"
+  defp radio_before_size_classes("sm"), do: "before:inset-0.5"
+  defp radio_before_size_classes("md"), do: "before:inset-1"
+  defp radio_before_size_classes("lg"), do: "before:inset-1.5"
+  defp radio_before_size_classes("xl"), do: "before:inset-1.5"
 
-  defp card_size_classes(true, "sm"),
-    do:
-      "[--radio-card-padding:theme(spacing.3)] [--radio-card-gap:theme(spacing.2)] [--radio-card-text:theme(fontSize.sm)]"
-
-  defp card_size_classes(true, "md"),
-    do:
-      "[--radio-card-padding:theme(spacing.4)] [--radio-card-gap:theme(spacing.3)] [--radio-card-text:theme(fontSize.base)]"
-
-  defp card_size_classes(true, "lg"),
-    do:
-      "[--radio-card-padding:theme(spacing.5)] [--radio-card-gap:theme(spacing.4)] [--radio-card-text:theme(fontSize.lg)]"
-
-  defp card_size_classes(true, "xl"),
-    do:
-      "[--radio-card-padding:theme(spacing.6)] [--radio-card-gap:theme(spacing.5)] [--radio-card-text:theme(fontSize.xl)]"
+  # Card padding and gap classes (only applied when card=true)
+  @spec card_padding_classes(String.t()) :: String.t()
+  defp card_padding_classes("xs"), do: "p-2 gap-2"
+  defp card_padding_classes("sm"), do: "p-3 gap-2"
+  defp card_padding_classes("md"), do: "p-4 gap-3"
+  defp card_padding_classes("lg"), do: "p-5 gap-4"
+  defp card_padding_classes("xl"), do: "p-6 gap-5"
 
   # Base classes for radio option container
   @spec radio_option_base_classes() :: String.t()
@@ -453,72 +582,296 @@ defmodule Pulsar.Components.RadioGroup do
     """
   end
 
-  # Base classes for radio input
+  # Base classes for radio input - now built with separate functions
+  @spec radio_input_classes(String.t(), String.t()) :: String.t()
+  defp radio_input_classes(color, size) do
+    [
+      radio_input_base_classes(),
+      radio_size_classes(size),
+      radio_before_size_classes(size),
+      radio_color_classes(color),
+      radio_hover_classes(color)
+    ]
+    |> List.flatten()
+    |> Enum.join(" ")
+  end
+
+  # Core radio input styles without size or color
   @spec radio_input_base_classes() :: String.t()
   defp radio_input_base_classes do
     """
     appearance-none relative cursor-pointer transition-all duration-200 ease-in-out
-    w-5 h-5 rounded-full border-2 border-[--radio-border]
-    bg-[--radio-background] 
-    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[--radio-color]
+    rounded-full border-2 
+    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
     disabled:cursor-not-allowed disabled:opacity-50
-    checked:border-[--radio-color] checked:bg-[--radio-color]
-    before:content-[''] before:absolute before:inset-1 before:rounded-full 
-    before:bg-[--radio-color-foreground] before:transition-all before:duration-200 
+    before:content-[''] before:absolute before:rounded-full 
+    before:transition-all before:duration-200 
     before:scale-0 before:opacity-0
     checked:before:scale-100 checked:before:opacity-100
-    [[data-radio-group][data-size=xs]_&]:w-3 [[data-radio-group][data-size=xs]_&]:h-3 [[data-radio-group][data-size=xs]_&]:before:inset-0.5
-    [[data-radio-group][data-size=sm]_&]:w-4 [[data-radio-group][data-size=sm]_&]:h-4 [[data-radio-group][data-size=sm]_&]:before:inset-0.5
-    [[data-radio-group][data-size=lg]_&]:w-6 [[data-radio-group][data-size=lg]_&]:h-6 [[data-radio-group][data-size=lg]_&]:before:inset-1.5
-    [[data-radio-group][data-size=xl]_&]:w-7 [[data-radio-group][data-size=xl]_&]:h-7 [[data-radio-group][data-size=xl]_&]:before:inset-1.5
-    hover:border-[--radio-color]/70 hover:shadow-sm
     """
+  end
+
+  # Hover classes for radio inputs
+  @spec radio_hover_classes(String.t()) :: String.t()
+  defp radio_hover_classes("neutral") do
+    "hover:border-neutral/70 dark:hover:border-dark-neutral/70 hover:shadow-sm"
+  end
+
+  defp radio_hover_classes("primary") do
+    "hover:border-primary/70 dark:hover:border-dark-primary/70 hover:shadow-sm"
+  end
+
+  defp radio_hover_classes("secondary") do
+    "hover:border-secondary/70 dark:hover:border-dark-secondary/70 hover:shadow-sm"
+  end
+
+  defp radio_hover_classes("success") do
+    "hover:border-success/70 dark:hover:border-dark-success/70 hover:shadow-sm"
+  end
+
+  defp radio_hover_classes("danger") do
+    "hover:border-danger/70 dark:hover:border-dark-danger/70 hover:shadow-sm"
+  end
+
+  defp radio_hover_classes("warning") do
+    "hover:border-warning/70 dark:hover:border-dark-warning/70 hover:shadow-sm"
+  end
+
+  defp radio_hover_classes("info") do
+    "hover:border-info/70 dark:hover:border-dark-info/70 hover:shadow-sm"
   end
 
   # Classes for radio labels (standard non-card)
   @spec radio_label_classes() :: String.t()
   defp radio_label_classes do
-    """
-    cursor-pointer select-none transition-all duration-200 flex-1 min-w-0
-    focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-[--radio-color]
-    """
+    "cursor-pointer select-none transition-all duration-200 flex-1 min-w-0"
   end
 
-  # Card base styles (matching checkbox pattern)
-  @spec card_base_classes() :: String.t()
-  defp card_base_classes do
-    """
-    relative flex items-start gap-3 p-[--radio-card-padding] rounded-lg border-2 
-    cursor-pointer transition-all duration-200 ease-in-out text-[--radio-card-text]
-    focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-[--radio-color]
-    """
+  # Card base styles (without CSS variables)
+  @spec card_base_classes(String.t(), String.t()) :: String.t()
+  defp card_base_classes(color, size) do
+    [
+      "relative flex items-start rounded-lg border-2",
+      "cursor-pointer transition-all duration-200 ease-in-out",
+      "focus-within:ring-2 focus-within:ring-offset-2",
+      card_padding_classes(size),
+      card_size_text_classes(size),
+      card_focus_ring_classes(color)
+    ]
+    |> Enum.join(" ")
   end
 
-  # Card variant styles
+  # Card focus ring classes by color
+  @spec card_focus_ring_classes(String.t()) :: String.t()
+  defp card_focus_ring_classes("neutral"),
+    do: "focus-within:ring-neutral dark:focus-within:ring-dark-neutral"
+
+  defp card_focus_ring_classes("primary"),
+    do: "focus-within:ring-primary dark:focus-within:ring-dark-primary"
+
+  defp card_focus_ring_classes("secondary"),
+    do: "focus-within:ring-secondary dark:focus-within:ring-dark-secondary"
+
+  defp card_focus_ring_classes("success"),
+    do: "focus-within:ring-success dark:focus-within:ring-dark-success"
+
+  defp card_focus_ring_classes("danger"),
+    do: "focus-within:ring-danger dark:focus-within:ring-dark-danger"
+
+  defp card_focus_ring_classes("warning"),
+    do: "focus-within:ring-warning dark:focus-within:ring-dark-warning"
+
+  defp card_focus_ring_classes("info"),
+    do: "focus-within:ring-info dark:focus-within:ring-dark-info"
+
+  # Card variant styles with direct color classes
   @spec card_variant_classes(String.t(), String.t()) :: String.t()
-  defp card_variant_classes("solid", _color) do
-    """
-    border-transparent bg-[--radio-background]
-    hover:bg-[--radio-color]/10
-    data-[checked=true]:bg-[--radio-color]/20
-    """
+  defp card_variant_classes("solid", color) do
+    [
+      "border-transparent",
+      card_variant_background_classes("solid", color),
+      card_variant_hover_classes("solid", color),
+      card_variant_checked_classes("solid", color)
+    ]
+    |> Enum.join(" ")
   end
 
-  defp card_variant_classes("outline", _color) do
-    """
-    border-[--radio-border] bg-[--radio-background]
-    hover:border-[--radio-color]/50 hover:bg-[--radio-color]/5
-    data-[checked=true]:border-[--radio-color] data-[checked=true]:bg-[--radio-color]/10
-    """
+  defp card_variant_classes("outline", color) do
+    [
+      card_variant_background_classes("outline", color),
+      card_variant_border_classes("outline", color),
+      card_variant_hover_classes("outline", color),
+      card_variant_checked_classes("outline", color)
+    ]
+    |> Enum.join(" ")
   end
 
-  defp card_variant_classes("ghost", _color) do
-    """
-    border-transparent bg-transparent
-    hover:bg-[--radio-color]/10
-    data-[checked=true]:bg-[--radio-color]/15
-    """
+  defp card_variant_classes("ghost", color) do
+    [
+      "border-transparent bg-transparent",
+      card_variant_hover_classes("ghost", color),
+      card_variant_checked_classes("ghost", color)
+    ]
+    |> Enum.join(" ")
   end
+
+  # Card background classes by variant
+  @spec card_variant_background_classes(String.t(), String.t()) :: String.t()
+  defp card_variant_background_classes("solid", _color),
+    do: "bg-background dark:bg-dark-background"
+
+  defp card_variant_background_classes("outline", _color),
+    do: "bg-background dark:bg-dark-background"
+
+  defp card_variant_background_classes("ghost", _color), do: "bg-transparent"
+
+  # Card border classes by variant and color
+  @spec card_variant_border_classes(String.t(), String.t()) :: String.t()
+  defp card_variant_border_classes("outline", _color), do: "border-border dark:border-dark-border"
+
+  # Card hover classes by variant and color
+  @spec card_variant_hover_classes(String.t(), String.t()) :: String.t()
+  defp card_variant_hover_classes("solid", "neutral"),
+    do: "hover:bg-neutral/10 dark:hover:bg-dark-neutral/10"
+
+  defp card_variant_hover_classes("solid", "primary"),
+    do: "hover:bg-primary/10 dark:hover:bg-dark-primary/10"
+
+  defp card_variant_hover_classes("solid", "secondary"),
+    do: "hover:bg-secondary/10 dark:hover:bg-dark-secondary/10"
+
+  defp card_variant_hover_classes("solid", "success"),
+    do: "hover:bg-success/10 dark:hover:bg-dark-success/10"
+
+  defp card_variant_hover_classes("solid", "danger"),
+    do: "hover:bg-danger/10 dark:hover:bg-dark-danger/10"
+
+  defp card_variant_hover_classes("solid", "warning"),
+    do: "hover:bg-warning/10 dark:hover:bg-dark-warning/10"
+
+  defp card_variant_hover_classes("solid", "info"),
+    do: "hover:bg-info/10 dark:hover:bg-dark-info/10"
+
+  defp card_variant_hover_classes("outline", "neutral"),
+    do:
+      "hover:border-neutral/50 dark:hover:border-dark-neutral/50 hover:bg-neutral/5 dark:hover:bg-dark-neutral/5"
+
+  defp card_variant_hover_classes("outline", "primary"),
+    do:
+      "hover:border-primary/50 dark:hover:border-dark-primary/50 hover:bg-primary/5 dark:hover:bg-dark-primary/5"
+
+  defp card_variant_hover_classes("outline", "secondary"),
+    do:
+      "hover:border-secondary/50 dark:hover:border-dark-secondary/50 hover:bg-secondary/5 dark:hover:bg-dark-secondary/5"
+
+  defp card_variant_hover_classes("outline", "success"),
+    do:
+      "hover:border-success/50 dark:hover:border-dark-success/50 hover:bg-success/5 dark:hover:bg-dark-success/5"
+
+  defp card_variant_hover_classes("outline", "danger"),
+    do:
+      "hover:border-danger/50 dark:hover:border-dark-danger/50 hover:bg-danger/5 dark:hover:bg-dark-danger/5"
+
+  defp card_variant_hover_classes("outline", "warning"),
+    do:
+      "hover:border-warning/50 dark:hover:border-dark-warning/50 hover:bg-warning/5 dark:hover:bg-dark-warning/5"
+
+  defp card_variant_hover_classes("outline", "info"),
+    do:
+      "hover:border-info/50 dark:hover:border-dark-info/50 hover:bg-info/5 dark:hover:bg-dark-info/5"
+
+  defp card_variant_hover_classes("ghost", "neutral"),
+    do: "hover:bg-neutral/10 dark:hover:bg-dark-neutral/10"
+
+  defp card_variant_hover_classes("ghost", "primary"),
+    do: "hover:bg-primary/10 dark:hover:bg-dark-primary/10"
+
+  defp card_variant_hover_classes("ghost", "secondary"),
+    do: "hover:bg-secondary/10 dark:hover:bg-dark-secondary/10"
+
+  defp card_variant_hover_classes("ghost", "success"),
+    do: "hover:bg-success/10 dark:hover:bg-dark-success/10"
+
+  defp card_variant_hover_classes("ghost", "danger"),
+    do: "hover:bg-danger/10 dark:hover:bg-dark-danger/10"
+
+  defp card_variant_hover_classes("ghost", "warning"),
+    do: "hover:bg-warning/10 dark:hover:bg-dark-warning/10"
+
+  defp card_variant_hover_classes("ghost", "info"),
+    do: "hover:bg-info/10 dark:hover:bg-dark-info/10"
+
+  # Card checked state classes by variant and color
+  @spec card_variant_checked_classes(String.t(), String.t()) :: String.t()
+  defp card_variant_checked_classes("solid", "neutral"),
+    do: "data-[checked=true]:bg-neutral/20 dark:data-[checked=true]:bg-dark-neutral/20"
+
+  defp card_variant_checked_classes("solid", "primary"),
+    do: "data-[checked=true]:bg-primary/20 dark:data-[checked=true]:bg-dark-primary/20"
+
+  defp card_variant_checked_classes("solid", "secondary"),
+    do: "data-[checked=true]:bg-secondary/20 dark:data-[checked=true]:bg-dark-secondary/20"
+
+  defp card_variant_checked_classes("solid", "success"),
+    do: "data-[checked=true]:bg-success/20 dark:data-[checked=true]:bg-dark-success/20"
+
+  defp card_variant_checked_classes("solid", "danger"),
+    do: "data-[checked=true]:bg-danger/20 dark:data-[checked=true]:bg-dark-danger/20"
+
+  defp card_variant_checked_classes("solid", "warning"),
+    do: "data-[checked=true]:bg-warning/20 dark:data-[checked=true]:bg-dark-warning/20"
+
+  defp card_variant_checked_classes("solid", "info"),
+    do: "data-[checked=true]:bg-info/20 dark:data-[checked=true]:bg-dark-info/20"
+
+  defp card_variant_checked_classes("outline", "neutral"),
+    do:
+      "data-[checked=true]:border-neutral dark:data-[checked=true]:border-dark-neutral data-[checked=true]:bg-neutral/10 dark:data-[checked=true]:bg-dark-neutral/10"
+
+  defp card_variant_checked_classes("outline", "primary"),
+    do:
+      "data-[checked=true]:border-primary dark:data-[checked=true]:border-dark-primary data-[checked=true]:bg-primary/10 dark:data-[checked=true]:bg-dark-primary/10"
+
+  defp card_variant_checked_classes("outline", "secondary"),
+    do:
+      "data-[checked=true]:border-secondary dark:data-[checked=true]:border-dark-secondary data-[checked=true]:bg-secondary/10 dark:data-[checked=true]:bg-dark-secondary/10"
+
+  defp card_variant_checked_classes("outline", "success"),
+    do:
+      "data-[checked=true]:border-success dark:data-[checked=true]:border-dark-success data-[checked=true]:bg-success/10 dark:data-[checked=true]:bg-dark-success/10"
+
+  defp card_variant_checked_classes("outline", "danger"),
+    do:
+      "data-[checked=true]:border-danger dark:data-[checked=true]:border-dark-danger data-[checked=true]:bg-danger/10 dark:data-[checked=true]:bg-dark-danger/10"
+
+  defp card_variant_checked_classes("outline", "warning"),
+    do:
+      "data-[checked=true]:border-warning dark:data-[checked=true]:border-dark-warning data-[checked=true]:bg-warning/10 dark:data-[checked=true]:bg-dark-warning/10"
+
+  defp card_variant_checked_classes("outline", "info"),
+    do:
+      "data-[checked=true]:border-info dark:data-[checked=true]:border-dark-info data-[checked=true]:bg-info/10 dark:data-[checked=true]:bg-dark-info/10"
+
+  defp card_variant_checked_classes("ghost", "neutral"),
+    do: "data-[checked=true]:bg-neutral/15 dark:data-[checked=true]:bg-dark-neutral/15"
+
+  defp card_variant_checked_classes("ghost", "primary"),
+    do: "data-[checked=true]:bg-primary/15 dark:data-[checked=true]:bg-dark-primary/15"
+
+  defp card_variant_checked_classes("ghost", "secondary"),
+    do: "data-[checked=true]:bg-secondary/15 dark:data-[checked=true]:bg-dark-secondary/15"
+
+  defp card_variant_checked_classes("ghost", "success"),
+    do: "data-[checked=true]:bg-success/15 dark:data-[checked=true]:bg-dark-success/15"
+
+  defp card_variant_checked_classes("ghost", "danger"),
+    do: "data-[checked=true]:bg-danger/15 dark:data-[checked=true]:bg-dark-danger/15"
+
+  defp card_variant_checked_classes("ghost", "warning"),
+    do: "data-[checked=true]:bg-warning/15 dark:data-[checked=true]:bg-dark-warning/15"
+
+  defp card_variant_checked_classes("ghost", "info"),
+    do: "data-[checked=true]:bg-info/15 dark:data-[checked=true]:bg-dark-info/15"
 
   # Card text size styles
   @spec card_size_text_classes(String.t()) :: String.t()
@@ -539,9 +892,8 @@ defmodule Pulsar.Components.RadioGroup do
 
   # Helper for error detection - checks if a Phoenix form field has validation errors
   @spec has_field_errors(map()) :: boolean()
-  defp has_field_errors(%{field: %FormField{errors: errors}}) when is_list(errors) do
-    not Enum.empty?(errors)
-  end
+  defp has_field_errors(%{field: %FormField{errors: errs}}) when is_list(errs) and errs != [],
+    do: true
 
-  defp has_field_errors(_assigns), do: false
+  defp has_field_errors(_), do: false
 end
