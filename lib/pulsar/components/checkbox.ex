@@ -173,7 +173,7 @@ defmodule Pulsar.Components.Checkbox do
   def checkbox(assigns) do
     # Validate required attributes
     if is_nil(assigns[:field]) and is_nil(assigns[:name]) do
-      raise ArgumentError, "Checkbox component requires :name when :field is not provided"
+      raise ArgumentError, "Checkbox requires :field or :name; provide :name only when not using a Phoenix form field"
     end
 
     # Detect errors and compute automatic color
@@ -373,7 +373,7 @@ defmodule Pulsar.Components.Checkbox do
       required={@required}
       disabled={@disabled}
       class={@input_class}
-      aria-invalid={if @invalid, do: "true", else: "false"}
+      aria-invalid={@invalid && "true"}
       {@rest}
     />
     """
@@ -407,7 +407,7 @@ defmodule Pulsar.Components.Checkbox do
         required={@required}
         disabled={@disabled}
         class={@input_class}
-        aria-invalid={if @invalid, do: "true", else: "false"}
+        aria-invalid={@invalid && "true"}
         {@rest}
       />
 
@@ -474,7 +474,8 @@ defmodule Pulsar.Components.Checkbox do
   # State classes for disabled/invalid states
   defp state_classes(disabled, invalid) do
     [
-      disabled && "before:bg-surface-2 dark:before:bg-dark-surface-2",
+      disabled &&
+        "before:bg-surface-2 dark:before:bg-dark-surface-2 before:border-border/50 dark:before:border-dark-border/50",
       invalid && "before:border-danger dark:before:border-dark-danger"
     ]
     |> Enum.filter(& &1)
