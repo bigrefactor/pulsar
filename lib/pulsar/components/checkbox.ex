@@ -217,6 +217,7 @@ defmodule Pulsar.Components.Checkbox do
   - **Card Integration**: Apply card styling to all checkboxes in the group using `card=true`
   - **Data-Driven Styling**: Leverage `data-state` attributes for checked/unchecked styling
   - **Consistent Styling**: All group checkboxes share the same styling attributes
+  - **Proper Spacing**: Automatic vertical spacing and alignment for groups
   - **Full Stellar API**: All Stellar checkbox group props and slots are supported
 
   ## Examples
@@ -318,7 +319,11 @@ defmodule Pulsar.Components.Checkbox do
           card_state_classes(assigns.disabled, has_errors)
         ])
       else
-        ""
+        # Add default spacing and alignment for standard checkbox groups
+        merge([
+          group_item_base_classes(),
+          group_item_spacing_classes()
+        ])
       end
 
     # Assign computed values to assigns
@@ -627,9 +632,10 @@ defmodule Pulsar.Components.Checkbox do
   @spec card_base_classes() :: String.t()
   defp card_base_classes do
     [
-      "flex items-start gap-3 rounded-lg cursor-pointer transition-all duration-200 ease-in-out",
+      "flex items-center gap-3 rounded-lg cursor-pointer transition-all duration-200 ease-in-out",
       "focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-ring",
-      "dark:focus-within:ring-dark-ring has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50"
+      "dark:focus-within:ring-dark-ring has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50",
+      "mb-3 last:mb-0"
     ]
     |> Enum.join(" ")
   end
@@ -709,6 +715,24 @@ defmodule Pulsar.Components.Checkbox do
       invalid && "border-danger dark:border-dark-danger bg-danger/5 dark:bg-dark-danger/10"
     ]
     |> Enum.filter(& &1)
+    |> Enum.join(" ")
+  end
+
+  # Base classes for checkbox group item wrappers (non-card)
+  @spec group_item_base_classes() :: String.t()
+  defp group_item_base_classes do
+    [
+      "flex items-center"
+    ]
+    |> Enum.join(" ")
+  end
+
+  # Spacing classes for checkbox group items
+  @spec group_item_spacing_classes() :: String.t()
+  defp group_item_spacing_classes do
+    [
+      "gap-3 mb-3 last:mb-0"
+    ]
     |> Enum.join(" ")
   end
 
