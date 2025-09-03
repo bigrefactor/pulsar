@@ -10,7 +10,7 @@ defmodule Pulsar.Components.RadioGroup do
 
   - **Stellar Foundation**: Built on Stellar's accessible radio group component with roving tabindex
   - **Custom Radio Design**: Styled radio buttons with smooth animations
-  - **Card-style Layout**: Rich card layouts with descriptions and custom content
+  - **Card-style Options**: Rich card layouts with descriptions and custom content
   - **Grid and Flex Layouts**: Flexible layout options for different UI needs
   - **Size Variants**: xs, sm, md, lg, xl for complete range
   - **Color Variants**: neutral, primary, secondary, success, danger, warning, info for consistent theming
@@ -23,58 +23,70 @@ defmodule Pulsar.Components.RadioGroup do
 
       # Basic radio group
       <.radio_group field={@form[:plan]}>
-        <.radio_option value="basic">Basic Plan</.radio_option>
-        <.radio_option value="pro">Pro Plan</.radio_option>
-        <.radio_option value="enterprise">Enterprise Plan</.radio_option>
+        <:option value="basic">Basic Plan</:option>
+        <:option value="pro">Pro Plan</:option>
+        <:option value="enterprise">Enterprise Plan</:option>
       </.radio_group>
 
       # With size and color variants
       <.radio_group field={@form[:size]} color="primary" size="lg" orientation="horizontal">
-        <.radio_option value="sm">Small</.radio_option>
-        <.radio_option value="md">Medium</.radio_option>
-        <.radio_option value="lg">Large</.radio_option>
+        <:option value="sm">Small</:option>
+        <:option value="md">Medium</:option>
+        <:option value="lg">Large</:option>
       </.radio_group>
 
       # Card-style layout with descriptions
-      <.radio_group field={@form[:plan]} layout="cards" variant="outline" color="primary">
-        <.radio_option value="basic">
+      <.radio_group field={@form[:plan]} card variant="outline" color="primary">
+        <:option value="basic">
           <div class="font-medium">Basic Plan</div>
           <div class="text-sm text-muted-foreground mt-1">Perfect for individuals</div>
           <div class="text-sm font-semibold mt-2">$10/month</div>
-        </.radio_option>
-        <.radio_option value="pro">
+        </:option>
+        <:option value="pro">
           <div class="font-medium">Pro Plan</div>
           <div class="text-sm text-muted-foreground mt-1">Great for teams</div>
           <div class="text-sm font-semibold mt-2">$25/month</div>
-        </.radio_option>
+        </:option>
       </.radio_group>
 
-      # Grid layout for multiple options
-      <.radio_group field={@form[:theme]} layout="grid" columns={3}>
-        <.radio_option value="light">Light</.radio_option>
-        <.radio_option value="dark">Dark</.radio_option>
-        <.radio_option value="auto">Auto</.radio_option>
-        <.radio_option value="blue">Blue</.radio_option>
-        <.radio_option value="green">Green</.radio_option>
-        <.radio_option value="purple">Purple</.radio_option>
+      # Grid layout with cards
+      <.radio_group field={@form[:theme]} card layout="grid" columns={3}>
+        <:option value="light">
+          <div class="text-center">
+            <div class="text-2xl mb-2">☀️</div>
+            <div class="font-medium">Light</div>
+          </div>
+        </:option>
+        <:option value="dark">
+          <div class="text-center">
+            <div class="text-2xl mb-2">🌙</div>
+            <div class="font-medium">Dark</div>
+          </div>
+        </:option>
+        <:option value="auto">
+          <div class="text-center">
+            <div class="text-2xl mb-2">💻</div>
+            <div class="font-medium">Auto</div>
+          </div>
+        </:option>
       </.radio_group>
 
       # Card-only selection (hidden radio inputs)
-      <.radio_group field={@form[:plan]} layout="cards" hide_radios variant="outline">
-        <.radio_option value="starter">
+      <.radio_group field={@form[:plan]} card hide_radios variant="outline">
+        <:option value="starter">
           <div class="text-center">
             <div class="text-2xl mb-2">🚀</div>
             <div class="font-medium">Starter</div>
             <div class="text-sm text-muted-foreground">Get started quickly</div>
           </div>
-        </.radio_option>
-        <.radio_option value="professional">
+        </:option>
+        <:option value="professional">
           <div class="text-center">
             <div class="text-2xl mb-2">💼</div>
             <div class="font-medium">Professional</div>
             <div class="text-sm text-muted-foreground">For growing teams</div>
           </div>
-        </.radio_option>
+        </:option>
       </.radio_group>
 
   ## Stellar Integration
@@ -96,19 +108,36 @@ defmodule Pulsar.Components.RadioGroup do
   alias Phoenix.LiveView.Rendered
   alias Stellar.Components.RadioGroup, as: StellarRadioGroup
 
-  # Pulsar-specific styling attributes
-  attr(:layout, :string,
-    default: "default",
-    values: ~w(default cards grid flex),
-    doc: "Layout style for the radio group"
+  # Card style (matching checkbox pattern)
+  attr(:card, :boolean,
+    default: false,
+    doc: "Render options as clickable cards"
+  )
+
+  attr(:hide_radios, :boolean,
+    default: false,
+    doc: "Hide the radio inputs (useful for card-only selection)"
   )
 
   attr(:variant, :string,
     default: "solid",
     values: ~w(solid outline ghost),
-    doc: "Visual style variant (applies to cards layout)"
+    doc: "Visual style variant (applies when card=true)"
   )
 
+  # Layout (independent of card)
+  attr(:layout, :string,
+    default: "flex",
+    values: ~w(flex grid),
+    doc: "Layout arrangement for the radio options"
+  )
+
+  attr(:columns, :integer,
+    default: 2,
+    doc: "Number of columns for grid layout"
+  )
+
+  # Common styling
   attr(:color, :string,
     default: "primary",
     values: ~w(neutral primary secondary success danger warning info),
@@ -119,16 +148,6 @@ defmodule Pulsar.Components.RadioGroup do
     default: "md",
     values: ~w(xs sm md lg xl),
     doc: "Size of the radio buttons and cards"
-  )
-
-  attr(:columns, :integer,
-    default: 2,
-    doc: "Number of columns for grid layout"
-  )
-
-  attr(:hide_radios, :boolean,
-    default: false,
-    doc: "Hide the radio inputs (useful for card-only selection)"
   )
 
   # Stellar radio group attributes - copied from Stellar.Components.RadioGroup
@@ -160,37 +179,47 @@ defmodule Pulsar.Components.RadioGroup do
   # Global attributes (allows all Phoenix and HTML attributes)
   attr(:rest, :global, doc: "Additional HTML attributes like aria-label, aria-labelledby")
 
-  # Slots for content
-  slot(:inner_block, required: true, doc: "Radio options go here")
+  # Slots for radio options
+  slot :option, required: true, doc: "Radio option" do
+    attr(:value, :any, required: true)
+    attr(:disabled, :boolean)
+    attr(:checked, :boolean, doc: "Override automatic checked state")
+  end
 
   @doc """
   Renders a styled radio group component.
 
   This function wraps Stellar.Components.RadioGroup with Pulsar's styling system.
   All Stellar props are passed through, with styling controlled via CSS classes
-  that respond to the radio group's layout and state.
+  that respond to the radio group's card and layout state.
 
-  ## Layout Options
+  ## Card vs Layout
 
-  - **default**: Standard radio buttons with labels
-  - **cards**: Rich card layouts with custom content slots
-  - **grid**: Grid layout for multiple options
-  - **flex**: Flexible layout with custom spacing
+  - **card**: Visual style - renders options as clickable cards
+  - **layout**: Spatial arrangement - flex or grid layout
+  - These can be combined independently
 
   ## Examples
 
       # Standard radio group
       <.radio_group field={@form[:plan]} color="primary" size="lg">
-        <.radio_option value="basic">Basic Plan</.radio_option>
-        <.radio_option value="pro">Pro Plan</.radio_option>
+        <:option value="basic">Basic Plan</:option>
+        <:option value="pro">Pro Plan</:option>
       </.radio_group>
 
-      # Card layout with descriptions
-      <.radio_group field={@form[:plan]} layout="cards" variant="outline">
-        <.radio_option value="basic">
+      # Card style with flex layout
+      <.radio_group field={@form[:plan]} card variant="outline">
+        <:option value="basic">
           <div class="font-medium">Basic Plan</div>
           <div class="text-sm text-muted-foreground">Perfect for individuals</div>
-        </.radio_option>
+        </:option>
+      </.radio_group>
+
+      # Card style with grid layout  
+      <.radio_group field={@form[:theme]} card layout="grid" columns={3}>
+        <:option value="light">Light Theme</:option>
+        <:option value="dark">Dark Theme</:option>
+        <:option value="auto">Auto Theme</:option>
       </.radio_group>
   """
   @spec radio_group(map()) :: Rendered.t()
@@ -201,13 +230,18 @@ defmodule Pulsar.Components.RadioGroup do
     invalid = if is_nil(user_invalid), do: has_errors, else: user_invalid
     effective_color = if invalid, do: "danger", else: assigns.color
 
+    # Compute name, value, and id from field if not provided
+    name = assigns[:name] || (assigns[:field] && assigns.field.name)
+    current_value = assigns[:value] || (assigns[:field] && assigns.field.value)
+    computed_id = assigns[:id] || (assigns[:field] && assigns.field.id)
+
     # Build class string for radio group container
     container_class =
       merge([
         base_container_classes(),
         layout_classes(assigns.layout, assigns.orientation),
         layout_grid_classes(assigns.layout, assigns.columns),
-        layout_size_classes(assigns.layout, assigns.size),
+        card_size_classes(assigns.card, assigns.size),
         assigns.class
       ])
 
@@ -216,80 +250,131 @@ defmodule Pulsar.Components.RadioGroup do
       |> assign(:container_class, container_class)
       |> assign(:effective_color, effective_color)
       |> assign(:invalid, invalid)
+      |> assign(:computed_name, name)
+      |> assign(:computed_value, current_value)
+      |> assign(:computed_id, computed_id)
 
     ~H"""
     <StellarRadioGroup.radio_group
       field={@field}
-      id={@id}
-      name={@name}
-      value={@value}
+      id={@computed_id}
+      name={@computed_name}
+      value={@computed_value}
       orientation={@orientation}
       disabled={@disabled}
       invalid={@invalid}
       required={@required}
       error_message={@error_message}
       class={@container_class}
-      data-layout={@layout}
+      data-card={@card && "true" || "false"}
       data-variant={@variant}
       data-color={@effective_color}
       data-size={@size}
-      data-columns={@columns}
-      data-hide-radios={if @hide_radios, do: "true", else: "false"}
+      data-hide-radios={@hide_radios && "true" || "false"}
       {@rest}
+      :let={group}
     >
-      {render_slot(@inner_block)}
+      <%= for option <- @option do %>
+        <%= render_radio_option(assigns, option, group) %>
+      <% end %>
     </StellarRadioGroup.radio_group>
     """
   end
 
-  @doc """
-  Renders a styled radio option within a radio group.
-
-  This component should be used as a child of `radio_group/1` to create
-  individual radio options with consistent styling.
-  """
-  attr(:value, :any, required: true, doc: "Value for this radio option")
-  attr(:disabled, :boolean, default: false, doc: "Disable this specific option")
-  attr(:class, :string, default: "", doc: "Additional CSS classes")
-
-  # Global attributes
-  attr(:rest, :global, doc: "Additional HTML attributes")
-
-  slot(:inner_block, required: true, doc: "Content for the radio option")
-
-  def radio_option(assigns) do
+  # Render individual radio option with group context from Stellar
+  defp render_radio_option(assigns, option, group) do
     # Generate unique ID for this radio option
-    radio_id = "radio-#{:erlang.phash2(assigns.value)}"
+    radio_id = "#{group.id}-#{:erlang.phash2(option.value)}"
 
-    assigns = assign(assigns, :radio_id, radio_id)
+    # Determine checked state
+    checked =
+      Map.get(option, :checked, false) || to_string(group.value) == to_string(option.value)
 
+    # Determine disabled state
+    disabled = Map.get(option, :disabled, false) || group.disabled
+
+    # Create new assigns with computed values
+    option_assigns =
+      assigns
+      |> assign(:option, option)
+      |> assign(:group, group)
+      |> assign(:radio_id, radio_id)
+      |> assign(:option_checked, checked)
+      |> assign(:option_disabled, disabled)
+
+    if assigns.card do
+      render_card_radio(option_assigns)
+    else
+      render_default_radio(option_assigns)
+    end
+  end
+
+  # Standard radio with label
+  defp render_default_radio(assigns) do
     ~H"""
-    <div class={
-      merge([
-        radio_option_base_classes(),
-        @class
-      ])
-    }>
+    <div class={radio_option_base_classes()}>
       <input
         type="radio"
         id={@radio_id}
-        value={@value}
-        disabled={@disabled}
-        class={
-          merge([
-            radio_input_base_classes()
-          ])
-        }
-        {@rest}
+        name={@group.name}
+        value={@option.value}
+        checked={@option_checked}
+        required={@group.required}
+        disabled={@option_disabled}
+        aria-invalid={@group.invalid && "true"}
+        class={merge([radio_input_base_classes(), if(@hide_radios, do: "sr-only", else: nil)])}
       />
       <label for={@radio_id} class={radio_label_classes()}>
-        {render_slot(@inner_block)}
+        <%= render_slot(@option) %>
       </label>
     </div>
     """
   end
 
-  # Base styles for radio group container
+  # Card-style radio (matching checkbox card pattern)
+  defp render_card_radio(assigns) do
+    container_class =
+      merge([
+        card_base_classes(),
+        card_variant_classes(assigns.variant, assigns.effective_color),
+        card_size_text_classes(assigns.size),
+        card_state_classes(assigns.option_disabled, assigns.invalid)
+      ])
+
+    radio_class = if assigns.hide_radios, do: "sr-only", else: radio_input_base_classes()
+
+    assigns =
+      assigns
+      |> assign(:container_class, container_class)
+      |> assign(:radio_class, radio_class)
+
+    ~H"""
+    <label 
+      for={@radio_id}
+      class={@container_class}
+      data-checked={@option_checked && "true" || "false"}
+      data-disabled={@option_disabled && "true" || "false"}
+    >
+      <input
+        type="radio"
+        id={@radio_id}
+        name={@group.name}
+        value={@option.value}
+        checked={@option_checked}
+        required={@group.required}
+        disabled={@option_disabled}
+        aria-invalid={@group.invalid && "true"}
+        aria-describedby={"#{@radio_id}-content"}
+        class={@radio_class}
+      />
+      <div class="flex-1 min-w-0" id={"#{@radio_id}-content"}>
+        <%= render_slot(@option) %>
+      </div>
+    </label>
+    """
+  end
+
+  # Base styles for radio group container with CSS variables
   @spec base_container_classes() :: String.t()
   defp base_container_classes do
     """
@@ -312,13 +397,9 @@ defmodule Pulsar.Components.RadioGroup do
     """
   end
 
-  # Layout-specific classes
+  # Layout-specific classes (independent of card)
   @spec layout_classes(String.t(), String.t()) :: String.t()
-  defp layout_classes("default", "horizontal"), do: "flex flex-row gap-6"
-  defp layout_classes("default", "vertical"), do: "flex flex-col gap-4"
-  defp layout_classes("cards", "horizontal"), do: "flex flex-row gap-4"
-  defp layout_classes("cards", "vertical"), do: "flex flex-col gap-4"
-  defp layout_classes("flex", "horizontal"), do: "flex flex-row flex-wrap gap-4"
+  defp layout_classes("flex", "horizontal"), do: "flex flex-row flex-wrap gap-6"
   defp layout_classes("flex", "vertical"), do: "flex flex-col gap-4"
   defp layout_classes("grid", _orientation), do: "grid gap-4"
 
@@ -340,37 +421,35 @@ defmodule Pulsar.Components.RadioGroup do
 
   defp layout_grid_classes(_layout, _columns), do: ""
 
-  # Size classes based on layout
-  @spec layout_size_classes(String.t(), String.t()) :: String.t()
-  defp layout_size_classes("cards", "xs"),
+  # Size classes for cards (only applied when card=true)
+  @spec card_size_classes(boolean(), String.t()) :: String.t()
+  defp card_size_classes(false, _size), do: ""
+
+  defp card_size_classes(true, "xs"),
     do:
       "[--radio-card-padding:theme(spacing.2)] [--radio-card-gap:theme(spacing.2)] [--radio-card-text:theme(fontSize.xs)]"
 
-  defp layout_size_classes("cards", "sm"),
+  defp card_size_classes(true, "sm"),
     do:
       "[--radio-card-padding:theme(spacing.3)] [--radio-card-gap:theme(spacing.2)] [--radio-card-text:theme(fontSize.sm)]"
 
-  defp layout_size_classes("cards", "md"),
+  defp card_size_classes(true, "md"),
     do:
       "[--radio-card-padding:theme(spacing.4)] [--radio-card-gap:theme(spacing.3)] [--radio-card-text:theme(fontSize.base)]"
 
-  defp layout_size_classes("cards", "lg"),
+  defp card_size_classes(true, "lg"),
     do:
       "[--radio-card-padding:theme(spacing.5)] [--radio-card-gap:theme(spacing.4)] [--radio-card-text:theme(fontSize.lg)]"
 
-  defp layout_size_classes("cards", "xl"),
+  defp card_size_classes(true, "xl"),
     do:
       "[--radio-card-padding:theme(spacing.6)] [--radio-card-gap:theme(spacing.5)] [--radio-card-text:theme(fontSize.xl)]"
-
-  defp layout_size_classes(_layout, _size), do: ""
 
   # Base classes for radio option container
   @spec radio_option_base_classes() :: String.t()
   defp radio_option_base_classes do
     """
-    relative
-    [&:has([data-layout=cards])]:block
-    [&:has([data-hide-radios=true])_.radio-input]:sr-only
+    relative flex items-start gap-3
     """
   end
 
@@ -378,7 +457,7 @@ defmodule Pulsar.Components.RadioGroup do
   @spec radio_input_base_classes() :: String.t()
   defp radio_input_base_classes do
     """
-    radio-input appearance-none relative cursor-pointer transition-all duration-200 ease-in-out
+    appearance-none relative cursor-pointer transition-all duration-200 ease-in-out
     w-5 h-5 rounded-full border-2 border-[--radio-border]
     bg-[--radio-background] 
     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[--radio-color]
@@ -388,44 +467,74 @@ defmodule Pulsar.Components.RadioGroup do
     before:bg-[--radio-color-foreground] before:transition-all before:duration-200 
     before:scale-0 before:opacity-0
     checked:before:scale-100 checked:before:opacity-100
-    [.radio-group[data-size=xs]_&]:w-3 [.radio-group[data-size=xs]_&]:h-3 [.radio-group[data-size=xs]_&]:before:inset-0.5
-    [.radio-group[data-size=sm]_&]:w-4 [.radio-group[data-size=sm]_&]:h-4 [.radio-group[data-size=sm]_&]:before:inset-0.5
-    [.radio-group[data-size=lg]_&]:w-6 [.radio-group[data-size=lg]_&]:h-6 [.radio-group[data-size=lg]_&]:before:inset-1.5
-    [.radio-group[data-size=xl]_&]:w-7 [.radio-group[data-size=xl]_&]:h-7 [.radio-group[data-size=xl]_&]:before:inset-1.5
+    [[data-radio-group][data-size=xs]_&]:w-3 [[data-radio-group][data-size=xs]_&]:h-3 [[data-radio-group][data-size=xs]_&]:before:inset-0.5
+    [[data-radio-group][data-size=sm]_&]:w-4 [[data-radio-group][data-size=sm]_&]:h-4 [[data-radio-group][data-size=sm]_&]:before:inset-0.5
+    [[data-radio-group][data-size=lg]_&]:w-6 [[data-radio-group][data-size=lg]_&]:h-6 [[data-radio-group][data-size=lg]_&]:before:inset-1.5
+    [[data-radio-group][data-size=xl]_&]:w-7 [[data-radio-group][data-size=xl]_&]:h-7 [[data-radio-group][data-size=xl]_&]:before:inset-1.5
     hover:border-[--radio-color]/70 hover:shadow-sm
     """
   end
 
-  # Classes for radio labels
+  # Classes for radio labels (standard non-card)
   @spec radio_label_classes() :: String.t()
   defp radio_label_classes do
     """
-    cursor-pointer select-none transition-all duration-200
-    [.radio-group[data-layout=default]_&]:ml-3 [.radio-group[data-layout=default]_&]:flex [.radio-group[data-layout=default]_&]:items-center
-    [.radio-group[data-layout=cards]_&]:block [.radio-group[data-layout=cards]_&]:p-[--radio-card-padding] 
-    [.radio-group[data-layout=cards]_&]:rounded-lg [.radio-group[data-layout=cards]_&]:border-2 [.radio-group[data-layout=cards]_&]:transition-all 
-    [.radio-group[data-layout=cards]_&]:cursor-pointer [.radio-group[data-layout=cards]_&]:text-[--radio-card-text]
-    [.radio-group[data-layout=cards][data-variant=solid]_&]:border-transparent [.radio-group[data-layout=cards][data-variant=solid]_&]:bg-[--radio-background]
-    [.radio-group[data-layout=cards][data-variant=solid]_&]:hover:bg-[--radio-color]/10
-    [.radio-group[data-layout=cards][data-variant=solid]_&]:has-[:checked]:bg-[--radio-color]/20
-    [.radio-group[data-layout=cards][data-variant=outline]_&]:border-[--radio-border] [.radio-group[data-layout=cards][data-variant=outline]_&]:bg-[--radio-background]
-    [.radio-group[data-layout=cards][data-variant=outline]_&]:hover:border-[--radio-color]/50 [.radio-group[data-layout=cards][data-variant=outline]_&]:hover:bg-[--radio-color]/5
-    [.radio-group[data-layout=cards][data-variant=outline]_&]:has-[:checked]:border-[--radio-color] [.radio-group[data-layout=cards][data-variant=outline]_&]:has-[:checked]:bg-[--radio-color]/10
-    [.radio-group[data-layout=cards][data-variant=ghost]_&]:border-transparent [.radio-group[data-layout=cards][data-variant=ghost]_&]:bg-transparent
-    [.radio-group[data-layout=cards][data-variant=ghost]_&]:hover:bg-[--radio-color]/10
-    [.radio-group[data-layout=cards][data-variant=ghost]_&]:has-[:checked]:bg-[--radio-color]/15
-    [.radio-group[data-layout=grid]_&]:block [.radio-group[data-layout=grid]_&]:p-3 [.radio-group[data-layout=grid]_&]:text-center
-    [.radio-group[data-layout=grid]_&]:rounded-lg [.radio-group[data-layout=grid]_&]:border-2 [.radio-group[data-layout=grid]_&]:border-[--radio-border]
-    [.radio-group[data-layout=grid]_&]:bg-[--radio-background] [.radio-group[data-layout=grid]_&]:transition-all [.radio-group[data-layout=grid]_&]:cursor-pointer
-    [.radio-group[data-layout=grid]_&]:hover:border-[--radio-color]/50 [.radio-group[data-layout=grid]_&]:hover:bg-[--radio-color]/5
-    [.radio-group[data-layout=grid]_&]:has-[:checked]:border-[--radio-color] [.radio-group[data-layout=grid]_&]:has-[:checked]:bg-[--radio-color]/10
-    [.radio-group[data-layout=flex]_&]:block [.radio-group[data-layout=flex]_&]:px-4 [.radio-group[data-layout=flex]_&]:py-2
-    [.radio-group[data-layout=flex]_&]:rounded-md [.radio-group[data-layout=flex]_&]:border [.radio-group[data-layout=flex]_&]:border-[--radio-border]
-    [.radio-group[data-layout=flex]_&]:bg-[--radio-background] [.radio-group[data-layout=flex]_&]:transition-all [.radio-group[data-layout=flex]_&]:cursor-pointer
-    [.radio-group[data-layout=flex]_&]:hover:border-[--radio-color]/50 [.radio-group[data-layout=flex]_&]:hover:bg-[--radio-color]/5
-    [.radio-group[data-layout=flex]_&]:has-[:checked]:border-[--radio-color] [.radio-group[data-layout=flex]_&]:has-[:checked]:bg-[--radio-color]/10
+    cursor-pointer select-none transition-all duration-200 flex-1 min-w-0
     focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-[--radio-color]
     """
+  end
+
+  # Card base styles (matching checkbox pattern)
+  @spec card_base_classes() :: String.t()
+  defp card_base_classes do
+    """
+    relative flex items-start gap-3 p-[--radio-card-padding] rounded-lg border-2 
+    cursor-pointer transition-all duration-200 ease-in-out text-[--radio-card-text]
+    focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-[--radio-color]
+    """
+  end
+
+  # Card variant styles
+  @spec card_variant_classes(String.t(), String.t()) :: String.t()
+  defp card_variant_classes("solid", _color) do
+    """
+    border-transparent bg-[--radio-background]
+    hover:bg-[--radio-color]/10
+    data-[checked=true]:bg-[--radio-color]/20
+    """
+  end
+
+  defp card_variant_classes("outline", _color) do
+    """
+    border-[--radio-border] bg-[--radio-background]
+    hover:border-[--radio-color]/50 hover:bg-[--radio-color]/5
+    data-[checked=true]:border-[--radio-color] data-[checked=true]:bg-[--radio-color]/10
+    """
+  end
+
+  defp card_variant_classes("ghost", _color) do
+    """
+    border-transparent bg-transparent
+    hover:bg-[--radio-color]/10
+    data-[checked=true]:bg-[--radio-color]/15
+    """
+  end
+
+  # Card text size styles
+  @spec card_size_text_classes(String.t()) :: String.t()
+  defp card_size_text_classes("xs"), do: "text-xs"
+  defp card_size_text_classes("sm"), do: "text-sm"
+  defp card_size_text_classes("md"), do: "text-base"
+  defp card_size_text_classes("lg"), do: "text-lg"
+  defp card_size_text_classes("xl"), do: "text-xl"
+
+  # Card state styles
+  @spec card_state_classes(boolean(), boolean()) :: String.t()
+  defp card_state_classes(disabled, invalid) do
+    classes = []
+    classes = if disabled, do: ["opacity-50 cursor-not-allowed" | classes], else: classes
+    classes = if invalid, do: ["border-danger ring-danger" | classes], else: classes
+    Enum.join(classes, " ")
   end
 
   # Helper for error detection - checks if a Phoenix form field has validation errors

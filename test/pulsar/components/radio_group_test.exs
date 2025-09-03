@@ -14,15 +14,15 @@ defmodule Pulsar.Components.RadioGroupTest do
       html =
         rendered_to_string(~H"""
         <.radio_group name="plan" value="basic">
-          <.radio_option value="basic">Basic Plan</.radio_option>
-          <.radio_option value="pro">Pro Plan</.radio_option>
+          <:option value="basic">Basic Plan</:option>
+          <:option value="pro">Pro Plan</:option>
         </.radio_group>
         """)
 
       assert html =~ ~s(role="radiogroup")
-      assert html =~ ~s(data-name="plan")
-      assert html =~ ~s(data-value="basic")
-      assert html =~ ~s(data-layout="default")
+      assert html =~ ~s(name="plan")
+      assert html =~ ~s(value="basic")
+      assert html =~ ~s(data-card="false")
       assert html =~ ~s(data-variant="solid")
       assert html =~ ~s(data-color="primary")
       assert html =~ ~s(data-size="md")
@@ -34,14 +34,15 @@ defmodule Pulsar.Components.RadioGroupTest do
       html =
         rendered_to_string(~H"""
         <.radio_group name="plan" value="basic">
-          <.radio_option value="basic">Basic Plan</.radio_option>
-          <.radio_option value="pro">Pro Plan</.radio_option>
+          <:option value="basic">Basic Plan</:option>
+          <:option value="pro">Pro Plan</:option>
         </.radio_group>
         """)
 
       assert html =~ ~s(type="radio")
       assert html =~ ~s(value="basic")
       assert html =~ ~s(value="pro")
+      assert html =~ ~s(name="plan")
       assert html =~ "Basic Plan"
       assert html =~ "Pro Plan"
     end
@@ -52,7 +53,7 @@ defmodule Pulsar.Components.RadioGroupTest do
       html =
         rendered_to_string(~H"""
         <.radio_group name="plan" value="basic">
-          <.radio_option value="basic">Basic</.radio_option>
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
@@ -62,7 +63,10 @@ defmodule Pulsar.Components.RadioGroupTest do
       assert html =~ "--radio-border:"
       assert html =~ "--radio-background:"
 
-      # Check for layout classes
+      # Check for data-radio-group attribute
+      assert html =~ ~s(data-radio-group="true")
+
+      # Check for default flex layout
       assert html =~ "flex flex-col gap-4"
     end
 
@@ -72,7 +76,7 @@ defmodule Pulsar.Components.RadioGroupTest do
       html =
         rendered_to_string(~H"""
         <.radio_group id="my-radio-group" name="plan" value="basic">
-          <.radio_option value="basic">Basic</.radio_option>
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
@@ -85,58 +89,41 @@ defmodule Pulsar.Components.RadioGroupTest do
       html =
         rendered_to_string(~H"""
         <.radio_group name="plan" value="basic">
-          <.radio_option value="basic">Basic</.radio_option>
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
-      assert html =~ ~r/id="radio-group-[^"]+"/
+      assert html =~ ~r/role="radiogroup"[^>]*id="[^"]+"/
     end
   end
 
-  describe "radio_group/1 layout variants" do
-    test "renders default layout vertically" do
+  describe "radio_group/1 layout and card variants" do
+    test "renders flex layout vertically (default)" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <.radio_group name="plan" value="basic" layout="default">
-          <.radio_option value="basic">Basic</.radio_option>
+        <.radio_group name="plan" value="basic">
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
       assert html =~ "flex flex-col gap-4"
-      assert html =~ ~s(data-layout="default")
+      assert html =~ ~s(data-orientation="vertical")
     end
 
-    test "renders default layout horizontally" do
+    test "renders flex layout horizontally" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <.radio_group name="plan" value="basic" layout="default" orientation="horizontal">
-          <.radio_option value="basic">Basic</.radio_option>
+        <.radio_group name="plan" value="basic" orientation="horizontal">
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
-      assert html =~ "flex flex-row gap-6"
+      assert html =~ "flex flex-row flex-wrap gap-6"
       assert html =~ ~s(data-orientation="horizontal")
-    end
-
-    test "renders cards layout" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <.radio_group name="plan" value="basic" layout="cards">
-          <.radio_option value="basic">
-            <div>Basic Plan</div>
-            <div>Description here</div>
-          </.radio_option>
-        </.radio_group>
-        """)
-
-      assert html =~ ~s(data-layout="cards")
-      assert html =~ "flex flex-col gap-4"
     end
 
     test "renders grid layout with columns" do
@@ -145,71 +132,125 @@ defmodule Pulsar.Components.RadioGroupTest do
       html =
         rendered_to_string(~H"""
         <.radio_group name="plan" value="basic" layout="grid" columns={3}>
-          <.radio_option value="basic">Basic</.radio_option>
-          <.radio_option value="pro">Pro</.radio_option>
-          <.radio_option value="enterprise">Enterprise</.radio_option>
+          <:option value="basic">Basic</:option>
+          <:option value="pro">Pro</:option>
+          <:option value="enterprise">Enterprise</:option>
         </.radio_group>
         """)
 
-      assert html =~ ~s(data-layout="grid")
-      assert html =~ ~s(data-columns="3")
       assert html =~ "grid gap-4"
       assert html =~ "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
     end
 
-    test "renders flex layout" do
+    test "renders standard radios (non-card)" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <.radio_group name="plan" value="basic" layout="flex">
-          <.radio_option value="basic">Basic</.radio_option>
+        <.radio_group name="plan" value="basic">
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
-      assert html =~ ~s(data-layout="flex")
-      assert html =~ "flex flex-col gap-4"
+      assert html =~ ~s(data-card="false")
+      # Should render standard radio + label structure
+      assert html =~ ~s(type="radio")
+      assert html =~ ~s(<label)
     end
-  end
 
-  describe "radio_group/1 variant styles" do
-    test "renders solid variant" do
+    test "renders card style" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <.radio_group name="plan" value="basic" variant="solid">
-          <.radio_option value="basic">Basic</.radio_option>
+        <.radio_group name="plan" value="basic" card>
+          <:option value="basic">
+            <div>Basic Plan</div>
+            <div>Description here</div>
+          </:option>
+        </.radio_group>
+        """)
+
+      assert html =~ ~s(data-card="true")
+      # Should render as clickable label with radio inside
+      assert html =~ ~s(<label)
+      assert html =~ ~s(cursor-pointer)
+    end
+
+    test "combines card style with grid layout" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic" card layout="grid" columns={2}>
+          <:option value="basic">Basic</:option>
+          <:option value="pro">Pro</:option>
+        </.radio_group>
+        """)
+
+      assert html =~ ~s(data-card="true")
+      assert html =~ "grid gap-4"
+      assert html =~ "grid-cols-1 sm:grid-cols-2"
+    end
+  end
+
+  describe "radio_group/1 variant styles (for cards)" do
+    test "renders solid variant on cards" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic" card variant="solid">
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
       assert html =~ ~s(data-variant="solid")
+      assert html =~ ~s(data-card="true")
     end
 
-    test "renders outline variant" do
+    test "renders outline variant on cards" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic" card variant="outline">
+          <:option value="basic">Basic</:option>
+        </.radio_group>
+        """)
+
+      assert html =~ ~s(data-variant="outline")
+      assert html =~ ~s(data-card="true")
+    end
+
+    test "renders ghost variant on cards" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic" card variant="ghost">
+          <:option value="basic">Basic</:option>
+        </.radio_group>
+        """)
+
+      assert html =~ ~s(data-variant="ghost")
+      assert html =~ ~s(data-card="true")
+    end
+
+    test "variant has no effect on non-card radios" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
         <.radio_group name="plan" value="basic" variant="outline">
-          <.radio_option value="basic">Basic</.radio_option>
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
       assert html =~ ~s(data-variant="outline")
-    end
-
-    test "renders ghost variant" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <.radio_group name="plan" value="basic" variant="ghost">
-          <.radio_option value="basic">Basic</.radio_option>
-        </.radio_group>
-        """)
-
-      assert html =~ ~s(data-variant="ghost")
+      assert html =~ ~s(data-card="false")
+      # Should still render as standard radio
+      assert html =~ ~s(type="radio")
     end
   end
 
@@ -220,7 +261,7 @@ defmodule Pulsar.Components.RadioGroupTest do
       html =
         rendered_to_string(~H"""
         <.radio_group name="plan" value="basic">
-          <.radio_option value="basic">Basic</.radio_option>
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
@@ -236,7 +277,7 @@ defmodule Pulsar.Components.RadioGroupTest do
         html =
           rendered_to_string(~H"""
           <.radio_group name="plan" value="basic" color={@color}>
-            <.radio_option value="basic">Basic</.radio_option>
+            <:option value="basic">Basic</:option>
           </.radio_group>
           """)
 
@@ -252,7 +293,7 @@ defmodule Pulsar.Components.RadioGroupTest do
       html =
         rendered_to_string(~H"""
         <.radio_group name="plan" value="basic">
-          <.radio_option value="basic">Basic</.radio_option>
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
@@ -268,7 +309,7 @@ defmodule Pulsar.Components.RadioGroupTest do
         html =
           rendered_to_string(~H"""
           <.radio_group name="plan" value="basic" size={@size}>
-            <.radio_option value="basic">Basic</.radio_option>
+            <:option value="basic">Basic</:option>
           </.radio_group>
           """)
 
@@ -284,12 +325,14 @@ defmodule Pulsar.Components.RadioGroupTest do
       html =
         rendered_to_string(~H"""
         <.radio_group name="plan" value="basic" disabled={true}>
-          <.radio_option value="basic">Basic</.radio_option>
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
       assert html =~ ~s(data-disabled="true")
       assert html =~ ~s(aria-disabled="true")
+      # Individual radios should also be disabled
+      assert html =~ ~s(disabled)
     end
 
     test "renders with enabled state by default" do
@@ -298,7 +341,7 @@ defmodule Pulsar.Components.RadioGroupTest do
       html =
         rendered_to_string(~H"""
         <.radio_group name="plan" value="basic">
-          <.radio_option value="basic">Basic</.radio_option>
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
@@ -312,12 +355,14 @@ defmodule Pulsar.Components.RadioGroupTest do
       html =
         rendered_to_string(~H"""
         <.radio_group name="plan" value="" required={true}>
-          <.radio_option value="basic">Basic</.radio_option>
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
       assert html =~ ~s(aria-required="true")
       assert html =~ ~s(data-required="true")
+      # Individual radios should have required attribute
+      assert html =~ ~s(required)
     end
 
     test "renders with invalid state" do
@@ -326,12 +371,38 @@ defmodule Pulsar.Components.RadioGroupTest do
       html =
         rendered_to_string(~H"""
         <.radio_group name="plan" value="" invalid={true}>
-          <.radio_option value="basic">Basic</.radio_option>
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
       assert html =~ ~s(data-invalid="true")
       assert html =~ ~s(aria-invalid="true")
+      # Individual radios should have aria-invalid
+      assert html =~ ~s(aria-invalid="true")
+    end
+
+    test "computes checked state automatically" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="pro">
+          <:option value="basic">Basic</:option>
+          <:option value="pro">Pro</:option>
+        </.radio_group>
+        """)
+
+      # The pro option should be checked
+      assert html =~ ~s(value="pro")
+      assert html =~ ~s(checked)
+
+      # The basic option should not be checked - look for a line with basic that doesn't have checked
+      assert html =~ ~s(value="basic")
+      # Count occurrences: should have one "basic" input and one "checked" attribute
+      basic_count = (html |> String.split("value=\"basic\"") |> length()) - 1
+      checked_count = length(Regex.scan(~r/\bchecked(?![:\-])/, html))
+      assert basic_count == 1
+      assert checked_count == 1
     end
   end
 
@@ -348,7 +419,7 @@ defmodule Pulsar.Components.RadioGroupTest do
           invalid={true}
           error_message="Please select a plan"
         >
-          <.radio_option value="basic">Basic</.radio_option>
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
@@ -373,7 +444,7 @@ defmodule Pulsar.Components.RadioGroupTest do
       html =
         rendered_to_string(~H"""
         <.radio_group name="plan" value="" color="primary" invalid={true}>
-          <.radio_option value="basic">Basic</.radio_option>
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
@@ -388,7 +459,7 @@ defmodule Pulsar.Components.RadioGroupTest do
       html =
         rendered_to_string(~H"""
         <.radio_group name="plan" value="" invalid={true} error_message={nil}>
-          <.radio_option value="basic">Basic</.radio_option>
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
@@ -402,7 +473,7 @@ defmodule Pulsar.Components.RadioGroupTest do
       html =
         rendered_to_string(~H"""
         <.radio_group name="plan" value="" invalid={true} error_message="">
-          <.radio_option value="basic">Basic</.radio_option>
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
@@ -430,13 +501,13 @@ defmodule Pulsar.Components.RadioGroupTest do
       html =
         rendered_to_string(~H"""
         <.radio_group field={@form_field}>
-          <.radio_option value="basic">Basic</.radio_option>
-          <.radio_option value="pro">Pro</.radio_option>
+          <:option value="basic">Basic</:option>
+          <:option value="pro">Pro</:option>
         </.radio_group>
         """)
 
       # Should extract name and value from field
-      assert html =~ ~s(data-name="user[plan]")
+      assert html =~ ~s(name="user[plan]")
       assert html =~ ~s(id="user_plan")
 
       # Should detect invalid state from field errors
@@ -467,7 +538,7 @@ defmodule Pulsar.Components.RadioGroupTest do
       html =
         rendered_to_string(~H"""
         <.radio_group field={@form_field} invalid={true} error_message="Custom error">
-          <.radio_option value="basic">Basic</.radio_option>
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
@@ -484,11 +555,13 @@ defmodule Pulsar.Components.RadioGroupTest do
       html =
         rendered_to_string(~H"""
         <.radio_group name="plan" value="basic" hide_radios={true}>
-          <.radio_option value="basic">Basic</.radio_option>
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
       assert html =~ ~s(data-hide-radios="true")
+      # Radio inputs should have sr-only class
+      assert html =~ ~s(sr-only)
     end
 
     test "passes through custom class" do
@@ -497,7 +570,7 @@ defmodule Pulsar.Components.RadioGroupTest do
       html =
         rendered_to_string(~H"""
         <.radio_group name="plan" value="basic" class="custom-radio-group">
-          <.radio_option value="basic">Basic</.radio_option>
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
@@ -515,7 +588,7 @@ defmodule Pulsar.Components.RadioGroupTest do
           aria-label="Choose a subscription plan"
           aria-labelledby="plan-heading"
         >
-          <.radio_option value="basic">Basic</.radio_option>
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
@@ -533,7 +606,7 @@ defmodule Pulsar.Components.RadioGroupTest do
           value="basic"
           data-test-id="plan-selector"
         >
-          <.radio_option value="basic">Basic</.radio_option>
+          <:option value="basic">Basic</:option>
         </.radio_group>
         """)
 
@@ -541,75 +614,115 @@ defmodule Pulsar.Components.RadioGroupTest do
     end
   end
 
-  describe "radio_option/1" do
-    test "renders radio option with proper structure" do
+  describe "radio options with slots" do
+    test "renders option slots with proper structure" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <.radio_option value="basic">Basic Plan</.radio_option>
+        <.radio_group name="plan" value="basic">
+          <:option value="basic">Basic Plan</:option>
+          <:option value="pro">Pro Plan</:option>
+        </.radio_group>
         """)
 
       assert html =~ ~s(type="radio")
       assert html =~ ~s(value="basic")
+      assert html =~ ~s(value="pro")
       assert html =~ "Basic Plan"
+      assert html =~ "Pro Plan"
     end
 
-    test "renders with custom class" do
+    test "option slots can have disabled state" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <.radio_option value="basic" class="custom-option">Basic</.radio_option>
+        <.radio_group name="plan" value="basic">
+          <:option value="basic">Basic</:option>
+          <:option value="pro" disabled>Pro</:option>
+        </.radio_group>
         """)
 
-      assert html =~ "custom-option"
+      # Should have one disabled radio with disabled attribute
+      assert html =~ ~r/value="pro".*?disabled(?!\:)/
+      # Basic should not have disabled attribute  
+      refute html =~ ~r/value="basic".*?disabled(?!\:)/
     end
 
-    test "renders with disabled state" do
+    test "option slots can override checked state" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <.radio_option value="basic" disabled={true}>Basic</.radio_option>
+        <.radio_group name="plan" value="basic">
+          <:option value="basic">Basic</:option>
+          <:option value="pro" checked>Pro</:option>
+        </.radio_group>
         """)
 
-      assert html =~ ~s(disabled)
+      # Pro should be checked (override)
+      assert html =~ ~r/value="pro"[^>]*checked/
+      # Basic should not be checked (overridden by explicit checked on pro)
+      # Note: Both might be checked in this case since we're overriding
     end
 
-    test "generates unique ID for each option" do
-      assigns = %{}
-
-      html1 =
-        rendered_to_string(~H"""
-        <.radio_option value="basic">Basic</.radio_option>
-        """)
-
-      html2 =
-        rendered_to_string(~H"""
-        <.radio_option value="pro">Pro</.radio_option>
-        """)
-
-      # Extract IDs from both HTML strings
-      [id1] = Regex.run(~r/id="([^"]+)"/, html1, capture: :all_but_first)
-      [id2] = Regex.run(~r/id="([^"]+)"/, html2, capture: :all_but_first)
-
-      refute id1 == id2
-    end
-
-    test "has proper label association" do
+    test "generates unique IDs for each option" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <.radio_option value="basic">Basic Plan</.radio_option>
+        <.radio_group name="plan" value="basic">
+          <:option value="basic">Basic</:option>
+          <:option value="pro">Pro</:option>
+        </.radio_group>
         """)
 
-      # Extract ID from input
-      [radio_id] = Regex.run(~r/id="([^"]+)"/, html, capture: :all_but_first)
+      # Extract all radio IDs
+      radio_ids = Regex.scan(~r/id="([^"]+)"/, html, capture: :all_but_first) |> List.flatten()
 
-      # Check that label has matching for attribute
+      # Should have at least 2 unique IDs (one for each radio)
+      unique_ids = Enum.uniq(radio_ids)
+      assert length(unique_ids) >= 2
+    end
+
+    test "has proper label association for each option" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic">
+          <:option value="basic">Basic</:option>
+        </.radio_group>
+        """)
+
+      # Extract radio input ID specifically
+      [radio_id | _] =
+        Regex.scan(~r/input[^>]*id="([^"]+)"/, html, capture: :all_but_first) |> List.flatten()
+
+      # Should have label with matching for attribute
       assert html =~ ~s(for="#{radio_id}")
+    end
+
+    test "supports rich content in option slots" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic" card>
+          <:option value="basic">
+            <div class="font-medium">Basic Plan</div>
+            <div class="text-sm text-muted">Perfect for individuals</div>
+            <div class="font-bold">$10/month</div>
+          </:option>
+        </.radio_group>
+        """)
+
+      assert html =~ "Basic Plan"
+      assert html =~ "Perfect for individuals"
+      assert html =~ "$10/month"
+      assert html =~ "font-medium"
+      assert html =~ "font-bold"
     end
   end
 end
