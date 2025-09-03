@@ -8,6 +8,7 @@ defmodule Pulsar.MixProject do
   alias Pulsar.Components.Input
   alias Pulsar.Components.Label
   alias Pulsar.Components.Link
+  alias Pulsar.Components.RadioGroup
   alias Pulsar.Components.Select
   alias Pulsar.Components.Textarea
 
@@ -150,6 +151,7 @@ defmodule Pulsar.MixProject do
           Input,
           Label,
           Link,
+          RadioGroup,
           Select,
           Textarea
         ],
