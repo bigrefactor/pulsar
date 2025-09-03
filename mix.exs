@@ -3,6 +3,7 @@ defmodule Pulsar.MixProject do
 
   alias Pulsar.Components.Badge
   alias Pulsar.Components.Button
+  alias Pulsar.Components.Checkbox
   alias Pulsar.Components.Icon
   alias Pulsar.Components.Input
   alias Pulsar.Components.Label
@@ -144,6 +145,7 @@ defmodule Pulsar.MixProject do
         Components: [
           Badge,
           Button,
+          Checkbox,
           Icon,
           Input,
           Label,

@@ -124,7 +124,7 @@ defmodule Pulsar.Components.Label do
 
   # Base classes for all labels
   defp base_label_classes do
-    "font-medium transition-colors duration-200"
+    "font-medium transition-colors duration-200 cursor-pointer"
   end
 
   # Size-based typography classes

@@ -24,6 +24,8 @@ defmodule Pulsar.Components.LabelTest do
       assert html =~ "text-foreground"
       # Font weight
       assert html =~ "font-medium"
+      # Cursor pointer for clickability
+      assert html =~ "cursor-pointer"
       # No indicators by default
       refute html =~ "*"
     end
