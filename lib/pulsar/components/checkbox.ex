@@ -84,85 +84,101 @@ defmodule Pulsar.Components.Checkbox do
   alias Stellar.Components.Checkbox, as: StellarCheckbox
 
   # Pulsar-specific styling attributes
-  attr :card, :boolean,
+  attr(:card, :boolean,
     default: false,
     doc: "Render as a clickable card layout"
+  )
 
-  attr :hide_checkbox, :boolean,
+  attr(:hide_checkbox, :boolean,
     default: false,
     doc: "Hide the checkbox input (useful for card-only selection interfaces)"
+  )
 
-  attr :variant, :string,
+  attr(:variant, :string,
     default: "solid",
     values: ~w(solid outline ghost),
     doc: "Visual style variant (applies to card when card=true)"
+  )
 
-  attr :color, :string,
+  attr(:color, :string,
     default: "primary",
     values: ~w(neutral primary secondary success danger warning info),
     doc: "Color scheme of the checkbox (overridden by error state)"
+  )
 
-  attr :size, :string,
+  attr(:size, :string,
     default: "md",
     values: ~w(xs sm md lg xl),
     doc: "Size of the checkbox"
+  )
 
   # Stellar checkbox attributes - copied from Stellar.Components.Checkbox
-  attr :field, FormField, default: nil, doc: "Phoenix form field"
+  attr(:field, FormField, default: nil, doc: "Phoenix form field")
 
   # Core attributes
-  attr :id, :string,
+  attr(:id, :string,
     default: nil,
     doc: "Checkbox ID (auto-generated if not provided)"
+  )
 
-  attr :name, :string,
+  attr(:name, :string,
     default: nil,
     doc: "Checkbox name (from field if not provided)"
+  )
 
-  attr :value, :any,
+  attr(:value, :any,
     default: "true",
     doc: "Value when checkbox is checked"
+  )
 
-  attr :checked, :boolean,
+  attr(:checked, :boolean,
     default: false,
     doc: "Checkbox state (from field if not provided)"
+  )
 
-  attr :unchecked_value, :string,
+  attr(:unchecked_value, :string,
     default: "false",
     doc: "Hidden input value when unchecked"
+  )
 
-  attr :indeterminate, :boolean,
+  attr(:indeterminate, :boolean,
     default: false,
     doc: "Tri-state checkbox support"
+  )
 
-  attr :render_hidden, :boolean,
+  attr(:render_hidden, :boolean,
     default: true,
     doc: "Render hidden input for unchecked value"
+  )
 
   # State attributes
-  attr :required, :boolean,
+  attr(:required, :boolean,
     default: false,
     doc: "Mark checkbox as required"
+  )
 
-  attr :disabled, :boolean,
+  attr(:disabled, :boolean,
     default: false,
     doc: "Disable the checkbox"
+  )
 
   # State override (optional)
-  attr :invalid, :boolean,
+  attr(:invalid, :boolean,
     default: nil,
     doc: "Force invalid state; defaults to Phoenix field errors when nil"
+  )
 
   # Styling
-  attr :class, :string,
+  attr(:class, :string,
     default: "",
     doc: "Additional CSS classes"
+  )
 
   # Global attributes (allows all Phoenix and HTML attributes)
-  attr :rest, :global, doc: "Additional HTML attributes"
+  attr(:rest, :global, doc: "Additional HTML attributes")
 
   # Card variant slots
-  slot :inner_block, doc: "Main content for card variant (replaces checkbox content)"
+  slot(:inner_block, doc: "Main content for card variant (replaces checkbox content)")
 
   @doc """
   Renders a styled checkbox component.
@@ -197,7 +213,8 @@ defmodule Pulsar.Components.Checkbox do
   def checkbox(assigns) do
     # Validate required attributes
     if is_nil(assigns[:field]) and is_nil(assigns[:name]) do
-      raise ArgumentError, "Checkbox requires :field or :name; provide :name only when not using a Phoenix form field"
+      raise ArgumentError,
+            "Checkbox requires :field or :name; provide :name only when not using a Phoenix form field"
     end
 
     # Detect errors and compute automatic color
@@ -277,6 +294,7 @@ defmodule Pulsar.Components.Checkbox do
       data-indeterminate={(@indeterminate && "true") || "false"}
       data-disabled={(@disabled && "true") || "false"}
       data-required={@required}
+      for={@id}
     >
       <StellarCheckbox.checkbox
         field={@field}
@@ -291,10 +309,11 @@ defmodule Pulsar.Components.Checkbox do
         disabled={@disabled}
         class={@checkbox_class}
         aria-invalid={@invalid && "true"}
+        aria-describedby={"#{@id}-content"}
         {@rest}
       />
 
-      <div class="flex-1 min-w-0">
+      <div class="flex-1 min-w-0" id={"#{@id}-content"}>
         {render_slot(@inner_block)}
       </div>
     </label>
@@ -813,7 +832,8 @@ defmodule Pulsar.Components.Checkbox do
   @spec card_state_classes(boolean(), boolean()) :: String.t()
   defp card_state_classes(disabled, invalid) do
     [
-      disabled && "bg-surface-2 dark:bg-dark-surface-2 border-border/50 dark:border-dark-border/50",
+      disabled &&
+        "bg-surface-2 dark:bg-dark-surface-2 border-border/50 dark:border-dark-border/50",
       invalid && "border-danger dark:border-dark-danger bg-danger/5 dark:bg-dark-danger/10"
     ]
     |> Enum.filter(& &1)
