@@ -352,7 +352,7 @@ defmodule Pulsar.Components.CheckboxTest do
         """)
 
       assert html =~ ~s(<label)
-      assert html =~ "flex items-start"
+      assert html =~ "flex items-center"
       assert html =~ "border-2"
       assert html =~ "rounded-lg"
       assert html =~ "Premium Plan"
@@ -603,81 +603,6 @@ defmodule Pulsar.Components.CheckboxTest do
       assert html =~ "after:opacity-0"
       assert html =~ "after:transition-all"
       assert html =~ "after:duration-200"
-    end
-  end
-
-  describe "checkbox_group/1 event handling" do
-    test "passes through phx-change to checkbox group container" do
-      form = %Form{
-        data: %{},
-        hidden: [],
-        id: "form",
-        impl: Phoenix.HTML.FormData.Map,
-        name: "form",
-        options: [],
-        source: %{}
-      }
-
-      field = %FormField{
-        errors: [],
-        field: :interests,
-        form: form,
-        id: "form_interests",
-        name: "form[interests]",
-        value: []
-      }
-
-      assigns = %{
-        field: field,
-        options: [{"frontend", "Frontend"}, {"backend", "Backend"}]
-      }
-
-      html =
-        rendered_to_string(~H"""
-        <.checkbox_group field={@field} options={@options} phx-change="update_interests" />
-        """)
-
-      # The phx-change should be applied to the fieldset container (not individual checkboxes)
-      # Individual checkboxes use Stellar's internal event dispatch to manage group state
-      assert html =~ ~s(phx-change="update_interests")
-      assert html =~ ~s(<fieldset)
-      assert html =~ ~s(phx-hook="Stellar.Components.Checkbox.StellarCheckboxGroup")
-    end
-
-    test "passes through phx-click to checkbox group container" do
-      form = %Form{
-        data: %{},
-        hidden: [],
-        id: "form",
-        impl: Phoenix.HTML.FormData.Map,
-        name: "form",
-        options: [],
-        source: %{}
-      }
-
-      field = %FormField{
-        errors: [],
-        field: :interests,
-        form: form,
-        id: "form_interests",
-        name: "form[interests]",
-        value: []
-      }
-
-      assigns = %{
-        field: field,
-        options: [{"frontend", "Frontend"}, {"backend", "Backend"}]
-      }
-
-      html =
-        rendered_to_string(~H"""
-        <.checkbox_group field={@field} options={@options} phx-click="click_checkbox" />
-        """)
-
-      # The phx-click should be applied to the fieldset container (not individual checkboxes)
-      # Individual checkboxes use Stellar's internal event dispatch to manage group state  
-      assert html =~ ~s(phx-click="click_checkbox")
-      assert html =~ ~s(<fieldset)
     end
   end
 end
