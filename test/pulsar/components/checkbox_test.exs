@@ -472,6 +472,23 @@ defmodule Pulsar.Components.CheckboxTest do
       assert html =~ "border-success/30"
       assert html =~ "hover:border-success"
     end
+
+    test "includes dynamic checked state styling in cards using has selectors" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox card variant="outline" name="plan" color="primary">
+          Dynamic Card
+        </.checkbox>
+        """)
+
+      # Check that checked state classes use has-[:checked] selectors
+      assert html =~ "has-[:checked]:bg-primary/15"
+      assert html =~ "has-[:checked]:hover:bg-primary/20"
+      assert html =~ "has-[:checked]:border-primary"
+      assert html =~ "dark:has-[:checked]:bg-dark-primary/20"
+    end
   end
 
   describe "checkbox/1 accessibility" do
