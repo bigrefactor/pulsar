@@ -11,7 +11,7 @@ defmodule Pulsar.Components.RadioGroup do
   - **Stellar Foundation**: Built on Stellar's accessible radio group component with roving tabindex
   - **Custom Radio Design**: Styled radio buttons with smooth animations
   - **Card-style Options**: Rich card layouts with descriptions and custom content
-  - **Grid and Flex Layouts**: Flexible layout options for different UI needs
+   - **Flexible Layouts**: Use the `class` attribute for any layout (flex, grid, etc.)
   - **Size Variants**: xs, sm, md, lg, xl for complete range
   - **Color Variants**: neutral, primary, secondary, success, danger, warning, info for consistent theming
   - **Hover and Focus States**: Smooth interactive feedback
@@ -28,8 +28,8 @@ defmodule Pulsar.Components.RadioGroup do
         <:option value="enterprise">Enterprise Plan</:option>
       </.radio_group>
 
-      # With size and color variants
-      <.radio_group field={@form[:size]} color="primary" size="lg" orientation="horizontal">
+      # With size and color variants (horizontal layout)
+      <.radio_group field={@form[:size]} color="primary" size="lg" class="flex flex-row gap-6">
         <:option value="sm">Small</:option>
         <:option value="md">Medium</:option>
         <:option value="lg">Large</:option>
@@ -50,7 +50,7 @@ defmodule Pulsar.Components.RadioGroup do
       </.radio_group>
 
       # Grid layout with cards
-      <.radio_group field={@form[:theme]} card layout="grid" columns={3}>
+      <.radio_group field={@form[:theme]} card class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <:option value="light">
           <div class="text-center">
             <div class="text-2xl mb-2">☀️</div>
@@ -125,18 +125,6 @@ defmodule Pulsar.Components.RadioGroup do
     doc: "Visual style variant (applies when card=true)"
   )
 
-  # Layout (independent of card)
-  attr(:layout, :string,
-    default: "flex",
-    values: ~w(flex grid),
-    doc: "Layout arrangement for the radio options"
-  )
-
-  attr(:columns, :integer,
-    default: 2,
-    doc: "Number of columns for grid layout (values >6 are capped at 6 columns)"
-  )
-
   # Common styling
   attr(:color, :string,
     default: "primary",
@@ -162,8 +150,7 @@ defmodule Pulsar.Components.RadioGroup do
   attr(:orientation, :string,
     default: "vertical",
     values: ["horizontal", "vertical"],
-    doc:
-      "Orientation affects arrow key navigation. Note: ignored when layout='grid' as grid layout uses its own navigation patterns"
+    doc: "Orientation affects arrow key navigation"
   )
 
   # State attributes
@@ -198,8 +185,7 @@ defmodule Pulsar.Components.RadioGroup do
   ## Card vs Layout
 
   - **card**: Visual style - renders options as clickable cards
-  - **layout**: Spatial arrangement - flex or grid layout
-  - These can be combined independently
+  - **class**: Spatial arrangement - use Tailwind classes for flex, grid, etc.
 
   ## Examples
 
@@ -218,7 +204,7 @@ defmodule Pulsar.Components.RadioGroup do
       </.radio_group>
 
       # Card style with grid layout  
-      <.radio_group field={@form[:theme]} card layout="grid" columns={3}>
+      <.radio_group field={@form[:theme]} card class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <:option value="light">Light Theme</:option>
         <:option value="dark">Dark Theme</:option>
         <:option value="auto">Auto Theme</:option>
@@ -232,17 +218,15 @@ defmodule Pulsar.Components.RadioGroup do
     invalid = if is_nil(user_invalid), do: has_errors, else: user_invalid
     effective_color = if invalid, do: "danger", else: assigns.color
 
-    # Compute name, value, and id from field if not provided
+    # Compute name and value from field if not provided  
+    # Note: ID is handled by Stellar's normalize_field_props, no need to duplicate
     name = assigns[:name] || (assigns[:field] && assigns.field.name)
     current_value = assigns[:value] || (assigns[:field] && assigns.field.value)
-    computed_id = assigns[:id] || (assigns[:field] && assigns.field.id)
 
     # Build class string for radio group container with incremental approach
     container_class =
       [
         container_base_classes(),
-        layout_classes(assigns.layout, assigns.orientation),
-        layout_grid_classes(assigns.layout, assigns.columns),
         assigns.class
       ]
       |> Enum.filter(&(&1 != ""))
@@ -255,13 +239,12 @@ defmodule Pulsar.Components.RadioGroup do
       |> assign(:invalid, invalid)
       |> assign(:computed_name, name)
       |> assign(:computed_value, current_value)
-      |> assign(:computed_id, computed_id)
 
     ~H"""
     <StellarRadioGroup.radio_group
       :let={group}
       field={@field}
-      id={@computed_id}
+      id={@id}
       name={@computed_name}
       value={@computed_value}
       orientation={@orientation}
@@ -535,30 +518,6 @@ defmodule Pulsar.Components.RadioGroup do
   defp radio_foreground_classes("info") do
     "before:bg-info-foreground dark:before:bg-dark-info-foreground"
   end
-
-  # Layout-specific classes (independent of card)
-  @spec layout_classes(String.t(), String.t()) :: String.t()
-  defp layout_classes("flex", "horizontal"), do: "flex flex-row flex-wrap gap-6"
-  defp layout_classes("flex", "vertical"), do: "flex flex-col gap-4"
-  defp layout_classes("grid", _orientation), do: "grid gap-4"
-
-  # Grid-specific column classes
-  @spec layout_grid_classes(String.t(), integer()) :: String.t()
-  defp layout_grid_classes("grid", 1), do: "grid-cols-1"
-  defp layout_grid_classes("grid", 2), do: "grid-cols-1 sm:grid-cols-2"
-  defp layout_grid_classes("grid", 3), do: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-  defp layout_grid_classes("grid", 4), do: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-
-  defp layout_grid_classes("grid", 5),
-    do: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
-
-  defp layout_grid_classes("grid", 6),
-    do: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
-
-  defp layout_grid_classes("grid", columns) when columns > 6,
-    do: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
-
-  defp layout_grid_classes(_layout, _columns), do: ""
 
   # Radio size classes - direct size application
   @spec radio_size_classes(String.t()) :: String.t()
