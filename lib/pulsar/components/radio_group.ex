@@ -134,7 +134,7 @@ defmodule Pulsar.Components.RadioGroup do
 
   attr(:columns, :integer,
     default: 2,
-    doc: "Number of columns for grid layout"
+    doc: "Number of columns for grid layout (values >6 are capped at 6 columns)"
   )
 
   # Common styling
@@ -162,7 +162,8 @@ defmodule Pulsar.Components.RadioGroup do
   attr(:orientation, :string,
     default: "vertical",
     values: ["horizontal", "vertical"],
-    doc: "Orientation affects arrow key navigation (ignored when layout='grid')"
+    doc:
+      "Orientation affects arrow key navigation. Note: ignored when layout='grid' as grid layout uses its own navigation patterns"
   )
 
   # State attributes
@@ -184,6 +185,7 @@ defmodule Pulsar.Components.RadioGroup do
     attr(:value, :any, required: true)
     attr(:disabled, :boolean)
     attr(:checked, :boolean, doc: "Override automatic checked state")
+    attr(:class, :string, doc: "Additional CSS classes for this option")
   end
 
   @doc """
@@ -270,21 +272,21 @@ defmodule Pulsar.Components.RadioGroup do
       class={@container_class}
       {@rest}
     >
-      <%= for option <- @option do %>
-        {render_radio_option(assigns, option, group)}
+      <%= for {option, index} <- Enum.with_index(@option) do %>
+        {render_radio_option(assigns, option, group, index)}
       <% end %>
     </StellarRadioGroup.radio_group>
     """
   end
 
   # Render individual radio option with group context from Stellar
-  defp render_radio_option(assigns, option, group) do
-    # Generate unique ID for this radio option
-    radio_id = "#{group.id}-#{:erlang.phash2(option.value)}"
+  defp render_radio_option(assigns, option, group, option_index) do
+    # Generate unique ID for this radio option using deterministic indexing
+    radio_id = "#{group.id}-#{option_index}"
 
-    # Determine checked state
+    # Determine checked state using proper value comparison
     checked =
-      Map.get(option, :checked, false) || to_string(group.value) == to_string(option.value)
+      Map.get(option, :checked, false) || values_equal?(group.value, option.value)
 
     # Determine disabled state
     disabled = Map.get(option, :disabled, false) || group.disabled
@@ -318,7 +320,7 @@ defmodule Pulsar.Components.RadioGroup do
     assigns = assign(assigns, :radio_input_class, radio_input_class)
 
     ~H"""
-    <div class={radio_option_base_classes()}>
+    <div class={merge([radio_option_base_classes(), @option_disabled && "opacity-50", Map.get(@option, :class, "")])}>
       <input
         type="radio"
         id={@radio_id}
@@ -328,6 +330,7 @@ defmodule Pulsar.Components.RadioGroup do
         required={@group.required}
         disabled={@option_disabled}
         aria-invalid={@group.invalid && "true"}
+        aria-required={@group.required && "true"}
         class={@radio_input_class}
       />
       <label for={@radio_id} class={radio_label_classes()}>
@@ -344,8 +347,10 @@ defmodule Pulsar.Components.RadioGroup do
       [
         card_base_classes(assigns.effective_color, assigns.size),
         card_variant_classes(assigns.variant, assigns.effective_color),
-        card_state_classes(assigns.option_disabled, assigns.invalid)
+        card_state_classes(assigns.option_disabled, assigns.invalid),
+        Map.get(assigns.option, :class, "")
       ]
+      |> Enum.filter(&(&1 != ""))
       |> Enum.join(" ")
 
     # Build radio input classes
@@ -377,10 +382,15 @@ defmodule Pulsar.Components.RadioGroup do
         required={@group.required}
         disabled={@option_disabled}
         aria-invalid={@group.invalid && "true"}
+        aria-required={@group.required && "true"}
         aria-describedby={"#{@radio_id}-content"}
         class={@radio_class}
       />
-      <div class="flex-1 min-w-0" id={"#{@radio_id}-content"}>
+      <div 
+        class="flex-1 min-w-0 overflow-hidden" 
+        id={"#{@radio_id}-content"}
+        aria-hidden={@hide_radios && "true"}
+      >
         {render_slot(@option)}
       </div>
     </label>
@@ -888,6 +898,19 @@ defmodule Pulsar.Components.RadioGroup do
     classes = if disabled, do: ["opacity-50 cursor-not-allowed" | classes], else: classes
     classes = if invalid, do: ["border-danger ring-danger" | classes], else: classes
     Enum.join(classes, " ")
+  end
+
+  # Helper for proper value comparison that handles complex types
+  @spec values_equal?(any(), any()) :: boolean()
+  defp values_equal?(val1, val2) when val1 === val2, do: true
+  defp values_equal?(nil, nil), do: true
+  defp values_equal?(nil, _), do: false
+  defp values_equal?(_, nil), do: false
+
+  # For Phoenix form compatibility, also compare string representations
+  # This handles cases where form values are strings but option values are atoms/integers
+  defp values_equal?(val1, val2) do
+    to_string(val1) == to_string(val2)
   end
 
   # Helper for error detection - checks if a Phoenix form field has validation errors
