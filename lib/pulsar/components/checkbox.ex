@@ -419,23 +419,26 @@ defmodule Pulsar.Components.Checkbox do
   end
 
   # Base styles for checkbox input with custom checkmark
+  @spec base_checkbox_classes() :: String.t()
   defp base_checkbox_classes do
-    """
-    appearance-none relative cursor-pointer transition-all duration-200 ease-in-out
-    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 
-    focus-visible:ring-ring dark:focus-visible:ring-dark-ring
-    disabled:cursor-not-allowed disabled:opacity-50
-    before:content-[''] before:absolute before:inset-0 before:rounded-inherit 
-    before:border-2 before:transition-all before:duration-200 before:ease-in-out
-    after:content-['✓'] after:absolute after:inset-0 after:flex after:items-center after:justify-center
-    after:text-current after:font-bold after:transition-all after:duration-200 after:ease-in-out
-    after:scale-0 after:opacity-0 
-    data-[checked=true]:after:scale-100 data-[checked=true]:after:opacity-100
-    data-[indeterminate=true]:after:content-['−'] data-[indeterminate=true]:after:scale-100 data-[indeterminate=true]:after:opacity-100
-    """
+    [
+      "appearance-none relative cursor-pointer transition-all duration-200 ease-in-out",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+      "focus-visible:ring-ring dark:focus-visible:ring-dark-ring",
+      "disabled:cursor-not-allowed disabled:opacity-50",
+      "before:content-[''] before:absolute before:inset-0 before:rounded-inherit",
+      "before:border-2 before:transition-all before:duration-200 before:ease-in-out",
+      "after:content-['✓'] after:absolute after:inset-0 after:flex after:items-center after:justify-center",
+      "after:text-current after:font-bold after:transition-all after:duration-200 after:ease-in-out",
+      "after:scale-0 after:opacity-0",
+      "data-[checked=true]:after:scale-100 data-[checked=true]:after:opacity-100",
+      "data-[indeterminate=true]:after:content-['−'] data-[indeterminate=true]:after:scale-100 data-[indeterminate=true]:after:opacity-100"
+    ]
+    |> Enum.join(" ")
   end
 
   # Size classes for checkbox
+  @spec size_classes(String.t()) :: String.t()
   defp size_classes("xs"), do: "h-3 w-3 rounded before:rounded after:text-[8px]"
   defp size_classes("sm"), do: "h-4 w-4 rounded before:rounded after:text-[10px]"
   defp size_classes("md"), do: "h-5 w-5 rounded-md before:rounded-md after:text-xs"
@@ -443,35 +446,21 @@ defmodule Pulsar.Components.Checkbox do
   defp size_classes("xl"), do: "h-7 w-7 rounded-lg before:rounded-lg after:text-base"
 
   # Color classes for checkbox
-  defp color_classes("neutral"),
-    do:
-      "text-neutral-foreground dark:text-dark-neutral-foreground before:border-border dark:before:border-dark-border data-[checked=true]:before:border-neutral dark:data-[checked=true]:before:border-dark-neutral data-[checked=true]:before:bg-neutral dark:data-[checked=true]:before:bg-dark-neutral data-[indeterminate=true]:before:border-neutral dark:data-[indeterminate=true]:before:border-dark-neutral data-[indeterminate=true]:before:bg-neutral dark:data-[indeterminate=true]:before:bg-dark-neutral"
-
-  defp color_classes("primary"),
-    do:
-      "text-primary-foreground dark:text-dark-primary-foreground before:border-border dark:before:border-dark-border data-[checked=true]:before:border-primary dark:data-[checked=true]:before:border-dark-primary data-[checked=true]:before:bg-primary dark:data-[checked=true]:before:bg-dark-primary data-[indeterminate=true]:before:border-primary dark:data-[indeterminate=true]:before:border-dark-primary data-[indeterminate=true]:before:bg-primary dark:data-[indeterminate=true]:before:bg-dark-primary"
-
-  defp color_classes("secondary"),
-    do:
-      "text-secondary-foreground dark:text-dark-secondary-foreground before:border-border dark:before:border-dark-border data-[checked=true]:before:border-secondary dark:data-[checked=true]:before:border-dark-secondary data-[checked=true]:before:bg-secondary dark:data-[checked=true]:before:bg-dark-secondary data-[indeterminate=true]:before:border-secondary dark:data-[indeterminate=true]:before:border-dark-secondary data-[indeterminate=true]:before:bg-secondary dark:data-[indeterminate=true]:before:bg-dark-secondary"
-
-  defp color_classes("success"),
-    do:
-      "text-success-foreground dark:text-dark-success-foreground before:border-border dark:before:border-dark-border data-[checked=true]:before:border-success dark:data-[checked=true]:before:border-dark-success data-[checked=true]:before:bg-success dark:data-[checked=true]:before:bg-dark-success data-[indeterminate=true]:before:border-success dark:data-[indeterminate=true]:before:border-dark-success data-[indeterminate=true]:before:bg-success dark:data-[indeterminate=true]:before:bg-dark-success"
-
-  defp color_classes("danger"),
-    do:
-      "text-danger-foreground dark:text-dark-danger-foreground before:border-border dark:before:border-dark-border data-[checked=true]:before:border-danger dark:data-[checked=true]:before:border-dark-danger data-[checked=true]:before:bg-danger dark:data-[checked=true]:before:bg-dark-danger data-[indeterminate=true]:before:border-danger dark:data-[indeterminate=true]:before:border-dark-danger data-[indeterminate=true]:before:bg-danger dark:data-[indeterminate=true]:before:bg-dark-danger"
-
-  defp color_classes("warning"),
-    do:
-      "text-warning-foreground dark:text-dark-warning-foreground before:border-border dark:before:border-dark-border data-[checked=true]:before:border-warning dark:data-[checked=true]:before:border-dark-warning data-[checked=true]:before:bg-warning dark:data-[checked=true]:before:bg-dark-warning data-[indeterminate=true]:before:border-warning dark:data-[indeterminate=true]:before:border-dark-warning data-[indeterminate=true]:before:bg-warning dark:data-[indeterminate=true]:before:bg-dark-warning"
-
-  defp color_classes("info"),
-    do:
-      "text-info-foreground dark:text-dark-info-foreground before:border-border dark:before:border-dark-border data-[checked=true]:before:border-info dark:data-[checked=true]:before:border-dark-info data-[checked=true]:before:bg-info dark:data-[checked=true]:before:bg-dark-info data-[indeterminate=true]:before:border-info dark:data-[indeterminate=true]:before:border-dark-info data-[indeterminate=true]:before:bg-info dark:data-[indeterminate=true]:before:bg-dark-info"
+  @spec color_classes(String.t()) :: String.t()
+  defp color_classes(color) do
+    [
+      "text-#{color}-foreground dark:text-dark-#{color}-foreground",
+      "before:border-border dark:before:border-dark-border",
+      "data-[checked=true]:before:border-#{color} dark:data-[checked=true]:before:border-dark-#{color}",
+      "data-[checked=true]:before:bg-#{color} dark:data-[checked=true]:before:bg-dark-#{color}",
+      "data-[indeterminate=true]:before:border-#{color} dark:data-[indeterminate=true]:before:border-dark-#{color}",
+      "data-[indeterminate=true]:before:bg-#{color} dark:data-[indeterminate=true]:before:bg-dark-#{color}"
+    ]
+    |> Enum.join(" ")
+  end
 
   # State classes for disabled/invalid states
+  @spec state_classes(boolean(), boolean()) :: String.t()
   defp state_classes(disabled, invalid) do
     [
       disabled &&
@@ -483,193 +472,85 @@ defmodule Pulsar.Components.Checkbox do
   end
 
   # Base card classes shared by all card variants
+  @spec card_base_classes() :: String.t()
   defp card_base_classes do
-    """
-    flex items-start gap-3 rounded-lg cursor-pointer transition-all duration-200 ease-in-out
-    focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-ring 
-    dark:focus-within:ring-dark-ring has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50
-    """
+    [
+      "flex items-start gap-3 rounded-lg cursor-pointer transition-all duration-200 ease-in-out",
+      "focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-ring",
+      "dark:focus-within:ring-dark-ring has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50"
+    ]
+    |> Enum.join(" ")
   end
 
   # Card size classes
+  @spec card_size_classes(String.t()) :: String.t()
   defp card_size_classes("xs"), do: "p-2 gap-2 text-xs"
   defp card_size_classes("sm"), do: "p-3 gap-2 text-sm"
   defp card_size_classes("md"), do: "p-4 gap-3"
   defp card_size_classes("lg"), do: "p-5 gap-4 text-lg"
   defp card_size_classes("xl"), do: "p-6 gap-5 text-xl"
 
-  # Solid card variants
-  defp card_variant_classes("solid", "neutral") do
+  # Card variant classes using helper functions to reduce repetition
+  @spec card_variant_classes(String.t(), String.t()) :: list(String.t())
+  defp card_variant_classes("solid", color) do
     [
-      "bg-neutral/10 hover:bg-neutral/20 dark:bg-dark-neutral/20 dark:hover:bg-dark-neutral/30",
+      card_solid_background(color),
       "border-2 border-transparent",
       "hover:shadow-sm"
     ]
   end
 
-  defp card_variant_classes("solid", "primary") do
+  defp card_variant_classes("outline", color) do
     [
-      "bg-primary/10 hover:bg-primary/20 dark:bg-dark-primary/20 dark:hover:bg-dark-primary/30",
-      "border-2 border-transparent",
-      "hover:shadow-sm"
-    ]
-  end
-
-  defp card_variant_classes("solid", "secondary") do
-    [
-      "bg-secondary/10 hover:bg-secondary/20 dark:bg-dark-secondary/20 dark:hover:bg-dark-secondary/30",
-      "border-2 border-transparent",
-      "hover:shadow-sm"
-    ]
-  end
-
-  defp card_variant_classes("solid", "success") do
-    [
-      "bg-success/10 hover:bg-success/20 dark:bg-dark-success/20 dark:hover:bg-dark-success/30",
-      "border-2 border-transparent",
-      "hover:shadow-sm"
-    ]
-  end
-
-  defp card_variant_classes("solid", "danger") do
-    [
-      "bg-danger/10 hover:bg-danger/20 dark:bg-dark-danger/20 dark:hover:bg-dark-danger/30",
-      "border-2 border-transparent",
-      "hover:shadow-sm"
-    ]
-  end
-
-  defp card_variant_classes("solid", "warning") do
-    [
-      "bg-warning/10 hover:bg-warning/20 dark:bg-dark-warning/20 dark:hover:bg-dark-warning/30",
-      "border-2 border-transparent",
-      "hover:shadow-sm"
-    ]
-  end
-
-  defp card_variant_classes("solid", "info") do
-    [
-      "bg-info/10 hover:bg-info/20 dark:bg-dark-info/20 dark:hover:bg-dark-info/30",
-      "border-2 border-transparent",
-      "hover:shadow-sm"
-    ]
-  end
-
-  # Outline card variants
-  defp card_variant_classes("outline", "neutral") do
-    [
-      "bg-background dark:bg-dark-background",
-      "border-2 border-border hover:border-primary/50 dark:border-dark-border dark:hover:border-dark-primary/50",
+      card_outline_background(color),
+      card_outline_border(color),
       "hover:shadow-md"
     ]
   end
 
-  defp card_variant_classes("outline", "primary") do
+  defp card_variant_classes("ghost", color) do
     [
-      "bg-background hover:bg-primary/5 dark:bg-dark-background dark:hover:bg-dark-primary/10",
-      "border-2 border-primary/30 hover:border-primary dark:border-dark-primary/30 dark:hover:border-dark-primary",
-      "hover:shadow-md"
-    ]
-  end
-
-  defp card_variant_classes("outline", "secondary") do
-    [
-      "bg-background hover:bg-secondary/5 dark:bg-dark-background dark:hover:bg-dark-secondary/10",
-      "border-2 border-secondary/30 hover:border-secondary dark:border-dark-secondary/30 dark:hover:border-dark-secondary",
-      "hover:shadow-md"
-    ]
-  end
-
-  defp card_variant_classes("outline", "success") do
-    [
-      "bg-background hover:bg-success/5 dark:bg-dark-background dark:hover:bg-dark-success/10",
-      "border-2 border-success/30 hover:border-success dark:border-dark-success/30 dark:hover:border-dark-success",
-      "hover:shadow-md"
-    ]
-  end
-
-  defp card_variant_classes("outline", "danger") do
-    [
-      "bg-background hover:bg-danger/5 dark:bg-dark-background dark:hover:bg-dark-danger/10",
-      "border-2 border-danger/30 hover:border-danger dark:border-dark-danger/30 dark:hover:border-dark-danger",
-      "hover:shadow-md"
-    ]
-  end
-
-  defp card_variant_classes("outline", "warning") do
-    [
-      "bg-background hover:bg-warning/5 dark:bg-dark-background dark:hover:bg-dark-warning/10",
-      "border-2 border-warning/30 hover:border-warning dark:border-dark-warning/30 dark:hover:border-dark-warning",
-      "hover:shadow-md"
-    ]
-  end
-
-  defp card_variant_classes("outline", "info") do
-    [
-      "bg-background hover:bg-info/5 dark:bg-dark-background dark:hover:bg-dark-info/10",
-      "border-2 border-info/30 hover:border-info dark:border-dark-info/30 dark:hover:border-dark-info",
-      "hover:shadow-md"
-    ]
-  end
-
-  # Ghost card variants
-  defp card_variant_classes("ghost", "neutral") do
-    [
-      "bg-transparent hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover",
+      card_ghost_background(color),
       "border-2 border-transparent",
       "hover:shadow-sm"
     ]
   end
 
-  defp card_variant_classes("ghost", "primary") do
-    [
-      "bg-transparent hover:bg-primary/10 dark:hover:bg-dark-primary/10",
-      "border-2 border-transparent",
-      "hover:shadow-sm"
-    ]
+  # Helper functions for card variant styling
+  @spec card_solid_background(String.t()) :: String.t()
+  defp card_solid_background(color) do
+    "bg-#{color}/10 hover:bg-#{color}/20 dark:bg-dark-#{color}/20 dark:hover:bg-dark-#{color}/30"
   end
 
-  defp card_variant_classes("ghost", "secondary") do
-    [
-      "bg-transparent hover:bg-secondary/10 dark:hover:bg-dark-secondary/10",
-      "border-2 border-transparent",
-      "hover:shadow-sm"
-    ]
+  @spec card_outline_background(String.t()) :: String.t()
+  defp card_outline_background("neutral") do
+    "bg-background dark:bg-dark-background"
   end
 
-  defp card_variant_classes("ghost", "success") do
-    [
-      "bg-transparent hover:bg-success/10 dark:hover:bg-dark-success/10",
-      "border-2 border-transparent",
-      "hover:shadow-sm"
-    ]
+  defp card_outline_background(color) do
+    "bg-background hover:bg-#{color}/5 dark:bg-dark-background dark:hover:bg-dark-#{color}/10"
   end
 
-  defp card_variant_classes("ghost", "danger") do
-    [
-      "bg-transparent hover:bg-danger/10 dark:hover:bg-dark-danger/10",
-      "border-2 border-transparent",
-      "hover:shadow-sm"
-    ]
+  @spec card_outline_border(String.t()) :: String.t()
+  defp card_outline_border("neutral") do
+    "border-2 border-border hover:border-primary/50 dark:border-dark-border dark:hover:border-dark-primary/50"
   end
 
-  defp card_variant_classes("ghost", "warning") do
-    [
-      "bg-transparent hover:bg-warning/10 dark:hover:bg-dark-warning/10",
-      "border-2 border-transparent",
-      "hover:shadow-sm"
-    ]
+  defp card_outline_border(color) do
+    "border-2 border-#{color}/30 hover:border-#{color} dark:border-dark-#{color}/30 dark:hover:border-dark-#{color}"
   end
 
-  defp card_variant_classes("ghost", "info") do
-    [
-      "bg-transparent hover:bg-info/10 dark:hover:bg-dark-info/10",
-      "border-2 border-transparent",
-      "hover:shadow-sm"
-    ]
+  @spec card_ghost_background(String.t()) :: String.t()
+  defp card_ghost_background("neutral") do
+    "bg-transparent hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover"
+  end
+
+  defp card_ghost_background(color) do
+    "bg-transparent hover:bg-#{color}/10 dark:hover:bg-dark-#{color}/10"
   end
 
   # Card state classes
+  @spec card_state_classes(boolean(), boolean()) :: String.t()
   defp card_state_classes(disabled, invalid) do
     [
       disabled && "bg-surface-2 dark:bg-dark-surface-2 border-border/50 dark:border-dark-border/50",
@@ -679,7 +560,11 @@ defmodule Pulsar.Components.Checkbox do
     |> Enum.join(" ")
   end
 
-  # Helper for error detection
-  defp has_field_errors(%{field: %FormField{errors: errs}}) when is_list(errs) and errs != [], do: true
-  defp has_field_errors(_), do: false
+  # Helper for error detection - checks if a Phoenix form field has validation errors
+  @spec has_field_errors(map()) :: boolean()
+  defp has_field_errors(%{field: %FormField{errors: errors}}) when is_list(errors) do
+    not Enum.empty?(errors)
+  end
+
+  defp has_field_errors(_assigns), do: false
 end
