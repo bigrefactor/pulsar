@@ -449,14 +449,166 @@ defmodule Pulsar.Components.Checkbox do
   @spec color_classes(String.t()) :: String.t()
   defp color_classes(color) do
     [
-      "text-#{color}-foreground dark:text-dark-#{color}-foreground",
       "before:border-border dark:before:border-dark-border",
-      "data-[checked=true]:before:border-#{color} dark:data-[checked=true]:before:border-dark-#{color}",
-      "data-[checked=true]:before:bg-#{color} dark:data-[checked=true]:before:bg-dark-#{color}",
-      "data-[indeterminate=true]:before:border-#{color} dark:data-[indeterminate=true]:before:border-dark-#{color}",
-      "data-[indeterminate=true]:before:bg-#{color} dark:data-[indeterminate=true]:before:bg-dark-#{color}"
+      checkbox_border_classes(color),
+      checkbox_background_classes(color),
+      checkbox_text_classes(color)
     ]
+    |> List.flatten()
     |> Enum.join(" ")
+  end
+
+  # Border classes for each color
+  @spec checkbox_border_classes(String.t()) :: list(String.t())
+  defp checkbox_border_classes("neutral") do
+    [
+      "data-[checked=true]:before:border-neutral dark:data-[checked=true]:before:border-dark-neutral",
+      "data-[indeterminate=true]:before:border-neutral dark:data-[indeterminate=true]:before:border-dark-neutral"
+    ]
+  end
+
+  defp checkbox_border_classes("primary") do
+    [
+      "data-[checked=true]:before:border-primary dark:data-[checked=true]:before:border-dark-primary",
+      "data-[indeterminate=true]:before:border-primary dark:data-[indeterminate=true]:before:border-dark-primary"
+    ]
+  end
+
+  defp checkbox_border_classes("secondary") do
+    [
+      "data-[checked=true]:before:border-secondary dark:data-[checked=true]:before:border-dark-secondary",
+      "data-[indeterminate=true]:before:border-secondary dark:data-[indeterminate=true]:before:border-dark-secondary"
+    ]
+  end
+
+  defp checkbox_border_classes("success") do
+    [
+      "data-[checked=true]:before:border-success dark:data-[checked=true]:before:border-dark-success",
+      "data-[indeterminate=true]:before:border-success dark:data-[indeterminate=true]:before:border-dark-success"
+    ]
+  end
+
+  defp checkbox_border_classes("danger") do
+    [
+      "data-[checked=true]:before:border-danger dark:data-[checked=true]:before:border-dark-danger",
+      "data-[indeterminate=true]:before:border-danger dark:data-[indeterminate=true]:before:border-dark-danger"
+    ]
+  end
+
+  defp checkbox_border_classes("warning") do
+    [
+      "data-[checked=true]:before:border-warning dark:data-[checked=true]:before:border-dark-warning",
+      "data-[indeterminate=true]:before:border-warning dark:data-[indeterminate=true]:before:border-dark-warning"
+    ]
+  end
+
+  defp checkbox_border_classes("info") do
+    [
+      "data-[checked=true]:before:border-info dark:data-[checked=true]:before:border-dark-info",
+      "data-[indeterminate=true]:before:border-info dark:data-[indeterminate=true]:before:border-dark-info"
+    ]
+  end
+
+  # Background classes for each color
+  @spec checkbox_background_classes(String.t()) :: list(String.t())
+  defp checkbox_background_classes("neutral") do
+    [
+      "data-[checked=true]:before:bg-neutral dark:data-[checked=true]:before:bg-dark-neutral",
+      "data-[indeterminate=true]:before:bg-neutral dark:data-[indeterminate=true]:before:bg-dark-neutral"
+    ]
+  end
+
+  defp checkbox_background_classes("primary") do
+    [
+      "data-[checked=true]:before:bg-primary dark:data-[checked=true]:before:bg-dark-primary",
+      "data-[indeterminate=true]:before:bg-primary dark:data-[indeterminate=true]:before:bg-dark-primary"
+    ]
+  end
+
+  defp checkbox_background_classes("secondary") do
+    [
+      "data-[checked=true]:before:bg-secondary dark:data-[checked=true]:before:bg-dark-secondary",
+      "data-[indeterminate=true]:before:bg-secondary dark:data-[indeterminate=true]:before:bg-dark-secondary"
+    ]
+  end
+
+  defp checkbox_background_classes("success") do
+    [
+      "data-[checked=true]:before:bg-success dark:data-[checked=true]:before:bg-dark-success",
+      "data-[indeterminate=true]:before:bg-success dark:data-[indeterminate=true]:before:bg-dark-success"
+    ]
+  end
+
+  defp checkbox_background_classes("danger") do
+    [
+      "data-[checked=true]:before:bg-danger dark:data-[checked=true]:before:bg-dark-danger",
+      "data-[indeterminate=true]:before:bg-danger dark:data-[indeterminate=true]:before:bg-dark-danger"
+    ]
+  end
+
+  defp checkbox_background_classes("warning") do
+    [
+      "data-[checked=true]:before:bg-warning dark:data-[checked=true]:before:bg-dark-warning",
+      "data-[indeterminate=true]:before:bg-warning dark:data-[indeterminate=true]:before:bg-dark-warning"
+    ]
+  end
+
+  defp checkbox_background_classes("info") do
+    [
+      "data-[checked=true]:before:bg-info dark:data-[checked=true]:before:bg-dark-info",
+      "data-[indeterminate=true]:before:bg-info dark:data-[indeterminate=true]:before:bg-dark-info"
+    ]
+  end
+
+  # Text/checkmark classes for each color using semantic foreground colors
+  @spec checkbox_text_classes(String.t()) :: list(String.t())
+  defp checkbox_text_classes("neutral") do
+    [
+      "data-[checked=true]:after:text-neutral-foreground dark:data-[checked=true]:after:text-dark-neutral-foreground",
+      "data-[indeterminate=true]:after:text-neutral-foreground dark:data-[indeterminate=true]:after:text-dark-neutral-foreground"
+    ]
+  end
+
+  defp checkbox_text_classes("primary") do
+    [
+      "data-[checked=true]:after:text-primary-foreground dark:data-[checked=true]:after:text-dark-primary-foreground",
+      "data-[indeterminate=true]:after:text-primary-foreground dark:data-[indeterminate=true]:after:text-dark-primary-foreground"
+    ]
+  end
+
+  defp checkbox_text_classes("secondary") do
+    [
+      "data-[checked=true]:after:text-secondary-foreground dark:data-[checked=true]:after:text-dark-secondary-foreground",
+      "data-[indeterminate=true]:after:text-secondary-foreground dark:data-[indeterminate=true]:after:text-dark-secondary-foreground"
+    ]
+  end
+
+  defp checkbox_text_classes("success") do
+    [
+      "data-[checked=true]:after:text-success-foreground dark:data-[checked=true]:after:text-dark-success-foreground",
+      "data-[indeterminate=true]:after:text-success-foreground dark:data-[indeterminate=true]:after:text-dark-success-foreground"
+    ]
+  end
+
+  defp checkbox_text_classes("danger") do
+    [
+      "data-[checked=true]:after:text-danger-foreground dark:data-[checked=true]:after:text-dark-danger-foreground",
+      "data-[indeterminate=true]:after:text-danger-foreground dark:data-[indeterminate=true]:after:text-dark-danger-foreground"
+    ]
+  end
+
+  defp checkbox_text_classes("warning") do
+    [
+      "data-[checked=true]:after:text-warning-foreground dark:data-[checked=true]:after:text-dark-warning-foreground",
+      "data-[indeterminate=true]:after:text-warning-foreground dark:data-[indeterminate=true]:after:text-dark-warning-foreground"
+    ]
+  end
+
+  defp checkbox_text_classes("info") do
+    [
+      "data-[checked=true]:after:text-info-foreground dark:data-[checked=true]:after:text-dark-info-foreground",
+      "data-[indeterminate=true]:after:text-info-foreground dark:data-[indeterminate=true]:after:text-dark-info-foreground"
+    ]
   end
 
   # State classes for disabled/invalid states
