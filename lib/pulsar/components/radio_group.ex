@@ -333,7 +333,7 @@ defmodule Pulsar.Components.RadioGroup do
         aria-required={@group.required && "true"}
         class={@radio_input_class}
       />
-      <label for={@radio_id} class={radio_label_classes()}>
+      <label for={@radio_id} class={radio_label_classes(@size, @effective_color)}>
         {render_slot(@option)}
       </label>
     </div>
@@ -588,7 +588,7 @@ defmodule Pulsar.Components.RadioGroup do
   @spec radio_option_base_classes() :: String.t()
   defp radio_option_base_classes do
     """
-    relative flex items-start gap-3
+    relative flex items-center gap-3
     """
   end
 
@@ -652,10 +652,29 @@ defmodule Pulsar.Components.RadioGroup do
   end
 
   # Classes for radio labels (standard non-card)
-  @spec radio_label_classes() :: String.t()
-  defp radio_label_classes do
-    "cursor-pointer select-none transition-all duration-200 flex-1 min-w-0"
+  @spec radio_label_classes(String.t(), String.t()) :: String.t()
+  defp radio_label_classes(size, color) do
+    base_classes = "cursor-pointer select-none transition-all duration-200 flex-1 min-w-0"
+    "#{base_classes} #{radio_label_text_classes(size)} #{radio_label_color_classes(color)}"
   end
+
+  # Text size classes for radio labels
+  @spec radio_label_text_classes(String.t()) :: String.t()
+  defp radio_label_text_classes("xs"), do: "text-xs"
+  defp radio_label_text_classes("sm"), do: "text-sm"
+  defp radio_label_text_classes("md"), do: "text-base"
+  defp radio_label_text_classes("lg"), do: "text-lg"
+  defp radio_label_text_classes("xl"), do: "text-xl"
+
+  # Color classes for radio labels
+  @spec radio_label_color_classes(String.t()) :: String.t()
+  defp radio_label_color_classes("neutral"), do: "text-foreground dark:text-dark-foreground"
+  defp radio_label_color_classes("primary"), do: "text-primary dark:text-dark-primary"
+  defp radio_label_color_classes("secondary"), do: "text-secondary dark:text-dark-secondary"
+  defp radio_label_color_classes("success"), do: "text-success dark:text-dark-success"
+  defp radio_label_color_classes("danger"), do: "text-danger dark:text-dark-danger"
+  defp radio_label_color_classes("warning"), do: "text-warning dark:text-dark-warning"
+  defp radio_label_color_classes("info"), do: "text-info dark:text-dark-info"
 
   # Card base styles (without CSS variables)
   @spec card_base_classes(String.t(), String.t()) :: String.t()
