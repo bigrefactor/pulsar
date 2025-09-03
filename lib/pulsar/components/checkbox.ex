@@ -245,6 +245,7 @@ defmodule Pulsar.Components.Checkbox do
       disabled={@disabled}
       class={@input_class}
       aria-invalid={@invalid && "true"}
+      data-required={@required}
       {@rest}
     />
     """
@@ -275,6 +276,7 @@ defmodule Pulsar.Components.Checkbox do
       data-checked={(@checked && "true") || "false"}
       data-indeterminate={(@indeterminate && "true") || "false"}
       data-disabled={(@disabled && "true") || "false"}
+      data-required={@required}
     >
       <StellarCheckbox.checkbox
         field={@field}
