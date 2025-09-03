@@ -162,7 +162,7 @@ defmodule Pulsar.Components.RadioGroup do
   attr(:orientation, :string,
     default: "vertical",
     values: ["horizontal", "vertical"],
-    doc: "Orientation affects arrow key navigation"
+    doc: "Orientation affects arrow key navigation (ignored when layout='grid')"
   )
 
   # State attributes
