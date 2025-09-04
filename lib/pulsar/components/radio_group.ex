@@ -350,7 +350,7 @@ defmodule Pulsar.Components.RadioGroup do
   end
 
   # Card-style radio (matching checkbox card pattern)
-  # Data attributes data-checked and data-disabled are provided on card labels 
+  # Data attributes data-checked and data-disabled are provided on card labels
   # for custom styling hooks and JavaScript integration
   defp render_card_radio(assigns) do
     # Build card container classes
