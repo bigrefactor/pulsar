@@ -111,6 +111,39 @@ defmodule Pulsar.Components.Input do
     "xs" => "text-xs"
   }
 
+  # Ghost variant padding maps (pre-calculated for all decorator combinations)
+  @ghost_padding_no_decorators %{
+    "lg" => ["px-4", "py-2"],
+    "md" => ["px-3", "py-1.5"],
+    "sm" => ["px-2", "py-1"],
+    "xl" => ["px-4", "py-2"],
+    "xs" => ["px-2", "py-1"]
+  }
+
+  @ghost_padding_start_decorator %{
+    "lg" => ["pl-0", "pr-4", "py-2"],
+    "md" => ["pl-0", "pr-3", "py-1.5"],
+    "sm" => ["pl-0", "pr-2", "py-1"],
+    "xl" => ["pl-0", "pr-4", "py-2"],
+    "xs" => ["pl-0", "pr-2", "py-1"]
+  }
+
+  @ghost_padding_end_decorator %{
+    "lg" => ["pl-4", "pr-0", "py-2"],
+    "md" => ["pl-3", "pr-0", "py-1.5"],
+    "sm" => ["pl-2", "pr-0", "py-1"],
+    "xl" => ["pl-4", "pr-0", "py-2"],
+    "xs" => ["pl-2", "pr-0", "py-1"]
+  }
+
+  @ghost_padding_both_decorators %{
+    "lg" => ["pl-0", "pr-0", "py-2"],
+    "md" => ["pl-0", "pr-0", "py-1.5"],
+    "sm" => ["pl-0", "pr-0", "py-1"],
+    "xl" => ["pl-0", "pr-0", "py-2"],
+    "xs" => ["pl-0", "pr-0", "py-1"]
+  }
+
   # Base input container classes
   @base_input_classes [
     "flex group overflow-hidden transition-all duration-200 ease-in-out",
@@ -534,25 +567,26 @@ defmodule Pulsar.Components.Input do
     |> Enum.join(" ")
   end
 
-  # Get input element padding classes with conditional logic for ghost variant
+  # Get input element padding classes (direct map lookups, no runtime filtering)
   defp get_input_padding_classes(size, variant, has_start_decorator, has_end_decorator) do
-    base_padding = @input_padding_classes[size] || @input_padding_classes["md"]
-
-    # For ghost variant, remove padding where decorators are present
     if variant == "ghost" do
-      base_padding
-      |> Enum.reject(fn class ->
-        (has_start_decorator and String.starts_with?(class, "pl-")) or
-          (has_end_decorator and String.starts_with?(class, "pr-"))
-      end)
-      |> then(fn classes ->
-        # Add conditional padding classes
-        classes = if has_start_decorator, do: classes ++ ["pl-0"], else: classes
-        if has_end_decorator, do: classes ++ ["pr-0"], else: classes
-      end)
+      get_ghost_padding_classes(size, has_start_decorator, has_end_decorator)
     else
-      base_padding
+      @input_padding_classes[size] || @input_padding_classes["md"]
     end
+  end
+
+  # Get ghost variant padding with direct map lookup based on decorator combination
+  defp get_ghost_padding_classes(size, has_start_decorator, has_end_decorator) do
+    map =
+      case {has_start_decorator, has_end_decorator} do
+        {false, false} -> @ghost_padding_no_decorators
+        {true, false} -> @ghost_padding_start_decorator
+        {false, true} -> @ghost_padding_end_decorator
+        {true, true} -> @ghost_padding_both_decorators
+      end
+
+    map[size] || map["md"]
   end
 
   # Decorator functions supporting all variants and colors
