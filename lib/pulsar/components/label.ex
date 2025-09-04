@@ -80,9 +80,12 @@ defmodule Pulsar.Components.Label do
 
   import TailwindMerge, only: [merge: 1]
 
+  alias Phoenix.LiveView.Rendered
+
   @doc """
   Renders a styled label component with typography variants and visual indicators.
   """
+  @spec label(map()) :: Rendered.t()
   attr(:for, :string, required: true, doc: "ID of the associated input element")
   attr(:required, :boolean, default: false, doc: "Whether the associated field is required")
   attr(:error, :boolean, default: false, doc: "Whether the label should show error styling")
@@ -100,27 +103,25 @@ defmodule Pulsar.Components.Label do
 
   attr(:class, :string, default: "", doc: "Additional CSS classes")
 
-  attr(:rest, :global,
-    doc: "Additional HTML attributes passed through to the underlying label element"
-  )
+  attr(:rest, :global, doc: "Additional HTML attributes passed through to the underlying label element")
 
   slot(:inner_block, required: true, doc: "Label text content")
 
   def label(assigns) do
-    assigns =
-      assigns
-      |> assign(:computed_classes, compute_label_classes(assigns))
-      |> assign(:data_error, data_boolean(assigns.error))
-      |> assign(:data_required, data_boolean(assigns.required))
-      |> assign(:data_size, assigns.size)
-
     ~H"""
     <label
       for={@for}
-      class={@computed_classes}
-      data-required={@data_required}
-      data-error={@data_error}
-      data-size={@data_size}
+      class={
+        merge([
+          base_label_classes(),
+          size_classes(@size),
+          color_classes(@error),
+          @class
+        ])
+      }
+      data-required={to_string(@required)}
+      data-error={to_string(@error)}
+      data-size={@size}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -128,16 +129,6 @@ defmodule Pulsar.Components.Label do
       <span :if={@required} class={required_indicator_classes(@size)} aria-hidden="true">*</span>
     </label>
     """
-  end
-
-  # Compute all label classes
-  defp compute_label_classes(assigns) do
-    merge([
-      base_label_classes(),
-      size_classes(assigns.size),
-      color_classes(assigns.error),
-      assigns.class
-    ])
   end
 
   # Base classes for all labels
@@ -153,22 +144,24 @@ defmodule Pulsar.Components.Label do
   defp size_classes("xl"), do: "text-xl"
 
   # Color classes based on state
-  defp color_classes(true = _error) do
+  defp color_classes(true) do
     "text-danger dark:text-dark-danger"
   end
 
-  defp color_classes(false = _error) do
+  defp color_classes(false) do
     "text-foreground dark:text-dark-foreground"
   end
 
   # Required indicator classes with size-appropriate spacing and ARIA hidden
-  defp required_indicator_classes("xs"), do: "text-danger dark:text-dark-danger ml-0.5 text-xs"
-  defp required_indicator_classes("sm"), do: "text-danger dark:text-dark-danger ml-0.5 text-sm"
-  defp required_indicator_classes("md"), do: "text-danger dark:text-dark-danger ml-1 text-base"
-  defp required_indicator_classes("lg"), do: "text-danger dark:text-dark-danger ml-1 text-lg"
-  defp required_indicator_classes("xl"), do: "text-danger dark:text-dark-danger ml-1 text-xl"
+  defp required_indicator_classes(size) do
+    merge([
+      "text-danger dark:text-dark-danger",
+      indicator_margin(size),
+      size_classes(size)
+    ])
+  end
 
-  # Convert boolean to data attribute string
-  defp data_boolean(true), do: "true"
-  defp data_boolean(false), do: "false"
+  # Size-appropriate margin for required indicator
+  defp indicator_margin(size) when size in ["xs", "sm"], do: "ml-0.5"
+  defp indicator_margin(_), do: "ml-1"
 end
