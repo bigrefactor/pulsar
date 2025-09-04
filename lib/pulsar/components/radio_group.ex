@@ -288,9 +288,13 @@ defmodule Pulsar.Components.RadioGroup do
     # Generate unique ID for this radio option using deterministic indexing
     radio_id = "#{group.id}-#{option_index}"
 
-    # Determine checked state using proper value comparison
+    # Determine checked state - explicit checked attribute takes precedence
     checked =
-      Map.get(option, :checked, false) || values_equal?(group.value, option.value)
+      if Map.has_key?(option, :checked) do
+        Map.get(option, :checked)
+      else
+        values_equal?(group.value, option.value)
+      end
 
     # Determine disabled state
     disabled = Map.get(option, :disabled, false) || group.disabled
