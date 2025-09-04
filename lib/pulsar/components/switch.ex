@@ -325,7 +325,7 @@ defmodule Pulsar.Components.Switch do
   @spec base_switch_classes() :: String.t()
   defp base_switch_classes do
     [
-      "group relative inline-flex rounded-full cursor-pointer transition-all duration-300 ease-in-out",
+      "peer relative inline-flex rounded-full cursor-pointer transition-all duration-300 ease-in-out",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
       "focus-visible:ring-ring dark:focus-visible:ring-dark-ring",
       "data-[disabled=true]:opacity-50 data-[disabled=true]:cursor-not-allowed",
@@ -400,7 +400,8 @@ defmodule Pulsar.Components.Switch do
   defp track_solid_checked_classes("warning"),
     do: "data-[state=checked]:bg-warning dark:data-[state=checked]:bg-dark-warning"
 
-  defp track_solid_checked_classes("info"), do: "data-[state=checked]:bg-info dark:data-[state=checked]:bg-dark-info"
+  defp track_solid_checked_classes("info"),
+    do: "data-[state=checked]:bg-info dark:data-[state=checked]:bg-dark-info"
 
   # Outline variant checked state classes by color
   @spec track_outline_checked_classes(String.t()) :: String.t()
@@ -542,7 +543,8 @@ defmodule Pulsar.Components.Switch do
   defp thumb_variant_classes("solid"), do: "bg-background dark:bg-dark-background shadow-lg"
 
   defp thumb_variant_classes("outline"),
-    do: "bg-background dark:bg-dark-background shadow-md border border-border/20 dark:border-dark-border/20"
+    do:
+      "bg-background dark:bg-dark-background shadow-md border border-border/20 dark:border-dark-border/20"
 
   defp thumb_variant_classes("ghost"), do: "bg-background dark:bg-dark-background shadow-sm"
 
@@ -551,7 +553,7 @@ defmodule Pulsar.Components.Switch do
   defp thumb_position_classes("xs") do
     [
       "left-0.5 translate-x-0",
-      "group-data-[state=checked]:translate-x-[14px]"
+      "peer-data-[state=checked]:translate-x-[14px]"
     ]
     |> Enum.join(" ")
   end
@@ -559,7 +561,7 @@ defmodule Pulsar.Components.Switch do
   defp thumb_position_classes("sm") do
     [
       "left-0.5 translate-x-0",
-      "group-data-[state=checked]:translate-x-[18px]"
+      "peer-data-[state=checked]:translate-x-[18px]"
     ]
     |> Enum.join(" ")
   end
@@ -567,7 +569,7 @@ defmodule Pulsar.Components.Switch do
   defp thumb_position_classes("md") do
     [
       "left-0.5 translate-x-0",
-      "group-data-[state=checked]:translate-x-[22px]"
+      "peer-data-[state=checked]:translate-x-[22px]"
     ]
     |> Enum.join(" ")
   end
@@ -575,7 +577,7 @@ defmodule Pulsar.Components.Switch do
   defp thumb_position_classes("lg") do
     [
       "left-0.5 translate-x-0",
-      "group-data-[state=checked]:translate-x-[30px]"
+      "peer-data-[state=checked]:translate-x-[30px]"
     ]
     |> Enum.join(" ")
   end
@@ -583,7 +585,7 @@ defmodule Pulsar.Components.Switch do
   defp thumb_position_classes("xl") do
     [
       "left-0.5 translate-x-0",
-      "group-data-[state=checked]:translate-x-[34px]"
+      "peer-data-[state=checked]:translate-x-[34px]"
     ]
     |> Enum.join(" ")
   end
