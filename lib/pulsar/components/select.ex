@@ -187,31 +187,20 @@ defmodule Pulsar.Components.Select do
       |> assign_computed_attributes()
       |> assign_final_name()
 
-    # Detect errors and compute automatic color
+    # Compute error state and effective styling
     has_errors = has_field_errors(assigns)
     user_invalid = Map.get(assigns, :invalid)
     invalid = if is_nil(user_invalid), do: has_errors, else: user_invalid
     effective_color = if invalid, do: "danger", else: assigns.color
 
-    # Resolve current value from explicit :value or Phoenix form field
+    # Resolve and normalize value for consistent handling
     current_value = value_or_field(assigns.value, assigns.field)
+    normalized_value = if assigns.multiple, do: List.wrap(current_value), else: current_value
 
-    # For multi-select, normalize current_value to always be a list to prevent HTML/JS desync
-    normalized_value =
-      if assigns.multiple do
-        List.wrap(current_value)
-      else
-        current_value
-      end
+    # For multi-select, extract selected options for badge display
+    selected_options = if assigns.multiple, do: extract_selected_options(normalized_value, assigns.options), else: []
 
-    # For multi-select, extract selected values for badge display
-    selected_options =
-      if assigns.multiple do
-        extract_selected_options(normalized_value, assigns.options)
-      else
-        []
-      end
-
+    # Build final styling
     class =
       merge([
         get_select_classes(assigns.variant, effective_color, assigns.size),
@@ -220,6 +209,7 @@ defmodule Pulsar.Components.Select do
         assigns.class
       ])
 
+    # Consolidate all final assigns
     assigns =
       assigns
       |> assign(:class, class)
@@ -228,10 +218,7 @@ defmodule Pulsar.Components.Select do
       |> assign(:value, normalized_value)
       |> assign(:selected_options, selected_options)
       |> assign(:show_badges, assigns.multiple and not Enum.empty?(selected_options))
-      |> assign(
-        :option_html,
-        generate_options_html(%{options: assigns.options, value: normalized_value})
-      )
+      |> assign(:option_html, generate_options_html(%{options: assigns.options, value: normalized_value}))
 
     ~H"""
     <div
@@ -364,6 +351,8 @@ defmodule Pulsar.Components.Select do
   defp variant_classes("solid"), do: "rounded-lg border-0"
 
   # Color classes by variant - matching Input component patterns
+
+  # Outline variant colors
   defp color_classes("outline", "neutral"),
     do:
       "border-border dark:border-dark-border bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground focus:ring-ring dark:focus:ring-dark-ring hover:border-border/80 dark:hover:border-dark-border/80"
@@ -392,6 +381,7 @@ defmodule Pulsar.Components.Select do
     do:
       "border-info/60 dark:border-dark-info/60 bg-background dark:bg-dark-background text-info dark:text-dark-info focus:ring-info/60 hover:border-info dark:hover:border-dark-info"
 
+  # Ghost variant colors  
   defp color_classes("ghost", "neutral"),
     do:
       "bg-transparent text-foreground dark:text-dark-foreground focus:ring-ring dark:focus:ring-dark-ring hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover"
@@ -419,6 +409,7 @@ defmodule Pulsar.Components.Select do
   defp color_classes("ghost", "info"),
     do: "bg-transparent text-info dark:text-dark-info focus:ring-info/60 hover:bg-info/5 dark:hover:bg-dark-info/10"
 
+  # Solid variant colors
   defp color_classes("solid", "neutral"),
     do:
       "bg-neutral/10 dark:bg-dark-neutral/20 text-neutral dark:text-dark-neutral focus:ring-neutral/60 hover:bg-neutral/20 dark:hover:bg-dark-neutral/30"
@@ -473,42 +464,39 @@ defmodule Pulsar.Components.Select do
   defp get_arrow_color_classes("warning"), do: "text-warning dark:text-dark-warning"
   defp get_arrow_color_classes("info"), do: "text-info dark:text-dark-info"
 
-  defp get_badge_size("xs"), do: "xs"
-  defp get_badge_size("sm"), do: "xs"
-  defp get_badge_size("md"), do: "sm"
-  defp get_badge_size("lg"), do: "sm"
-  defp get_badge_size("xl"), do: "md"
+  # Badge size mapping
+  @badge_sizes %{"lg" => "sm", "md" => "sm", "sm" => "xs", "xl" => "md", "xs" => "xs"}
+
+  defp get_badge_size(size), do: Map.get(@badge_sizes, size, "sm")
 
   # Helper for extracting selected options for multi-select badges
-  defp extract_selected_options(nil, _options), do: []
-  defp extract_selected_options([], _options), do: []
+  defp extract_selected_options(values, options) do
+    selected_values = List.wrap(values)
 
-  defp extract_selected_options(selected_values, options) when is_list(selected_values) do
-    option_map = build_option_map(options)
+    case selected_values do
+      [] ->
+        []
 
-    selected_values
-    |> Enum.map(fn value ->
-      case Map.get(option_map, to_string(value)) do
-        nil -> %{label: to_string(value), value: value}
-        label -> %{label: label, value: value}
-      end
-    end)
-  end
+      _ ->
+        option_map = build_option_map(options)
 
-  defp extract_selected_options(selected_value, options) do
-    extract_selected_options([selected_value], options)
+        Enum.map(selected_values, fn value ->
+          %{
+            label: Map.get(option_map, to_string(value), to_string(value)),
+            value: value
+          }
+        end)
+    end
   end
 
   # Build a flat map of value -> label from Phoenix options format
   defp build_option_map(options) when is_list(options) do
-    options
-    |> Enum.reduce(%{}, fn
+    Enum.reduce(options, %{}, fn
       {label, value}, acc when not is_list(value) ->
         Map.put(acc, to_string(value), label)
 
       {_group_label, group_options}, acc when is_list(group_options) ->
-        group_map = build_option_map(group_options)
-        Map.merge(acc, group_map)
+        Map.merge(acc, build_option_map(group_options))
 
       value, acc when is_binary(value) or is_atom(value) or is_integer(value) ->
         Map.put(acc, to_string(value), to_string(value))
@@ -595,10 +583,8 @@ defmodule Pulsar.Components.Select do
     |> Phoenix.HTML.safe_to_string()
   end
 
-  # Data attribute helpers (from Stellar)
-  defp data_boolean(true), do: "true"
-  defp data_boolean(false), do: "false"
-  defp data_boolean(nil), do: "false"
+  # Data attribute helper (from Stellar)
+  defp data_boolean(val), do: if(val, do: "true", else: "false")
 
   # Handle array name for multi-select
   defp assign_final_name(assigns) do
@@ -613,22 +599,16 @@ defmodule Pulsar.Components.Select do
   end
 
   # Badge removal JS command
-  defp remove_badge_js(event_or_nil, wrapper_id, js \\ %JS{})
+  defp remove_badge_js(handler, wrapper_id) do
+    case handler do
+      %JS{} = custom_js ->
+        custom_js |> JS.dispatch("pulsar:remove-selection", to: "##{wrapper_id}-wrapper")
 
-  # Support %JS{} directly
-  defp remove_badge_js(%JS{} = custom_js, wrapper_id, _js) do
-    custom_js
-    |> JS.dispatch("pulsar:remove-selection", to: "##{wrapper_id}-wrapper")
-  end
+      event when is_binary(event) ->
+        JS.dispatch("pulsar:remove-selection", to: "##{wrapper_id}-wrapper") |> JS.push(event)
 
-  defp remove_badge_js(nil, wrapper_id, js) do
-    js
-    |> JS.dispatch("pulsar:remove-selection", to: "##{wrapper_id}-wrapper")
-  end
-
-  defp remove_badge_js(event, wrapper_id, js) when is_binary(event) do
-    js
-    |> JS.dispatch("pulsar:remove-selection", to: "##{wrapper_id}-wrapper")
-    |> JS.push(event)
+      _ ->
+        JS.dispatch("pulsar:remove-selection", to: "##{wrapper_id}-wrapper")
+    end
   end
 end
