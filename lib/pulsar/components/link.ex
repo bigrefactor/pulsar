@@ -323,19 +323,26 @@ defmodule Pulsar.Components.Link do
     parsed_uri = URI.parse(assigns.href || "")
 
     # Only set target="_blank" for http/https links, not mailto/tel
+    # Use assign instead of assign_new to ensure external links get target="_blank"
     assigns =
-      assign_new(assigns, :target, fn ->
-        case parsed_uri do
-          %URI{scheme: scheme} when is_binary(scheme) ->
-            case String.downcase(scheme) do
-              scheme when scheme in ["http", "https"] -> "_blank"
-              _ -> nil
-            end
+      case parsed_uri do
+        %URI{scheme: scheme} when is_binary(scheme) ->
+          case String.downcase(scheme) do
+            scheme when scheme in ["http", "https"] ->
+              # Force target="_blank" for HTTP/HTTPS unless explicitly set to something else
+              if Map.has_key?(assigns, :target) and assigns[:target] != nil do
+                assigns
+              else
+                assign(assigns, :target, "_blank")
+              end
 
-          _ ->
-            nil
-        end
-      end)
+            _ ->
+              assigns
+          end
+
+        _ ->
+          assigns
+      end
 
     # Set rel based on the target value (after it's been assigned)
     assigns =
