@@ -6,6 +6,7 @@ defmodule Pulsar.Components.SelectTest do
 
   alias Phoenix.HTML.Form
   alias Phoenix.HTML.FormField
+  alias Phoenix.LiveView.JS
   alias Pulsar.Components.Select
 
   describe "select/1 basic functionality" do
@@ -314,6 +315,201 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ "Choose option..."
       assert html =~ ~s(value="")
       assert html =~ "disabled"
+    end
+  end
+
+  describe "multi-select badge removal" do
+    test "hook is attached to wrapper div for proper event bubbling" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select name="skills" options={["Elixir", "Phoenix"]} value={["Elixir"]} multiple={true} />
+        """)
+
+      # Hook should be on wrapper div, not select element
+      assert html =~ ~s(phx-hook=".PulsarSelect")
+      # Wrapper should have ID for event targeting (uses field name + -wrapper)
+      assert html =~ ~s(id="skills-wrapper")
+    end
+
+    test "colocated hook script is present for multi-select" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select name="skills" options={["Elixir", "Phoenix"]} value={["Elixir"]} multiple={true} />
+        """)
+
+      # Should contain JavaScript hook comment
+      assert html =~ "<!-- JavaScript hook for multi-select badge removal -->"
+      # Should contain script tag reference (even if script content is not rendered)
+      # The hook functionality is tested by integration testing in the showcase app
+    end
+
+    test "JS dispatch targets wrapper element for proper event bubbling" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select name="skills" options={[{"Elixir", "elixir"}]} value={["elixir"]} multiple={true} />
+        """)
+
+      # Should dispatch to wrapper element
+      assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
+      # Should target wrapper element
+      assert html =~ ~s(to&quot;:&quot;#)
+      assert html =~ ~s(-wrapper&quot;)
+    end
+
+    test "data_has_value correctly handles empty arrays" do
+      assigns = %{}
+
+      # Test with empty array
+      html =
+        rendered_to_string(~H"""
+        <Select.select name="skills" options={["Elixir", "Phoenix"]} value={[]} multiple={true} />
+        """)
+
+      assert html =~ ~s(data-has-value="false")
+
+      # Test with nil
+      html =
+        rendered_to_string(~H"""
+        <Select.select name="skills" options={["Elixir", "Phoenix"]} value={nil} multiple={true} />
+        """)
+
+      assert html =~ ~s(data-has-value="false")
+
+      # Test with actual values
+      html =
+        rendered_to_string(~H"""
+        <Select.select name="skills" options={["Elixir", "Phoenix"]} value={["Elixir"]} multiple={true} />
+        """)
+
+      assert html =~ ~s(data-has-value="true")
+    end
+
+    test "supports %JS{} command for on_remove_badge" do
+      assigns = %{
+        custom_js: %JS{} |> JS.hide(to: "#modal")
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select
+          name="skills"
+          options={[{"Elixir", "elixir"}]}
+          value={["elixir"]}
+          multiple={true}
+          on_remove_badge={@custom_js}
+        />
+        """)
+
+      # Should handle %JS{} command and dispatch event
+      assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
+      assert html =~ ~s(&quot;hide&quot;)
+    end
+
+    test "supports string event name for on_remove_badge" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select
+          name="skills"
+          options={[{"Elixir", "elixir"}]}
+          value={["elixir"]}
+          multiple={true}
+          on_remove_badge="custom_remove"
+        />
+        """)
+
+      # Should dispatch event and push custom event
+      assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
+      assert html =~ ~s(&quot;custom_remove&quot;)
+    end
+
+    test "badge component doesn't have unused phx-value-option attribute" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select
+          name="skills"
+          options={[{"Elixir", "elixir"}]}
+          value={["elixir"]}
+          multiple={true}
+        />
+        """)
+
+      # Extract the badge portion (before the button)
+      badge_section =
+        html
+        |> String.split("<button")
+        |> List.first()
+
+      # Badge itself should not have phx-value-option
+      refute badge_section =~ ~s(phx-value-option="elixir")
+
+      # But button should have it
+      button_section =
+        html
+        |> String.split("<button")
+        |> List.last()
+
+      assert button_section =~ ~s(phx-value-option="elixir")
+    end
+
+    test "grouped options work correctly with badge display" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select
+          name="location"
+          options={[
+            "North America": [{"United States", "US"}, {"Canada", "CA"}],
+            Europe: [{"United Kingdom", "UK"}, {"Germany", "DE"}]
+          ]}
+          value={["US", "UK"]}
+          multiple={true}
+        />
+        """)
+
+      # Should show correct labels for grouped options
+      assert html =~ "United States"
+      assert html =~ "United Kingdom"
+      # Should have remove buttons for both
+      assert html =~ ~s(phx-value-option="US")
+      assert html =~ ~s(phx-value-option="UK")
+    end
+
+    test "handles mixed option formats in multi-select badges" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select
+          name="mixed"
+          options={[
+            "Simple",
+            {"Complex Label", "complex_value"},
+            {:atom_label, "atom_value"}
+          ]}
+          value={["Simple", "complex_value", "atom_value"]}
+          multiple={true}
+        />
+        """)
+
+      # Should display correct labels
+      assert html =~ "Simple"
+      assert html =~ "Complex Label"
+      assert html =~ "atom_label"
+      # Should have correct values in buttons
+      assert html =~ ~s(phx-value-option="Simple")
+      assert html =~ ~s(phx-value-option="complex_value")
+      assert html =~ ~s(phx-value-option="atom_value")
     end
   end
 

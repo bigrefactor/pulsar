@@ -91,7 +91,7 @@ defmodule Pulsar.Components.Select do
   alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Badge
 
-  # Inline ID generator (replacing Stellar.Helpers.IdGenerator)  
+  # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
   defp generate_id(prefix) do
     "#{prefix}-#{System.unique_integer([:positive])}"
   end
@@ -156,7 +156,7 @@ defmodule Pulsar.Components.Select do
   # Multi-select badge removal
   attr(:on_remove_badge, :any,
     default: nil,
-    doc: "Event handler for removing badges in multi-select mode (JS command or event name)"
+    doc: "Event handler for removing badges in multi-select mode (Phoenix.LiveView.JS command or event name string)"
   )
 
   # Styling
@@ -235,7 +235,9 @@ defmodule Pulsar.Components.Select do
 
     ~H"""
     <div
+      id={"#{@id}-wrapper"}
       class="space-y-2"
+      phx-hook={@multiple && ".PulsarSelect"}
       data-variant={@variant}
       data-color={@effective_color}
       data-size={@size}
@@ -251,13 +253,12 @@ defmodule Pulsar.Components.Select do
           variant={@variant}
           color={@effective_color}
           size={get_badge_size(@size)}
-          phx-value-option={option.value}
         >
           {option.label}
           <:end_addon>
             <button
               type="button"
-              phx-click={remove_badge_js(@on_remove_badge)}
+              phx-click={remove_badge_js(@on_remove_badge, @id)}
               phx-value-option={option.value}
               class="ml-1 hover:bg-black/10 dark:hover:bg-white/10 rounded-full p-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current transition-colors"
               aria-label={"Remove #{option.label}"}
@@ -284,7 +285,6 @@ defmodule Pulsar.Components.Select do
           data-multiple={@data_multiple}
           data-has-value={@data_has_value}
           data-state="closed"
-          phx-hook={@multiple && ".PulsarSelect"}
           {@rest}
         >
           <option :if={@prompt && !@multiple} value="" disabled selected={@value in [nil, ""]}>
@@ -308,24 +308,28 @@ defmodule Pulsar.Components.Select do
     <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarSelect">
       export default {
         mounted() {
+          // Find the select element within the wrapper
+          this.selectEl = this.el.querySelector('select');
+          if (!this.selectEl) return;
+          
           this.handleRemoveSelection = (e) => {
-            const selectElement = this.el;
-            const optionValue = e.detail.option || e.target.getAttribute('phx-value-option');
+            // Get value from detail or target attribute
+            const optionValue = e.detail?.option || e.target?.getAttribute('phx-value-option');
             
-            if (!selectElement.multiple || !optionValue) return;
+            if (!this.selectEl.multiple || !optionValue) return;
 
-            // Find and deselect the option
-            const option = selectElement.querySelector(`option[value="${optionValue}"]`);
+            // Find and deselect the option (with CSS escaping for security)
+            const option = this.selectEl.querySelector(`option[value="${CSS.escape(optionValue)}"]`);
             if (option) {
               option.selected = false;
               
-              // Dispatch input event to trigger phx-change
-              selectElement.dispatchEvent(new Event('input', { bubbles: true }));
-              selectElement.dispatchEvent(new Event('change', { bubbles: true }));
+              // Dispatch events on the select element
+              this.selectEl.dispatchEvent(new Event('input', { bubbles: true }));
+              this.selectEl.dispatchEvent(new Event('change', { bubbles: true }));
             }
           };
 
-          // Listen for the custom remove selection event
+          // Listen on the wrapper element (this.el)
           this.el.addEventListener('pulsar:remove-selection', this.handleRemoveSelection);
         },
 
@@ -568,15 +572,21 @@ defmodule Pulsar.Components.Select do
         {caller, errors} -> "#{caller} #{errors}"
       end
 
+    # Compute data_has_value considering arrays and empty values
+    data_has_value =
+      case assigns.value do
+        nil -> "false"
+        "" -> "false"
+        [] -> "false"
+        _ -> "true"
+      end
+
     assigns
     |> assign(:computed_aria_describedby, computed_aria_describedby)
     |> assign(:data_disabled, data_boolean(assigns.disabled))
     |> assign(:data_multiple, data_boolean(assigns.multiple))
     |> assign(:data_required, data_boolean(assigns.required))
-    |> assign(
-      :data_has_value,
-      if(is_nil(assigns.value) || assigns.value == "", do: "false", else: "true")
-    )
+    |> assign(:data_has_value, data_has_value)
   end
 
   # Options generation (from Stellar)
@@ -603,15 +613,22 @@ defmodule Pulsar.Components.Select do
   end
 
   # Badge removal JS command
-  defp remove_badge_js(event_or_nil, js \\ %JS{})
+  defp remove_badge_js(event_or_nil, wrapper_id, js \\ %JS{})
 
-  defp remove_badge_js(nil, js) do
-    js |> JS.dispatch("pulsar:remove-selection")
+  # Support %JS{} directly
+  defp remove_badge_js(%JS{} = custom_js, wrapper_id, _js) do
+    custom_js
+    |> JS.dispatch("pulsar:remove-selection", to: "##{wrapper_id}-wrapper")
   end
 
-  defp remove_badge_js(event, js) do
+  defp remove_badge_js(nil, wrapper_id, js) do
     js
-    |> JS.dispatch("pulsar:remove-selection")
+    |> JS.dispatch("pulsar:remove-selection", to: "##{wrapper_id}-wrapper")
+  end
+
+  defp remove_badge_js(event, wrapper_id, js) when is_binary(event) do
+    js
+    |> JS.dispatch("pulsar:remove-selection", to: "##{wrapper_id}-wrapper")
     |> JS.push(event)
   end
 end
