@@ -18,13 +18,12 @@ defmodule Pulsar.Components.InputTest do
         """)
 
       assert html =~ ~s(<div)
-      assert html =~ ~s(data-variant="solid")
-      assert html =~ ~s(data-color="neutral")
-      assert html =~ ~s(data-size="md")
       # Default solid variant with neutral color
       assert html =~ "bg-neutral/10"
       # Default size (md)
       assert html =~ "min-h-10"
+      # Input padding classes are applied directly
+      assert html =~ "px-3 py-1.5"
     end
 
     test "renders with ghost variant" do
@@ -35,7 +34,7 @@ defmodule Pulsar.Components.InputTest do
         <Input.input name="test" variant="ghost" />
         """)
 
-      assert html =~ ~s(data-variant="ghost")
+      # Ghost variant styling
       assert html =~ "bg-transparent"
       # Ghost doesn't have border
       refute html =~ "border-2"

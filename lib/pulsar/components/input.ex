@@ -78,38 +78,37 @@ defmodule Pulsar.Components.Input do
   # CONFIGURATION & CONSTANTS
   # ============================================================================
 
-  # Size configuration for input and decorators
-  @size_config %{
-    "lg" => %{
-      container: "min-h-12 text-lg",
-      decorator_padding: "px-4 py-2",
-      decorator_text: "text-lg",
-      input_padding: "px-4 py-2"
-    },
-    "md" => %{
-      container: "min-h-10",
-      decorator_padding: "px-3 py-1.5",
-      decorator_text: "",
-      input_padding: "px-3 py-1.5"
-    },
-    "sm" => %{
-      container: "min-h-8 text-sm",
-      decorator_padding: "px-2 py-1",
-      decorator_text: "text-sm",
-      input_padding: "px-2 py-1"
-    },
-    "xl" => %{
-      container: "min-h-14 text-xl",
-      decorator_padding: "px-4 py-2",
-      decorator_text: "text-xl",
-      input_padding: "px-4 py-2"
-    },
-    "xs" => %{
-      container: "min-h-6 text-xs",
-      decorator_padding: "px-2 py-1",
-      decorator_text: "text-xs",
-      input_padding: "px-2 py-1"
-    }
+  # Direct class maps for efficient lookup (no data-attributes needed)
+  @input_padding_classes %{
+    "lg" => ["px-4", "py-2"],
+    "md" => ["px-3", "py-1.5"],
+    "sm" => ["px-2", "py-1"],
+    "xl" => ["px-4", "py-2"],
+    "xs" => ["px-2", "py-1"]
+  }
+
+  @container_size_classes %{
+    "lg" => ["min-h-12", "text-lg"],
+    "md" => ["min-h-10"],
+    "sm" => ["min-h-8", "text-sm"],
+    "xl" => ["min-h-14", "text-xl"],
+    "xs" => ["min-h-6", "text-xs"]
+  }
+
+  @decorator_padding_classes %{
+    "lg" => ["px-4", "py-2"],
+    "md" => ["px-3", "py-1.5"],
+    "sm" => ["px-2", "py-1"],
+    "xl" => ["px-4", "py-2"],
+    "xs" => ["px-2", "py-1"]
+  }
+
+  @decorator_text_classes %{
+    "lg" => "text-lg",
+    "md" => "",
+    "sm" => "text-sm",
+    "xl" => "text-xl",
+    "xs" => "text-xs"
   }
 
   # Base input container classes
@@ -404,16 +403,7 @@ defmodule Pulsar.Components.Input do
       |> assign(:required_attr, assigns.required)
 
     ~H"""
-    <div
-      class={@class}
-      data-variant={@variant}
-      data-size={@size}
-      data-color={@decorator_color}
-      data-has-start-decorator={@has_start_decorator}
-      data-has-end-decorator={@has_end_decorator}
-      data-invalid={if @invalid, do: "true", else: "false"}
-      data-required={if @required_attr, do: "true", else: "false"}
-    >
+    <div class={@class}>
       <.start_decorator
         :if={@has_start_decorator}
         decorator_variant={@decorator_variant}
@@ -427,12 +417,11 @@ defmodule Pulsar.Components.Input do
         class={
           [
             "w-full outline-0 transition-all duration-200 ease-in-out",
-            get_input_padding_classes(@size),
-            "group-data-[variant=ghost]:group-data-[has-start-decorator=true]:pl-0",
-            "group-data-[variant=ghost]:group-data-[has-end-decorator=true]:pr-0",
+            get_input_padding_classes(@size, @variant, @has_start_decorator, @has_end_decorator),
             (@disabled && "cursor-not-allowed") || (@readonly && "cursor-default") || nil
           ]
           |> Enum.filter(& &1)
+          |> List.flatten()
         }
         type={@type}
         id={@id}
@@ -522,13 +511,18 @@ defmodule Pulsar.Components.Input do
       Enum.join(@base_input_classes, " "),
       @variant_config[variant],
       get_color_classes(variant, color),
-      @size_config[size][:container]
+      get_container_size_classes(size)
     ])
   end
 
   # Get color classes from configuration
   defp get_color_classes(variant, color) do
     @color_config[variant][color] || ""
+  end
+
+  # Get container size classes directly (direct map lookup)
+  defp get_container_size_classes(size) do
+    @container_size_classes[size] || @container_size_classes["md"]
   end
 
   defp get_state_classes(disabled, readonly) do
@@ -540,26 +534,50 @@ defmodule Pulsar.Components.Input do
     |> Enum.join(" ")
   end
 
-  # Get input element padding classes based on size
-  defp get_input_padding_classes(size) do
-    case size do
-      "xs" -> ["group-data-[size=xs]:px-2", "group-data-[size=xs]:py-1"]
-      "sm" -> ["group-data-[size=sm]:px-2", "group-data-[size=sm]:py-1"]
-      "md" -> ["group-data-[size=md]:px-3", "group-data-[size=md]:py-1.5"]
-      "lg" -> ["group-data-[size=lg]:px-4", "group-data-[size=lg]:py-2"]
-      "xl" -> ["group-data-[size=xl]:px-4", "group-data-[size=xl]:py-2"]
-      _ -> ["group-data-[size=md]:px-3", "group-data-[size=md]:py-1.5"]
+  # Get input element padding classes with conditional logic for ghost variant
+  defp get_input_padding_classes(size, variant, has_start_decorator, has_end_decorator) do
+    base_padding = @input_padding_classes[size] || @input_padding_classes["md"]
+
+    # For ghost variant, remove padding where decorators are present
+    if variant == "ghost" do
+      base_padding
+      |> Enum.reject(fn class ->
+        (has_start_decorator and String.starts_with?(class, "pl-")) or
+          (has_end_decorator and String.starts_with?(class, "pr-"))
+      end)
+      |> then(fn classes ->
+        # Add conditional padding classes
+        classes = if has_start_decorator, do: classes ++ ["pl-0"], else: classes
+        if has_end_decorator, do: classes ++ ["pr-0"], else: classes
+      end)
+    else
+      base_padding
     end
   end
 
   # Decorator functions supporting all variants and colors
   defp get_decorator_classes(_position, variant, color, size) do
-    size_config = @size_config[size]
-    base_classes = "#{size_config[:decorator_padding]} flex items-center justify-center #{size_config[:decorator_text]}"
+    base_classes = [
+      "flex",
+      "items-center",
+      "justify-center",
+      get_decorator_padding_classes(size),
+      get_decorator_text_classes(size)
+    ]
 
     color_classes = get_decorator_color_classes(variant, color)
 
     merge([base_classes, color_classes])
+  end
+
+  # Get decorator padding classes based on size (direct map lookup)
+  defp get_decorator_padding_classes(size) do
+    @decorator_padding_classes[size] || @decorator_padding_classes["md"]
+  end
+
+  # Get decorator text size classes (direct map lookup)
+  defp get_decorator_text_classes(size) do
+    @decorator_text_classes[size] || @decorator_text_classes["md"]
   end
 
   defp get_decorator_color_classes("ghost", _color) do
