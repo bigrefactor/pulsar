@@ -321,7 +321,7 @@ defmodule Pulsar.Components.Switch do
     """
   end
 
-  # Base switch track classes
+  # Base switch track classes - added subtle inset shadow for depth
   @spec base_switch_classes() :: String.t()
   defp base_switch_classes do
     [
@@ -329,7 +329,8 @@ defmodule Pulsar.Components.Switch do
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
       "focus-visible:ring-ring dark:focus-visible:ring-dark-ring",
       "data-[disabled=true]:opacity-50 data-[disabled=true]:cursor-not-allowed",
-      "data-[loading=true]:cursor-wait"
+      "data-[loading=true]:cursor-wait",
+      "shadow-inner shadow-black/5 dark:shadow-black/10"
     ]
     |> Enum.join(" ")
   end
@@ -345,19 +346,19 @@ defmodule Pulsar.Components.Switch do
     |> Enum.join(" ")
   end
 
-  # Track size classes
+  # Track size classes - optimized proportions for iOS-style appearance
   @spec track_size_classes(String.t()) :: String.t()
-  defp track_size_classes("xs"), do: "h-4 w-7"
-  defp track_size_classes("sm"), do: "h-5 w-9"
-  defp track_size_classes("md"), do: "h-6 w-11"
-  defp track_size_classes("lg"), do: "h-7 w-14"
-  defp track_size_classes("xl"), do: "h-8 w-16"
+  defp track_size_classes("xs"), do: "h-3.5 w-7"
+  defp track_size_classes("sm"), do: "h-4 w-9"
+  defp track_size_classes("md"), do: "h-5 w-11"
+  defp track_size_classes("lg"), do: "h-6 w-14"
+  defp track_size_classes("xl"), do: "h-7 w-16"
 
   # Track variant classes by color
   @spec track_variant_classes(String.t(), String.t()) :: list(String.t())
   defp track_variant_classes("solid", color) do
     [
-      "data-[state=unchecked]:bg-muted dark:data-[state=unchecked]:bg-dark-muted",
+      "data-[state=unchecked]:bg-muted/80 dark:data-[state=unchecked]:bg-dark-muted/80",
       track_solid_checked_classes(color)
     ]
   end
@@ -365,8 +366,8 @@ defmodule Pulsar.Components.Switch do
   defp track_variant_classes("outline", color) do
     [
       "border-2",
-      "data-[state=unchecked]:bg-background data-[state=unchecked]:border-border",
-      "dark:data-[state=unchecked]:bg-dark-background dark:data-[state=unchecked]:border-dark-border",
+      "data-[state=unchecked]:bg-background data-[state=unchecked]:border-border/70",
+      "dark:data-[state=unchecked]:bg-dark-background dark:data-[state=unchecked]:border-dark-border/70",
       track_outline_checked_classes(color)
     ]
   end
@@ -374,34 +375,34 @@ defmodule Pulsar.Components.Switch do
   defp track_variant_classes("ghost", color) do
     [
       "border-2 border-transparent",
-      "data-[state=unchecked]:bg-transparent hover:data-[state=unchecked]:bg-muted/20",
-      "dark:hover:data-[state=unchecked]:bg-dark-muted/20",
+      "data-[state=unchecked]:bg-muted/30 hover:data-[state=unchecked]:bg-muted/40",
+      "dark:data-[state=unchecked]:bg-dark-muted/30 dark:hover:data-[state=unchecked]:bg-dark-muted/40",
       track_ghost_checked_classes(color)
     ]
   end
 
-  # Solid variant checked state classes by color
+  # Solid variant checked state classes by color - softer opacity for better visual hierarchy
   @spec track_solid_checked_classes(String.t()) :: String.t()
   defp track_solid_checked_classes("neutral"),
-    do: "data-[state=checked]:bg-neutral dark:data-[state=checked]:bg-dark-neutral"
+    do: "data-[state=checked]:bg-neutral/90 dark:data-[state=checked]:bg-dark-neutral/90"
 
   defp track_solid_checked_classes("primary"),
-    do: "data-[state=checked]:bg-primary dark:data-[state=checked]:bg-dark-primary"
+    do: "data-[state=checked]:bg-primary/90 dark:data-[state=checked]:bg-dark-primary/90"
 
   defp track_solid_checked_classes("secondary"),
-    do: "data-[state=checked]:bg-secondary dark:data-[state=checked]:bg-dark-secondary"
+    do: "data-[state=checked]:bg-secondary/90 dark:data-[state=checked]:bg-dark-secondary/90"
 
   defp track_solid_checked_classes("success"),
-    do: "data-[state=checked]:bg-success dark:data-[state=checked]:bg-dark-success"
+    do: "data-[state=checked]:bg-success/90 dark:data-[state=checked]:bg-dark-success/90"
 
   defp track_solid_checked_classes("danger"),
-    do: "data-[state=checked]:bg-danger dark:data-[state=checked]:bg-dark-danger"
+    do: "data-[state=checked]:bg-danger/90 dark:data-[state=checked]:bg-dark-danger/90"
 
   defp track_solid_checked_classes("warning"),
-    do: "data-[state=checked]:bg-warning dark:data-[state=checked]:bg-dark-warning"
+    do: "data-[state=checked]:bg-warning/90 dark:data-[state=checked]:bg-dark-warning/90"
 
   defp track_solid_checked_classes("info"),
-    do: "data-[state=checked]:bg-info dark:data-[state=checked]:bg-dark-info"
+    do: "data-[state=checked]:bg-info/90 dark:data-[state=checked]:bg-dark-info/90"
 
   # Outline variant checked state classes by color
   @spec track_outline_checked_classes(String.t()) :: String.t()
@@ -530,30 +531,32 @@ defmodule Pulsar.Components.Switch do
     |> Enum.join(" ")
   end
 
-  # Thumb size classes
+  # Thumb size classes - properly sized and centered for each track size
   @spec thumb_size_classes(String.t()) :: String.t()
-  defp thumb_size_classes("xs"), do: "h-3 w-3 top-0.5"
-  defp thumb_size_classes("sm"), do: "h-4 w-4 top-0.5"
-  defp thumb_size_classes("md"), do: "h-5 w-5 top-0.5"
-  defp thumb_size_classes("lg"), do: "h-6 w-6 top-0.5"
-  defp thumb_size_classes("xl"), do: "h-7 w-7 top-0.5"
+  defp thumb_size_classes("xs"), do: "h-2.5 w-2.5 top-0.5"
+  defp thumb_size_classes("sm"), do: "h-3 w-3 top-0.5"
+  defp thumb_size_classes("md"), do: "h-4 w-4 top-0.5"
+  defp thumb_size_classes("lg"), do: "h-5 w-5 top-0.5"
+  defp thumb_size_classes("xl"), do: "h-5.5 w-5.5 top-[3px]"
 
-  # Thumb variant classes (shadow and border)
+  # Thumb variant classes (shadow and border) - enhanced shadows for depth
   @spec thumb_variant_classes(String.t()) :: String.t()
-  defp thumb_variant_classes("solid"), do: "bg-background dark:bg-dark-background shadow-lg"
+  defp thumb_variant_classes("solid"),
+    do: "bg-background dark:bg-dark-background shadow-lg shadow-black/10 dark:shadow-black/25"
 
   defp thumb_variant_classes("outline"),
     do:
-      "bg-background dark:bg-dark-background shadow-md border border-border/20 dark:border-dark-border/20"
+      "bg-background dark:bg-dark-background shadow-md shadow-black/8 dark:shadow-black/20 border border-border/30 dark:border-dark-border/30"
 
-  defp thumb_variant_classes("ghost"), do: "bg-background dark:bg-dark-background shadow-sm"
+  defp thumb_variant_classes("ghost"),
+    do: "bg-background dark:bg-dark-background shadow-md shadow-black/6 dark:shadow-black/15"
 
-  # Thumb position classes based on size
+  # Thumb position classes based on size - recalculated for new thumb sizes
   @spec thumb_position_classes(String.t()) :: String.t()
   defp thumb_position_classes("xs") do
     [
       "left-0.5 translate-x-0",
-      "peer-data-[state=checked]:translate-x-[14px]"
+      "peer-data-[state=checked]:translate-x-[15px]"
     ]
     |> Enum.join(" ")
   end
@@ -561,7 +564,7 @@ defmodule Pulsar.Components.Switch do
   defp thumb_position_classes("sm") do
     [
       "left-0.5 translate-x-0",
-      "peer-data-[state=checked]:translate-x-[18px]"
+      "peer-data-[state=checked]:translate-x-[20px]"
     ]
     |> Enum.join(" ")
   end
@@ -569,7 +572,7 @@ defmodule Pulsar.Components.Switch do
   defp thumb_position_classes("md") do
     [
       "left-0.5 translate-x-0",
-      "peer-data-[state=checked]:translate-x-[22px]"
+      "peer-data-[state=checked]:translate-x-[24px]"
     ]
     |> Enum.join(" ")
   end
@@ -577,15 +580,15 @@ defmodule Pulsar.Components.Switch do
   defp thumb_position_classes("lg") do
     [
       "left-0.5 translate-x-0",
-      "peer-data-[state=checked]:translate-x-[30px]"
+      "peer-data-[state=checked]:translate-x-[32px]"
     ]
     |> Enum.join(" ")
   end
 
   defp thumb_position_classes("xl") do
     [
-      "left-0.5 translate-x-0",
-      "peer-data-[state=checked]:translate-x-[34px]"
+      "left-[3px] translate-x-0",
+      "peer-data-[state=checked]:translate-x-[36px]"
     ]
     |> Enum.join(" ")
   end
