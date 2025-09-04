@@ -82,12 +82,13 @@ defmodule Pulsar.Components.Select do
 
   use Phoenix.Component
 
+  import Pulsar.Components.Icon, only: [icon: 1]
   import TailwindMerge, only: [merge: 1]
 
+  alias Phoenix.HTML.Form
   alias Phoenix.HTML.FormField
   alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Badge
-  alias Pulsar.Components.Icon
 
   # Inline ID generator (replacing Stellar.Helpers.IdGenerator)  
   defp generate_id(prefix) do
@@ -248,11 +249,20 @@ defmodule Pulsar.Components.Select do
           variant={@variant}
           color={@effective_color}
           size={get_badge_size(@size)}
-          removable
-          on_remove={@on_remove_badge || "remove_selection"}
           phx-value-option={option.value}
         >
           {option.label}
+          <:end_addon>
+            <button
+              type="button"
+              phx-click={@on_remove_badge || "remove_selection"}
+              phx-value-option={option.value}
+              class="ml-1 hover:bg-black/10 dark:hover:bg-white/10 rounded-full p-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current transition-colors"
+              aria-label={"Remove #{option.label}"}
+            >
+              <.icon name="hero-x-mark" variant="micro" size="xs" color="current" aria-hidden="true" />
+            </button>
+          </:end_addon>
         </Badge.badge>
       </div>
       
@@ -286,7 +296,7 @@ defmodule Pulsar.Components.Select do
           get_arrow_classes(@variant, @effective_color),
           @disabled && "opacity-50"
         ]}>
-          <Icon.icon name="hero-chevron-down" size="sm" color="current" />
+          <.icon name="hero-chevron-down" size="sm" color="current" />
         </div>
       </div>
     </div>
@@ -367,8 +377,7 @@ defmodule Pulsar.Components.Select do
       "bg-transparent text-warning dark:text-dark-warning focus:ring-warning/60 hover:bg-warning/5 dark:hover:bg-dark-warning/10"
 
   defp color_classes("ghost", "info"),
-    do:
-      "bg-transparent text-info dark:text-dark-info focus:ring-info/60 hover:bg-info/5 dark:hover:bg-dark-info/10"
+    do: "bg-transparent text-info dark:text-dark-info focus:ring-info/60 hover:bg-info/5 dark:hover:bg-dark-info/10"
 
   defp color_classes("solid", "neutral"),
     do:
@@ -470,8 +479,7 @@ defmodule Pulsar.Components.Select do
   end
 
   # Keep local and private - helper for error detection
-  defp has_field_errors(%{field: %FormField{errors: errs}}) when is_list(errs) and errs != [],
-    do: true
+  defp has_field_errors(%{field: %FormField{errors: errs}}) when is_list(errs) and errs != [], do: true
 
   defp has_field_errors(_), do: false
 
@@ -514,8 +522,7 @@ defmodule Pulsar.Components.Select do
 
     errors_id =
       if assigns.field_provided and has_field_errors(assigns),
-        do: "#{assigns.id}-errors",
-        else: nil
+        do: "#{assigns.id}-errors"
 
     computed_aria_describedby =
       case {caller_describedby, errors_id} do
@@ -538,7 +545,7 @@ defmodule Pulsar.Components.Select do
 
   # Options generation (from Stellar)
   defp generate_options_html(assigns) do
-    Phoenix.HTML.Form.options_for_select(assigns.options, assigns.value)
+    Form.options_for_select(assigns.options, assigns.value)
     |> Phoenix.HTML.safe_to_string()
   end
 
