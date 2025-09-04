@@ -104,6 +104,7 @@ defmodule Pulsar.Components.RadioGroup do
 
   import TailwindMerge, only: [merge: 1]
 
+  alias Phoenix.HTML.Form
   alias Phoenix.HTML.FormField
   alias Phoenix.LiveView.Rendered
   alias Stellar.Components.RadioGroup, as: StellarRadioGroup
@@ -229,8 +230,6 @@ defmodule Pulsar.Components.RadioGroup do
       else
         if assigns[:field] do
           to_string(assigns.field.name)
-        else
-          nil
         end
       end
 
@@ -240,8 +239,6 @@ defmodule Pulsar.Components.RadioGroup do
       else
         if assigns[:field] do
           assigns.field.value
-        else
-          nil
         end
       end
 
@@ -679,26 +676,19 @@ defmodule Pulsar.Components.RadioGroup do
 
   # Card focus ring classes by color
   @spec card_focus_ring_classes(String.t()) :: String.t()
-  defp card_focus_ring_classes("neutral"),
-    do: "focus-within:ring-neutral dark:focus-within:ring-dark-neutral"
+  defp card_focus_ring_classes("neutral"), do: "focus-within:ring-neutral dark:focus-within:ring-dark-neutral"
 
-  defp card_focus_ring_classes("primary"),
-    do: "focus-within:ring-primary dark:focus-within:ring-dark-primary"
+  defp card_focus_ring_classes("primary"), do: "focus-within:ring-primary dark:focus-within:ring-dark-primary"
 
-  defp card_focus_ring_classes("secondary"),
-    do: "focus-within:ring-secondary dark:focus-within:ring-dark-secondary"
+  defp card_focus_ring_classes("secondary"), do: "focus-within:ring-secondary dark:focus-within:ring-dark-secondary"
 
-  defp card_focus_ring_classes("success"),
-    do: "focus-within:ring-success dark:focus-within:ring-dark-success"
+  defp card_focus_ring_classes("success"), do: "focus-within:ring-success dark:focus-within:ring-dark-success"
 
-  defp card_focus_ring_classes("danger"),
-    do: "focus-within:ring-danger dark:focus-within:ring-dark-danger"
+  defp card_focus_ring_classes("danger"), do: "focus-within:ring-danger dark:focus-within:ring-dark-danger"
 
-  defp card_focus_ring_classes("warning"),
-    do: "focus-within:ring-warning dark:focus-within:ring-dark-warning"
+  defp card_focus_ring_classes("warning"), do: "focus-within:ring-warning dark:focus-within:ring-dark-warning"
 
-  defp card_focus_ring_classes("info"),
-    do: "focus-within:ring-info dark:focus-within:ring-dark-info"
+  defp card_focus_ring_classes("info"), do: "focus-within:ring-info dark:focus-within:ring-dark-info"
 
   # Card variant styles with direct color classes
   @spec card_variant_classes(String.t(), String.t()) :: String.t()
@@ -733,11 +723,9 @@ defmodule Pulsar.Components.RadioGroup do
 
   # Card background classes by variant
   @spec card_variant_background_classes(String.t(), String.t()) :: String.t()
-  defp card_variant_background_classes("solid", _color),
-    do: "bg-background dark:bg-dark-background"
+  defp card_variant_background_classes("solid", _color), do: "bg-background dark:bg-dark-background"
 
-  defp card_variant_background_classes("outline", _color),
-    do: "bg-background dark:bg-dark-background"
+  defp card_variant_background_classes("outline", _color), do: "bg-background dark:bg-dark-background"
 
   defp card_variant_background_classes("ghost", _color), do: "bg-transparent"
 
@@ -747,75 +735,55 @@ defmodule Pulsar.Components.RadioGroup do
 
   # Card hover classes by variant and color
   @spec card_variant_hover_classes(String.t(), String.t()) :: String.t()
-  defp card_variant_hover_classes("solid", "neutral"),
-    do: "hover:bg-neutral/10 dark:hover:bg-dark-neutral/10"
+  defp card_variant_hover_classes("solid", "neutral"), do: "hover:bg-neutral/10 dark:hover:bg-dark-neutral/10"
 
-  defp card_variant_hover_classes("solid", "primary"),
-    do: "hover:bg-primary/10 dark:hover:bg-dark-primary/10"
+  defp card_variant_hover_classes("solid", "primary"), do: "hover:bg-primary/10 dark:hover:bg-dark-primary/10"
 
-  defp card_variant_hover_classes("solid", "secondary"),
-    do: "hover:bg-secondary/10 dark:hover:bg-dark-secondary/10"
+  defp card_variant_hover_classes("solid", "secondary"), do: "hover:bg-secondary/10 dark:hover:bg-dark-secondary/10"
 
-  defp card_variant_hover_classes("solid", "success"),
-    do: "hover:bg-success/10 dark:hover:bg-dark-success/10"
+  defp card_variant_hover_classes("solid", "success"), do: "hover:bg-success/10 dark:hover:bg-dark-success/10"
 
-  defp card_variant_hover_classes("solid", "danger"),
-    do: "hover:bg-danger/10 dark:hover:bg-dark-danger/10"
+  defp card_variant_hover_classes("solid", "danger"), do: "hover:bg-danger/10 dark:hover:bg-dark-danger/10"
 
-  defp card_variant_hover_classes("solid", "warning"),
-    do: "hover:bg-warning/10 dark:hover:bg-dark-warning/10"
+  defp card_variant_hover_classes("solid", "warning"), do: "hover:bg-warning/10 dark:hover:bg-dark-warning/10"
 
-  defp card_variant_hover_classes("solid", "info"),
-    do: "hover:bg-info/10 dark:hover:bg-dark-info/10"
+  defp card_variant_hover_classes("solid", "info"), do: "hover:bg-info/10 dark:hover:bg-dark-info/10"
 
   defp card_variant_hover_classes("outline", "neutral"),
-    do:
-      "hover:border-neutral/50 dark:hover:border-dark-neutral/50 hover:bg-neutral/5 dark:hover:bg-dark-neutral/5"
+    do: "hover:border-neutral/50 dark:hover:border-dark-neutral/50 hover:bg-neutral/5 dark:hover:bg-dark-neutral/5"
 
   defp card_variant_hover_classes("outline", "primary"),
-    do:
-      "hover:border-primary/50 dark:hover:border-dark-primary/50 hover:bg-primary/5 dark:hover:bg-dark-primary/5"
+    do: "hover:border-primary/50 dark:hover:border-dark-primary/50 hover:bg-primary/5 dark:hover:bg-dark-primary/5"
 
   defp card_variant_hover_classes("outline", "secondary"),
     do:
       "hover:border-secondary/50 dark:hover:border-dark-secondary/50 hover:bg-secondary/5 dark:hover:bg-dark-secondary/5"
 
   defp card_variant_hover_classes("outline", "success"),
-    do:
-      "hover:border-success/50 dark:hover:border-dark-success/50 hover:bg-success/5 dark:hover:bg-dark-success/5"
+    do: "hover:border-success/50 dark:hover:border-dark-success/50 hover:bg-success/5 dark:hover:bg-dark-success/5"
 
   defp card_variant_hover_classes("outline", "danger"),
-    do:
-      "hover:border-danger/50 dark:hover:border-dark-danger/50 hover:bg-danger/5 dark:hover:bg-dark-danger/5"
+    do: "hover:border-danger/50 dark:hover:border-dark-danger/50 hover:bg-danger/5 dark:hover:bg-dark-danger/5"
 
   defp card_variant_hover_classes("outline", "warning"),
-    do:
-      "hover:border-warning/50 dark:hover:border-dark-warning/50 hover:bg-warning/5 dark:hover:bg-dark-warning/5"
+    do: "hover:border-warning/50 dark:hover:border-dark-warning/50 hover:bg-warning/5 dark:hover:bg-dark-warning/5"
 
   defp card_variant_hover_classes("outline", "info"),
-    do:
-      "hover:border-info/50 dark:hover:border-dark-info/50 hover:bg-info/5 dark:hover:bg-dark-info/5"
+    do: "hover:border-info/50 dark:hover:border-dark-info/50 hover:bg-info/5 dark:hover:bg-dark-info/5"
 
-  defp card_variant_hover_classes("ghost", "neutral"),
-    do: "hover:bg-neutral/10 dark:hover:bg-dark-neutral/10"
+  defp card_variant_hover_classes("ghost", "neutral"), do: "hover:bg-neutral/10 dark:hover:bg-dark-neutral/10"
 
-  defp card_variant_hover_classes("ghost", "primary"),
-    do: "hover:bg-primary/10 dark:hover:bg-dark-primary/10"
+  defp card_variant_hover_classes("ghost", "primary"), do: "hover:bg-primary/10 dark:hover:bg-dark-primary/10"
 
-  defp card_variant_hover_classes("ghost", "secondary"),
-    do: "hover:bg-secondary/10 dark:hover:bg-dark-secondary/10"
+  defp card_variant_hover_classes("ghost", "secondary"), do: "hover:bg-secondary/10 dark:hover:bg-dark-secondary/10"
 
-  defp card_variant_hover_classes("ghost", "success"),
-    do: "hover:bg-success/10 dark:hover:bg-dark-success/10"
+  defp card_variant_hover_classes("ghost", "success"), do: "hover:bg-success/10 dark:hover:bg-dark-success/10"
 
-  defp card_variant_hover_classes("ghost", "danger"),
-    do: "hover:bg-danger/10 dark:hover:bg-dark-danger/10"
+  defp card_variant_hover_classes("ghost", "danger"), do: "hover:bg-danger/10 dark:hover:bg-dark-danger/10"
 
-  defp card_variant_hover_classes("ghost", "warning"),
-    do: "hover:bg-warning/10 dark:hover:bg-dark-warning/10"
+  defp card_variant_hover_classes("ghost", "warning"), do: "hover:bg-warning/10 dark:hover:bg-dark-warning/10"
 
-  defp card_variant_hover_classes("ghost", "info"),
-    do: "hover:bg-info/10 dark:hover:bg-dark-info/10"
+  defp card_variant_hover_classes("ghost", "info"), do: "hover:bg-info/10 dark:hover:bg-dark-info/10"
 
   # Card checked state classes by variant and color - using :checked pseudo-class
   @spec card_variant_checked_classes(String.t(), String.t()) :: String.t()
@@ -909,14 +877,13 @@ defmodule Pulsar.Components.RadioGroup do
   # Helper for proper value comparison using Phoenix's normalization
   @spec values_equal?(any(), any()) :: boolean()
   defp values_equal?(val1, val2) do
-    Phoenix.HTML.Form.normalize_value("radio", val1) ==
-      Phoenix.HTML.Form.normalize_value("radio", val2)
+    Form.normalize_value("radio", val1) ==
+      Form.normalize_value("radio", val2)
   end
 
   # Helper for error detection - checks if a Phoenix form field has validation errors
   @spec has_field_errors(map()) :: boolean()
-  defp has_field_errors(%{field: %FormField{errors: errs}}) when is_list(errs) and errs != [],
-    do: true
+  defp has_field_errors(%{field: %FormField{errors: errs}}) when is_list(errs) and errs != [], do: true
 
   defp has_field_errors(_), do: false
 end
