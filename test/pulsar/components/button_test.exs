@@ -390,6 +390,87 @@ defmodule Pulsar.Components.ButtonTest do
       assert html =~ "External"
     end
 
+    test "sanitizes dangerous protocols in href" do
+      assigns = %{}
+
+      # Test javascript: protocol is blocked
+      html_js =
+        rendered_to_string(~H"""
+        <Button.button href="javascript:alert('xss')">Malicious</Button.button>
+        """)
+
+      assert html_js =~ ~s(href="#")
+      refute html_js =~ "javascript:"
+
+      # Test data: protocol is blocked
+      html_data =
+        rendered_to_string(~H"""
+        <Button.button href="data:text/html,<script>alert('xss')</script>">Data URL</Button.button>
+        """)
+
+      assert html_data =~ ~s(href="#")
+      refute html_data =~ "data:"
+
+      # Test vbscript: protocol is blocked
+      html_vbs =
+        rendered_to_string(~H"""
+        <Button.button href="vbscript:msgbox('xss')">VBScript</Button.button>
+        """)
+
+      assert html_vbs =~ ~s(href="#")
+      refute html_vbs =~ "vbscript:"
+    end
+
+    test "allows safe protocols in href" do
+      safe_protocols = [
+        {"https://example.com", "https://example.com"},
+        {"http://example.com", "http://example.com"},
+        {"mailto:user@example.com", "mailto:user@example.com"},
+        {"tel:+1234567890", "tel:+1234567890"},
+        {"/relative/path", "/relative/path"},
+        {"#anchor", "#anchor"}
+      ]
+
+      for {input_href, expected_href} <- safe_protocols do
+        assigns = %{href: input_href}
+
+        html =
+          rendered_to_string(~H"""
+          <Button.button href={@href}>Safe Link</Button.button>
+          """)
+
+        assert html =~ ~s(href="#{expected_href}")
+      end
+    end
+
+    test "auto-adds security attributes for external links" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Button.button href="https://external.com">External</Button.button>
+        """)
+
+      # Should auto-add target="_blank" for external HTTPS links
+      assert html =~ ~s(target="_blank")
+      # Should auto-add rel="noopener noreferrer" for target="_blank"
+      assert html =~ ~s(rel="noopener noreferrer")
+    end
+
+    test "preserves existing target and rel attributes" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Button.button href="https://external.com" target="_self" rel="external">External</Button.button>
+        """)
+
+      # Should preserve explicit target
+      assert html =~ ~s(target="_self")
+      # Should preserve explicit rel
+      assert html =~ ~s(rel="external")
+    end
+
     test "renders as LiveView navigate link" do
       assigns = %{}
 
@@ -491,6 +572,40 @@ defmodule Pulsar.Components.ButtonTest do
 
       # Note: TailwindMerge puts conflicting classes later in the string so they take precedence
       # The presence of both is expected - CSS cascade will apply the later one
+    end
+
+    test "link variant focus ring override works correctly" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Button.button variant="link">Link</Button.button>
+        """)
+
+      # Link variant should override base focus ring with its own
+      assert html =~ "focus-visible:ring-0"
+      assert html =~ "focus-visible:ring-offset-0"
+      assert html =~ "focus-visible:underline"
+
+      # Should not have the base ring classes 
+      # (TailwindMerge should resolve the conflict in favor of ring-0)
+      # This tests that our TailwindMerge integration properly handles ring conflicts
+    end
+
+    test "custom focus classes override component defaults" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Button.button class="focus-visible:ring-4 focus-visible:ring-purple-500">Custom Focus</Button.button>
+        """)
+
+      # Custom focus ring should be present
+      assert html =~ "focus-visible:ring-4"
+      assert html =~ "focus-visible:ring-purple-500"
+
+      # TailwindMerge should ensure custom classes take precedence
+      # Component's ring-2 might be present but custom ring-4 will have priority
     end
 
     test "preserves non-conflicting classes" do

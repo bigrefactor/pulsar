@@ -19,8 +19,9 @@ defmodule Pulsar.Components.Button do
 
   ## Security
 
-  - **XSS Protection**: href attributes are sanitized automatically
-  - **Navigation Safety**: Proper handling of external links
+  - **XSS Protection**: href attributes sanitized to block dangerous protocols (javascript:, data:, etc.)
+  - **External Link Safety**: Auto-adds rel="noopener noreferrer" for target="_blank" links
+  - **Navigation Safety**: Proper handling of external links with security attributes
   - **Pseudo-button Accessibility**: keyboard navigation for div/a buttons
 
   ## Examples
@@ -73,6 +74,56 @@ defmodule Pulsar.Components.Button do
   # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
   defp generate_id(prefix \\ "button") do
     "#{prefix}-#{System.unique_integer([:positive])}"
+  end
+
+  # Security - dangerous protocols to block (from link component)
+  @dangerous_protocols ~w(javascript data vbscript about file)
+
+  # Sanitize href to prevent XSS via dangerous protocols
+  defp sanitize_href(nil), do: nil
+
+  defp sanitize_href(href) when is_binary(href) do
+    trimmed = String.trim(href)
+
+    case Regex.run(~r/^\s*([a-z][a-z0-9+.\-]*):/i, trimmed) do
+      [_, scheme] -> if String.downcase(scheme) in @dangerous_protocols, do: "#", else: trimmed
+      _ -> trimmed
+    end
+  end
+
+  # Detect external links
+  defp external_link?(nil), do: false
+
+  defp external_link?(href) when is_binary(href) do
+    (String.starts_with?(href, "//") && !String.starts_with?(href, "///")) ||
+      case URI.parse(href) do
+        %URI{scheme: scheme} when is_binary(scheme) ->
+          String.downcase(scheme) in ["http", "https", "mailto", "tel", "ftp"]
+
+        _ ->
+          false
+      end
+  end
+
+  # Apply security attributes for external links
+  defp apply_external_security(assigns, false), do: assigns
+
+  defp apply_external_security(assigns, true) do
+    assigns =
+      case URI.parse(assigns.href || "") do
+        %URI{scheme: scheme} when scheme in ["http", "https"] ->
+          if Map.has_key?(assigns.rest, :target), do: assigns, else: put_in(assigns.rest[:target], "_blank")
+
+        _ ->
+          assigns
+      end
+
+    if get_in(assigns.rest, [:target]) == "_blank" do
+      rel = get_in(assigns.rest, [:rel]) || "noopener noreferrer"
+      put_in(assigns.rest[:rel], rel)
+    else
+      assigns
+    end
   end
 
   # Pulsar-specific styling attributes
@@ -134,10 +185,9 @@ defmodule Pulsar.Components.Button do
     doc: "Disable the button"
   )
 
-  attr(:pressed, :atom,
-    values: [true, false, nil],
+  attr(:pressed, :boolean,
     default: nil,
-    doc: "Toggle button pressed state"
+    doc: "Toggle button pressed state (tri-state: true, false, or nil)"
   )
 
   attr(:expanded, :any,
@@ -201,6 +251,10 @@ defmodule Pulsar.Components.Button do
   - **solid, outline, ghost variants**: Size controls height, padding, and text size
   - **link variant**: Size is ignored to preserve natural text flow. Links adapt to surrounding text.
 
+  ## Icon Spacing
+  - **solid, outline, ghost variants**: Use `inline-flex` with automatic gap spacing
+  - **link variant**: Uses `inline` layout. Icons next to text require manual spacing (`ml-1`, `mr-1`, etc.)
+
   ## Examples
 
       # Link buttons ignore size - they flow with surrounding text
@@ -213,6 +267,15 @@ defmodule Pulsar.Components.Button do
     # Stellar's validation logic
     ensure_nav_exclusive!(assigns)
     assigns = ensure_disclosure_linkage!(assigns)
+
+    # Security: sanitize href and apply external link security
+    sanitized_href = sanitize_href(assigns.href)
+    is_external = external_link?(sanitized_href)
+
+    assigns =
+      assigns
+      |> assign(:href, sanitized_href)
+      |> apply_external_security(is_external)
 
     # Ensure ID exists for hook functionality (replacing IdGenerator)
     assigns = assign_new(assigns, :id, fn -> generate_id() end)
@@ -250,6 +313,7 @@ defmodule Pulsar.Components.Button do
       id={@id}
       class={@merged_classes}
       aria-busy={aria_flag(@loading)}
+      aria-disabled={aria_flag(@disabled || @loading)}
       aria-pressed={if is_boolean(@pressed), do: aria_tf(@pressed), else: nil}
       aria-expanded={aria_tf(@expanded)}
       aria-controls={@controls}
@@ -261,28 +325,7 @@ defmodule Pulsar.Components.Button do
       data-expanded={data_tf(@expanded)}
       {@rest}
     >
-      <div :if={@loading && @variant != "link" && @loading_content != []}>
-        {render_slot(@loading_content)}
-      </div>
-      <svg
-        :if={@loading && @show_loading_spinner && @variant != "link" && @loading_content == []}
-        aria-hidden="true"
-        class={spinner_size_classes(@size)}
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
-        <path
-          fill="currentColor"
-          class="opacity-75"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-        >
-        </path>
-      </svg>
-      <div :if={!@loading || @loading_content == []}>
-        {render_slot(@inner_block)}
-      </div>
+      <.render_button_content {assigns} />
     </button>
     """
   end
@@ -324,28 +367,7 @@ defmodule Pulsar.Components.Button do
       data-expanded={data_tf(@expanded)}
       {@rest}
     >
-      <div :if={@loading && @variant != "link" && @loading_content != []}>
-        {render_slot(@loading_content)}
-      </div>
-      <svg
-        :if={@loading && @show_loading_spinner && @variant != "link" && @loading_content == []}
-        aria-hidden="true"
-        class={spinner_size_classes(@size)}
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
-        <path
-          fill="currentColor"
-          class="opacity-75"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-        >
-        </path>
-      </svg>
-      <div :if={!@loading || @loading_content == []}>
-        {render_slot(@inner_block)}
-      </div>
+      <.render_button_content {assigns} />
     </a>
     """
   end
@@ -372,28 +394,7 @@ defmodule Pulsar.Components.Button do
       data-expanded={data_tf(@expanded)}
       {@rest}
     >
-      <div :if={@loading && @variant != "link" && @loading_content != []}>
-        {render_slot(@loading_content)}
-      </div>
-      <svg
-        :if={@loading && @show_loading_spinner && @variant != "link" && @loading_content == []}
-        aria-hidden="true"
-        class={spinner_size_classes(@size)}
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
-        <path
-          fill="currentColor"
-          class="opacity-75"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-        >
-        </path>
-      </svg>
-      <div :if={!@loading || @loading_content == []}>
-        {render_slot(@inner_block)}
-      </div>
+      <.render_button_content {assigns} />
     </div>
     """
   end
@@ -420,28 +421,7 @@ defmodule Pulsar.Components.Button do
       data-expanded={data_tf(@expanded)}
       {@rest}
     >
-      <div :if={@loading && @variant != "link" && @loading_content != []}>
-        {render_slot(@loading_content)}
-      </div>
-      <svg
-        :if={@loading && @show_loading_spinner && @variant != "link" && @loading_content == []}
-        aria-hidden="true"
-        class={spinner_size_classes(@size)}
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
-        <path
-          fill="currentColor"
-          class="opacity-75"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-        >
-        </path>
-      </svg>
-      <div :if={!@loading || @loading_content == []}>
-        {render_slot(@inner_block)}
-      </div>
+      <.render_button_content {assigns} />
     </a>
     """
   end
@@ -468,28 +448,7 @@ defmodule Pulsar.Components.Button do
       data-expanded={data_tf(@expanded)}
       {@rest}
     >
-      <div :if={@loading && @variant != "link" && @loading_content != []}>
-        {render_slot(@loading_content)}
-      </div>
-      <svg
-        :if={@loading && @show_loading_spinner && @variant != "link" && @loading_content == []}
-        aria-hidden="true"
-        class={spinner_size_classes(@size)}
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
-        <path
-          fill="currentColor"
-          class="opacity-75"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-        >
-        </path>
-      </svg>
-      <div :if={!@loading || @loading_content == []}>
-        {render_slot(@inner_block)}
-      </div>
+      <.render_button_content {assigns} />
     </a>
     """
   end
@@ -515,29 +474,36 @@ defmodule Pulsar.Components.Button do
       data-expanded={data_tf(@expanded)}
       {@rest}
     >
-      <div :if={@loading && @variant != "link" && @loading_content != []}>
-        {render_slot(@loading_content)}
-      </div>
-      <svg
-        :if={@loading && @show_loading_spinner && @variant != "link" && @loading_content == []}
-        aria-hidden="true"
-        class={spinner_size_classes(@size)}
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
-        <path
-          fill="currentColor"
-          class="opacity-75"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-        >
-        </path>
-      </svg>
-      <div :if={!@loading || @loading_content == []}>
-        {render_slot(@inner_block)}
-      </div>
+      <.render_button_content {assigns} />
     </.link>
+    """
+  end
+
+  # Extract content rendering to eliminate 5x duplication
+  defp render_button_content(assigns) do
+    ~H"""
+    <div :if={@loading && @variant != "link" && @loading_content != []}>
+      {render_slot(@loading_content)}
+    </div>
+    <svg
+      :if={@loading && @show_loading_spinner && @variant != "link" && @loading_content == []}
+      aria-hidden="true"
+      class={spinner_size_classes(@size)}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
+      <path
+        fill="currentColor"
+        class="opacity-75"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+      >
+      </path>
+    </svg>
+    <div :if={!@loading || @loading_content == []}>
+      {render_slot(@inner_block)}
+    </div>
     """
   end
 
@@ -735,27 +701,22 @@ defmodule Pulsar.Components.Button do
       "text-info hover:bg-info/10 active:bg-info/20 dark:text-dark-info dark:hover:bg-dark-info/10 dark:active:bg-dark-info/20"
 
   defp color_classes("link", "neutral"),
-    do:
-      "text-muted-foreground dark:text-dark-muted-foreground hover:text-foreground dark:hover:text-dark-foreground"
+    do: "text-muted-foreground dark:text-dark-muted-foreground hover:text-foreground dark:hover:text-dark-foreground"
 
   defp color_classes("link", "primary"),
-    do:
-      "text-primary hover:text-primary/80 dark:text-dark-primary dark:hover:text-dark-primary/80"
+    do: "text-primary hover:text-primary/80 dark:text-dark-primary dark:hover:text-dark-primary/80"
 
   defp color_classes("link", "secondary"),
-    do:
-      "text-secondary hover:text-secondary/80 dark:text-dark-secondary dark:hover:text-dark-secondary/80"
+    do: "text-secondary hover:text-secondary/80 dark:text-dark-secondary dark:hover:text-dark-secondary/80"
 
   defp color_classes("link", "success"),
-    do:
-      "text-success hover:text-success/80 dark:text-dark-success dark:hover:text-dark-success/80"
+    do: "text-success hover:text-success/80 dark:text-dark-success dark:hover:text-dark-success/80"
 
   defp color_classes("link", "danger"),
     do: "text-danger hover:text-danger/80 dark:text-dark-danger dark:hover:text-dark-danger/80"
 
   defp color_classes("link", "warning"),
-    do:
-      "text-warning hover:text-warning/80 dark:text-dark-warning dark:hover:text-dark-warning/80"
+    do: "text-warning hover:text-warning/80 dark:text-dark-warning dark:hover:text-dark-warning/80"
 
   defp color_classes("link", "info"),
     do: "text-info hover:text-info/80 dark:text-dark-info dark:hover:text-dark-info/80"
