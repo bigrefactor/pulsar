@@ -54,3 +54,4 @@ pulsar-*.tar
 # Environment files
 .env
 .env.local
+.expert/
