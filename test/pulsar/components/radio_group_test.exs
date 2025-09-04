@@ -21,7 +21,7 @@ defmodule Pulsar.Components.RadioGroupTest do
       assert html =~ ~s(name="plan")
       assert html =~ ~s(value="basic")
       # Check for layout classes
-      assert html =~ "flex flex-col gap-4"
+      assert html =~ "flex flex-col gap-3"
     end
 
     test "renders radio options with proper structure" do
@@ -212,10 +212,11 @@ defmodule Pulsar.Components.RadioGroupTest do
         """)
 
       assert html =~ ~s(name="user[plan]")
-      assert html =~ ~s(id="user_plan")
       # Should automatically use danger color due to validation errors
       assert html =~ "checked:border-danger"
-      assert html =~ "can&#39;t be blank"
+      # Verify invalid state is set correctly
+      assert html =~ ~s(data-invalid="true")
+      assert html =~ ~s(aria-invalid="true")
     end
   end
 

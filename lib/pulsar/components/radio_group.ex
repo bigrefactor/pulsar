@@ -158,9 +158,6 @@ defmodule Pulsar.Components.RadioGroup do
   attr(:invalid, :boolean, default: nil, doc: "Marks the radio group as having validation errors")
   attr(:required, :boolean, default: false, doc: "Marks the radio group as required")
 
-  # Error handling
-  attr(:error_message, :string, default: nil, doc: "Error message for invalid state")
-
   # Styling
   attr(:class, :string, default: "", doc: "Additional CSS classes")
 
@@ -218,7 +215,7 @@ defmodule Pulsar.Components.RadioGroup do
     invalid = if is_nil(user_invalid), do: has_errors, else: user_invalid
     effective_color = if invalid, do: "danger", else: assigns.color
 
-    # Compute name and value from field if not provided  
+    # Compute name and value from field if not provided
     # Note: ID is handled by Stellar's normalize_field_props, no need to duplicate
     name = assigns[:name] || (assigns[:field] && assigns.field.name)
     current_value = assigns[:value] || (assigns[:field] && assigns.field.value)
@@ -251,7 +248,6 @@ defmodule Pulsar.Components.RadioGroup do
       disabled={@disabled}
       invalid={@invalid}
       required={@required}
-      error_message={@error_message}
       class={@container_class}
       {@rest}
     >
@@ -334,7 +330,7 @@ defmodule Pulsar.Components.RadioGroup do
         Map.get(assigns.option, :class, "")
       ]
       |> Enum.filter(&(&1 != ""))
-      |> Enum.join(" ")
+      |> merge()
 
     # Build radio input classes
     radio_class =
@@ -369,8 +365,8 @@ defmodule Pulsar.Components.RadioGroup do
         aria-describedby={"#{@radio_id}-content"}
         class={@radio_class}
       />
-      <div 
-        class="flex-1 min-w-0 overflow-hidden" 
+      <div
+        class="flex-1 min-w-0 overflow-hidden"
         id={"#{@radio_id}-content"}
         aria-hidden={@hide_radios && "true"}
       >
@@ -383,7 +379,7 @@ defmodule Pulsar.Components.RadioGroup do
   # Base styles for radio group container
   @spec container_base_classes() :: String.t()
   defp container_base_classes do
-    ""
+    "flex flex-col gap-3"
   end
 
   # Radio color classes - only generates needed classes for the selected color
@@ -612,9 +608,9 @@ defmodule Pulsar.Components.RadioGroup do
 
   # Classes for radio labels (standard non-card)
   @spec radio_label_classes(String.t(), String.t()) :: String.t()
-  defp radio_label_classes(size, color) do
+  defp radio_label_classes(size, _color) do
     base_classes = "cursor-pointer select-none transition-all duration-200 flex-1 min-w-0"
-    "#{base_classes} #{radio_label_text_classes(size)} #{radio_label_color_classes(color)}"
+    "#{base_classes} #{radio_label_text_classes(size)} #{radio_label_color_classes("neutral")}"
   end
 
   # Text size classes for radio labels
@@ -651,26 +647,19 @@ defmodule Pulsar.Components.RadioGroup do
 
   # Card focus ring classes by color
   @spec card_focus_ring_classes(String.t()) :: String.t()
-  defp card_focus_ring_classes("neutral"),
-    do: "focus-within:ring-neutral dark:focus-within:ring-dark-neutral"
+  defp card_focus_ring_classes("neutral"), do: "focus-within:ring-neutral dark:focus-within:ring-dark-neutral"
 
-  defp card_focus_ring_classes("primary"),
-    do: "focus-within:ring-primary dark:focus-within:ring-dark-primary"
+  defp card_focus_ring_classes("primary"), do: "focus-within:ring-primary dark:focus-within:ring-dark-primary"
 
-  defp card_focus_ring_classes("secondary"),
-    do: "focus-within:ring-secondary dark:focus-within:ring-dark-secondary"
+  defp card_focus_ring_classes("secondary"), do: "focus-within:ring-secondary dark:focus-within:ring-dark-secondary"
 
-  defp card_focus_ring_classes("success"),
-    do: "focus-within:ring-success dark:focus-within:ring-dark-success"
+  defp card_focus_ring_classes("success"), do: "focus-within:ring-success dark:focus-within:ring-dark-success"
 
-  defp card_focus_ring_classes("danger"),
-    do: "focus-within:ring-danger dark:focus-within:ring-dark-danger"
+  defp card_focus_ring_classes("danger"), do: "focus-within:ring-danger dark:focus-within:ring-dark-danger"
 
-  defp card_focus_ring_classes("warning"),
-    do: "focus-within:ring-warning dark:focus-within:ring-dark-warning"
+  defp card_focus_ring_classes("warning"), do: "focus-within:ring-warning dark:focus-within:ring-dark-warning"
 
-  defp card_focus_ring_classes("info"),
-    do: "focus-within:ring-info dark:focus-within:ring-dark-info"
+  defp card_focus_ring_classes("info"), do: "focus-within:ring-info dark:focus-within:ring-dark-info"
 
   # Card variant styles with direct color classes
   @spec card_variant_classes(String.t(), String.t()) :: String.t()
@@ -705,11 +694,9 @@ defmodule Pulsar.Components.RadioGroup do
 
   # Card background classes by variant
   @spec card_variant_background_classes(String.t(), String.t()) :: String.t()
-  defp card_variant_background_classes("solid", _color),
-    do: "bg-background dark:bg-dark-background"
+  defp card_variant_background_classes("solid", _color), do: "bg-background dark:bg-dark-background"
 
-  defp card_variant_background_classes("outline", _color),
-    do: "bg-background dark:bg-dark-background"
+  defp card_variant_background_classes("outline", _color), do: "bg-background dark:bg-dark-background"
 
   defp card_variant_background_classes("ghost", _color), do: "bg-transparent"
 
@@ -719,147 +706,127 @@ defmodule Pulsar.Components.RadioGroup do
 
   # Card hover classes by variant and color
   @spec card_variant_hover_classes(String.t(), String.t()) :: String.t()
-  defp card_variant_hover_classes("solid", "neutral"),
-    do: "hover:bg-neutral/10 dark:hover:bg-dark-neutral/10"
+  defp card_variant_hover_classes("solid", "neutral"), do: "hover:bg-neutral/10 dark:hover:bg-dark-neutral/10"
 
-  defp card_variant_hover_classes("solid", "primary"),
-    do: "hover:bg-primary/10 dark:hover:bg-dark-primary/10"
+  defp card_variant_hover_classes("solid", "primary"), do: "hover:bg-primary/10 dark:hover:bg-dark-primary/10"
 
-  defp card_variant_hover_classes("solid", "secondary"),
-    do: "hover:bg-secondary/10 dark:hover:bg-dark-secondary/10"
+  defp card_variant_hover_classes("solid", "secondary"), do: "hover:bg-secondary/10 dark:hover:bg-dark-secondary/10"
 
-  defp card_variant_hover_classes("solid", "success"),
-    do: "hover:bg-success/10 dark:hover:bg-dark-success/10"
+  defp card_variant_hover_classes("solid", "success"), do: "hover:bg-success/10 dark:hover:bg-dark-success/10"
 
-  defp card_variant_hover_classes("solid", "danger"),
-    do: "hover:bg-danger/10 dark:hover:bg-dark-danger/10"
+  defp card_variant_hover_classes("solid", "danger"), do: "hover:bg-danger/10 dark:hover:bg-dark-danger/10"
 
-  defp card_variant_hover_classes("solid", "warning"),
-    do: "hover:bg-warning/10 dark:hover:bg-dark-warning/10"
+  defp card_variant_hover_classes("solid", "warning"), do: "hover:bg-warning/10 dark:hover:bg-dark-warning/10"
 
-  defp card_variant_hover_classes("solid", "info"),
-    do: "hover:bg-info/10 dark:hover:bg-dark-info/10"
+  defp card_variant_hover_classes("solid", "info"), do: "hover:bg-info/10 dark:hover:bg-dark-info/10"
 
   defp card_variant_hover_classes("outline", "neutral"),
-    do:
-      "hover:border-neutral/50 dark:hover:border-dark-neutral/50 hover:bg-neutral/5 dark:hover:bg-dark-neutral/5"
+    do: "hover:border-neutral/50 dark:hover:border-dark-neutral/50 hover:bg-neutral/5 dark:hover:bg-dark-neutral/5"
 
   defp card_variant_hover_classes("outline", "primary"),
-    do:
-      "hover:border-primary/50 dark:hover:border-dark-primary/50 hover:bg-primary/5 dark:hover:bg-dark-primary/5"
+    do: "hover:border-primary/50 dark:hover:border-dark-primary/50 hover:bg-primary/5 dark:hover:bg-dark-primary/5"
 
   defp card_variant_hover_classes("outline", "secondary"),
     do:
       "hover:border-secondary/50 dark:hover:border-dark-secondary/50 hover:bg-secondary/5 dark:hover:bg-dark-secondary/5"
 
   defp card_variant_hover_classes("outline", "success"),
-    do:
-      "hover:border-success/50 dark:hover:border-dark-success/50 hover:bg-success/5 dark:hover:bg-dark-success/5"
+    do: "hover:border-success/50 dark:hover:border-dark-success/50 hover:bg-success/5 dark:hover:bg-dark-success/5"
 
   defp card_variant_hover_classes("outline", "danger"),
-    do:
-      "hover:border-danger/50 dark:hover:border-dark-danger/50 hover:bg-danger/5 dark:hover:bg-dark-danger/5"
+    do: "hover:border-danger/50 dark:hover:border-dark-danger/50 hover:bg-danger/5 dark:hover:bg-dark-danger/5"
 
   defp card_variant_hover_classes("outline", "warning"),
-    do:
-      "hover:border-warning/50 dark:hover:border-dark-warning/50 hover:bg-warning/5 dark:hover:bg-dark-warning/5"
+    do: "hover:border-warning/50 dark:hover:border-dark-warning/50 hover:bg-warning/5 dark:hover:bg-dark-warning/5"
 
   defp card_variant_hover_classes("outline", "info"),
-    do:
-      "hover:border-info/50 dark:hover:border-dark-info/50 hover:bg-info/5 dark:hover:bg-dark-info/5"
+    do: "hover:border-info/50 dark:hover:border-dark-info/50 hover:bg-info/5 dark:hover:bg-dark-info/5"
 
-  defp card_variant_hover_classes("ghost", "neutral"),
-    do: "hover:bg-neutral/10 dark:hover:bg-dark-neutral/10"
+  defp card_variant_hover_classes("ghost", "neutral"), do: "hover:bg-neutral/10 dark:hover:bg-dark-neutral/10"
 
-  defp card_variant_hover_classes("ghost", "primary"),
-    do: "hover:bg-primary/10 dark:hover:bg-dark-primary/10"
+  defp card_variant_hover_classes("ghost", "primary"), do: "hover:bg-primary/10 dark:hover:bg-dark-primary/10"
 
-  defp card_variant_hover_classes("ghost", "secondary"),
-    do: "hover:bg-secondary/10 dark:hover:bg-dark-secondary/10"
+  defp card_variant_hover_classes("ghost", "secondary"), do: "hover:bg-secondary/10 dark:hover:bg-dark-secondary/10"
 
-  defp card_variant_hover_classes("ghost", "success"),
-    do: "hover:bg-success/10 dark:hover:bg-dark-success/10"
+  defp card_variant_hover_classes("ghost", "success"), do: "hover:bg-success/10 dark:hover:bg-dark-success/10"
 
-  defp card_variant_hover_classes("ghost", "danger"),
-    do: "hover:bg-danger/10 dark:hover:bg-dark-danger/10"
+  defp card_variant_hover_classes("ghost", "danger"), do: "hover:bg-danger/10 dark:hover:bg-dark-danger/10"
 
-  defp card_variant_hover_classes("ghost", "warning"),
-    do: "hover:bg-warning/10 dark:hover:bg-dark-warning/10"
+  defp card_variant_hover_classes("ghost", "warning"), do: "hover:bg-warning/10 dark:hover:bg-dark-warning/10"
 
-  defp card_variant_hover_classes("ghost", "info"),
-    do: "hover:bg-info/10 dark:hover:bg-dark-info/10"
+  defp card_variant_hover_classes("ghost", "info"), do: "hover:bg-info/10 dark:hover:bg-dark-info/10"
 
-  # Card checked state classes by variant and color
+  # Card checked state classes by variant and color - using :checked pseudo-class
   @spec card_variant_checked_classes(String.t(), String.t()) :: String.t()
   defp card_variant_checked_classes("solid", "neutral"),
-    do: "data-[checked=true]:bg-neutral/20 dark:data-[checked=true]:bg-dark-neutral/20"
+    do: "has-[:checked]:bg-neutral/20 dark:has-[:checked]:bg-dark-neutral/20"
 
   defp card_variant_checked_classes("solid", "primary"),
-    do: "data-[checked=true]:bg-primary/20 dark:data-[checked=true]:bg-dark-primary/20"
+    do: "has-[:checked]:bg-primary/20 dark:has-[:checked]:bg-dark-primary/20"
 
   defp card_variant_checked_classes("solid", "secondary"),
-    do: "data-[checked=true]:bg-secondary/20 dark:data-[checked=true]:bg-dark-secondary/20"
+    do: "has-[:checked]:bg-secondary/20 dark:has-[:checked]:bg-dark-secondary/20"
 
   defp card_variant_checked_classes("solid", "success"),
-    do: "data-[checked=true]:bg-success/20 dark:data-[checked=true]:bg-dark-success/20"
+    do: "has-[:checked]:bg-success/20 dark:has-[:checked]:bg-dark-success/20"
 
   defp card_variant_checked_classes("solid", "danger"),
-    do: "data-[checked=true]:bg-danger/20 dark:data-[checked=true]:bg-dark-danger/20"
+    do: "has-[:checked]:bg-danger/20 dark:has-[:checked]:bg-dark-danger/20"
 
   defp card_variant_checked_classes("solid", "warning"),
-    do: "data-[checked=true]:bg-warning/20 dark:data-[checked=true]:bg-dark-warning/20"
+    do: "has-[:checked]:bg-warning/20 dark:has-[:checked]:bg-dark-warning/20"
 
   defp card_variant_checked_classes("solid", "info"),
-    do: "data-[checked=true]:bg-info/20 dark:data-[checked=true]:bg-dark-info/20"
+    do: "has-[:checked]:bg-info/20 dark:has-[:checked]:bg-dark-info/20"
 
   defp card_variant_checked_classes("outline", "neutral"),
     do:
-      "data-[checked=true]:border-neutral dark:data-[checked=true]:border-dark-neutral data-[checked=true]:bg-neutral/10 dark:data-[checked=true]:bg-dark-neutral/10"
+      "has-[:checked]:border-neutral dark:has-[:checked]:border-dark-neutral has-[:checked]:bg-neutral/10 dark:has-[:checked]:bg-dark-neutral/10"
 
   defp card_variant_checked_classes("outline", "primary"),
     do:
-      "data-[checked=true]:border-primary dark:data-[checked=true]:border-dark-primary data-[checked=true]:bg-primary/10 dark:data-[checked=true]:bg-dark-primary/10"
+      "has-[:checked]:border-primary dark:has-[:checked]:border-dark-primary has-[:checked]:bg-primary/10 dark:has-[:checked]:bg-dark-primary/10"
 
   defp card_variant_checked_classes("outline", "secondary"),
     do:
-      "data-[checked=true]:border-secondary dark:data-[checked=true]:border-dark-secondary data-[checked=true]:bg-secondary/10 dark:data-[checked=true]:bg-dark-secondary/10"
+      "has-[:checked]:border-secondary dark:has-[:checked]:border-dark-secondary has-[:checked]:bg-secondary/10 dark:has-[:checked]:bg-dark-secondary/10"
 
   defp card_variant_checked_classes("outline", "success"),
     do:
-      "data-[checked=true]:border-success dark:data-[checked=true]:border-dark-success data-[checked=true]:bg-success/10 dark:data-[checked=true]:bg-dark-success/10"
+      "has-[:checked]:border-success dark:has-[:checked]:border-dark-success has-[:checked]:bg-success/10 dark:has-[:checked]:bg-dark-success/10"
 
   defp card_variant_checked_classes("outline", "danger"),
     do:
-      "data-[checked=true]:border-danger dark:data-[checked=true]:border-dark-danger data-[checked=true]:bg-danger/10 dark:data-[checked=true]:bg-dark-danger/10"
+      "has-[:checked]:border-danger dark:has-[:checked]:border-dark-danger has-[:checked]:bg-danger/10 dark:has-[:checked]:bg-dark-danger/10"
 
   defp card_variant_checked_classes("outline", "warning"),
     do:
-      "data-[checked=true]:border-warning dark:data-[checked=true]:border-dark-warning data-[checked=true]:bg-warning/10 dark:data-[checked=true]:bg-dark-warning/10"
+      "has-[:checked]:border-warning dark:has-[:checked]:border-dark-warning has-[:checked]:bg-warning/10 dark:has-[:checked]:bg-dark-warning/10"
 
   defp card_variant_checked_classes("outline", "info"),
     do:
-      "data-[checked=true]:border-info dark:data-[checked=true]:border-dark-info data-[checked=true]:bg-info/10 dark:data-[checked=true]:bg-dark-info/10"
+      "has-[:checked]:border-info dark:has-[:checked]:border-dark-info has-[:checked]:bg-info/10 dark:has-[:checked]:bg-dark-info/10"
 
   defp card_variant_checked_classes("ghost", "neutral"),
-    do: "data-[checked=true]:bg-neutral/15 dark:data-[checked=true]:bg-dark-neutral/15"
+    do: "has-[:checked]:bg-neutral/15 dark:has-[:checked]:bg-dark-neutral/15"
 
   defp card_variant_checked_classes("ghost", "primary"),
-    do: "data-[checked=true]:bg-primary/15 dark:data-[checked=true]:bg-dark-primary/15"
+    do: "has-[:checked]:bg-primary/15 dark:has-[:checked]:bg-dark-primary/15"
 
   defp card_variant_checked_classes("ghost", "secondary"),
-    do: "data-[checked=true]:bg-secondary/15 dark:data-[checked=true]:bg-dark-secondary/15"
+    do: "has-[:checked]:bg-secondary/15 dark:has-[:checked]:bg-dark-secondary/15"
 
   defp card_variant_checked_classes("ghost", "success"),
-    do: "data-[checked=true]:bg-success/15 dark:data-[checked=true]:bg-dark-success/15"
+    do: "has-[:checked]:bg-success/15 dark:has-[:checked]:bg-dark-success/15"
 
   defp card_variant_checked_classes("ghost", "danger"),
-    do: "data-[checked=true]:bg-danger/15 dark:data-[checked=true]:bg-dark-danger/15"
+    do: "has-[:checked]:bg-danger/15 dark:has-[:checked]:bg-dark-danger/15"
 
   defp card_variant_checked_classes("ghost", "warning"),
-    do: "data-[checked=true]:bg-warning/15 dark:data-[checked=true]:bg-dark-warning/15"
+    do: "has-[:checked]:bg-warning/15 dark:has-[:checked]:bg-dark-warning/15"
 
   defp card_variant_checked_classes("ghost", "info"),
-    do: "data-[checked=true]:bg-info/15 dark:data-[checked=true]:bg-dark-info/15"
+    do: "has-[:checked]:bg-info/15 dark:has-[:checked]:bg-dark-info/15"
 
   # Card text size styles
   @spec card_size_text_classes(String.t()) :: String.t()
@@ -893,8 +860,7 @@ defmodule Pulsar.Components.RadioGroup do
 
   # Helper for error detection - checks if a Phoenix form field has validation errors
   @spec has_field_errors(map()) :: boolean()
-  defp has_field_errors(%{field: %FormField{errors: errs}}) when is_list(errs) and errs != [],
-    do: true
+  defp has_field_errors(%{field: %FormField{errors: errs}}) when is_list(errs) and errs != [], do: true
 
   defp has_field_errors(_), do: false
 end
