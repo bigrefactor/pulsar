@@ -1,6 +1,6 @@
 defmodule Pulsar.Components.Checkbox do
   @moduledoc """
-  Styled checkbox component built on Stellar.Components.Checkbox.
+  Accessible checkbox component with built-in accessibility patterns.
 
   Provides beautiful, accessible checkboxes with animated checkmark, semantic variants,
   and consistent styling. All styling is applied via Tailwind CSS utilities with semantic
@@ -8,15 +8,15 @@ defmodule Pulsar.Components.Checkbox do
 
   ## Features
 
-  - **Stellar Foundation**: Built on Stellar's accessible checkbox component
+  - **Accessible by Default**: WCAG 2.1 AA compliance with proper ARIA attributes
   - **Size Variants**: xs, sm, md, lg, xl for complete range
   - **Color Variants**: neutral, primary, secondary, success, danger, warning for consistent theming
-  - **Indeterminate State**: Full tri-state support with visual animation
+  - **Indeterminate State**: Full tri-state support with visual animation and proper ARIA
   - **Card-style Options**: Enhanced layouts for rich checkbox experiences with checked state styling
   - **Hidden Checkbox**: Option to hide checkbox input for card-only selection interfaces
   - **Dark Mode**: Automatic light/dark mode support
   - **Phoenix Integration**: Automatic error styling when used with Phoenix forms
-  - **Full Stellar API**: All Stellar checkbox props are supported
+  - **Container Customization**: Full control over card container styling and events
 
   ## Examples
 
@@ -65,13 +65,14 @@ defmodule Pulsar.Components.Checkbox do
   When used with Phoenix forms, validation errors automatically override styling
   to show danger (red) styling. This provides consistent error feedback.
 
-  ## Stellar Integration
+  ## Core Attributes
 
-  This component wraps Stellar.Components.Checkbox and passes through all its props:
-  - `:field` - Phoenix form field integration
-  - `:checked`, `:indeterminate` - State management
-  - `:value`, `:unchecked_value` - Value handling
-  - `:disabled`, `:required` - Form states
+  This component provides comprehensive checkbox functionality:
+  - `:field` - Phoenix form field integration with automatic error handling
+  - `:checked`, `:indeterminate` - State management with proper ARIA attributes
+  - `:value`, `:unchecked_value` - Value handling for form submission
+  - `:disabled`, `:required` - Form states with visual feedback
+  - `:container_class` - Card container customization
   - All Phoenix LiveView attributes (phx-click, etc.)
   """
 
@@ -82,6 +83,56 @@ defmodule Pulsar.Components.Checkbox do
   alias Phoenix.HTML.FormField
   alias Phoenix.LiveView.Rendered
 
+  # ============================================================================
+  # CONFIGURATION & CONSTANTS
+  # ============================================================================
+
+  # Size configuration for both checkbox input and card variants
+  @size_config %{
+    "lg" => %{
+      card: "p-5 gap-4 text-lg",
+      input: "h-6 w-6 rounded-md before:rounded-md after:text-sm"
+    },
+    "md" => %{
+      card: "p-4 gap-3",
+      input: "h-5 w-5 rounded-md before:rounded-md after:text-xs"
+    },
+    "sm" => %{
+      card: "p-3 gap-2 text-sm",
+      input: "h-4 w-4 rounded before:rounded after:text-[10px]"
+    },
+    "xl" => %{
+      card: "p-6 gap-5 text-xl",
+      input: "h-7 w-7 rounded-lg before:rounded-lg after:text-base"
+    },
+    "xs" => %{
+      card: "p-2 gap-2 text-xs",
+      input: "h-3 w-3 rounded before:rounded after:text-[8px]"
+    }
+  }
+
+  # Base checkbox styling classes
+  @checkbox_base_classes [
+    "appearance-none relative cursor-pointer transition-all duration-200 ease-in-out",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+    "focus-visible:ring-ring dark:focus-visible:ring-dark-ring",
+    "disabled:cursor-not-allowed disabled:opacity-50",
+    "before:content-[''] before:absolute before:inset-0 before:rounded-[inherit]",
+    "before:border-2 before:transition-all before:duration-200 before:ease-in-out",
+    "after:content-['✓'] after:absolute after:inset-0 after:flex after:items-center after:justify-center",
+    "after:text-current after:font-bold after:transition-all after:duration-200 after:ease-in-out",
+    "after:scale-0 after:opacity-0",
+    "data-[checked=true]:after:scale-100 data-[checked=true]:after:opacity-100",
+    "data-[indeterminate=true]:after:content-['−'] data-[indeterminate=true]:after:scale-100 data-[indeterminate=true]:after:opacity-100"
+  ]
+
+  # Base card container styling classes
+  @card_base_classes [
+    "flex items-center gap-3 rounded-lg cursor-pointer transition-all duration-200 ease-in-out",
+    "focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-ring",
+    "dark:focus-within:ring-dark-ring has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50"
+  ]
+
   # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
   defp generate_id(prefix) do
     "#{prefix}-#{System.unique_integer([:positive])}"
@@ -91,22 +142,20 @@ defmodule Pulsar.Components.Checkbox do
   defp normalize_field_props(assigns) do
     field = assigns[:field]
 
-    cond do
-      field ->
-        %{
-          id: assigns[:id] || field.id || generate_id("checkbox"),
-          name: assigns[:name] || field.name,
-          checked: is_checked?(field.value, assigns[:value] || "true"),
-          errors: field.errors || []
-        }
-
-      true ->
-        %{
-          id: assigns[:id] || generate_id("checkbox"),
-          name: assigns[:name],
-          checked: assigns[:checked] || false,
-          errors: []
-        }
+    if field do
+      %{
+        checked: is_checked?(field.value, assigns[:value] || "true"),
+        errors: field.errors || [],
+        id: assigns[:id] || field.id || generate_id("checkbox"),
+        name: assigns[:name] || field.name
+      }
+    else
+      %{
+        checked: assigns[:checked] || false,
+        errors: [],
+        id: assigns[:id] || generate_id("checkbox"),
+        name: assigns[:name]
+      }
     end
   end
 
@@ -124,6 +173,38 @@ defmodule Pulsar.Components.Checkbox do
     |> assign(:name, normalized.name)
     |> assign(:checked, normalized.checked)
     |> assign(:field_errors, normalized.errors)
+  end
+
+  # ============================================================================
+  # CHECKBOX COMPONENT HELPERS
+  # ============================================================================
+
+  # Validates required attributes for the checkbox component
+  defp validates_attributes!(assigns) do
+    if is_nil(assigns[:field]) and is_nil(assigns[:name]) do
+      raise ArgumentError,
+            "Checkbox requires :field or :name; provide :name only when not using a Phoenix form field"
+    end
+  end
+
+  # Computes the effective color based on error state
+  defp compute_effective_color(assigns, normalized) do
+    has_errors = not Enum.empty?(normalized.errors)
+    user_invalid = Map.get(assigns, :invalid)
+    invalid = if is_nil(user_invalid), do: has_errors, else: user_invalid
+    effective_color = if invalid, do: "danger", else: assigns.color
+    {effective_color, invalid}
+  end
+
+  # Builds the merged class string for checkbox input
+  defp build_checkbox_input_classes(assigns, effective_color, invalid) do
+    merge([
+      base_checkbox_classes(),
+      size_classes(assigns.size),
+      color_classes(effective_color),
+      state_classes(assigns.disabled, invalid),
+      assigns.class
+    ])
   end
 
   # Pulsar-specific styling attributes
@@ -153,6 +234,12 @@ defmodule Pulsar.Components.Checkbox do
     default: "md",
     values: ~w(xs sm md lg xl),
     doc: "Size of the checkbox"
+  )
+
+  # Card container customization
+  attr(:container_class, :string,
+    default: "",
+    doc: "Additional CSS classes for the card container (label element in card mode)"
   )
 
   # Stellar checkbox attributes - copied from Stellar.Components.Checkbox
@@ -217,67 +304,57 @@ defmodule Pulsar.Components.Checkbox do
     doc: "Additional CSS classes"
   )
 
-  # Global attributes (allows all Phoenix and HTML attributes)
+  # Global attributes (applies to container in card mode, input in default mode)
   attr(:rest, :global, doc: "Additional HTML attributes")
 
   # Card variant slots
   slot(:inner_block, doc: "Main content for card variant (replaces checkbox content)")
 
   @doc """
-  Renders a styled checkbox component.
+  Renders an accessible checkbox component.
 
-  This function wraps Stellar.Components.Checkbox with Pulsar's styling system.
-  All Stellar props are passed through, with styling controlled via CSS classes
-  that respond to the checkbox's data attributes.
+  This function provides a self-contained checkbox with full accessibility support.
+  Styling is controlled via Tailwind CSS classes that respond to the checkbox's
+  data attributes, with automatic error state handling for Phoenix forms.
 
   ## Default vs Card Variant
   - **default**: Standard checkbox with clean, modern styling
-  - **card**: Rich checkbox layout with dedicated slots for structured content
+  - **card**: Rich checkbox layout with dedicated slots for structured content and container customization
+
+  ## Container Customization (Card Mode)
+  - `:container_class` - Additional CSS classes for the card container
+  - Global attributes (`:rest`) apply to the card container in card mode, checkbox input in default mode
 
   ## Examples
 
       # Standard checkbox
       <.checkbox field={@form[:terms]} color="primary" />
 
-       # Rich card layout  
-       <.checkbox card field={@form[:plan]} value="pro">
+       # Rich card layout with custom spacing
+       <.checkbox card field={@form[:plan]} value="pro" container_class="mb-4">
          <div class="font-medium">Pro Plan</div>
          <div class="text-sm text-muted-foreground mt-1">Everything in Basic plus advanced features</div>
          <div class="text-sm font-semibold mt-2">$19/month</div>
        </.checkbox>
 
-       # Card-only selection (no visible checkbox)
-       <.checkbox card hide_checkbox field={@form[:theme]} value="light">
+       # Card-only selection with event handling on container
+       <.checkbox 
+         card 
+         hide_checkbox 
+         field={@form[:theme]} 
+         value="light"
+         phx-click="select_theme"
+       >
          <div class="font-medium">Light Theme</div>
          <div class="text-sm text-muted-foreground mt-1">Clean and bright interface</div>
        </.checkbox>
   """
   @spec checkbox(map()) :: Rendered.t()
   def checkbox(assigns) do
-    # Validate required attributes
-    if is_nil(assigns[:field]) and is_nil(assigns[:name]) do
-      raise ArgumentError,
-            "Checkbox requires :field or :name; provide :name only when not using a Phoenix form field"
-    end
-
-    # Normalize field properties
+    validates_attributes!(assigns)
     normalized = normalize_field_props(assigns)
-
-    # Detect errors and compute automatic color
-    has_errors = not Enum.empty?(normalized.errors)
-    user_invalid = Map.get(assigns, :invalid)
-    invalid = if is_nil(user_invalid), do: has_errors, else: user_invalid
-    effective_color = if invalid, do: "danger", else: assigns.color
-
-    # Build class string for checkbox input
-    input_class =
-      merge([
-        base_checkbox_classes(),
-        size_classes(assigns.size),
-        color_classes(effective_color),
-        state_classes(assigns.disabled, invalid),
-        assigns.class
-      ])
+    {effective_color, invalid} = compute_effective_color(assigns, normalized)
+    input_class = build_checkbox_input_classes(assigns, effective_color, invalid)
 
     assigns =
       assigns
@@ -311,11 +388,13 @@ defmodule Pulsar.Components.Checkbox do
         checked={@checked}
         data-checked={@checked && "true"}
         data-indeterminate={@indeterminate && "true"}
+        data-disabled={@disabled && "true"}
         data-required={@required && "true"}
         class={@input_class}
         required={@required}
         disabled={@disabled}
         aria-invalid={@invalid && "true"}
+        aria-checked={@indeterminate && "mixed"}
         {@rest}
       />
     </div>
@@ -324,7 +403,7 @@ defmodule Pulsar.Components.Checkbox do
 
   # Card variant with generic content slot
   defp render_card_checkbox(assigns) do
-    container_class =
+    base_container_class =
       [
         [card_base_classes()],
         card_variant_classes(assigns.variant, assigns.effective_color),
@@ -332,23 +411,26 @@ defmodule Pulsar.Components.Checkbox do
         [card_state_classes(assigns.disabled, assigns.invalid)]
       ]
       |> List.flatten()
-      |> merge()
+
+    # Merge base classes with user-provided container_class
+    final_container_class = merge([base_container_class, assigns[:container_class] || ""])
 
     checkbox_class = if assigns.hide_checkbox, do: "sr-only", else: assigns.input_class
 
     assigns =
       assigns
-      |> assign(:container_class, container_class)
+      |> assign(:final_container_class, final_container_class)
       |> assign(:checkbox_class, checkbox_class)
 
     ~H"""
     <label
-      class={@container_class}
+      class={@final_container_class}
       data-checked={(@checked && "true") || "false"}
       data-indeterminate={(@indeterminate && "true") || "false"}
       data-disabled={(@disabled && "true") || "false"}
-      data-required={@required}
+      data-required={(@required && "true") || "false"}
       for={@id}
+      {@rest}
     >
       <input
         :if={@render_hidden}
@@ -364,13 +446,14 @@ defmodule Pulsar.Components.Checkbox do
         checked={@checked}
         data-checked={@checked && "true"}
         data-indeterminate={@indeterminate && "true"}
+        data-disabled={@disabled && "true"}
         data-required={@required && "true"}
         class={@checkbox_class}
         required={@required}
         disabled={@disabled}
         aria-invalid={@invalid && "true"}
+        aria-checked={@indeterminate && "mixed"}
         aria-describedby={"#{@id}-content"}
-        {@rest}
       />
 
       <div class="flex-1 min-w-0" id={"#{@id}-content"}>
@@ -381,31 +464,16 @@ defmodule Pulsar.Components.Checkbox do
   end
 
   # Base styles for checkbox input with custom checkmark
-  @spec base_checkbox_classes() :: String.t()
+  @spec base_checkbox_classes() :: list(String.t())
   defp base_checkbox_classes do
-    [
-      "appearance-none relative cursor-pointer transition-all duration-200 ease-in-out",
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-      "focus-visible:ring-ring dark:focus-visible:ring-dark-ring",
-      "disabled:cursor-not-allowed disabled:opacity-50",
-      "before:content-[''] before:absolute before:inset-0 before:rounded-inherit",
-      "before:border-2 before:transition-all before:duration-200 before:ease-in-out",
-      "after:content-['✓'] after:absolute after:inset-0 after:flex after:items-center after:justify-center",
-      "after:text-current after:font-bold after:transition-all after:duration-200 after:ease-in-out",
-      "after:scale-0 after:opacity-0",
-      "data-[checked=true]:after:scale-100 data-[checked=true]:after:opacity-100",
-      "data-[indeterminate=true]:after:content-['−'] data-[indeterminate=true]:after:scale-100 data-[indeterminate=true]:after:opacity-100"
-    ]
-    |> Enum.join(" ")
+    @checkbox_base_classes
   end
 
   # Size classes for checkbox
   @spec size_classes(String.t()) :: String.t()
-  defp size_classes("xs"), do: "h-3 w-3 rounded before:rounded after:text-[8px]"
-  defp size_classes("sm"), do: "h-4 w-4 rounded before:rounded after:text-[10px]"
-  defp size_classes("md"), do: "h-5 w-5 rounded-md before:rounded-md after:text-xs"
-  defp size_classes("lg"), do: "h-6 w-6 rounded-md before:rounded-md after:text-sm"
-  defp size_classes("xl"), do: "h-7 w-7 rounded-lg before:rounded-lg after:text-base"
+  defp size_classes(size) do
+    @size_config[size][:input]
+  end
 
   # Color classes for checkbox
   @spec color_classes(String.t()) :: String.t()
@@ -419,6 +487,21 @@ defmodule Pulsar.Components.Checkbox do
     |> List.flatten()
     |> Enum.join(" ")
   end
+
+  # ============================================================================
+  # CHECKBOX COLOR FUNCTIONS
+  # ============================================================================
+  #
+  # The following color functions are intentionally repetitive to maintain
+  # PurgeCSS compatibility. Each color variant must be defined as static strings
+  # so that PurgeCSS can detect all Tailwind classes during the build process.
+  #
+  # This repetition is a necessary trade-off for:
+  # 1. PurgeCSS compatibility - classes must be statically analyzable
+  # 2. No safelist configuration required
+  # 3. Optimal bundle size - only used colors are included
+  # 4. Zero runtime overhead - no string interpolation
+  # ============================================================================
 
   # Border classes for each color
   @spec checkbox_border_classes(String.t()) :: list(String.t())
@@ -573,6 +656,10 @@ defmodule Pulsar.Components.Checkbox do
     ]
   end
 
+  # ============================================================================
+  # CHECKBOX STATE & UTILITY FUNCTIONS
+  # ============================================================================
+
   # State classes for disabled/invalid states
   @spec state_classes(boolean(), boolean()) :: String.t()
   defp state_classes(disabled, invalid) do
@@ -585,25 +672,25 @@ defmodule Pulsar.Components.Checkbox do
     |> Enum.join(" ")
   end
 
+  # ============================================================================
+  # CARD VARIANT FUNCTIONS
+  # ============================================================================
+  #
+  # Card-style checkbox functions with similar repetition patterns.
+  # Same PurgeCSS compatibility requirements apply here.
+  # ============================================================================
+
   # Base card classes shared by all card variants
-  @spec card_base_classes() :: String.t()
+  @spec card_base_classes() :: list(String.t())
   defp card_base_classes do
-    [
-      "flex items-center gap-3 rounded-lg cursor-pointer transition-all duration-200 ease-in-out",
-      "focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-ring",
-      "dark:focus-within:ring-dark-ring has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50",
-      "mb-3 last:mb-0"
-    ]
-    |> Enum.join(" ")
+    @card_base_classes
   end
 
   # Card size classes
   @spec card_size_classes(String.t()) :: String.t()
-  defp card_size_classes("xs"), do: "p-2 gap-2 text-xs"
-  defp card_size_classes("sm"), do: "p-3 gap-2 text-sm"
-  defp card_size_classes("md"), do: "p-4 gap-3"
-  defp card_size_classes("lg"), do: "p-5 gap-4 text-lg"
-  defp card_size_classes("xl"), do: "p-6 gap-5 text-xl"
+  defp card_size_classes(size) do
+    @size_config[size][:card]
+  end
 
   # Card variant classes using helper functions to reduce repetition
   @spec card_variant_classes(String.t(), String.t()) :: list(String.t())
