@@ -247,4 +247,249 @@ defmodule Pulsar.Components.RadioGroupTest do
       assert html =~ ~s(disabled)
     end
   end
+
+  describe "radio_group/1 name and value presence behavior" do
+    test "uses explicit name and value when provided as empty string" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="" value="">
+          <:option value="basic">Basic</:option>
+        </.radio_group>
+        """)
+
+      # Should use empty string, not fall back to field
+      assert html =~ ~s(name="")
+      assert html =~ ~s(data-name="")
+    end
+
+    test "falls back to field when name and value are nil" do
+      form_data = %{"plan" => "pro"}
+      changeset = {form_data, %{plan: :string}} |> Ecto.Changeset.cast(%{plan: "pro"}, [:plan])
+      form = Phoenix.Component.to_form(changeset, as: "user")
+      field = form[:plan]
+
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group field={@field}>
+          <:option value="basic">Basic</:option>
+          <:option value="pro">Pro</:option>
+        </.radio_group>
+        """)
+
+      # Should fall back to field-derived name and value
+      assert html =~ ~s(name="user[plan]")
+      assert html =~ ~s(value="pro")
+    end
+
+    test "respects explicit name over field" do
+      form_data = %{"plan" => "pro"}
+      changeset = {form_data, %{plan: :string}} |> Ecto.Changeset.cast(%{plan: "pro"}, [:plan])
+      form = Phoenix.Component.to_form(changeset, as: "user")
+      field = form[:plan]
+
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group field={@field} name="custom_name">
+          <:option value="basic">Basic</:option>
+          <:option value="pro">Pro</:option>
+        </.radio_group>
+        """)
+
+      # Should use explicit name, not field-derived
+      assert html =~ ~s(name="custom_name")
+    end
+
+    test "respects explicit value over field" do
+      form_data = %{"plan" => "pro"}
+      changeset = {form_data, %{plan: :string}} |> Ecto.Changeset.cast(%{plan: "pro"}, [:plan])
+      form = Phoenix.Component.to_form(changeset, as: "user")
+      field = form[:plan]
+
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group field={@field} value="custom_value">
+          <:option value="basic">Basic</:option>
+          <:option value="custom_value">Custom</:option>
+        </.radio_group>
+        """)
+
+      # Should use explicit value and mark correct option as checked
+      assert html =~ ~s(value="custom_value")
+      # The custom value should be marked as checked (radio group value matches option value)
+      assert html =~ "checked"
+    end
+  end
+
+  describe "radio_group/1 label_color option" do
+    test "uses neutral color by default for labels" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic" color="primary">
+          <:option value="basic">Basic Plan</:option>
+        </.radio_group>
+        """)
+
+      # Label should use neutral text colors by default
+      assert html =~ "text-foreground dark:text-dark-foreground"
+    end
+
+    test "inherits radio color when label_color is inherit" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic" color="primary" label_color="inherit">
+          <:option value="basic">Basic Plan</:option>
+        </.radio_group>
+        """)
+
+      # Label should inherit primary color
+      assert html =~ "text-primary dark:text-dark-primary"
+    end
+
+    test "inherits danger color when invalid and label_color is inherit" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic" color="primary" label_color="inherit" invalid>
+          <:option value="basic">Basic Plan</:option>
+        </.radio_group>
+        """)
+
+      # Label should inherit danger color due to invalid state
+      assert html =~ "text-danger dark:text-dark-danger"
+    end
+
+    test "uses different inherit colors" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic" color="success" label_color="inherit">
+          <:option value="basic">Basic Plan</:option>
+        </.radio_group>
+        """)
+
+      # Label should inherit success color
+      assert html =~ "text-success dark:text-dark-success"
+    end
+  end
+
+  describe "radio_group/1 hide_radios accessibility" do
+    test "content is not aria-hidden in card mode with hide_radios" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic" card hide_radios>
+          <:option value="basic">
+            <div>Basic Plan</div>
+            <div>Description here</div>
+          </:option>
+        </.radio_group>
+        """)
+
+      # Content div should NOT have aria-hidden
+      refute html =~ ~s(aria-hidden="true") && html =~ "Basic Plan"
+      # Radio input should have sr-only
+      assert html =~ "sr-only"
+      # Content should be properly labeled
+      assert html =~ ~s(id=") && html =~ ~s(-content")
+    end
+
+    test "radio inputs have sr-only when hide_radios in standard mode" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic" hide_radios>
+          <:option value="basic">Basic Plan</:option>
+        </.radio_group>
+        """)
+
+      # Radio input should have sr-only
+      assert html =~ "sr-only"
+      # Label should still be visible
+      assert html =~ "Basic Plan"
+      refute html =~ ~s(aria-hidden="true")
+    end
+  end
+
+  describe "radio_group/1 data attributes" do
+    test "card labels have data-checked and data-disabled attributes" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic" card>
+          <:option value="basic">Basic Plan</:option>
+          <:option value="pro">Pro Plan</:option>
+        </.radio_group>
+        """)
+
+      # Should have data-checked="true" on selected option
+      assert html =~ ~s(data-checked="true") && html =~ "Basic Plan"
+      # Should have data-checked="false" on unselected option
+      assert html =~ ~s(data-checked="false") && html =~ "Pro Plan"
+      # Should have data-disabled="false" by default
+      assert html =~ ~s(data-disabled="false")
+    end
+
+    test "data-checked reflects current state correctly" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="pro" card>
+          <:option value="basic">Basic Plan</:option>
+          <:option value="pro">Pro Plan</:option>
+        </.radio_group>
+        """)
+
+      # Pro should be checked, Basic should not be
+      assert html =~ ~s(data-checked="false") && html =~ "Basic Plan"
+      assert html =~ ~s(data-checked="true") && html =~ "Pro Plan"
+    end
+
+    test "data-disabled reflects disabled state" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic" card disabled>
+          <:option value="basic">Basic Plan</:option>
+        </.radio_group>
+        """)
+
+      # Should have data-disabled="true" when disabled
+      assert html =~ ~s(data-disabled="true")
+    end
+
+    test "individual option disabled state" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic" card>
+          <:option value="basic">Basic Plan</:option>
+          <:option value="pro" disabled>Pro Plan</:option>
+        </.radio_group>
+        """)
+
+      # Basic should not be disabled, Pro should be
+      assert html =~ ~s(data-disabled="false") && html =~ "Basic Plan"
+      assert html =~ ~s(data-disabled="true") && html =~ "Pro Plan"
+    end
+  end
 end
