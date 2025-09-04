@@ -354,11 +354,14 @@ defmodule Pulsar.Components.Switch do
         data-loading={(@loading && "true") || "false"}
         data-disabled={(@disabled && "true") || "false"}
       >
-        <!-- Loading spinner -->
+        <!-- Loading spinner with fade-in animation -->
         <svg
           :if={@loading && @show_loading_spinner && @loading_content == []}
           aria-hidden="true"
-          class={["animate-spin text-muted-foreground dark:text-dark-muted-foreground", spinner_size_classes(@size)]}
+          class={[
+            "animate-spin text-muted-foreground dark:text-dark-muted-foreground animate-fade-in",
+            spinner_size_classes(@size)
+          ]}
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -385,12 +388,18 @@ defmodule Pulsar.Components.Switch do
   @spec base_switch_classes() :: String.t()
   defp base_switch_classes do
     [
-      "peer relative inline-flex rounded-full cursor-pointer transition-all duration-300 ease-in-out",
+      "peer relative inline-flex rounded-full cursor-pointer",
+      "transition-all duration-300 ease-in-out",
+      # Enable GPU acceleration for smoother animations
+      "transform-gpu",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
       "focus-visible:ring-ring dark:focus-visible:ring-dark-ring",
+      "focus-visible:ring-offset-background dark:focus-visible:ring-offset-dark-background",
       "data-[disabled=true]:opacity-50 data-[disabled=true]:cursor-not-allowed",
       "data-[loading=true]:cursor-wait",
-      "shadow-inner shadow-black/5 dark:shadow-black/10"
+      "shadow-inner shadow-black/5 dark:shadow-black/10",
+      # Enhanced shadow on hover
+      "hover:shadow-inner hover:shadow-black/10 dark:hover:shadow-black/20"
     ]
     |> Enum.join(" ")
   end
@@ -419,6 +428,8 @@ defmodule Pulsar.Components.Switch do
   defp track_variant_classes("solid", color) do
     [
       "bg-muted/80 dark:bg-dark-muted/80",
+      "hover:bg-muted/90 dark:hover:bg-dark-muted/90",
+      "peer-focus-visible:bg-muted dark:peer-focus-visible:bg-dark-muted",
       track_solid_checked_classes(color)
     ]
   end
@@ -428,6 +439,8 @@ defmodule Pulsar.Components.Switch do
       "border-2",
       "bg-background border-border/70",
       "dark:bg-dark-background dark:border-dark-border/70",
+      "hover:border-border dark:hover:border-dark-border",
+      "peer-focus-visible:border-border dark:peer-focus-visible:border-dark-border",
       track_outline_checked_classes(color)
     ]
   end
@@ -437,26 +450,40 @@ defmodule Pulsar.Components.Switch do
       "border-2 border-transparent",
       "bg-muted/30 hover:bg-muted/40",
       "dark:bg-dark-muted/30 dark:hover:bg-dark-muted/40",
+      "peer-focus-visible:bg-muted/50 dark:peer-focus-visible:bg-dark-muted/50",
       track_ghost_checked_classes(color)
     ]
   end
 
   # Solid variant checked state classes by color - using peer-checked: pattern
   @spec track_solid_checked_classes(String.t()) :: String.t()
-  defp track_solid_checked_classes("neutral"), do: "peer-checked:bg-neutral/90 dark:peer-checked:bg-dark-neutral/90"
+  defp track_solid_checked_classes("neutral") do
+    "peer-checked:bg-neutral/90 dark:peer-checked:bg-dark-neutral/90 peer-checked:hover:bg-neutral dark:peer-checked:hover:bg-dark-neutral"
+  end
 
-  defp track_solid_checked_classes("primary"), do: "peer-checked:bg-primary/90 dark:peer-checked:bg-dark-primary/90"
+  defp track_solid_checked_classes("primary") do
+    "peer-checked:bg-primary/90 dark:peer-checked:bg-dark-primary/90 peer-checked:hover:bg-primary dark:peer-checked:hover:bg-dark-primary"
+  end
 
-  defp track_solid_checked_classes("secondary"),
-    do: "peer-checked:bg-secondary/90 dark:peer-checked:bg-dark-secondary/90"
+  defp track_solid_checked_classes("secondary") do
+    "peer-checked:bg-secondary/90 dark:peer-checked:bg-dark-secondary/90 peer-checked:hover:bg-secondary dark:peer-checked:hover:bg-dark-secondary"
+  end
 
-  defp track_solid_checked_classes("success"), do: "peer-checked:bg-success/90 dark:peer-checked:bg-dark-success/90"
+  defp track_solid_checked_classes("success") do
+    "peer-checked:bg-success/90 dark:peer-checked:bg-dark-success/90 peer-checked:hover:bg-success dark:peer-checked:hover:bg-dark-success"
+  end
 
-  defp track_solid_checked_classes("danger"), do: "peer-checked:bg-danger/90 dark:peer-checked:bg-dark-danger/90"
+  defp track_solid_checked_classes("danger") do
+    "peer-checked:bg-danger/90 dark:peer-checked:bg-dark-danger/90 peer-checked:hover:bg-danger dark:peer-checked:hover:bg-dark-danger"
+  end
 
-  defp track_solid_checked_classes("warning"), do: "peer-checked:bg-warning/90 dark:peer-checked:bg-dark-warning/90"
+  defp track_solid_checked_classes("warning") do
+    "peer-checked:bg-warning/90 dark:peer-checked:bg-dark-warning/90 peer-checked:hover:bg-warning dark:peer-checked:hover:bg-dark-warning"
+  end
 
-  defp track_solid_checked_classes("info"), do: "peer-checked:bg-info/90 dark:peer-checked:bg-dark-info/90"
+  defp track_solid_checked_classes("info") do
+    "peer-checked:bg-info/90 dark:peer-checked:bg-dark-info/90 peer-checked:hover:bg-info dark:peer-checked:hover:bg-dark-info"
+  end
 
   # Outline variant checked state classes by color - using peer-checked: pattern
   @spec track_outline_checked_classes(String.t()) :: String.t()
@@ -578,9 +605,18 @@ defmodule Pulsar.Components.Switch do
   @spec base_thumb_classes() :: String.t()
   defp base_thumb_classes do
     [
-      "absolute rounded-full transition-all duration-300 ease-in-out",
+      "absolute rounded-full",
+      "transition-all duration-300 ease-in-out",
+      # Enable GPU acceleration
+      "transform-gpu",
       "flex items-center justify-center pointer-events-none",
-      "data-[loading=true]:bg-background data-[loading=true]:dark:bg-dark-background"
+      "data-[loading=true]:bg-background data-[loading=true]:dark:bg-dark-background",
+      # Subtle scale on hover
+      "peer-hover:scale-105",
+      # Scale down when clicking
+      "peer-active:scale-95",
+      # Emphasize on focus
+      "peer-focus-visible:scale-110"
     ]
     |> Enum.join(" ")
   end
@@ -610,7 +646,9 @@ defmodule Pulsar.Components.Switch do
   defp thumb_position_classes("xs") do
     [
       "left-0.5 translate-x-0",
-      "peer-checked:translate-x-[15px]"
+      "peer-checked:translate-x-[15px]",
+      # Add rotation animation when toggling
+      "peer-checked:rotate-180"
     ]
     |> Enum.join(" ")
   end
@@ -618,7 +656,8 @@ defmodule Pulsar.Components.Switch do
   defp thumb_position_classes("sm") do
     [
       "left-0.5 translate-x-0",
-      "peer-checked:translate-x-[20px]"
+      "peer-checked:translate-x-[20px]",
+      "peer-checked:rotate-180"
     ]
     |> Enum.join(" ")
   end
@@ -626,7 +665,8 @@ defmodule Pulsar.Components.Switch do
   defp thumb_position_classes("md") do
     [
       "left-0.5 translate-x-0",
-      "peer-checked:translate-x-[24px]"
+      "peer-checked:translate-x-[24px]",
+      "peer-checked:rotate-180"
     ]
     |> Enum.join(" ")
   end
@@ -634,7 +674,8 @@ defmodule Pulsar.Components.Switch do
   defp thumb_position_classes("lg") do
     [
       "left-0.5 translate-x-0",
-      "peer-checked:translate-x-[32px]"
+      "peer-checked:translate-x-[32px]",
+      "peer-checked:rotate-180"
     ]
     |> Enum.join(" ")
   end
@@ -642,7 +683,8 @@ defmodule Pulsar.Components.Switch do
   defp thumb_position_classes("xl") do
     [
       "left-[3px] translate-x-0",
-      "peer-checked:translate-x-[35px]"
+      "peer-checked:translate-x-[35px]",
+      "peer-checked:rotate-180"
     ]
     |> Enum.join(" ")
   end

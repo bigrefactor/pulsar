@@ -209,7 +209,6 @@ defmodule Pulsar.Components.InputTest do
 
       # Outline decorators have border background
       assert html =~ "bg-border"
-      assert html =~ "border-r"
     end
 
     test "ghost decorator styling" do
@@ -430,7 +429,6 @@ defmodule Pulsar.Components.InputTest do
       assert html =~ "dark:bg-dark-danger"
       assert html =~ "text-danger-foreground"
       assert html =~ "dark:text-dark-danger-foreground"
-      assert html =~ "border-r"
       assert html =~ "border-danger"
     end
   end

@@ -255,6 +255,64 @@
   --z-toast: 70;
 }
 
+/* Custom animations for Pulsar components */
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .85;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(-2px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Animation utilities */
+.animate-fade-in {
+  animation: fade-in var(--duration-normal, 200ms) var(--easing-standard);
+}
+
+.animate-slide-in {
+  animation: slide-in var(--duration-normal, 200ms) var(--easing-standard);
+}
+
+.animate-scale-in {
+  animation: scale-in var(--duration-quick, 120ms) var(--easing-standard);
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 /* Dark mode tokens (explicit) */
 @theme inline {
   --color-dark-background: var(--color-gray-950);
