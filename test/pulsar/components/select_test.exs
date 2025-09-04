@@ -354,8 +354,8 @@ defmodule Pulsar.Components.SelectTest do
       # Should display selected badges
       assert html =~ "Elixir"
       assert html =~ "Phoenix"
-      # Should have remove buttons with direct event handling
-      assert html =~ ~s(phx-click="remove_selection")
+      # Should have remove buttons with JS dispatch event handling
+      assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
       assert html =~ ~s(phx-value-option="elixir")
       assert html =~ ~s(phx-value-option="phoenix")
     end
@@ -408,8 +408,8 @@ defmodule Pulsar.Components.SelectTest do
 
       # Should have aria-label on close button with option label
       assert html =~ ~s(aria-label="Remove Elixir")
-      # Should have remove button with direct event handler
-      assert html =~ ~s(phx-click="remove_selection")
+      # Should have remove button with JS dispatch event handler
+      assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
       assert html =~ ~s(phx-value-option="elixir")
     end
   end
@@ -663,8 +663,8 @@ defmodule Pulsar.Components.SelectTest do
     end
   end
 
-  describe "Stellar integration" do
-    test "passes through Stellar data attributes" do
+  describe "data attributes" do
+    test "includes standard data attributes" do
       assigns = %{}
 
       html =
@@ -672,14 +672,13 @@ defmodule Pulsar.Components.SelectTest do
         <Select.select name="test" options={["A", "B", "C"]} multiple={false} required={true} />
         """)
 
-      # Should include Stellar's data attributes
+      # Should include standard data attributes
       assert html =~ ~s(data-multiple="false")
       assert html =~ ~s(data-required="true")
       assert html =~ ~s(data-disabled="false")
-      assert html =~ ~s(phx-hook="Stellar.Components.Select.StellarSelectState")
     end
 
-    test "includes Stellar's JavaScript hook" do
+    test "includes state attributes" do
       assigns = %{}
 
       html =
@@ -687,9 +686,7 @@ defmodule Pulsar.Components.SelectTest do
         <Select.select name="test" options={["A", "B", "C"]} />
         """)
 
-      # Should include the colocated hook attribute (script is embedded in Stellar component)
-      assert html =~ ~s(phx-hook="Stellar.Components.Select.StellarSelectState")
-      # Should include data-state attribute managed by the hook
+      # Should include data-state attribute for styling
       assert html =~ ~s(data-state="closed")
     end
   end
@@ -765,8 +762,8 @@ defmodule Pulsar.Components.SelectTest do
         />
         """)
 
-      # Should use custom badge event with direct event handling
-      assert html =~ ~s(phx-click="custom_remove")
+      # Should use custom badge event with JS dispatch + push handling
+      assert html =~ ~s(&quot;custom_remove&quot;)
       assert html =~ ~s(phx-value-option="elixir")
     end
   end
