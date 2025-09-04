@@ -8,6 +8,7 @@ defmodule Pulsar.MixProject do
   alias Pulsar.Components.Input
   alias Pulsar.Components.Label
   alias Pulsar.Components.Link
+  alias Pulsar.Components.RadioGroup
   alias Pulsar.Components.Select
   alias Pulsar.Components.Textarea
 
@@ -74,7 +75,9 @@ defmodule Pulsar.MixProject do
 
       # Documentation and testing
       {:ex_doc, "~> 0.36", only: :dev, runtime: false},
-      {:excoveralls, "~> 0.18", only: :test}
+      {:excoveralls, "~> 0.18", only: :test},
+      {:ecto, "~> 3.12", only: :test},
+      {:phoenix_ecto, "~> 4.6", only: :test}
     ]
   end
 
@@ -150,6 +153,7 @@ defmodule Pulsar.MixProject do
           Input,
           Label,
           Link,
+          RadioGroup,
           Select,
           Textarea
         ],
