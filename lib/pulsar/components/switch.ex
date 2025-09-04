@@ -1,6 +1,6 @@
 defmodule Pulsar.Components.Switch do
   @moduledoc """
-  iOS-style toggle switch component built on Stellar.Components.Switch.
+  iOS-style toggle switch component for Phoenix LiveView forms.
 
   Provides beautiful, accessible switches with smooth animations, semantic variants,
   and consistent styling. All styling is applied via Tailwind CSS utilities with semantic
@@ -8,15 +8,15 @@ defmodule Pulsar.Components.Switch do
 
   ## Features
 
-  - **Stellar Foundation**: Built on Stellar's accessible switch component
+  - **Native Form Integration**: Uses checkbox input for proper form submission
   - **iOS-inspired Design**: Smooth animations with rounded track and sliding thumb
+  - **Keyboard Accessible**: Space key toggles, Tab navigation, screen reader support
   - **Variants**: solid, outline, ghost with semantic styling
   - **Colors**: neutral, primary, secondary, success, danger, warning, info for consistent theming
   - **Multiple Sizes**: xs, sm, md, lg, xl for complete range
-   - **Loading State**: Spinner animation during async operations
-   - **Dark Mode**: Automatic light/dark mode support
-  - **Phoenix Integration**: Automatic error styling when used with Phoenix forms
-  - **Full Stellar API**: All Stellar switch props are supported
+  - **Loading State**: Spinner animation during async operations
+  - **Dark Mode**: Automatic light/dark mode support
+  - **Phoenix Integration**: Automatic invalid styling when used with Phoenix forms
 
   ## Examples
 
@@ -66,20 +66,24 @@ defmodule Pulsar.Components.Switch do
   a setting), and checkboxes for selections that may require form submission. 
   Switches imply the action happens now, like a physical light switch.
 
-  ## Error State Handling
+  ## Form Integration
+
+  The switch uses a hidden checkbox input for proper form submission. When the form
+  is submitted, the switch value will be included in the form params as "true" when
+  checked and "false" when unchecked.
+
+  ## Invalid State Handling
 
   When used with Phoenix forms, validation errors automatically override styling
   to show danger (red) styling. This provides consistent error feedback.
 
-  ## Stellar Integration
+  ## Accessibility
 
-  This component wraps Stellar.Components.Switch and passes through all its props:
-  - `:field` - Phoenix form field integration
-  - `:checked`, `:loading` - State management
-  - `:name`, `:value`, `:unchecked_value` - Value handling
-  - `:disabled`, `:required` - Form states
-  - `:aria_label`, `:aria_labelledby` - Accessibility
-  - All Phoenix LiveView attributes (phx-click, etc.)
+  The switch provides full keyboard and screen reader support:
+  - Space key toggles the switch
+  - Tab key moves focus to/from the switch  
+  - Screen readers announce the switch state
+  - ARIA attributes provide proper semantic information
   """
 
   use Phoenix.Component
@@ -98,22 +102,20 @@ defmodule Pulsar.Components.Switch do
   defp normalize_field_props(assigns) do
     field = assigns[:field]
 
-    cond do
-      field ->
-        %{
-          id: assigns[:id] || field.id || generate_id("switch"),
-          name: assigns[:name] || field.name,
-          checked: is_checked?(field.value, assigns[:value] || "true"),
-          errors: field.errors || []
-        }
-
-      true ->
-        %{
-          id: assigns[:id] || generate_id("switch"),
-          name: assigns[:name],
-          checked: assigns[:checked] || false,
-          errors: []
-        }
+    if field do
+      %{
+        checked: is_checked?(field.value, assigns[:value] || "true"),
+        errors: field.errors || [],
+        id: assigns[:id] || field.id || generate_id("switch"),
+        name: assigns[:name] || field.name
+      }
+    else
+      %{
+        checked: assigns[:checked] || false,
+        errors: [],
+        id: assigns[:id] || generate_id("switch"),
+        name: assigns[:name]
+      }
     end
   end
 
@@ -203,9 +205,9 @@ defmodule Pulsar.Components.Switch do
     doc: "Disable the switch"
   )
 
-  attr(:error, :boolean,
+  attr(:invalid, :boolean,
     default: nil,
-    doc: "Force error state; defaults to Phoenix field errors when nil"
+    doc: "Force invalid state; defaults to Phoenix field errors when nil"
   )
 
   # Accessibility attributes
@@ -236,9 +238,8 @@ defmodule Pulsar.Components.Switch do
   @doc """
   Renders an iOS-style toggle switch component.
 
-  This function wraps Stellar.Components.Switch with Pulsar's styling system.
-  All Stellar props are passed through, with styling controlled via CSS classes
-  that respond to the switch's data attributes.
+  The switch is implemented as a styled checkbox input for proper form integration,
+  with visual styling applied via Tailwind CSS classes that respond to the checkbox state.
 
   ## Variants
   - **solid**: Filled background when checked (default, most prominent)
@@ -277,17 +278,17 @@ defmodule Pulsar.Components.Switch do
     normalized = normalize_field_props(assigns)
 
     # Detect errors and compute effective color
-    has_errors =
-      if is_nil(assigns.error), do: not Enum.empty?(normalized.errors), else: assigns.error
-
-    effective_color = if has_errors, do: "danger", else: assigns.color
+    has_errors = not Enum.empty?(normalized.errors)
+    user_invalid = Map.get(assigns, :invalid)
+    invalid = if is_nil(user_invalid), do: has_errors, else: user_invalid
+    effective_color = if invalid, do: "danger", else: assigns.color
 
     # Build class string for switch
     switch_class =
       merge([
         base_switch_classes(),
         track_classes(assigns.variant, effective_color, assigns.size),
-        state_classes(assigns.disabled, has_errors),
+        state_classes(assigns.disabled, invalid),
         assigns.class
       ])
 
@@ -306,12 +307,12 @@ defmodule Pulsar.Components.Switch do
       |> assign(:switch_class, switch_class)
       |> assign(:thumb_class, thumb_class)
       |> assign(:effective_color, effective_color)
-      |> assign(:has_errors, has_errors)
+      |> assign(:invalid, invalid)
 
     render_switch_only(assigns)
   end
 
-  # Switch only (no label wrapper)
+  # Switch only (no label wrapper) - now using checkbox for proper form submission
   defp render_switch_only(assigns) do
     ~H"""
     <div class="relative inline-flex">
@@ -321,27 +322,33 @@ defmodule Pulsar.Components.Switch do
         name={@name}
         value={@unchecked_value}
       />
-      <button
-        type="button"
-        role="switch"
+      <input
+        type="checkbox"
         id={@id}
         name={@name}
         value={@value}
-        data-state={@checked && "checked" || "unchecked"}
-        data-checked={@checked && "true"}
-        data-loading={@loading && "true"}
-        data-disabled={@disabled && "true"}
-        class={@switch_class}
+        checked={@checked}
+        class="sr-only peer"
         required={@required}
         disabled={@disabled}
-        aria-checked={@checked && "true" || "false"}
         aria-label={@aria_label}
         aria-labelledby={@aria_labelledby}
-        aria-invalid={@has_errors && "true"}
+        aria-invalid={@invalid && "true"}
         {@rest}
       />
       
-      <!-- Custom thumb with loading state -->
+    <!-- Visual switch track (clickable) -->
+      <button
+        type="button"
+        tabindex="-1"
+        onclick={"document.getElementById('#{@id}').click()"}
+        class={@switch_class}
+        data-loading={@loading && "true"}
+        data-disabled={@disabled && "true"}
+        disabled={@disabled}
+      />
+      
+    <!-- Custom thumb with loading state -->
       <div
         class={@thumb_class}
         data-loading={(@loading && "true") || "false"}
@@ -365,7 +372,7 @@ defmodule Pulsar.Components.Switch do
           </path>
         </svg>
         
-        <!-- Custom loading content -->
+    <!-- Custom loading content -->
         <div :if={@loading && @loading_content != []}>
           {render_slot(@loading_content)}
         </div>
@@ -407,11 +414,11 @@ defmodule Pulsar.Components.Switch do
   defp track_size_classes("lg"), do: "h-6 w-14"
   defp track_size_classes("xl"), do: "h-7 w-16"
 
-  # Track variant classes by color
+  # Track variant classes by color - updated to use peer-checked: pattern
   @spec track_variant_classes(String.t(), String.t()) :: list(String.t())
   defp track_variant_classes("solid", color) do
     [
-      "data-[state=unchecked]:bg-muted/80 dark:data-[state=unchecked]:bg-dark-muted/80",
+      "bg-muted/80 dark:bg-dark-muted/80",
       track_solid_checked_classes(color)
     ]
   end
@@ -419,8 +426,8 @@ defmodule Pulsar.Components.Switch do
   defp track_variant_classes("outline", color) do
     [
       "border-2",
-      "data-[state=unchecked]:bg-background data-[state=unchecked]:border-border/70",
-      "dark:data-[state=unchecked]:bg-dark-background dark:data-[state=unchecked]:border-dark-border/70",
+      "bg-background border-border/70",
+      "dark:bg-dark-background dark:border-dark-border/70",
       track_outline_checked_classes(color)
     ]
   end
@@ -428,147 +435,141 @@ defmodule Pulsar.Components.Switch do
   defp track_variant_classes("ghost", color) do
     [
       "border-2 border-transparent",
-      "data-[state=unchecked]:bg-muted/30 hover:data-[state=unchecked]:bg-muted/40",
-      "dark:data-[state=unchecked]:bg-dark-muted/30 dark:hover:data-[state=unchecked]:bg-dark-muted/40",
+      "bg-muted/30 hover:bg-muted/40",
+      "dark:bg-dark-muted/30 dark:hover:bg-dark-muted/40",
       track_ghost_checked_classes(color)
     ]
   end
 
-  # Solid variant checked state classes by color - softer opacity for better visual hierarchy
+  # Solid variant checked state classes by color - using peer-checked: pattern
   @spec track_solid_checked_classes(String.t()) :: String.t()
-  defp track_solid_checked_classes("neutral"),
-    do: "data-[state=checked]:bg-neutral/90 dark:data-[state=checked]:bg-dark-neutral/90"
+  defp track_solid_checked_classes("neutral"), do: "peer-checked:bg-neutral/90 dark:peer-checked:bg-dark-neutral/90"
 
-  defp track_solid_checked_classes("primary"),
-    do: "data-[state=checked]:bg-primary/90 dark:data-[state=checked]:bg-dark-primary/90"
+  defp track_solid_checked_classes("primary"), do: "peer-checked:bg-primary/90 dark:peer-checked:bg-dark-primary/90"
 
   defp track_solid_checked_classes("secondary"),
-    do: "data-[state=checked]:bg-secondary/90 dark:data-[state=checked]:bg-dark-secondary/90"
+    do: "peer-checked:bg-secondary/90 dark:peer-checked:bg-dark-secondary/90"
 
-  defp track_solid_checked_classes("success"),
-    do: "data-[state=checked]:bg-success/90 dark:data-[state=checked]:bg-dark-success/90"
+  defp track_solid_checked_classes("success"), do: "peer-checked:bg-success/90 dark:peer-checked:bg-dark-success/90"
 
-  defp track_solid_checked_classes("danger"),
-    do: "data-[state=checked]:bg-danger/90 dark:data-[state=checked]:bg-dark-danger/90"
+  defp track_solid_checked_classes("danger"), do: "peer-checked:bg-danger/90 dark:peer-checked:bg-dark-danger/90"
 
-  defp track_solid_checked_classes("warning"),
-    do: "data-[state=checked]:bg-warning/90 dark:data-[state=checked]:bg-dark-warning/90"
+  defp track_solid_checked_classes("warning"), do: "peer-checked:bg-warning/90 dark:peer-checked:bg-dark-warning/90"
 
-  defp track_solid_checked_classes("info"),
-    do: "data-[state=checked]:bg-info/90 dark:data-[state=checked]:bg-dark-info/90"
+  defp track_solid_checked_classes("info"), do: "peer-checked:bg-info/90 dark:peer-checked:bg-dark-info/90"
 
-  # Outline variant checked state classes by color
+  # Outline variant checked state classes by color - using peer-checked: pattern
   @spec track_outline_checked_classes(String.t()) :: String.t()
   defp track_outline_checked_classes("neutral") do
     [
-      "data-[state=checked]:bg-neutral/10 data-[state=checked]:border-neutral",
-      "dark:data-[state=checked]:bg-dark-neutral/10 dark:data-[state=checked]:border-dark-neutral"
+      "peer-checked:bg-neutral/10 peer-checked:border-neutral",
+      "dark:peer-checked:bg-dark-neutral/10 dark:peer-checked:border-dark-neutral"
     ]
     |> Enum.join(" ")
   end
 
   defp track_outline_checked_classes("primary") do
     [
-      "data-[state=checked]:bg-primary/10 data-[state=checked]:border-primary",
-      "dark:data-[state=checked]:bg-dark-primary/10 dark:data-[state=checked]:border-dark-primary"
+      "peer-checked:bg-primary/10 peer-checked:border-primary",
+      "dark:peer-checked:bg-dark-primary/10 dark:peer-checked:border-dark-primary"
     ]
     |> Enum.join(" ")
   end
 
   defp track_outline_checked_classes("secondary") do
     [
-      "data-[state=checked]:bg-secondary/10 data-[state=checked]:border-secondary",
-      "dark:data-[state=checked]:bg-dark-secondary/10 dark:data-[state=checked]:border-dark-secondary"
+      "peer-checked:bg-secondary/10 peer-checked:border-secondary",
+      "dark:peer-checked:bg-dark-secondary/10 dark:peer-checked:border-dark-secondary"
     ]
     |> Enum.join(" ")
   end
 
   defp track_outline_checked_classes("success") do
     [
-      "data-[state=checked]:bg-success/10 data-[state=checked]:border-success",
-      "dark:data-[state=checked]:bg-dark-success/10 dark:data-[state=checked]:border-dark-success"
+      "peer-checked:bg-success/10 peer-checked:border-success",
+      "dark:peer-checked:bg-dark-success/10 dark:peer-checked:border-dark-success"
     ]
     |> Enum.join(" ")
   end
 
   defp track_outline_checked_classes("danger") do
     [
-      "data-[state=checked]:bg-danger/10 data-[state=checked]:border-danger",
-      "dark:data-[state=checked]:bg-dark-danger/10 dark:data-[state=checked]:border-dark-danger"
+      "peer-checked:bg-danger/10 peer-checked:border-danger",
+      "dark:peer-checked:bg-dark-danger/10 dark:peer-checked:border-dark-danger"
     ]
     |> Enum.join(" ")
   end
 
   defp track_outline_checked_classes("warning") do
     [
-      "data-[state=checked]:bg-warning/10 data-[state=checked]:border-warning",
-      "dark:data-[state=checked]:bg-dark-warning/10 dark:data-[state=checked]:border-dark-warning"
+      "peer-checked:bg-warning/10 peer-checked:border-warning",
+      "dark:peer-checked:bg-dark-warning/10 dark:peer-checked:border-dark-warning"
     ]
     |> Enum.join(" ")
   end
 
   defp track_outline_checked_classes("info") do
     [
-      "data-[state=checked]:bg-info/10 data-[state=checked]:border-info",
-      "dark:data-[state=checked]:bg-dark-info/10 dark:data-[state=checked]:border-dark-info"
+      "peer-checked:bg-info/10 peer-checked:border-info",
+      "dark:peer-checked:bg-dark-info/10 dark:peer-checked:border-dark-info"
     ]
     |> Enum.join(" ")
   end
 
-  # Ghost variant checked state classes by color
+  # Ghost variant checked state classes by color - using peer-checked: pattern
   @spec track_ghost_checked_classes(String.t()) :: String.t()
   defp track_ghost_checked_classes("neutral") do
     [
-      "data-[state=checked]:bg-neutral/15 hover:data-[state=checked]:bg-neutral/20",
-      "dark:data-[state=checked]:bg-dark-neutral/15 dark:hover:data-[state=checked]:bg-dark-neutral/20"
+      "peer-checked:bg-neutral/15 hover:peer-checked:bg-neutral/20",
+      "dark:peer-checked:bg-dark-neutral/15 dark:hover:peer-checked:bg-dark-neutral/20"
     ]
     |> Enum.join(" ")
   end
 
   defp track_ghost_checked_classes("primary") do
     [
-      "data-[state=checked]:bg-primary/15 hover:data-[state=checked]:bg-primary/20",
-      "dark:data-[state=checked]:bg-dark-primary/15 dark:hover:data-[state=checked]:bg-dark-primary/20"
+      "peer-checked:bg-primary/15 hover:peer-checked:bg-primary/20",
+      "dark:peer-checked:bg-dark-primary/15 dark:hover:peer-checked:bg-dark-primary/20"
     ]
     |> Enum.join(" ")
   end
 
   defp track_ghost_checked_classes("secondary") do
     [
-      "data-[state=checked]:bg-secondary/15 hover:data-[state=checked]:bg-secondary/20",
-      "dark:data-[state=checked]:bg-dark-secondary/15 dark:hover:data-[state=checked]:bg-dark-secondary/20"
+      "peer-checked:bg-secondary/15 hover:peer-checked:bg-secondary/20",
+      "dark:peer-checked:bg-dark-secondary/15 dark:hover:peer-checked:bg-dark-secondary/20"
     ]
     |> Enum.join(" ")
   end
 
   defp track_ghost_checked_classes("success") do
     [
-      "data-[state=checked]:bg-success/15 hover:data-[state=checked]:bg-success/20",
-      "dark:data-[state=checked]:bg-dark-success/15 dark:hover:data-[state=checked]:bg-dark-success/20"
+      "peer-checked:bg-success/15 hover:peer-checked:bg-success/20",
+      "dark:peer-checked:bg-dark-success/15 dark:hover:peer-checked:bg-dark-success/20"
     ]
     |> Enum.join(" ")
   end
 
   defp track_ghost_checked_classes("danger") do
     [
-      "data-[state=checked]:bg-danger/15 hover:data-[state=checked]:bg-danger/20",
-      "dark:data-[state=checked]:bg-dark-danger/15 dark:hover:data-[state=checked]:bg-dark-danger/20"
+      "peer-checked:bg-danger/15 hover:peer-checked:bg-danger/20",
+      "dark:peer-checked:bg-dark-danger/15 dark:hover:peer-checked:bg-dark-danger/20"
     ]
     |> Enum.join(" ")
   end
 
   defp track_ghost_checked_classes("warning") do
     [
-      "data-[state=checked]:bg-warning/15 hover:data-[state=checked]:bg-warning/20",
-      "dark:data-[state=checked]:bg-dark-warning/15 dark:hover:data-[state=checked]:bg-dark-warning/20"
+      "peer-checked:bg-warning/15 hover:peer-checked:bg-warning/20",
+      "dark:peer-checked:bg-dark-warning/15 dark:hover:peer-checked:bg-dark-warning/20"
     ]
     |> Enum.join(" ")
   end
 
   defp track_ghost_checked_classes("info") do
     [
-      "data-[state=checked]:bg-info/15 hover:data-[state=checked]:bg-info/20",
-      "dark:data-[state=checked]:bg-dark-info/15 dark:hover:data-[state=checked]:bg-dark-info/20"
+      "peer-checked:bg-info/15 hover:peer-checked:bg-info/20",
+      "dark:peer-checked:bg-dark-info/15 dark:hover:peer-checked:bg-dark-info/20"
     ]
     |> Enum.join(" ")
   end
@@ -590,7 +591,7 @@ defmodule Pulsar.Components.Switch do
   defp thumb_size_classes("sm"), do: "h-3 w-3 top-0.5"
   defp thumb_size_classes("md"), do: "h-4 w-4 top-0.5"
   defp thumb_size_classes("lg"), do: "h-5 w-5 top-0.5"
-  defp thumb_size_classes("xl"), do: "h-5.5 w-5.5 top-[3px]"
+  defp thumb_size_classes("xl"), do: "h-[22px] w-[22px] top-[3px]"
 
   # Thumb variant classes (shadow and border) - enhanced shadows for depth
   @spec thumb_variant_classes(String.t()) :: String.t()
@@ -604,12 +605,12 @@ defmodule Pulsar.Components.Switch do
   defp thumb_variant_classes("ghost"),
     do: "bg-background dark:bg-dark-background shadow-md shadow-black/6 dark:shadow-black/15"
 
-  # Thumb position classes based on size - recalculated for new thumb sizes
+  # Thumb position classes based on size - using peer-checked: pattern
   @spec thumb_position_classes(String.t()) :: String.t()
   defp thumb_position_classes("xs") do
     [
       "left-0.5 translate-x-0",
-      "peer-data-[state=checked]:translate-x-[15px]"
+      "peer-checked:translate-x-[15px]"
     ]
     |> Enum.join(" ")
   end
@@ -617,7 +618,7 @@ defmodule Pulsar.Components.Switch do
   defp thumb_position_classes("sm") do
     [
       "left-0.5 translate-x-0",
-      "peer-data-[state=checked]:translate-x-[20px]"
+      "peer-checked:translate-x-[20px]"
     ]
     |> Enum.join(" ")
   end
@@ -625,7 +626,7 @@ defmodule Pulsar.Components.Switch do
   defp thumb_position_classes("md") do
     [
       "left-0.5 translate-x-0",
-      "peer-data-[state=checked]:translate-x-[24px]"
+      "peer-checked:translate-x-[24px]"
     ]
     |> Enum.join(" ")
   end
@@ -633,7 +634,7 @@ defmodule Pulsar.Components.Switch do
   defp thumb_position_classes("lg") do
     [
       "left-0.5 translate-x-0",
-      "peer-data-[state=checked]:translate-x-[32px]"
+      "peer-checked:translate-x-[32px]"
     ]
     |> Enum.join(" ")
   end
@@ -641,15 +642,15 @@ defmodule Pulsar.Components.Switch do
   defp thumb_position_classes("xl") do
     [
       "left-[3px] translate-x-0",
-      "peer-data-[state=checked]:translate-x-[36px]"
+      "peer-checked:translate-x-[35px]"
     ]
     |> Enum.join(" ")
   end
 
-  # State classes for error states
+  # State classes for invalid states
   @spec state_classes(boolean(), boolean()) :: String.t()
-  defp state_classes(_disabled, has_errors) do
-    if has_errors do
+  defp state_classes(_disabled, invalid) do
+    if invalid do
       "ring-2 ring-danger dark:ring-dark-danger"
     else
       ""
