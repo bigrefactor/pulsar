@@ -81,7 +81,50 @@ defmodule Pulsar.Components.Checkbox do
 
   alias Phoenix.HTML.FormField
   alias Phoenix.LiveView.Rendered
-  alias Stellar.Components.Checkbox, as: StellarCheckbox
+
+  # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
+  defp generate_id(prefix) do
+    "#{prefix}-#{System.unique_integer([:positive])}"
+  end
+
+  # Essential Stellar helpers copied locally for normalization
+  defp normalize_field_props(assigns) do
+    field = assigns[:field]
+
+    cond do
+      field ->
+        %{
+          id: assigns[:id] || field.id || generate_id("checkbox"),
+          name: assigns[:name] || field.name,
+          checked: is_checked?(field.value, assigns[:value] || "true"),
+          errors: field.errors || []
+        }
+
+      true ->
+        %{
+          id: assigns[:id] || generate_id("checkbox"),
+          name: assigns[:name],
+          checked: assigns[:checked] || false,
+          errors: []
+        }
+    end
+  end
+
+  defp is_checked?(field_value, checkbox_value) when is_list(field_value) do
+    to_string(checkbox_value) in Enum.map(field_value, &to_string/1)
+  end
+
+  defp is_checked?(field_value, checkbox_value) do
+    to_string(field_value) == to_string(checkbox_value)
+  end
+
+  defp assign_computed_attributes(assigns, normalized) do
+    assigns
+    |> assign(:id, normalized.id)
+    |> assign(:name, normalized.name)
+    |> assign(:checked, normalized.checked)
+    |> assign(:field_errors, normalized.errors)
+  end
 
   # Pulsar-specific styling attributes
   attr(:card, :boolean,
@@ -217,8 +260,11 @@ defmodule Pulsar.Components.Checkbox do
             "Checkbox requires :field or :name; provide :name only when not using a Phoenix form field"
     end
 
+    # Normalize field properties
+    normalized = normalize_field_props(assigns)
+
     # Detect errors and compute automatic color
-    has_errors = has_field_errors(assigns)
+    has_errors = not Enum.empty?(normalized.errors)
     user_invalid = Map.get(assigns, :invalid)
     invalid = if is_nil(user_invalid), do: has_errors, else: user_invalid
     effective_color = if invalid, do: "danger", else: assigns.color
@@ -235,6 +281,7 @@ defmodule Pulsar.Components.Checkbox do
 
     assigns =
       assigns
+      |> assign_computed_attributes(normalized)
       |> assign(:input_class, input_class)
       |> assign(:effective_color, effective_color)
       |> assign(:invalid, invalid)
@@ -249,22 +296,29 @@ defmodule Pulsar.Components.Checkbox do
   # Default checkbox variant
   defp render_default_checkbox(assigns) do
     ~H"""
-    <StellarCheckbox.checkbox
-      field={@field}
-      id={@id}
-      name={@name}
-      value={@value}
-      checked={@checked}
-      unchecked_value={@unchecked_value}
-      indeterminate={@indeterminate}
-      render_hidden={@render_hidden}
-      required={@required}
-      disabled={@disabled}
-      class={@input_class}
-      aria-invalid={@invalid && "true"}
-      data-required={@required}
-      {@rest}
-    />
+    <div>
+      <input
+        :if={@render_hidden}
+        type="hidden"
+        name={@name}
+        value={@unchecked_value}
+      />
+      <input
+        type="checkbox"
+        id={@id}
+        name={@name}
+        value={@value}
+        checked={@checked}
+        data-checked={@checked && "true"}
+        data-indeterminate={@indeterminate && "true"}
+        data-required={@required && "true"}
+        class={@input_class}
+        required={@required}
+        disabled={@disabled}
+        aria-invalid={@invalid && "true"}
+        {@rest}
+      />
+    </div>
     """
   end
 
@@ -296,18 +350,24 @@ defmodule Pulsar.Components.Checkbox do
       data-required={@required}
       for={@id}
     >
-      <StellarCheckbox.checkbox
-        field={@field}
+      <input
+        :if={@render_hidden}
+        type="hidden"
+        name={@name}
+        value={@unchecked_value}
+      />
+      <input
+        type="checkbox"
         id={@id}
         name={@name}
         value={@value}
         checked={@checked}
-        unchecked_value={@unchecked_value}
-        indeterminate={@indeterminate}
-        render_hidden={@render_hidden}
+        data-checked={@checked && "true"}
+        data-indeterminate={@indeterminate && "true"}
+        data-required={@required && "true"}
+        class={@checkbox_class}
         required={@required}
         disabled={@disabled}
-        class={@checkbox_class}
         aria-invalid={@invalid && "true"}
         aria-describedby={"#{@id}-content"}
         {@rest}
@@ -839,12 +899,4 @@ defmodule Pulsar.Components.Checkbox do
     |> Enum.filter(& &1)
     |> Enum.join(" ")
   end
-
-  # Helper for error detection - checks if a Phoenix form field has validation errors
-  @spec has_field_errors(map()) :: boolean()
-  defp has_field_errors(%{field: %FormField{errors: errors}}) when is_list(errors) do
-    not Enum.empty?(errors)
-  end
-
-  defp has_field_errors(_assigns), do: false
 end

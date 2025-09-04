@@ -88,69 +88,83 @@ defmodule Pulsar.Components.Select do
   alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Badge
   alias Pulsar.Components.Icon
-  alias Stellar.Components.Select, as: StellarSelect
+
+  # Inline ID generator (replacing Stellar.Helpers.IdGenerator)  
+  defp generate_id(prefix) do
+    "#{prefix}-#{System.unique_integer([:positive])}"
+  end
 
   # Pulsar-specific styling attributes
-  attr :variant, :string,
+  attr(:variant, :string,
     default: "solid",
     values: ~w(outline ghost solid),
     doc: "Visual style variant of the select"
+  )
 
-  attr :color, :string,
+  attr(:color, :string,
     default: "neutral",
     values: ~w(neutral primary secondary success danger warning info),
     doc: "Color scheme of the select (overridden by error state)"
+  )
 
-  attr :size, :string,
+  attr(:size, :string,
     default: "md",
     values: ~w(xs sm md lg xl),
     doc: "Size of the select"
+  )
 
   # Stellar select attributes - copied from Stellar.Components.Select
-  attr :field, FormField, default: nil, doc: "Phoenix form field"
+  attr(:field, FormField, default: nil, doc: "Phoenix form field")
 
   # Core attributes
-  attr :name, :string,
+  attr(:name, :string,
     default: nil,
     doc: "Select name (from field if not provided)"
+  )
 
-  attr :value, :any,
+  attr(:value, :any,
     default: nil,
     doc: "Selected value(s) (from field if not provided)"
+  )
 
-  attr :options, :list, required: true, doc: "List of options in Phoenix format"
+  attr(:options, :list, required: true, doc: "List of options in Phoenix format")
 
   # Select-specific attributes
-  attr :multiple, :boolean, default: false, doc: "Enable multi-select mode"
-  attr :prompt, :string, default: nil, doc: "Prompt option text"
-  attr :auto_name_array, :boolean, default: true, doc: "Auto-append [] to name for multi-select"
+  attr(:multiple, :boolean, default: false, doc: "Enable multi-select mode")
+  attr(:prompt, :string, default: nil, doc: "Prompt option text")
+  attr(:auto_name_array, :boolean, default: true, doc: "Auto-append [] to name for multi-select")
 
   # State attributes
-  attr :required, :boolean,
+  attr(:required, :boolean,
     default: false,
     doc: "Mark select as required"
+  )
 
-  attr :disabled, :boolean,
+  attr(:disabled, :boolean,
     default: false,
     doc: "Disable the select"
+  )
 
   # State override (optional)
-  attr :invalid, :boolean,
+  attr(:invalid, :boolean,
     default: nil,
     doc: "Force invalid state; defaults to Phoenix field errors when nil"
+  )
 
   # Multi-select badge removal
-  attr :on_remove_badge, :any,
+  attr(:on_remove_badge, :any,
     default: nil,
     doc: "Event handler for removing badges in multi-select mode (JS command or event name)"
+  )
 
   # Styling
-  attr :class, :string,
+  attr(:class, :string,
     default: "",
     doc: "Additional CSS classes"
+  )
 
   # Global attributes (allows all Phoenix and HTML attributes)
-  attr :rest, :global, doc: "Additional HTML attributes"
+  attr(:rest, :global, doc: "Additional HTML attributes")
 
   @doc """
   Renders a styled select component with optional multi-select badges.
@@ -164,10 +178,11 @@ defmodule Pulsar.Components.Select do
   """
   @spec select(map()) :: Rendered.t()
   def select(assigns) do
-    # Validate required attributes
-    if is_nil(assigns[:field]) and is_nil(assigns[:name]) do
-      raise ArgumentError, "Select component requires :name when :field is not provided"
-    end
+    # Apply Stellar field normalization and computed attributes
+    assigns =
+      assigns
+      |> normalize_field_props()
+      |> assign_computed_attributes()
 
     # Detect errors and compute automatic color
     has_errors = has_field_errors(assigns)
@@ -210,6 +225,10 @@ defmodule Pulsar.Components.Select do
       |> assign(:value, normalized_value)
       |> assign(:selected_options, selected_options)
       |> assign(:show_badges, assigns.multiple and not Enum.empty?(selected_options))
+      |> assign(
+        :option_html,
+        generate_options_html(%{options: assigns.options, value: normalized_value})
+      )
 
     ~H"""
     <div
@@ -239,20 +258,27 @@ defmodule Pulsar.Components.Select do
       
     <!-- Select wrapper with custom arrow -->
       <div class="relative">
-        <StellarSelect.select
-          class={@class}
-          field={@field}
+        <select
+          id={@id}
           name={@name}
-          value={@value}
-          options={@options}
           multiple={@multiple}
-          prompt={@prompt}
-          auto_name_array={@auto_name_array}
           required={@required}
           disabled={@disabled}
+          class={@class}
+          aria-describedby={@computed_aria_describedby}
           aria-invalid={@invalid && "true"}
+          data-disabled={@data_disabled}
+          data-required={@data_required}
+          data-multiple={@data_multiple}
+          data-has-value={@data_has_value}
+          data-state="closed"
           {@rest}
-        />
+        >
+          <option :if={@prompt && !@multiple} value="" disabled selected={@value in [nil, ""]}>
+            {@prompt}
+          </option>
+          {Phoenix.HTML.raw(@option_html)}
+        </select>
         
     <!-- Custom arrow icon -->
         <div class={[
@@ -341,7 +367,8 @@ defmodule Pulsar.Components.Select do
       "bg-transparent text-warning dark:text-dark-warning focus:ring-warning/60 hover:bg-warning/5 dark:hover:bg-dark-warning/10"
 
   defp color_classes("ghost", "info"),
-    do: "bg-transparent text-info dark:text-dark-info focus:ring-info/60 hover:bg-info/5 dark:hover:bg-dark-info/10"
+    do:
+      "bg-transparent text-info dark:text-dark-info focus:ring-info/60 hover:bg-info/5 dark:hover:bg-dark-info/10"
 
   defp color_classes("solid", "neutral"),
     do:
@@ -443,11 +470,80 @@ defmodule Pulsar.Components.Select do
   end
 
   # Keep local and private - helper for error detection
-  defp has_field_errors(%{field: %FormField{errors: errs}}) when is_list(errs) and errs != [], do: true
+  defp has_field_errors(%{field: %FormField{errors: errs}}) when is_list(errs) and errs != [],
+    do: true
+
   defp has_field_errors(_), do: false
 
   # Resolve value precedence: explicit :value over Phoenix form field
   defp value_or_field(nil, %FormField{value: v}), do: v
   defp value_or_field(nil, _), do: nil
   defp value_or_field(v, _), do: v
+
+  # === Stellar Helper Functions (Merged) ===
+
+  # Normalize field props (from Stellar)
+  defp normalize_field_props(%{field: %FormField{} = field} = assigns) do
+    assigns
+    |> assign(:id, assigns[:id] || field.id || generate_id("select"))
+    |> assign_new(:name, fn -> field.name end)
+    |> assign_new(:value, fn -> field.value end)
+    |> assign(:field_provided, true)
+  end
+
+  defp normalize_field_props(assigns) do
+    assigns
+    |> ensure_name!()
+    |> assign(:id, assigns[:id] || assigns[:name] || generate_id("select"))
+    |> assign_new(:value, fn -> nil end)
+    |> assign(:field_provided, false)
+  end
+
+  defp ensure_name!(assigns) do
+    if is_nil(assigns[:name]) do
+      raise ArgumentError, "Select component requires :name when :field is not provided"
+    end
+
+    assigns
+  end
+
+  # Compute attributes (from Stellar)
+  defp assign_computed_attributes(assigns) do
+    # ARIA describedby merging
+    caller_describedby = assigns[:aria_describedby]
+
+    errors_id =
+      if assigns.field_provided and has_field_errors(assigns),
+        do: "#{assigns.id}-errors",
+        else: nil
+
+    computed_aria_describedby =
+      case {caller_describedby, errors_id} do
+        {nil, nil} -> nil
+        {caller, nil} -> caller
+        {nil, errors} -> errors
+        {caller, errors} -> "#{caller} #{errors}"
+      end
+
+    assigns
+    |> assign(:computed_aria_describedby, computed_aria_describedby)
+    |> assign(:data_disabled, data_boolean(assigns.disabled))
+    |> assign(:data_multiple, data_boolean(assigns.multiple))
+    |> assign(:data_required, data_boolean(assigns.required))
+    |> assign(
+      :data_has_value,
+      if(is_nil(assigns.value) || assigns.value == "", do: "false", else: "true")
+    )
+  end
+
+  # Options generation (from Stellar)
+  defp generate_options_html(assigns) do
+    Phoenix.HTML.Form.options_for_select(assigns.options, assigns.value)
+    |> Phoenix.HTML.safe_to_string()
+  end
+
+  # Data attribute helpers (from Stellar)
+  defp data_boolean(true), do: "true"
+  defp data_boolean(false), do: "false"
+  defp data_boolean(nil), do: "false"
 end

@@ -88,7 +88,46 @@ defmodule Pulsar.Components.Switch do
 
   alias Phoenix.HTML.FormField
   alias Phoenix.LiveView.Rendered
-  alias Stellar.Components.Switch, as: StellarSwitch
+
+  # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
+  defp generate_id(prefix) do
+    "#{prefix}-#{System.unique_integer([:positive])}"
+  end
+
+  # Essential Stellar helpers copied locally for normalization
+  defp normalize_field_props(assigns) do
+    field = assigns[:field]
+
+    cond do
+      field ->
+        %{
+          id: assigns[:id] || field.id || generate_id("switch"),
+          name: assigns[:name] || field.name,
+          checked: is_checked?(field.value, assigns[:value] || "true"),
+          errors: field.errors || []
+        }
+
+      true ->
+        %{
+          id: assigns[:id] || generate_id("switch"),
+          name: assigns[:name],
+          checked: assigns[:checked] || false,
+          errors: []
+        }
+    end
+  end
+
+  defp is_checked?(field_value, switch_value) do
+    to_string(field_value) == to_string(switch_value)
+  end
+
+  defp assign_computed_attributes(assigns, normalized) do
+    assigns
+    |> assign(:id, normalized.id)
+    |> assign(:name, normalized.name)
+    |> assign(:checked, normalized.checked)
+    |> assign(:field_errors, normalized.errors)
+  end
 
   # Pulsar-specific styling attributes
   attr(:variant, :string,
@@ -234,8 +273,13 @@ defmodule Pulsar.Components.Switch do
             "Switch requires :field or :name; provide :name only when not using a Phoenix form field"
     end
 
+    # Normalize field properties
+    normalized = normalize_field_props(assigns)
+
     # Detect errors and compute effective color
-    has_errors = if is_nil(assigns.error), do: has_field_errors(assigns), else: assigns.error
+    has_errors =
+      if is_nil(assigns.error), do: not Enum.empty?(normalized.errors), else: assigns.error
+
     effective_color = if has_errors, do: "danger", else: assigns.color
 
     # Build class string for switch
@@ -258,6 +302,7 @@ defmodule Pulsar.Components.Switch do
 
     assigns =
       assigns
+      |> assign_computed_attributes(normalized)
       |> assign(:switch_class, switch_class)
       |> assign(:thumb_class, thumb_class)
       |> assign(:effective_color, effective_color)
@@ -270,25 +315,33 @@ defmodule Pulsar.Components.Switch do
   defp render_switch_only(assigns) do
     ~H"""
     <div class="relative inline-flex">
-      <StellarSwitch.switch
-        field={@field}
+      <input
+        :if={@render_hidden}
+        type="hidden"
+        name={@name}
+        value={@unchecked_value}
+      />
+      <button
+        type="button"
+        role="switch"
         id={@id}
         name={@name}
         value={@value}
-        checked={@checked}
-        unchecked_value={@unchecked_value}
-        loading={@loading}
-        render_hidden={@render_hidden}
+        data-state={@checked && "checked" || "unchecked"}
+        data-checked={@checked && "true"}
+        data-loading={@loading && "true"}
+        data-disabled={@disabled && "true"}
+        class={@switch_class}
         required={@required}
         disabled={@disabled}
-        error={@has_errors}
-        aria_label={@aria_label}
-        aria_labelledby={@aria_labelledby}
-        class={@switch_class}
+        aria-checked={@checked && "true" || "false"}
+        aria-label={@aria_label}
+        aria-labelledby={@aria_labelledby}
+        aria-invalid={@has_errors && "true"}
         {@rest}
       />
       
-    <!-- Custom thumb with loading state -->
+      <!-- Custom thumb with loading state -->
       <div
         class={@thumb_class}
         data-loading={(@loading && "true") || "false"}
@@ -312,7 +365,7 @@ defmodule Pulsar.Components.Switch do
           </path>
         </svg>
         
-    <!-- Custom loading content -->
+        <!-- Custom loading content -->
         <div :if={@loading && @loading_content != []}>
           {render_slot(@loading_content)}
         </div>
@@ -610,12 +663,4 @@ defmodule Pulsar.Components.Switch do
   defp spinner_size_classes("md"), do: "h-4 w-4"
   defp spinner_size_classes("lg"), do: "h-5 w-5"
   defp spinner_size_classes("xl"), do: "h-6 w-6"
-
-  # Helper for error detection - checks if a Phoenix form field has validation errors
-  @spec has_field_errors(map()) :: boolean()
-  defp has_field_errors(%{field: %FormField{errors: errors}}) when is_list(errors) do
-    not Enum.empty?(errors)
-  end
-
-  defp has_field_errors(_assigns), do: false
 end

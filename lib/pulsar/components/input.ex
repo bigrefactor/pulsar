@@ -73,77 +73,127 @@ defmodule Pulsar.Components.Input do
 
   alias Phoenix.HTML.FormField
   alias Phoenix.LiveView.Rendered
-  alias Stellar.Components.Input, as: StellarInput
+
+  # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
+  defp generate_id(prefix) do
+    "#{prefix}-#{System.unique_integer([:positive])}"
+  end
+
+  # Essential Stellar helpers copied locally for normalization
+  defp normalize_field_props(assigns) do
+    field = assigns[:field]
+
+    cond do
+      field ->
+        %{
+          id: assigns[:id] || field.id || generate_id("input"),
+          name: assigns[:name] || field.name,
+          value: assigns[:value] || field.value,
+          errors: field.errors || []
+        }
+
+      true ->
+        %{
+          id: assigns[:id] || generate_id("input"),
+          name: assigns[:name],
+          value: assigns[:value],
+          errors: []
+        }
+    end
+  end
+
+  defp assign_computed_attributes(assigns, normalized) do
+    assigns
+    |> assign(:id, normalized.id)
+    |> assign(:name, normalized.name)
+    |> assign(:value, normalized.value)
+    |> assign(:field_errors, normalized.errors)
+  end
 
   # Pulsar-specific styling attributes
-  attr :variant, :string,
+  attr(:variant, :string,
     default: "solid",
     values: ~w(outline ghost solid),
     doc: "Visual style variant of the input"
+  )
 
-  attr :color, :string,
+  attr(:color, :string,
     default: "neutral",
     values: ~w(neutral primary secondary success danger warning info),
     doc: "Color scheme of the input (overridden by error state)"
+  )
 
-  attr :size, :string,
+  attr(:size, :string,
     default: "md",
     values: ~w(xs sm md lg xl),
     doc: "Size of the input"
+  )
 
   # Stellar input attributes - copied from Stellar.Components.Input
-  attr :type, :string,
-    values: ~w(text email password number tel url search date time datetime-local month week color range file hidden),
+  attr(:type, :string,
+    values:
+      ~w(text email password number tel url search date time datetime-local month week color range file hidden),
     default: "text",
     doc: "Input type"
+  )
 
-  attr :field, FormField, default: nil, doc: "Phoenix form field"
+  attr(:field, FormField, default: nil, doc: "Phoenix form field")
 
   # Core attributes
-  attr :id, :string,
+  attr(:id, :string,
     default: nil,
     doc: "Input ID (auto-generated if not provided)"
+  )
 
-  attr :name, :string,
+  attr(:name, :string,
     default: nil,
     doc: "Input name (from field if not provided)"
+  )
 
-  attr :value, :any,
+  attr(:value, :any,
     default: nil,
     doc: "Input value (from field if not provided)"
+  )
 
   # State attributes
-  attr :required, :boolean,
+  attr(:required, :boolean,
     default: false,
     doc: "Mark input as required"
+  )
 
-  attr :disabled, :boolean,
+  attr(:disabled, :boolean,
     default: false,
     doc: "Disable the input"
+  )
 
-  attr :readonly, :boolean,
+  attr(:readonly, :boolean,
     default: false,
     doc: "Make input read-only"
+  )
 
   # State override (optional)
-  attr :invalid, :boolean,
+  attr(:invalid, :boolean,
     default: nil,
     doc: "Force invalid state; defaults to Phoenix field errors when nil"
+  )
 
   # Styling
-  attr :class, :string,
+  attr(:class, :string,
     default: "",
     doc: "Additional CSS classes"
+  )
 
   # Global attributes (allows all Phoenix and HTML attributes)
-  attr :rest, :global, doc: "Additional HTML attributes including placeholder"
+  attr(:rest, :global, doc: "Additional HTML attributes including placeholder")
 
   # Decorator slots
-  slot :start_decorator,
+  slot(:start_decorator,
     doc: "Leading decorator content (icons, text, buttons)"
+  )
 
-  slot :end_decorator,
+  slot(:end_decorator,
     doc: "Trailing decorator content (icons, text, buttons)"
+  )
 
   @doc """
   Renders a styled input component with optional decorators.
@@ -161,10 +211,14 @@ defmodule Pulsar.Components.Input do
       raise ArgumentError, "Input component requires :name when :field is not provided"
     end
 
+    # Normalize field properties
+    normalized = normalize_field_props(assigns)
+
+    assigns = assign_computed_attributes(assigns, normalized)
+
     ~H"""
-    <StellarInput.input
+    <input
       type="hidden"
-      field={@field}
       id={@id}
       name={@name}
       value={@value}
@@ -182,8 +236,11 @@ defmodule Pulsar.Components.Input do
       raise ArgumentError, "Input component requires :name when :field is not provided"
     end
 
+    # Normalize field properties
+    normalized = normalize_field_props(assigns)
+
     # Detect errors and compute automatic color
-    has_errors = has_field_errors(assigns)
+    has_errors = not Enum.empty?(normalized.errors)
     user_invalid = Map.get(assigns, :invalid)
     invalid = if is_nil(user_invalid), do: has_errors, else: user_invalid
     effective_color = if invalid, do: "danger", else: assigns.color
@@ -197,6 +254,7 @@ defmodule Pulsar.Components.Input do
 
     assigns =
       assigns
+      |> assign_computed_attributes(normalized)
       |> assign(:class, class)
       |> assign(:has_start_decorator, assigns.start_decorator != [])
       |> assign(:has_end_decorator, assigns.end_decorator != [])
@@ -225,7 +283,7 @@ defmodule Pulsar.Components.Input do
         {render_slot(@start_decorator)}
       </.start_decorator>
 
-      <StellarInput.input
+      <input
         class={
           [
             "w-full outline-0 transition-all duration-200 ease-in-out",
@@ -241,7 +299,6 @@ defmodule Pulsar.Components.Input do
           |> Enum.filter(& &1)
         }
         type={@type}
-        field={@field}
         id={@id}
         name={@name}
         value={@value}
@@ -264,11 +321,11 @@ defmodule Pulsar.Components.Input do
     """
   end
 
-  attr :class, :any, default: ""
-  attr :decorator_variant, :string, required: true
-  attr :decorator_color, :string, required: true
-  attr :decorator_size, :string, required: true
-  slot :inner_block, required: true, doc: "Content to render inside the decorator"
+  attr(:class, :any, default: "")
+  attr(:decorator_variant, :string, required: true)
+  attr(:decorator_color, :string, required: true)
+  attr(:decorator_size, :string, required: true)
+  slot(:inner_block, required: true, doc: "Content to render inside the decorator")
 
   defp start_decorator(assigns) do
     assigns = assign_new(assigns, :class, fn -> "" end)
@@ -469,7 +526,8 @@ defmodule Pulsar.Components.Input do
   defp decorator_position_classes(_, "ghost"), do: ""
 
   defp decorator_color_classes("outline", "neutral"),
-    do: "bg-border dark:bg-dark-border text-neutral-700 dark:text-neutral-300 border-border dark:border-dark-border"
+    do:
+      "bg-border dark:bg-dark-border text-neutral-700 dark:text-neutral-300 border-border dark:border-dark-border"
 
   defp decorator_color_classes("outline", "primary"),
     do:
@@ -520,12 +578,9 @@ defmodule Pulsar.Components.Input do
       "bg-warning/20 dark:bg-dark-warning/30 text-warning dark:text-dark-warning border-warning/30 dark:border-dark-warning/40"
 
   defp decorator_color_classes("solid", "info"),
-    do: "bg-info/20 dark:bg-dark-info/30 text-info dark:text-dark-info border-info/30 dark:border-dark-info/40"
+    do:
+      "bg-info/20 dark:bg-dark-info/30 text-info dark:text-dark-info border-info/30 dark:border-dark-info/40"
 
-  defp decorator_color_classes("ghost", _color), do: "text-muted-foreground dark:text-dark-muted-foreground"
-
-  # Keep local and private - helper for error detection
-  defp has_field_errors(%{field: %FormField{errors: errs}}) when is_list(errs) and errs != [], do: true
-
-  defp has_field_errors(_), do: false
+  defp decorator_color_classes("ghost", _color),
+    do: "text-muted-foreground dark:text-dark-muted-foreground"
 end

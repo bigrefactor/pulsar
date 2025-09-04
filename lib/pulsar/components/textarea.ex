@@ -94,85 +94,100 @@ defmodule Pulsar.Components.Textarea do
 
   alias Phoenix.HTML.FormField
   alias Phoenix.LiveView.Rendered
-  alias Stellar.Components.Textarea, as: StellarTextarea
+
+  # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
+  defp generate_id(prefix) do
+    "#{prefix}-#{System.unique_integer([:positive])}"
+  end
 
   # Pulsar-specific styling attributes
-  attr :variant, :string,
+  attr(:variant, :string,
     default: "solid",
     values: ~w(outline ghost solid),
     doc: "Visual style variant of the textarea"
+  )
 
-  attr :color, :string,
+  attr(:color, :string,
     default: "neutral",
     values: ~w(neutral primary secondary success danger warning info),
     doc: "Color scheme of the textarea (overridden by error state)"
+  )
 
-  attr :size, :string,
+  attr(:size, :string,
     default: "md",
     values: ~w(xs sm md lg xl),
     doc: "Size of the textarea"
+  )
 
   # Height constraints for auto-resize
-  attr :min_height, :string,
+  attr(:min_height, :string,
     default: nil,
     doc: "Minimum height (CSS value like '80px' or '5rem')"
+  )
 
-  attr :max_height, :string,
+  attr(:max_height, :string,
     default: nil,
     doc: "Maximum height (CSS value like '300px' or '20rem')"
+  )
 
   # Stellar textarea attributes - copied from Stellar.Components.Textarea
-  attr :field, FormField, default: nil, doc: "Phoenix form field"
+  attr(:field, FormField, default: nil, doc: "Phoenix form field")
 
   # Core attributes
-  attr :id, :string, doc: "Textarea ID (auto-generated if not provided)"
+  attr(:id, :string, doc: "Textarea ID (auto-generated if not provided)")
 
-  attr :name, :string, doc: "Textarea name (from field if not provided)"
+  attr(:name, :string, doc: "Textarea name (from field if not provided)")
 
-  attr :value, :any, doc: "Textarea value (from field if not provided)"
+  attr(:value, :any, doc: "Textarea value (from field if not provided)")
 
   # Textarea-specific attributes
-  attr :rows, :integer, default: 4, doc: "Number of visible text lines"
-  attr :cols, :integer, default: nil, doc: "Visible width in characters"
-  attr :wrap, :string, default: nil, doc: "Text wrapping behavior"
-  attr :placeholder, :string, default: nil, doc: "Placeholder text"
+  attr(:rows, :integer, default: 4, doc: "Number of visible text lines")
+  attr(:cols, :integer, default: nil, doc: "Visible width in characters")
+  attr(:wrap, :string, default: nil, doc: "Text wrapping behavior")
+  attr(:placeholder, :string, default: nil, doc: "Placeholder text")
 
   # Length constraints
-  attr :maxlength, :integer, default: nil, doc: "Maximum number of characters allowed"
-  attr :minlength, :integer, default: nil, doc: "Minimum number of characters required"
+  attr(:maxlength, :integer, default: nil, doc: "Maximum number of characters allowed")
+  attr(:minlength, :integer, default: nil, doc: "Minimum number of characters required")
 
   # State attributes
-  attr :required, :boolean,
+  attr(:required, :boolean,
     default: false,
     doc: "Mark textarea as required"
+  )
 
-  attr :disabled, :boolean,
+  attr(:disabled, :boolean,
     default: false,
     doc: "Disable the textarea"
+  )
 
-  attr :readonly, :boolean,
+  attr(:readonly, :boolean,
     default: false,
     doc: "Make textarea read-only"
+  )
 
-  attr :invalid, :boolean,
+  attr(:invalid, :boolean,
     default: false,
     doc: "Mark textarea as invalid (overridden by form field errors)"
+  )
 
   # Feature flags
-  attr :auto_resize, :boolean, default: false, doc: "Enable automatic height adjustment"
-  attr :show_character_count, :boolean, default: false, doc: "Enable character counting display"
+  attr(:auto_resize, :boolean, default: false, doc: "Enable automatic height adjustment")
+  attr(:show_character_count, :boolean, default: false, doc: "Enable character counting display")
 
-  attr :max_length, :integer,
+  attr(:max_length, :integer,
     default: nil,
     doc: "Maximum characters for display counting (different from maxlength)"
+  )
 
   # Styling
-  attr :class, :string,
+  attr(:class, :string,
     default: "",
     doc: "Additional CSS classes"
+  )
 
   # Global attributes (allows all Phoenix and HTML attributes)
-  attr :rest, :global, doc: "Additional HTML attributes"
+  attr(:rest, :global, doc: "Additional HTML attributes")
 
   @doc """
   Renders a styled textarea component with optional auto-resize and character counting.
@@ -185,10 +200,11 @@ defmodule Pulsar.Components.Textarea do
   """
   @spec textarea(map()) :: Rendered.t()
   def textarea(assigns) do
-    # Validate required attributes
-    if is_nil(assigns[:field]) and is_nil(assigns[:name]) do
-      raise ArgumentError, "Textarea component requires either :field or :name attribute"
-    end
+    # Apply Stellar field normalization and computed attributes
+    assigns =
+      assigns
+      |> normalize_field_props()
+      |> assign_computed_attributes()
 
     # Detect errors and compute automatic color
     has_errors =
@@ -221,12 +237,9 @@ defmodule Pulsar.Components.Textarea do
 
     ~H"""
     <div class="space-y-2">
-      <StellarTextarea.textarea
-        class={@class}
-        field={@field}
+      <textarea
         id={@id}
         name={@name}
-        value={@value}
         rows={@rows}
         cols={@cols}
         wrap={@wrap}
@@ -236,18 +249,25 @@ defmodule Pulsar.Components.Textarea do
         required={@required}
         disabled={@disabled}
         readonly={@readonly}
-        auto_resize={@auto_resize}
-        character_count={@character_count}
-        max_length={@max_length_display}
+        class={@class}
         style={build_custom_height_styles(@min_height, @max_height)}
+        aria-describedby={@computed_aria_describedby}
+        aria-invalid={if @invalid, do: "true", else: "false"}
+        data-disabled={@data_disabled}
+        data-readonly={@data_readonly}
+        data-required={@data_required}
+        data-has-value={@data_has_value}
+        data-auto-resize={@data_auto_resize}
+        data-state={@data_state}
+        data-character-count={@character_count}
+        data-max-length={@max_length_display}
+        data-chars-remaining={@data_chars_remaining}
         data-variant={@variant}
         data-size={@size}
         data-color={@effective_color}
         data-invalid={@invalid}
-        data-required={@required_attr}
-        aria-invalid={if @invalid, do: "true", else: "false"}
         {@rest}
-      />
+      >{to_string(@value || "")}</textarea>
 
       <.character_count_display
         :if={@show_character_count and @character_count != nil}
@@ -262,15 +282,20 @@ defmodule Pulsar.Components.Textarea do
   end
 
   # Character count display component
-  attr :color, :string, required: true
-  attr :character_count, :integer, required: true
-  attr :max_length, :integer, default: nil
-  attr :chars_remaining, :integer, default: nil
-  attr :over_limit, :boolean, default: false
+  attr(:color, :string, required: true)
+  attr(:character_count, :integer, required: true)
+  attr(:max_length, :integer, default: nil)
+  attr(:chars_remaining, :integer, default: nil)
+  attr(:over_limit, :boolean, default: false)
 
   defp character_count_display(assigns) do
     count_color_class =
-      get_character_count_color_class(assigns.chars_remaining, assigns.over_limit, assigns.color, assigns.max_length)
+      get_character_count_color_class(
+        assigns.chars_remaining,
+        assigns.over_limit,
+        assigns.color,
+        assigns.max_length
+      )
 
     assigns = assign(assigns, :count_color_class, count_color_class)
 
@@ -307,18 +332,24 @@ defmodule Pulsar.Components.Textarea do
   end
 
   # Get color for normal character count state (not over/near limit)
-  defp get_normal_character_count_color("neutral"), do: "text-muted-foreground dark:text-dark-muted-foreground"
+  defp get_normal_character_count_color("neutral"),
+    do: "text-muted-foreground dark:text-dark-muted-foreground"
 
   defp get_normal_character_count_color("primary"), do: "text-primary dark:text-dark-primary"
 
-  defp get_normal_character_count_color("secondary"), do: "text-secondary dark:text-dark-secondary"
+  defp get_normal_character_count_color("secondary"),
+    do: "text-secondary dark:text-dark-secondary"
 
   defp get_normal_character_count_color("success"), do: "text-success dark:text-dark-success"
-  defp get_normal_character_count_color("danger"), do: "text-danger dark:text-dark-danger font-medium"
+
+  defp get_normal_character_count_color("danger"),
+    do: "text-danger dark:text-dark-danger font-medium"
+
   defp get_normal_character_count_color("warning"), do: "text-warning dark:text-dark-warning"
   defp get_normal_character_count_color("info"), do: "text-info dark:text-dark-info"
 
-  defp get_normal_character_count_color(_), do: "text-muted-foreground dark:text-dark-muted-foreground"
+  defp get_normal_character_count_color(_),
+    do: "text-muted-foreground dark:text-dark-muted-foreground"
 
   # Normalize field attributes to ensure id, name, value are always present
   defp normalize_field_attributes(%{field: %FormField{} = field} = assigns) do
@@ -523,4 +554,83 @@ defmodule Pulsar.Components.Textarea do
       |> assign(:over_limit, false)
     end
   end
+
+  # === Stellar Helper Functions (Merged) ===
+
+  # Normalize field props (from Stellar)
+  defp normalize_field_props(%{field: %FormField{} = field} = assigns) do
+    assigns
+    |> assign(:id, assigns[:id] || field.id || generate_id("textarea"))
+    |> assign_new(:name, fn -> field.name end)
+    |> assign_new(:value, fn -> field.value end)
+    |> assign(:field_provided, true)
+  end
+
+  defp normalize_field_props(assigns) do
+    assigns
+    |> ensure_name!()
+    |> assign(:id, assigns[:id] || assigns[:name] || generate_id("textarea"))
+    |> assign_new(:value, fn -> nil end)
+    |> assign(:field_provided, false)
+  end
+
+  defp ensure_name!(assigns) do
+    if is_nil(assigns[:name]) do
+      raise ArgumentError, "Textarea component requires :name when :field is not provided"
+    end
+
+    assigns
+  end
+
+  # Compute attributes (from Stellar)
+  defp assign_computed_attributes(assigns) do
+    # ARIA describedby merging - start with caller's value
+    caller_describedby = assigns[:aria_describedby]
+
+    errors_id =
+      if assigns.field_provided and has_field_errors(assigns),
+        do: "#{assigns.id}-errors",
+        else: nil
+
+    computed_aria_describedby =
+      case {caller_describedby, errors_id} do
+        {nil, nil} -> nil
+        {caller, nil} -> caller
+        {nil, errors} -> errors
+        {caller, errors} -> "#{caller} #{errors}"
+      end
+
+    assigns
+    |> assign(:computed_aria_describedby, computed_aria_describedby)
+    |> assign(:data_disabled, data_boolean(assigns.disabled))
+    |> assign(:data_readonly, data_boolean(assigns.readonly))
+    |> assign(:data_required, data_boolean(assigns.required))
+    |> assign(
+      :data_has_value,
+      if(to_string(assigns.value || "") == "", do: "false", else: "true")
+    )
+    |> assign(:data_auto_resize, data_boolean(assigns.auto_resize))
+    |> assign(:data_state, compute_data_state(assigns))
+    |> assign(
+      :data_chars_remaining,
+      if(assigns[:max_length],
+        do: assigns.max_length - (assigns[:character_count] || 0),
+        else: nil
+      )
+    )
+  end
+
+  # Helper functions (from Stellar)
+  defp compute_data_state(%{disabled: true}), do: "disabled"
+  defp compute_data_state(%{readonly: true}), do: "readonly"
+  defp compute_data_state(_), do: "default"
+
+  defp data_boolean(true), do: "true"
+  defp data_boolean(false), do: "false"
+  defp data_boolean(nil), do: "false"
+
+  defp has_field_errors(%{field: %FormField{errors: errs}}) when is_list(errs) and errs != [],
+    do: true
+
+  defp has_field_errors(_), do: false
 end
