@@ -378,6 +378,7 @@ defmodule Pulsar.Components.RadioGroup do
       class={@container_class}
       data-checked={(@option_checked && "true") || "false"}
       data-disabled={(@option_disabled && "true") || "false"}
+      data-state={if @option_checked, do: "checked", else: "unchecked"}
     >
       <input
         type="radio"
@@ -584,7 +585,7 @@ defmodule Pulsar.Components.RadioGroup do
       radio_hover_classes(color)
     ]
     |> List.flatten()
-    |> Enum.join(" ")
+    |> merge()
   end
 
   # Core radio input styles without size or color
@@ -638,7 +639,12 @@ defmodule Pulsar.Components.RadioGroup do
     base_classes = "cursor-pointer select-none transition-all duration-200 flex-1 min-w-0"
     effective_label_color = if label_color == "inherit", do: color, else: "neutral"
 
-    "#{base_classes} #{radio_label_text_classes(size)} #{radio_label_color_classes(effective_label_color)}"
+    [
+      base_classes,
+      radio_label_text_classes(size),
+      radio_label_color_classes(effective_label_color)
+    ]
+    |> merge()
   end
 
   # Text size classes for radio labels
