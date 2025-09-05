@@ -40,7 +40,6 @@ defmodule Pulsar.Components.ListTest do
 
       # Should use proper definition list structure
       assert html =~ ~s(<dl)
-      assert html =~ ~s(<div class="flex flex-col">)
       assert html =~ ~s(<dt)
       assert html =~ ~s(<dd)
       assert html =~ "Status"
@@ -268,53 +267,6 @@ defmodule Pulsar.Components.ListTest do
     end
   end
 
-  describe "list layouts" do
-    test "renders vertical layout (default)" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <List.list layout="vertical">
-          <:item title="Item 1">Content 1</:item>
-          <:item title="Item 2">Content 2</:item>
-        </List.list>
-        """)
-
-      assert html =~ ~s(flex flex-col)
-      assert html =~ ~s(flex-col)
-    end
-
-    test "renders horizontal layout" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <List.list layout="horizontal">
-          <:item title="Item 1">Content 1</:item>
-          <:item title="Item 2">Content 2</:item>
-        </List.list>
-        """)
-
-      assert html =~ ~s(flex flex-row flex-wrap)
-      assert html =~ ~s(min-w-0)
-    end
-
-    test "renders grid layout" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <List.list layout="grid">
-          <:item title="Item 1">Content 1</:item>
-          <:item title="Item 2">Content 2</:item>
-        </List.list>
-        """)
-
-      assert html =~ ~s(grid grid-cols-1 sm:grid-cols-2)
-      assert html =~ ~s(gap-4)
-    end
-  end
-
   describe "list features" do
     test "renders striped rows" do
       assigns = %{}
@@ -332,12 +284,12 @@ defmodule Pulsar.Components.ListTest do
       assert html =~ ~s(bg-muted/30)
     end
 
-    test "renders dividers between items in vertical layout" do
+    test "renders dividers between items" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <List.list dividers={true} layout="vertical">
+        <List.list dividers={true}>
           <:item title="Item 1">Content 1</:item>
           <:item title="Item 2">Content 2</:item>
         </List.list>
@@ -345,37 +297,6 @@ defmodule Pulsar.Components.ListTest do
 
       assert html =~ ~s(border-t)
       assert html =~ ~s(border-border)
-    end
-
-    test "renders dividers between items in horizontal layout" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <List.list dividers={true} layout="horizontal">
-          <:item title="Item 1">Content 1</:item>
-          <:item title="Item 2">Content 2</:item>
-        </List.list>
-        """)
-
-      assert html =~ ~s(border-l)
-      assert html =~ ~s(pl-4)
-    end
-
-    test "no dividers in grid layout" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <List.list dividers={true} layout="grid">
-          <:item title="Item 1">Content 1</:item>
-          <:item title="Item 2">Content 2</:item>
-        </List.list>
-        """)
-
-      # Grid layout shouldn't have dividers
-      refute html =~ ~s(border-t)
-      refute html =~ ~s(border-l)
     end
   end
 
@@ -431,7 +352,6 @@ defmodule Pulsar.Components.ListTest do
           variant="outline"
           color="primary"
           size="lg"
-          layout="vertical"
           striped={true}
           dividers={true}
           class="custom-list"
@@ -453,9 +373,6 @@ defmodule Pulsar.Components.ListTest do
       # Check size
       assert html =~ ~s(text-lg)
       assert html =~ ~s(py-3 px-5)
-
-      # Check layout
-      assert html =~ ~s(flex flex-col)
 
       # Check features
       # striped
@@ -496,7 +413,7 @@ defmodule Pulsar.Components.ListTest do
   end
 
   describe "edge cases" do
-    test "handles empty items gracefully" do
+    test "handles empty content gracefully" do
       assigns = %{}
 
       html =
@@ -512,6 +429,21 @@ defmodule Pulsar.Components.ListTest do
       # Should still render proper structure
       assert html =~ ~s(<dt)
       assert html =~ ~s(<dd)
+    end
+
+    test "handles no items" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <List.list></List.list>
+        """)
+
+      # Should still render dl but with no children
+      assert html =~ ~s(<dl)
+      assert html =~ ~s(</dl>)
+      refute html =~ ~s(<dt)
+      refute html =~ ~s(<dd)
     end
 
     test "handles single item" do

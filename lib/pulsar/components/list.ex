@@ -2,9 +2,9 @@ defmodule Pulsar.Components.List do
   @moduledoc """
   List component for displaying key-value data pairs with semantic HTML.
 
-  Provides styled lists for displaying structured data with flexible layouts
-  and consistent theming. Perfect for showing entity details, metadata, or
-  any key-value information with proper accessibility.
+  Provides styled lists for displaying structured data with consistent theming.
+  Perfect for showing entity details, metadata, or any key-value information 
+  with proper accessibility.
 
   ## Features
 
@@ -12,8 +12,8 @@ defmodule Pulsar.Components.List do
   - **Multiple Variants**: solid, outline, and ghost for different visual emphasis
   - **Full Color Palette**: All semantic colors with automatic dark mode support
   - **Multiple Sizes**: xs, sm, md, lg, xl matching other Pulsar components
-  - **Flexible Layouts**: vertical, horizontal, and responsive grid layouts
   - **Visual Options**: striped rows, dividers, and spacing controls
+  - **Flexible Layout**: Apply any Tailwind classes for custom layouts
 
   ## Examples
 
@@ -33,15 +33,16 @@ defmodule Pulsar.Components.List do
         </:item>
       </.list>
 
-      # Horizontal layout
-      <.list layout="horizontal" size="md">
+      # Custom layouts with Tailwind classes
+      # Horizontal cards
+      <.list class="flex flex-row flex-wrap gap-4" size="md">
         <:item title="Orders">1,234</:item>
         <:item title="Revenue">$45,678</:item>
         <:item title="Customers">890</:item>
       </.list>
 
       # Grid layout (responsive 2-column)
-      <.list layout="grid">
+      <.list class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <:item title="First Name">Jane</:item>
         <:item title="Last Name">Smith</:item>
         <:item title="Department">Engineering</:item>
@@ -96,13 +97,6 @@ defmodule Pulsar.Components.List do
       item: "py-1 px-2 gap-2",
       title: "font-medium text-xs"
     }
-  }
-
-  # Layout configuration
-  @layout_config %{
-    "grid" => "grid grid-cols-1 sm:grid-cols-2 gap-4",
-    "horizontal" => "flex flex-row flex-wrap",
-    "vertical" => "flex flex-col"
   }
 
   # Base classes for the list container
@@ -246,11 +240,6 @@ defmodule Pulsar.Components.List do
     values: ~w(xs sm md lg xl),
     doc: "Size affecting spacing and typography"
 
-  attr :layout, :string,
-    default: "vertical",
-    values: ~w(vertical horizontal grid),
-    doc: "Layout direction for items"
-
   attr :striped, :boolean,
     default: false,
     doc: "Enable zebra striping for rows"
@@ -281,42 +270,39 @@ defmodule Pulsar.Components.List do
   Renders a semantic list component.
 
   Uses definition list markup (`<dl>`, `<dt>`, `<dd>`) for proper accessibility
-  and screen reader support. Supports multiple layouts, variants, and visual options.
+  and screen reader support. Supports multiple variants and visual options.
   """
   def list(assigns) do
     # Build container classes
     container_classes = build_container_classes(assigns)
 
-    # Build item classes based on layout
-    layout_classes = build_layout_classes(assigns.layout)
+    # Build item classes
     item_base = build_item_base_classes(assigns)
 
     assigns =
       assigns
       |> assign(:container_classes, container_classes)
-      |> assign(:layout_classes, layout_classes)
       |> assign(:item_base, item_base)
 
     ~H"""
     <dl class={@container_classes} {@rest}>
-      <div class={@layout_classes}>
-        <%= for {item, index} <- Enum.with_index(@item) do %>
-          <div class={
-            merge([
-              @item_base,
-              item_variant_classes(@variant, @color, index, @striped),
-              @dividers && index > 0 && divider_classes(@layout),
-              Map.get(item, :class, "")
-            ])
-          }>
-            <dt class={title_classes(@variant, @color, @size)}>
-              {item.title}
-            </dt>
-            <dd class={content_classes(@size)}>
-              {render_slot(item)}
-            </dd>
-          </div>
-        <% end %>
+      <div
+        :for={{item, index} <- Enum.with_index(Map.get(assigns, :item, []))}
+        class={
+          merge([
+            @item_base,
+            item_variant_classes(@variant, @color, index, @striped),
+            @dividers && index > 0 && "border-t border-border dark:border-dark-border",
+            item[:class] || ""
+          ])
+        }
+      >
+        <dt class={title_classes(@variant, @color, @size)}>
+          {item.title}
+        </dt>
+        <dd class={content_classes(@size)}>
+          {render_slot(item)}
+        </dd>
       </div>
     </dl>
     """
@@ -341,10 +327,6 @@ defmodule Pulsar.Components.List do
     ])
   end
 
-  defp build_layout_classes(layout) do
-    Map.get(@layout_config, layout)
-  end
-
   defp build_item_base_classes(assigns) do
     size_config = Map.get(@size_config, assigns.size)
     item_spacing = Map.get(size_config, :item)
@@ -352,11 +334,7 @@ defmodule Pulsar.Components.List do
     merge([
       @item_base_classes,
       item_spacing,
-      case assigns.layout do
-        "vertical" -> "flex-col"
-        "horizontal" -> "flex-col min-w-0"
-        "grid" -> "flex-col"
-      end
+      "flex-col"
     ])
   end
 
@@ -369,7 +347,7 @@ defmodule Pulsar.Components.List do
         case variant do
           "ghost" -> "bg-muted/30 dark:bg-dark-muted/20"
           "outline" -> "bg-muted/20 dark:bg-dark-muted/10"
-          "solid" -> "brightness-95 dark:brightness-105"
+          "solid" -> "bg-foreground/5 dark:bg-dark-foreground/5"
         end
       else
         ""
@@ -377,10 +355,6 @@ defmodule Pulsar.Components.List do
 
     merge([hover_classes, striped_classes])
   end
-
-  defp divider_classes("vertical"), do: "border-t border-border dark:border-dark-border"
-  defp divider_classes("horizontal"), do: "border-l border-border dark:border-dark-border pl-4"
-  defp divider_classes("grid"), do: ""
 
   defp title_classes(variant, color, size) do
     size_config = Map.get(@size_config, size)
