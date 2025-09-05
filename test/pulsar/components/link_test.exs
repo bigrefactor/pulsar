@@ -243,6 +243,67 @@ defmodule Pulsar.Components.LinkTest do
       # Should not have data-external attribute for internal links
       refute html =~ ~s(data-external="true")
     end
+
+    test "adds security rel tokens for external links with target blank" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="https://example.com">External</Link.a>
+        """)
+
+      assert html =~ ~s(rel="noopener noreferrer")
+      assert html =~ ~s(target="_blank")
+    end
+
+    test "merges security rel tokens with existing rel" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="https://example.com" rel="external sponsored">External</Link.a>
+        """)
+
+      # Should contain all tokens: existing ones + security ones
+      assert html =~ ~r/rel="[^"]*external[^"]*"/
+      assert html =~ ~r/rel="[^"]*sponsored[^"]*"/
+      assert html =~ ~r/rel="[^"]*noopener[^"]*"/
+      assert html =~ ~r/rel="[^"]*noreferrer[^"]*"/
+    end
+
+    test "does not duplicate existing security tokens in rel" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="https://example.com" rel="noopener external noreferrer">External</Link.a>
+        """)
+
+      # Count occurrences of noopener and noreferrer - should only be one of each
+      rel_match = Regex.run(~r/rel="([^"]*)"/, html)
+      assert rel_match != nil
+      [_, rel_value] = rel_match
+
+      noopener_count = rel_value |> String.split() |> Enum.count(&(&1 == "noopener"))
+      noreferrer_count = rel_value |> String.split() |> Enum.count(&(&1 == "noreferrer"))
+
+      assert noopener_count == 1
+      assert noreferrer_count == 1
+      assert rel_value =~ "external"
+    end
+
+    test "does not add security tokens when target is not blank" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="https://example.com" target="_self">External</Link.a>
+        """)
+
+      refute html =~ ~r/rel="[^"]*noopener[^"]*"/
+      refute html =~ ~r/rel="[^"]*noreferrer[^"]*"/
+      assert html =~ ~s(target="_self")
+    end
   end
 
   describe "Link.a/1 Phoenix navigation" do
@@ -410,20 +471,15 @@ defmodule Pulsar.Components.LinkTest do
       assert html =~ ~s(href="https://example.com/delete")
     end
 
-    test "allows method when href is nil" do
+    test "raises error when no navigation prop is provided" do
       assigns = %{}
 
-      # This should not raise an error - method validation only applies when href is present
-      html =
+      # This should raise an error - exactly one nav prop must be provided
+      assert_raise ArgumentError, "Provide one of :href, :navigate, or :patch", fn ->
         rendered_to_string(~H"""
         <Link.a method="post">No Href</Link.a>
         """)
-
-      # When href is nil, Phoenix's link component converts it to href="#"
-      # Phoenix link may not render method attribute for invalid hrefs like "#"
-      # The important thing is that it doesn't raise an error during validation
-      assert html =~ "No Href"
-      assert html =~ ~s(href="#")
+      end
     end
   end
 

@@ -161,6 +161,7 @@ defmodule Pulsar.Components.Link do
   defp icon_position_class("end"), do: "inline-flex items-center ml-1"
 
   defp prepare_link_assigns(assigns) do
+    assigns = ensure_nav_present!(assigns)
     ensure_nav_exclusive!(assigns)
 
     # Extract scheme from original href for method validation (before sanitization)
@@ -203,6 +204,14 @@ defmodule Pulsar.Components.Link do
 
       raise ArgumentError,
             "Provide only one of :href, :navigate, or :patch. Found: #{props_string}"
+    end
+
+    assigns
+  end
+
+  defp ensure_nav_present!(assigns) do
+    if assigns[:href] == nil and assigns[:navigate] == nil and assigns[:patch] == nil do
+      raise ArgumentError, "Provide one of :href, :navigate, or :patch"
     end
 
     assigns
@@ -285,7 +294,28 @@ defmodule Pulsar.Components.Link do
           assigns
       end
 
-    assign(assigns, :rel, assigns[:rel] || if(assigns[:target] == "_blank", do: "noopener noreferrer"))
+    rel_value =
+      if assigns[:target] == "_blank" do
+        merge_rel_tokens(assigns[:rel], ["noopener", "noreferrer"])
+      else
+        assigns[:rel]
+      end
+
+    assign(assigns, :rel, rel_value)
+  end
+
+  defp merge_rel_tokens(existing_rel, required_tokens) when is_binary(existing_rel) do
+    existing_tokens = String.split(existing_rel, ~r/\s+/, trim: true)
+
+    all_tokens =
+      (existing_tokens ++ required_tokens)
+      |> Enum.uniq()
+
+    Enum.join(all_tokens, " ")
+  end
+
+  defp merge_rel_tokens(nil, required_tokens) do
+    Enum.join(required_tokens, " ")
   end
 
   @base_classes """
