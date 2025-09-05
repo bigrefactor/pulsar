@@ -18,13 +18,12 @@ defmodule Pulsar.Components.InputTest do
         """)
 
       assert html =~ ~s(<div)
-      assert html =~ ~s(data-variant="solid")
-      assert html =~ ~s(data-color="neutral")
-      assert html =~ ~s(data-size="md")
       # Default solid variant with neutral color
       assert html =~ "bg-neutral/10"
       # Default size (md)
       assert html =~ "min-h-10"
+      # Input padding classes are applied directly
+      assert html =~ "px-3 py-1.5"
     end
 
     test "renders with ghost variant" do
@@ -35,7 +34,7 @@ defmodule Pulsar.Components.InputTest do
         <Input.input name="test" variant="ghost" />
         """)
 
-      assert html =~ ~s(data-variant="ghost")
+      # Ghost variant styling
       assert html =~ "bg-transparent"
       # Ghost doesn't have border
       refute html =~ "border-2"
@@ -162,8 +161,13 @@ defmodule Pulsar.Components.InputTest do
         </Input.input>
         """)
 
-      assert html =~ ~s(data-has-start-decorator)
+      # Decorator content is present
       assert html =~ "$"
+      # Decorator element has proper styling
+      assert html =~ "flex items-center justify-center"
+      # Both decorator and input elements are present
+      assert html =~ ~s(<div class="flex items-center justify-center)
+      assert html =~ ~s(<input)
     end
 
     test "renders with end decorator" do
@@ -176,8 +180,13 @@ defmodule Pulsar.Components.InputTest do
         </Input.input>
         """)
 
-      assert html =~ ~s(data-has-end-decorator)
+      # Decorator content is present
       assert html =~ "USD"
+      # Decorator element has proper styling
+      assert html =~ "flex items-center justify-center"
+      # Both decorator and input elements are present
+      assert html =~ ~s(<div class="flex items-center justify-center)
+      assert html =~ ~s(<input)
     end
 
     test "renders with both decorators" do
@@ -191,8 +200,20 @@ defmodule Pulsar.Components.InputTest do
         </Input.input>
         """)
 
-      assert html =~ ~s(data-has-start-decorator)
-      assert html =~ ~s(data-has-end-decorator)
+      # Both decorator contents are present
+      assert html =~ "$"
+      assert html =~ "USD"
+      # Multiple decorator elements and input are present
+      decorator_count =
+        html
+        |> String.split("flex items-center justify-center")
+        |> length()
+        |> Kernel.-(1)
+
+      # Two decorators
+      assert decorator_count == 2
+      assert html =~ ~s(<input)
+
       assert html =~ "$"
       assert html =~ "USD"
     end
@@ -209,7 +230,6 @@ defmodule Pulsar.Components.InputTest do
 
       # Outline decorators have border background
       assert html =~ "bg-border"
-      assert html =~ "border-r"
     end
 
     test "ghost decorator styling" do
@@ -272,8 +292,9 @@ defmodule Pulsar.Components.InputTest do
         <Input.input name="test" required={true} />
         """)
 
+      # Required attribute is applied to input element
       assert html =~ ~s(required)
-      assert html =~ ~s(data-required="true")
+      assert String.match?(html, ~r/<input[^>]*required[^>]*>/)
     end
 
     test "includes focus ring classes" do
@@ -314,9 +335,8 @@ defmodule Pulsar.Components.InputTest do
       assert html =~ "text-danger"
       assert html =~ "dark:text-dark-danger"
 
-      # Should have data attributes for invalid state
-      assert html =~ ~s(data-invalid)
-      assert html =~ ~s(data-color="danger")
+      # Should have aria-invalid="true" on input element
+      assert html =~ ~s(aria-invalid="true")
     end
 
     test "no error state uses neutral color" do
@@ -341,9 +361,8 @@ defmodule Pulsar.Components.InputTest do
       assert html =~ "bg-neutral/10"
       assert html =~ "text-neutral"
 
-      # Should have data attributes for valid state
-      assert html =~ ~s(data-invalid="false")
-      assert html =~ ~s(data-color="neutral")
+      # Should have aria-invalid="false" on input element
+      assert html =~ ~s(aria-invalid="false")
     end
 
     test "sets aria-invalid to 'true' when field has errors" do
@@ -430,7 +449,6 @@ defmodule Pulsar.Components.InputTest do
       assert html =~ "dark:bg-dark-danger"
       assert html =~ "text-danger-foreground"
       assert html =~ "dark:text-dark-danger-foreground"
-      assert html =~ "border-r"
       assert html =~ "border-danger"
     end
   end

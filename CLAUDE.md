@@ -1,50 +1,53 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code when working with the Pulsar component generator.
+This file provides guidance to Claude Code when working with the Pulsar component library.
 
 ## Repository Context
 
-Pulsar is a **generator-based component system** for Phoenix LiveView, similar to shadcn/ui for React. It generates styled, production-ready components directly into Phoenix applications rather than being imported as a library dependency.
+Pulsar is a **single-dependency component library** for Phoenix LiveView. This self-contained library provides production-ready components with all accessibility and behavior built-in, perfect for Phoenix applications.
 
 ## Project Architecture
 
-### Core Philosophy
-- **Generator-First**: Components are generated into user apps, not imported as dependencies
+### Core Philosophy  
+- **Self-Contained**: Single dependency library with all accessibility and behavior inlined
 - **Utility-First**: Built on Tailwind CSS classes, not custom CSS
 - **Phoenix-Native**: Uses Phoenix.LiveView.JS exclusively, zero external JavaScript
 - **Accessible by Default**: WCAG 2.1 AA compliance with ARIA attributes built-in
-- **Copy-Paste Friendly**: Generated components can be fully customized after generation
+- **Production Ready**: High-quality components for Phoenix applications
+- **Security First**: XSS protection and proper input validation built-in
 
 ### Directory Structure
 ```
 lib/pulsar/
-├── pulsar.ex              # Main module with CLI interface
-├── generators/            # Mix task generators for each component
-│   ├── button.ex         # mix pulsar.gen.button
-│   ├── form.ex           # mix pulsar.gen.form  
-│   └── modal.ex          # mix pulsar.gen.modal
-└── templates/            # Component templates used by generators
-    ├── button/
-    ├── form/
-    └── modal/
+├── pulsar.ex              # Main module 
+└── components/            # Self-contained components (no external dependencies)
+    ├── badge.ex          # Badge component
+    ├── button.ex         # Button component with colocated JS
+    ├── checkbox.ex       # Checkbox component with card variants
+    ├── icon.ex           # Icon component (partial)
+    ├── input.ex          # Text input with decorators
+    ├── label.ex          # Label component
+    ├── link.ex           # Link component with XSS protection
+    ├── radio_group.ex    # Radio button groups
+    ├── select.ex         # Select dropdowns
+    ├── switch.ex         # Toggle switches
+    └── textarea.ex       # Multi-line text input
 
-priv/templates/           # Template files for code generation
-├── button.ex.eex        
-├── form.ex.eex
-└── modal.ex.eex
+themes/
+└── pulsar.css           # CSS custom properties for theming
 ```
 
 ## Development Patterns
 
-### Generator Architecture
+### Component Architecture
 
-Pulsar uses the **Igniter** library for sophisticated code generation and project modification. This allows generators to:
+Pulsar components are self-contained modules with all functionality inlined:
 
-- **Smart File Creation**: Creates files only if they don't exist
-- **No Dependency Management**: Components are generated directly - no external dependencies added
-- **Import Updates**: Modifies existing files to add component imports
-- **Conflict Resolution**: Handles module naming and path conflicts
-- **Rollback Safety**: Can undo changes if generation fails
+- **No External Dependencies**: Only requires TailwindMerge for class conflict resolution
+- **Inlined Accessibility**: All ARIA attributes and keyboard navigation built-in
+- **Phoenix Integration**: Seamless form field support with proper validation
+- **Security Built-in**: XSS protection and input sanitization included
+- **Proven Patterns**: Maintains proven accessibility and behavior patterns
 
 **Generator-Only Benefits:**
 - **Tailwind Purging**: Generated classes in user's codebase are detected automatically
@@ -188,47 +191,61 @@ document.documentElement.dataset.theme = 'light'; // Disable
 
 ## Dependencies
 
-### Generator Development Dependencies
-- **Stellar**: Headless components for accessibility and behavior (`path: "../stellar"`)
-- **TailwindMerge**: Class conflict resolution for dynamic styling 
-- **Igniter**: Code generation and project modification toolkit
-- **Phoenix LiveView**: Component system and reactivity
+### Runtime Dependencies (Minimal)
+- **TailwindMerge**: Class conflict resolution for intelligent class merging (`~> 0.2`)
+- **Phoenix LiveView**: Component system and reactivity (standard Phoenix dependency)
+
+### Development Dependencies  
+- **ExUnit**: Unit testing framework (standard Elixir)
+- **Credo**: Static analysis for code quality
+- **Dialyzer**: Type checking and analysis
 
 ### Component Showcase
 Component examples and interactive testing are available in the standalone storybook app located at `../storybook/`. This is a separate Phoenix application that imports Pulsar as a dependency.
 
-**Important**: Generated components depend on **Stellar** and **TailwindMerge** as the only required dependencies. No Pulsar package dependency is needed.
+**Self-Contained Implementation**: Components include all accessibility and behavior patterns directly, with only TailwindMerge as the single external dependency.
 
-**Generated Components Include:**
-- **Badge**: Flexible labels with variants/sizes, removable option, and action slot
-- **Button**: Multiple variants (solid, outline, ghost, link) with full color palette
-- **Icon**: Centralized icon component (Heroicons; outline/solid/mini/micro, sizes, accessibility)
-- **Input**: Text inputs with decorator system (start/end icons, text, buttons)
+**Complete Component Library Includes:**
+- **Badge**: Flexible labels with variants/sizes, removable option, and action slot (partial implementation)
+- **Button**: Multiple variants (primary, success, error, etc.) with loading states and JS hooks
+- **Checkbox**: Checkboxes with card variants and complete Phoenix form integration  
+- **Icon**: Centralized icon component (Heroicons; outline/solid/mini/micro, sizes, accessibility) (partial)
+- **Input**: Text inputs with decorator system (start/end icons, text, buttons) and validation
 - **Label**: Typography variants with required indicators and helper text
-- **Link**: Link component with button-like styling options
-- **Select**: Native select with custom arrow, multi-select badges, and option groups
-- **Textarea**: Multi-line input with consistent styling
-- Complete component implementation using Stellar for behavior
-- TailwindMerge integration for intelligent class composition  
-- All styling and interaction code
-- Full accessibility features via Stellar
+- **Link**: Link component with XSS protection and Phoenix navigation integration
+- **RadioGroup**: Radio button groups with proper ARIA semantics and card variants
+- **Select**: Native select with option generation and form integration
+- **Switch**: Toggle switches with Phoenix form support
+- **Textarea**: Multi-line input with character counting and validation
+- **Self-contained implementation** with all accessibility patterns built-in
+- **TailwindMerge integration** for intelligent class composition  
+- **Complete accessibility features** with ARIA attributes and keyboard navigation
+- **Security-first approach** with XSS protection and input validation
 
 ## Commands
 
 ### Development
 ```bash
-mix compile              # Compile the generator
-mix test                # Run all tests
-mix dialyzer            # Type checking
-mix credo               # Code quality
-# No server - Pulsar is generator-only
+mix deps.get             # Install dependencies (only TailwindMerge)
+mix compile              # Compile the library
+mix test                 # Run all tests  
+mix dialyzer             # Type checking
+mix credo --strict       # Code quality analysis
+mix format               # Format code
 ```
 
-### Generator Usage (in user apps)
-```bash
-mix pulsar.gen.button    # Generate button component
-mix pulsar.gen.form      # Generate form components
-mix pulsar.gen.modal     # Generate modal component
+### Usage (in Phoenix apps)
+```elixir
+# Add to mix.exs
+{:pulsar, "~> 0.1"},
+{:tailwind_merge, "~> 0.2"}
+
+# Import components in LiveViews/Components
+import Pulsar.Components.{Button, Input, Select, Checkbox}
+
+# Use in templates
+<.button variant="primary">Save</.button>
+<.input field={@form[:email]} type="email" />
 ```
 
 ## Testing Strategy
@@ -323,7 +340,7 @@ end
 
 **Code Generation Validation:**
 - Verifies correct file paths and module names
-- Tests code generation (stellar, tailwind_merge code embedded)
+- Tests code generation (component code with tailwind_merge integration)
 - Validates component import updates
 - Checks error handling for edge cases
 

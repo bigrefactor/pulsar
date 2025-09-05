@@ -1,236 +1,333 @@
 defmodule Pulsar.Components.Link do
   @moduledoc """
-  Styled link component built on Stellar.Components.Link.
-
-  Provides consistent link styling with semantic variants and color schemes.
-  All styling is applied via Tailwind CSS utilities with semantic color tokens that
-  support both light and dark modes.
-
-  ## Dependencies
-
-  This component requires:
-  - `Pulsar.Components.Icon` - for external link indicators
+  Accessible link component with semantic variants, security, and Phoenix navigation.
 
   ## Features
-
-  - **Stellar Foundation**: Built on Stellar's accessible link component
-  - **Semantic Variants**: solid, ghost, outline with clear meaning for links
-  - **Color Schemes**: full semantic color palette (primary, secondary, etc.)
-  - **Automatic External Detection**: URLs with protocols get security attributes
-  - **Flexible Sizing**: inherit parent text size or specify explicit sizes
-  - **Full Stellar API**: All Stellar link props are supported
+  - Security-first: XSS protection and external link security
+  - Semantic variants: solid, ghost, outline  
+  - Color schemes: primary, secondary, danger, etc.
+  - Automatic external detection with security attributes
+  - Phoenix navigation support (navigate, patch, href)
+  - WCAG 2.1 AA compliance
 
   ## Examples
 
-      # Basic link (defaults to solid variant, primary color)
       <Link.a href="/profile">View Profile</Link.a>
-
-      # Different variants
-      <Link.a href="/docs" variant="ghost">Documentation</Link.a>
-      <Link.a href="/help" variant="outline">Help Center</Link.a>
-
-      # Different colors
-      <Link.a href="/delete" color="danger">Delete Account</Link.a>
-      <Link.a href="/settings" color="muted">Settings</Link.a>
-
-      # External link with automatic icon and security attributes
-      <Link.a href="https://example.com">Visit External Site</Link.a>
-
-      # With Phoenix navigation
-      <Link.a navigate={~p"/dashboard"}>Go to Dashboard</Link.a>
-
-      # With custom icons
-      <Link.a navigate={~p"/settings"}>
+      <Link.a href="https://example.com">External Link</Link.a>
+      <Link.a navigate={~p"/dashboard"} variant="ghost" color="danger">Dashboard</Link.a>
+      <Link.a href="/settings">
         <:start_icon>⚙️</:start_icon>
-        Account Settings
+        Settings
       </Link.a>
 
   ## Variants
-
-  - **solid** (default): Clean colored text without underline
-  - **ghost**: Shows underline on hover only  
-  - **outline**: Always shows underline
-
-  ## Stellar Integration
-
-  This component wraps Stellar.Components.Link and passes through all its props:
-  - `:href` - External URL
-  - `:navigate`, `:patch` - Phoenix LiveView navigation
-  - All standard link attributes
+  - `solid` (default): No underline
+  - `ghost`: Underline on hover
+  - `outline`: Always underlined
   """
 
   use Phoenix.Component
 
   import TailwindMerge, only: [merge: 1]
 
+  alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Icon
-  alias Stellar.Components.Link, as: StellarLink
 
   # Pulsar-specific styling attributes
-  attr :variant, :string,
+  attr(:variant, :string,
     default: "solid",
     values: ~w(solid ghost outline),
     doc: "Visual style variant of the link. solid=no underline, ghost=hover underline, outline=always underline"
+  )
 
-  attr :color, :string,
+  attr(:color, :string,
     default: "primary",
     values: ~w(primary secondary muted danger success warning info inherit),
     doc: "Color scheme of the link"
+  )
 
-  attr :size, :string,
+  attr(:size, :string,
     default: "inherit",
     values: ~w(xs sm md lg xl inherit),
     doc: "Size of the link text. inherit adapts to parent text size"
+  )
 
   # Stellar Link attributes - copied from Stellar.Components.Link
-  attr :href, :string, default: nil, doc: "External URL to navigate to"
-  attr :navigate, :string, default: nil, doc: "Phoenix route to navigate to"
-  attr :patch, :string, default: nil, doc: "Phoenix route to patch navigate to"
-  attr :replace, :boolean, default: false, doc: "Replace current history entry"
-  attr :method, :string, default: nil, doc: "HTTP method for the link"
-  attr :target, :string, default: nil, doc: "Link target attribute (auto-set for external)"
-  attr :rel, :string, default: nil, doc: "Link relationship (auto-set for external)"
+  attr(:href, :string, default: nil, doc: "External URL to navigate to")
+  attr(:navigate, :any, default: nil, doc: "Phoenix route to navigate to (string or VerifiedRoute)")
+  attr(:patch, :any, default: nil, doc: "Phoenix route to patch navigate to (string or VerifiedRoute)")
+  attr(:replace, :boolean, default: false, doc: "Replace current history entry")
+  attr(:method, :string, default: nil, doc: "HTTP method for the link")
+  attr(:csrf_token, :any, default: true, doc: "CSRF token for links with non-GET methods")
+  attr(:target, :string, default: nil, doc: "Link target attribute (auto-set for external)")
+  attr(:rel, :string, default: nil, doc: "Link relationship (auto-set for external)")
 
   # Standard HTML attributes
-  attr :id, :string, default: nil
-  attr :class, :string, default: "", doc: "Additional CSS classes"
+  attr(:id, :string, default: nil)
+  attr(:class, :string, default: "", doc: "Additional CSS classes")
 
   # ARIA attributes (matching Stellar.Components.Link)
-  attr :aria_label, :string, default: nil, doc: "Accessible label for the link"
-  attr :aria_describedby, :string, default: nil
-  attr :aria_current, :string, default: nil
+  attr(:aria_label, :string, default: nil, doc: "Accessible label for the link")
+  attr(:aria_describedby, :string, default: nil)
+  attr(:aria_current, :string, default: nil)
 
-  attr :rest, :global
+  attr(:rest, :global)
 
   # Slots
-  slot :inner_block, required: true, doc: "Link content"
-  slot :start_icon, doc: "Icon shown before the link text"
-  slot :end_icon, doc: "Icon shown after the link text"
+  slot(:inner_block, required: true, doc: "Link content")
+  slot(:start_icon, doc: "Icon shown before the link text")
+  slot(:end_icon, doc: "Icon shown after the link text")
 
   @doc """
-  Renders a styled link component.
-
-  Uses semantic color tokens and variants for consistent styling.
-  External links automatically get security attributes and visual indicators.
-
-  ## Size Behavior
-  By default, links inherit the text size from their parent context.
-  You can override this with explicit size classes.
-
-  ## External Links
-  Stellar automatically detects external URLs and:
-  - Adds `target="_blank"` and `rel="noopener noreferrer"`
-  - Appends an arrow icon (unless custom end_icon is provided)
-  - Maintains all security best practices
-
-  ## Examples
-
-      # Inherits parent text size
-      <p class="text-lg">
-        Check out our <Link.a href="/docs">documentation</Link.a> for details.
-      </p>
-
-      # Explicit size
-      <Link.a href="/profile" size="lg">Large Profile Link</Link.a>
+  Accessible link with security defaults and Phoenix navigation (href/navigate/patch).
   """
+  @spec a(map()) :: Rendered.t()
   def a(assigns) do
-    # Build complete class string using TailwindMerge - only include needed classes
-    assigns =
-      assign(
-        assigns,
-        :merged_classes,
-        merge([
-          # Enable group-data selectors for external icon handling
-          "group inline-flex items-center",
-          base_link_classes(),
-          variant_classes(assigns.variant),
-          color_classes(assigns.color),
-          size_classes(assigns.size),
-          assigns.class
-        ])
-      )
+    assigns = prepare_link_assigns(assigns)
 
     ~H"""
-    <StellarLink.a
+    <.link
       href={@href}
       navigate={@navigate}
       patch={@patch}
       replace={@replace}
       method={@method}
+      csrf_token={@csrf_token}
       target={@target}
       rel={@rel}
       id={@id}
       class={@merged_classes}
-      aria_label={@aria_label}
-      aria_describedby={@aria_describedby}
-      aria_current={@aria_current}
+      aria-label={@aria_label}
+      aria-describedby={@aria_describedby}
+      aria-current={@aria_current}
+      data-external={(@external && "true") || nil}
+      data-current={@aria_current}
+      data-target={@target}
       {@rest}
     >
-      <span :if={@start_icon != []} class="inline-flex items-center mr-1" aria-hidden="true">
-        {render_slot(@start_icon)}
-      </span>
+      <.render_icon_slot slot={@start_icon} position="start" />
       {render_slot(@inner_block)}
-      <!-- Automatic external icon - shown only for links that open in new tab without custom end_icon -->
-      <span
-        :if={@end_icon == []}
-        class="hidden group-data-[target=_blank]:inline-flex items-center ml-1"
-        aria-hidden="true"
-      >
-        <Icon.icon name="hero-arrow-top-right-on-square" class="w-[1em] h-[1em]" color="current" />
-      </span>
-      <!-- Custom end icon - shown when provided -->
-      <span :if={@end_icon != []} class="inline-flex items-center ml-1" aria-hidden="true">
-        {render_slot(@end_icon)}
-      </span>
-    </StellarLink.a>
+      <.render_external_icon show_external={@show_external_icon} />
+      <.render_icon_slot slot={@end_icon} position="end" />
+    </.link>
     """
   end
 
-  # Base styles shared by all links
-  defp base_link_classes do
-    """
-    cursor-pointer transition-all duration-200 ease-in-out
-    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 dark:focus-visible:ring-dark-ring/50
-    focus-visible:ring-offset-1
+  defp render_icon_slot(assigns) do
+    ~H"""
+    <span :if={@slot != []} class={icon_position_class(@position)} aria-hidden="true">
+      {render_slot(@slot)}
+    </span>
     """
   end
 
-  # Variant-specific border behavior
-  defp variant_classes("solid"), do: "no-underline"
+  defp render_external_icon(assigns) do
+    ~H"""
+    <span
+      :if={@show_external}
+      class="hidden group-data-[target=_blank]:inline-flex items-center ml-1"
+      aria-hidden="true"
+    >
+      <Icon.icon name="hero-arrow-top-right-on-square" class="w-[1em] h-[1em]" color="current" />
+    </span>
+    """
+  end
 
-  defp variant_classes("ghost"), do: "no-underline border-b-2 border-transparent hover:border-current pb-0.5"
+  defp icon_position_class("start"), do: "inline-flex items-center mr-1"
+  defp icon_position_class("end"), do: "inline-flex items-center ml-1"
 
-  defp variant_classes("outline"), do: "no-underline border-b-2 border-current pb-0.5"
+  defp prepare_link_assigns(assigns) do
+    assigns = ensure_nav_present!(assigns)
+    ensure_nav_exclusive!(assigns)
 
-  # Color classes using semantic tokens + opacity
-  defp color_classes("primary"),
-    do: "text-primary hover:text-primary/80 dark:text-dark-primary dark:hover:text-dark-primary/80"
+    # Extract scheme from original href for method validation (before sanitization)
+    original_scheme = if is_binary(assigns.href), do: URI.parse(assigns.href).scheme
+    ensure_method_compatibility!(assigns, original_scheme)
 
-  defp color_classes("secondary"),
-    do: "text-secondary hover:text-secondary/80 dark:text-dark-secondary dark:hover:text-dark-secondary/80"
+    sanitized_href = sanitize_href(assigns.href)
+    parsed_uri = if is_binary(sanitized_href), do: URI.parse(sanitized_href)
+    scheme = if parsed_uri, do: parsed_uri.scheme
 
-  defp color_classes("muted"),
-    do:
-      "text-muted-foreground hover:text-muted-foreground/70 dark:text-dark-muted-foreground dark:hover:text-dark-muted-foreground/70"
+    is_external = external_link?(parsed_uri, sanitized_href)
 
-  defp color_classes("danger"),
-    do: "text-danger hover:text-danger/80 dark:text-dark-danger dark:hover:text-dark-danger/80"
+    assigns
+    |> assign(:href, sanitized_href)
+    |> assign(:parsed_uri, parsed_uri)
+    |> assign(:scheme, scheme)
+    |> assign(:external, is_external)
+    |> assign(:show_external_icon, is_external && assigns.end_icon == [])
+    |> apply_external_security(is_external, scheme)
+    |> build_classes()
+  end
 
-  defp color_classes("success"),
-    do: "text-success hover:text-success/80 dark:text-dark-success dark:hover:text-dark-success/80"
+  # Private helper functions
 
-  defp color_classes("warning"),
-    do: "text-warning hover:text-warning/80 dark:text-dark-warning dark:hover:text-dark-warning/80"
+  defp ensure_nav_exclusive!(assigns) do
+    nav_props = [
+      {assigns[:href], :href},
+      {assigns[:navigate], :navigate},
+      {assigns[:patch], :patch}
+    ]
 
-  defp color_classes("info"), do: "text-info hover:text-info/80 dark:text-dark-info dark:hover:text-dark-info/80"
+    provided_props =
+      nav_props
+      |> Enum.filter(fn {value, _key} -> value end)
+      |> Enum.map(fn {_value, key} -> key end)
 
-  defp color_classes("inherit"), do: "text-inherit"
+    if length(provided_props) > 1 do
+      props_string = provided_props |> Enum.map_join(", ", &inspect/1)
 
-  # Size classes
-  defp size_classes("xs"), do: "text-xs"
-  defp size_classes("sm"), do: "text-sm"
-  defp size_classes("md"), do: "text-base"
-  defp size_classes("lg"), do: "text-lg"
-  defp size_classes("xl"), do: "text-xl"
-  defp size_classes("inherit"), do: ""
+      raise ArgumentError,
+            "Provide only one of :href, :navigate, or :patch. Found: #{props_string}"
+    end
+
+    assigns
+  end
+
+  defp ensure_nav_present!(assigns) do
+    if assigns[:href] == nil and assigns[:navigate] == nil and assigns[:patch] == nil do
+      raise ArgumentError, "Provide one of :href, :navigate, or :patch"
+    end
+
+    assigns
+  end
+
+  defp ensure_method_compatibility!(assigns, scheme) do
+    if assigns[:method] != nil and (assigns[:navigate] != nil or assigns[:patch] != nil) do
+      raise ArgumentError,
+            ":method cannot be used with :navigate or :patch. Use :method only with :href for form submissions."
+    end
+
+    if is_binary(assigns[:method]) and assigns[:href] != nil do
+      href = assigns[:href]
+
+      cond do
+        not is_binary(href) ->
+          raise ArgumentError,
+                ":method can only be used with relative paths or http(s) hrefs"
+
+        scheme in [nil, "http", "https"] ->
+          # Allow relative URLs (scheme = nil) and http/https URLs
+          :ok
+
+        true ->
+          raise ArgumentError,
+                ":method can only be used with relative paths or http(s) hrefs; other schemes (mailto:, tel:, javascript:, data:, ...) are not allowed"
+      end
+    end
+
+    assigns
+  end
+
+  @dangerous_protocols ~w(javascript data vbscript about file)
+
+  defp sanitize_href(nil), do: nil
+
+  defp sanitize_href(href) when is_binary(href) do
+    trimmed = String.trim(href)
+
+    case Regex.run(~r/^\s*([a-z][a-z0-9+.\-]*):/i, trimmed) do
+      [_, scheme] ->
+        if String.downcase(scheme) in @dangerous_protocols, do: "#", else: trimmed
+
+      _ ->
+        trimmed
+    end
+  end
+
+  defp external_link?(nil, _), do: false
+  defp external_link?(_, nil), do: false
+
+  defp external_link?(parsed_uri, href) when is_binary(href) do
+    (String.starts_with?(href, "//") && !String.starts_with?(href, "///")) ||
+      case parsed_uri do
+        %URI{scheme: scheme} when is_binary(scheme) ->
+          String.downcase(scheme) in ["http", "https", "mailto", "tel", "ftp"]
+
+        _ ->
+          false
+      end
+  end
+
+  defp apply_external_security(assigns, false, _scheme), do: assigns
+
+  defp apply_external_security(assigns, true, scheme) do
+    assigns =
+      case scheme do
+        scheme when scheme in ["http", "https", "ftp"] ->
+          if assigns[:target] || assigns[:method], do: assigns, else: assign(assigns, :target, "_blank")
+
+        _ ->
+          assigns
+      end
+
+    rel_value =
+      if assigns[:target] == "_blank" do
+        merge_rel_tokens(assigns[:rel], ["noopener", "noreferrer"])
+      else
+        assigns[:rel]
+      end
+
+    assign(assigns, :rel, rel_value)
+  end
+
+  defp merge_rel_tokens(existing_rel, required_tokens) when is_binary(existing_rel) do
+    existing_tokens = String.split(existing_rel, ~r/\s+/, trim: true)
+
+    all_tokens =
+      (existing_tokens ++ required_tokens)
+      |> Enum.uniq()
+
+    Enum.join(all_tokens, " ")
+  end
+
+  defp merge_rel_tokens(nil, required_tokens) do
+    Enum.join(required_tokens, " ")
+  end
+
+  @base_classes """
+  group inline-flex items-center cursor-pointer transition-all duration-200 ease-in-out
+  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 dark:focus-visible:ring-dark-ring/50
+  focus-visible:ring-offset-1
+  """
+
+  @variant_classes %{
+    "ghost" => "no-underline border-b-2 border-transparent hover:border-current pb-0.5",
+    "outline" => "no-underline border-b-2 border-current pb-0.5",
+    "solid" => "no-underline"
+  }
+
+  @color_classes %{
+    "danger" => "text-danger hover:text-danger/80 dark:text-dark-danger dark:hover:text-dark-danger/80",
+    "info" => "text-info hover:text-info/80 dark:text-dark-info dark:hover:text-dark-info/80",
+    "inherit" => "text-inherit",
+    "muted" =>
+      "text-muted-foreground hover:text-muted-foreground/70 dark:text-dark-muted-foreground dark:hover:text-dark-muted-foreground/70",
+    "primary" => "text-primary hover:text-primary/80 dark:text-dark-primary dark:hover:text-dark-primary/80",
+    "secondary" => "text-secondary hover:text-secondary/80 dark:text-dark-secondary dark:hover:text-dark-secondary/80",
+    "success" => "text-success hover:text-success/80 dark:text-dark-success dark:hover:text-dark-success/80",
+    "warning" => "text-warning hover:text-warning/80 dark:text-dark-warning dark:hover:text-dark-warning/80"
+  }
+
+  @size_classes %{
+    "inherit" => "",
+    "lg" => "text-lg",
+    "md" => "text-base",
+    "sm" => "text-sm",
+    "xl" => "text-xl",
+    "xs" => "text-xs"
+  }
+
+  defp build_classes(assigns) do
+    classes =
+      merge([
+        @base_classes,
+        @variant_classes[assigns.variant],
+        @color_classes[assigns.color],
+        @size_classes[assigns.size],
+        assigns.class
+      ])
+
+    assign(assigns, :merged_classes, classes)
+  end
 end

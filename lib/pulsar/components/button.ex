@@ -1,19 +1,28 @@
 defmodule Pulsar.Components.Button do
   @moduledoc """
-  Styled button component built on Stellar.Components.Button.
+  Beautiful, accessible button component with polymorphic rendering and styling.
 
-  Provides beautiful, accessible buttons with semantic variants and consistent styling.
-  All styling is applied via Tailwind CSS utilities with semantic color tokens that
-  support both light and dark modes.
+  Provides styled buttons with semantic variants, consistent accessibility, and
+  smart navigation handling. All styling is applied via Tailwind CSS utilities 
+  with semantic color tokens that support both light and dark modes.
 
   ## Features
 
-  - **Stellar Foundation**: Built on Stellar's accessible button component
-  - **Variants**: solid, outline, ghost, link with semantic styling
-  - **Colors**: neutral, primary, secondary, success, danger, warning for consistent theming
+  - **Polymorphic Rendering**: Renders as `<button>`, `<a>`, or `<div>` elements
+  - **Accessibility-First**: WCAG 2.1 AA compliance with proper ARIA attributes
+  - **Variants**: solid, outline, ghost, link with semantic styling  
+  - **Colors**: neutral, primary, secondary, success, danger, warning for theming
   - **Multiple Sizes**: xs, sm, md, lg, xl for complete range
-  - **Dark Mode**: Automatic light/dark mode support
-  - **Full Stellar API**: All Stellar button props are supported
+  - **Smart Navigation**: Phoenix LiveView navigation with security
+  - **Keyboard Support**: Space/Enter activation for pseudo-buttons
+  - **Loading States**: Built-in loading indicators and disabled states
+
+  ## Security
+
+  - **XSS Protection**: href attributes sanitized to block dangerous protocols (javascript:, data:, etc.)
+  - **External Link Safety**: Auto-adds rel="noopener noreferrer" for target="_blank" links
+  - **Navigation Safety**: Proper handling of external links with security attributes
+  - **Pseudo-button Accessibility**: keyboard navigation for div/a buttons
 
   ## Examples
 
@@ -30,137 +39,314 @@ defmodule Pulsar.Components.Button do
         Go to Dashboard
       </.button>
 
-      # Icon-only button with accessibility
-      <.button variant="solid" color="primary" size="sm" class="w-8 p-0" aria_label="Add item">
-        +
+      # Toggle button with pressed state
+      <.button variant="ghost" pressed={@expanded} phx-click="toggle">
+        Menu
       </.button>
 
-      # Custom styling
-      <.button variant="solid" color="primary" class="w-full justify-start">
-        <span>📁</span> Add Item
+      # Custom element with ARIA
+      <.button as={:div} controls="menu-popup" expanded={@menu_open}>
+        Options
       </.button>
 
-  ## Stellar Integration
+  ## Polymorphic Behavior
 
-  This component wraps Stellar.Components.Button and passes through all its props:
-  - `:as` - Render as button, a, or div
-  - `:loading`, `:disabled`, `:pressed` - Interactive states
-  - `:navigate`, `:href`, `:patch` - Navigation options
-  - `:controls`, `:expanded` - ARIA attributes
-  - All Phoenix LiveView attributes (phx-click, etc.)
+  The component automatically chooses the appropriate HTML element:
+  - `<button>` for interactive buttons (default)
+  - `<a>` for navigation (when href/navigate/patch provided)  
+  - Custom element when explicitly set via `:as`
+
+  ## Accessibility Features
+
+  - **Proper semantics**: Button role and ARIA attributes
+  - **Keyboard support**: Space/Enter activation for pseudo-buttons
+  - **Screen reader support**: Loading, pressed, expanded states
+  - **Focus management**: Proper tabindex handling for disabled states
+  - **Disclosure patterns**: aria-expanded/aria-controls linking
   """
 
   use Phoenix.Component
 
   import TailwindMerge, only: [merge: 1]
 
-  alias Stellar.Components.Button, as: StellarButton
+  alias Phoenix.LiveView.Rendered
+  alias Phoenix.VerifiedRoutes.Route
+  alias Pulsar.Components.Link
+
+  # Custom guard for validating navigation links
+  defguard is_link(href) when is_binary(href) or is_struct(href, Route) or is_struct(href, URI)
+
+  # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
+  defp generate_id(prefix \\ "button") do
+    "#{prefix}-#{System.unique_integer([:positive])}"
+  end
+
+  # ============================================================================
+  # CONFIGURATION & CONSTANTS
+  # ============================================================================
+
+  # Size configuration for button variants
+  @size_config %{
+    "lg" => %{
+      button: "h-12 px-6 text-lg gap-2 rounded-lg",
+      spinner: "h-5 w-5 animate-spin"
+    },
+    "md" => %{
+      button: "h-10 px-4 gap-2 rounded-lg",
+      spinner: "h-4 w-4 animate-spin"
+    },
+    "sm" => %{
+      button: "h-8 px-3 text-sm gap-1 rounded-md",
+      spinner: "h-4 w-4 animate-spin"
+    },
+    "xl" => %{
+      button: "h-14 px-8 text-xl gap-3 rounded-xl",
+      spinner: "h-6 w-6 animate-spin"
+    },
+    "xs" => %{
+      button: "h-6 px-2 text-xs gap-1 rounded-md",
+      spinner: "h-3 w-3 animate-spin"
+    }
+  }
+
+  # Base button styling classes
+  @button_base_classes [
+    "font-medium cursor-pointer transition-shadow transition-transform duration-200 ease-in-out",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+    "focus-visible:ring-ring dark:focus-visible:ring-dark-ring",
+    "disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed",
+    "data-[loading=true]:pointer-events-none data-[loading=true]:opacity-50 data-[loading=true]:cursor-wait",
+    "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[disabled=true]:cursor-not-allowed"
+  ]
+
+  # Variant-specific layout and behavior classes
+  @variant_classes %{
+    "ghost" => [
+      "inline-flex items-center justify-center shadow-sm hover:shadow-md",
+      "hover:scale-[1.02] active:scale-[0.98]",
+      "motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none"
+    ],
+    "link" => [
+      "inline underline-offset-4 hover:underline focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:underline"
+    ],
+    "outline" => [
+      "inline-flex items-center justify-center shadow-sm hover:shadow-md",
+      "hover:scale-[1.02] active:scale-[0.98]",
+      "motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none"
+    ],
+    "solid" => [
+      "inline-flex items-center justify-center shadow-sm hover:shadow-md",
+      "hover:scale-[1.02] active:scale-[0.98]",
+      "motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none"
+    ]
+  }
+
+  # Color configuration for each variant and color combination
+  @color_config %{
+    "ghost" => %{
+      "danger" =>
+        "text-danger hover:bg-danger/10 active:bg-danger/20 dark:text-dark-danger dark:hover:bg-dark-danger/10 dark:active:bg-dark-danger/20",
+      "info" =>
+        "text-info hover:bg-info/10 active:bg-info/20 dark:text-dark-info dark:hover:bg-dark-info/10 dark:active:bg-dark-info/20",
+      "neutral" =>
+        "text-foreground dark:text-dark-foreground hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover active:bg-surface-1-active dark:active:bg-dark-surface-1-active",
+      "primary" =>
+        "text-primary hover:bg-primary/10 active:bg-primary/20 dark:text-dark-primary dark:hover:bg-dark-primary/10 dark:active:bg-dark-primary/20",
+      "secondary" =>
+        "text-secondary hover:bg-secondary/10 active:bg-secondary/20 dark:text-dark-secondary dark:hover:bg-dark-secondary/10 dark:active:bg-dark-secondary/20",
+      "success" =>
+        "text-success hover:bg-success/10 active:bg-success/20 dark:text-dark-success dark:hover:bg-dark-success/10 dark:active:bg-dark-success/20",
+      "warning" =>
+        "text-warning hover:bg-warning/10 active:bg-warning/20 dark:text-dark-warning dark:hover:bg-dark-warning/10 dark:active:bg-dark-warning/20"
+    },
+    "link" => %{
+      "danger" => "text-danger hover:text-danger/80 dark:text-dark-danger dark:hover:text-dark-danger/80",
+      "info" => "text-info hover:text-info/80 dark:text-dark-info dark:hover:text-dark-info/80",
+      "neutral" =>
+        "text-muted-foreground dark:text-dark-muted-foreground hover:text-foreground dark:hover:text-dark-foreground",
+      "primary" => "text-primary hover:text-primary/80 dark:text-dark-primary dark:hover:text-dark-primary/80",
+      "secondary" =>
+        "text-secondary hover:text-secondary/80 dark:text-dark-secondary dark:hover:text-dark-secondary/80",
+      "success" => "text-success hover:text-success/80 dark:text-dark-success dark:hover:text-dark-success/80",
+      "warning" => "text-warning hover:text-warning/80 dark:text-dark-warning dark:hover:text-dark-warning/80"
+    },
+    "outline" => %{
+      "danger" =>
+        "border-2 border-danger bg-background text-danger hover:bg-danger/5 active:bg-danger/10 dark:border-dark-danger dark:bg-dark-background dark:text-dark-danger dark:hover:bg-dark-danger/10 dark:active:bg-dark-danger/20",
+      "info" =>
+        "border-2 border-info bg-background text-info hover:bg-info/5 active:bg-info/10 dark:border-dark-info dark:bg-dark-background dark:text-dark-info dark:hover:bg-dark-info/10 dark:active:bg-dark-info/20",
+      "neutral" =>
+        "border-2 border-border dark:border-dark-border bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover active:bg-surface-1-active dark:active:bg-dark-surface-1-active",
+      "primary" =>
+        "border-2 border-primary bg-background text-primary hover:bg-primary/5 active:bg-primary/10 dark:border-dark-primary dark:bg-dark-background dark:text-dark-primary dark:hover:bg-dark-primary/10 dark:active:bg-dark-primary/20",
+      "secondary" =>
+        "border-2 border-secondary bg-background text-secondary hover:bg-secondary/5 active:bg-secondary/10 dark:border-dark-secondary dark:bg-dark-background dark:text-dark-secondary dark:hover:bg-dark-secondary/10 dark:active:bg-dark-secondary/20",
+      "success" =>
+        "border-2 border-success bg-background text-success hover:bg-success/5 active:bg-success/10 dark:border-dark-success dark:bg-dark-background dark:text-dark-success dark:hover:bg-dark-success/10 dark:active:bg-dark-success/20",
+      "warning" =>
+        "border-2 border-warning bg-background text-warning hover:bg-warning/5 active:bg-warning/10 dark:border-dark-warning dark:bg-dark-background dark:text-dark-warning dark:hover:bg-dark-warning/10 dark:active:bg-dark-warning/20"
+    },
+    "solid" => %{
+      "danger" =>
+        "bg-danger text-danger-foreground hover:bg-danger/90 active:bg-danger/80 dark:bg-dark-danger dark:text-dark-danger-foreground dark:hover:bg-dark-danger/90 dark:active:bg-dark-danger/80",
+      "info" =>
+        "bg-info text-info-foreground hover:bg-info/90 active:bg-info/80 dark:bg-dark-info dark:text-dark-info-foreground dark:hover:bg-dark-info/90 dark:active:bg-dark-info/80",
+      "neutral" =>
+        "bg-neutral text-neutral-foreground hover:bg-neutral/90 active:bg-neutral/80 dark:bg-dark-neutral dark:text-dark-neutral-foreground dark:hover:bg-dark-neutral/90 dark:active:bg-dark-neutral/80",
+      "primary" =>
+        "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 dark:bg-dark-primary dark:text-dark-primary-foreground dark:hover:bg-dark-primary/90 dark:active:bg-dark-primary/80",
+      "secondary" =>
+        "bg-secondary text-secondary-foreground hover:bg-secondary/90 active:bg-secondary/80 dark:bg-dark-secondary dark:text-dark-secondary-foreground dark:hover:bg-dark-secondary/90 dark:active:bg-dark-secondary/80",
+      "success" =>
+        "bg-success text-success-foreground hover:bg-success/90 active:bg-success/80 dark:bg-dark-success dark:text-dark-success-foreground dark:hover:bg-dark-success/90 dark:active:bg-dark-success/80",
+      "warning" =>
+        "bg-warning text-warning-foreground hover:bg-warning/90 active:bg-warning/80 dark:bg-dark-warning dark:text-dark-warning-foreground dark:hover:bg-dark-warning/90 dark:active:bg-dark-warning/80"
+    }
+  }
 
   # Pulsar-specific styling attributes
-  attr :variant, :string,
+  attr(:variant, :string,
     default: "solid",
     values: ~w(solid outline ghost link),
     doc: "Visual style variant of the button"
+  )
 
-  attr :color, :string,
+  attr(:color, :string,
     default: "primary",
     values: ~w(neutral primary secondary success danger warning info),
     doc: "Color scheme of the button"
+  )
 
-  attr :size, :string,
+  attr(:size, :string,
     default: "md",
     values: ~w(xs sm md lg xl),
     doc: "Size of the button. Note: link variant ignores size to preserve natural text flow"
+  )
 
   # Stellar button attributes - copied from Stellar.Components.Button
-  attr :as, :atom,
+  attr(:as, :atom,
     values: [:button, :a, :div],
     default: :button,
     doc: "Element type to render as"
+  )
 
-  attr :type, :string,
+  attr(:type, :string,
     values: ~w(button submit reset),
     default: "button",
     doc: "Button type attribute"
+  )
 
   # Navigation (mutually exclusive)
-  attr :href, :string,
+  attr(:href, :string,
     default: nil,
     doc: "External URL to navigate to"
+  )
 
-  attr :navigate, :string,
+  attr(:navigate, :any,
     default: nil,
-    doc: "Phoenix route to navigate to"
+    doc: "Phoenix route to navigate to (string or VerifiedRoute)"
+  )
 
-  attr :patch, :string,
+  attr(:patch, :any,
     default: nil,
-    doc: "Phoenix route to patch navigate to"
+    doc: "Phoenix route to patch navigate to (string or VerifiedRoute)"
+  )
+
+  attr(:method, :string,
+    default: nil,
+    doc: "HTTP method for form submissions with href"
+  )
+
+  attr(:csrf_token, :any,
+    default: true,
+    doc: "CSRF token for links with non-GET methods"
+  )
 
   # State
-  attr :loading, :boolean,
+  attr(:loading, :boolean,
     default: false,
     doc: "Show loading state"
+  )
 
-  attr :disabled, :boolean,
+  attr(:disabled, :boolean,
     default: false,
     doc: "Disable the button"
+  )
 
-  attr :pressed, :atom,
-    values: [true, false, nil],
+  attr(:pressed, :boolean,
     default: nil,
-    doc: "Toggle button pressed state"
+    doc: "Toggle button pressed state (tri-state: true, false, or nil)"
+  )
 
-  attr :expanded, :any,
+  attr(:expanded, :any,
     default: nil,
     doc: "Disclosure/dropdown expanded state"
+  )
 
-  attr :controls, :string,
+  attr(:controls, :string,
     default: nil,
     doc: "ID of element controlled by this button"
+  )
 
   # ARIA
-  attr :haspopup, :string,
+  attr(:haspopup, :string,
     values: ~w(menu listbox tree grid dialog false),
     default: "false",
     doc: "ARIA haspopup value"
+  )
 
   # Core
-  attr :id, :string,
+  attr(:id, :string,
     default: nil,
     doc: "Button ID"
+  )
 
-  attr :class, :string,
+  attr(:tabindex, :string,
+    default: "0",
+    doc: "Tab order (defaults to '0' when focusable, '-1' when disabled/loading)"
+  )
+
+  attr(:class, :string,
     default: "",
     doc: "Additional CSS classes"
+  )
 
-  attr :aria_label, :string,
+  attr(:aria_label, :string,
     default: nil,
     doc: "Accessible label for icon-only buttons"
+  )
 
-  attr :show_loading_spinner, :boolean,
+  attr(:show_loading_spinner, :boolean,
     default: true,
     doc: "Show automatic spinner when loading (can be disabled for custom loading content)"
+  )
 
-  attr :rest, :global, doc: "Additional HTML attributes"
+  attr(:rest, :global, doc: "Additional HTML attributes")
 
-  slot :inner_block,
+  slot(:inner_block,
     required: true,
     doc: "Button content"
+  )
 
-  slot :loading_content,
+  slot(:loading_content,
     required: false,
     doc: "Custom loading content that replaces inner_block when button is loading"
+  )
 
   @doc """
   Renders a styled button component.
 
-  This function wraps Stellar.Components.Button with Pulsar's styling system.
-  All Stellar props are passed through, with styling controlled via data attributes
-  for better maintainability and smaller class strings.
+  Self-contained button component with polymorphic rendering and security built-in.
+  Styling is controlled via configuration maps and TailwindMerge for intelligent
+  class composition and conflict resolution.
 
   ## Size Behavior
   - **solid, outline, ghost variants**: Size controls height, padding, and text size
   - **link variant**: Size is ignored to preserve natural text flow. Links adapt to surrounding text.
+
+  ## Icon Spacing
+  - **solid, outline, ghost variants**: Use `inline-flex` with automatic gap spacing
+  - **link variant**: Uses `inline` layout. Icons next to text require manual spacing (`ml-1`, `mr-1`, etc.)
 
   ## Examples
 
@@ -170,8 +356,19 @@ defmodule Pulsar.Components.Button do
       # Other variants respect size
       <.button variant="solid" size="lg">Download</.button>  # h-12, px-6, text-lg
   """
+  @spec button(map()) :: Rendered.t()
   def button(assigns) do
-    # Build complete class string using TailwindMerge - only include needed classes
+    # Button-specific validation only
+    assigns = ensure_disclosure_linkage!(assigns)
+
+    # Ensure ID exists for hook functionality (replacing IdGenerator)
+    assigns = assign_new(assigns, :id, fn -> generate_id() end)
+
+    # Resolve element type and build styling
+    as = resolve_as_from_props(assigns)
+    assigns = %{assigns | as: as}
+
+    # Build complete class string using TailwindMerge
     assigns =
       assign(
         assigns,
@@ -186,191 +383,351 @@ defmodule Pulsar.Components.Button do
       )
 
     ~H"""
-    <StellarButton.button
-      as={@as}
+    {render_button(assigns)}
+    <.button_hook />
+    """
+  end
+
+  # Native button rendering (from Stellar with Pulsar loading content)
+  defp render_button(%{as: :button} = assigns) do
+    ~H"""
+    <button
       type={@type}
+      disabled={@disabled || @loading}
+      id={@id}
+      class={@merged_classes}
+      aria-busy={aria_flag(@loading)}
+      aria-disabled={aria_flag(@disabled || @loading)}
+      aria-pressed={if is_boolean(@pressed), do: aria_tf(@pressed), else: nil}
+      aria-expanded={aria_tf(@expanded)}
+      aria-controls={@controls}
+      aria-haspopup={(@haspopup != "false" && @haspopup) || nil}
+      aria-label={@aria_label}
+      data-loading={data_tf(@loading)}
+      data-disabled={data_tf(@disabled || @loading)}
+      data-pressed={if is_boolean(@pressed), do: data_tf(@pressed), else: nil}
+      data-expanded={data_tf(@expanded)}
+      {@rest}
+    >
+      <.render_button_content {assigns} />
+    </button>
+    """
+  end
+
+  # Anchor with href navigation
+  defp render_button(%{as: :a, href: href} = assigns) when is_binary(href) do
+    render_navigation_link(assigns)
+  end
+
+  # Anchor with navigate navigation
+  defp render_button(%{as: :a, navigate: navigate} = assigns) when is_link(navigate) do
+    render_navigation_link(assigns)
+  end
+
+  # Anchor with patch navigation
+  defp render_button(%{as: :a, patch: patch} = assigns) when is_link(patch) do
+    render_navigation_link(assigns)
+  end
+
+  # Anchor as pseudo-button
+  defp render_button(%{as: :a} = assigns) do
+    ~H"""
+    <a
+      role="button"
+      tabindex={tabindex(assigns)}
+      phx-hook=".PulsarButton"
+      id={@id}
+      class={@merged_classes}
+      aria-busy={aria_flag(@loading)}
+      aria-disabled={aria_flag(@disabled || @loading)}
+      aria-pressed={if is_boolean(@pressed), do: aria_tf(@pressed), else: nil}
+      aria-expanded={aria_tf(@expanded)}
+      aria-controls={@controls}
+      aria-haspopup={(@haspopup != "false" && @haspopup) || nil}
+      aria-label={@aria_label}
+      data-loading={data_tf(@loading)}
+      data-disabled={data_tf(@disabled || @loading)}
+      data-pressed={if is_boolean(@pressed), do: data_tf(@pressed), else: nil}
+      data-expanded={data_tf(@expanded)}
+      {@rest}
+    >
+      <.render_button_content {assigns} />
+    </a>
+    """
+  end
+
+  # Div as pseudo-button
+  defp render_button(%{as: :div} = assigns) do
+    ~H"""
+    <div
+      role="button"
+      tabindex={tabindex(assigns)}
+      phx-hook=".PulsarButton"
+      id={@id}
+      class={@merged_classes}
+      aria-busy={aria_flag(@loading)}
+      aria-disabled={aria_flag(@disabled || @loading)}
+      aria-pressed={if is_boolean(@pressed), do: aria_tf(@pressed), else: nil}
+      aria-expanded={aria_tf(@expanded)}
+      aria-controls={@controls}
+      aria-haspopup={(@haspopup != "false" && @haspopup) || nil}
+      aria-label={@aria_label}
+      data-loading={data_tf(@loading)}
+      data-disabled={data_tf(@disabled || @loading)}
+      data-pressed={if is_boolean(@pressed), do: data_tf(@pressed), else: nil}
+      data-expanded={data_tf(@expanded)}
+      {@rest}
+    >
+      <.render_button_content {assigns} />
+    </div>
+    """
+  end
+
+  # Disabled navigation renders disabled anchor
+  defp render_navigation_link(%{disabled: true} = assigns) do
+    ~H"""
+    <a
+      role="button"
+      tabindex="-1"
+      phx-hook=".PulsarButton"
+      id={@id}
+      class={@merged_classes}
+      aria-busy={aria_flag(@loading)}
+      aria-disabled="true"
+      aria-pressed={if is_boolean(@pressed), do: aria_tf(@pressed), else: nil}
+      aria-expanded={aria_tf(@expanded)}
+      aria-controls={@controls}
+      aria-haspopup={(@haspopup != "false" && @haspopup) || nil}
+      aria-label={@aria_label}
+      data-loading={data_tf(@loading)}
+      data-disabled="true"
+      data-pressed={if is_boolean(@pressed), do: data_tf(@pressed), else: nil}
+      data-expanded={data_tf(@expanded)}
+      {@rest}
+    >
+      <.render_button_content {assigns} />
+    </a>
+    """
+  end
+
+  # Loading navigation renders disabled anchor
+  defp render_navigation_link(%{loading: true} = assigns) do
+    ~H"""
+    <a
+      role="button"
+      tabindex="-1"
+      phx-hook=".PulsarButton"
+      id={@id}
+      class={@merged_classes}
+      aria-busy="true"
+      aria-disabled="true"
+      aria-pressed={if is_boolean(@pressed), do: aria_tf(@pressed), else: nil}
+      aria-expanded={aria_tf(@expanded)}
+      aria-controls={@controls}
+      aria-haspopup={(@haspopup != "false" && @haspopup) || nil}
+      aria-label={@aria_label}
+      data-loading="true"
+      data-disabled="true"
+      data-pressed={if is_boolean(@pressed), do: data_tf(@pressed), else: nil}
+      data-expanded={data_tf(@expanded)}
+      {@rest}
+    >
+      <.render_button_content {assigns} />
+    </a>
+    """
+  end
+
+  # Active navigation link template
+  defp render_navigation_link(assigns) do
+    # Delegate to Link.a which handles all navigation logic including raw anchors for external URLs
+    ~H"""
+    <Link.a
       href={@href}
       navigate={@navigate}
       patch={@patch}
-      loading={@loading}
-      disabled={@disabled}
-      pressed={@pressed}
-      expanded={@expanded}
-      controls={@controls}
-      haspopup={@haspopup}
-      id={@id}
+      method={@method}
+      csrf_token={@csrf_token}
       class={@merged_classes}
-      aria-label={@aria_label}
+      id={@id}
+      aria_label={@aria_label}
+      data-loading={data_tf(@loading)}
+      data-disabled={data_tf(@disabled || @loading)}
+      data-pressed={if is_boolean(@pressed), do: data_tf(@pressed), else: nil}
+      data-expanded={data_tf(@expanded)}
       {@rest}
     >
-      <div :if={@loading && @variant != "link" && @loading_content != []}>
-        {render_slot(@loading_content)}
-      </div>
-      <svg
-        :if={@loading && @show_loading_spinner && @variant != "link" && @loading_content == []}
-        aria-hidden="true"
-        class={spinner_size_classes(@size)}
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
+      <.render_button_content {assigns} />
+    </Link.a>
+    """
+  end
+
+  # Extract content rendering to eliminate 5x duplication
+  defp render_button_content(assigns) do
+    ~H"""
+    <div :if={@loading && @variant != "link" && @loading_content != []}>
+      {render_slot(@loading_content)}
+    </div>
+    <svg
+      :if={@loading && @show_loading_spinner && @variant != "link" && @loading_content == []}
+      aria-hidden="true"
+      class={spinner_size_classes(@size)}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
+      <path
+        fill="currentColor"
+        class="opacity-75"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
       >
-        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
-        <path
-          fill="currentColor"
-          class="opacity-75"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-        >
-        </path>
-      </svg>
-      <div :if={!@loading || @loading_content == []}>
-        {render_slot(@inner_block)}
-      </div>
-    </StellarButton.button>
+      </path>
+    </svg>
+    <div :if={!@loading || @loading_content == []}>
+      {render_slot(@inner_block)}
+    </div>
+    """
+  end
+
+  # Colocated hook component for pseudo-buttons (renamed from Stellar)
+  defp button_hook(assigns) do
+    ~H"""
+    <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarButton">
+      export default {
+        mounted() {
+          const el = this.el
+          if (el.getAttribute("role") !== "button") return
+
+          // Cache author-provided tabindex (if any)
+          if (!el.dataset.prevTabindex) {
+            const t = el.getAttribute("tabindex")
+            if (t != null) el.dataset.prevTabindex = t
+          }
+
+          const isDisabledOrBusy = () =>
+            el.getAttribute("aria-disabled") === "true" ||
+            el.getAttribute("aria-busy") === "true"
+
+          const applyTabindex = () => {
+            if (isDisabledOrBusy()) {
+              // Keep focus if already focused; just remove from tab order
+              el.setAttribute("tabindex", "-1")
+            } else {
+              const prev = el.dataset.prevTabindex
+              if (prev === undefined || prev === "") el.setAttribute("tabindex", "0")
+              else el.setAttribute("tabindex", prev)
+            }
+          }
+
+          // Initial sync
+          applyTabindex()
+
+          // React to attribute changes (LV patches)
+          this._observer = new MutationObserver((muts) => {
+            if (muts.some(m => m.attributeName === "aria-disabled" || m.attributeName === "aria-busy")) {
+              applyTabindex()
+            }
+          })
+          this._observer.observe(el, { attributes: true, attributeFilter: ["aria-disabled", "aria-busy"] })
+
+          this._onKeydown = (e) => {
+            if (isDisabledOrBusy()) { e.preventDefault(); return }
+            if (e.code === "Space" || e.key === " ") { e.preventDefault() } // prevent scroll
+            if (e.code === "Enter") { e.preventDefault(); el.click() }
+          }
+
+          this._onKeyup = (e) => {
+            if (isDisabledOrBusy()) return
+            if (e.code === "Space" || e.key === " ") { e.preventDefault(); el.click() }
+          }
+
+          this._onClick = (e) => {
+            if (isDisabledOrBusy()) e.preventDefault()
+          }
+
+          el.addEventListener("keydown", this._onKeydown)
+          el.addEventListener("keyup", this._onKeyup)
+          el.addEventListener("click", this._onClick)
+        },
+
+        updated() {
+          // MutationObserver already handles attribute changes from LV patches
+        },
+
+        destroyed() {
+          if (this._observer) this._observer.disconnect()
+          if (this._onKeydown) this.el.removeEventListener("keydown", this._onKeydown)
+          if (this._onKeyup) this.el.removeEventListener("keyup", this._onKeyup)
+          if (this._onClick) this.el.removeEventListener("click", this._onClick)
+        }
+      }
+    </script>
     """
   end
 
   # Base styles shared by all buttons
   defp base_button_classes do
-    """
-    font-medium cursor-pointer transition-shadow transition-transform duration-200 ease-in-out
-    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 
-    focus-visible:ring-ring dark:focus-visible:ring-dark-ring
-    disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed
-    data-[loading=true]:pointer-events-none data-[loading=true]:opacity-50 data-[loading=true]:cursor-wait
-    data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[disabled=true]:cursor-not-allowed
-    """
+    @button_base_classes
   end
 
   # Variant-specific layout and behavior
-  defp variant_classes("link") do
-    "inline underline-offset-4 hover:underline focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:underline"
-  end
-
-  defp variant_classes(_other) do
-    """
-    inline-flex items-center justify-center shadow-sm hover:shadow-md
-    hover:scale-[1.02] active:scale-[0.98]
-    motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none
-    """
+  defp variant_classes(variant) do
+    @variant_classes[variant] || @variant_classes["solid"]
   end
 
   # Size classes
-  defp size_classes("xs"), do: "h-6 px-2 text-xs gap-1 rounded-md"
-  defp size_classes("sm"), do: "h-8 px-3 text-sm gap-1 rounded-md"
-  defp size_classes("md"), do: "h-10 px-4 gap-2 rounded-lg"
-  defp size_classes("lg"), do: "h-12 px-6 text-lg gap-2 rounded-lg"
-  defp size_classes("xl"), do: "h-14 px-8 text-xl gap-3 rounded-xl"
+  defp size_classes(size) do
+    @size_config[size][:button]
+  end
 
   # Color classes by variant
-  defp color_classes("solid", "neutral"),
-    do:
-      "bg-neutral text-neutral-foreground hover:bg-neutral/90 active:bg-neutral/80 dark:bg-dark-neutral dark:text-dark-neutral-foreground dark:hover:bg-dark-neutral/90 dark:active:bg-dark-neutral/80"
-
-  defp color_classes("solid", "primary"),
-    do:
-      "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 dark:bg-dark-primary dark:text-dark-primary-foreground dark:hover:bg-dark-primary/90 dark:active:bg-dark-primary/80"
-
-  defp color_classes("solid", "secondary"),
-    do:
-      "bg-secondary text-secondary-foreground hover:bg-secondary/90 active:bg-secondary/80 dark:bg-dark-secondary dark:text-dark-secondary-foreground dark:hover:bg-dark-secondary/90 dark:active:bg-dark-secondary/80"
-
-  defp color_classes("solid", "success"),
-    do:
-      "bg-success text-success-foreground hover:bg-success/90 active:bg-success/80 dark:bg-dark-success dark:text-dark-success-foreground dark:hover:bg-dark-success/90 dark:active:bg-dark-success/80"
-
-  defp color_classes("solid", "danger"),
-    do:
-      "bg-danger text-danger-foreground hover:bg-danger/90 active:bg-danger/80 dark:bg-dark-danger dark:text-dark-danger-foreground dark:hover:bg-dark-danger/90 dark:active:bg-dark-danger/80"
-
-  defp color_classes("solid", "warning"),
-    do:
-      "bg-warning text-warning-foreground hover:bg-warning/90 active:bg-warning/80 dark:bg-dark-warning dark:text-dark-warning-foreground dark:hover:bg-dark-warning/90 dark:active:bg-dark-warning/80"
-
-  defp color_classes("solid", "info"),
-    do:
-      "bg-info text-info-foreground hover:bg-info/90 active:bg-info/80 dark:bg-dark-info dark:text-dark-info-foreground dark:hover:bg-dark-info/90 dark:active:bg-dark-info/80"
-
-  defp color_classes("outline", "neutral"),
-    do:
-      "border-2 border-border dark:border-dark-border bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover active:bg-surface-1-active dark:active:bg-dark-surface-1-active"
-
-  defp color_classes("outline", "primary"),
-    do:
-      "border-2 border-primary bg-background text-primary hover:bg-primary/5 active:bg-primary/10 dark:border-dark-primary dark:bg-dark-background dark:text-dark-primary dark:hover:bg-dark-primary/10 dark:active:bg-dark-primary/20"
-
-  defp color_classes("outline", "secondary"),
-    do:
-      "border-2 border-secondary bg-background text-secondary hover:bg-secondary/5 active:bg-secondary/10 dark:border-dark-secondary dark:bg-dark-background dark:text-dark-secondary dark:hover:bg-dark-secondary/10 dark:active:bg-dark-secondary/20"
-
-  defp color_classes("outline", "success"),
-    do:
-      "border-2 border-success bg-background text-success hover:bg-success/5 active:bg-success/10 dark:border-dark-success dark:bg-dark-background dark:text-dark-success dark:hover:bg-dark-success/10 dark:active:bg-dark-success/20"
-
-  defp color_classes("outline", "danger"),
-    do:
-      "border-2 border-danger bg-background text-danger hover:bg-danger/5 active:bg-danger/10 dark:border-dark-danger dark:bg-dark-background dark:text-dark-danger dark:hover:bg-dark-danger/10 dark:active:bg-dark-danger/20"
-
-  defp color_classes("outline", "warning"),
-    do:
-      "border-2 border-warning bg-background text-warning hover:bg-warning/5 active:bg-warning/10 dark:border-dark-warning dark:bg-dark-background dark:text-dark-warning dark:hover:bg-dark-warning/10 dark:active:bg-dark-warning/20"
-
-  defp color_classes("outline", "info"),
-    do:
-      "border-2 border-info bg-background text-info hover:bg-info/5 active:bg-info/10 dark:border-dark-info dark:bg-dark-background dark:text-dark-info dark:hover:bg-dark-info/10 dark:active:bg-dark-info/20"
-
-  defp color_classes("ghost", "neutral"),
-    do:
-      "text-foreground dark:text-dark-foreground hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover active:bg-surface-1-active dark:active:bg-dark-surface-1-active"
-
-  defp color_classes("ghost", "primary"),
-    do:
-      "text-primary hover:bg-primary/10 active:bg-primary/20 dark:text-dark-primary dark:hover:bg-dark-primary/10 dark:active:bg-dark-primary/20"
-
-  defp color_classes("ghost", "secondary"),
-    do:
-      "text-secondary hover:bg-secondary/10 active:bg-secondary/20 dark:text-dark-secondary dark:hover:bg-dark-secondary/10 dark:active:bg-dark-secondary/20"
-
-  defp color_classes("ghost", "success"),
-    do:
-      "text-success hover:bg-success/10 active:bg-success/20 dark:text-dark-success dark:hover:bg-dark-success/10 dark:active:bg-dark-success/20"
-
-  defp color_classes("ghost", "danger"),
-    do:
-      "text-danger hover:bg-danger/10 active:bg-danger/20 dark:text-dark-danger dark:hover:bg-dark-danger/10 dark:active:bg-dark-danger/20"
-
-  defp color_classes("ghost", "warning"),
-    do:
-      "text-warning hover:bg-warning/10 active:bg-warning/20 dark:text-dark-warning dark:hover:bg-dark-warning/10 dark:active:bg-dark-warning/20"
-
-  defp color_classes("ghost", "info"),
-    do:
-      "text-info hover:bg-info/10 active:bg-info/20 dark:text-dark-info dark:hover:bg-dark-info/10 dark:active:bg-dark-info/20"
-
-  defp color_classes("link", "neutral"),
-    do: "text-muted-foreground dark:text-dark-muted-foreground hover:text-foreground dark:hover:text-dark-foreground"
-
-  defp color_classes("link", "primary"),
-    do: "text-primary hover:text-primary/80 dark:text-dark-primary dark:hover:text-dark-primary/80"
-
-  defp color_classes("link", "secondary"),
-    do: "text-secondary hover:text-secondary/80 dark:text-dark-secondary dark:hover:text-dark-secondary/80"
-
-  defp color_classes("link", "success"),
-    do: "text-success hover:text-success/80 dark:text-dark-success dark:hover:text-dark-success/80"
-
-  defp color_classes("link", "danger"),
-    do: "text-danger hover:text-danger/80 dark:text-dark-danger dark:hover:text-dark-danger/80"
-
-  defp color_classes("link", "warning"),
-    do: "text-warning hover:text-warning/80 dark:text-dark-warning dark:hover:text-dark-warning/80"
-
-  defp color_classes("link", "info"),
-    do: "text-info hover:text-info/80 dark:text-dark-info dark:hover:text-dark-info/80"
+  defp color_classes(variant, color) do
+    get_in(@color_config, [variant, color]) || get_in(@color_config, ["solid", "primary"])
+  end
 
   # Spinner size classes based on button size
-  defp spinner_size_classes("xs"), do: "h-3 w-3 animate-spin"
-  defp spinner_size_classes("sm"), do: "h-4 w-4 animate-spin"
-  defp spinner_size_classes("md"), do: "h-4 w-4 animate-spin"
-  defp spinner_size_classes("lg"), do: "h-5 w-5 animate-spin"
-  defp spinner_size_classes("xl"), do: "h-6 w-6 animate-spin"
+  defp spinner_size_classes(size) do
+    @size_config[size][:spinner]
+  end
+
+  # === Helper Functions ===
+
+  # Element resolution (from Stellar)
+  defp resolve_as_from_props(%{as: :div} = _assigns), do: :div
+
+  defp resolve_as_from_props(assigns) do
+    if has_navigation?(assigns), do: :a, else: assigns.as
+  end
+
+  defp ensure_disclosure_linkage!(%{controls: ctrls, expanded: exp} = assigns) do
+    if exp in [true, false] and is_nil(ctrls) do
+      raise ArgumentError,
+            "When setting :expanded, also provide :controls (id of controlled region)"
+    end
+
+    assigns
+  end
+
+  defp ensure_disclosure_linkage!(assigns), do: assigns
+
+  defp tabindex(assigns) do
+    if assigns.disabled || assigns.loading, do: "-1", else: assigns.tabindex
+  end
+
+  defp has_navigation?(assigns) do
+    is_link(assigns.href) || is_link(assigns.navigate) || is_link(assigns.patch)
+  end
+
+  defp aria_flag(true), do: "true"
+  defp aria_flag(false), do: nil
+  defp aria_flag(nil), do: nil
+
+  # for aria-pressed/expanded where "false" is informative
+  defp aria_tf(true), do: "true"
+  defp aria_tf(false), do: "false"
+  defp aria_tf(nil), do: nil
+
+  defp data_tf(true), do: "true"
+  defp data_tf(false), do: "false"
+  defp data_tf(nil), do: nil
 end

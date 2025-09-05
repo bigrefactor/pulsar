@@ -489,6 +489,62 @@ defmodule Pulsar.Components.CheckboxTest do
       assert html =~ "has-[:checked]:border-primary"
       assert html =~ "dark:has-[:checked]:bg-dark-primary/20"
     end
+
+    test "applies container_class to card container" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox card name="plan" container_class="custom-container-class">
+          <div>Test content</div>
+        </.checkbox>
+        """)
+
+      assert html =~ "custom-container-class"
+    end
+
+    test "applies global attributes to card container in card mode" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox card name="plan" phx-click="handle_click" data-testid="card-container">
+          <div>Test content</div>
+        </.checkbox>
+        """)
+
+      assert html =~ ~s(phx-click="handle_click")
+      assert html =~ ~s(data-testid="card-container")
+      # Verify these attributes are on the label (container), not the input
+      assert String.contains?(html, ~s(<label)) and String.contains?(html, ~s(phx-click="handle_click"))
+    end
+
+    test "hides checkbox input with sr-only when hide_checkbox is true" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox card hide_checkbox name="plan">
+          <div>Hidden checkbox test</div>
+        </.checkbox>
+        """)
+
+      assert html =~ "sr-only"
+    end
+
+    test "does not include opinionated margin classes by default" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox card name="plan">
+          <div>No margin test</div>
+        </.checkbox>
+        """)
+
+      refute html =~ "mb-3"
+      refute html =~ "last:mb-0"
+    end
   end
 
   describe "checkbox/1 accessibility" do
@@ -512,6 +568,28 @@ defmodule Pulsar.Components.CheckboxTest do
         """)
 
       assert html =~ ~s(aria-invalid="true")
+    end
+
+    test "sets aria-checked=mixed for indeterminate state" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox name="terms" indeterminate={true} />
+        """)
+
+      assert html =~ ~s(aria-checked="mixed")
+    end
+
+    test "does not set aria-checked when not indeterminate" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox name="terms" checked={true} />
+        """)
+
+      refute html =~ ~s(aria-checked="mixed")
     end
 
     test "includes focus ring classes" do
@@ -620,6 +698,104 @@ defmodule Pulsar.Components.CheckboxTest do
       assert html =~ "after:opacity-0"
       assert html =~ "after:transition-all"
       assert html =~ "after:duration-200"
+    end
+
+    test "includes rounded classes for pseudo elements" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox name="terms" />
+        """)
+
+      # Default size (md) should have before:rounded-md
+      assert html =~ "before:rounded-md"
+      # Should not have the old broken syntax
+      refute html =~ "before:rounded-inherit"
+    end
+  end
+
+  describe "refactored functionality verification" do
+    test "all color variants generate correct classes" do
+      colors = ~w(neutral primary secondary success danger warning info)
+
+      for color <- colors do
+        assigns = %{color: color}
+
+        html =
+          rendered_to_string(~H"""
+          <.checkbox name="test" color={@color} checked />
+          """)
+
+        # Should contain color-specific classes
+        assert html =~ "data-[checked=true]:before:border-#{color}"
+        assert html =~ "data-[checked=true]:before:bg-#{color}"
+        assert html =~ "data-[checked=true]:after:text-#{color}-foreground"
+      end
+    end
+
+    test "all size variants generate correct classes" do
+      sizes = ~w(xs sm md lg xl)
+
+      expected_heights = %{
+        "lg" => "h-6",
+        "md" => "h-5",
+        "sm" => "h-4",
+        "xl" => "h-7",
+        "xs" => "h-3"
+      }
+
+      for size <- sizes do
+        assigns = %{size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <.checkbox name="test" size={@size} />
+          """)
+
+        assert html =~ expected_heights[size]
+      end
+    end
+
+    test "card variants with all colors work correctly" do
+      colors = ~w(neutral primary secondary success danger warning info)
+      variants = ~w(solid outline ghost)
+
+      for color <- colors, variant <- variants do
+        assigns = %{color: color, variant: variant}
+
+        html =
+          rendered_to_string(~H"""
+          <.checkbox name="test" card variant={@variant} color={@color}>
+            Content
+          </.checkbox>
+          """)
+
+        # Should render as label with proper structure
+        assert html =~ ~s(<label)
+        assert html =~ "Content"
+        assert html =~ ~s(type="checkbox")
+      end
+    end
+
+    test "refactored size configuration works for both input and card" do
+      assigns = %{}
+
+      # Test input size classes
+      html =
+        rendered_to_string(~H"""
+        <.checkbox name="test" size="lg" />
+        """)
+
+      assert html =~ "h-6 w-6"
+
+      # Test card size classes
+      html =
+        rendered_to_string(~H"""
+        <.checkbox name="test" card size="lg">Content</.checkbox>
+        """)
+
+      assert html =~ "p-5 gap-4 text-lg"
     end
   end
 end

@@ -38,7 +38,7 @@ defmodule Pulsar.Components.BadgeTest do
       assigns = %{}
       html = rendered_to_string(~H[<Badge.badge variant="outline">Outline</Badge.badge>])
 
-      assert html =~ ~s(rounded-md border)
+      assert html =~ ~s(border)
       assert html =~ ~s(border-border)
       assert html =~ ~s(bg-background)
     end
@@ -115,40 +115,68 @@ defmodule Pulsar.Components.BadgeTest do
     end
   end
 
-  describe "removable badges" do
-    test "does not render remove button by default" do
+  describe "badge addons" do
+    test "does not render addons by default" do
       assigns = %{}
-      html = rendered_to_string(~H[<Badge.badge>Non-removable</Badge.badge>])
+      html = rendered_to_string(~H[<Badge.badge>No addons</Badge.badge>])
 
+      assert html =~ "No addons"
       refute html =~ ~s(<button)
-      refute html =~ ~s(aria-label="Remove badge")
     end
 
-    test "renders remove button when removable=true" do
+    test "renders start addon" do
       assigns = %{}
-      html = rendered_to_string(~H[<Badge.badge removable>Removable</Badge.badge>])
 
-      assert html =~ ~s(<button)
-      assert html =~ ~s(aria-label="Remove badge")
-      assert html =~ ~s(hero-x-mark-micro)
-      assert html =~ ~s(phx-click=)
+      html =
+        rendered_to_string(~H"""
+        <Badge.badge>
+          <:start_addon>
+            <span class="icon">★</span>
+          </:start_addon>
+          Featured
+        </Badge.badge>
+        """)
+
+      assert html =~ ~s(<span class="icon">★</span>)
+      assert html =~ "Featured"
     end
 
-    test "uses custom removal handler" do
+    test "renders end addon" do
       assigns = %{}
-      html = rendered_to_string(~H[<Badge.badge removable on_remove="custom_remove">Custom</Badge.badge>])
 
-      assert html =~ ~s(phx-click="[[&quot;push&quot;,{&quot;event&quot;:&quot;custom_remove&quot;}]]")
+      html =
+        rendered_to_string(~H"""
+        <Badge.badge>
+          Content
+          <:end_addon>
+            <button type="button">Remove</button>
+          </:end_addon>
+        </Badge.badge>
+        """)
+
+      assert html =~ "Content"
+      assert html =~ ~s(<button type="button">Remove</button>)
     end
 
-    test "remove button has proper styling and accessibility" do
+    test "renders both start and end addons" do
       assigns = %{}
-      html = rendered_to_string(~H[<Badge.badge removable>Accessible</Badge.badge>])
 
-      assert html =~ ~s(type="button")
-      assert html =~ ~s(aria-label="Remove badge")
-      assert html =~ ~s(hover:bg-black/10 dark:hover:bg-white/10)
-      assert html =~ ~s(focus:outline-none focus:ring-1)
+      html =
+        rendered_to_string(~H"""
+        <Badge.badge>
+          <:start_addon>
+            <span>Start</span>
+          </:start_addon>
+          Middle
+          <:end_addon>
+            <span>End</span>
+          </:end_addon>
+        </Badge.badge>
+        """)
+
+      assert html =~ ~s(<span>Start</span>)
+      assert html =~ "Middle"
+      assert html =~ ~s(<span>End</span>)
     end
   end
 
@@ -185,43 +213,6 @@ defmodule Pulsar.Components.BadgeTest do
 
       assert html =~ ~s(text-danger dark:text-dark-danger)
       assert html =~ ~s(hover:bg-danger/10 dark:hover:bg-dark-danger/10)
-    end
-  end
-
-  describe "badge with action slot" do
-    test "renders custom action slot" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <Badge.badge>
-          With Action
-          <:action>
-            <button type="button">Custom</button>
-          </:action>
-        </Badge.badge>
-        """)
-
-      assert html =~ "With Action"
-      assert html =~ ~s(<button type="button">Custom</button>)
-    end
-
-    test "can have both removable and action slot" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <Badge.badge removable>
-          Complex
-          <:action>
-            <span>Extra</span>
-          </:action>
-        </Badge.badge>
-        """)
-
-      assert html =~ "Complex"
-      assert html =~ ~s(aria-label="Remove badge")
-      assert html =~ ~s(<span>Extra</span>)
     end
   end
 end

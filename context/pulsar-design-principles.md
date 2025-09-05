@@ -130,7 +130,7 @@ Pulsar extends Tailwind CSS's utility-first approach into the LiveView ecosystem
 
 **Why Generator-Only?**
 - **Tailwind Purging**: Generated classes in your codebase are detected automatically
-- **Minimal Dependencies**: Only Stellar (behavior) + TailwindMerge (styling) needed
+- **Minimal Dependencies**: Only TailwindMerge for intelligent class composition needed
 - **Complete Control**: Modify generated components however you need
 - **Simpler Builds**: No complex safelist configurations required
 - **Better DX**: All component code is visible and searchable in your project

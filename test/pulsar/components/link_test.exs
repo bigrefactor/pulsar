@@ -243,6 +243,67 @@ defmodule Pulsar.Components.LinkTest do
       # Should not have data-external attribute for internal links
       refute html =~ ~s(data-external="true")
     end
+
+    test "adds security rel tokens for external links with target blank" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="https://example.com" csrf_token={false}>External</Link.a>
+        """)
+
+      assert html =~ ~s(rel="noopener noreferrer")
+      assert html =~ ~s(target="_blank")
+    end
+
+    test "merges security rel tokens with existing rel" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="https://example.com" rel="external sponsored" csrf_token={false}>External</Link.a>
+        """)
+
+      # Should contain all tokens: existing ones + security ones
+      assert html =~ ~r/rel="[^"]*external[^"]*"/
+      assert html =~ ~r/rel="[^"]*sponsored[^"]*"/
+      assert html =~ ~r/rel="[^"]*noopener[^"]*"/
+      assert html =~ ~r/rel="[^"]*noreferrer[^"]*"/
+    end
+
+    test "does not duplicate existing security tokens in rel" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="https://example.com" rel="noopener external noreferrer" csrf_token={false}>External</Link.a>
+        """)
+
+      # Count occurrences of noopener and noreferrer - should only be one of each
+      rel_match = Regex.run(~r/rel="([^"]*)"/, html)
+      assert rel_match != nil
+      [_, rel_value] = rel_match
+
+      noopener_count = rel_value |> String.split() |> Enum.count(&(&1 == "noopener"))
+      noreferrer_count = rel_value |> String.split() |> Enum.count(&(&1 == "noreferrer"))
+
+      assert noopener_count == 1
+      assert noreferrer_count == 1
+      assert rel_value =~ "external"
+    end
+
+    test "does not add security tokens when target is not blank" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="https://example.com" target="_self" csrf_token={false}>External</Link.a>
+        """)
+
+      refute html =~ ~r/rel="[^"]*noopener[^"]*"/
+      refute html =~ ~r/rel="[^"]*noreferrer[^"]*"/
+      assert html =~ ~s(target="_self")
+    end
   end
 
   describe "Link.a/1 Phoenix navigation" do
@@ -292,6 +353,133 @@ defmodule Pulsar.Components.LinkTest do
         """)
 
       assert html =~ ~s(data-method="delete")
+    end
+
+    test "raises error when method is used with navigate" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/cannot be used with :navigate or :patch/, fn ->
+        rendered_to_string(~H"""
+        <Link.a navigate="/dashboard" method="post">Dashboard</Link.a>
+        """)
+      end
+    end
+
+    test "raises error when method is used with patch" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/cannot be used with :navigate or :patch/, fn ->
+        rendered_to_string(~H"""
+        <Link.a patch="/current" method="put">Current</Link.a>
+        """)
+      end
+    end
+
+    test "raises error when method is used with mailto: href" do
+      assigns = %{}
+
+      assert_raise ArgumentError,
+                   ~r/:method can only be used with relative paths or http\(s\) hrefs; other schemes \(mailto:, tel:, javascript:, data:, \.\.\.\) are not allowed/,
+                   fn ->
+                     rendered_to_string(~H"""
+                     <Link.a href="mailto:test@example.com" method="post">Email</Link.a>
+                     """)
+                   end
+    end
+
+    test "raises error when method is used with tel: href" do
+      assigns = %{}
+
+      assert_raise ArgumentError,
+                   ~r/:method can only be used with relative paths or http\(s\) hrefs; other schemes \(mailto:, tel:, javascript:, data:, \.\.\.\) are not allowed/,
+                   fn ->
+                     rendered_to_string(~H"""
+                     <Link.a href="tel:+1234567890" method="post">Call</Link.a>
+                     """)
+                   end
+    end
+
+    test "allows method with relative href" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/relative/path" method="post">Relative</Link.a>
+        """)
+
+      assert html =~ ~s(data-method="post")
+      assert html =~ ~s(href="/relative/path")
+    end
+
+    test "raises error when method is used with non-binary href" do
+      assigns = %{href: 123}
+
+      assert_raise ArgumentError,
+                   ~r/:method can only be used with relative paths or http\(s\) hrefs/,
+                   fn ->
+                     rendered_to_string(~H"""
+                     <Link.a href={@href} method="post">Invalid</Link.a>
+                     """)
+                   end
+    end
+
+    test "raises error when method is used with javascript: href" do
+      assigns = %{}
+
+      assert_raise ArgumentError,
+                   ~r/:method can only be used with relative paths or http\(s\) hrefs; other schemes \(mailto:, tel:, javascript:, data:, \.\.\.\) are not allowed/,
+                   fn ->
+                     rendered_to_string(~H"""
+                     <Link.a href="javascript:alert('xss')" method="post">Malicious</Link.a>
+                     """)
+                   end
+    end
+
+    test "raises error when method is used with data: href" do
+      assigns = %{}
+
+      assert_raise ArgumentError,
+                   ~r/:method can only be used with relative paths or http\(s\) hrefs; other schemes \(mailto:, tel:, javascript:, data:, \.\.\.\) are not allowed/,
+                   fn ->
+                     rendered_to_string(~H"""
+                     <Link.a href="data:text/html,<script>alert('xss')</script>" method="post">Data URL</Link.a>
+                     """)
+                   end
+    end
+
+    test "allows method with http:// href" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="http://example.com/delete" method="delete" csrf_token={false}>Delete</Link.a>
+        """)
+
+      assert html =~ ~s(data-method="delete")
+      assert html =~ ~s(href="http://example.com/delete")
+    end
+
+    test "renders with method attribute for external URLs" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="https://example.com/delete" method="delete" csrf_token={false}>Delete</Link.a>
+        """)
+
+      assert html =~ ~s(data-method="delete")
+      assert html =~ ~s(href="https://example.com/delete")
+    end
+
+    test "raises error when no navigation prop is provided" do
+      assigns = %{}
+
+      # This should raise an error - exactly one nav prop must be provided
+      assert_raise ArgumentError, "Provide one of :href, :navigate, or :patch", fn ->
+        rendered_to_string(~H"""
+        <Link.a method="post">No Href</Link.a>
+        """)
+      end
     end
   end
 

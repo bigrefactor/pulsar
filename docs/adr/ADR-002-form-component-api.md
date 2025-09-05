@@ -11,7 +11,7 @@ Pulsar needs a consistent API design strategy for form components that balances 
 
 ### Background
 
-Pulsar is building styled components on top of Stellar's headless foundation. The initial implementations (Button, Input, Label, Textarea) have established patterns that need to be formalized before expanding to additional components. The goal is to create a cohesive API that serves as a drop-in replacement for Phoenix's `core_components` while offering advanced capabilities.
+Pulsar provides styled components with built-in accessibility and behavior. The initial implementations (Button, Input, Label, Textarea) have established patterns that need to be formalized before expanding to additional components. The goal is to create a cohesive API that serves as a drop-in replacement for Phoenix's `core_components` while offering advanced capabilities.
 
 ### Requirements
 - Maintain 100% backward compatibility with Phoenix.Component form helpers
@@ -33,10 +33,10 @@ Pulsar is building styled components on top of Stellar's headless foundation. Th
 ## Considered Options
 
 ### Option 1: Pure Wrapper Pattern (Current Approach)
-**Description**: Wrap Stellar components with Pulsar styling, using slots for composition
+**Description**: Self-contained components with styling and behavior, using slots for composition
 
 **Pros**:
-- Clean separation of concerns (behavior in Stellar, styling in Pulsar)
+- Clean component architecture with built-in accessibility
 - Leverages Phoenix's slot system for maximum flexibility
 - Consistent with Phoenix LiveView patterns
 - Easy to understand and document
@@ -102,7 +102,7 @@ Pulsar is building styled components on top of Stellar's headless foundation. Th
 
 ### Rationale
 
-The pure wrapper pattern with slots provides the best balance of flexibility, consistency, and Phoenix compatibility. By wrapping Stellar components and using slots for composition, we maintain clean separation of concerns while leveraging Phoenix's native composition model. This approach is already proven in our Input component implementation and scales well to complex scenarios.
+The self-contained component pattern with slots provides the best balance of flexibility, consistency, and Phoenix compatibility. By building components with integrated accessibility and using slots for composition, we maintain clean architecture while leveraging Phoenix's native composition model. This approach is already proven in our Input component implementation and scales well to complex scenarios.
 
 ### Implementation Example
 
@@ -110,7 +110,6 @@ The pure wrapper pattern with slots provides the best balance of flexibility, co
 defmodule Pulsar.Components.Form.Input do
   use Phoenix.Component
   import TailwindMerge, only: [merge: 1]
-  alias Stellar.Components.Input, as: StellarInput
 
   # Consistent prop pattern across all components
   attr :variant, :string, default: "solid", values: ~w(outline ghost solid)
@@ -157,9 +156,10 @@ defmodule Pulsar.Components.Form.Input do
         {render_slot(@start_decorator)}
       </.decorator>
       
-      <StellarInput.input
+      <input
         field={@field}
         type={@type}
+        class="input-base-classes"
         invalid={invalid}
         disabled={@disabled}
         {...@rest}
@@ -181,7 +181,7 @@ end
 - **Phoenix Integration**: Drop-in replacement for core_components works seamlessly
 - **Flexibility**: Slots enable any level of UI complexity
 - **Performance**: No runtime overhead for prop detection or transformation
-- **Maintainability**: Clear separation between behavior (Stellar) and presentation (Pulsar)
+- **Maintainability**: Self-contained components with clear patterns
 - **Documentation**: Single pattern to learn and document
 
 ### Negative
@@ -266,7 +266,7 @@ How will we know this decision was correct?
 
 ### Research Links
 - [Phoenix.Component Documentation](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html)
-- [Stellar Components Architecture](https://github.com/bigrefactor/stellar)
+- [Phoenix LiveView Components](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html)
 - [TailwindMerge for Class Resolution](https://github.com/dcastil/tailwind-merge)
 
 ### Component Conventions

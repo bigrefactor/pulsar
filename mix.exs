@@ -10,6 +10,7 @@ defmodule Pulsar.MixProject do
   alias Pulsar.Components.Link
   alias Pulsar.Components.RadioGroup
   alias Pulsar.Components.Select
+  alias Pulsar.Components.Switch
   alias Pulsar.Components.Textarea
 
   @version "0.1.0"
@@ -38,7 +39,8 @@ defmodule Pulsar.MixProject do
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test,
-        "coveralls.cobertura": :test
+        "coveralls.cobertura": :test,
+        test: :test
       ],
 
       # Dialyzer configuration
@@ -63,7 +65,6 @@ defmodule Pulsar.MixProject do
       {:phoenix_live_view, "~> 1.1"},
       {:phoenix_html, "~> 4.0"},
       {:phoenix_html_helpers, "~> 1.0"},
-      {:stellar, github: "bigrefactor/stellar"},
       {:tailwind_merge, github: "bigrefactor/tailwind_merge"},
       {:igniter, "~> 0.6"},
 
@@ -89,8 +90,8 @@ defmodule Pulsar.MixProject do
         "format --check-formatted",
         "credo --strict",
         "dialyzer",
-        "test",
-        "deps.audit"
+        "deps.audit",
+        "test"
       ],
       "check.ci": [
         "format --check-formatted",
@@ -106,9 +107,9 @@ defmodule Pulsar.MixProject do
 
   defp description do
     """
-    Beautiful, accessible Phoenix LiveView components built on Stellar.
-    Generator-based component system providing production-ready, styled components
-    with full accessibility and behavior from Stellar's headless components.
+    Beautiful, accessible Phoenix LiveView components.
+    Single-dependency component library with production-ready, styled components
+    providing full accessibility, security, and Phoenix integration.
     """
   end
 
@@ -155,6 +156,7 @@ defmodule Pulsar.MixProject do
           Link,
           RadioGroup,
           Select,
+          Switch,
           Textarea
         ],
         Generators: [
