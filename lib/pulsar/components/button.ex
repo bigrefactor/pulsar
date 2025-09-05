@@ -72,6 +72,9 @@ defmodule Pulsar.Components.Button do
   alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Link
 
+  # Custom guard for validating navigation links
+  defguard is_link(href) when is_binary(href) or is_struct(href, Phoenix.VerifiedRoutes) or is_struct(href, URI)
+
   # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
   defp generate_id(prefix \\ "button") do
     "#{prefix}-#{System.unique_integer([:positive])}"
@@ -411,12 +414,12 @@ defmodule Pulsar.Components.Button do
   end
 
   # Anchor with navigate navigation
-  defp render_button(%{as: :a, navigate: navigate} = assigns) when is_binary(navigate) do
+  defp render_button(%{as: :a, navigate: navigate} = assigns) when is_link(navigate) do
     render_navigation_link(assigns)
   end
 
   # Anchor with patch navigation
-  defp render_button(%{as: :a, patch: patch} = assigns) when is_binary(patch) do
+  defp render_button(%{as: :a, patch: patch} = assigns) when is_link(patch) do
     render_navigation_link(assigns)
   end
 
@@ -708,7 +711,7 @@ defmodule Pulsar.Components.Button do
   end
 
   defp has_navigation?(assigns) do
-    is_binary(assigns.href) || is_binary(assigns.navigate) || is_binary(assigns.patch)
+    is_link(assigns.href) || is_link(assigns.navigate) || is_link(assigns.patch)
   end
 
   defp aria_flag(true), do: "true"
