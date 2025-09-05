@@ -19,7 +19,7 @@ defmodule Pulsar.Components.ListTest do
         """)
 
       assert html =~ ~s(<dl)
-      assert html =~ ~s(dl-list)
+      assert html =~ ~s(data-list)
       assert html =~ ~s(<dt)
       assert html =~ ~s(<dd)
       assert html =~ "Name"
@@ -79,7 +79,7 @@ defmodule Pulsar.Components.ListTest do
       # Ghost should have minimal styling - no border or background on container
       refute html =~ ~s(border)
       refute html =~ ~s(bg-)
-      assert html =~ ~s(dl-list)
+      assert html =~ ~s(data-list)
     end
 
     test "renders outline variant" do
@@ -504,10 +504,10 @@ defmodule Pulsar.Components.ListTest do
       assert html =~ "Applicant Information"
       assert html =~ ~s(<h3)
       assert html =~ ~s(font-semibold)
-      # Should have wrapper div when header exists  
+      # Should have wrapper div when header exists
       assert html =~ "overflow-hidden"
-      # Should have nested dl inside wrapper
-      assert html =~ "dl-list"
+      # Should have nested dl inside wrapper with data attribute
+      assert html =~ "data-list"
       assert html =~ "overflow-hidden"
     end
 
@@ -567,7 +567,7 @@ defmodule Pulsar.Components.ListTest do
         """)
 
       # Should be direct dl, not wrapped
-      assert html =~ ~s(<dl class="dl-list)
+      assert html =~ ~s(<dl class="text-base" data-list)
       refute html =~ "overflow-hidden"
       refute html =~ ~s(<h3)
       refute html =~ ~s(<p)
@@ -587,7 +587,7 @@ defmodule Pulsar.Components.ListTest do
 
       # Large title
       assert html =~ ~s(text-lg/7 font-semibold)
-      # Large description  
+      # Large description
       assert html =~ ~s(text-base/6)
       assert html =~ ~s(dark:text-dark-muted-foreground)
       # Large padding

@@ -35,17 +35,17 @@ defmodule Pulsar.Components.List do
         </:item>
       </.list>
 
-      # Vertical stacked items (override default horizontal layout)
-      <.list class="[&_.dl-item]:flex-col">
-        <:item title="Description">
-          This is a longer description that works better
-          when stacked vertically below the title.
-        </:item>
-        <:item title="Notes">
-          Additional notes and commentary that span
-          multiple lines work well in this layout.
-        </:item>
-      </.list>
+       # Vertical stacked items (override default horizontal layout)
+       <.list class="[&_[data-list-item]]:flex-col">
+         <:item title="Description">
+           This is a longer description that works better
+           when stacked vertically below the title.
+         </:item>
+         <:item title="Notes">
+           Additional notes and commentary that span
+           multiple lines work well in this layout.
+         </:item>
+       </.list>
 
       # Custom container layouts with Tailwind classes
       # Grid layout (responsive 2-column)
@@ -127,13 +127,11 @@ defmodule Pulsar.Components.List do
   }
 
   # Base classes for the list container
-  @container_base_classes [
-    "dl-list"
-  ]
+  @container_base_classes []
 
   # Base classes for list items
   @item_base_classes [
-    "dl-item flex"
+    "flex"
   ]
 
   # Variant-specific classes for container
@@ -338,7 +336,7 @@ defmodule Pulsar.Components.List do
         </p>
       </div>
       <div class={content_wrapper_classes(@variant)}>
-        <dl class={@container_classes}>
+        <dl class={@container_classes} data-list>
           <div
             :for={{item, index} <- Enum.with_index(@items)}
             :if={@has_items}
@@ -350,6 +348,7 @@ defmodule Pulsar.Components.List do
                 item[:class] || ""
               ])
             }
+            data-list-item
           >
             <dt class={title_classes(@variant, @color, @size)}>
               {item.title}
@@ -369,7 +368,7 @@ defmodule Pulsar.Components.List do
         </dl>
       </div>
     </div>
-    <dl :if={!@has_header} class={@container_classes} {@rest}>
+    <dl :if={!@has_header} class={@container_classes} data-list {@rest}>
       <div
         :for={{item, index} <- Enum.with_index(@items)}
         :if={@has_items}
@@ -381,6 +380,7 @@ defmodule Pulsar.Components.List do
             item[:class] || ""
           ])
         }
+        data-list-item
       >
         <dt class={title_classes(@variant, @color, @size)}>
           {item.title}
@@ -417,7 +417,7 @@ defmodule Pulsar.Components.List do
       end
 
     color_config = get_in(@color_config, [assigns.variant, assigns.color])
-    # When we have a header, don't apply background colors to container (wrapper handles it) 
+    # When we have a header, don't apply background colors to container (wrapper handles it)
     color_classes =
       if has_header do
         ""
