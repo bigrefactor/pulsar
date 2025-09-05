@@ -44,9 +44,11 @@ import Pulsar.Components.{Button, Label, Link, Input, Textarea, Select, Checkbox
   Save Changes
 </.button>
 
-<.input field={@form[:email]} type="email" label="Email Address" />
+<.label for="email-input">Email Address</.label>
+<.input field={@form[:email]} type="email" id="email-input" />
 
-<.select field={@form[:category]} options={@categories} />
+<.label for="category-select">Category</.label>
+<.select field={@form[:category]} options={@categories} id="category-select" />
 ```
 
 ## Components
@@ -74,19 +76,22 @@ import Pulsar.Components.{Button, Label, Link, Input, Textarea, Select, Checkbox
   Save Changes
 </.button>
 
-# Form input with validation
+# Form input with validation  
+<.label for="email-input">Email Address</.label>
 <.input field={@form[:email]} type="email" 
-        label="Email Address" 
+        id="email-input"
         placeholder="Enter your email" />
 
 # Select with options
+<.label for="role-select">Role</.label>
 <.select field={@form[:role]} 
+         id="role-select"
          options={[{"Admin", "admin"}, {"User", "user"}]} />
 
 # Checkbox with card styling
-<.checkbox field={@form[:terms]} 
-           variant="card" 
-           label="I agree to the terms" />
+<.checkbox field={@form[:terms]} card variant="outline">
+  I agree to the terms
+</.checkbox>
 ```
 
 **All components support:**

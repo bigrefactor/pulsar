@@ -698,7 +698,7 @@ defmodule Pulsar.Components.Textarea do
   # Compute attributes (from Stellar)
   defp assign_computed_attributes(assigns) do
     # ARIA describedby merging - start with caller's value
-    caller_describedby = assigns[:aria_describedby]
+    caller_describedby = assigns[:"aria-describedby"]
 
     errors_id =
       if assigns.field_provided and has_field_errors(assigns),

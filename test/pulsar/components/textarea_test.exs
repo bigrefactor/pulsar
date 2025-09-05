@@ -568,6 +568,39 @@ defmodule Pulsar.Components.TextareaTest do
       assert html =~ ~s(aria-invalid="false")
       refute html =~ ~s(aria-invalid="true")
     end
+
+    test "respects caller-provided aria-describedby attribute" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Textarea.textarea name="test" aria-describedby="help-text" />
+        """)
+
+      assert html =~ ~s(aria-describedby="help-text")
+    end
+
+    test "merges caller aria-describedby with error ids" do
+      # Create a form field with errors
+      field = %FormField{
+        errors: [{"is too short", []}],
+        field: :description,
+        form: %Form{},
+        id: "user_description",
+        name: "user[description]",
+        value: ""
+      }
+
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Textarea.textarea field={@field} aria-describedby="help-text" />
+        """)
+
+      # Should merge both the caller's aria-describedby and the errors id
+      assert html =~ ~s(aria-describedby="help-text user_description-errors")
+    end
   end
 
   describe "automatic error state handling" do

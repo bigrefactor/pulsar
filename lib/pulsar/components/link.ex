@@ -161,6 +161,7 @@ defmodule Pulsar.Components.Link do
 
   defp prepare_link_assigns(assigns) do
     ensure_nav_exclusive!(assigns)
+    ensure_method_compatibility!(assigns)
 
     sanitized_href = sanitize_href(assigns.href)
     is_external = external_link?(sanitized_href)
@@ -245,6 +246,16 @@ defmodule Pulsar.Components.Link do
 
       raise ArgumentError,
             "Provide only one of :href, :navigate, or :patch. Found: #{props_string}"
+    end
+
+    assigns
+  end
+
+  # Ensure method is only used with href, not with navigate or patch
+  defp ensure_method_compatibility!(assigns) do
+    if is_binary(assigns[:method]) and (is_binary(assigns[:navigate]) or is_binary(assigns[:patch])) do
+      raise ArgumentError,
+            ":method cannot be used with :navigate or :patch. Use :method only with :href for form submissions."
     end
 
     assigns

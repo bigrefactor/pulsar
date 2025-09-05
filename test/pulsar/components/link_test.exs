@@ -293,6 +293,26 @@ defmodule Pulsar.Components.LinkTest do
 
       assert html =~ ~s(data-method="delete")
     end
+
+    test "raises error when method is used with navigate" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/cannot be used with :navigate or :patch/, fn ->
+        rendered_to_string(~H"""
+        <Link.a navigate="/dashboard" method="post">Dashboard</Link.a>
+        """)
+      end
+    end
+
+    test "raises error when method is used with patch" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/cannot be used with :navigate or :patch/, fn ->
+        rendered_to_string(~H"""
+        <Link.a patch="/current" method="put">Current</Link.a>
+        """)
+      end
+    end
   end
 
   describe "Link.a/1 icons" do
