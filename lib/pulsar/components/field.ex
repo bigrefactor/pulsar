@@ -46,17 +46,39 @@ defmodule Pulsar.Components.Field do
         <:label>I agree to the terms and conditions</:label>
       </.field>
 
-      # Switch field with description
-      <.field field={@form[:notifications_enabled]} type="switch">
-        <:label>Enable notifications</:label>
-        <:description>Receive email updates about your account activity</:description>
-      </.field>
+       # Switch field with description
+       <.field field={@form[:notifications_enabled]} type="switch">
+         <:label>Enable notifications</:label>
+         <:description>Receive email updates about your account activity</:description>
+       </.field>
 
-      # Custom label styling and size override
-      <.field field={@form[:title]} type="text">
-        <:label class="font-bold text-primary-700" size="lg">Document Title</:label>
-        <:description class="italic">Choose a descriptive title</:description>
-      </.field>
+       # File upload field (HTML attributes like accept pass through via rest)
+       <.field field={@form[:avatar]} type="file" accept="image/*">
+         <:label>Profile Picture</:label>
+         <:description>Upload a profile image (JPG, PNG, or GIF)</:description>
+       </.field>
+
+       # Range input with min/max/step
+       <.field field={@form[:volume]} type="range" min="0" max="100" step="10">
+         <:label>Volume Level</:label>
+         <:description>Adjust the audio volume</:description>
+       </.field>
+
+       # Radio field with tuple list options
+       <.field field={@form[:size]} type="radio" options={[{"Small", "s"}, {"Medium", "m"}, {"Large", "l"}]}>
+         <:label>T-Shirt Size</:label>
+       </.field>
+
+       # Radio field with keyword list options (alternative format)
+       <.field field={@form[:priority]} type="radio" options={[low: "low", medium: "medium", high: "high"]}>
+         <:label>Priority Level</:label>
+       </.field>
+
+       # Custom label styling and size override
+       <.field field={@form[:title]} type="text">
+         <:label class="font-bold text-primary-700" size="lg">Document Title</:label>
+         <:description class="italic">Choose a descriptive title</:description>
+       </.field>
 
   ## Label Generation
 
