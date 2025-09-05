@@ -479,136 +479,90 @@ defmodule Pulsar.Components.RadioGroup do
     "flex flex-col gap-3"
   end
 
-  # Radio color classes - only generates needed classes for the selected color
+  # ============================================================================
+  # RADIO COLOR CONFIGURATION
+  # ============================================================================
+  #
+  # Map-based color system for radio buttons. Each color defines its border,
+  # background, focus ring, and foreground (inner dot) classes.
+  # This approach maintains PurgeCSS compatibility while reducing repetition.
+  # ============================================================================
+
+  @radio_color_config %{
+    "danger" => %{
+      background: "bg-background dark:bg-dark-background checked:bg-danger dark:checked:bg-dark-danger",
+      border: "border-border dark:border-dark-border checked:border-danger dark:checked:border-dark-danger",
+      foreground: "before:bg-danger-foreground dark:before:bg-dark-danger-foreground",
+      hover: "hover:border-danger/70 dark:hover:border-dark-danger/70 hover:shadow-sm",
+      ring: "focus-visible:ring-danger dark:focus-visible:ring-dark-danger"
+    },
+    "info" => %{
+      background: "bg-background dark:bg-dark-background checked:bg-info dark:checked:bg-dark-info",
+      border: "border-border dark:border-dark-border checked:border-info dark:checked:border-dark-info",
+      foreground: "before:bg-info-foreground dark:before:bg-dark-info-foreground",
+      hover: "hover:border-info/70 dark:hover:border-dark-info/70 hover:shadow-sm",
+      ring: "focus-visible:ring-info dark:focus-visible:ring-dark-info"
+    },
+    "neutral" => %{
+      background: "bg-background dark:bg-dark-background checked:bg-neutral dark:checked:bg-dark-neutral",
+      border: "border-border dark:border-dark-border checked:border-neutral dark:checked:border-dark-neutral",
+      foreground: "before:bg-neutral-foreground dark:before:bg-dark-neutral-foreground",
+      hover: "hover:border-neutral/70 dark:hover:border-dark-neutral/70 hover:shadow-sm",
+      ring: "focus-visible:ring-neutral dark:focus-visible:ring-dark-neutral"
+    },
+    "primary" => %{
+      background: "bg-background dark:bg-dark-background checked:bg-primary dark:checked:bg-dark-primary",
+      border: "border-border dark:border-dark-border checked:border-primary dark:checked:border-dark-primary",
+      foreground: "before:bg-primary-foreground dark:before:bg-dark-primary-foreground",
+      hover: "hover:border-primary/70 dark:hover:border-dark-primary/70 hover:shadow-sm",
+      ring: "focus-visible:ring-primary dark:focus-visible:ring-dark-primary"
+    },
+    "secondary" => %{
+      background: "bg-background dark:bg-dark-background checked:bg-secondary dark:checked:bg-dark-secondary",
+      border: "border-border dark:border-dark-border checked:border-secondary dark:checked:border-dark-secondary",
+      foreground: "before:bg-secondary-foreground dark:before:bg-dark-secondary-foreground",
+      hover: "hover:border-secondary/70 dark:hover:border-dark-secondary/70 hover:shadow-sm",
+      ring: "focus-visible:ring-secondary dark:focus-visible:ring-dark-secondary"
+    },
+    "success" => %{
+      background: "bg-background dark:bg-dark-background checked:bg-success dark:checked:bg-dark-success",
+      border: "border-border dark:border-dark-border checked:border-success dark:checked:border-dark-success",
+      foreground: "before:bg-success-foreground dark:before:bg-dark-success-foreground",
+      hover: "hover:border-success/70 dark:hover:border-dark-success/70 hover:shadow-sm",
+      ring: "focus-visible:ring-success dark:focus-visible:ring-dark-success"
+    },
+    "warning" => %{
+      background: "bg-background dark:bg-dark-background checked:bg-warning dark:checked:bg-dark-warning",
+      border: "border-border dark:border-dark-border checked:border-warning dark:checked:border-dark-warning",
+      foreground: "before:bg-warning-foreground dark:before:bg-dark-warning-foreground",
+      hover: "hover:border-warning/70 dark:hover:border-dark-warning/70 hover:shadow-sm",
+      ring: "focus-visible:ring-warning dark:focus-visible:ring-dark-warning"
+    }
+  }
+
+  @radio_label_color_config %{
+    "danger" => "text-danger dark:text-dark-danger",
+    "info" => "text-info dark:text-dark-info",
+    "neutral" => "text-foreground dark:text-dark-foreground",
+    "primary" => "text-primary dark:text-dark-primary",
+    "secondary" => "text-secondary dark:text-dark-secondary",
+    "success" => "text-success dark:text-dark-success",
+    "warning" => "text-warning dark:text-dark-warning"
+  }
+
+  # Radio color classes - uses map lookup instead of pattern matching
   @spec radio_color_classes(String.t()) :: String.t()
   defp radio_color_classes(color) do
+    config = @radio_color_config[color]
+
     [
-      radio_border_classes(color),
-      radio_background_classes(color),
-      radio_ring_classes(color),
-      radio_foreground_classes(color)
+      config.border,
+      config.background,
+      config.ring,
+      config.foreground,
+      config.hover
     ]
     |> merge()
-  end
-
-  # Radio border classes for each color
-  @spec radio_border_classes(String.t()) :: String.t()
-  defp radio_border_classes("neutral") do
-    "border-border dark:border-dark-border checked:border-neutral dark:checked:border-dark-neutral"
-  end
-
-  defp radio_border_classes("primary") do
-    "border-border dark:border-dark-border checked:border-primary dark:checked:border-dark-primary"
-  end
-
-  defp radio_border_classes("secondary") do
-    "border-border dark:border-dark-border checked:border-secondary dark:checked:border-dark-secondary"
-  end
-
-  defp radio_border_classes("success") do
-    "border-border dark:border-dark-border checked:border-success dark:checked:border-dark-success"
-  end
-
-  defp radio_border_classes("danger") do
-    "border-border dark:border-dark-border checked:border-danger dark:checked:border-dark-danger"
-  end
-
-  defp radio_border_classes("warning") do
-    "border-border dark:border-dark-border checked:border-warning dark:checked:border-dark-warning"
-  end
-
-  defp radio_border_classes("info") do
-    "border-border dark:border-dark-border checked:border-info dark:checked:border-dark-info"
-  end
-
-  # Radio background classes for each color
-  @spec radio_background_classes(String.t()) :: String.t()
-  defp radio_background_classes("neutral") do
-    "bg-background dark:bg-dark-background checked:bg-neutral dark:checked:bg-dark-neutral"
-  end
-
-  defp radio_background_classes("primary") do
-    "bg-background dark:bg-dark-background checked:bg-primary dark:checked:bg-dark-primary"
-  end
-
-  defp radio_background_classes("secondary") do
-    "bg-background dark:bg-dark-background checked:bg-secondary dark:checked:bg-dark-secondary"
-  end
-
-  defp radio_background_classes("success") do
-    "bg-background dark:bg-dark-background checked:bg-success dark:checked:bg-dark-success"
-  end
-
-  defp radio_background_classes("danger") do
-    "bg-background dark:bg-dark-background checked:bg-danger dark:checked:bg-dark-danger"
-  end
-
-  defp radio_background_classes("warning") do
-    "bg-background dark:bg-dark-background checked:bg-warning dark:checked:bg-dark-warning"
-  end
-
-  defp radio_background_classes("info") do
-    "bg-background dark:bg-dark-background checked:bg-info dark:checked:bg-dark-info"
-  end
-
-  # Radio ring classes for focus states
-  @spec radio_ring_classes(String.t()) :: String.t()
-  defp radio_ring_classes("neutral") do
-    "focus-visible:ring-neutral dark:focus-visible:ring-dark-neutral"
-  end
-
-  defp radio_ring_classes("primary") do
-    "focus-visible:ring-primary dark:focus-visible:ring-dark-primary"
-  end
-
-  defp radio_ring_classes("secondary") do
-    "focus-visible:ring-secondary dark:focus-visible:ring-dark-secondary"
-  end
-
-  defp radio_ring_classes("success") do
-    "focus-visible:ring-success dark:focus-visible:ring-dark-success"
-  end
-
-  defp radio_ring_classes("danger") do
-    "focus-visible:ring-danger dark:focus-visible:ring-dark-danger"
-  end
-
-  defp radio_ring_classes("warning") do
-    "focus-visible:ring-warning dark:focus-visible:ring-dark-warning"
-  end
-
-  defp radio_ring_classes("info") do
-    "focus-visible:ring-info dark:focus-visible:ring-dark-info"
-  end
-
-  # Radio foreground classes for the before pseudo-element (the inner dot)
-  @spec radio_foreground_classes(String.t()) :: String.t()
-  defp radio_foreground_classes("neutral") do
-    "before:bg-neutral-foreground dark:before:bg-dark-neutral-foreground"
-  end
-
-  defp radio_foreground_classes("primary") do
-    "before:bg-primary-foreground dark:before:bg-dark-primary-foreground"
-  end
-
-  defp radio_foreground_classes("secondary") do
-    "before:bg-secondary-foreground dark:before:bg-dark-secondary-foreground"
-  end
-
-  defp radio_foreground_classes("success") do
-    "before:bg-success-foreground dark:before:bg-dark-success-foreground"
-  end
-
-  defp radio_foreground_classes("danger") do
-    "before:bg-danger-foreground dark:before:bg-dark-danger-foreground"
-  end
-
-  defp radio_foreground_classes("warning") do
-    "before:bg-warning-foreground dark:before:bg-dark-warning-foreground"
-  end
-
-  defp radio_foreground_classes("info") do
-    "before:bg-info-foreground dark:before:bg-dark-info-foreground"
   end
 
   # Base classes for radio option container
@@ -626,8 +580,7 @@ defmodule Pulsar.Components.RadioGroup do
       radio_input_base_classes(),
       @size_config[size][:radio],
       @size_config[size][:radio_before],
-      radio_color_classes(color),
-      radio_hover_classes(color)
+      radio_color_classes(color)
     ]
     |> List.flatten()
     |> merge()
@@ -648,36 +601,6 @@ defmodule Pulsar.Components.RadioGroup do
     """
   end
 
-  # Hover classes for radio inputs
-  @spec radio_hover_classes(String.t()) :: String.t()
-  defp radio_hover_classes("neutral") do
-    "hover:border-neutral/70 dark:hover:border-dark-neutral/70 hover:shadow-sm"
-  end
-
-  defp radio_hover_classes("primary") do
-    "hover:border-primary/70 dark:hover:border-dark-primary/70 hover:shadow-sm"
-  end
-
-  defp radio_hover_classes("secondary") do
-    "hover:border-secondary/70 dark:hover:border-dark-secondary/70 hover:shadow-sm"
-  end
-
-  defp radio_hover_classes("success") do
-    "hover:border-success/70 dark:hover:border-dark-success/70 hover:shadow-sm"
-  end
-
-  defp radio_hover_classes("danger") do
-    "hover:border-danger/70 dark:hover:border-dark-danger/70 hover:shadow-sm"
-  end
-
-  defp radio_hover_classes("warning") do
-    "hover:border-warning/70 dark:hover:border-dark-warning/70 hover:shadow-sm"
-  end
-
-  defp radio_hover_classes("info") do
-    "hover:border-info/70 dark:hover:border-dark-info/70 hover:shadow-sm"
-  end
-
   # Classes for radio labels (standard non-card)
   @spec radio_label_classes(String.t(), String.t(), String.t()) :: String.t()
   defp radio_label_classes(size, color, label_color) do
@@ -692,15 +615,11 @@ defmodule Pulsar.Components.RadioGroup do
     |> merge()
   end
 
-  # Color classes for radio labels
+  # Color classes for radio labels - uses map lookup
   @spec radio_label_color_classes(String.t()) :: String.t()
-  defp radio_label_color_classes("neutral"), do: "text-foreground dark:text-dark-foreground"
-  defp radio_label_color_classes("primary"), do: "text-primary dark:text-dark-primary"
-  defp radio_label_color_classes("secondary"), do: "text-secondary dark:text-dark-secondary"
-  defp radio_label_color_classes("success"), do: "text-success dark:text-dark-success"
-  defp radio_label_color_classes("danger"), do: "text-danger dark:text-dark-danger"
-  defp radio_label_color_classes("warning"), do: "text-warning dark:text-dark-warning"
-  defp radio_label_color_classes("info"), do: "text-info dark:text-dark-info"
+  defp radio_label_color_classes(color) do
+    @radio_label_color_config[color] || @radio_label_color_config["neutral"]
+  end
 
   # Card base styles (without CSS variables)
   @spec card_base_classes(String.t(), String.t()) :: String.t()
@@ -716,188 +635,217 @@ defmodule Pulsar.Components.RadioGroup do
     |> merge()
   end
 
-  # Card focus ring classes by color
+  # ============================================================================
+  # CARD COLOR CONFIGURATION  
+  # ============================================================================
+  #
+  # Map-based color system for card variants. Each color defines focus ring
+  # and variant-specific styling classes.
+  # ============================================================================
+
+  @card_color_config %{
+    "danger" => %{
+      focus_ring: "focus-within:ring-danger dark:focus-within:ring-dark-danger"
+    },
+    "info" => %{
+      focus_ring: "focus-within:ring-info dark:focus-within:ring-dark-info"
+    },
+    "neutral" => %{
+      focus_ring: "focus-within:ring-neutral dark:focus-within:ring-dark-neutral"
+    },
+    "primary" => %{
+      focus_ring: "focus-within:ring-primary dark:focus-within:ring-dark-primary"
+    },
+    "secondary" => %{
+      focus_ring: "focus-within:ring-secondary dark:focus-within:ring-dark-secondary"
+    },
+    "success" => %{
+      focus_ring: "focus-within:ring-success dark:focus-within:ring-dark-success"
+    },
+    "warning" => %{
+      focus_ring: "focus-within:ring-warning dark:focus-within:ring-dark-warning"
+    }
+  }
+
+  # Card focus ring classes by color - uses map lookup
   @spec card_focus_ring_classes(String.t()) :: String.t()
-  defp card_focus_ring_classes("neutral"), do: "focus-within:ring-neutral dark:focus-within:ring-dark-neutral"
+  defp card_focus_ring_classes(color) do
+    @card_color_config[color][:focus_ring] || @card_color_config["neutral"][:focus_ring]
+  end
 
-  defp card_focus_ring_classes("primary"), do: "focus-within:ring-primary dark:focus-within:ring-dark-primary"
+  # ============================================================================
+  # CARD VARIANT CONFIGURATION
+  # ============================================================================
+  #
+  # Map-based card variant system. Each variant/color combination defines
+  # background, border, hover, and checked state classes.
+  # ============================================================================
 
-  defp card_focus_ring_classes("secondary"), do: "focus-within:ring-secondary dark:focus-within:ring-dark-secondary"
+  @card_variant_config %{
+    "ghost" => %{
+      "danger" => %{
+        base: "border-transparent bg-transparent",
+        checked: "has-[:checked]:bg-danger/15 dark:has-[:checked]:bg-dark-danger/15",
+        hover: "hover:bg-danger/10 dark:hover:bg-dark-danger/10"
+      },
+      "info" => %{
+        base: "border-transparent bg-transparent",
+        checked: "has-[:checked]:bg-info/15 dark:has-[:checked]:bg-dark-info/15",
+        hover: "hover:bg-info/10 dark:hover:bg-dark-info/10"
+      },
+      "neutral" => %{
+        base: "border-transparent bg-transparent",
+        checked: "has-[:checked]:bg-neutral/15 dark:has-[:checked]:bg-dark-neutral/15",
+        hover: "hover:bg-neutral/10 dark:hover:bg-dark-neutral/10"
+      },
+      "primary" => %{
+        base: "border-transparent bg-transparent",
+        checked: "has-[:checked]:bg-primary/15 dark:has-[:checked]:bg-dark-primary/15",
+        hover: "hover:bg-primary/10 dark:hover:bg-dark-primary/10"
+      },
+      "secondary" => %{
+        base: "border-transparent bg-transparent",
+        checked: "has-[:checked]:bg-secondary/15 dark:has-[:checked]:bg-dark-secondary/15",
+        hover: "hover:bg-secondary/10 dark:hover:bg-dark-secondary/10"
+      },
+      "success" => %{
+        base: "border-transparent bg-transparent",
+        checked: "has-[:checked]:bg-success/15 dark:has-[:checked]:bg-dark-success/15",
+        hover: "hover:bg-success/10 dark:hover:bg-dark-success/10"
+      },
+      "warning" => %{
+        base: "border-transparent bg-transparent",
+        checked: "has-[:checked]:bg-warning/15 dark:has-[:checked]:bg-dark-warning/15",
+        hover: "hover:bg-warning/10 dark:hover:bg-dark-warning/10"
+      }
+    },
+    "outline" => %{
+      "danger" => %{
+        background: "bg-background dark:bg-dark-background",
+        base: "",
+        border: "border-border dark:border-dark-border",
+        checked:
+          "has-[:checked]:border-danger dark:has-[:checked]:border-dark-danger has-[:checked]:bg-danger/10 dark:has-[:checked]:bg-dark-danger/10",
+        hover: "hover:border-danger/50 dark:hover:border-dark-danger/50 hover:bg-danger/5 dark:hover:bg-dark-danger/5"
+      },
+      "info" => %{
+        background: "bg-background dark:bg-dark-background",
+        base: "",
+        border: "border-border dark:border-dark-border",
+        checked:
+          "has-[:checked]:border-info dark:has-[:checked]:border-dark-info has-[:checked]:bg-info/10 dark:has-[:checked]:bg-dark-info/10",
+        hover: "hover:border-info/50 dark:hover:border-dark-info/50 hover:bg-info/5 dark:hover:bg-dark-info/5"
+      },
+      "neutral" => %{
+        background: "bg-background dark:bg-dark-background",
+        base: "",
+        border: "border-border dark:border-dark-border",
+        checked:
+          "has-[:checked]:border-neutral dark:has-[:checked]:border-dark-neutral has-[:checked]:bg-neutral/10 dark:has-[:checked]:bg-dark-neutral/10",
+        hover:
+          "hover:border-neutral/50 dark:hover:border-dark-neutral/50 hover:bg-neutral/5 dark:hover:bg-dark-neutral/5"
+      },
+      "primary" => %{
+        background: "bg-background dark:bg-dark-background",
+        base: "",
+        border: "border-border dark:border-dark-border",
+        checked:
+          "has-[:checked]:border-primary dark:has-[:checked]:border-dark-primary has-[:checked]:bg-primary/10 dark:has-[:checked]:bg-dark-primary/10",
+        hover:
+          "hover:border-primary/50 dark:hover:border-dark-primary/50 hover:bg-primary/5 dark:hover:bg-dark-primary/5"
+      },
+      "secondary" => %{
+        background: "bg-background dark:bg-dark-background",
+        base: "",
+        border: "border-border dark:border-dark-border",
+        checked:
+          "has-[:checked]:border-secondary dark:has-[:checked]:border-dark-secondary has-[:checked]:bg-secondary/10 dark:has-[:checked]:bg-dark-secondary/10",
+        hover:
+          "hover:border-secondary/50 dark:hover:border-dark-secondary/50 hover:bg-secondary/5 dark:hover:bg-dark-secondary/5"
+      },
+      "success" => %{
+        background: "bg-background dark:bg-dark-background",
+        base: "",
+        border: "border-border dark:border-dark-border",
+        checked:
+          "has-[:checked]:border-success dark:has-[:checked]:border-dark-success has-[:checked]:bg-success/10 dark:has-[:checked]:bg-dark-success/10",
+        hover:
+          "hover:border-success/50 dark:hover:border-dark-success/50 hover:bg-success/5 dark:hover:bg-dark-success/5"
+      },
+      "warning" => %{
+        background: "bg-background dark:bg-dark-background",
+        base: "",
+        border: "border-border dark:border-dark-border",
+        checked:
+          "has-[:checked]:border-warning dark:has-[:checked]:border-dark-warning has-[:checked]:bg-warning/10 dark:has-[:checked]:bg-dark-warning/10",
+        hover:
+          "hover:border-warning/50 dark:hover:border-dark-warning/50 hover:bg-warning/5 dark:hover:bg-dark-warning/5"
+      }
+    },
+    "solid" => %{
+      "danger" => %{
+        background: "bg-background dark:bg-dark-background",
+        base: "border-transparent",
+        checked: "has-[:checked]:bg-danger/20 dark:has-[:checked]:bg-dark-danger/20",
+        hover: "hover:bg-danger/10 dark:hover:bg-dark-danger/10"
+      },
+      "info" => %{
+        background: "bg-background dark:bg-dark-background",
+        base: "border-transparent",
+        checked: "has-[:checked]:bg-info/20 dark:has-[:checked]:bg-dark-info/20",
+        hover: "hover:bg-info/10 dark:hover:bg-dark-info/10"
+      },
+      "neutral" => %{
+        background: "bg-background dark:bg-dark-background",
+        base: "border-transparent",
+        checked: "has-[:checked]:bg-neutral/20 dark:has-[:checked]:bg-dark-neutral/20",
+        hover: "hover:bg-neutral/10 dark:hover:bg-dark-neutral/10"
+      },
+      "primary" => %{
+        background: "bg-background dark:bg-dark-background",
+        base: "border-transparent",
+        checked: "has-[:checked]:bg-primary/20 dark:has-[:checked]:bg-dark-primary/20",
+        hover: "hover:bg-primary/10 dark:hover:bg-dark-primary/10"
+      },
+      "secondary" => %{
+        background: "bg-background dark:bg-dark-background",
+        base: "border-transparent",
+        checked: "has-[:checked]:bg-secondary/20 dark:has-[:checked]:bg-dark-secondary/20",
+        hover: "hover:bg-secondary/10 dark:hover:bg-dark-secondary/10"
+      },
+      "success" => %{
+        background: "bg-background dark:bg-dark-background",
+        base: "border-transparent",
+        checked: "has-[:checked]:bg-success/20 dark:has-[:checked]:bg-dark-success/20",
+        hover: "hover:bg-success/10 dark:hover:bg-dark-success/10"
+      },
+      "warning" => %{
+        background: "bg-background dark:bg-dark-background",
+        base: "border-transparent",
+        checked: "has-[:checked]:bg-warning/20 dark:has-[:checked]:bg-dark-warning/20",
+        hover: "hover:bg-warning/10 dark:hover:bg-dark-warning/10"
+      }
+    }
+  }
 
-  defp card_focus_ring_classes("success"), do: "focus-within:ring-success dark:focus-within:ring-dark-success"
-
-  defp card_focus_ring_classes("danger"), do: "focus-within:ring-danger dark:focus-within:ring-dark-danger"
-
-  defp card_focus_ring_classes("warning"), do: "focus-within:ring-warning dark:focus-within:ring-dark-warning"
-
-  defp card_focus_ring_classes("info"), do: "focus-within:ring-info dark:focus-within:ring-dark-info"
-
-  # Card variant styles with direct color classes
+  # Card variant classes using map lookup
   @spec card_variant_classes(String.t(), String.t()) :: String.t()
-  defp card_variant_classes("solid", color) do
-    [
-      "border-transparent",
-      card_variant_background_classes("solid", color),
-      card_variant_hover_classes("solid", color),
-      card_variant_checked_classes("solid", color)
-    ]
-    |> Enum.join(" ")
+  defp card_variant_classes(variant, color) do
+    config = @card_variant_config[variant][color]
+
+    if config do
+      [
+        config[:base],
+        config[:background],
+        config[:border],
+        config[:hover],
+        config[:checked]
+      ]
+      |> merge()
+    else
+      ""
+    end
   end
-
-  defp card_variant_classes("outline", color) do
-    [
-      card_variant_background_classes("outline", color),
-      card_variant_border_classes("outline", color),
-      card_variant_hover_classes("outline", color),
-      card_variant_checked_classes("outline", color)
-    ]
-    |> Enum.join(" ")
-  end
-
-  defp card_variant_classes("ghost", color) do
-    [
-      "border-transparent bg-transparent",
-      card_variant_hover_classes("ghost", color),
-      card_variant_checked_classes("ghost", color)
-    ]
-    |> Enum.join(" ")
-  end
-
-  # Card background classes by variant
-  @spec card_variant_background_classes(String.t(), String.t()) :: String.t()
-  defp card_variant_background_classes("solid", _color), do: "bg-background dark:bg-dark-background"
-
-  defp card_variant_background_classes("outline", _color), do: "bg-background dark:bg-dark-background"
-
-  defp card_variant_background_classes("ghost", _color), do: "bg-transparent"
-
-  # Card border classes by variant and color
-  @spec card_variant_border_classes(String.t(), String.t()) :: String.t()
-  defp card_variant_border_classes("outline", _color), do: "border-border dark:border-dark-border"
-
-  # Card hover classes by variant and color
-  @spec card_variant_hover_classes(String.t(), String.t()) :: String.t()
-  defp card_variant_hover_classes("solid", "neutral"), do: "hover:bg-neutral/10 dark:hover:bg-dark-neutral/10"
-
-  defp card_variant_hover_classes("solid", "primary"), do: "hover:bg-primary/10 dark:hover:bg-dark-primary/10"
-
-  defp card_variant_hover_classes("solid", "secondary"), do: "hover:bg-secondary/10 dark:hover:bg-dark-secondary/10"
-
-  defp card_variant_hover_classes("solid", "success"), do: "hover:bg-success/10 dark:hover:bg-dark-success/10"
-
-  defp card_variant_hover_classes("solid", "danger"), do: "hover:bg-danger/10 dark:hover:bg-dark-danger/10"
-
-  defp card_variant_hover_classes("solid", "warning"), do: "hover:bg-warning/10 dark:hover:bg-dark-warning/10"
-
-  defp card_variant_hover_classes("solid", "info"), do: "hover:bg-info/10 dark:hover:bg-dark-info/10"
-
-  defp card_variant_hover_classes("outline", "neutral"),
-    do: "hover:border-neutral/50 dark:hover:border-dark-neutral/50 hover:bg-neutral/5 dark:hover:bg-dark-neutral/5"
-
-  defp card_variant_hover_classes("outline", "primary"),
-    do: "hover:border-primary/50 dark:hover:border-dark-primary/50 hover:bg-primary/5 dark:hover:bg-dark-primary/5"
-
-  defp card_variant_hover_classes("outline", "secondary"),
-    do:
-      "hover:border-secondary/50 dark:hover:border-dark-secondary/50 hover:bg-secondary/5 dark:hover:bg-dark-secondary/5"
-
-  defp card_variant_hover_classes("outline", "success"),
-    do: "hover:border-success/50 dark:hover:border-dark-success/50 hover:bg-success/5 dark:hover:bg-dark-success/5"
-
-  defp card_variant_hover_classes("outline", "danger"),
-    do: "hover:border-danger/50 dark:hover:border-dark-danger/50 hover:bg-danger/5 dark:hover:bg-dark-danger/5"
-
-  defp card_variant_hover_classes("outline", "warning"),
-    do: "hover:border-warning/50 dark:hover:border-dark-warning/50 hover:bg-warning/5 dark:hover:bg-dark-warning/5"
-
-  defp card_variant_hover_classes("outline", "info"),
-    do: "hover:border-info/50 dark:hover:border-dark-info/50 hover:bg-info/5 dark:hover:bg-dark-info/5"
-
-  defp card_variant_hover_classes("ghost", "neutral"), do: "hover:bg-neutral/10 dark:hover:bg-dark-neutral/10"
-
-  defp card_variant_hover_classes("ghost", "primary"), do: "hover:bg-primary/10 dark:hover:bg-dark-primary/10"
-
-  defp card_variant_hover_classes("ghost", "secondary"), do: "hover:bg-secondary/10 dark:hover:bg-dark-secondary/10"
-
-  defp card_variant_hover_classes("ghost", "success"), do: "hover:bg-success/10 dark:hover:bg-dark-success/10"
-
-  defp card_variant_hover_classes("ghost", "danger"), do: "hover:bg-danger/10 dark:hover:bg-dark-danger/10"
-
-  defp card_variant_hover_classes("ghost", "warning"), do: "hover:bg-warning/10 dark:hover:bg-dark-warning/10"
-
-  defp card_variant_hover_classes("ghost", "info"), do: "hover:bg-info/10 dark:hover:bg-dark-info/10"
-
-  # Card checked state classes by variant and color - using :checked pseudo-class
-  @spec card_variant_checked_classes(String.t(), String.t()) :: String.t()
-  defp card_variant_checked_classes("solid", "neutral"),
-    do: "has-[:checked]:bg-neutral/20 dark:has-[:checked]:bg-dark-neutral/20"
-
-  defp card_variant_checked_classes("solid", "primary"),
-    do: "has-[:checked]:bg-primary/20 dark:has-[:checked]:bg-dark-primary/20"
-
-  defp card_variant_checked_classes("solid", "secondary"),
-    do: "has-[:checked]:bg-secondary/20 dark:has-[:checked]:bg-dark-secondary/20"
-
-  defp card_variant_checked_classes("solid", "success"),
-    do: "has-[:checked]:bg-success/20 dark:has-[:checked]:bg-dark-success/20"
-
-  defp card_variant_checked_classes("solid", "danger"),
-    do: "has-[:checked]:bg-danger/20 dark:has-[:checked]:bg-dark-danger/20"
-
-  defp card_variant_checked_classes("solid", "warning"),
-    do: "has-[:checked]:bg-warning/20 dark:has-[:checked]:bg-dark-warning/20"
-
-  defp card_variant_checked_classes("solid", "info"),
-    do: "has-[:checked]:bg-info/20 dark:has-[:checked]:bg-dark-info/20"
-
-  defp card_variant_checked_classes("outline", "neutral"),
-    do:
-      "has-[:checked]:border-neutral dark:has-[:checked]:border-dark-neutral has-[:checked]:bg-neutral/10 dark:has-[:checked]:bg-dark-neutral/10"
-
-  defp card_variant_checked_classes("outline", "primary"),
-    do:
-      "has-[:checked]:border-primary dark:has-[:checked]:border-dark-primary has-[:checked]:bg-primary/10 dark:has-[:checked]:bg-dark-primary/10"
-
-  defp card_variant_checked_classes("outline", "secondary"),
-    do:
-      "has-[:checked]:border-secondary dark:has-[:checked]:border-dark-secondary has-[:checked]:bg-secondary/10 dark:has-[:checked]:bg-dark-secondary/10"
-
-  defp card_variant_checked_classes("outline", "success"),
-    do:
-      "has-[:checked]:border-success dark:has-[:checked]:border-dark-success has-[:checked]:bg-success/10 dark:has-[:checked]:bg-dark-success/10"
-
-  defp card_variant_checked_classes("outline", "danger"),
-    do:
-      "has-[:checked]:border-danger dark:has-[:checked]:border-dark-danger has-[:checked]:bg-danger/10 dark:has-[:checked]:bg-dark-danger/10"
-
-  defp card_variant_checked_classes("outline", "warning"),
-    do:
-      "has-[:checked]:border-warning dark:has-[:checked]:border-dark-warning has-[:checked]:bg-warning/10 dark:has-[:checked]:bg-dark-warning/10"
-
-  defp card_variant_checked_classes("outline", "info"),
-    do:
-      "has-[:checked]:border-info dark:has-[:checked]:border-dark-info has-[:checked]:bg-info/10 dark:has-[:checked]:bg-dark-info/10"
-
-  defp card_variant_checked_classes("ghost", "neutral"),
-    do: "has-[:checked]:bg-neutral/15 dark:has-[:checked]:bg-dark-neutral/15"
-
-  defp card_variant_checked_classes("ghost", "primary"),
-    do: "has-[:checked]:bg-primary/15 dark:has-[:checked]:bg-dark-primary/15"
-
-  defp card_variant_checked_classes("ghost", "secondary"),
-    do: "has-[:checked]:bg-secondary/15 dark:has-[:checked]:bg-dark-secondary/15"
-
-  defp card_variant_checked_classes("ghost", "success"),
-    do: "has-[:checked]:bg-success/15 dark:has-[:checked]:bg-dark-success/15"
-
-  defp card_variant_checked_classes("ghost", "danger"),
-    do: "has-[:checked]:bg-danger/15 dark:has-[:checked]:bg-dark-danger/15"
-
-  defp card_variant_checked_classes("ghost", "warning"),
-    do: "has-[:checked]:bg-warning/15 dark:has-[:checked]:bg-dark-warning/15"
-
-  defp card_variant_checked_classes("ghost", "info"),
-    do: "has-[:checked]:bg-info/15 dark:has-[:checked]:bg-dark-info/15"
 
   # Card state styles
   @spec card_state_classes(boolean(), boolean()) :: String.t()
