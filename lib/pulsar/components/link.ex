@@ -54,8 +54,8 @@ defmodule Pulsar.Components.Link do
 
   # Stellar Link attributes - copied from Stellar.Components.Link
   attr(:href, :string, default: nil, doc: "External URL to navigate to")
-  attr(:navigate, :string, default: nil, doc: "Phoenix route to navigate to")
-  attr(:patch, :string, default: nil, doc: "Phoenix route to patch navigate to")
+  attr(:navigate, :any, default: nil, doc: "Phoenix route to navigate to (string or VerifiedRoute)")
+  attr(:patch, :any, default: nil, doc: "Phoenix route to patch navigate to (string or VerifiedRoute)")
   attr(:replace, :boolean, default: false, doc: "Replace current history entry")
   attr(:method, :string, default: nil, doc: "HTTP method for the link")
   attr(:target, :string, default: nil, doc: "Link target attribute (auto-set for external)")
@@ -218,7 +218,7 @@ defmodule Pulsar.Components.Link do
   end
 
   defp ensure_method_compatibility!(assigns, scheme) do
-    if is_binary(assigns[:method]) and (is_binary(assigns[:navigate]) or is_binary(assigns[:patch])) do
+    if assigns[:method] != nil and (assigns[:navigate] != nil or assigns[:patch] != nil) do
       raise ArgumentError,
             ":method cannot be used with :navigate or :patch. Use :method only with :href for form submissions."
     end
