@@ -270,7 +270,7 @@ defmodule Pulsar.Components.List do
 
   attr :rest, :global
 
-  slot :item, required: true do
+  slot :item do
     attr :title, :string,
       required: true,
       doc: "The label/key for the item"
