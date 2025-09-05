@@ -2,7 +2,7 @@
 
 ## Introduction/Overview
 
-This PRD defines the implementation of styled form components for the Pulsar design system, built on Stellar's headless foundation. These components will provide a drop-in replacement for Phoenix's generated `core_components` with enhanced features, beautiful styling, and complete theme integration. The goal is to give Phoenix developers production-ready form components that work seamlessly with existing Phoenix patterns while offering advanced capabilities like compositional addons, dark mode support, and semantic theming.
+This PRD defines the implementation of styled form components for the Pulsar design system, providing self-contained components with built-in accessibility. These components will provide a drop-in replacement for Phoenix's generated `core_components` with enhanced features, beautiful styling, and complete theme integration. The goal is to give Phoenix developers production-ready form components that work seamlessly with existing Phoenix patterns while offering advanced capabilities like compositional addons, dark mode support, and semantic theming.
 
 ## GitHub Hierarchy Context
 
@@ -16,7 +16,7 @@ This PRD defines the implementation of styled form components for the Pulsar des
 2. **Beautiful Defaults**: Deliver production-ready styling that works out of the box with zero configuration
 3. **Developer Experience**: Enable Phoenix developers to adopt Pulsar forms with minimal code changes
 4. **Theme Integration**: Full support for Pulsar's semantic color system and automatic dark mode
-5. **Accessibility**: Maintain Stellar's WCAG 2.1 AA compliance through proper component wrapping
+5. **Accessibility**: Maintain WCAG 2.1 AA compliance through proper component implementation
 
 ## User Stories
 
@@ -34,8 +34,8 @@ This PRD defines the implementation of styled form components for the Pulsar des
 
 1. **Core Component Implementation**
    - The system must provide Input, Label, and Textarea components as the initial release
-   - Each component must wrap its corresponding Stellar headless component
-   - Components must maintain all Stellar accessibility features
+   - Each component must be self-contained with built-in accessibility
+   - Components must maintain full WCAG 2.1 AA compliance
 
 2. **Phoenix API Compatibility**
    - Components must support all existing Phoenix.Component form attributes
@@ -154,14 +154,14 @@ This PRD defines the implementation of styled form components for the Pulsar des
 ## Implementation Breakdown
 
 ### Phase 1: Core Components (Priority)
-- [ ] Create `Pulsar.Components.Form.Input` wrapping Stellar.Components.Input (#sub-issue-1)
+- [ ] Create `Pulsar.Components.Form.Input` with built-in accessibility (#sub-issue-1)
   - [ ] Basic input with all Phoenix.Component attributes
   - [ ] Variant support (default, filled, outlined, error)
   - [ ] Size variants (xs, sm, md, lg, xl)
   - [ ] Compositional addon system with leading/trailing slots
   - [ ] Error state styling and message display
   
-- [ ] Create `Pulsar.Components.Form.Label` wrapping Stellar.Components.Label (#sub-issue-2)
+- [ ] Create `Pulsar.Components.Form.Label` with built-in accessibility (#sub-issue-2)
   - [ ] Typography variants matching input sizes
   - [ ] Required indicator support
   - [ ] Helper text styling
@@ -203,7 +203,7 @@ This PRD defines the implementation of styled form components for the Pulsar des
 
 ### External References
 - [Phoenix.Component Documentation](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html)
-- [Stellar Components Documentation](https://github.com/bigrefactor/stellar)
+- [Phoenix LiveView Components](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html)
 - [Pulsar Theme System](/docs/adr/ADR-001-theme-design-system.md)
 
 ## Open Questions

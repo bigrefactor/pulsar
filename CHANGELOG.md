@@ -7,10 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed - Stellar Merge Completion
+### Changed - Self-Contained Component Library
 
-- **BREAKING**: Completed Stellar → Pulsar component library merge
-- **Single Dependency**: Removed Stellar dependency, now only requires TailwindMerge
+- **BREAKING**: Complete self-contained component library implementation 
+- **Single Dependency**: Only requires TailwindMerge for intelligent class merging
 - **Self-Contained Components**: All 11 core components now include inlined accessibility and behavior
 - **Production Ready**: Complete component coverage for Phoenix applications
 - **Clean Architecture**: Zero compilation warnings, full test coverage maintained
@@ -52,7 +52,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependencies
 
 - Phoenix LiveView integration
-- Stellar for headless component behavior  
 - TailwindMerge for intelligent class composition
 - Tailwind CSS utility-first styling
 

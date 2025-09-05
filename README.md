@@ -2,7 +2,7 @@
 
 Beautiful, accessible Phoenix LiveView components.
 
-Pulsar provides production-ready, styled components with gorgeous Tailwind CSS styling. Originally built on Stellar's headless components, Pulsar has been merged into a single, dependency-free library that maintains all accessibility and behavior while providing complete control and customization.
+Pulsar provides production-ready, styled components with gorgeous Tailwind CSS styling. This self-contained library includes all accessibility and behavior built-in while providing complete control and customization.
 
 ## Features
 
@@ -196,20 +196,19 @@ This approach provides:
 - **Phoenix integration** - Seamless form field support with validation
 - **Security first** - XSS protection and proper escaping built-in
 
-## Migration from Stellar + Pulsar
+## Migration Guide
 
-If you were previously using separate Stellar and Pulsar libraries:
+If you were using an older version of Pulsar:
 
-1. **Remove Stellar dependency** from `mix.exs`
-2. **Update imports** - Import directly from `Pulsar.Components.*`
-3. **No API changes** - All component APIs remain identical
-4. **Clean compilation** - Run `mix deps.get && mix compile --force`
+1. **Update imports** - Import directly from `Pulsar.Components.*`
+2. **No API changes** - All component APIs remain identical
+3. **Clean compilation** - Run `mix deps.get && mix compile --force`
 
 ## Roadmap
 
 - [x] **Core Form Components** - Button, Input, Textarea, Select, Checkbox, Switch, RadioGroup
 - [x] **UI Components** - Label, Link
-- [x] **Stellar Migration** - Full merge completed, zero external dependencies
+- [x] **Self-Contained Components** - Zero external dependencies beyond TailwindMerge
 - [ ] Card component
 - [ ] Alert component  
 - [ ] Badge component (partial implementation available)
@@ -229,5 +228,5 @@ Built with:
 - [Phoenix LiveView](https://hexdocs.pm/phoenix_live_view) - Rich, interactive web applications
 
 Originally inspired by:
-- [Stellar](https://github.com/stellar-framework/stellar) - Headless LiveView components (now merged)
+- [Phoenix LiveView](https://hexdocs.pm/phoenix_live_view) - Rich, interactive web applications
 

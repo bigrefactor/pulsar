@@ -4,7 +4,7 @@ This file provides guidance to Claude Code when working with the Pulsar componen
 
 ## Repository Context
 
-Pulsar is a **single-dependency component library** for Phoenix LiveView. Originally a generator-based system built on Stellar headless components, Pulsar has been successfully merged into a self-contained library perfect for Phoenix applications.
+Pulsar is a **single-dependency component library** for Phoenix LiveView. This self-contained library provides production-ready components with all accessibility and behavior built-in, perfect for Phoenix applications.
 
 ## Project Architecture
 
@@ -47,7 +47,7 @@ Pulsar components are self-contained modules with all functionality inlined:
 - **Inlined Accessibility**: All ARIA attributes and keyboard navigation built-in
 - **Phoenix Integration**: Seamless form field support with proper validation
 - **Security Built-in**: XSS protection and input sanitization included
-- **Stellar Patterns**: Maintains proven accessibility and behavior patterns from Stellar merge
+- **Proven Patterns**: Maintains proven accessibility and behavior patterns
 
 **Generator-Only Benefits:**
 - **Tailwind Purging**: Generated classes in user's codebase are detected automatically
@@ -203,7 +203,7 @@ document.documentElement.dataset.theme = 'light'; // Disable
 ### Component Showcase
 Component examples and interactive testing are available in the standalone storybook app located at `../storybook/`. This is a separate Phoenix application that imports Pulsar as a dependency.
 
-**Migration Complete**: All Stellar dependencies have been removed. Components now include all accessibility and behavior patterns directly, with only TailwindMerge as the single external dependency.
+**Self-Contained Implementation**: Components include all accessibility and behavior patterns directly, with only TailwindMerge as the single external dependency.
 
 **Complete Component Library Includes:**
 - **Badge**: Flexible labels with variants/sizes, removable option, and action slot (partial implementation)
@@ -217,7 +217,7 @@ Component examples and interactive testing are available in the standalone story
 - **Select**: Native select with option generation and form integration
 - **Switch**: Toggle switches with Phoenix form support
 - **Textarea**: Multi-line input with character counting and validation
-- **Self-contained implementation** with all Stellar patterns inlined
+- **Self-contained implementation** with all accessibility patterns built-in
 - **TailwindMerge integration** for intelligent class composition  
 - **Complete accessibility features** with ARIA attributes and keyboard navigation
 - **Security-first approach** with XSS protection and input validation
@@ -340,7 +340,7 @@ end
 
 **Code Generation Validation:**
 - Verifies correct file paths and module names
-- Tests code generation (stellar, tailwind_merge code embedded)
+- Tests code generation (component code with tailwind_merge integration)
 - Validates component import updates
 - Checks error handling for edge cases
 

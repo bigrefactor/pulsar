@@ -5,7 +5,7 @@
 
 ## Context
 
-Pulsar is the styled component library for the Nebula suite, built on top of the headless Stellar primitives. End‑users are expected to theme Pulsar to match their brand while preserving default accessibility and consistency across applications. We need a tokenized design system that:
+Pulsar is the styled component library for the Nebula suite, providing self-contained components with built-in accessibility. End‑users are expected to theme Pulsar to match their brand while preserving default accessibility and consistency across applications. We need a tokenized design system that:
 
 - Enables drop‑in Tailwind utilities (e.g., `bg-primary`, `text-foreground`).
 - Supports dark mode via whatever strategy consumers configure in Tailwind (media/class/custom selector).
