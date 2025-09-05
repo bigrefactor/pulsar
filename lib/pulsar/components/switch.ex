@@ -117,12 +117,12 @@ defmodule Pulsar.Components.Switch do
     },
     "xl" => %{
       spinner: "h-6 w-6",
-      thumb: "h-[22px] w-[22px] top-[3px] left-[3px] translate-x-0 peer-checked:translate-x-[35px]",
+      thumb: "h-[22px] w-[22px] top-[3px] left-[3px] translate-x-0 peer-checked:translate-x-[36px]",
       track: "h-7 w-16"
     },
     "xs" => %{
       spinner: "h-2 w-2",
-      thumb: "h-2.5 w-2.5 top-0.5 left-0.5 translate-x-0 peer-checked:translate-x-[15px]",
+      thumb: "h-2.5 w-2.5 top-0.5 left-0.5 translate-x-0 peer-checked:translate-x-[14px]",
       track: "h-3.5 w-7"
     }
   }
@@ -231,13 +231,13 @@ defmodule Pulsar.Components.Switch do
 
   # Base switch track classes
   @switch_base_classes [
-    "peer relative inline-flex rounded-full cursor-pointer",
+    "relative inline-flex rounded-full cursor-pointer",
     "transition-all duration-200 ease-in-out",
     "transform-gpu",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
     "focus-visible:ring-ring dark:focus-visible:ring-dark-ring",
     "focus-visible:ring-offset-background dark:focus-visible:ring-offset-dark-background",
-    "data-[disabled=true]:opacity-50 data-[disabled=true]:cursor-not-allowed",
+    "data-[disabled=true]:opacity-50 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:pointer-events-none",
     "data-[loading=true]:cursor-wait",
     "shadow-inner shadow-black/5 dark:shadow-black/10",
     "hover:shadow-inner hover:shadow-black/10 dark:hover:shadow-black/20"
@@ -250,8 +250,8 @@ defmodule Pulsar.Components.Switch do
     "transform-gpu",
     "flex items-center justify-center pointer-events-none",
     "data-[loading=true]:bg-background data-[loading=true]:dark:bg-dark-background",
-    "peer-hover:scale-105",
-    "peer-active:scale-95",
+    "group-hover:scale-105",
+    "group-active:scale-95",
     "peer-focus-visible:scale-110"
   ]
 
@@ -476,12 +476,13 @@ defmodule Pulsar.Components.Switch do
   # Switch only (no label wrapper) - now using checkbox for proper form submission
   defp render_switch_only(assigns) do
     ~H"""
-    <div class="relative inline-flex">
+    <div class="relative inline-flex group">
       <input
         :if={@render_hidden}
         type="hidden"
         name={@name}
         value={@unchecked_value}
+        disabled={@disabled}
       />
       <input
         type="checkbox"
