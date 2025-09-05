@@ -62,6 +62,70 @@ defmodule Pulsar.Components.Badge do
 
   import TailwindMerge, only: [merge: 1]
 
+  # ============================================================================
+  # CONFIGURATION & CONSTANTS
+  # ============================================================================
+
+  # Size configuration for badges
+  @size_config %{
+    "lg" => "text-base px-3 py-1 gap-1.5",
+    "md" => "text-sm px-2.5 py-0.5 gap-1.5",
+    "sm" => "text-sm px-2 py-0.5 gap-1",
+    "xl" => "text-lg px-3.5 py-1 gap-2",
+    "xs" => "text-xs px-2 py-0.5 gap-1"
+  }
+
+  # Base badge styling classes
+  @badge_base_classes [
+    "inline-flex items-center font-medium rounded-md",
+    "transition-colors duration-200",
+    "focus-within:outline-none focus-within:ring-2",
+    "focus-within:ring-current focus-within:ring-offset-2"
+  ]
+
+  # Color configuration for each variant
+  @color_config %{
+    "ghost" => %{
+      "danger" => "text-danger dark:text-dark-danger hover:bg-danger/10 dark:hover:bg-dark-danger/10",
+      "info" => "text-info dark:text-dark-info hover:bg-info/10 dark:hover:bg-dark-info/10",
+      "neutral" => "text-neutral dark:text-dark-neutral hover:bg-neutral/10 dark:hover:bg-dark-neutral/10",
+      "primary" => "text-primary dark:text-dark-primary hover:bg-primary/10 dark:hover:bg-dark-primary/10",
+      "secondary" => "text-secondary dark:text-dark-secondary hover:bg-secondary/10 dark:hover:bg-dark-secondary/10",
+      "success" => "text-success dark:text-dark-success hover:bg-success/10 dark:hover:bg-dark-success/10",
+      "warning" => "text-warning dark:text-dark-warning hover:bg-warning/10 dark:hover:bg-dark-warning/10"
+    },
+    "outline" => %{
+      "danger" =>
+        "border border-danger dark:border-dark-danger text-danger dark:text-dark-danger bg-background dark:bg-dark-background",
+      "info" =>
+        "border border-info dark:border-dark-info text-info dark:text-dark-info bg-background dark:bg-dark-background",
+      "neutral" =>
+        "border border-border dark:border-dark-border text-neutral dark:text-dark-neutral bg-background dark:bg-dark-background",
+      "primary" =>
+        "border border-primary dark:border-dark-primary text-primary dark:text-dark-primary bg-background dark:bg-dark-background",
+      "secondary" =>
+        "border border-secondary dark:border-dark-secondary text-secondary dark:text-dark-secondary bg-background dark:bg-dark-background",
+      "success" =>
+        "border border-success dark:border-dark-success text-success dark:text-dark-success bg-background dark:bg-dark-background",
+      "warning" =>
+        "border border-warning dark:border-dark-warning text-warning dark:text-dark-warning bg-background dark:bg-dark-background"
+    },
+    "solid" => %{
+      "danger" => "bg-danger text-danger-foreground dark:bg-dark-danger dark:text-dark-danger-foreground",
+      "info" => "bg-info text-info-foreground dark:bg-dark-info dark:text-dark-info-foreground",
+      "neutral" => "bg-neutral text-neutral-foreground dark:bg-dark-neutral dark:text-dark-neutral-foreground",
+      "primary" => "bg-primary text-primary-foreground dark:bg-dark-primary dark:text-dark-primary-foreground",
+      "secondary" =>
+        "bg-secondary text-secondary-foreground dark:bg-dark-secondary dark:text-dark-secondary-foreground",
+      "success" => "bg-success text-success-foreground dark:bg-dark-success dark:text-dark-success-foreground",
+      "warning" => "bg-warning text-warning-foreground dark:bg-dark-warning dark:text-dark-warning-foreground"
+    }
+  }
+
+  # ============================================================================
+  # BADGE COMPONENT
+  # ============================================================================
+
   attr :variant, :string,
     default: "solid",
     values: ~w(solid outline ghost),
@@ -94,15 +158,7 @@ defmodule Pulsar.Components.Badge do
   Any interactivity is added through the addon slots.
   """
   def badge(assigns) do
-    class =
-      merge([
-        base_badge_classes(),
-        variant_classes(assigns.variant),
-        color_classes(assigns.variant, assigns.color),
-        size_classes(assigns.size),
-        assigns.class
-      ])
-
+    class = build_badge_classes(assigns)
     assigns = assign(assigns, :class, class)
 
     ~H"""
@@ -114,87 +170,32 @@ defmodule Pulsar.Components.Badge do
     """
   end
 
-  # Base styles shared by all badge variants
-  defp base_badge_classes do
-    "inline-flex items-center font-medium rounded-md transition-colors duration-200 focus-within:outline-none focus-within:ring-2 focus-within:ring-current focus-within:ring-offset-2"
+  # ============================================================================
+  # BADGE HELPER FUNCTIONS
+  # ============================================================================
+
+  # Builds the merged class string for badge
+  defp build_badge_classes(assigns) do
+    merge([
+      base_badge_classes(),
+      variant_color_classes(assigns.variant, assigns.color),
+      size_classes(assigns.size),
+      assigns.class
+    ])
   end
 
-  # Variant-specific structure and borders
-  defp variant_classes("outline"), do: "border"
-  defp variant_classes(_), do: ""
+  # Base styles shared by all badge variants
+  defp base_badge_classes do
+    @badge_base_classes
+  end
 
-  # Color classes by variant - following Pulsar color system
-  defp color_classes("solid", "neutral"),
-    do: "bg-neutral text-neutral-foreground dark:bg-dark-neutral dark:text-dark-neutral-foreground"
+  # Get size classes from config
+  defp size_classes(size) do
+    @size_config[size]
+  end
 
-  defp color_classes("solid", "primary"),
-    do: "bg-primary text-primary-foreground dark:bg-dark-primary dark:text-dark-primary-foreground"
-
-  defp color_classes("solid", "secondary"),
-    do: "bg-secondary text-secondary-foreground dark:bg-dark-secondary dark:text-dark-secondary-foreground"
-
-  defp color_classes("solid", "success"),
-    do: "bg-success text-success-foreground dark:bg-dark-success dark:text-dark-success-foreground"
-
-  defp color_classes("solid", "danger"),
-    do: "bg-danger text-danger-foreground dark:bg-dark-danger dark:text-dark-danger-foreground"
-
-  defp color_classes("solid", "warning"),
-    do: "bg-warning text-warning-foreground dark:bg-dark-warning dark:text-dark-warning-foreground"
-
-  defp color_classes("solid", "info"),
-    do: "bg-info text-info-foreground dark:bg-dark-info dark:text-dark-info-foreground"
-
-  defp color_classes("outline", "neutral"),
-    do:
-      "border-border dark:border-dark-border text-neutral dark:text-dark-neutral bg-background dark:bg-dark-background"
-
-  defp color_classes("outline", "primary"),
-    do:
-      "border-primary dark:border-dark-primary text-primary dark:text-dark-primary bg-background dark:bg-dark-background"
-
-  defp color_classes("outline", "secondary"),
-    do:
-      "border-secondary dark:border-dark-secondary text-secondary dark:text-dark-secondary bg-background dark:bg-dark-background"
-
-  defp color_classes("outline", "success"),
-    do:
-      "border-success dark:border-dark-success text-success dark:text-dark-success bg-background dark:bg-dark-background"
-
-  defp color_classes("outline", "danger"),
-    do: "border-danger dark:border-dark-danger text-danger dark:text-dark-danger bg-background dark:bg-dark-background"
-
-  defp color_classes("outline", "warning"),
-    do:
-      "border-warning dark:border-dark-warning text-warning dark:text-dark-warning bg-background dark:bg-dark-background"
-
-  defp color_classes("outline", "info"),
-    do: "border-info dark:border-dark-info text-info dark:text-dark-info bg-background dark:bg-dark-background"
-
-  defp color_classes("ghost", "neutral"),
-    do: "text-neutral dark:text-dark-neutral hover:bg-neutral/10 dark:hover:bg-dark-neutral/10"
-
-  defp color_classes("ghost", "primary"),
-    do: "text-primary dark:text-dark-primary hover:bg-primary/10 dark:hover:bg-dark-primary/10"
-
-  defp color_classes("ghost", "secondary"),
-    do: "text-secondary dark:text-dark-secondary hover:bg-secondary/10 dark:hover:bg-dark-secondary/10"
-
-  defp color_classes("ghost", "success"),
-    do: "text-success dark:text-dark-success hover:bg-success/10 dark:hover:bg-dark-success/10"
-
-  defp color_classes("ghost", "danger"),
-    do: "text-danger dark:text-dark-danger hover:bg-danger/10 dark:hover:bg-dark-danger/10"
-
-  defp color_classes("ghost", "warning"),
-    do: "text-warning dark:text-dark-warning hover:bg-warning/10 dark:hover:bg-dark-warning/10"
-
-  defp color_classes("ghost", "info"), do: "text-info dark:text-dark-info hover:bg-info/10 dark:hover:bg-dark-info/10"
-
-  # Size classes with proper proportions
-  defp size_classes("xs"), do: "text-xs px-2 py-0.5 gap-1"
-  defp size_classes("sm"), do: "text-sm px-2 py-0.5 gap-1"
-  defp size_classes("md"), do: "text-sm px-2.5 py-0.5 gap-1.5"
-  defp size_classes("lg"), do: "text-base px-3 py-1 gap-1.5"
-  defp size_classes("xl"), do: "text-lg px-3.5 py-1 gap-2"
+  # Get variant and color classes from config
+  defp variant_color_classes(variant, color) do
+    @color_config[variant][color]
+  end
 end
