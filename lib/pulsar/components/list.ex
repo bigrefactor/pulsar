@@ -15,6 +15,7 @@ defmodule Pulsar.Components.List do
   - **Visual Options**: striped rows, dividers (on by default), and spacing controls
   - **Flexible Layout**: Default horizontal (2-column) layout, customizable with Tailwind classes
   - **Empty State**: Customizable empty state with default fallback
+  - **Header Support**: Optional title and description for structured presentation
 
   ## Examples
 
@@ -70,6 +71,16 @@ defmodule Pulsar.Components.List do
             <p class="mt-2">No data available</p>
           </div>
         </:empty>
+      </.list>
+
+      # With title and description
+      <.list variant="outline" color="neutral">
+        <:title>Applicant Information</:title>
+        <:description>Personal details and application.</:description>
+        <:item title="Full name">Margot Foster</:item>
+        <:item title="Application for">Backend Developer</:item>
+        <:item title="Email address">margotfoster@example.com</:item>
+        <:item title="Salary expectation">$120,000</:item>
       </.list>
   """
 
@@ -280,6 +291,10 @@ defmodule Pulsar.Components.List do
 
   slot :empty, doc: "Content to display when no items are present"
 
+  slot :title, doc: "Optional title for the list (e.g., 'Applicant Information')"
+
+  slot :description, doc: "Optional description for the list (e.g., 'Personal details and application.')"
+
   # ============================================================================
   # COMPONENT IMPLEMENTATION
   # ============================================================================
@@ -291,8 +306,11 @@ defmodule Pulsar.Components.List do
   and screen reader support. Supports multiple variants and visual options.
   """
   def list(assigns) do
-    # Build container classes
-    container_classes = build_container_classes(assigns)
+    # Check if we have header content first
+    has_header = assigns[:title] != [] || assigns[:description] != []
+
+    # Build container classes (aware of header state)
+    container_classes = build_container_classes(assigns, has_header)
 
     # Build item classes
     item_base = build_item_base_classes(assigns)
@@ -307,37 +325,78 @@ defmodule Pulsar.Components.List do
       |> assign(:item_base, item_base)
       |> assign(:items, items)
       |> assign(:has_items, has_items)
+      |> assign(:has_header, has_header)
 
     ~H"""
-    <dl class={@container_classes} {@rest}>
-      <%= if @has_items do %>
-        <div
-          :for={{item, index} <- Enum.with_index(@items)}
-          class={
-            merge([
-              @item_base,
-              item_variant_classes(@variant, @color, index, @striped, length(@items)),
-              @dividers && index > 0 && "border-t border-border dark:border-dark-border",
-              item[:class] || ""
-            ])
-          }
-        >
-          <dt class={title_classes(@variant, @color, @size)}>
-            {item.title}
-          </dt>
-          <dd class={content_classes(@size)}>
-            {render_slot(item)}
-          </dd>
+    <div :if={@has_header} class={wrapper_classes(@variant, @color)} {@rest}>
+      <div class={header_classes(@size)}>
+        <h3 :if={@title != []} class={title_header_classes(@variant, @color, @size)}>
+          {render_slot(@title)}
+        </h3>
+        <p :if={@description != []} class={description_classes(@size)}>
+          {render_slot(@description)}
+        </p>
+      </div>
+      <div class={content_wrapper_classes(@variant)}>
+        <dl class={@container_classes}>
+          <div
+            :for={{item, index} <- Enum.with_index(@items)}
+            :if={@has_items}
+            class={
+              merge([
+                @item_base,
+                item_variant_classes(@variant, @color, index, @striped, length(@items)),
+                @dividers && index > 0 && "border-t border-border dark:border-dark-border",
+                item[:class] || ""
+              ])
+            }
+          >
+            <dt class={title_classes(@variant, @color, @size)}>
+              {item.title}
+            </dt>
+            <dd class={content_classes(@size)}>
+              {render_slot(item)}
+            </dd>
+          </div>
+          <div :if={!@has_items} class={empty_classes(@size)}>
+            <div :if={@empty != []}>
+              {render_slot(@empty)}
+            </div>
+            <div :if={@empty == []}>
+              No items to display
+            </div>
+          </div>
+        </dl>
+      </div>
+    </div>
+    <dl :if={!@has_header} class={@container_classes} {@rest}>
+      <div
+        :for={{item, index} <- Enum.with_index(@items)}
+        :if={@has_items}
+        class={
+          merge([
+            @item_base,
+            item_variant_classes(@variant, @color, index, @striped, length(@items)),
+            @dividers && index > 0 && "border-t border-border dark:border-dark-border",
+            item[:class] || ""
+          ])
+        }
+      >
+        <dt class={title_classes(@variant, @color, @size)}>
+          {item.title}
+        </dt>
+        <dd class={content_classes(@size)}>
+          {render_slot(item)}
+        </dd>
+      </div>
+      <div :if={!@has_items} class={empty_classes(@size)}>
+        <div :if={@empty != []}>
+          {render_slot(@empty)}
         </div>
-      <% else %>
-        <div class={empty_classes(@size)}>
-          <%= if @empty != [] do %>
-            {render_slot(@empty)}
-          <% else %>
-            No items to display
-          <% end %>
+        <div :if={@empty == []}>
+          No items to display
         </div>
-      <% end %>
+      </div>
     </dl>
     """
   end
@@ -346,18 +405,35 @@ defmodule Pulsar.Components.List do
   # PRIVATE HELPER FUNCTIONS
   # ============================================================================
 
-  defp build_container_classes(assigns) do
+  defp build_container_classes(assigns, has_header) do
     size_classes = Map.get(@size_config, assigns.size).container
-    variant_classes = Map.get(@variant_container_classes, assigns.variant)
+
+    # When we have a header, don't apply variant styling to container (wrapper handles it)
+    variant_classes =
+      if has_header do
+        []
+      else
+        Map.get(@variant_container_classes, assigns.variant)
+      end
+
     color_config = get_in(@color_config, [assigns.variant, assigns.color])
-    color_classes = Map.get(color_config, :container, "")
+    # When we have a header, don't apply background colors to container (wrapper handles it) 
+    color_classes =
+      if has_header do
+        ""
+      else
+        Map.get(color_config, :container, "")
+      end
+
+    # Only apply user classes when no header (otherwise wrapper gets them)
+    user_classes = if has_header, do: "", else: assigns.class
 
     merge([
       @container_base_classes,
       size_classes,
       variant_classes,
       color_classes,
-      assigns.class
+      user_classes
     ])
   end
 
@@ -418,5 +494,84 @@ defmodule Pulsar.Components.List do
       text_size,
       "text-center text-muted-foreground dark:text-dark-muted-foreground"
     ])
+  end
+
+  defp wrapper_classes(variant, color) do
+    base_classes = ["overflow-hidden"]
+
+    variant_classes =
+      case variant do
+        "outline" ->
+          color_config = get_in(@color_config, [variant, color])
+          container_styles = Map.get(color_config, :container, "")
+
+          [
+            "border rounded-lg",
+            container_styles
+          ]
+
+        "solid" ->
+          color_config = get_in(@color_config, [variant, color])
+          container_styles = Map.get(color_config, :container, "")
+
+          [
+            "rounded-lg",
+            container_styles
+          ]
+
+        "ghost" ->
+          [
+            "rounded-lg bg-background/30 dark:bg-dark-background/30 border border-border/20 dark:border-dark-border/20"
+          ]
+      end
+
+    merge([base_classes, variant_classes])
+  end
+
+  defp header_classes(size) do
+    padding =
+      case size do
+        "xs" -> "px-3 py-4"
+        "sm" -> "px-4 py-5"
+        "md" -> "px-4 py-6 sm:px-6"
+        "lg" -> "px-6 py-7"
+        "xl" -> "px-8 py-8"
+      end
+
+    padding
+  end
+
+  defp title_header_classes(variant, color, size) do
+    base_typography =
+      case size do
+        "xs" -> "text-sm/6 font-semibold"
+        "sm" -> "text-base/6 font-semibold"
+        "md" -> "text-base/7 font-semibold"
+        "lg" -> "text-lg/7 font-semibold"
+        "xl" -> "text-xl/8 font-semibold"
+      end
+
+    color_config = get_in(@color_config, [variant, color])
+    color_classes = Map.get(color_config, :title, "text-foreground dark:text-dark-foreground")
+
+    merge([color_classes, base_typography])
+  end
+
+  defp description_classes(size) do
+    typography =
+      case size do
+        "xs" -> "mt-1 text-xs/5"
+        "sm" -> "mt-1 text-sm/5"
+        "md" -> "mt-1 max-w-2xl text-sm/6"
+        "lg" -> "mt-1 max-w-2xl text-base/6"
+        "xl" -> "mt-2 max-w-2xl text-lg/7"
+      end
+
+    merge(["text-muted-foreground dark:text-dark-muted-foreground", typography])
+  end
+
+  defp content_wrapper_classes(_variant) do
+    # Very subtle divider between header and content for all variants
+    "border-t border-border/10 dark:border-dark-border/10"
   end
 end
