@@ -508,6 +508,34 @@ defmodule Pulsar.Components.InputTest do
       refute html =~ ~s(data-variant)
       refute html =~ "flex group"
     end
+
+    test "file input does not include value attribute" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Input.input name="test" type="file" value="some_value" />
+        """)
+
+      # File inputs should not have value attribute even if provided
+      refute html =~ ~r(<input[^>]*type="file"[^>]*value=)
+      assert html =~ ~s(type="file")
+      assert html =~ ~s(name="test")
+    end
+
+    test "non-file input includes value attribute" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Input.input name="test" type="text" value="test_value" />
+        """)
+
+      # Non-file inputs should include value attribute
+      assert html =~ ~s(value="test_value")
+      assert html =~ ~s(type="text")
+      assert html =~ ~s(name="test")
+    end
   end
 
   describe "TailwindMerge integration" do

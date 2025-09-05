@@ -308,6 +308,61 @@ defmodule Pulsar.Components.FieldTest do
       assert html =~ ~s(accept="image/*")
     end
 
+    test "file input does not include value attribute" do
+      field = create_field(:avatar, "some_value")
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="file" />
+        """)
+
+      # File inputs should not have value attribute even if field has a value
+      refute html =~ ~r(<input[^>]*type="file"[^>]*value=)
+      assert html =~ ~s(type="file")
+    end
+
+    test "non-file input includes value attribute" do
+      field = create_field(:email, "test@example.com")
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="email" />
+        """)
+
+      # Non-file inputs should include value attribute
+      assert html =~ ~s(value="test@example.com")
+      assert html =~ ~s(type="email")
+    end
+
+    test "text input includes value attribute when field has value" do
+      field = create_field(:name, "John Doe")
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="text" />
+        """)
+
+      assert html =~ ~s(value="John Doe")
+      assert html =~ ~s(type="text")
+    end
+
+    test "text input with empty value still includes value attribute" do
+      field = create_field(:name, "")
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="text" />
+        """)
+
+      # Even empty values should include value attribute for non-file inputs
+      assert html =~ ~s(value="")
+      assert html =~ ~s(type="text")
+    end
+
     test "renders range input field" do
       field = create_field(:volume, 50)
       assigns = %{field: field}

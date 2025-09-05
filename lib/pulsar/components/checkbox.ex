@@ -378,6 +378,7 @@ defmodule Pulsar.Components.Checkbox do
       type="hidden"
       name={@name}
       value={@unchecked_value}
+      disabled={@disabled}
     />
     <input
       type="checkbox"
@@ -435,6 +436,7 @@ defmodule Pulsar.Components.Checkbox do
         type="hidden"
         name={@name}
         value={@unchecked_value}
+        disabled={@disabled}
       />
       <input
         type="checkbox"
