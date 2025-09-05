@@ -144,6 +144,30 @@ defmodule Pulsar.Components.Field do
   alias Pulsar.Components.Textarea
 
   # ============================================================================
+  # CONFIGURATION & CONSTANTS
+  # ============================================================================
+
+  # Description color configuration for different states
+  @description_colors %{
+    "danger" => "text-danger-600 dark:text-danger-400",
+    "info" => "text-info-600 dark:text-info-400",
+    "neutral" => "text-gray-600 dark:text-gray-400",
+    "primary" => "text-primary-600 dark:text-primary-400",
+    "secondary" => "text-secondary-600 dark:text-secondary-400",
+    "success" => "text-success-600 dark:text-success-400",
+    "warning" => "text-warning-600 dark:text-warning-400"
+  }
+
+  # Error message styling - always uses danger color
+  @error_message_classes "text-sm text-danger-600 dark:text-danger-400 flex items-center gap-1"
+
+  # Base field wrapper classes
+  @field_wrapper_base_classes "flex flex-col gap-2"
+
+  # Label section wrapper classes
+  @label_section_classes "flex flex-col gap-1"
+
+  # ============================================================================
   # MAIN FIELD COMPONENT
   # ============================================================================
 
@@ -218,11 +242,14 @@ defmodule Pulsar.Components.Field do
       |> generate_label_if_missing()
       |> extract_field_errors()
       |> generate_aria_ids()
+      |> assign(:error_message_classes, @error_message_classes)
+      |> assign(:field_wrapper_base_classes, @field_wrapper_base_classes)
+      |> assign(:label_section_classes, @label_section_classes)
 
     ~H"""
-    <div class={merge(["flex flex-col gap-2", @class])}>
+    <div class={merge([@field_wrapper_base_classes, @class])}>
       <!-- Label Section -->
-      <div :if={has_label?(@label, @type)} class="flex flex-col gap-1">
+      <div :if={has_label?(@label, @type)} class={@label_section_classes}>
         <Label.label
           for={get_label_for(@field_id, @type)}
           id={get_label_id(@field_id, @type)}
@@ -243,7 +270,7 @@ defmodule Pulsar.Components.Field do
           id={@description_id}
           class={
             merge([
-              "text-sm text-gray-600 dark:text-gray-400",
+              get_description_color_class(@has_errors, @color),
               get_description_class(@description)
             ])
           }
@@ -260,7 +287,7 @@ defmodule Pulsar.Components.Field do
         <p
           :for={{error, index} <- Enum.with_index(@field_errors)}
           id={Enum.at(@error_ids, index)}
-          class="text-sm text-danger-600 dark:text-danger-400 flex items-center gap-1"
+          class={@error_message_classes}
         >
           <Icon.icon name="hero-exclamation-circle" size="sm" color="current" class="flex-shrink-0" />
           {error}
@@ -541,6 +568,14 @@ defmodule Pulsar.Components.Field do
       [%{class: class}] when class != nil -> class
       _ -> ""
     end
+  end
+
+  # Gets description color classes based on error state and field color
+  defp get_description_color_class(has_errors, color) do
+    effective_color = if has_errors, do: "danger", else: color
+    color_class = @description_colors[effective_color] || @description_colors["neutral"]
+
+    "text-sm #{color_class}"
   end
 
   # Simple error translation - in real apps this would use Gettext
