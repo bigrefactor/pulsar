@@ -99,6 +99,7 @@ defmodule Pulsar.Components.Link do
         data-external={(@external && "true") || nil}
         data-current={@aria_current}
         data-target={assigns[:target]}
+        data-method={@method}
         {@rest}
       >
         <.render_icon_slot slot={@start_icon} position="start" />

@@ -313,6 +313,18 @@ defmodule Pulsar.Components.LinkTest do
         """)
       end
     end
+
+    test "renders with method attribute for external URLs" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="https://example.com/delete" method="delete">Delete</Link.a>
+        """)
+
+      assert html =~ ~s(data-method="delete")
+      assert html =~ ~s(href="https://example.com/delete")
+    end
   end
 
   describe "Link.a/1 icons" do
