@@ -431,7 +431,7 @@ defmodule Pulsar.Components.ListTest do
       assert html =~ ~s(<dd)
     end
 
-    test "handles no items" do
+    test "handles no items with default message" do
       assigns = %{}
 
       html =
@@ -439,9 +439,34 @@ defmodule Pulsar.Components.ListTest do
         <List.list></List.list>
         """)
 
-      # Should still render dl but with no children
+      # Should render dl with default empty message
       assert html =~ ~s(<dl)
       assert html =~ ~s(</dl>)
+      assert html =~ "No items to display"
+      refute html =~ ~s(<dt)
+      refute html =~ ~s(<dd)
+    end
+
+    test "handles no items with custom empty slot" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <List.list>
+          <:empty>
+            <div class="custom-empty">
+              Custom empty message
+            </div>
+          </:empty>
+        </List.list>
+        """)
+
+      # Should render dl with custom empty content
+      assert html =~ ~s(<dl)
+      assert html =~ ~s(</dl>)
+      assert html =~ "Custom empty message"
+      assert html =~ "custom-empty"
+      refute html =~ "No items to display"
       refute html =~ ~s(<dt)
       refute html =~ ~s(<dd)
     end

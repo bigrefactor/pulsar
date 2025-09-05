@@ -14,6 +14,7 @@ defmodule Pulsar.Components.List do
   - **Multiple Sizes**: xs, sm, md, lg, xl matching other Pulsar components
   - **Visual Options**: striped rows, dividers, and spacing controls
   - **Flexible Layout**: Apply any Tailwind classes for custom layouts
+  - **Empty State**: Customizable empty state with default fallback
 
   ## Examples
 
@@ -54,6 +55,16 @@ defmodule Pulsar.Components.List do
         <:item title="Created">2024-01-15</:item>
         <:item title="Modified">2024-03-20</:item>
         <:item title="Author">System Admin</:item>
+      </.list>
+
+      # Empty state with custom content
+      <.list variant="outline">
+        <:empty>
+          <div class="py-8">
+            <.icon name="document-text" class="mx-auto h-12 w-12 text-muted-foreground" />
+            <p class="mt-2">No data available</p>
+          </div>
+        </:empty>
       </.list>
   """
 
@@ -262,6 +273,8 @@ defmodule Pulsar.Components.List do
     attr :class, :string, doc: "Additional classes for the item"
   end
 
+  slot :empty, doc: "Content to display when no items are present"
+
   # ============================================================================
   # COMPONENT IMPLEMENTATION
   # ============================================================================
@@ -279,31 +292,47 @@ defmodule Pulsar.Components.List do
     # Build item classes
     item_base = build_item_base_classes(assigns)
 
+    # Check if items are empty
+    items = Map.get(assigns, :item, [])
+    has_items = not Enum.empty?(items)
+
     assigns =
       assigns
       |> assign(:container_classes, container_classes)
       |> assign(:item_base, item_base)
+      |> assign(:items, items)
+      |> assign(:has_items, has_items)
 
     ~H"""
     <dl class={@container_classes} {@rest}>
-      <div
-        :for={{item, index} <- Enum.with_index(Map.get(assigns, :item, []))}
-        class={
-          merge([
-            @item_base,
-            item_variant_classes(@variant, @color, index, @striped),
-            @dividers && index > 0 && "border-t border-border dark:border-dark-border",
-            item[:class] || ""
-          ])
-        }
-      >
-        <dt class={title_classes(@variant, @color, @size)}>
-          {item.title}
-        </dt>
-        <dd class={content_classes(@size)}>
-          {render_slot(item)}
-        </dd>
-      </div>
+      <%= if @has_items do %>
+        <div
+          :for={{item, index} <- Enum.with_index(@items)}
+          class={
+            merge([
+              @item_base,
+              item_variant_classes(@variant, @color, index, @striped, length(@items)),
+              @dividers && index > 0 && "border-t border-border dark:border-dark-border",
+              item[:class] || ""
+            ])
+          }
+        >
+          <dt class={title_classes(@variant, @color, @size)}>
+            {item.title}
+          </dt>
+          <dd class={content_classes(@size)}>
+            {render_slot(item)}
+          </dd>
+        </div>
+      <% else %>
+        <div class={empty_classes(@size)}>
+          <%= if @empty != [] do %>
+            {render_slot(@empty)}
+          <% else %>
+            No items to display
+          <% end %>
+        </div>
+      <% end %>
     </dl>
     """
   end
@@ -338,12 +367,13 @@ defmodule Pulsar.Components.List do
     ])
   end
 
-  defp item_variant_classes(variant, color, index, striped) do
+  defp item_variant_classes(variant, color, index, striped, total_items) do
     color_config = get_in(@color_config, [variant, color])
     hover_classes = Map.get(color_config, :hover, "")
 
+    # Only apply striping if there's more than one item and striping is enabled
     striped_classes =
-      if striped && rem(index, 2) == 1 do
+      if striped && total_items > 1 && rem(index, 2) == 0 do
         case variant do
           "ghost" -> "bg-muted/30 dark:bg-dark-muted/20"
           "outline" -> "bg-muted/20 dark:bg-dark-muted/10"
@@ -369,5 +399,17 @@ defmodule Pulsar.Components.List do
   defp content_classes(size) do
     size_config = Map.get(@size_config, size)
     Map.get(size_config, :content)
+  end
+
+  defp empty_classes(size) do
+    size_config = Map.get(@size_config, size)
+    padding = Map.get(size_config, :item)
+    text_size = Map.get(size_config, :content)
+
+    merge([
+      padding,
+      text_size,
+      "text-center text-muted-foreground dark:text-dark-muted-foreground"
+    ])
   end
 end
