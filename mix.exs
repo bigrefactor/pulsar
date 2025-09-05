@@ -38,7 +38,8 @@ defmodule Pulsar.MixProject do
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test,
-        "coveralls.cobertura": :test
+        "coveralls.cobertura": :test,
+        test: :test
       ],
 
       # Dialyzer configuration
@@ -88,8 +89,8 @@ defmodule Pulsar.MixProject do
         "format --check-formatted",
         "credo --strict",
         "dialyzer",
-        "test",
-        "deps.audit"
+        "deps.audit",
+        "test"
       ],
       "check.ci": [
         "format --check-formatted",
@@ -154,6 +155,7 @@ defmodule Pulsar.MixProject do
           Link,
           RadioGroup,
           Select,
+          Switch,
           Textarea
         ],
         Generators: [

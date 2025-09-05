@@ -353,7 +353,7 @@ defmodule Pulsar.Components.Select do
           </:end_addon>
         </Badge.badge>
       </div>
-
+      
     <!-- Select wrapper with custom arrow -->
       <div class="relative">
         <select
@@ -377,7 +377,7 @@ defmodule Pulsar.Components.Select do
           </option>
           {Phoenix.HTML.raw(@option_html)}
         </select>
-
+        
     <!-- Custom arrow icon -->
         <div class={[
           "absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none",
