@@ -313,6 +313,17 @@
   animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-slide-in,
+  .animate-scale-in,
+  .animate-pulse-subtle {
+    animation: none !important;
+    transition-duration: 0s !important;
+  }
+}
+
 /* Dark mode tokens (explicit) */
 @theme inline {
   --color-dark-background: var(--color-gray-950);
