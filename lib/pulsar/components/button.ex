@@ -710,7 +710,6 @@ defmodule Pulsar.Components.Button do
 
   defp ensure_disclosure_linkage!(assigns), do: assigns
 
-  # Helper functions for computed values (from Stellar)  
   defp tabindex(assigns) do
     if assigns.disabled || assigns.loading, do: "-1", else: assigns.tabindex
   end
