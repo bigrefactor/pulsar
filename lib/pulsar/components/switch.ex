@@ -93,6 +93,168 @@ defmodule Pulsar.Components.Switch do
   alias Phoenix.HTML.FormField
   alias Phoenix.LiveView.Rendered
 
+  # ============================================================================
+  # CONFIGURATION & CONSTANTS
+  # ============================================================================
+
+  # Size configuration for both track and thumb
+  @size_config %{
+    "lg" => %{
+      spinner: "h-5 w-5",
+      thumb: "h-5 w-5 top-0.5 left-0.5 translate-x-0 peer-checked:translate-x-[32px]",
+      track: "h-6 w-14"
+    },
+    "md" => %{
+      spinner: "h-4 w-4",
+      thumb: "h-4 w-4 top-0.5 left-0.5 translate-x-0 peer-checked:translate-x-[24px]",
+      track: "h-5 w-11"
+    },
+    "sm" => %{
+      spinner: "h-3 w-3",
+      thumb: "h-3 w-3 top-0.5 left-0.5 translate-x-0 peer-checked:translate-x-[20px]",
+      track: "h-4 w-9"
+    },
+    "xl" => %{
+      spinner: "h-6 w-6",
+      thumb: "h-[22px] w-[22px] top-[3px] left-[3px] translate-x-0 peer-checked:translate-x-[35px]",
+      track: "h-7 w-16"
+    },
+    "xs" => %{
+      spinner: "h-2 w-2",
+      thumb: "h-2.5 w-2.5 top-0.5 left-0.5 translate-x-0 peer-checked:translate-x-[15px]",
+      track: "h-3.5 w-7"
+    }
+  }
+
+  # Color configuration for different variants
+  @color_config %{
+    "danger" => %{
+      ghost: %{
+        checked:
+          "peer-checked:bg-danger/15 hover:peer-checked:bg-danger/20 dark:peer-checked:bg-dark-danger/15 dark:hover:peer-checked:bg-dark-danger/20"
+      },
+      outline: %{
+        checked:
+          "peer-checked:bg-danger/10 peer-checked:border-danger dark:peer-checked:bg-dark-danger/10 dark:peer-checked:border-dark-danger"
+      },
+      solid: %{
+        checked:
+          "peer-checked:bg-danger/90 dark:peer-checked:bg-dark-danger/90 peer-checked:hover:bg-danger dark:peer-checked:hover:bg-dark-danger"
+      }
+    },
+    "info" => %{
+      ghost: %{
+        checked:
+          "peer-checked:bg-info/15 hover:peer-checked:bg-info/20 dark:peer-checked:bg-dark-info/15 dark:hover:peer-checked:bg-dark-info/20"
+      },
+      outline: %{
+        checked:
+          "peer-checked:bg-info/10 peer-checked:border-info dark:peer-checked:bg-dark-info/10 dark:peer-checked:border-dark-info"
+      },
+      solid: %{
+        checked:
+          "peer-checked:bg-info/90 dark:peer-checked:bg-dark-info/90 peer-checked:hover:bg-info dark:peer-checked:hover:bg-dark-info"
+      }
+    },
+    "neutral" => %{
+      ghost: %{
+        checked:
+          "peer-checked:bg-neutral/15 hover:peer-checked:bg-neutral/20 dark:peer-checked:bg-dark-neutral/15 dark:hover:peer-checked:bg-dark-neutral/20"
+      },
+      outline: %{
+        checked:
+          "peer-checked:bg-neutral/10 peer-checked:border-neutral dark:peer-checked:bg-dark-neutral/10 dark:peer-checked:border-dark-neutral"
+      },
+      solid: %{
+        checked:
+          "peer-checked:bg-neutral/90 dark:peer-checked:bg-dark-neutral/90 peer-checked:hover:bg-neutral dark:peer-checked:hover:bg-dark-neutral"
+      }
+    },
+    "primary" => %{
+      ghost: %{
+        checked:
+          "peer-checked:bg-primary/15 hover:peer-checked:bg-primary/20 dark:peer-checked:bg-dark-primary/15 dark:hover:peer-checked:bg-dark-primary/20"
+      },
+      outline: %{
+        checked:
+          "peer-checked:bg-primary/10 peer-checked:border-primary dark:peer-checked:bg-dark-primary/10 dark:peer-checked:border-dark-primary"
+      },
+      solid: %{
+        checked:
+          "peer-checked:bg-primary/90 dark:peer-checked:bg-dark-primary/90 peer-checked:hover:bg-primary dark:peer-checked:hover:bg-dark-primary"
+      }
+    },
+    "secondary" => %{
+      ghost: %{
+        checked:
+          "peer-checked:bg-secondary/15 hover:peer-checked:bg-secondary/20 dark:peer-checked:bg-dark-secondary/15 dark:hover:peer-checked:bg-dark-secondary/20"
+      },
+      outline: %{
+        checked:
+          "peer-checked:bg-secondary/10 peer-checked:border-secondary dark:peer-checked:bg-dark-secondary/10 dark:peer-checked:border-dark-secondary"
+      },
+      solid: %{
+        checked:
+          "peer-checked:bg-secondary/90 dark:peer-checked:bg-dark-secondary/90 peer-checked:hover:bg-secondary dark:peer-checked:hover:bg-dark-secondary"
+      }
+    },
+    "success" => %{
+      ghost: %{
+        checked:
+          "peer-checked:bg-success/15 hover:peer-checked:bg-success/20 dark:peer-checked:bg-dark-success/15 dark:hover:peer-checked:bg-dark-success/20"
+      },
+      outline: %{
+        checked:
+          "peer-checked:bg-success/10 peer-checked:border-success dark:peer-checked:bg-dark-success/10 dark:peer-checked:border-dark-success"
+      },
+      solid: %{
+        checked:
+          "peer-checked:bg-success/90 dark:peer-checked:bg-dark-success/90 peer-checked:hover:bg-success dark:peer-checked:hover:bg-dark-success"
+      }
+    },
+    "warning" => %{
+      ghost: %{
+        checked:
+          "peer-checked:bg-warning/15 hover:peer-checked:bg-warning/20 dark:peer-checked:bg-dark-warning/15 dark:hover:peer-checked:bg-dark-warning/20"
+      },
+      outline: %{
+        checked:
+          "peer-checked:bg-warning/10 peer-checked:border-warning dark:peer-checked:bg-dark-warning/10 dark:peer-checked:border-dark-warning"
+      },
+      solid: %{
+        checked:
+          "peer-checked:bg-warning/90 dark:peer-checked:bg-dark-warning/90 peer-checked:hover:bg-warning dark:peer-checked:hover:bg-dark-warning"
+      }
+    }
+  }
+
+  # Base switch track classes
+  @switch_base_classes [
+    "peer relative inline-flex rounded-full cursor-pointer",
+    "transition-all duration-300 ease-in-out",
+    "transform-gpu",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+    "focus-visible:ring-ring dark:focus-visible:ring-dark-ring",
+    "focus-visible:ring-offset-background dark:focus-visible:ring-offset-dark-background",
+    "data-[disabled=true]:opacity-50 data-[disabled=true]:cursor-not-allowed",
+    "data-[loading=true]:cursor-wait",
+    "shadow-inner shadow-black/5 dark:shadow-black/10",
+    "hover:shadow-inner hover:shadow-black/10 dark:hover:shadow-black/20"
+  ]
+
+  # Base thumb classes
+  @thumb_base_classes [
+    "absolute rounded-full",
+    "transition-all duration-300 ease-in-out",
+    "transform-gpu",
+    "flex items-center justify-center pointer-events-none",
+    "data-[loading=true]:bg-background data-[loading=true]:dark:bg-dark-background",
+    "peer-hover:scale-105",
+    "peer-active:scale-95",
+    "peer-focus-visible:scale-110",
+    "peer-checked:rotate-180"
+  ]
+
   # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
   defp generate_id(prefix) do
     "#{prefix}-#{System.unique_integer([:positive])}"
@@ -287,7 +449,8 @@ defmodule Pulsar.Components.Switch do
     switch_class =
       merge([
         base_switch_classes(),
-        track_classes(assigns.variant, effective_color, assigns.size),
+        track_size_classes(assigns.size),
+        track_variant_classes(assigns.variant, effective_color),
         state_classes(assigns.disabled, invalid),
         assigns.class
       ])
@@ -296,9 +459,7 @@ defmodule Pulsar.Components.Switch do
     thumb_class =
       merge([
         base_thumb_classes(),
-        thumb_size_classes(assigns.size),
-        thumb_variant_classes(assigns.variant),
-        thumb_position_classes(assigns.size)
+        thumb_classes(assigns.size, assigns.variant)
       ])
 
     assigns =
@@ -384,54 +545,32 @@ defmodule Pulsar.Components.Switch do
     """
   end
 
-  # Base switch track classes - added subtle inset shadow for depth
-  @spec base_switch_classes() :: String.t()
+  # ============================================================================
+  # SWITCH COMPONENT HELPERS
+  # ============================================================================
+
+  # Base switch track classes using module attribute
+  @spec base_switch_classes() :: list(String.t())
   defp base_switch_classes do
-    [
-      "peer relative inline-flex rounded-full cursor-pointer",
-      "transition-all duration-300 ease-in-out",
-      # Enable GPU acceleration for smoother animations
-      "transform-gpu",
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-      "focus-visible:ring-ring dark:focus-visible:ring-dark-ring",
-      "focus-visible:ring-offset-background dark:focus-visible:ring-offset-dark-background",
-      "data-[disabled=true]:opacity-50 data-[disabled=true]:cursor-not-allowed",
-      "data-[loading=true]:cursor-wait",
-      "shadow-inner shadow-black/5 dark:shadow-black/10",
-      # Enhanced shadow on hover
-      "hover:shadow-inner hover:shadow-black/10 dark:hover:shadow-black/20"
-    ]
-    |> Enum.join(" ")
+    @switch_base_classes
   end
 
-  # Track classes combining variant, color, and size
-  @spec track_classes(String.t(), String.t(), String.t()) :: String.t()
-  defp track_classes(variant, color, size) do
-    [
-      track_size_classes(size),
-      track_variant_classes(variant, color)
-    ]
-    |> List.flatten()
-    |> Enum.join(" ")
-  end
-
-  # Track size classes - optimized proportions for iOS-style appearance
+  # Track size classes from configuration map
   @spec track_size_classes(String.t()) :: String.t()
-  defp track_size_classes("xs"), do: "h-3.5 w-7"
-  defp track_size_classes("sm"), do: "h-4 w-9"
-  defp track_size_classes("md"), do: "h-5 w-11"
-  defp track_size_classes("lg"), do: "h-6 w-14"
-  defp track_size_classes("xl"), do: "h-7 w-16"
+  defp track_size_classes(size) do
+    @size_config[size][:track]
+  end
 
-  # Track variant classes by color - updated to use peer-checked: pattern
-  @spec track_variant_classes(String.t(), String.t()) :: list(String.t())
+  # Track variant classes using configuration map
+  @spec track_variant_classes(String.t(), String.t()) :: String.t()
   defp track_variant_classes("solid", color) do
     [
       "bg-muted/80 dark:bg-dark-muted/80",
       "hover:bg-muted/90 dark:hover:bg-dark-muted/90",
       "peer-focus-visible:bg-muted dark:peer-focus-visible:bg-dark-muted",
-      track_solid_checked_classes(color)
+      @color_config[color][:solid][:checked]
     ]
+    |> Enum.join(" ")
   end
 
   defp track_variant_classes("outline", color) do
@@ -441,8 +580,9 @@ defmodule Pulsar.Components.Switch do
       "dark:bg-dark-background dark:border-dark-border/70",
       "hover:border-border dark:hover:border-dark-border",
       "peer-focus-visible:border-border dark:peer-focus-visible:border-dark-border",
-      track_outline_checked_classes(color)
+      @color_config[color][:outline][:checked]
     ]
+    |> Enum.join(" ")
   end
 
   defp track_variant_classes("ghost", color) do
@@ -451,242 +591,39 @@ defmodule Pulsar.Components.Switch do
       "bg-muted/30 hover:bg-muted/40",
       "dark:bg-dark-muted/30 dark:hover:bg-dark-muted/40",
       "peer-focus-visible:bg-muted/50 dark:peer-focus-visible:bg-dark-muted/50",
-      track_ghost_checked_classes(color)
-    ]
-  end
-
-  # Solid variant checked state classes by color - using peer-checked: pattern
-  @spec track_solid_checked_classes(String.t()) :: String.t()
-  defp track_solid_checked_classes("neutral") do
-    "peer-checked:bg-neutral/90 dark:peer-checked:bg-dark-neutral/90 peer-checked:hover:bg-neutral dark:peer-checked:hover:bg-dark-neutral"
-  end
-
-  defp track_solid_checked_classes("primary") do
-    "peer-checked:bg-primary/90 dark:peer-checked:bg-dark-primary/90 peer-checked:hover:bg-primary dark:peer-checked:hover:bg-dark-primary"
-  end
-
-  defp track_solid_checked_classes("secondary") do
-    "peer-checked:bg-secondary/90 dark:peer-checked:bg-dark-secondary/90 peer-checked:hover:bg-secondary dark:peer-checked:hover:bg-dark-secondary"
-  end
-
-  defp track_solid_checked_classes("success") do
-    "peer-checked:bg-success/90 dark:peer-checked:bg-dark-success/90 peer-checked:hover:bg-success dark:peer-checked:hover:bg-dark-success"
-  end
-
-  defp track_solid_checked_classes("danger") do
-    "peer-checked:bg-danger/90 dark:peer-checked:bg-dark-danger/90 peer-checked:hover:bg-danger dark:peer-checked:hover:bg-dark-danger"
-  end
-
-  defp track_solid_checked_classes("warning") do
-    "peer-checked:bg-warning/90 dark:peer-checked:bg-dark-warning/90 peer-checked:hover:bg-warning dark:peer-checked:hover:bg-dark-warning"
-  end
-
-  defp track_solid_checked_classes("info") do
-    "peer-checked:bg-info/90 dark:peer-checked:bg-dark-info/90 peer-checked:hover:bg-info dark:peer-checked:hover:bg-dark-info"
-  end
-
-  # Outline variant checked state classes by color - using peer-checked: pattern
-  @spec track_outline_checked_classes(String.t()) :: String.t()
-  defp track_outline_checked_classes("neutral") do
-    [
-      "peer-checked:bg-neutral/10 peer-checked:border-neutral",
-      "dark:peer-checked:bg-dark-neutral/10 dark:peer-checked:border-dark-neutral"
+      @color_config[color][:ghost][:checked]
     ]
     |> Enum.join(" ")
   end
 
-  defp track_outline_checked_classes("primary") do
-    [
-      "peer-checked:bg-primary/10 peer-checked:border-primary",
-      "dark:peer-checked:bg-dark-primary/10 dark:peer-checked:border-dark-primary"
-    ]
-    |> Enum.join(" ")
-  end
-
-  defp track_outline_checked_classes("secondary") do
-    [
-      "peer-checked:bg-secondary/10 peer-checked:border-secondary",
-      "dark:peer-checked:bg-dark-secondary/10 dark:peer-checked:border-dark-secondary"
-    ]
-    |> Enum.join(" ")
-  end
-
-  defp track_outline_checked_classes("success") do
-    [
-      "peer-checked:bg-success/10 peer-checked:border-success",
-      "dark:peer-checked:bg-dark-success/10 dark:peer-checked:border-dark-success"
-    ]
-    |> Enum.join(" ")
-  end
-
-  defp track_outline_checked_classes("danger") do
-    [
-      "peer-checked:bg-danger/10 peer-checked:border-danger",
-      "dark:peer-checked:bg-dark-danger/10 dark:peer-checked:border-dark-danger"
-    ]
-    |> Enum.join(" ")
-  end
-
-  defp track_outline_checked_classes("warning") do
-    [
-      "peer-checked:bg-warning/10 peer-checked:border-warning",
-      "dark:peer-checked:bg-dark-warning/10 dark:peer-checked:border-dark-warning"
-    ]
-    |> Enum.join(" ")
-  end
-
-  defp track_outline_checked_classes("info") do
-    [
-      "peer-checked:bg-info/10 peer-checked:border-info",
-      "dark:peer-checked:bg-dark-info/10 dark:peer-checked:border-dark-info"
-    ]
-    |> Enum.join(" ")
-  end
-
-  # Ghost variant checked state classes by color - using peer-checked: pattern
-  @spec track_ghost_checked_classes(String.t()) :: String.t()
-  defp track_ghost_checked_classes("neutral") do
-    [
-      "peer-checked:bg-neutral/15 hover:peer-checked:bg-neutral/20",
-      "dark:peer-checked:bg-dark-neutral/15 dark:hover:peer-checked:bg-dark-neutral/20"
-    ]
-    |> Enum.join(" ")
-  end
-
-  defp track_ghost_checked_classes("primary") do
-    [
-      "peer-checked:bg-primary/15 hover:peer-checked:bg-primary/20",
-      "dark:peer-checked:bg-dark-primary/15 dark:hover:peer-checked:bg-dark-primary/20"
-    ]
-    |> Enum.join(" ")
-  end
-
-  defp track_ghost_checked_classes("secondary") do
-    [
-      "peer-checked:bg-secondary/15 hover:peer-checked:bg-secondary/20",
-      "dark:peer-checked:bg-dark-secondary/15 dark:hover:peer-checked:bg-dark-secondary/20"
-    ]
-    |> Enum.join(" ")
-  end
-
-  defp track_ghost_checked_classes("success") do
-    [
-      "peer-checked:bg-success/15 hover:peer-checked:bg-success/20",
-      "dark:peer-checked:bg-dark-success/15 dark:hover:peer-checked:bg-dark-success/20"
-    ]
-    |> Enum.join(" ")
-  end
-
-  defp track_ghost_checked_classes("danger") do
-    [
-      "peer-checked:bg-danger/15 hover:peer-checked:bg-danger/20",
-      "dark:peer-checked:bg-dark-danger/15 dark:hover:peer-checked:bg-dark-danger/20"
-    ]
-    |> Enum.join(" ")
-  end
-
-  defp track_ghost_checked_classes("warning") do
-    [
-      "peer-checked:bg-warning/15 hover:peer-checked:bg-warning/20",
-      "dark:peer-checked:bg-dark-warning/15 dark:hover:peer-checked:bg-dark-warning/20"
-    ]
-    |> Enum.join(" ")
-  end
-
-  defp track_ghost_checked_classes("info") do
-    [
-      "peer-checked:bg-info/15 hover:peer-checked:bg-info/20",
-      "dark:peer-checked:bg-dark-info/15 dark:hover:peer-checked:bg-dark-info/20"
-    ]
-    |> Enum.join(" ")
-  end
-
-  # Base thumb classes
-  @spec base_thumb_classes() :: String.t()
+  # Base thumb classes using module attribute
+  @spec base_thumb_classes() :: list(String.t())
   defp base_thumb_classes do
+    @thumb_base_classes
+  end
+
+  # Combined thumb classes from configuration map
+  @spec thumb_classes(String.t(), String.t()) :: String.t()
+  defp thumb_classes(size, variant) do
     [
-      "absolute rounded-full",
-      "transition-all duration-300 ease-in-out",
-      # Enable GPU acceleration
-      "transform-gpu",
-      "flex items-center justify-center pointer-events-none",
-      "data-[loading=true]:bg-background data-[loading=true]:dark:bg-dark-background",
-      # Subtle scale on hover
-      "peer-hover:scale-105",
-      # Scale down when clicking
-      "peer-active:scale-95",
-      # Emphasize on focus
-      "peer-focus-visible:scale-110"
+      @size_config[size][:thumb],
+      thumb_variant_classes(variant)
     ]
     |> Enum.join(" ")
   end
 
-  # Thumb size classes - properly sized and centered for each track size
-  @spec thumb_size_classes(String.t()) :: String.t()
-  defp thumb_size_classes("xs"), do: "h-2.5 w-2.5 top-0.5"
-  defp thumb_size_classes("sm"), do: "h-3 w-3 top-0.5"
-  defp thumb_size_classes("md"), do: "h-4 w-4 top-0.5"
-  defp thumb_size_classes("lg"), do: "h-5 w-5 top-0.5"
-  defp thumb_size_classes("xl"), do: "h-[22px] w-[22px] top-[3px]"
-
-  # Thumb variant classes (shadow and border) - enhanced shadows for depth
+  # Thumb variant classes (shadow and border)
   @spec thumb_variant_classes(String.t()) :: String.t()
-  defp thumb_variant_classes("solid"),
-    do: "bg-background dark:bg-dark-background shadow-lg shadow-black/10 dark:shadow-black/25"
-
-  defp thumb_variant_classes("outline"),
-    do:
-      "bg-background dark:bg-dark-background shadow-md shadow-black/8 dark:shadow-black/20 border border-border/30 dark:border-dark-border/30"
-
-  defp thumb_variant_classes("ghost"),
-    do: "bg-background dark:bg-dark-background shadow-md shadow-black/6 dark:shadow-black/15"
-
-  # Thumb position classes based on size - using peer-checked: pattern
-  @spec thumb_position_classes(String.t()) :: String.t()
-  defp thumb_position_classes("xs") do
-    [
-      "left-0.5 translate-x-0",
-      "peer-checked:translate-x-[15px]",
-      # Add rotation animation when toggling
-      "peer-checked:rotate-180"
-    ]
-    |> Enum.join(" ")
+  defp thumb_variant_classes("solid") do
+    "bg-background dark:bg-dark-background shadow-lg shadow-black/10 dark:shadow-black/25"
   end
 
-  defp thumb_position_classes("sm") do
-    [
-      "left-0.5 translate-x-0",
-      "peer-checked:translate-x-[20px]",
-      "peer-checked:rotate-180"
-    ]
-    |> Enum.join(" ")
+  defp thumb_variant_classes("outline") do
+    "bg-background dark:bg-dark-background shadow-md shadow-black/8 dark:shadow-black/20 border border-border/30 dark:border-dark-border/30"
   end
 
-  defp thumb_position_classes("md") do
-    [
-      "left-0.5 translate-x-0",
-      "peer-checked:translate-x-[24px]",
-      "peer-checked:rotate-180"
-    ]
-    |> Enum.join(" ")
-  end
-
-  defp thumb_position_classes("lg") do
-    [
-      "left-0.5 translate-x-0",
-      "peer-checked:translate-x-[32px]",
-      "peer-checked:rotate-180"
-    ]
-    |> Enum.join(" ")
-  end
-
-  defp thumb_position_classes("xl") do
-    [
-      "left-[3px] translate-x-0",
-      "peer-checked:translate-x-[35px]",
-      "peer-checked:rotate-180"
-    ]
-    |> Enum.join(" ")
+  defp thumb_variant_classes("ghost") do
+    "bg-background dark:bg-dark-background shadow-md shadow-black/6 dark:shadow-black/15"
   end
 
   # State classes for invalid states
@@ -699,11 +636,9 @@ defmodule Pulsar.Components.Switch do
     end
   end
 
-  # Loading spinner size classes
+  # Loading spinner size classes from configuration map
   @spec spinner_size_classes(String.t()) :: String.t()
-  defp spinner_size_classes("xs"), do: "h-2 w-2"
-  defp spinner_size_classes("sm"), do: "h-3 w-3"
-  defp spinner_size_classes("md"), do: "h-4 w-4"
-  defp spinner_size_classes("lg"), do: "h-5 w-5"
-  defp spinner_size_classes("xl"), do: "h-6 w-6"
+  defp spinner_size_classes(size) do
+    @size_config[size][:spinner]
+  end
 end
