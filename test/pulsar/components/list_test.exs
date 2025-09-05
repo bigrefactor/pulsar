@@ -488,4 +488,160 @@ defmodule Pulsar.Components.ListTest do
       refute html =~ ~s(bg-muted/30)
     end
   end
+
+  describe "list header functionality" do
+    test "renders with title only" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <List.list>
+          <:title>Applicant Information</:title>
+          <:item title="Name">John Doe</:item>
+        </List.list>
+        """)
+
+      assert html =~ "Applicant Information"
+      assert html =~ ~s(<h3)
+      assert html =~ ~s(font-semibold)
+      # Should have wrapper div when header exists  
+      assert html =~ "overflow-hidden"
+      # Should have nested dl inside wrapper
+      assert html =~ "dl-list"
+      assert html =~ "overflow-hidden"
+    end
+
+    test "renders with description only" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <List.list>
+          <:description>Personal details and application.</:description>
+          <:item title="Name">John Doe</:item>
+        </List.list>
+        """)
+
+      assert html =~ "Personal details and application."
+      assert html =~ ~s(<p)
+      assert html =~ ~s(dark:text-dark-muted-foreground)
+    end
+
+    test "renders with both title and description" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <List.list variant="outline">
+          <:title>Applicant Information</:title>
+          <:description>Personal details and application.</:description>
+          <:item title="Full name">Margot Foster</:item>
+          <:item title="Email">margot@example.com</:item>
+        </List.list>
+        """)
+
+      # Header content
+      assert html =~ "Applicant Information"
+      assert html =~ "Personal details and application."
+      assert html =~ ~s(<h3)
+      assert html =~ ~s(<p)
+
+      # Wrapper structure
+      assert html =~ "overflow-hidden"
+      # Content separator
+      assert html =~ "border-t"
+
+      # List items
+      assert html =~ "Full name"
+      assert html =~ "Margot Foster"
+    end
+
+    test "renders without header wrapper when no title/description" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <List.list>
+          <:item title="Name">John Doe</:item>
+        </List.list>
+        """)
+
+      # Should be direct dl, not wrapped
+      assert html =~ ~s(<dl class="dl-list)
+      refute html =~ "overflow-hidden"
+      refute html =~ ~s(<h3)
+      refute html =~ ~s(<p)
+    end
+
+    test "header respects size variants" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <List.list size="lg">
+          <:title>Large Title</:title>
+          <:description>Large description</:description>
+          <:item title="Name">John</:item>
+        </List.list>
+        """)
+
+      # Large title
+      assert html =~ ~s(text-lg/7 font-semibold)
+      # Large description  
+      assert html =~ ~s(text-base/6)
+      assert html =~ ~s(dark:text-dark-muted-foreground)
+      # Large padding
+      assert html =~ ~s(px-6 py-7)
+    end
+
+    test "header respects color variants" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <List.list color="primary">
+          <:title>Primary Title</:title>
+          <:item title="Name">John</:item>
+        </List.list>
+        """)
+
+      assert html =~ ~s(text-primary)
+      assert html =~ ~s(dark:text-dark-primary)
+    end
+
+    test "empty state works with header" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <List.list>
+          <:title>Empty List</:title>
+          <:description>This list has no items</:description>
+        </List.list>
+        """)
+
+      assert html =~ "Empty List"
+      assert html =~ "This list has no items"
+      assert html =~ "No items to display"
+    end
+
+    test "custom empty slot works with header" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <List.list>
+          <:title>Custom Empty</:title>
+          <:empty>
+            <div class="custom-empty-with-header">Nothing here</div>
+          </:empty>
+        </List.list>
+        """)
+
+      assert html =~ "Custom Empty"
+      assert html =~ "Nothing here"
+      assert html =~ "custom-empty-with-header"
+      refute html =~ "No items to display"
+    end
+  end
 end

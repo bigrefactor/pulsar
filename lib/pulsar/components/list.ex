@@ -571,7 +571,7 @@ defmodule Pulsar.Components.List do
   end
 
   defp content_wrapper_classes(_variant) do
-    # Very subtle divider between header and content for all variants
-    "border-t border-border/10 dark:border-dark-border/10"
+    # Clear border between header and content for all variants
+    "border-t border-border dark:border-dark-border"
   end
 end
