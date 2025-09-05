@@ -92,6 +92,9 @@ defmodule Pulsar.Components.List do
   # CONFIGURATION & CONSTANTS
   # ============================================================================
 
+  alias Phoenix.LiveView.Rendered
+  alias Phoenix.LiveView.Socket
+
   # Size configuration for container, items, and typography
   @size_config %{
     "lg" => %{
@@ -303,6 +306,7 @@ defmodule Pulsar.Components.List do
   Uses definition list markup (`<dl>`, `<dt>`, `<dd>`) for proper accessibility
   and screen reader support. Supports multiple variants and visual options.
   """
+  @spec list(Socket.assigns()) :: Rendered.t()
   def list(assigns) do
     # Check if we have header content first
     has_header = assigns[:title] != [] || assigns[:description] != []
@@ -326,7 +330,7 @@ defmodule Pulsar.Components.List do
       |> assign(:has_header, has_header)
 
     ~H"""
-    <div :if={@has_header} class={wrapper_classes(@variant, @color)} {@rest}>
+    <div :if={@has_header} class={wrapper_classes(@variant, @color, @class)} {@rest}>
       <div class={header_classes(@size)}>
         <h3 :if={@title != []} class={title_header_classes(@variant, @color, @size)}>
           {render_slot(@title)}
@@ -368,7 +372,7 @@ defmodule Pulsar.Components.List do
         </dl>
       </div>
     </div>
-    <dl :if={!@has_header} class={@container_classes} data-list {@rest}>
+    <dl :if={!@has_header} class={merge([@container_classes, @class])} data-list {@rest}>
       <div
         :for={{item, index} <- Enum.with_index(@items)}
         :if={@has_items}
@@ -496,7 +500,7 @@ defmodule Pulsar.Components.List do
     ])
   end
 
-  defp wrapper_classes(variant, color) do
+  defp wrapper_classes(variant, color, user_class) do
     base_classes = ["overflow-hidden"]
 
     variant_classes =
@@ -525,7 +529,7 @@ defmodule Pulsar.Components.List do
           ]
       end
 
-    merge([base_classes, variant_classes])
+    merge([base_classes, variant_classes, user_class])
   end
 
   defp header_classes(size) do
