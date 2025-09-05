@@ -58,6 +58,7 @@ defmodule Pulsar.Components.Link do
   attr(:patch, :any, default: nil, doc: "Phoenix route to patch navigate to (string or VerifiedRoute)")
   attr(:replace, :boolean, default: false, doc: "Replace current history entry")
   attr(:method, :string, default: nil, doc: "HTTP method for the link")
+  attr(:csrf_token, :any, default: true, doc: "CSRF token for links with non-GET methods")
   attr(:target, :string, default: nil, doc: "Link target attribute (auto-set for external)")
   attr(:rel, :string, default: nil, doc: "Link relationship (auto-set for external)")
 
@@ -84,57 +85,32 @@ defmodule Pulsar.Components.Link do
   def a(assigns) do
     assigns = prepare_link_assigns(assigns)
 
-    if assigns.use_raw_anchor do
-      ~H"""
-      <a
-        phx-no-format
-        href={@href}
-        target={assigns[:target]}
-        rel={assigns[:rel]}
-        id={@id}
-        class={@merged_classes}
-        aria-label={@aria_label}
-        aria-describedby={@aria_describedby}
-        aria-current={@aria_current}
-        data-external={(@external && "true") || nil}
-        data-current={@aria_current}
-        data-target={assigns[:target]}
-        data-method={@method}
-        {@rest}
-      >
-        <.render_icon_slot slot={@start_icon} position="start" />
-        {render_slot(@inner_block)}
-        <.render_external_icon show_external={@show_external_icon} />
-        <.render_icon_slot slot={@end_icon} position="end" />
-      </a>
-      """
-    else
-      ~H"""
-      <.link
-        href={@href}
-        navigate={@navigate}
-        patch={@patch}
-        replace={@replace}
-        method={@method}
-        target={@target}
-        rel={@rel}
-        id={@id}
-        class={@merged_classes}
-        aria-label={@aria_label}
-        aria-describedby={@aria_describedby}
-        aria-current={@aria_current}
-        data-external={(@external && "true") || nil}
-        data-current={@aria_current}
-        data-target={@target}
-        {@rest}
-      >
-        <.render_icon_slot slot={@start_icon} position="start" />
-        {render_slot(@inner_block)}
-        <.render_external_icon show_external={@show_external_icon} />
-        <.render_icon_slot slot={@end_icon} position="end" />
-      </.link>
-      """
-    end
+    ~H"""
+    <.link
+      href={@href}
+      navigate={@navigate}
+      patch={@patch}
+      replace={@replace}
+      method={@method}
+      csrf_token={@csrf_token}
+      target={@target}
+      rel={@rel}
+      id={@id}
+      class={@merged_classes}
+      aria-label={@aria_label}
+      aria-describedby={@aria_describedby}
+      aria-current={@aria_current}
+      data-external={(@external && "true") || nil}
+      data-current={@aria_current}
+      data-target={@target}
+      {@rest}
+    >
+      <.render_icon_slot slot={@start_icon} position="start" />
+      {render_slot(@inner_block)}
+      <.render_external_icon show_external={@show_external_icon} />
+      <.render_icon_slot slot={@end_icon} position="end" />
+    </.link>
+    """
   end
 
   defp render_icon_slot(assigns) do
@@ -172,14 +148,13 @@ defmodule Pulsar.Components.Link do
     parsed_uri = if is_binary(sanitized_href), do: URI.parse(sanitized_href)
     scheme = if parsed_uri, do: parsed_uri.scheme
 
-    is_external = external_link?(sanitized_href)
-    use_raw_anchor = should_use_raw_anchor?(sanitized_href)
+    is_external = external_link?(parsed_uri, sanitized_href)
 
     assigns
     |> assign(:href, sanitized_href)
+    |> assign(:parsed_uri, parsed_uri)
     |> assign(:scheme, scheme)
     |> assign(:external, is_external)
-    |> assign(:use_raw_anchor, use_raw_anchor)
     |> assign(:show_external_icon, is_external && assigns.end_icon == [])
     |> apply_external_security(is_external, scheme)
     |> build_classes()
@@ -244,15 +219,6 @@ defmodule Pulsar.Components.Link do
     assigns
   end
 
-  defp should_use_raw_anchor?(href) when is_binary(href) do
-    case URI.parse(href) do
-      %URI{scheme: scheme} when scheme in ["mailto", "tel", "http", "https", "ftp"] -> true
-      _ -> false
-    end
-  end
-
-  defp should_use_raw_anchor?(_), do: false
-
   @dangerous_protocols ~w(javascript data vbscript about file)
 
   defp sanitize_href(nil), do: nil
@@ -269,11 +235,12 @@ defmodule Pulsar.Components.Link do
     end
   end
 
-  defp external_link?(nil), do: false
+  defp external_link?(nil, _), do: false
+  defp external_link?(_, nil), do: false
 
-  defp external_link?(href) when is_binary(href) do
+  defp external_link?(parsed_uri, href) when is_binary(href) do
     (String.starts_with?(href, "//") && !String.starts_with?(href, "///")) ||
-      case URI.parse(href) do
+      case parsed_uri do
         %URI{scheme: scheme} when is_binary(scheme) ->
           String.downcase(scheme) in ["http", "https", "mailto", "tel", "ftp"]
 

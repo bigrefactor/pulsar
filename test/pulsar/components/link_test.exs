@@ -249,7 +249,7 @@ defmodule Pulsar.Components.LinkTest do
 
       html =
         rendered_to_string(~H"""
-        <Link.a href="https://example.com">External</Link.a>
+        <Link.a href="https://example.com" csrf_token={false}>External</Link.a>
         """)
 
       assert html =~ ~s(rel="noopener noreferrer")
@@ -261,7 +261,7 @@ defmodule Pulsar.Components.LinkTest do
 
       html =
         rendered_to_string(~H"""
-        <Link.a href="https://example.com" rel="external sponsored">External</Link.a>
+        <Link.a href="https://example.com" rel="external sponsored" csrf_token={false}>External</Link.a>
         """)
 
       # Should contain all tokens: existing ones + security ones
@@ -276,7 +276,7 @@ defmodule Pulsar.Components.LinkTest do
 
       html =
         rendered_to_string(~H"""
-        <Link.a href="https://example.com" rel="noopener external noreferrer">External</Link.a>
+        <Link.a href="https://example.com" rel="noopener external noreferrer" csrf_token={false}>External</Link.a>
         """)
 
       # Count occurrences of noopener and noreferrer - should only be one of each
@@ -297,7 +297,7 @@ defmodule Pulsar.Components.LinkTest do
 
       html =
         rendered_to_string(~H"""
-        <Link.a href="https://example.com" target="_self">External</Link.a>
+        <Link.a href="https://example.com" target="_self" csrf_token={false}>External</Link.a>
         """)
 
       refute html =~ ~r/rel="[^"]*noopener[^"]*"/
@@ -452,7 +452,7 @@ defmodule Pulsar.Components.LinkTest do
 
       html =
         rendered_to_string(~H"""
-        <Link.a href="http://example.com/delete" method="delete">Delete</Link.a>
+        <Link.a href="http://example.com/delete" method="delete" csrf_token={false}>Delete</Link.a>
         """)
 
       assert html =~ ~s(data-method="delete")
@@ -464,7 +464,7 @@ defmodule Pulsar.Components.LinkTest do
 
       html =
         rendered_to_string(~H"""
-        <Link.a href="https://example.com/delete" method="delete">Delete</Link.a>
+        <Link.a href="https://example.com/delete" method="delete" csrf_token={false}>Delete</Link.a>
         """)
 
       assert html =~ ~s(data-method="delete")

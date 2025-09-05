@@ -238,19 +238,24 @@ defmodule Pulsar.Components.Button do
     doc: "External URL to navigate to"
   )
 
-  attr(:navigate, :string,
+  attr(:navigate, :any,
     default: nil,
-    doc: "Phoenix route to navigate to"
+    doc: "Phoenix route to navigate to (string or VerifiedRoute)"
   )
 
-  attr(:patch, :string,
+  attr(:patch, :any,
     default: nil,
-    doc: "Phoenix route to patch navigate to"
+    doc: "Phoenix route to patch navigate to (string or VerifiedRoute)"
   )
 
   attr(:method, :string,
     default: nil,
     doc: "HTTP method for form submissions with href"
+  )
+
+  attr(:csrf_token, :any,
+    default: true,
+    doc: "CSRF token for links with non-GET methods"
   )
 
   # State
@@ -532,6 +537,7 @@ defmodule Pulsar.Components.Button do
       navigate={@navigate}
       patch={@patch}
       method={@method}
+      csrf_token={@csrf_token}
       class={@merged_classes}
       id={@id}
       aria_label={@aria_label}

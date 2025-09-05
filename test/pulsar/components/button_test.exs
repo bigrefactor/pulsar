@@ -382,7 +382,7 @@ defmodule Pulsar.Components.ButtonTest do
 
       html =
         rendered_to_string(~H"""
-        <Button.button href="https://example.com">External</Button.button>
+        <Button.button href="https://example.com" csrf_token={false}>External</Button.button>
         """)
 
       assert html =~ ~s(<a)
@@ -434,10 +434,19 @@ defmodule Pulsar.Components.ButtonTest do
       for {input_href, expected_href} <- safe_protocols do
         assigns = %{href: input_href}
 
+        # Add csrf_token=false for external links to avoid CSRF token generation
+        is_external = String.starts_with?(input_href, "http")
+
         html =
-          rendered_to_string(~H"""
-          <Button.button href={@href}>Safe Link</Button.button>
-          """)
+          if is_external do
+            rendered_to_string(~H"""
+            <Button.button href={@href} csrf_token={false}>Safe Link</Button.button>
+            """)
+          else
+            rendered_to_string(~H"""
+            <Button.button href={@href}>Safe Link</Button.button>
+            """)
+          end
 
         assert html =~ ~s(href="#{expected_href}")
       end
@@ -448,7 +457,7 @@ defmodule Pulsar.Components.ButtonTest do
 
       html =
         rendered_to_string(~H"""
-        <Button.button href="https://external.com">External</Button.button>
+        <Button.button href="https://external.com" csrf_token={false}>External</Button.button>
         """)
 
       # Should auto-add target="_blank" for external HTTPS links
@@ -462,7 +471,7 @@ defmodule Pulsar.Components.ButtonTest do
 
       html =
         rendered_to_string(~H"""
-        <Button.button href="https://external.com" target="_self" rel="external">External</Button.button>
+        <Button.button href="https://external.com" target="_self" rel="external" csrf_token={false}>External</Button.button>
         """)
 
       # Should preserve explicit target
