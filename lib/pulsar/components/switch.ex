@@ -104,7 +104,7 @@ defmodule Pulsar.Components.Switch do
 
     if field do
       %{
-        checked: is_checked?(field.value, assigns[:value] || "true"),
+        checked: checked?(field.value, assigns[:value] || "true"),
         errors: field.errors || [],
         id: assigns[:id] || field.id || generate_id("switch"),
         name: assigns[:name] || field.name
@@ -119,7 +119,7 @@ defmodule Pulsar.Components.Switch do
     end
   end
 
-  defp is_checked?(field_value, switch_value) do
+  defp checked?(field_value, switch_value) do
     to_string(field_value) == to_string(switch_value)
   end
 

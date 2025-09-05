@@ -144,7 +144,7 @@ defmodule Pulsar.Components.Checkbox do
 
     if field do
       %{
-        checked: is_checked?(field.value, assigns[:value] || "true"),
+        checked: checked?(field.value, assigns[:value] || "true"),
         errors: field.errors || [],
         id: assigns[:id] || field.id || generate_id("checkbox"),
         name: assigns[:name] || field.name
@@ -159,11 +159,11 @@ defmodule Pulsar.Components.Checkbox do
     end
   end
 
-  defp is_checked?(field_value, checkbox_value) when is_list(field_value) do
+  defp checked?(field_value, checkbox_value) when is_list(field_value) do
     to_string(checkbox_value) in Enum.map(field_value, &to_string/1)
   end
 
-  defp is_checked?(field_value, checkbox_value) do
+  defp checked?(field_value, checkbox_value) do
     to_string(field_value) == to_string(checkbox_value)
   end
 

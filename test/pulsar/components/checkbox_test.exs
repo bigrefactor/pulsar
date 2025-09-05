@@ -789,7 +789,7 @@ defmodule Pulsar.Components.CheckboxTest do
 
       assert html =~ "h-6 w-6"
 
-      # Test card size classes  
+      # Test card size classes
       html =
         rendered_to_string(~H"""
         <.checkbox name="test" card size="lg">Content</.checkbox>

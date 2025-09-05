@@ -278,7 +278,7 @@ defmodule Pulsar.Components.RadioGroup do
         </:option>
       </.radio_group>
 
-      # Card style with grid layout  
+      # Card style with grid layout
       <.radio_group field={@form[:theme]} card class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <:option value="light">Light Theme</:option>
         <:option value="dark">Dark Theme</:option>
@@ -591,11 +591,11 @@ defmodule Pulsar.Components.RadioGroup do
   defp radio_input_base_classes do
     """
     appearance-none relative cursor-pointer transition-all duration-200 ease-in-out
-    rounded-full border-2 
+    rounded-full border-2
     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
     disabled:cursor-not-allowed disabled:opacity-50
-    before:content-[''] before:absolute before:rounded-full 
-    before:transition-all before:duration-200 
+    before:content-[''] before:absolute before:rounded-full
+    before:transition-all before:duration-200
     before:scale-0 before:opacity-0
     checked:before:scale-100 checked:before:opacity-100
     """
@@ -636,7 +636,7 @@ defmodule Pulsar.Components.RadioGroup do
   end
 
   # ============================================================================
-  # CARD COLOR CONFIGURATION  
+  # CARD COLOR CONFIGURATION
   # ============================================================================
   #
   # Map-based color system for card variants. Each color defines focus ring

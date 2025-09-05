@@ -3,7 +3,7 @@ defmodule Pulsar.Components.Select do
   Styled select component built on Stellar.Components.Select with consistent theming.
 
   Provides beautiful, accessible select fields with optional multi-select badge display.
-  All styling is applied via Tailwind CSS utilities with semantic color tokens 
+  All styling is applied via Tailwind CSS utilities with semantic color tokens
   supporting both light and dark modes.
 
   ## Dependencies
@@ -37,10 +37,10 @@ defmodule Pulsar.Components.Select do
       <.select field={@form[:skills]} options={@skills} multiple />
 
       # Custom badge removal handler
-      <.select 
-        field={@form[:tags]} 
-        options={@tags} 
-        multiple 
+      <.select
+        field={@form[:tags]}
+        options={@tags}
+        multiple
         on_remove_badge={JS.push("remove_tag")}
       />
 
@@ -159,7 +159,7 @@ defmodule Pulsar.Components.Select do
       "warning" =>
         "bg-transparent text-warning dark:text-dark-warning focus:ring-warning/60 hover:bg-warning/5 dark:hover:bg-dark-warning/10"
     },
-    # Solid variant colors  
+    # Solid variant colors
     "solid" => %{
       "danger" =>
         "bg-danger/10 dark:bg-dark-danger/20 text-danger dark:text-dark-danger focus:ring-danger/60 hover:bg-danger/20 dark:hover:bg-dark-danger/30",
@@ -178,7 +178,7 @@ defmodule Pulsar.Components.Select do
     }
   }
 
-  # Arrow color configuration  
+  # Arrow color configuration
   @arrow_colors %{
     "danger" => "text-danger dark:text-dark-danger",
     "info" => "text-info dark:text-dark-info",
@@ -270,7 +270,7 @@ defmodule Pulsar.Components.Select do
   Renders a styled select component with optional multi-select badges.
 
   This function wraps Stellar.Components.Select with Pulsar's styling system.
-  All Stellar props are passed through, with styling automatically determined 
+  All Stellar props are passed through, with styling automatically determined
   by variant and error state.
 
   Error states automatically apply danger styling when using Phoenix forms.
@@ -353,7 +353,7 @@ defmodule Pulsar.Components.Select do
           </:end_addon>
         </Badge.badge>
       </div>
-      
+
     <!-- Select wrapper with custom arrow -->
       <div class="relative">
         <select
@@ -377,7 +377,7 @@ defmodule Pulsar.Components.Select do
           </option>
           {Phoenix.HTML.raw(@option_html)}
         </select>
-        
+
     <!-- Custom arrow icon -->
         <div class={[
           "absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none",
@@ -396,18 +396,18 @@ defmodule Pulsar.Components.Select do
           // Find the select element within the wrapper
           this.selectEl = this.el.querySelector('select');
           if (!this.selectEl) return;
-          
+
           this.handleRemoveSelection = (e) => {
             // Get value from detail or target attribute
             const optionValue = e.detail?.option || e.target?.getAttribute('phx-value-option');
-            
+
             if (!this.selectEl.multiple || !optionValue) return;
 
             // Find and deselect the option (with CSS escaping for security)
             const option = this.selectEl.querySelector(`option[value="${CSS.escape(optionValue)}"]`);
             if (option) {
               option.selected = false;
-              
+
               // Dispatch events on the select element
               this.selectEl.dispatchEvent(new Event('input', { bubbles: true }));
               this.selectEl.dispatchEvent(new Event('change', { bubbles: true }));

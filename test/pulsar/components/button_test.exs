@@ -587,7 +587,7 @@ defmodule Pulsar.Components.ButtonTest do
       assert html =~ "focus-visible:ring-offset-0"
       assert html =~ "focus-visible:underline"
 
-      # Should not have the base ring classes 
+      # Should not have the base ring classes
       # (TailwindMerge should resolve the conflict in favor of ring-0)
       # This tests that our TailwindMerge integration properly handles ring conflicts
     end

@@ -69,8 +69,6 @@ defmodule Pulsar.Components.Button do
 
   import TailwindMerge, only: [merge: 1]
 
-  alias Phoenix.LiveView.JS
-
   # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
   defp generate_id(prefix \\ "button") do
     "#{prefix}-#{System.unique_integer([:positive])}"
@@ -731,51 +729,7 @@ defmodule Pulsar.Components.Button do
     @size_config[size][:spinner]
   end
 
-  # === Stellar Helper Functions (Merged) ===
-
-  @doc """
-  Toggles the pressed state of a button.
-  """
-  @spec toggle_button(JS.t(), keyword()) :: JS.t()
-  def toggle_button(js \\ %JS{}, opts) do
-    to = Keyword.fetch!(opts, :to)
-
-    js
-    |> JS.toggle_attribute({"aria-pressed", "true", "false"}, to: to)
-    |> JS.toggle_attribute({"data-pressed", "true", "false"}, to: to)
-  end
-
-  @doc """
-  Sets a button to loading state.
-  """
-  @spec set_loading(JS.t(), keyword()) :: JS.t()
-  def set_loading(js \\ %JS{}, opts) do
-    to = Keyword.fetch!(opts, :to)
-
-    js
-    |> JS.set_attribute({"aria-busy", "true"}, to: to)
-    |> JS.set_attribute({"data-loading", "true"}, to: to)
-    |> JS.set_attribute({"aria-disabled", "true"}, to: to)
-  end
-
-  @doc """
-  Clears the loading state of a button.
-
-  Only removes aria-disabled if the element is not otherwise disabled
-  (respects data-disabled="true" state).
-  """
-  @spec clear_loading(JS.t(), keyword()) :: JS.t()
-  def clear_loading(js \\ %JS{}, opts) do
-    to = Keyword.fetch!(opts, :to)
-
-    js
-    |> JS.remove_attribute("aria-busy", to: to)
-    |> JS.remove_attribute("data-loading", to: to)
-    |> JS.exec(
-      "if (el.getAttribute('data-disabled') !== 'true') el.removeAttribute('aria-disabled')",
-      to: to
-    )
-  end
+  # === Helper Functions ===
 
   # Element resolution (from Stellar)
   defp resolve_as_from_props(%{as: :div} = _assigns), do: :div

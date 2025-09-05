@@ -23,19 +23,19 @@ defmodule Pulsar.Components.Textarea do
       <.textarea field={@form[:description]} />
 
       # With auto-resize and character counting
-      <.textarea 
-        field={@form[:comment]} 
-        auto_resize 
-        show_character_count 
+      <.textarea
+        field={@form[:comment]}
+        auto_resize
+        show_character_count
         max_length={500}
         placeholder="Share your thoughts..."
       />
 
       # Large textarea with custom styling
-      <.textarea 
-        field={@form[:bio]} 
-        variant="outline" 
-        color="primary" 
+      <.textarea
+        field={@form[:bio]}
+        variant="outline"
+        color="primary"
         size="lg"
         auto_resize
         show_character_count
@@ -421,7 +421,7 @@ defmodule Pulsar.Components.Textarea do
   Renders a styled textarea component with optional auto-resize and character counting.
 
   This function wraps Stellar.Components.Textarea with Pulsar's styling system
-  and adds visual character counting display. All Stellar props are passed 
+  and adds visual character counting display. All Stellar props are passed
   through, with styling automatically determined by variant and error state.
 
   Error states automatically apply danger styling when using Phoenix forms.
@@ -680,11 +680,11 @@ defmodule Pulsar.Components.Textarea do
     |> assign(:field_provided, false)
   end
 
-  # ============================================================================  
+  # ============================================================================
   # VALIDATION AND COMPUTATION HELPERS
   # ============================================================================
 
-  # Validates required attributes for the textarea component  
+  # Validates required attributes for the textarea component
   defp validate_required_attributes!(assigns) do
     if is_nil(assigns[:field]) and is_nil(assigns[:name]) do
       raise ArgumentError, "Textarea component requires either :field or :name attribute"
