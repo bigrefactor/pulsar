@@ -228,15 +228,15 @@ defmodule Pulsar.Components.Link do
       cond do
         not is_binary(href) ->
           raise ArgumentError,
-                ":method can only be used with http(s) hrefs and not with mailto:, tel:, or relative URLs"
+                ":method can only be used with relative paths or http(s) hrefs"
 
-        scheme in ["mailto", "tel"] ->
-          raise ArgumentError,
-                ":method can only be used with http(s) hrefs and not with mailto:, tel:, or relative URLs"
-
-        true ->
+        scheme in [nil, "http", "https"] ->
           # Allow relative URLs (scheme = nil) and http/https URLs
           :ok
+
+        true ->
+          raise ArgumentError,
+                ":method can only be used with relative paths or http(s) hrefs; other schemes (mailto:, tel:, javascript:, data:, ...) are not allowed"
       end
     end
 

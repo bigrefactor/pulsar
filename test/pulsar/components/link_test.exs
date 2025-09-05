@@ -318,7 +318,7 @@ defmodule Pulsar.Components.LinkTest do
       assigns = %{}
 
       assert_raise ArgumentError,
-                   ~r/:method can only be used with http\(s\) hrefs and not with mailto:, tel:, or relative URLs/,
+                   ~r/:method can only be used with relative paths or http\(s\) hrefs; other schemes \(mailto:, tel:, javascript:, data:, \.\.\.\) are not allowed/,
                    fn ->
                      rendered_to_string(~H"""
                      <Link.a href="mailto:test@example.com" method="post">Email</Link.a>
@@ -330,7 +330,7 @@ defmodule Pulsar.Components.LinkTest do
       assigns = %{}
 
       assert_raise ArgumentError,
-                   ~r/:method can only be used with http\(s\) hrefs and not with mailto:, tel:, or relative URLs/,
+                   ~r/:method can only be used with relative paths or http\(s\) hrefs; other schemes \(mailto:, tel:, javascript:, data:, \.\.\.\) are not allowed/,
                    fn ->
                      rendered_to_string(~H"""
                      <Link.a href="tel:+1234567890" method="post">Call</Link.a>
@@ -354,10 +354,34 @@ defmodule Pulsar.Components.LinkTest do
       assigns = %{href: 123}
 
       assert_raise ArgumentError,
-                   ~r/:method can only be used with http\(s\) hrefs and not with mailto:, tel:, or relative URLs/,
+                   ~r/:method can only be used with relative paths or http\(s\) hrefs/,
                    fn ->
                      rendered_to_string(~H"""
                      <Link.a href={@href} method="post">Invalid</Link.a>
+                     """)
+                   end
+    end
+
+    test "raises error when method is used with javascript: href" do
+      assigns = %{}
+
+      assert_raise ArgumentError,
+                   ~r/:method can only be used with relative paths or http\(s\) hrefs; other schemes \(mailto:, tel:, javascript:, data:, \.\.\.\) are not allowed/,
+                   fn ->
+                     rendered_to_string(~H"""
+                     <Link.a href="javascript:alert('xss')" method="post">Malicious</Link.a>
+                     """)
+                   end
+    end
+
+    test "raises error when method is used with data: href" do
+      assigns = %{}
+
+      assert_raise ArgumentError,
+                   ~r/:method can only be used with relative paths or http\(s\) hrefs; other schemes \(mailto:, tel:, javascript:, data:, \.\.\.\) are not allowed/,
+                   fn ->
+                     rendered_to_string(~H"""
+                     <Link.a href="data:text/html,<script>alert('xss')</script>" method="post">Data URL</Link.a>
                      """)
                    end
     end

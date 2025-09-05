@@ -714,7 +714,7 @@ defmodule Pulsar.Components.ButtonTest do
       assigns = %{}
 
       assert_raise ArgumentError,
-                   ~r/:method can only be used with http\(s\) hrefs and not with mailto:, tel:, or relative URLs/,
+                   ~r/:method can only be used with relative paths or http\(s\) hrefs; other schemes \(mailto:, tel:, javascript:, data:, \.\.\.\) are not allowed/,
                    fn ->
                      rendered_to_string(~H"""
                      <Button.button href="mailto:test@example.com" method="post">Email</Button.button>
@@ -726,10 +726,34 @@ defmodule Pulsar.Components.ButtonTest do
       assigns = %{}
 
       assert_raise ArgumentError,
-                   ~r/:method can only be used with http\(s\) hrefs and not with mailto:, tel:, or relative URLs/,
+                   ~r/:method can only be used with relative paths or http\(s\) hrefs; other schemes \(mailto:, tel:, javascript:, data:, \.\.\.\) are not allowed/,
                    fn ->
                      rendered_to_string(~H"""
                      <Button.button href="tel:+1234567890" method="post">Call</Button.button>
+                     """)
+                   end
+    end
+
+    test "raises error when method is used with javascript: href" do
+      assigns = %{}
+
+      assert_raise ArgumentError,
+                   ~r/:method can only be used with relative paths or http\(s\) hrefs; other schemes \(mailto:, tel:, javascript:, data:, \.\.\.\) are not allowed/,
+                   fn ->
+                     rendered_to_string(~H"""
+                     <Button.button href="javascript:alert('xss')" method="post">Malicious</Button.button>
+                     """)
+                   end
+    end
+
+    test "raises error when method is used with data: href" do
+      assigns = %{}
+
+      assert_raise ArgumentError,
+                   ~r/:method can only be used with relative paths or http\(s\) hrefs; other schemes \(mailto:, tel:, javascript:, data:, \.\.\.\) are not allowed/,
+                   fn ->
+                     rendered_to_string(~H"""
+                     <Button.button href="data:text/html,<script>alert('xss')</script>" method="post">Data URL</Button.button>
                      """)
                    end
     end
