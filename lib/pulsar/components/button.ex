@@ -70,6 +70,7 @@ defmodule Pulsar.Components.Button do
   import TailwindMerge, only: [merge: 1]
 
   alias Phoenix.LiveView.Rendered
+  alias Pulsar.Components.Link
 
   # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
   defp generate_id(prefix \\ "button") do
@@ -79,9 +80,6 @@ defmodule Pulsar.Components.Button do
   # ============================================================================
   # CONFIGURATION & CONSTANTS
   # ============================================================================
-
-  # Security - dangerous protocols to block (from link component)
-  @dangerous_protocols ~w(javascript data vbscript about file)
 
   # Size configuration for button variants
   @size_config %{
@@ -202,61 +200,6 @@ defmodule Pulsar.Components.Button do
     }
   }
 
-  # Sanitize href to prevent XSS via dangerous protocols
-  defp sanitize_href(nil), do: nil
-
-  defp sanitize_href(href) when is_binary(href) do
-    trimmed = String.trim(href)
-
-    case Regex.run(~r/^\s*([a-z][a-z0-9+.\-]*):/i, trimmed) do
-      [_, scheme] -> if String.downcase(scheme) in @dangerous_protocols, do: "#", else: trimmed
-      _ -> trimmed
-    end
-  end
-
-  # Detect external links
-  defp external_link?(nil), do: false
-
-  defp external_link?(href) when is_binary(href) do
-    (String.starts_with?(href, "//") && !String.starts_with?(href, "///")) ||
-      case URI.parse(href) do
-        %URI{scheme: scheme} when is_binary(scheme) ->
-          String.downcase(scheme) in ["http", "https", "mailto", "tel", "ftp"]
-
-        _ ->
-          false
-      end
-  end
-
-  # Apply security attributes for external links
-  defp apply_external_security(assigns, false), do: assigns
-
-  defp apply_external_security(assigns, true) do
-    rest = Map.get(assigns, :rest, %{})
-
-    assigns =
-      case URI.parse(assigns.href || "") do
-        %URI{scheme: scheme} when scheme in ["http", "https"] ->
-          if Map.has_key?(rest, :target) do
-            assigns
-          else
-            put_in(assigns, [:rest], Map.put(rest, :target, "_blank"))
-          end
-
-        _ ->
-          assigns
-      end
-
-    rest = Map.get(assigns, :rest, %{})
-
-    if Map.get(rest, :target) == "_blank" do
-      rel = Map.get(rest, :rel) || "noopener noreferrer"
-      put_in(assigns, [:rest], Map.put(rest, :rel, rel))
-    else
-      assigns
-    end
-  end
-
   # Pulsar-specific styling attributes
   attr(:variant, :string,
     default: "solid",
@@ -303,6 +246,11 @@ defmodule Pulsar.Components.Button do
   attr(:patch, :string,
     default: nil,
     doc: "Phoenix route to patch navigate to"
+  )
+
+  attr(:method, :string,
+    default: nil,
+    doc: "HTTP method for form submissions with href"
   )
 
   # State
@@ -396,18 +344,8 @@ defmodule Pulsar.Components.Button do
   """
   @spec button(map()) :: Rendered.t()
   def button(assigns) do
-    # Stellar's validation logic
-    ensure_nav_exclusive!(assigns)
+    # Button-specific validation only
     assigns = ensure_disclosure_linkage!(assigns)
-
-    # Security: sanitize href and apply external link security
-    sanitized_href = sanitize_href(assigns.href)
-    is_external = external_link?(sanitized_href)
-
-    assigns =
-      assigns
-      |> assign(:href, sanitized_href)
-      |> apply_external_security(is_external)
 
     # Ensure ID exists for hook functionality (replacing IdGenerator)
     assigns = assign_new(assigns, :id, fn -> generate_id() end)
@@ -587,19 +525,17 @@ defmodule Pulsar.Components.Button do
 
   # Active navigation link template
   defp render_navigation_link(assigns) do
+    # Delegate to Link.a which handles all navigation logic including raw anchors for external URLs
     ~H"""
-    <.link
+    <Link.a
       href={@href}
       navigate={@navigate}
       patch={@patch}
-      id={@id}
+      method={@method}
       class={@merged_classes}
-      aria-busy={aria_flag(@loading)}
-      aria-pressed={if is_boolean(@pressed), do: aria_tf(@pressed), else: nil}
-      aria-expanded={aria_tf(@expanded)}
-      aria-controls={@controls}
-      aria-haspopup={(@haspopup != "false" && @haspopup) || nil}
-      aria-label={@aria_label}
+      id={@id}
+      aria_label={@aria_label}
+      aria_current={if is_boolean(@pressed) and @pressed, do: "page", else: nil}
       data-loading={data_tf(@loading)}
       data-disabled={data_tf(@disabled || @loading)}
       data-pressed={if is_boolean(@pressed), do: data_tf(@pressed), else: nil}
@@ -607,7 +543,7 @@ defmodule Pulsar.Components.Button do
       {@rest}
     >
       <.render_button_content {assigns} />
-    </.link>
+    </Link.a>
     """
   end
 
@@ -747,19 +683,6 @@ defmodule Pulsar.Components.Button do
 
   defp resolve_as_from_props(assigns) do
     if has_navigation?(assigns), do: :a, else: assigns.as
-  end
-
-  # Validation functions (from Stellar)
-  defp ensure_nav_exclusive!(assigns) do
-    nav_count =
-      [assigns.href, assigns.navigate, assigns.patch]
-      |> Enum.count(&is_binary/1)
-
-    if nav_count > 1 do
-      raise ArgumentError, "Provide only one of :href, :navigate, or :patch"
-    end
-
-    assigns
   end
 
   defp ensure_disclosure_linkage!(%{controls: ctrls, expanded: exp} = assigns) do

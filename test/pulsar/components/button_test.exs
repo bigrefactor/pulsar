@@ -652,4 +652,100 @@ defmodule Pulsar.Components.ButtonTest do
       assert html =~ ~s(data-testid="save-button")
     end
   end
+
+  describe "button/1 navigation and method" do
+    test "renders with method attribute for relative URLs" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Button.button href="/api/delete" method="delete">Delete</Button.button>
+        """)
+
+      assert html =~ ~s(data-method="delete")
+      assert html =~ ~s(href="/api/delete")
+    end
+
+    test "allows method with relative href" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Button.button href="/posts/123" method="delete">Delete Post</Button.button>
+        """)
+
+      assert html =~ ~s(data-method="delete")
+      assert html =~ ~s(href="/posts/123")
+    end
+
+    test "renders method with different HTTP verbs" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Button.button href="/api/update" method="put">Update</Button.button>
+        """)
+
+      assert html =~ ~s(data-method="put")
+      assert html =~ ~s(href="/api/update")
+    end
+
+    test "raises error when method is used with navigate" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/cannot be used with :navigate or :patch/, fn ->
+        rendered_to_string(~H"""
+        <Button.button navigate="/dashboard" method="post">Dashboard</Button.button>
+        """)
+      end
+    end
+
+    test "raises error when method is used with patch" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/cannot be used with :navigate or :patch/, fn ->
+        rendered_to_string(~H"""
+        <Button.button patch="/current" method="put">Current</Button.button>
+        """)
+      end
+    end
+
+    test "raises error when method is used with mailto: href" do
+      assigns = %{}
+
+      assert_raise ArgumentError,
+                   ~r/:method can only be used with http\(s\) hrefs and not with mailto:, tel:, or relative URLs/,
+                   fn ->
+                     rendered_to_string(~H"""
+                     <Button.button href="mailto:test@example.com" method="post">Email</Button.button>
+                     """)
+                   end
+    end
+
+    test "raises error when method is used with tel: href" do
+      assigns = %{}
+
+      assert_raise ArgumentError,
+                   ~r/:method can only be used with http\(s\) hrefs and not with mailto:, tel:, or relative URLs/,
+                   fn ->
+                     rendered_to_string(~H"""
+                     <Button.button href="tel:+1234567890" method="post">Call</Button.button>
+                     """)
+                   end
+    end
+
+    test "allows method when href is nil" do
+      assigns = %{}
+
+      # This should not raise an error - method validation only applies when href is present
+      html =
+        rendered_to_string(~H"""
+        <Button.button method="post">No Href</Button.button>
+        """)
+
+      # The button component should render as a regular button when no navigation props
+      assert html =~ ~s(<button)
+      assert html =~ "No Href"
+    end
+  end
 end

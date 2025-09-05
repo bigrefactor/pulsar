@@ -162,75 +162,35 @@ defmodule Pulsar.Components.Link do
 
   defp prepare_link_assigns(assigns) do
     ensure_nav_exclusive!(assigns)
-    ensure_method_compatibility!(assigns)
+
+    # Extract scheme from original href for method validation (before sanitization)
+    original_scheme = if is_binary(assigns.href), do: URI.parse(assigns.href).scheme
+    ensure_method_compatibility!(assigns, original_scheme)
 
     sanitized_href = sanitize_href(assigns.href)
+    parsed_uri = if is_binary(sanitized_href), do: URI.parse(sanitized_href)
+    scheme = if parsed_uri, do: parsed_uri.scheme
+
     is_external = external_link?(sanitized_href)
     use_raw_anchor = should_use_raw_anchor?(sanitized_href)
 
     assigns
     |> assign(:href, sanitized_href)
+    |> assign(:scheme, scheme)
     |> assign(:external, is_external)
     |> assign(:use_raw_anchor, use_raw_anchor)
     |> assign(:show_external_icon, is_external && assigns.end_icon == [])
-    |> apply_external_security(is_external)
+    |> apply_external_security(is_external, scheme)
     |> build_classes()
   end
 
-  defp should_use_raw_anchor?(href) when is_binary(href) do
-    case URI.parse(href) do
-      %URI{scheme: scheme} when scheme in ["mailto", "tel", "http", "https", "ftp"] -> true
-      _ -> false
-    end
-  end
+  # Public helper functions for other components that need navigation functionality
 
-  defp should_use_raw_anchor?(_), do: false
-
-  @dangerous_protocols ~w(javascript data vbscript about file)
-
-  defp sanitize_href(nil), do: nil
-
-  defp sanitize_href(href) when is_binary(href) do
-    trimmed = String.trim(href)
-
-    case Regex.run(~r/^\s*([a-z][a-z0-9+.\-]*):/i, trimmed) do
-      [_, scheme] -> if String.downcase(scheme) in @dangerous_protocols, do: "#", else: trimmed
-      _ -> trimmed
-    end
-  end
-
-  defp external_link?(nil), do: false
-
-  defp external_link?(href) when is_binary(href) do
-    (String.starts_with?(href, "//") && !String.starts_with?(href, "///")) ||
-      case URI.parse(href) do
-        %URI{scheme: scheme} when is_binary(scheme) ->
-          String.downcase(scheme) in ["http", "https", "mailto", "tel", "ftp"]
-
-        _ ->
-          false
-      end
-  end
-
-  defp apply_external_security(assigns, false), do: assigns
-
-  defp apply_external_security(assigns, true) do
-    assigns =
-      case URI.parse(assigns.href || "") do
-        %URI{scheme: scheme} when scheme in ["http", "https"] ->
-          if assigns[:target] || assigns[:method], do: assigns, else: assign(assigns, :target, "_blank")
-
-        _ ->
-          assigns
-      end
-
-    assign_new(assigns, :rel, fn ->
-      if assigns[:target] == "_blank", do: "noopener noreferrer"
-    end)
-  end
-
-  # Ensure only one navigation prop is provided
-  defp ensure_nav_exclusive!(assigns) do
+  @doc """
+  Ensures only one navigation prop is provided.
+  Used by Button component for validation.
+  """
+  def ensure_nav_exclusive!(assigns) do
     nav_props = [
       {assigns[:href], :href},
       {assigns[:navigate], :navigate},
@@ -252,14 +212,90 @@ defmodule Pulsar.Components.Link do
     assigns
   end
 
-  # Ensure method is only used with href, not with navigate or patch
-  defp ensure_method_compatibility!(assigns) do
+  @doc """
+  Ensures method is only used with appropriate href values.
+  Used by Button component for validation.
+  """
+  def ensure_method_compatibility!(assigns, scheme) do
     if is_binary(assigns[:method]) and (is_binary(assigns[:navigate]) or is_binary(assigns[:patch])) do
       raise ArgumentError,
             ":method cannot be used with :navigate or :patch. Use :method only with :href for form submissions."
     end
 
+    if is_binary(assigns[:method]) and assigns[:href] != nil do
+      href = assigns[:href]
+
+      cond do
+        not is_binary(href) ->
+          raise ArgumentError,
+                ":method can only be used with http(s) hrefs and not with mailto:, tel:, or relative URLs"
+
+        scheme in ["mailto", "tel"] ->
+          raise ArgumentError,
+                ":method can only be used with http(s) hrefs and not with mailto:, tel:, or relative URLs"
+
+        true ->
+          # Allow relative URLs (scheme = nil) and http/https URLs
+          :ok
+      end
+    end
+
     assigns
+  end
+
+  # Private helper functions
+
+  defp should_use_raw_anchor?(href) when is_binary(href) do
+    case URI.parse(href) do
+      %URI{scheme: scheme} when scheme in ["mailto", "tel", "http", "https", "ftp"] -> true
+      _ -> false
+    end
+  end
+
+  defp should_use_raw_anchor?(_), do: false
+
+  @dangerous_protocols ~w(javascript data vbscript about file)
+
+  defp sanitize_href(nil), do: nil
+
+  defp sanitize_href(href) when is_binary(href) do
+    trimmed = String.trim(href)
+
+    case Regex.run(~r/^\s*([a-z][a-z0-9+.\-]*):/i, trimmed) do
+      [_, scheme] ->
+        if String.downcase(scheme) in @dangerous_protocols, do: "#", else: trimmed
+
+      _ ->
+        trimmed
+    end
+  end
+
+  defp external_link?(nil), do: false
+
+  defp external_link?(href) when is_binary(href) do
+    (String.starts_with?(href, "//") && !String.starts_with?(href, "///")) ||
+      case URI.parse(href) do
+        %URI{scheme: scheme} when is_binary(scheme) ->
+          String.downcase(scheme) in ["http", "https", "mailto", "tel", "ftp"]
+
+        _ ->
+          false
+      end
+  end
+
+  defp apply_external_security(assigns, false, _scheme), do: assigns
+
+  defp apply_external_security(assigns, true, scheme) do
+    assigns =
+      case scheme do
+        scheme when scheme in ["http", "https"] ->
+          if assigns[:target] || assigns[:method], do: assigns, else: assign(assigns, :target, "_blank")
+
+        _ ->
+          assigns
+      end
+
+    assign(assigns, :rel, assigns[:rel] || if(assigns[:target] == "_blank", do: "noopener noreferrer"))
   end
 
   @base_classes """

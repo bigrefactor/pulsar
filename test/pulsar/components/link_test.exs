@@ -314,6 +314,66 @@ defmodule Pulsar.Components.LinkTest do
       end
     end
 
+    test "raises error when method is used with mailto: href" do
+      assigns = %{}
+
+      assert_raise ArgumentError,
+                   ~r/:method can only be used with http\(s\) hrefs and not with mailto:, tel:, or relative URLs/,
+                   fn ->
+                     rendered_to_string(~H"""
+                     <Link.a href="mailto:test@example.com" method="post">Email</Link.a>
+                     """)
+                   end
+    end
+
+    test "raises error when method is used with tel: href" do
+      assigns = %{}
+
+      assert_raise ArgumentError,
+                   ~r/:method can only be used with http\(s\) hrefs and not with mailto:, tel:, or relative URLs/,
+                   fn ->
+                     rendered_to_string(~H"""
+                     <Link.a href="tel:+1234567890" method="post">Call</Link.a>
+                     """)
+                   end
+    end
+
+    test "allows method with relative href" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/relative/path" method="post">Relative</Link.a>
+        """)
+
+      assert html =~ ~s(data-method="post")
+      assert html =~ ~s(href="/relative/path")
+    end
+
+    test "raises error when method is used with non-binary href" do
+      assigns = %{href: 123}
+
+      assert_raise ArgumentError,
+                   ~r/:method can only be used with http\(s\) hrefs and not with mailto:, tel:, or relative URLs/,
+                   fn ->
+                     rendered_to_string(~H"""
+                     <Link.a href={@href} method="post">Invalid</Link.a>
+                     """)
+                   end
+    end
+
+    test "allows method with http:// href" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="http://example.com/delete" method="delete">Delete</Link.a>
+        """)
+
+      assert html =~ ~s(data-method="delete")
+      assert html =~ ~s(href="http://example.com/delete")
+    end
+
     test "renders with method attribute for external URLs" do
       assigns = %{}
 
@@ -324,6 +384,22 @@ defmodule Pulsar.Components.LinkTest do
 
       assert html =~ ~s(data-method="delete")
       assert html =~ ~s(href="https://example.com/delete")
+    end
+
+    test "allows method when href is nil" do
+      assigns = %{}
+
+      # This should not raise an error - method validation only applies when href is present
+      html =
+        rendered_to_string(~H"""
+        <Link.a method="post">No Href</Link.a>
+        """)
+
+      # When href is nil, Phoenix's link component converts it to href="#" 
+      # Phoenix link may not render method attribute for invalid hrefs like "#"
+      # The important thing is that it doesn't raise an error during validation
+      assert html =~ "No Href"
+      assert html =~ ~s(href="#")
     end
   end
 
