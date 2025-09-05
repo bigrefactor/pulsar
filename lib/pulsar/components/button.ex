@@ -70,10 +70,11 @@ defmodule Pulsar.Components.Button do
   import TailwindMerge, only: [merge: 1]
 
   alias Phoenix.LiveView.Rendered
+  alias Phoenix.VerifiedRoutes.Route
   alias Pulsar.Components.Link
 
   # Custom guard for validating navigation links
-  defguard is_link(href) when is_binary(href) or is_struct(href, Phoenix.VerifiedRoutes) or is_struct(href, URI)
+  defguard is_link(href) when is_binary(href) or is_struct(href, Route) or is_struct(href, URI)
 
   # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
   defp generate_id(prefix \\ "button") do
@@ -549,7 +550,6 @@ defmodule Pulsar.Components.Button do
       class={@merged_classes}
       id={@id}
       aria_label={@aria_label}
-      aria_current={if is_boolean(@pressed) and @pressed, do: "page", else: nil}
       data-loading={data_tf(@loading)}
       data-disabled={data_tf(@disabled || @loading)}
       data-pressed={if is_boolean(@pressed), do: data_tf(@pressed), else: nil}
