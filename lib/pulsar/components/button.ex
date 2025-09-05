@@ -300,6 +300,11 @@ defmodule Pulsar.Components.Button do
     doc: "Button ID"
   )
 
+  attr(:tabindex, :string,
+    default: "0",
+    doc: "Tab order (defaults to '0' when focusable, '-1' when disabled/loading)"
+  )
+
   attr(:class, :string,
     default: "",
     doc: "Additional CSS classes"
@@ -705,9 +710,9 @@ defmodule Pulsar.Components.Button do
 
   defp ensure_disclosure_linkage!(assigns), do: assigns
 
-  # Helper functions for computed values (from Stellar)
+  # Helper functions for computed values (from Stellar)  
   defp tabindex(assigns) do
-    if assigns.disabled || assigns.loading, do: "-1", else: "0"
+    if assigns.disabled || assigns.loading, do: "-1", else: assigns.tabindex
   end
 
   defp has_navigation?(assigns) do
