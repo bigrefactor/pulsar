@@ -459,7 +459,7 @@ defmodule Pulsar.Components.Input do
         type={@type}
         id={@id}
         name={@name}
-        value={@value}
+        {if @type != "file", do: [value: @value], else: []}
         required={@required}
         disabled={@disabled}
         readonly={@readonly}

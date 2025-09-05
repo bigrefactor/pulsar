@@ -250,6 +250,31 @@ defmodule Pulsar.Components.CheckboxTest do
       assert html =~ ~s(data-disabled="true")
     end
 
+    test "hidden input is disabled when checkbox is disabled" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox name="terms" disabled={true} />
+        """)
+
+      # Check that both hidden and checkbox inputs have disabled attribute
+      assert html =~ ~r(<input[^>]*type="hidden"[^>]*disabled[^>]*>)
+      assert html =~ ~r(<input[^>]*type="checkbox"[^>]*disabled[^>]*>)
+    end
+
+    test "hidden input is not disabled when checkbox is not disabled" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox name="terms" disabled={false} />
+        """)
+
+      # Ensure hidden input doesn't have disabled attribute when checkbox is enabled
+      refute html =~ ~r(<input[^>]*type="hidden"[^>]*disabled[^>]*>)
+    end
+
     test "handles required state" do
       assigns = %{}
 
@@ -517,6 +542,37 @@ defmodule Pulsar.Components.CheckboxTest do
       assert html =~ ~s(data-testid="card-container")
       # Verify these attributes are on the label (container), not the input
       assert String.contains?(html, ~s(<label)) and String.contains?(html, ~s(phx-click="handle_click"))
+    end
+
+    test "card variant hidden input is disabled when checkbox is disabled" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox card name="plan" disabled={true}>
+          <div>Test content</div>
+        </.checkbox>
+        """)
+
+      # Check that both hidden and checkbox inputs have disabled attribute in card variant
+      assert html =~ ~r(<input[^>]*type="hidden"[^>]*disabled[^>]*>)
+      assert html =~ ~r(<input[^>]*type="checkbox"[^>]*disabled[^>]*>)
+      assert html =~ ~s(data-disabled="true")
+    end
+
+    test "card variant hidden input is not disabled when checkbox is not disabled" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox card name="plan" disabled={false}>
+          <div>Test content</div>
+        </.checkbox>
+        """)
+
+      # Ensure hidden input doesn't have disabled attribute when card checkbox is enabled
+      refute html =~ ~r(<input[^>]*type="hidden"[^>]*disabled[^>]*>)
+      assert html =~ ~s(data-disabled="false")
     end
 
     test "hides checkbox input with sr-only when hide_checkbox is true" do
