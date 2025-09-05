@@ -368,7 +368,7 @@ defmodule Pulsar.Components.List do
     merge([
       @item_base_classes,
       item_spacing,
-      "flex-row justify-between items-start"
+      "flex-row items-start"
     ])
   end
 
@@ -398,7 +398,7 @@ defmodule Pulsar.Components.List do
     color_config = get_in(@color_config, [variant, color])
     color_classes = Map.get(color_config, :title, "")
 
-    merge([base_title, color_classes])
+    merge([base_title, color_classes, "flex-shrink-0 min-w-0 mr-4"])
   end
 
   defp content_classes(size) do
