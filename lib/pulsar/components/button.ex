@@ -69,6 +69,8 @@ defmodule Pulsar.Components.Button do
 
   import TailwindMerge, only: [merge: 1]
 
+  alias Phoenix.LiveView.Rendered
+
   # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
   defp generate_id(prefix \\ "button") do
     "#{prefix}-#{System.unique_integer([:positive])}"
@@ -230,18 +232,26 @@ defmodule Pulsar.Components.Button do
   defp apply_external_security(assigns, false), do: assigns
 
   defp apply_external_security(assigns, true) do
+    rest = Map.get(assigns, :rest, %{})
+
     assigns =
       case URI.parse(assigns.href || "") do
         %URI{scheme: scheme} when scheme in ["http", "https"] ->
-          if Map.has_key?(assigns.rest, :target), do: assigns, else: put_in(assigns.rest[:target], "_blank")
+          if Map.has_key?(rest, :target) do
+            assigns
+          else
+            put_in(assigns, [:rest], Map.put(rest, :target, "_blank"))
+          end
 
         _ ->
           assigns
       end
 
-    if get_in(assigns.rest, [:target]) == "_blank" do
-      rel = get_in(assigns.rest, [:rel]) || "noopener noreferrer"
-      put_in(assigns.rest[:rel], rel)
+    rest = Map.get(assigns, :rest, %{})
+
+    if Map.get(rest, :target) == "_blank" do
+      rel = Map.get(rest, :rel) || "noopener noreferrer"
+      put_in(assigns, [:rest], Map.put(rest, :rel, rel))
     else
       assigns
     end
@@ -364,9 +374,9 @@ defmodule Pulsar.Components.Button do
   @doc """
   Renders a styled button component.
 
-  This function wraps Stellar.Components.Button with Pulsar's styling system.
-  All Stellar props are passed through, with styling controlled via data attributes
-  for better maintainability and smaller class strings.
+  Self-contained button component with polymorphic rendering and security built-in.
+  Styling is controlled via configuration maps and TailwindMerge for intelligent
+  class composition and conflict resolution.
 
   ## Size Behavior
   - **solid, outline, ghost variants**: Size controls height, padding, and text size
@@ -384,6 +394,7 @@ defmodule Pulsar.Components.Button do
       # Other variants respect size
       <.button variant="solid" size="lg">Download</.button>  # h-12, px-6, text-lg
   """
+  @spec button(map()) :: Rendered.t()
   def button(assigns) do
     # Stellar's validation logic
     ensure_nav_exclusive!(assigns)

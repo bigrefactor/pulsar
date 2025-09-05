@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **BREAKING**: Completed Stellar → Pulsar component library merge
 - **Single Dependency**: Removed Stellar dependency, now only requires TailwindMerge
-- **Self-Contained Components**: All 9 core components now include inlined accessibility and behavior
+- **Self-Contained Components**: All 11 core components now include inlined accessibility and behavior
 - **Production Ready**: Complete component coverage for Phoenix applications
 - **Clean Architecture**: Zero compilation warnings, full test coverage maintained
 

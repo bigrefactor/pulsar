@@ -7,7 +7,7 @@ defmodule Pulsar.Components.Textarea do
 
   ## Features
 
-  - **Stellar Foundation**: Built on Stellar's accessible textarea component
+  - **Accessible by Default**: Proper textarea semantics with full keyboard and screen reader support
   - **Auto-resize**: Optional automatic height adjustment as content grows
   - **Character Counting**: Visual character count with theme-colored display
   - **Multiple Variants**: outline, ghost, and solid for different use cases
@@ -15,7 +15,7 @@ defmodule Pulsar.Components.Textarea do
   - **Multiple Sizes**: xs, sm, md, lg, xl with appropriate min/max heights
   - **Dark Mode**: Automatic light/dark mode support
   - **Phoenix Integration**: Automatic error styling when used with Phoenix forms
-  - **Full Stellar API**: All Stellar textarea props are supported
+  - **Phoenix-native API**: Works seamlessly with Phoenix forms and LiveView
 
   ## Examples
 
@@ -60,15 +60,16 @@ defmodule Pulsar.Components.Textarea do
   When used with Phoenix forms, validation errors automatically override styling
   to show danger (red) styling. This provides consistent error feedback across all textareas.
 
-  ## Stellar Integration
+  ## Integration
 
-  This component wraps Stellar.Components.Textarea and passes through all its props:
+  Works with Phoenix forms and supports standard textarea attributes. Error states
+  automatically reflect in styles and `aria-invalid`:
   - Multi-line text input with rows/cols configuration
   - Phoenix form integration with automatic error detection
   - Character counting with data attributes
   - Auto-resize functionality
   - Accessibility features and ARIA attributes (including `aria-invalid`)
-  - Validation error signaling via `aria-invalid` (Stellar no longer sets `aria-describedby`)
+  - Validation error signaling via `aria-invalid`
   - All standard HTML attributes
 
   ## Character Count Display
@@ -414,15 +415,18 @@ defmodule Pulsar.Components.Textarea do
     doc: "Additional CSS classes"
   )
 
+  # Accessibility
+  attr(:"aria-describedby", :string, default: nil, doc: "Id(s) of elements that describe the textarea")
+
   # Global attributes (allows all Phoenix and HTML attributes)
   attr(:rest, :global, doc: "Additional HTML attributes")
 
   @doc """
   Renders a styled textarea component with optional auto-resize and character counting.
 
-  This function wraps Stellar.Components.Textarea with Pulsar's styling system
-  and adds visual character counting display. All Stellar props are passed
-  through, with styling automatically determined by variant and error state.
+  This function renders a native textarea with Pulsar's styling system
+  and adds visual character counting display. Styling is automatically
+  determined by variant and error state.
 
   Error states automatically apply danger styling when using Phoenix forms.
   """

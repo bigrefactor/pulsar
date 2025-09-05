@@ -10,6 +10,7 @@ defmodule Pulsar.MixProject do
   alias Pulsar.Components.Link
   alias Pulsar.Components.RadioGroup
   alias Pulsar.Components.Select
+  alias Pulsar.Components.Switch
   alias Pulsar.Components.Textarea
 
   @version "0.1.0"

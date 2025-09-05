@@ -67,6 +67,8 @@ defmodule Pulsar.Components.Icon do
   # CONFIGURATION & CONSTANTS
   # ============================================================================
 
+  alias Phoenix.LiveView.Rendered
+
   # Size configuration for icon component
   @size_config %{
     "lg" => "w-6 h-6",
@@ -127,6 +129,7 @@ defmodule Pulsar.Components.Icon do
   Icons use CSS-based rendering for efficiency. The component automatically
   applies the correct Heroicon class name, size scaling, and semantic colors.
   """
+  @spec icon(map()) :: Rendered.t()
   def icon(assigns) do
     assigns =
       assigns

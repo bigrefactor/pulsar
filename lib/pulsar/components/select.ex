@@ -14,7 +14,7 @@ defmodule Pulsar.Components.Select do
 
   ## Features
 
-  - **Stellar Foundation**: Built on Stellar's accessible select component
+  - **Accessible by Default**: Proper select semantics with full keyboard and screen reader support
   - **Multiple Variants**: outline, ghost, and solid for different use cases
   - **Full Color Palette**: All semantic colors with automatic error override
   - **Multiple Sizes**: xs, sm, md, lg, xl matching button and input components
@@ -23,7 +23,7 @@ defmodule Pulsar.Components.Select do
   - **Option Groups**: Consistent styling for grouped options
   - **Dark Mode**: Automatic light/dark mode support
   - **Phoenix Integration**: Automatic error styling when used with Phoenix forms
-  - **Full Stellar API**: All Stellar select props are supported
+  - **Phoenix-native API**: Aligns with Pulsar components and Phoenix forms
 
   ## Examples
 
@@ -64,9 +64,9 @@ defmodule Pulsar.Components.Select do
   When used with Phoenix forms, validation errors automatically override styling
   to show danger (red) styling. This provides consistent error feedback across all selects.
 
-  ## Stellar Integration
+  ## Integration
 
-  This component wraps Stellar.Components.Select and passes through all its props:
+  This component provides full Phoenix form integration:
   - Native HTML select element for optimal accessibility and mobile support
   - Single and multi-select modes
   - Phoenix options integration with all standard formats
@@ -263,15 +263,17 @@ defmodule Pulsar.Components.Select do
     doc: "Additional CSS classes"
   )
 
+  # Accessibility
+  attr(:"aria-describedby", :string, default: nil, doc: "Id(s) of elements that describe the select")
+
   # Global attributes (allows all Phoenix and HTML attributes)
   attr(:rest, :global, doc: "Additional HTML attributes")
 
   @doc """
   Renders a styled select component with optional multi-select badges.
 
-  This function wraps Stellar.Components.Select with Pulsar's styling system.
-  All Stellar props are passed through, with styling automatically determined
-  by variant and error state.
+  This function renders a native HTML select with Pulsar's styling system.
+  Styling is automatically determined by variant and error state.
 
   Error states automatically apply danger styling when using Phoenix forms.
   Multi-select mode displays selected options as removable badges.

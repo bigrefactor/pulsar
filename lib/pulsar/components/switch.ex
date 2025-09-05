@@ -91,6 +91,7 @@ defmodule Pulsar.Components.Switch do
   import TailwindMerge, only: [merge: 1]
 
   alias Phoenix.HTML.FormField
+  alias Phoenix.LiveView.JS
   alias Phoenix.LiveView.Rendered
 
   # ============================================================================
@@ -502,7 +503,7 @@ defmodule Pulsar.Components.Switch do
       <button
         type="button"
         tabindex="-1"
-        onclick={"document.getElementById('#{@id}').click()"}
+        phx-click={JS.dispatch("click", to: "##{@id}")}
         class={@switch_class}
         data-loading={@loading && "true"}
         data-disabled={@disabled && "true"}

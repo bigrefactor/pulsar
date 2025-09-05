@@ -30,6 +30,7 @@ defmodule Pulsar.Components.Link do
 
   import TailwindMerge, only: [merge: 1]
 
+  alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Icon
 
   # Pulsar-specific styling attributes
@@ -76,6 +77,10 @@ defmodule Pulsar.Components.Link do
   slot(:start_icon, doc: "Icon shown before the link text")
   slot(:end_icon, doc: "Icon shown after the link text")
 
+  @doc """
+  Accessible link with security defaults and Phoenix navigation (href/navigate/patch).
+  """
+  @spec a(map()) :: Rendered.t()
   def a(assigns) do
     assigns = prepare_link_assigns(assigns)
 

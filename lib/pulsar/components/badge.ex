@@ -66,6 +66,8 @@ defmodule Pulsar.Components.Badge do
   # CONFIGURATION & CONSTANTS
   # ============================================================================
 
+  alias Phoenix.LiveView.Rendered
+
   # Size configuration for badges
   @size_config %{
     "lg" => "text-base px-3 py-1 gap-1.5",
@@ -157,6 +159,7 @@ defmodule Pulsar.Components.Badge do
   The badge uses semantic color tokens and supports all standard variants.
   Any interactivity is added through the addon slots.
   """
+  @spec badge(map()) :: Rendered.t()
   def badge(assigns) do
     class = build_badge_classes(assigns)
     assigns = assign(assigns, :class, class)

@@ -8,7 +8,7 @@ defmodule Pulsar.Components.RadioGroup do
 
   ## Features
 
-  - **Stellar Foundation**: Built on Stellar's accessible radio group component with roving tabindex
+  - **Accessible by Default**: Proper radiogroup semantics with keyboard support and roving tabindex
   - **Custom Radio Design**: Styled radio buttons with smooth animations
   - **Card-style Options**: Rich card layouts with descriptions and custom content
    - **Flexible Layouts**: Use the `class` attribute for any layout (flex, grid, etc.)
@@ -17,7 +17,7 @@ defmodule Pulsar.Components.RadioGroup do
   - **Hover and Focus States**: Smooth interactive feedback
   - **Dark Mode**: Automatic light/dark mode support
   - **Phoenix Integration**: Automatic error styling when used with Phoenix forms
-  - **Full Stellar API**: All Stellar radio group props are supported
+  - **Phoenix Integration**: Works seamlessly with Phoenix forms and LiveView assigns
 
   ## Examples
 
@@ -89,9 +89,9 @@ defmodule Pulsar.Components.RadioGroup do
         </:option>
       </.radio_group>
 
-  ## Stellar Integration
+  ## Phoenix Form Integration
 
-  This component wraps Stellar.Components.RadioGroup and passes through all its props:
+  This component integrates seamlessly with Phoenix forms:
   - `:field` - Phoenix form field integration with automatic validation
   - `:name`, `:value` - Form control attributes
   - `:orientation` - Keyboard navigation direction
@@ -253,9 +253,8 @@ defmodule Pulsar.Components.RadioGroup do
   @doc """
   Renders a styled radio group component.
 
-  This function wraps Stellar.Components.RadioGroup with Pulsar's styling system.
-  All Stellar props are passed through, with styling controlled via CSS classes
-  that respond to the radio group's card and layout state.
+  Renders a native radiogroup with Pulsar's styling system. Styling is controlled
+  via CSS classes that respond to the radio group's card and layout state.
 
   ## Card vs Layout
 
