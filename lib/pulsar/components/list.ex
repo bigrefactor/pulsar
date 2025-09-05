@@ -12,7 +12,7 @@ defmodule Pulsar.Components.List do
   - **Multiple Variants**: solid, outline, and ghost for different visual emphasis
   - **Full Color Palette**: All semantic colors with automatic dark mode support
   - **Multiple Sizes**: xs, sm, md, lg, xl matching other Pulsar components
-  - **Visual Options**: striped rows, dividers, and spacing controls
+  - **Visual Options**: striped rows, dividers (on by default), and spacing controls
   - **Flexible Layout**: Default horizontal (2-column) layout, customizable with Tailwind classes
   - **Empty State**: Customizable empty state with default fallback
 
@@ -55,8 +55,8 @@ defmodule Pulsar.Components.List do
         <:item title="Location">New York</:item>
       </.list>
 
-      # With visual features
-      <.list striped={true} dividers={true} variant="outline">
+      # With visual features (striping enabled, dividers are on by default)
+      <.list striped={true} variant="outline">
         <:item title="Created">2024-01-15</:item>
         <:item title="Modified">2024-03-20</:item>
         <:item title="Author">System Admin</:item>
@@ -261,7 +261,7 @@ defmodule Pulsar.Components.List do
     doc: "Enable zebra striping for rows"
 
   attr :dividers, :boolean,
-    default: false,
+    default: true,
     doc: "Show dividers between items"
 
   attr :class, :string,
