@@ -368,7 +368,7 @@ defmodule Pulsar.Components.List do
     merge([
       @item_base_classes,
       item_spacing,
-      "flex-row items-start"
+      "sm:grid sm:grid-cols-3 sm:gap-4"
     ])
   end
 
@@ -398,12 +398,14 @@ defmodule Pulsar.Components.List do
     color_config = get_in(@color_config, [variant, color])
     color_classes = Map.get(color_config, :title, "")
 
-    merge([base_title, color_classes, "flex-shrink-0 min-w-0 mr-4"])
+    merge([base_title, color_classes])
   end
 
   defp content_classes(size) do
     size_config = Map.get(@size_config, size)
-    Map.get(size_config, :content)
+    base_content = Map.get(size_config, :content)
+
+    merge([base_content, "mt-1 sm:col-span-2 sm:mt-0"])
   end
 
   defp empty_classes(size) do
