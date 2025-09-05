@@ -196,7 +196,7 @@ defmodule Pulsar.Components.Link do
 
     provided_props =
       nav_props
-      |> Enum.filter(fn {value, _key} -> is_binary(value) end)
+      |> Enum.filter(fn {value, _key} -> value end)
       |> Enum.map(fn {_value, key} -> key end)
 
     if length(provided_props) > 1 do
