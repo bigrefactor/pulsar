@@ -82,6 +82,37 @@ defmodule Pulsar.Components.Label do
 
   alias Phoenix.LiveView.Rendered
 
+  # ============================================================================
+  # CONFIGURATION & CONSTANTS
+  # ============================================================================
+
+  # Size configuration for label typography and required indicator margins
+  @size_config %{
+    "lg" => %{
+      margin: "ml-1",
+      text: "text-lg"
+    },
+    "md" => %{
+      margin: "ml-1",
+      text: "text-base"
+    },
+    "sm" => %{
+      margin: "ml-0.5",
+      text: "text-sm"
+    },
+    "xl" => %{
+      margin: "ml-1",
+      text: "text-xl"
+    },
+    "xs" => %{
+      margin: "ml-0.5",
+      text: "text-xs"
+    }
+  }
+
+  # Base label styling classes
+  @label_base_classes "font-medium transition-colors duration-200 cursor-pointer"
+
   @doc """
   Renders a styled label component with typography variants and visual indicators.
   """
@@ -114,7 +145,7 @@ defmodule Pulsar.Components.Label do
       class={
         merge([
           base_label_classes(),
-          size_classes(@size),
+          size_text_classes(@size),
           color_classes(@error),
           @class
         ])
@@ -131,19 +162,24 @@ defmodule Pulsar.Components.Label do
     """
   end
 
+  # ============================================================================
+  # LABEL COMPONENT HELPERS
+  # ============================================================================
+
   # Base classes for all labels
+  @spec base_label_classes() :: String.t()
   defp base_label_classes do
-    "font-medium transition-colors duration-200 cursor-pointer"
+    @label_base_classes
   end
 
   # Size-based typography classes
-  defp size_classes("xs"), do: "text-xs"
-  defp size_classes("sm"), do: "text-sm"
-  defp size_classes("md"), do: "text-base"
-  defp size_classes("lg"), do: "text-lg"
-  defp size_classes("xl"), do: "text-xl"
+  @spec size_text_classes(String.t()) :: String.t()
+  defp size_text_classes(size) do
+    @size_config[size][:text]
+  end
 
-  # Color classes based on state
+  # Color classes based on error state
+  @spec color_classes(boolean()) :: String.t()
   defp color_classes(true) do
     "text-danger dark:text-dark-danger"
   end
@@ -153,15 +189,18 @@ defmodule Pulsar.Components.Label do
   end
 
   # Required indicator classes with size-appropriate spacing and ARIA hidden
+  @spec required_indicator_classes(String.t()) :: String.t()
   defp required_indicator_classes(size) do
     merge([
       "text-danger dark:text-dark-danger",
-      indicator_margin(size),
-      size_classes(size)
+      indicator_margin_classes(size),
+      size_text_classes(size)
     ])
   end
 
   # Size-appropriate margin for required indicator
-  defp indicator_margin(size) when size in ["xs", "sm"], do: "ml-0.5"
-  defp indicator_margin(_), do: "ml-1"
+  @spec indicator_margin_classes(String.t()) :: String.t()
+  defp indicator_margin_classes(size) do
+    @size_config[size][:margin]
+  end
 end
