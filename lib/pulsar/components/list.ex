@@ -13,7 +13,7 @@ defmodule Pulsar.Components.List do
   - **Full Color Palette**: All semantic colors with automatic dark mode support
   - **Multiple Sizes**: xs, sm, md, lg, xl matching other Pulsar components
   - **Visual Options**: striped rows, dividers, and spacing controls
-  - **Flexible Layout**: Apply any Tailwind classes for custom layouts
+  - **Flexible Layout**: Default horizontal (2-column) layout, customizable with Tailwind classes
   - **Empty State**: Customizable empty state with default fallback
 
   ## Examples
@@ -34,14 +34,19 @@ defmodule Pulsar.Components.List do
         </:item>
       </.list>
 
-      # Custom layouts with Tailwind classes
-      # Horizontal cards
-      <.list class="flex flex-row flex-wrap gap-4" size="md">
-        <:item title="Orders">1,234</:item>
-        <:item title="Revenue">$45,678</:item>
-        <:item title="Customers">890</:item>
+      # Vertical stacked items (override default horizontal layout)
+      <.list class="[&_.dl-item]:flex-col">
+        <:item title="Description">
+          This is a longer description that works better
+          when stacked vertically below the title.
+        </:item>
+        <:item title="Notes">
+          Additional notes and commentary that span
+          multiple lines work well in this layout.
+        </:item>
       </.list>
 
+      # Custom container layouts with Tailwind classes
       # Grid layout (responsive 2-column)
       <.list class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <:item title="First Name">Jane</:item>
@@ -363,7 +368,7 @@ defmodule Pulsar.Components.List do
     merge([
       @item_base_classes,
       item_spacing,
-      "flex-col"
+      "flex-row justify-between items-start"
     ])
   end
 
