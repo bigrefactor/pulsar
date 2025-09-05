@@ -200,7 +200,7 @@ defmodule Pulsar.Components.ListTest do
         """)
 
       assert html =~ ~s(text-xs)
-      assert html =~ ~s(py-1 px-2)
+      assert html =~ ~s(py-3 px-2)
       assert html =~ ~s(gap-2)
     end
 
@@ -215,7 +215,7 @@ defmodule Pulsar.Components.ListTest do
         """)
 
       assert html =~ ~s(text-sm)
-      assert html =~ ~s(py-1.5 px-3)
+      assert html =~ ~s(py-4 px-3)
       assert html =~ ~s(gap-3)
     end
 
@@ -230,7 +230,7 @@ defmodule Pulsar.Components.ListTest do
         """)
 
       assert html =~ ~s(text-base)
-      assert html =~ ~s(py-2 px-4)
+      assert html =~ ~s(py-6 px-4)
       assert html =~ ~s(gap-4)
     end
 
@@ -245,8 +245,8 @@ defmodule Pulsar.Components.ListTest do
         """)
 
       assert html =~ ~s(text-lg)
-      assert html =~ ~s(py-3 px-5)
-      assert html =~ ~s(gap-5)
+      assert html =~ ~s(py-8 px-6)
+      assert html =~ ~s(gap-6)
       assert html =~ ~s(font-semibold)
     end
 
@@ -261,8 +261,8 @@ defmodule Pulsar.Components.ListTest do
         """)
 
       assert html =~ ~s(text-xl)
-      assert html =~ ~s(py-4 px-6)
-      assert html =~ ~s(gap-6)
+      assert html =~ ~s(py-10 px-8)
+      assert html =~ ~s(gap-8)
       assert html =~ ~s(font-semibold)
     end
   end
@@ -372,7 +372,7 @@ defmodule Pulsar.Components.ListTest do
 
       # Check size
       assert html =~ ~s(text-lg)
-      assert html =~ ~s(py-3 px-5)
+      assert html =~ ~s(py-8 px-6)
 
       # Check features
       # striped

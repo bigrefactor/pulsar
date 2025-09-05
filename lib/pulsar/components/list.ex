@@ -86,31 +86,31 @@ defmodule Pulsar.Components.List do
     "lg" => %{
       container: "text-lg",
       content: "text-lg",
-      item: "py-3 px-5 gap-5",
+      item: "py-8 px-6 gap-6",
       title: "font-semibold text-lg"
     },
     "md" => %{
       container: "text-base",
       content: "text-base",
-      item: "py-2 px-4 gap-4",
+      item: "py-6 px-4 gap-4",
       title: "font-medium text-base"
     },
     "sm" => %{
       container: "text-sm",
       content: "text-sm",
-      item: "py-1.5 px-3 gap-3",
+      item: "py-4 px-3 gap-3",
       title: "font-medium text-sm"
     },
     "xl" => %{
       container: "text-xl",
       content: "text-xl",
-      item: "py-4 px-6 gap-6",
+      item: "py-10 px-8 gap-8",
       title: "font-semibold text-xl"
     },
     "xs" => %{
       container: "text-xs",
       content: "text-xs",
-      item: "py-1 px-2 gap-2",
+      item: "py-3 px-2 gap-2",
       title: "font-medium text-xs"
     }
   }
