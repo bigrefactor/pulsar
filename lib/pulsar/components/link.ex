@@ -116,8 +116,8 @@ defmodule Pulsar.Components.Link do
         patch={@patch}
         replace={@replace}
         method={@method}
-        target={assigns[:target]}
-        rel={assigns[:rel]}
+        target={@target}
+        rel={@rel}
         id={@id}
         class={@merged_classes}
         aria-label={@aria_label}
@@ -125,7 +125,7 @@ defmodule Pulsar.Components.Link do
         aria-current={@aria_current}
         data-external={(@external && "true") || nil}
         data-current={@aria_current}
-        data-target={assigns[:target]}
+        data-target={@target}
         {@rest}
       >
         <.render_icon_slot slot={@start_icon} position="start" />
@@ -287,7 +287,7 @@ defmodule Pulsar.Components.Link do
   defp apply_external_security(assigns, true, scheme) do
     assigns =
       case scheme do
-        scheme when scheme in ["http", "https"] ->
+        scheme when scheme in ["http", "https", "ftp"] ->
           if assigns[:target] || assigns[:method], do: assigns, else: assign(assigns, :target, "_blank")
 
         _ ->
