@@ -184,13 +184,9 @@ defmodule Pulsar.Components.Link do
     |> build_classes()
   end
 
-  # Public helper functions for other components that need navigation functionality
+  # Private helper functions
 
-  @doc """
-  Ensures only one navigation prop is provided.
-  Used by Button component for validation.
-  """
-  def ensure_nav_exclusive!(assigns) do
+  defp ensure_nav_exclusive!(assigns) do
     nav_props = [
       {assigns[:href], :href},
       {assigns[:navigate], :navigate},
@@ -212,11 +208,7 @@ defmodule Pulsar.Components.Link do
     assigns
   end
 
-  @doc """
-  Ensures method is only used with appropriate href values.
-  Used by Button component for validation.
-  """
-  def ensure_method_compatibility!(assigns, scheme) do
+  defp ensure_method_compatibility!(assigns, scheme) do
     if is_binary(assigns[:method]) and (is_binary(assigns[:navigate]) or is_binary(assigns[:patch])) do
       raise ArgumentError,
             ":method cannot be used with :navigate or :patch. Use :method only with :href for form submissions."
@@ -242,8 +234,6 @@ defmodule Pulsar.Components.Link do
 
     assigns
   end
-
-  # Private helper functions
 
   defp should_use_raw_anchor?(href) when is_binary(href) do
     case URI.parse(href) do
