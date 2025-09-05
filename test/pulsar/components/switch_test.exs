@@ -123,7 +123,7 @@ defmodule Pulsar.Components.SwitchTest do
       # thumb size
       assert html =~ "h-2.5 w-2.5"
       # thumb translation
-      assert html =~ "peer-checked:translate-x-[15px]"
+      assert html =~ "peer-checked:translate-x-[14px]"
     end
 
     test "applies md size classes (default)" do
@@ -147,7 +147,7 @@ defmodule Pulsar.Components.SwitchTest do
       # thumb size (custom)
       assert html =~ "h-[22px] w-[22px]"
       # thumb translation
-      assert html =~ "peer-checked:translate-x-[35px]"
+      assert html =~ "peer-checked:translate-x-[36px]"
     end
   end
 
