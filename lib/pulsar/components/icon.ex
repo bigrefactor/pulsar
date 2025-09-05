@@ -63,6 +63,31 @@ defmodule Pulsar.Components.Icon do
 
   import TailwindMerge, only: [merge: 1]
 
+  # ============================================================================
+  # CONFIGURATION & CONSTANTS
+  # ============================================================================
+
+  # Size configuration for icon component
+  @size_config %{
+    "lg" => "w-6 h-6",
+    "md" => "w-5 h-5",
+    "sm" => "w-4 h-4",
+    "xl" => "w-8 h-8",
+    "xs" => "w-3 h-3"
+  }
+
+  # Color configuration for icon component
+  @color_config %{
+    "current" => "text-current",
+    "danger" => "text-danger dark:text-dark-danger",
+    "info" => "text-info dark:text-dark-info",
+    "neutral" => "text-neutral dark:text-dark-neutral",
+    "primary" => "text-primary dark:text-dark-primary",
+    "secondary" => "text-secondary dark:text-dark-secondary",
+    "success" => "text-success dark:text-dark-success",
+    "warning" => "text-warning dark:text-dark-warning"
+  }
+
   attr :name, :string,
     required: true,
     doc: "Heroicon name (e.g., 'hero-check', 'hero-x-mark')"
@@ -113,6 +138,10 @@ defmodule Pulsar.Components.Icon do
     """
   end
 
+  # ============================================================================
+  # ICON HELPER FUNCTIONS
+  # ============================================================================
+
   # Build the Heroicon CSS class name based on icon name and variant
   defp build_heroicon_class(name, variant) do
     case {name, variant} do
@@ -125,22 +154,21 @@ defmodule Pulsar.Components.Icon do
     end
   end
 
-  # Size classes - scales any variant
-  defp get_size_classes("xs"), do: "w-3 h-3"
-  defp get_size_classes("sm"), do: "w-4 h-4"
-  defp get_size_classes("md"), do: "w-5 h-5"
-  defp get_size_classes("lg"), do: "w-6 h-6"
-  defp get_size_classes("xl"), do: "w-8 h-8"
+  # Get size classes from configuration map
+  @spec get_size_classes(String.t()) :: String.t()
+  defp get_size_classes(size) do
+    @size_config[size]
+  end
 
-  # Color classes using semantic tokens with dark mode support
-  defp get_color_classes("current"), do: "text-current"
-  defp get_color_classes("neutral"), do: "text-neutral dark:text-dark-neutral"
-  defp get_color_classes("primary"), do: "text-primary dark:text-dark-primary"
-  defp get_color_classes("secondary"), do: "text-secondary dark:text-dark-secondary"
-  defp get_color_classes("success"), do: "text-success dark:text-dark-success"
-  defp get_color_classes("danger"), do: "text-danger dark:text-dark-danger"
-  defp get_color_classes("warning"), do: "text-warning dark:text-dark-warning"
-  defp get_color_classes("info"), do: "text-info dark:text-dark-info"
+  # Get color classes from configuration map
+  @spec get_color_classes(String.t()) :: String.t()
+  defp get_color_classes(color) do
+    @color_config[color]
+  end
+
+  # ============================================================================
+  # ASSIGNMENT HELPERS
+  # ============================================================================
 
   # Assign CSS classes with TailwindMerge
   defp assign_classes(assigns) do
