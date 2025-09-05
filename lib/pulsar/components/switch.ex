@@ -232,7 +232,7 @@ defmodule Pulsar.Components.Switch do
   # Base switch track classes
   @switch_base_classes [
     "peer relative inline-flex rounded-full cursor-pointer",
-    "transition-all duration-300 ease-in-out",
+    "transition-all duration-200 ease-in-out",
     "transform-gpu",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
     "focus-visible:ring-ring dark:focus-visible:ring-dark-ring",
@@ -246,14 +246,13 @@ defmodule Pulsar.Components.Switch do
   # Base thumb classes
   @thumb_base_classes [
     "absolute rounded-full",
-    "transition-all duration-300 ease-in-out",
+    "transition-all duration-200 ease-in-out",
     "transform-gpu",
     "flex items-center justify-center pointer-events-none",
     "data-[loading=true]:bg-background data-[loading=true]:dark:bg-dark-background",
     "peer-hover:scale-105",
     "peer-active:scale-95",
-    "peer-focus-visible:scale-110",
-    "peer-checked:rotate-180"
+    "peer-focus-visible:scale-110"
   ]
 
   # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
