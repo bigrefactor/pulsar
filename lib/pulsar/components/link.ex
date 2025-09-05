@@ -218,7 +218,7 @@ defmodule Pulsar.Components.Link do
     assigns =
       case URI.parse(assigns.href || "") do
         %URI{scheme: scheme} when scheme in ["http", "https"] ->
-          if assigns[:target], do: assigns, else: assign(assigns, :target, "_blank")
+          if assigns[:target] || assigns[:method], do: assigns, else: assign(assigns, :target, "_blank")
 
         _ ->
           assigns
