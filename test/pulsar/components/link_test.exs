@@ -395,7 +395,7 @@ defmodule Pulsar.Components.LinkTest do
         <Link.a method="post">No Href</Link.a>
         """)
 
-      # When href is nil, Phoenix's link component converts it to href="#" 
+      # When href is nil, Phoenix's link component converts it to href="#"
       # Phoenix link may not render method attribute for invalid hrefs like "#"
       # The important thing is that it doesn't raise an error during validation
       assert html =~ "No Href"
