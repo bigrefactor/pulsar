@@ -373,31 +373,29 @@ defmodule Pulsar.Components.Checkbox do
   # Default checkbox variant
   defp render_default_checkbox(assigns) do
     ~H"""
-    <div>
-      <input
-        :if={@render_hidden}
-        type="hidden"
-        name={@name}
-        value={@unchecked_value}
-      />
-      <input
-        type="checkbox"
-        id={@id}
-        name={@name}
-        value={@value}
-        checked={@checked}
-        data-checked={@checked && "true"}
-        data-indeterminate={@indeterminate && "true"}
-        data-disabled={@disabled && "true"}
-        data-required={@required && "true"}
-        class={@input_class}
-        required={@required}
-        disabled={@disabled}
-        aria-invalid={@invalid && "true"}
-        aria-checked={@indeterminate && "mixed"}
-        {@rest}
-      />
-    </div>
+    <input
+      :if={@render_hidden}
+      type="hidden"
+      name={@name}
+      value={@unchecked_value}
+    />
+    <input
+      type="checkbox"
+      id={@id}
+      name={@name}
+      value={@value}
+      checked={@checked}
+      data-checked={@checked && "true"}
+      data-indeterminate={@indeterminate && "true"}
+      data-disabled={@disabled && "true"}
+      data-required={@required && "true"}
+      class={@input_class}
+      required={@required}
+      disabled={@disabled}
+      aria-invalid={@invalid && "true"}
+      aria-checked={@indeterminate && "mixed"}
+      {@rest}
+    />
     """
   end
 

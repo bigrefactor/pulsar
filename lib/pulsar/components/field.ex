@@ -93,7 +93,7 @@ defmodule Pulsar.Components.Field do
 
   All input types support the full range of styling attributes including `variant`, `color`, and `size`:
 
-  - **Text Inputs**: text, email, password, number, tel, url, search, date, time, datetime-local (via Pulsar.Components.Input)
+  - **Text Inputs**: text, email, password, number, tel, url, search, date, time, datetime-local, file, range (via Pulsar.Components.Input)
   - **Select**: Renders Pulsar.Components.Select with dropdown options
   - **Textarea**: Renders Pulsar.Components.Textarea for multi-line text
   - **Checkbox**: Renders Pulsar.Components.Checkbox with optional card styling
@@ -158,6 +158,26 @@ defmodule Pulsar.Components.Field do
     "warning" => "text-warning-600 dark:text-warning-400"
   }
 
+  # Inline label color configuration for checkbox/switch labels
+  @inline_label_colors %{
+    "danger" => "text-danger-900 dark:text-danger-100",
+    "info" => "text-info-900 dark:text-info-100",
+    "neutral" => "text-gray-900 dark:text-gray-100",
+    "primary" => "text-primary-900 dark:text-primary-100",
+    "secondary" => "text-secondary-900 dark:text-secondary-100",
+    "success" => "text-success-900 dark:text-success-100",
+    "warning" => "text-warning-900 dark:text-warning-100"
+  }
+
+  # Inline label size configuration
+  @inline_label_sizes %{
+    "lg" => "text-base",
+    "md" => "text-sm",
+    "sm" => "text-sm",
+    "xl" => "text-lg",
+    "xs" => "text-xs"
+  }
+
   # Error message styling - always uses danger color
   @error_message_classes "text-sm text-danger-600 dark:text-danger-400 flex items-center gap-1"
 
@@ -166,6 +186,9 @@ defmodule Pulsar.Components.Field do
 
   # Label section wrapper classes
   @label_section_classes "flex flex-col gap-1"
+
+  # Inline label base classes for checkbox/switch
+  @inline_label_base_classes "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 
   # ============================================================================
   # MAIN FIELD COMPONENT
@@ -181,7 +204,7 @@ defmodule Pulsar.Components.Field do
 
   attr(:type, :string,
     default: "text",
-    values: ~w(text email password number tel url search date time datetime-local month week color
+    values: ~w(text email password number tel url search date time datetime-local month week color file range
                select textarea checkbox radio switch),
     doc: "Input type - determines which component to render"
   )
@@ -283,7 +306,7 @@ defmodule Pulsar.Components.Field do
       {render_input(assigns)}
       
     <!-- Error Section -->
-      <div :if={@has_errors} class="flex flex-col gap-1">
+      <div :if={@has_errors} class="flex flex-col gap-1" aria-live="polite">
         <p
           :for={{error, index} <- Enum.with_index(@field_errors)}
           id={Enum.at(@error_ids, index)}
@@ -347,41 +370,61 @@ defmodule Pulsar.Components.Field do
 
   defp render_input(%{type: "checkbox"} = assigns) do
     ~H"""
-    <Checkbox.checkbox
-      field={@field}
-      id={@field_id}
-      name={@field_name}
-      value={@field_value}
-      checked={@checked}
-      variant={@variant}
-      color={@color}
-      size={@size}
-      required={@required}
-      disabled={@disabled}
-      invalid={@has_errors}
-      aria-describedby={@aria_describedby}
-      {@rest}
-    />
+    <label for={@field_id} class="inline-flex items-center gap-2 cursor-pointer">
+      <Checkbox.checkbox
+        field={@field}
+        id={@field_id}
+        name={@field_name}
+        value={@field_value}
+        checked={@checked}
+        variant={@variant}
+        color={@color}
+        size={@size}
+        required={@required}
+        disabled={@disabled}
+        invalid={@has_errors}
+        aria-describedby={@aria_describedby}
+        {@rest}
+      />
+      <span class={get_inline_label_classes(@size, @has_errors, @color, get_label_class(@label))}>
+        <%= if @label != [] do %>
+          {render_slot(@label)}
+        <% else %>
+          {@generated_label}
+        <% end %>
+      </span>
+    </label>
     """
   end
 
   defp render_input(%{type: "switch"} = assigns) do
     ~H"""
-    <Switch.switch
-      field={@field}
-      id={@field_id}
-      name={@field_name}
-      value={@field_value}
-      checked={@checked}
-      variant={@variant}
-      color={@color}
-      size={@size}
-      required={@required}
-      disabled={@disabled}
-      invalid={@has_errors}
-      aria-describedby={@aria_describedby}
-      {@rest}
-    />
+    <label for={@field_id} class="inline-flex items-center gap-2 cursor-pointer">
+      <div class="flex items-center">
+        <Switch.switch
+          field={@field}
+          id={@field_id}
+          name={@field_name}
+          value={@field_value}
+          checked={@checked}
+          variant={@variant}
+          color={@color}
+          size={@size}
+          required={@required}
+          disabled={@disabled}
+          invalid={@has_errors}
+          aria-describedby={@aria_describedby}
+          {@rest}
+        />
+      </div>
+      <span class={get_inline_label_classes(@size, @has_errors, @color, get_label_class(@label))}>
+        <%= if @label != [] do %>
+          {render_slot(@label)}
+        <% else %>
+          {@generated_label}
+        <% end %>
+      </span>
+    </label>
     """
   end
 
@@ -540,10 +583,10 @@ defmodule Pulsar.Components.Field do
     |> assign(:has_errors, not Enum.empty?(field_errors))
   end
 
-  # Determines if label should be displayed based on type
-  defp has_label?(label_slot, type) do
-    # Always show label for most types, but checkbox/switch can be inline
-    label_slot != [] or type not in ~w(checkbox switch)
+  # Determines if label should be displayed separately (above input) based on type
+  defp has_label?(_label_slot, type) do
+    # Show separate label for most types, but not for checkbox/switch which use inline labels
+    type not in ~w(checkbox switch)
   end
 
   # Gets label size from slot attribute or falls back to field size
@@ -576,6 +619,20 @@ defmodule Pulsar.Components.Field do
     color_class = @description_colors[effective_color] || @description_colors["neutral"]
 
     "text-sm #{color_class}"
+  end
+
+  # Gets inline label classes for checkbox/switch labels
+  defp get_inline_label_classes(size, has_errors, color, custom_class) do
+    size_class = @inline_label_sizes[size] || @inline_label_sizes["md"]
+    effective_color = if has_errors, do: "danger", else: color
+    color_class = @inline_label_colors[effective_color] || @inline_label_colors["neutral"]
+
+    merge([
+      @inline_label_base_classes,
+      size_class,
+      color_class,
+      custom_class
+    ])
   end
 
   # Simple error translation - in real apps this would use Gettext

@@ -156,6 +156,19 @@ defmodule Pulsar.Components.FieldTest do
       assert html =~ "hero-exclamation-circle"
     end
 
+    test "error container has aria-live attribute for screen readers" do
+      field = create_field(:email, "", [{"is required", []}])
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="email" />
+        """)
+
+      # Should have aria-live="polite" on error container
+      assert html =~ ~s(aria-live="polite")
+    end
+
     test "passes error state to label" do
       field = create_field(:email, "", [{"is required", []}])
       assigns = %{field: field}
@@ -280,6 +293,35 @@ defmodule Pulsar.Components.FieldTest do
       # Exact assertion depends on RadioGroup component implementation
       assert html =~ "Basic"
       assert html =~ "Pro"
+    end
+
+    test "renders file input field" do
+      field = create_field(:avatar)
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="file" accept="image/*" />
+        """)
+
+      assert html =~ ~s(type="file")
+      assert html =~ ~s(accept="image/*")
+    end
+
+    test "renders range input field" do
+      field = create_field(:volume, 50)
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="range" min="0" max="100" step="10" />
+        """)
+
+      assert html =~ ~s(type="range")
+      assert html =~ ~s(min="0")
+      assert html =~ ~s(max="100")
+      assert html =~ ~s(step="10")
+      assert html =~ ~s(value="50")
     end
   end
 
@@ -421,6 +463,110 @@ defmodule Pulsar.Components.FieldTest do
       # Should render description with custom class
       assert html =~ "Tell us about yourself"
       assert html =~ "italic text-blue-600"
+    end
+  end
+
+  describe "inline labels for checkbox and switch" do
+    test "checkbox field renders with inline label" do
+      field = create_field(:terms, false)
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="checkbox">
+          <:label>I agree to the terms</:label>
+        </Field.field>
+        """)
+
+      # Should wrap checkbox and label in a single label element
+      assert html =~ ~s(<label for="user_terms")
+      assert html =~ "I agree to the terms"
+      # Should have inline-flex layout
+      assert html =~ "inline-flex items-center gap-2"
+      # Should NOT render separate Label component above
+      refute html =~ ~s(<div class="flex flex-col gap-1">)
+    end
+
+    test "checkbox field with auto-generated inline label" do
+      field = create_field(:terms_accepted, false)
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="checkbox" />
+        """)
+
+      # Should have auto-generated label inline
+      assert html =~ "Terms accepted"
+      assert html =~ ~s(<label for="user_terms_accepted")
+      assert html =~ "inline-flex items-center gap-2"
+    end
+
+    test "switch field renders with inline label" do
+      field = create_field(:notifications, false)
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="switch">
+          <:label>Enable notifications</:label>
+        </Field.field>
+        """)
+
+      # Should wrap switch and label in a single label element
+      assert html =~ ~s(<label for="user_notifications")
+      assert html =~ "Enable notifications"
+      # Should have inline-flex layout
+      assert html =~ "inline-flex items-center gap-2"
+      # Should NOT render separate Label component above
+      refute html =~ ~s(<div class="flex flex-col gap-1">)
+    end
+
+    test "switch field with auto-generated inline label" do
+      field = create_field(:dark_mode, false)
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="switch" />
+        """)
+
+      # Should have auto-generated label inline
+      assert html =~ "Dark mode"
+      assert html =~ ~s(<label for="user_dark_mode")
+      assert html =~ "inline-flex items-center gap-2"
+    end
+
+    test "inline labels inherit error styling" do
+      field = create_field(:terms, false, [{"must be accepted", []}])
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="checkbox">
+          <:label>I agree to the terms</:label>
+        </Field.field>
+        """)
+
+      # Inline label should have error color classes
+      assert html =~ "text-danger-900 dark:text-danger-100"
+    end
+
+    test "inline labels support custom classes from label slot" do
+      field = create_field(:premium, false)
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="checkbox">
+          <:label class="font-bold text-blue-600">Upgrade to Premium</:label>
+        </Field.field>
+        """)
+
+      # Should include custom classes and base classes (where not conflicting)
+      assert html =~ "font-bold text-blue-600"
+      assert html =~ "leading-none"
+      assert html =~ "peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
     end
   end
 
