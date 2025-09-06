@@ -14,7 +14,7 @@ defmodule Pulsar do
 
       # In your component module
       import Pulsar.Components.Button
-      import Pulsar.Components.Card
+      import Pulsar.Components.Header
       # ... or use the convenience macro
       use PulsarWeb, :components
 
@@ -43,13 +43,18 @@ defmodule Pulsar do
 
   ## Components
 
-  All components support the full Stellar API plus additional styling props:
+  All components support semantic styling with variants, colors, and sizes:
 
-  - `Button` - Various styles and states
-  - `Card` - Content containers
-  - `Alert` - Notification messages
-  - `Badge` - Status indicators
-  - More coming soon...
+  - `Button` - Interactive buttons with multiple variants and states
+  - `Header` - Page headers with titles, subtitles, breadcrumbs, and actions
+  - `Badge` - Status indicators and labels with addons
+  - `Input` - Text inputs with decorators and validation
+  - `Select` - Dropdown selects with multi-select badge display
+  - `Checkbox` - Checkboxes with card variants and form integration
+  - `Switch` - Toggle switches with proper ARIA semantics
+  - `Link` - Secure navigation links with XSS protection
+  - `Icon` - Heroicons with flexible sizing and semantic colors
+  - More components available...
 
   ## Theme Customization
 
