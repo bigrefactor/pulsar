@@ -556,4 +556,43 @@ defmodule Pulsar.Components.HeaderTest do
       assert html =~ "dark:bg-dark-background"
     end
   end
+
+  describe "divider behavior" do
+    test "divider shows with ghost and solid variants" do
+      assigns = %{}
+
+      ghost_html =
+        rendered_to_string(~H"""
+        <Header.header variant="ghost" divider={true}>
+          Title
+        </Header.header>
+        """)
+
+      solid_html =
+        rendered_to_string(~H"""
+        <Header.header variant="solid" divider={true}>
+          Title
+        </Header.header>
+        """)
+
+      assert ghost_html =~ "<hr"
+      assert solid_html =~ "<hr"
+    end
+
+    test "divider does not show with outline variant to avoid double border" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Header.header variant="outline" divider={true}>
+          Title
+        </Header.header>
+        """)
+
+      # Outline variant already has border-b, so no hr should render
+      refute html =~ "<hr"
+      # But should still have the outline border
+      assert html =~ "border-b"
+    end
+  end
 end

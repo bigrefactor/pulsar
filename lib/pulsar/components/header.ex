@@ -338,7 +338,7 @@ defmodule Pulsar.Components.Header do
         </div>
       </div>
 
-      <hr :if={@divider} class="border-neutral-200 dark:border-dark-neutral-700" />
+      <hr :if={@divider && @variant != "outline"} class="border-neutral-200 dark:border-dark-neutral-700" />
     </header>
     """
   end
