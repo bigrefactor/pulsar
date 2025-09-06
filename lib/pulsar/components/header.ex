@@ -117,6 +117,7 @@ defmodule Pulsar.Components.Header do
   import Pulsar.Components.Icon, only: [icon: 1]
   import TailwindMerge, only: [merge: 1]
 
+  alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Link
 
   # ============================================================================
@@ -149,7 +150,6 @@ defmodule Pulsar.Components.Header do
 
   # Base header styling classes
   @header_base_classes [
-    "header-component",
     "flex flex-col gap-4"
   ]
 
@@ -239,8 +239,8 @@ defmodule Pulsar.Components.Header do
     doc: "Optional actions like buttons or links, aligned to the right on desktop"
 
   slot :breadcrumb, doc: "Breadcrumb navigation items with automatic chevron separators" do
-    attr :navigate, :string, doc: "Phoenix LiveView navigation path"
-    attr :patch, :string, doc: "Phoenix LiveView patch path"
+    attr :navigate, :any, doc: "Phoenix LiveView navigation path"
+    attr :patch, :any, doc: "Phoenix LiveView patch path"
     attr :href, :string, doc: "Direct href for external links"
   end
 
@@ -251,6 +251,7 @@ defmodule Pulsar.Components.Header do
   @doc """
   Renders a page header with title, optional subtitle, actions, and breadcrumb navigation.
   """
+  @spec header(map()) :: Rendered.t()
   def header(assigns) do
     validate_breadcrumbs!(assigns.breadcrumb)
 
@@ -260,8 +261,8 @@ defmodule Pulsar.Components.Header do
       |> assign(:merged_classes, build_header_classes(assigns))
 
     ~H"""
-    <header class={@merged_classes} {@rest}>
-      <nav :if={length(@breadcrumb) > 0} aria-label="Breadcrumb" class="breadcrumb-nav">
+    <header class={@merged_classes} data-component="header" {@rest}>
+      <nav :if={length(@breadcrumb) > 0} aria-label="Breadcrumb" data-role="breadcrumb">
         <ol class="flex items-center flex-wrap gap-1 text-sm text-neutral-500 dark:text-dark-neutral-400">
           <li :for={{breadcrumb, index} <- Enum.with_index(@breadcrumb)} class="flex items-center">
             <.icon
@@ -320,8 +321,8 @@ defmodule Pulsar.Components.Header do
         </ol>
       </nav>
 
-      <div class="header-content flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-        <div class="title-section flex-1 min-w-0">
+      <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4" data-role="content">
+        <div class="flex-1 min-w-0" data-role="title">
           <.dynamic_tag tag_name={@as} class={@size_classes.title}>
             {render_slot(@inner_block)}
           </.dynamic_tag>
@@ -330,7 +331,7 @@ defmodule Pulsar.Components.Header do
           </div>
         </div>
 
-        <div :if={length(@actions) > 0} class="actions flex-shrink-0">
+        <div :if={length(@actions) > 0} class="flex-shrink-0" data-role="actions">
           <div class="flex items-center gap-3">
             {render_slot(@actions)}
           </div>

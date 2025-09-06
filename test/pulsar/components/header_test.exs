@@ -19,7 +19,7 @@ defmodule Pulsar.Components.HeaderTest do
       assert html =~ "Simple Title"
       assert html =~ ~s(<h1)
       # Default variant (ghost) with default color (neutral) - should have minimal styling
-      assert html =~ "header-component"
+      assert html =~ ~s(data-component="header")
       # Default size (md)
       assert html =~ "text-2xl"
       assert html =~ "font-semibold"
@@ -454,7 +454,7 @@ defmodule Pulsar.Components.HeaderTest do
         <Header.header>Title</Header.header>
         """)
 
-      assert html =~ "title-section"
+      assert html =~ ~s(data-role="title")
       assert html =~ "flex-1"
       # Prevents text overflow
       assert html =~ "min-w-0"
