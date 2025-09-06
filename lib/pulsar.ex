@@ -51,10 +51,11 @@ defmodule Pulsar do
   - `Input` - Text inputs with decorators and validation
   - `Select` - Dropdown selects with multi-select badge display
   - `Checkbox` - Checkboxes with card variants and form integration
-  - `Switch` - Toggle switches with proper ARIA semantics
-  - `Link` - Secure navigation links with XSS protection
-  - `Icon` - Heroicons with flexible sizing and semantic colors
-  - More components available...
+   - `Switch` - Toggle switches with proper ARIA semantics
+   - `Link` - Secure navigation links with XSS protection
+   - `Icon` - Heroicons with flexible sizing and semantic colors
+   - `Table` - Data tables with LiveStream support, sorting, and actions
+   - More components available...
 
   ## Theme Customization
 
