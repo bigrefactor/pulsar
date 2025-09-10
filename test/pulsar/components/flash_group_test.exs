@@ -1,0 +1,555 @@
+defmodule Pulsar.Components.FlashGroupTest do
+  use ExUnit.Case
+
+  import Phoenix.Component
+  import Phoenix.LiveViewTest
+
+  alias Pulsar.Components.FlashGroup
+
+  describe "flash_group/1 basic functionality" do
+    test "renders empty when no flash messages" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{}} />
+        """)
+
+      # Should not render container when no messages
+      refute html =~ ~s(<div)
+    end
+
+    test "renders container with flash messages" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{info: "Test message"}} />
+        """)
+
+      assert html =~ ~s(<div)
+      assert html =~ "Test message"
+      # Default position (top-right)
+      assert html =~ "top-4"
+      assert html =~ "right-4"
+      # Should render Flash component
+      assert html =~ ~s(id="flash-")
+    end
+
+    test "renders multiple flash messages" do
+      assigns = %{}
+
+      flash = %{
+        error: "Error message",
+        info: "Info message",
+        success: "Success message"
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={flash} />
+        """)
+
+      assert html =~ "Info message"
+      assert html =~ "Error message"
+      assert html =~ "Success message"
+
+      # Debug: print the HTML to understand the output
+      # Should have multiple flash components
+      matches = Regex.scan(~r/id=\"flash-[^\"]+\"/, html)
+      flash_count = length(matches)
+      assert flash_count == 3
+    end
+
+    test "applies variant to all flashes" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group
+          flash={%{info: "Message", error: "Error"}}
+          variant="outline"
+        />
+        """)
+
+      # Both flashes should use outline variant
+      assert html =~ "border-info"
+      assert html =~ "border-danger"
+    end
+
+    test "applies size to all flashes" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group
+          flash={%{info: "Message"}}
+          size="lg"
+        />
+        """)
+
+      # Should use large size classes
+      assert html =~ "p-4"
+      assert html =~ "text-base"
+    end
+  end
+
+  describe "flash_group/1 type-to-color mapping" do
+    test "maps error type to danger color" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{error: "Error message"}} />
+        """)
+
+      assert html =~ "bg-danger"
+      assert html =~ "Error message"
+    end
+
+    test "maps warning type to warning color" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{warning: "Warning message"}} />
+        """)
+
+      assert html =~ "bg-warning"
+      assert html =~ "Warning message"
+    end
+
+    test "maps info type to info color" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{info: "Info message"}} />
+        """)
+
+      assert html =~ "bg-info"
+      assert html =~ "Info message"
+    end
+
+    test "maps success type to success color" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{success: "Success message"}} />
+        """)
+
+      assert html =~ "bg-success"
+      assert html =~ "Success message"
+    end
+
+    test "maps custom types to neutral color" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{custom: "Custom message"}} />
+        """)
+
+      assert html =~ "bg-neutral"
+      assert html =~ "Custom message"
+    end
+
+    test "maps multiple types correctly" do
+      assigns = %{}
+
+      flash = %{
+        custom: "Custom",
+        error: "Error",
+        info: "Info",
+        success: "Success",
+        warning: "Warning"
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={flash} />
+        """)
+
+      # error -> danger
+      assert html =~ "bg-danger"
+      # warning -> warning
+      assert html =~ "bg-warning"
+      # info -> info
+      assert html =~ "bg-info"
+      # success -> success
+      assert html =~ "bg-success"
+      # custom -> neutral
+      assert html =~ "bg-neutral"
+    end
+  end
+
+  describe "flash_group/1 ARIA role mapping" do
+    test "maps error and warning to alert role" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{error: "Error", warning: "Warning"}} />
+        """)
+
+      # Should have alert roles
+      alert_count = html |> String.split(~s(role="alert")) |> length() |> Kernel.-(1)
+      assert alert_count == 2
+    end
+
+    test "maps other types to status role" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{info: "Info", success: "Success"}} />
+        """)
+
+      # Should have status roles
+      status_count = html |> String.split(~s(role="status")) |> length() |> Kernel.-(1)
+      assert status_count == 2
+    end
+  end
+
+  describe "flash_group/1 positioning" do
+    test "renders with default top-right position" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{info: "Message"}} />
+        """)
+
+      assert html =~ "top-4"
+      assert html =~ "right-4"
+      assert html =~ "items-end"
+      assert html =~ "flex-col"
+    end
+
+    test "renders with top-center position" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{info: "Message"}} position="top-center" />
+        """)
+
+      assert html =~ "top-4"
+      assert html =~ "left-1/2"
+      assert html =~ "-translate-x-1/2"
+      assert html =~ "items-center"
+    end
+
+    test "renders with bottom-right position" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{info: "Message"}} position="bottom-right" />
+        """)
+
+      assert html =~ "bottom-4"
+      assert html =~ "right-4"
+      assert html =~ "flex-col-reverse"
+      assert html =~ "items-end"
+    end
+
+    test "renders with bottom-center position" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{info: "Message"}} position="bottom-center" />
+        """)
+
+      assert html =~ "bottom-4"
+      assert html =~ "left-1/2"
+      assert html =~ "-translate-x-1/2"
+      assert html =~ "flex-col-reverse"
+      assert html =~ "items-center"
+    end
+
+    test "renders with left positions" do
+      assigns = %{}
+
+      html_top_left =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{info: "Message"}} position="top-left" />
+        """)
+
+      assert html_top_left =~ "top-4"
+      assert html_top_left =~ "left-4"
+      assert html_top_left =~ "items-start"
+
+      html_bottom_left =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{info: "Message"}} position="bottom-left" />
+        """)
+
+      assert html_bottom_left =~ "bottom-4"
+      assert html_bottom_left =~ "left-4"
+      assert html_bottom_left =~ "flex-col-reverse"
+      assert html_bottom_left =~ "items-start"
+    end
+
+    test "includes animation transitions based on position" do
+      assigns = %{}
+
+      # Top positions should slide from top
+      html_top =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{info: "Message"}} position="top-center" />
+        """)
+
+      assert html_top =~ "phx-mounted="
+      assert html_top =~ "-translate-y-full"
+      assert html_top =~ "translate-y-0"
+
+      # Bottom positions should slide from bottom
+      html_bottom =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{info: "Message"}} position="bottom-center" />
+        """)
+
+      assert html_bottom =~ "translate-y-full"
+      assert html_bottom =~ "translate-y-0"
+    end
+  end
+
+  describe "flash_group/1 max_items limiting" do
+    test "respects max_items limit" do
+      assigns = %{}
+
+      flash = %{
+        msg1: "Message 1",
+        msg2: "Message 2",
+        msg3: "Message 3",
+        msg4: "Message 4",
+        msg5: "Message 5",
+        # Should be excluded with max_items=3
+        msg6: "Message 6"
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={flash} max_items={3} />
+        """)
+
+      # Should only have 3 flash components
+      flash_count = Regex.scan(~r/id=\"flash-[^\"]+\"/, html) |> length()
+      assert flash_count == 3
+
+      # Should contain first 3 messages (Map.to_list behavior)
+      assert html =~ "Message 1"
+      assert html =~ "Message 2"
+      assert html =~ "Message 3"
+    end
+
+    test "handles empty and nil messages" do
+      assigns = %{}
+
+      flash = %{
+        error: "Error message",
+        # Empty string should be filtered
+        info: "",
+        # Nil should be filtered
+        warning: nil,
+        success: "Success message"
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={flash} />
+        """)
+
+      # Should only render non-empty messages
+      flash_count = Regex.scan(~r/id=\"flash-[^\"]+\"/, html) |> length()
+      assert flash_count == 2
+
+      assert html =~ "Error message"
+      assert html =~ "Success message"
+      refute html =~ ~s(data-flash-key="info")
+      refute html =~ ~s(data-flash-key="warning")
+    end
+  end
+
+  describe "flash_group/1 event handling" do
+    test "includes default dismiss event" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{error: "Error"}} />
+        """)
+
+      assert html =~ ~s(data-on-dismiss="clear_flash")
+    end
+
+    test "includes custom dismiss event" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group
+          flash={%{error: "Error"}}
+          on_dismiss="custom_clear"
+        />
+        """)
+
+      assert html =~ ~s(data-on-dismiss="custom_clear")
+    end
+
+    test "includes flash keys for identification" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{error: "Error", info: "Info"}} />
+        """)
+
+      assert html =~ ~s(data-flash-key="error")
+      assert html =~ ~s(data-flash-key="info")
+    end
+  end
+
+  describe "flash_group/1 configuration options" do
+    test "applies auto_dismiss setting to all flashes" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group
+          flash={%{info: "Message"}}
+          auto_dismiss={false}
+        />
+        """)
+
+      assert html =~ ~s(data-auto-dismiss="false")
+    end
+
+    test "applies custom dismiss_after to all flashes" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group
+          flash={%{info: "Message"}}
+          dismiss_after={10000}
+        />
+        """)
+
+      assert html =~ ~s(data-dismiss-after="10000")
+    end
+
+    test "applies dismissible setting to all flashes" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group
+          flash={%{info: "Message"}}
+          dismissible={false}
+        />
+        """)
+
+      # Should not have dismiss button
+      refute html =~ ~s(<button)
+      refute html =~ ~s(aria-label="Dismiss")
+    end
+  end
+
+  describe "flash_group/1 custom attributes" do
+    test "passes through custom HTML attributes" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group
+          flash={%{info: "Message"}}
+          class="custom-container"
+          data-testid="flash-group"
+        />
+        """)
+
+      assert html =~ "custom-container"
+      assert html =~ ~s(data-testid="flash-group")
+    end
+
+    test "merges custom classes with position classes" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group
+          flash={%{info: "Message"}}
+          class="custom-spacing"
+        />
+        """)
+
+      # Should have both custom and position classes
+      assert html =~ "custom-spacing"
+      # Default position
+      assert html =~ "top-4"
+      assert html =~ "right-4"
+    end
+  end
+
+  describe "flash_group/1 edge cases" do
+    test "handles non-map flash gracefully" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={nil} />
+        """)
+
+      # Should render nothing
+      refute html =~ ~s(<div)
+    end
+
+    test "handles flash with atom values" do
+      assigns = %{}
+
+      # Phoenix.Flash can store any term, not just strings
+      flash = %{info: :some_atom}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={flash} />
+        """)
+
+      assert html =~ "some_atom"
+    end
+
+    test "generates unique flash IDs" do
+      assigns = %{}
+
+      flash = %{error: "Error", info: "Info"}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={flash} />
+        """)
+
+      # Should have unique IDs for each flash
+      assert html =~ ~s(id="flash-error")
+      assert html =~ ~s(id="flash-info")
+    end
+
+    test "falls back to default position for invalid position" do
+      assigns = %{}
+
+      # This test assumes the component handles invalid positions gracefully
+      # The actual behavior depends on the implementation
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{info: "Message"}} position="invalid" />
+        """)
+
+      # Should fall back to top-right (default)
+      assert html =~ "top-4"
+      assert html =~ "right-4"
+    end
+  end
+end
