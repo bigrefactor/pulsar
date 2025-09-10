@@ -339,14 +339,32 @@ defmodule Pulsar.Components.Flash do
           }, { threshold: 0.1 })
 
           this.observer.observe(this.el)
-
+          
+          // Start timer immediately if already visible
+          if (this.autoDismiss && !this.timer) {
+            const rect = this.el.getBoundingClientRect()
+            const vw = window.innerWidth || document.documentElement.clientWidth
+            const vh = window.innerHeight || document.documentElement.clientHeight
+            const inViewport = rect.bottom > 0 && rect.right > 0 && rect.top < vh && rect.left < vw
+            const style = window.getComputedStyle(this.el)
+            const isDisplayed = style.display !== 'none' && style.visibility !== 'hidden' && parseFloat(style.opacity || '1') > 0
+            if (inViewport && isDisplayed) {
+              this.isVisible = true
+              this.startTimer()
+            }
+          }
+          
           // Hover handlers for pause/resume
-          this.el.addEventListener('mouseenter', () => this.pause())
-          this.el.addEventListener('mouseleave', () => this.resume())
+          this._onMouseEnter = () => this.pause()
+          this._onMouseLeave = () => this.resume()
+          this.el.addEventListener('mouseenter', this._onMouseEnter)
+          this.el.addEventListener('mouseleave', this._onMouseLeave)
           
           // Focus handlers for pause/resume (accessibility)
-          this.el.addEventListener('focusin', () => this.pause())
-          this.el.addEventListener('focusout', () => this.resume())
+          this._onFocusIn = () => this.pause()
+          this._onFocusOut = () => this.resume()
+          this.el.addEventListener('focusin', this._onFocusIn)
+          this.el.addEventListener('focusout', this._onFocusOut)
         },
 
         startTimer() {
@@ -382,8 +400,7 @@ defmodule Pulsar.Components.Flash do
           }
 
           // Trigger exit animation and removal
-          const transition = {"ease-in duration-200", "opacity-100 translate-y-0", "opacity-0 -translate-y-2"}
-          
+
           // Apply exit transition
           this.el.style.transition = "opacity 200ms ease-in, transform 200ms ease-in"
           this.el.style.opacity = "0"
@@ -430,6 +447,12 @@ defmodule Pulsar.Components.Flash do
           if (this.timer) {
             clearTimeout(this.timer)
           }
+          
+          // Remove event listeners
+          if (this._onMouseEnter) this.el.removeEventListener('mouseenter', this._onMouseEnter)
+          if (this._onMouseLeave) this.el.removeEventListener('mouseleave', this._onMouseLeave)
+          if (this._onFocusIn) this.el.removeEventListener('focusin', this._onFocusIn)
+          if (this._onFocusOut) this.el.removeEventListener('focusout', this._onFocusOut)
         }
       }
     </script>
