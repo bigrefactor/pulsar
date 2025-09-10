@@ -1,6 +1,7 @@
 defmodule Pulsar.Components.FlashGroupTest do
   use ExUnit.Case
 
+  import ExUnit.CaptureLog
   import Phoenix.Component
   import Phoenix.LiveViewTest
 
@@ -560,6 +561,79 @@ defmodule Pulsar.Components.FlashGroupTest do
     end
   end
 
+  describe "flash_group/1 flash message ordering" do
+    test "renders flash messages in priority order" do
+      assigns = %{}
+
+      # Mix flash types to test ordering
+      flash = %{
+        custom: "Custom message",
+        error: "Error message",
+        info: "Info message",
+        success: "Success message",
+        warning: "Warning message"
+      }
+
+      assigns = Map.put(assigns, :flash, flash)
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={@flash} />
+        """)
+
+      # Extract flash elements in order they appear in HTML
+      flash_elements = Regex.scan(~r/id="flash-\d+-(\w+)"/, html, capture: :all_but_first)
+      flash_types = Enum.map(flash_elements, fn [type] -> type end)
+
+      # Should be in priority order: error, warning, info, success, custom
+      assert flash_types == ["error", "warning", "info", "success", "custom"]
+    end
+
+    test "maintains consistent ordering across multiple renders" do
+      assigns = %{}
+
+      flash = %{
+        error: "Error",
+        success: "Success",
+        warning: "Warning"
+      }
+
+      assigns = Map.put(assigns, :flash, flash)
+
+      # Render multiple times to ensure consistent ordering
+      html1 =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={@flash} />
+        """)
+
+      html2 =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={@flash} />
+        """)
+
+      html3 =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={@flash} />
+        """)
+
+      # Extract types from each render (ignoring the unique component IDs)
+      extract_types = fn html ->
+        Regex.scan(~r/id="flash-\d+-(\w+)"/, html, capture: :all_but_first)
+        |> Enum.map(fn [type] -> type end)
+      end
+
+      types1 = extract_types.(html1)
+      types2 = extract_types.(html2)
+      types3 = extract_types.(html3)
+
+      # All renders should have the same order
+      assert types1 == types2
+      assert types2 == types3
+      # Should be in priority order
+      assert types1 == ["error", "warning", "success"]
+    end
+  end
+
   describe "flash_group/1 edge cases" do
     test "handles non-map flash gracefully" do
       assigns = %{}
@@ -611,14 +685,20 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       # This test assumes the component handles invalid positions gracefully
       # The actual behavior depends on the implementation
-      html =
-        rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{info: "Message"}} position="invalid" />
-        """)
+      log =
+        capture_log(fn ->
+          html =
+            rendered_to_string(~H"""
+            <FlashGroup.flash_group flash={%{info: "Message"}} position="invalid" />
+            """)
 
-      # Should fall back to top-right (default)
-      assert html =~ "top-4"
-      assert html =~ "right-4"
+          # Should fall back to top-right (default)
+          assert html =~ "top-4"
+          assert html =~ "right-4"
+        end)
+
+      # Should log a warning about invalid position
+      assert log =~ "Invalid flash group position 'invalid', falling back to 'top-right'"
     end
   end
 end

@@ -438,35 +438,34 @@ defmodule Pulsar.Components.FlashGroup do
 
   # === Helper Functions ===
 
-  # Extract flash messages with item limiting
+  # Extract flash messages with item limiting and consistent ordering
   # Note: Phoenix.Flash stores one message per type (not a true queue),
   # so max_items effectively limits how many different flash types are shown
   defp extract_flash_messages(flash, max_items) when is_map(flash) do
-    all_messages =
-      flash
-      |> Map.to_list()
-      |> Enum.reject(fn {_type, message} ->
-        is_nil(message) or (is_binary(message) and String.trim(message) == "")
-      end)
-
-    # Limit to max_items (Map.to_list order is undefined)
-    case length(all_messages) do
-      count when count <= max_items ->
-        all_messages
-
-      _count ->
-        Enum.take(all_messages, max_items)
-    end
+    flash
+    |> Map.to_list()
+    |> Enum.reject(fn {_type, message} ->
+      is_nil(message) or (is_binary(message) and String.trim(message) == "")
+    end)
+    |> Enum.sort_by(fn {type, _message} -> flash_priority(type) end)
+    |> Enum.take(max_items)
   end
 
   defp extract_flash_messages(_, _), do: []
+
+  # Define flash message display priority (lower numbers show first)
+  defp flash_priority(:error), do: 1
+  defp flash_priority(:warning), do: 2
+  defp flash_priority(:info), do: 3
+  defp flash_priority(:success), do: 4
+  defp flash_priority(_), do: 5
 
   # Get color for flash type
   defp get_flash_color(type) do
     @type_colors[normalize_type(type)] || "neutral"
   end
 
-  # Get ARIA role for flash type  
+  # Get ARIA role for flash type
   defp get_flash_role(type) do
     @type_roles[normalize_type(type)] || "status"
   end

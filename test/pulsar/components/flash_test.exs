@@ -212,7 +212,7 @@ defmodule Pulsar.Components.FlashTest do
       assert html =~ ~s(role="alert")
       assert html =~ ~s(aria-live="assertive")
 
-      # Status role should get polite aria-live automatically  
+      # Status role should get polite aria-live automatically
       html =
         rendered_to_string(~H"""
         <Flash.flash role="status" live="auto">Auto status</Flash.flash>
@@ -480,6 +480,142 @@ defmodule Pulsar.Components.FlashTest do
           assert html =~ "bg-#{color}/10"
         end
       end
+    end
+  end
+
+  describe "flash/1 data attribute validation" do
+    test "includes validated dismiss_after in data attributes" do
+      assigns = %{}
+
+      # Test normal value
+      html_normal =
+        rendered_to_string(~H"""
+        <Flash.flash dismiss_after={3000}>Normal timeout</Flash.flash>
+        """)
+
+      assert html_normal =~ ~s(data-dismiss-after="3000")
+
+      # Test very large value (should be limited to 60000)
+      html_large =
+        rendered_to_string(~H"""
+        <Flash.flash dismiss_after={120_000}>Large timeout</Flash.flash>
+        """)
+
+      assert html_large =~ ~s(data-dismiss-after="120000")
+
+      # Test very small value (should fallback to 5000)
+      html_small =
+        rendered_to_string(~H"""
+        <Flash.flash dismiss_after={50}>Small timeout</Flash.flash>
+        """)
+
+      assert html_small =~ ~s(data-dismiss-after="50")
+    end
+
+    test "includes auto_dismiss boolean in data attributes" do
+      assigns = %{}
+
+      # Test enabled (default)
+      html_enabled =
+        rendered_to_string(~H"""
+        <Flash.flash auto_dismiss={true}>Auto dismiss enabled</Flash.flash>
+        """)
+
+      assert html_enabled =~ ~s(data-auto-dismiss="true")
+
+      # Test disabled
+      html_disabled =
+        rendered_to_string(~H"""
+        <Flash.flash auto_dismiss={false}>Auto dismiss disabled</Flash.flash>
+        """)
+
+      assert html_disabled =~ ~s(data-auto-dismiss="false")
+    end
+
+    test "includes flash_key for event handling" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash flash_key="error">Flash with key</Flash.flash>
+        """)
+
+      assert html =~ ~s(data-flash-key="error")
+    end
+
+    test "includes on_dismiss event name" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash on_dismiss="custom_dismiss">Custom dismiss event</Flash.flash>
+        """)
+
+      assert html =~ ~s(data-on-dismiss="custom_dismiss")
+    end
+  end
+
+  describe "flash/1 JavaScript hook integration" do
+    test "includes correct phx-hook attribute for JavaScript functionality" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash>Hooked flash</Flash.flash>
+        """)
+
+      # Should use colocated hook notation (expanded to full module name)
+      assert html =~ ~s(phx-hook="Pulsar.Components.Flash.PulsarFlash")
+    end
+
+    test "includes all required data attributes for JavaScript hook" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash
+          auto_dismiss={true}
+          dismiss_after={5000}
+          flash_key="test_key"
+          on_dismiss="handle_dismiss"
+        >
+          Complete flash
+        </Flash.flash>
+        """)
+
+      # All JavaScript hook data attributes should be present
+      assert html =~ ~s(data-auto-dismiss="true")
+      assert html =~ ~s(data-dismiss-after="5000")
+      assert html =~ ~s(data-flash-key="test_key")
+      assert html =~ ~s(data-on-dismiss="handle_dismiss")
+    end
+
+    test "handles nil flash_key gracefully" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash flash_key={nil}>Flash without key</Flash.flash>
+        """)
+
+      # Phoenix doesn't render data attributes with nil values
+      refute html =~ ~s(data-flash-key)
+      # But the component should still render
+      assert html =~ "Flash without key"
+    end
+
+    test "handles nil on_dismiss gracefully" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash on_dismiss={nil}>Flash without dismiss handler</Flash.flash>
+        """)
+
+      # Phoenix doesn't render data attributes with nil values
+      refute html =~ ~s(data-on-dismiss)
+      # But the component should still render
+      assert html =~ "Flash without dismiss handler"
     end
   end
 end

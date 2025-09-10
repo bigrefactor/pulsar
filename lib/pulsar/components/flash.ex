@@ -66,7 +66,7 @@ defmodule Pulsar.Components.Flash do
   alias Phoenix.LiveView.Rendered
 
   # ============================================================================
-  # CONFIGURATION & CONSTANTS  
+  # CONFIGURATION & CONSTANTS
   # ============================================================================
 
   # Inline ID generator (replacing external dependencies)
@@ -321,7 +321,12 @@ defmodule Pulsar.Components.Flash do
 
         // Initialize flash component state
         initializeState() {
-          this.dismissAfter = parseInt(this.el.dataset.dismissAfter || 5000)
+          const dismissAfterValue = parseInt(this.el.dataset.dismissAfter || 5000)
+          // Validate dismissAfter: must be positive number, max 60 seconds, fallback to 5 seconds
+          this.dismissAfter = isNaN(dismissAfterValue) || dismissAfterValue < 100 
+            ? 5000 
+            : Math.min(dismissAfterValue, 60000)
+          
           this.autoDismiss = this.el.dataset.autoDismiss === "true"
           this.onDismissEvent = this.el.dataset.onDismiss
           this.flashKey = this.el.dataset.flashKey
@@ -330,6 +335,7 @@ defmodule Pulsar.Components.Flash do
           this.isVisible = false
           this.isPaused = false
           this.startTime = null
+          this.operationInProgress = false
         },
 
         // Set up IntersectionObserver for visibility detection
@@ -378,6 +384,8 @@ defmodule Pulsar.Components.Flash do
 
         // Set up mouse and keyboard interaction handlers
         setupInteractionHandlers() {
+          if (!this.el || !this.el.addEventListener) return
+
           this._onMouseEnter = () => this.pause()
           this._onMouseLeave = () => this.resume()
           this._onFocusIn = () => this.pause()
@@ -393,25 +401,29 @@ defmodule Pulsar.Components.Flash do
 
         // Start the auto-dismiss timer
         startTimer() {
-          if (!this.autoDismiss || this.timer) return
+          if (!this.autoDismiss || this.timer || this.operationInProgress) return
 
+          this.operationInProgress = true
           this.startTime = Date.now()
           this.timer = setTimeout(() => this.dismiss(), this.remainingTime)
+          this.operationInProgress = false
         },
 
         // Pause the auto-dismiss timer
         pause() {
-          if (!this.timer || !this.autoDismiss) return
+          if (!this.timer || !this.autoDismiss || this.operationInProgress) return
 
+          this.operationInProgress = true
           clearTimeout(this.timer)
           this.remainingTime -= (Date.now() - this.startTime)
           this.timer = null
           this.isPaused = true
+          this.operationInProgress = false
         },
 
         // Resume the auto-dismiss timer
         resume() {
-          if (!this.isPaused || !this.autoDismiss) return
+          if (!this.isPaused || !this.autoDismiss || this.operationInProgress) return
 
           this.isPaused = false
           this.startTimer()
@@ -461,8 +473,13 @@ defmodule Pulsar.Components.Flash do
 
         // Update dismiss timeout if changed
         updateDismissAfter(newDismissAfter) {
-          if (newDismissAfter !== this.dismissAfter) {
-            this.dismissAfter = newDismissAfter
+          // Apply same validation as initializeState
+          const validatedTimeout = isNaN(newDismissAfter) || newDismissAfter < 100
+            ? 5000
+            : Math.min(newDismissAfter, 60000)
+            
+          if (validatedTimeout !== this.dismissAfter) {
+            this.dismissAfter = validatedTimeout
             if (!this.isVisible) {
               this.remainingTime = this.dismissAfter
             }
@@ -498,6 +515,8 @@ defmodule Pulsar.Components.Flash do
 
         // Remove all event listeners
         removeEventListeners() {
+          if (!this.el || !this.el.removeEventListener) return
+
           if (this._onMouseEnter) {
             this.el.removeEventListener('mouseenter', this._onMouseEnter)
             this._onMouseEnter = null
