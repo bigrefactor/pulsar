@@ -32,8 +32,8 @@ defmodule Pulsar.Components.FlashGroupTest do
       # Default position (top-right)
       assert html =~ "top-4"
       assert html =~ "right-4"
-      # Should render Flash component
-      assert html =~ ~s(id="flash-")
+      # Should render Flash component with specific ID
+      assert html =~ ~s(id="flash-info")
     end
 
     test "renders multiple flash messages" do
@@ -45,9 +45,11 @@ defmodule Pulsar.Components.FlashGroupTest do
         success: "Success message"
       }
 
+      assigns = Map.put(assigns, :flash, flash)
+
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={flash} />
+        <FlashGroup.flash_group flash={@flash} />
         """)
 
       assert html =~ "Info message"
@@ -166,9 +168,11 @@ defmodule Pulsar.Components.FlashGroupTest do
         warning: "Warning"
       }
 
+      assigns = Map.put(assigns, :flash, flash)
+
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={flash} />
+        <FlashGroup.flash_group flash={@flash} />
         """)
 
       # error -> danger
@@ -331,9 +335,11 @@ defmodule Pulsar.Components.FlashGroupTest do
         msg6: "Message 6"
       }
 
+      assigns = Map.put(assigns, :flash, flash)
+
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={flash} max_items={3} />
+        <FlashGroup.flash_group flash={@flash} max_items={3} />
         """)
 
       # Should only have 3 flash components
@@ -358,9 +364,11 @@ defmodule Pulsar.Components.FlashGroupTest do
         success: "Success message"
       }
 
+      assigns = Map.put(assigns, :flash, flash)
+
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={flash} />
+        <FlashGroup.flash_group flash={@flash} />
         """)
 
       # Should only render non-empty messages
@@ -514,9 +522,11 @@ defmodule Pulsar.Components.FlashGroupTest do
       # Phoenix.Flash can store any term, not just strings
       flash = %{info: :some_atom}
 
+      assigns = Map.put(assigns, :flash, flash)
+
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={flash} />
+        <FlashGroup.flash_group flash={@flash} />
         """)
 
       assert html =~ "some_atom"
@@ -527,9 +537,11 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       flash = %{error: "Error", info: "Info"}
 
+      assigns = Map.put(assigns, :flash, flash)
+
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={flash} />
+        <FlashGroup.flash_group flash={@flash} />
         """)
 
       # Should have unique IDs for each flash

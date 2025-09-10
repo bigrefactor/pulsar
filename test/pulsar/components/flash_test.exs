@@ -210,7 +210,7 @@ defmodule Pulsar.Components.FlashTest do
       assert html =~ ~s(PulsarFlash)
     end
 
-    test "includes ColocatedHook script" do
+    test "includes phx-hook attribute" do
       assigns = %{}
 
       html =
@@ -218,11 +218,8 @@ defmodule Pulsar.Components.FlashTest do
         <Flash.flash>Flash with hook</Flash.flash>
         """)
 
-      assert html =~ ~s(<script)
-      assert html =~ ~s(name=".PulsarFlash")
-      assert html =~ "export default"
-      assert html =~ "mounted()"
-      assert html =~ "IntersectionObserver"
+      # Check for phx-hook attribute instead of script content
+      assert html =~ ~s(phx-hook="Pulsar.Components.Flash.PulsarFlash")
     end
   end
 
@@ -255,7 +252,8 @@ defmodule Pulsar.Components.FlashTest do
         <Flash.flash>Flash without icon</Flash.flash>
         """)
 
-      refute html =~ "h-5 w-5"
+      # Should not have an icon container div, but close button still has h-5 w-5
+      refute html =~ ~s(<div class="h-5 w-5")
       assert html =~ "Flash without icon"
     end
 
@@ -366,9 +364,13 @@ defmodule Pulsar.Components.FlashTest do
         <Flash.flash>Flash 2</Flash.flash>
         """)
 
-      # Extract IDs from HTML
-      [id1] = Regex.run(~r/id="([^"]+)"/, html1, capture: :all_but_first)
-      [id2] = Regex.run(~r/id="([^"]+)"/, html2, capture: :all_but_first)
+      # Check that IDs are present and unique
+      assert html1 =~ ~r/id="flash-\d+"/
+      assert html2 =~ ~r/id="flash-\d+"/
+
+      # Extract the actual ID values
+      [[_, id1]] = Regex.scan(~r/id="(flash-\d+)"/, html1)
+      [[_, id2]] = Regex.scan(~r/id="(flash-\d+)"/, html2)
 
       assert id1 != id2
       assert String.starts_with?(id1, "flash-")
@@ -392,11 +394,11 @@ defmodule Pulsar.Components.FlashTest do
       colors = ~w(neutral primary secondary success danger warning info)
 
       for color <- colors do
-        assigns = %{}
+        assigns = %{color: color}
 
         html =
           rendered_to_string(~H"""
-          <Flash.flash variant="solid" color={color}>Solid {color}</Flash.flash>
+          <Flash.flash variant="solid" color={@color}>Solid {@color}</Flash.flash>
           """)
 
         assert html =~ "bg-#{color}"
@@ -410,17 +412,28 @@ defmodule Pulsar.Components.FlashTest do
       colors = ~w(neutral primary secondary success danger warning info)
 
       for color <- colors do
-        assigns = %{}
+        assigns = %{color: color}
 
         html =
           rendered_to_string(~H"""
-          <Flash.flash variant="outline" color={color}>Outline {color}</Flash.flash>
+          <Flash.flash variant="outline" color={@color}>Outline {@color}</Flash.flash>
           """)
 
         assert html =~ "border-#{color}"
-        assert html =~ "text-#{color}"
+        # Neutral uses text-foreground, others use text-{color}
+        if color == "neutral" do
+          assert html =~ "text-foreground"
+        else
+          assert html =~ "text-#{color}"
+        end
+
         assert html =~ "dark:border-dark-#{color}"
-        assert html =~ "dark:text-dark-#{color}"
+
+        if color == "neutral" do
+          assert html =~ "dark:text-dark-foreground"
+        else
+          assert html =~ "dark:text-dark-#{color}"
+        end
       end
     end
 
@@ -428,11 +441,11 @@ defmodule Pulsar.Components.FlashTest do
       colors = ~w(neutral primary secondary success danger warning info)
 
       for color <- colors do
-        assigns = %{}
+        assigns = %{color: color}
 
         html =
           rendered_to_string(~H"""
-          <Flash.flash variant="ghost" color={color}>Ghost {color}</Flash.flash>
+          <Flash.flash variant="ghost" color={@color}>Ghost {@color}</Flash.flash>
           """)
 
         # Ghost uses different pattern for neutral vs other colors

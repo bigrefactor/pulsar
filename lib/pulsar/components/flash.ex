@@ -258,7 +258,7 @@ defmodule Pulsar.Components.Flash do
   @spec flash(map()) :: Rendered.t()
   def flash(assigns) do
     # Ensure ID exists for hook functionality
-    assigns = assign_new(assigns, :id, fn -> generate_id() end)
+    assigns = assign(assigns, :id, assigns[:id] || generate_id())
 
     # Build complete class string using TailwindMerge
     assigns =
