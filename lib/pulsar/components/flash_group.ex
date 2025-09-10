@@ -41,17 +41,132 @@ defmodule Pulsar.Components.FlashGroup do
   - `:success` → `success` color
   - Custom types → `neutral` color
 
-  ## Usage in Phoenix Applications
+   ## Usage in Phoenix Applications
 
-      # In your root layout or LiveView
-      <.flash_group flash={@flash} position="top-right" />
+       # In your root layout or LiveView
+       <.flash_group flash={@flash} position="top-right" />
 
-      # Set flash messages in controllers/LiveViews
-      conn |> put_flash(:error, "Something went wrong")
-      conn |> put_flash(:success, "Changes saved!")
+       # Set flash messages in controllers/LiveViews
+       conn |> put_flash(:error, "Something went wrong")
+       conn |> put_flash(:success, "Changes saved!")
 
-      # In LiveViews
-      socket |> put_flash(:info, "Welcome back!")
+       # In LiveViews
+       socket |> put_flash(:info, "Welcome back!")
+
+   ## Required Event Handler
+
+   FlashGroup requires an event handler in your LiveView to clear flash messages:
+
+       defmodule MyAppWeb.PageLive do
+         use MyAppWeb, :live_view
+
+         def render(assigns) do
+           ~H\"\"\"
+           <.flash_group flash={@flash} />
+           <!-- your page content -->
+           \"\"\"
+         end
+
+         # Handle flash dismissal with flash key
+         def handle_event("clear_flash", %{"key" => key}, socket) do
+           {:noreply, clear_flash(socket, String.to_existing_atom(key))}
+         end
+
+         # Handle flash dismissal without key (clear all)
+         def handle_event("clear_flash", _params, socket) do
+           {:noreply, clear_flash(socket)}
+         end
+       end
+
+   ## Controller Integration
+
+   FlashGroup works seamlessly with controller-set flashes:
+
+       defmodule MyAppWeb.UserController do
+         use MyAppWeb, :controller
+
+         def create(conn, %{"user" => user_params}) do
+           case Users.create_user(user_params) do
+             {:ok, user} ->
+               conn
+               |> put_flash(:success, "User created successfully!")
+               |> redirect(to: ~p"/users/#{user}")
+
+             {:error, %Ecto.Changeset{} = changeset} ->
+               conn
+               |> put_flash(:error, "Please check the errors below")
+               |> render(:new, changeset: changeset)
+         end
+       end
+
+   ## Testing FlashGroup Components
+
+   ### Testing Flash Messages in LiveView Tests
+
+       test "displays flash messages with appropriate icons and colors", %{conn: conn} do
+         {:ok, view, _html} = live(conn, "/")
+         
+         # Set flash messages
+         view |> put_flash(:success, "Changes saved!")
+         view |> put_flash(:error, "Something went wrong")
+         
+         # Assert flash messages are displayed
+         assert has_element?(view, "[role='status']", "Changes saved!")
+         assert has_element?(view, "[role='alert']", "Something went wrong") 
+         
+         # Assert icons are present
+         assert has_element?(view, ".hero-check-circle") # success icon
+         assert has_element?(view, ".hero-x-circle")     # error icon
+       end
+
+   ### Testing Flash Dismissal
+
+       test "handles flash dismissal correctly", %{conn: conn} do
+         {:ok, view, _html} = live(conn, "/")
+         
+         view |> put_flash(:info, "Test message")
+         assert has_element?(view, "[role='status']", "Test message")
+         
+         # Simulate manual dismiss
+         view |> element("[aria-label='Dismiss']") |> render_click()
+         
+         # Flash should be cleared
+         refute has_element?(view, "[role='status']", "Test message")
+       end
+
+   ### Testing Custom Configuration
+
+       test "respects custom positioning and styling", %{conn: conn} do
+         {:ok, view, _html} = live(conn, "/custom-flash")
+         
+         view |> put_flash(:warning, "Custom styled flash")
+         
+         # Assert custom positioning
+         assert has_element?(view, ".bottom-4.left-4")   # bottom-left position
+         assert has_element?(view, ".z-30")              # custom z-index
+         
+         # Assert custom variant
+         assert has_element?(view, ".border.border-warning") # outline variant
+       end
+
+   ### Helper Functions for Testing
+
+   Add these helpers to your test support modules:
+
+       def put_flash(view, type, message) do
+         Phoenix.LiveViewTest.put_flash(view, type, message)
+       end
+
+       def assert_flash(view, type, message) do
+         role = if type in [:error, :warning], do: "alert", else: "status"
+         assert has_element?(view, "[role='\#{role}']", message)
+       end
+
+       def refute_flash(view, type, message) do
+         role = if type in [:error, :warning], do: "alert", else: "status" 
+         refute has_element?(view, "[role='\#{role}']", message)
+       end
+       end
 
   ## Positioning
 
@@ -70,6 +185,7 @@ defmodule Pulsar.Components.FlashGroup do
 
   alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Flash
+  alias Pulsar.Components.Icon
 
   # ============================================================================
   # CONFIGURATION & CONSTANTS
@@ -91,36 +207,44 @@ defmodule Pulsar.Components.FlashGroup do
     # All other types use "status" (see get_flash_role/1)
   }
 
-  # Position configuration with container classes and animations
+  # Type to icon mapping
+  @type_icons %{
+    error: "hero-x-circle",
+    warning: "hero-exclamation-triangle",
+    info: "hero-information-circle",
+    success: "hero-check-circle"
+    # All other types use "hero-bell" (see get_flash_icon/1)
+  }
+
+  # Position configuration with container classes and animations (without z-index)
   @position_config %{
     "bottom-center" => %{
-      container:
-        "fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex flex-col-reverse items-center gap-2 max-w-sm w-full",
+      container: "fixed bottom-4 left-1/2 -translate-x-1/2 flex flex-col-reverse items-center gap-2 max-w-sm w-full",
       entry_from: "translate-y-full",
       entry_to: "translate-y-0"
     },
     "bottom-left" => %{
-      container: "fixed bottom-4 left-4 z-50 flex flex-col-reverse items-start gap-2 max-w-sm w-full",
+      container: "fixed bottom-4 left-4 flex flex-col-reverse items-start gap-2 max-w-sm w-full",
       entry_from: "translate-y-full -translate-x-full",
       entry_to: "translate-x-0 translate-y-0"
     },
     "bottom-right" => %{
-      container: "fixed bottom-4 right-4 z-50 flex flex-col-reverse items-end gap-2 max-w-sm w-full",
+      container: "fixed bottom-4 right-4 flex flex-col-reverse items-end gap-2 max-w-sm w-full",
       entry_from: "translate-y-full translate-x-full",
       entry_to: "translate-x-0 translate-y-0"
     },
     "top-center" => %{
-      container: "fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 max-w-sm w-full",
+      container: "fixed top-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 max-w-sm w-full",
       entry_from: "-translate-y-full",
       entry_to: "translate-y-0"
     },
     "top-left" => %{
-      container: "fixed top-4 left-4 z-50 flex flex-col items-start gap-2 max-w-sm w-full",
+      container: "fixed top-4 left-4 flex flex-col items-start gap-2 max-w-sm w-full",
       entry_from: "-translate-x-full",
       entry_to: "translate-x-0"
     },
     "top-right" => %{
-      container: "fixed top-4 right-4 z-50 flex flex-col items-end gap-2 max-w-sm w-full",
+      container: "fixed top-4 right-4 flex flex-col items-end gap-2 max-w-sm w-full",
       entry_from: "translate-x-full",
       entry_to: "translate-x-0"
     }
@@ -170,9 +294,20 @@ defmodule Pulsar.Components.FlashGroup do
     doc: "Show close buttons on all flashes"
   )
 
+  attr(:stagger_delay, :integer,
+    default: 100,
+    doc: "Milliseconds between staggered flash animations (0 to disable)"
+  )
+
   attr(:on_dismiss, :string,
     default: "clear_flash",
     doc: "Phoenix event to push when any flash is dismissed"
+  )
+
+  attr(:z_index, :string,
+    default: "50",
+    values: ~w(10 20 30 40 50 auto),
+    doc: "Z-index for the flash group (10=dropdown, 20=sticky, 30=header, 40=overlay, 50=modal)"
   )
 
   attr(:class, :string,
@@ -231,8 +366,8 @@ defmodule Pulsar.Components.FlashGroup do
 
     assigns = assign(assigns, :flash_messages, flash_messages)
 
-    # Get position configuration
-    position_config = @position_config[assigns.position] || @position_config["top-right"]
+    # Get position configuration with validation
+    position_config = get_position_config(assigns.position)
 
     assigns =
       assign(
@@ -240,6 +375,7 @@ defmodule Pulsar.Components.FlashGroup do
         :container_classes,
         merge([
           position_config.container,
+          get_z_index_class(assigns.z_index),
           assigns.class
         ])
       )
@@ -251,7 +387,7 @@ defmodule Pulsar.Components.FlashGroup do
       {@rest}
     >
       <Flash.flash
-        :for={{type, message} <- @flash_messages}
+        :for={{{type, message}, index} <- Enum.with_index(@flash_messages)}
         id={"flash-#{type}"}
         variant={@variant}
         color={get_flash_color(type)}
@@ -261,7 +397,8 @@ defmodule Pulsar.Components.FlashGroup do
         dismiss_after={@dismiss_after}
         dismissible={@dismissible}
         on_dismiss={@on_dismiss}
-        flash_key={Atom.to_string(type)}
+        flash_key={normalize_flash_key(type)}
+        style={get_animation_style(index, @stagger_delay)}
         phx-mounted={
           Phoenix.LiveView.JS.show(
             transition: {
@@ -272,6 +409,9 @@ defmodule Pulsar.Components.FlashGroup do
           )
         }
       >
+        <:start_icon>
+          <Icon.icon name={get_flash_icon(type)} variant="mini" color={get_flash_color(type)} />
+        </:start_icon>
         {message}
       </Flash.flash>
     </div>
@@ -280,35 +420,97 @@ defmodule Pulsar.Components.FlashGroup do
 
   # === Helper Functions ===
 
-  # Extract flash messages with FIFO limiting
+  # Extract flash messages with FIFO limiting and exit animation for displaced items
   defp extract_flash_messages(flash, max_items) when is_map(flash) do
-    flash
-    |> Map.to_list()
-    |> Enum.reject(fn {_type, message} ->
-      is_nil(message) or (is_binary(message) and String.trim(message) == "")
-    end)
-    |> Enum.take(max_items)
+    all_messages =
+      flash
+      |> Map.to_list()
+      |> Enum.reject(fn {_type, message} ->
+        is_nil(message) or (is_binary(message) and String.trim(message) == "")
+      end)
+
+    # Take only the most recent messages, but add exit class to displaced ones
+    case length(all_messages) do
+      count when count <= max_items ->
+        all_messages
+
+      _count ->
+        # Keep the most recent messages
+        Enum.take(all_messages, max_items)
+    end
   end
 
   defp extract_flash_messages(_, _), do: []
 
   # Get color for flash type
   defp get_flash_color(type) do
-    @type_colors[type] || "neutral"
+    @type_colors[normalize_type(type)] || "neutral"
   end
 
   # Get ARIA role for flash type  
   defp get_flash_role(type) do
-    @type_roles[type] || "status"
+    @type_roles[normalize_type(type)] || "status"
   end
 
   # Get entry animation start position
   defp get_entry_from(position) do
-    @position_config[position][:entry_from] || "translate-x-full"
+    get_position_config(position)[:entry_from]
+  end
+
+  # Get position configuration with validation and fallback
+  defp get_position_config(position) do
+    case @position_config[position] do
+      nil ->
+        require Logger
+
+        Logger.warning("Invalid flash group position '#{position}', falling back to 'top-right'")
+        @position_config["top-right"]
+
+      config ->
+        config
+    end
   end
 
   # Get entry animation end position
   defp get_entry_to(position) do
-    @position_config[position][:entry_to] || "translate-x-0"
+    get_position_config(position)[:entry_to]
   end
+
+  # Get icon for flash type
+  defp get_flash_icon(type) do
+    @type_icons[normalize_type(type)] || "hero-bell"
+  end
+
+  # Normalize flash type to atom for consistent lookups
+  defp normalize_type(type) when is_atom(type), do: type
+
+  defp normalize_type(type) when is_binary(type) do
+    String.to_existing_atom(type)
+  rescue
+    ArgumentError -> :info
+  end
+
+  defp normalize_type(_), do: :info
+
+  # Normalize flash key to string for flash_key attribute
+  defp normalize_flash_key(type) when is_atom(type), do: Atom.to_string(type)
+  defp normalize_flash_key(type) when is_binary(type), do: type
+  defp normalize_flash_key(_), do: "info"
+
+  # Get animation style with stagger delay
+  defp get_animation_style(index, stagger_delay) when stagger_delay > 0 do
+    delay_ms = index * stagger_delay
+    "animation-delay: #{delay_ms}ms;"
+  end
+
+  defp get_animation_style(_, _), do: nil
+
+  # Get z-index class
+  defp get_z_index_class("auto"), do: "z-auto"
+
+  defp get_z_index_class(z_index) when z_index in ~w(10 20 30 40 50) do
+    "z-#{z_index}"
+  end
+
+  defp get_z_index_class(_), do: "z-50"
 end

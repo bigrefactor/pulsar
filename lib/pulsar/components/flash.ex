@@ -317,7 +317,14 @@ defmodule Pulsar.Components.Flash do
     <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarFlash">
       export default {
         mounted() {
-          // Initialize timer state
+          this.initializeState()
+          this.setupVisibilityObserver()
+          this.checkInitialVisibility()
+          this.setupInteractionHandlers()
+        },
+
+        // Initialize flash component state
+        initializeState() {
           this.dismissAfter = parseInt(this.el.dataset.dismissAfter || 5000)
           this.autoDismiss = this.el.dataset.autoDismiss === "true"
           this.onDismissEvent = this.el.dataset.onDismiss
@@ -327,8 +334,10 @@ defmodule Pulsar.Components.Flash do
           this.isVisible = false
           this.isPaused = false
           this.startTime = null
+        },
 
-          // Set up IntersectionObserver for visibility detection
+        // Set up IntersectionObserver for visibility detection
+        setupVisibilityObserver() {
           this.observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
               if (entry.isIntersecting && !this.isVisible && this.autoDismiss) {
@@ -337,45 +346,62 @@ defmodule Pulsar.Components.Flash do
               }
             })
           }, { threshold: 0.1 })
-
+          
           this.observer.observe(this.el)
+        },
+
+        // Check if flash is already visible and start timer if needed
+        checkInitialVisibility() {
+          if (!this.autoDismiss || this.timer) return
+
+          const rect = this.el.getBoundingClientRect()
+          const style = window.getComputedStyle(this.el)
           
-          // Start timer immediately if already visible
-          if (this.autoDismiss && !this.timer) {
-            const rect = this.el.getBoundingClientRect()
-            const vw = window.innerWidth || document.documentElement.clientWidth
-            const vh = window.innerHeight || document.documentElement.clientHeight
-            const inViewport = rect.bottom > 0 && rect.right > 0 && rect.top < vh && rect.left < vw
-            const style = window.getComputedStyle(this.el)
-            const isDisplayed = style.display !== 'none' && style.visibility !== 'hidden' && parseFloat(style.opacity || '1') > 0
-            if (inViewport && isDisplayed) {
-              this.isVisible = true
-              this.startTimer()
-            }
+          const inViewport = this.isElementInViewport(rect)
+          const isDisplayed = this.isElementDisplayed(style)
+          
+          if (inViewport && isDisplayed) {
+            this.isVisible = true
+            this.startTimer()
           }
-          
-          // Hover handlers for pause/resume
+        },
+
+        // Check if element is in viewport
+        isElementInViewport(rect) {
+          const vw = window.innerWidth || document.documentElement.clientWidth
+          const vh = window.innerHeight || document.documentElement.clientHeight
+          return rect.bottom > 0 && rect.right > 0 && rect.top < vh && rect.left < vw
+        },
+
+        // Check if element is displayed (not hidden by CSS)
+        isElementDisplayed(style) {
+          return style.display !== 'none' && 
+                 style.visibility !== 'hidden' && 
+                 parseFloat(style.opacity || '1') > 0
+        },
+
+        // Set up mouse and keyboard interaction handlers
+        setupInteractionHandlers() {
           this._onMouseEnter = () => this.pause()
           this._onMouseLeave = () => this.resume()
-          this.el.addEventListener('mouseenter', this._onMouseEnter)
-          this.el.addEventListener('mouseleave', this._onMouseLeave)
-          
-          // Focus handlers for pause/resume (accessibility)
           this._onFocusIn = () => this.pause()
           this._onFocusOut = () => this.resume()
+
+          this.el.addEventListener('mouseenter', this._onMouseEnter)
+          this.el.addEventListener('mouseleave', this._onMouseLeave)
           this.el.addEventListener('focusin', this._onFocusIn)
           this.el.addEventListener('focusout', this._onFocusOut)
         },
 
+        // Start the auto-dismiss timer
         startTimer() {
           if (!this.autoDismiss || this.timer) return
 
           this.startTime = Date.now()
-          this.timer = setTimeout(() => {
-            this.dismiss()
-          }, this.remainingTime)
+          this.timer = setTimeout(() => this.dismiss(), this.remainingTime)
         },
 
+        // Pause the auto-dismiss timer
         pause() {
           if (!this.timer || !this.autoDismiss) return
 
@@ -385,6 +411,7 @@ defmodule Pulsar.Components.Flash do
           this.isPaused = true
         },
 
+        // Resume the auto-dismiss timer
         resume() {
           if (!this.isPaused || !this.autoDismiss) return
 
@@ -392,21 +419,30 @@ defmodule Pulsar.Components.Flash do
           this.startTimer()
         },
 
+        // Dismiss the flash with animation
         dismiss() {
-          // Clear timer
+          this.clearTimer()
+          this.animateExit()
+          this.scheduleDismissEvent()
+        },
+
+        // Clear the active timer
+        clearTimer() {
           if (this.timer) {
             clearTimeout(this.timer)
             this.timer = null
           }
+        },
 
-          // Trigger exit animation and removal
-
-          // Apply exit transition
+        // Apply exit animation
+        animateExit() {
           this.el.style.transition = "opacity 200ms ease-in, transform 200ms ease-in"
           this.el.style.opacity = "0"
           this.el.style.transform = "translateY(-8px)"
+        },
 
-          // Push dismiss event after animation
+        // Schedule dismiss event after animation
+        scheduleDismissEvent() {
           setTimeout(() => {
             if (this.onDismissEvent && this.flashKey) {
               this.pushEvent(this.onDismissEvent, {key: this.flashKey})
@@ -416,43 +452,70 @@ defmodule Pulsar.Components.Flash do
           }, 200)
         },
 
+        // Handle data attribute updates
         updated() {
-          // Update data attributes if they've changed
           const newDismissAfter = parseInt(this.el.dataset.dismissAfter || 5000)
           const newAutoDismiss = this.el.dataset.autoDismiss === "true"
           
+          this.updateDismissAfter(newDismissAfter)
+          this.updateAutoDismiss(newAutoDismiss)
+        },
+
+        // Update dismiss timeout if changed
+        updateDismissAfter(newDismissAfter) {
           if (newDismissAfter !== this.dismissAfter) {
             this.dismissAfter = newDismissAfter
             if (!this.isVisible) {
               this.remainingTime = this.dismissAfter
             }
           }
-          
+        },
+
+        // Update auto-dismiss setting if changed
+        updateAutoDismiss(newAutoDismiss) {
           if (newAutoDismiss !== this.autoDismiss) {
             this.autoDismiss = newAutoDismiss
             if (!this.autoDismiss && this.timer) {
-              clearTimeout(this.timer)
-              this.timer = null
+              this.clearTimer()
             } else if (this.autoDismiss && this.isVisible && !this.timer) {
               this.startTimer()
             }
           }
         },
 
+        // Clean up all resources
         destroyed() {
-          // Clean up observers and timers
+          this.cleanupObserver()
+          this.clearTimer()
+          this.removeEventListeners()
+        },
+
+        // Clean up intersection observer
+        cleanupObserver() {
           if (this.observer) {
             this.observer.disconnect()
+            this.observer = null
           }
-          if (this.timer) {
-            clearTimeout(this.timer)
+        },
+
+        // Remove all event listeners
+        removeEventListeners() {
+          if (this._onMouseEnter) {
+            this.el.removeEventListener('mouseenter', this._onMouseEnter)
+            this._onMouseEnter = null
           }
-          
-          // Remove event listeners
-          if (this._onMouseEnter) this.el.removeEventListener('mouseenter', this._onMouseEnter)
-          if (this._onMouseLeave) this.el.removeEventListener('mouseleave', this._onMouseLeave)
-          if (this._onFocusIn) this.el.removeEventListener('focusin', this._onFocusIn)
-          if (this._onFocusOut) this.el.removeEventListener('focusout', this._onFocusOut)
+          if (this._onMouseLeave) {
+            this.el.removeEventListener('mouseleave', this._onMouseLeave)
+            this._onMouseLeave = null
+          }
+          if (this._onFocusIn) {
+            this.el.removeEventListener('focusin', this._onFocusIn)
+            this._onFocusIn = null
+          }
+          if (this._onFocusOut) {
+            this.el.removeEventListener('focusout', this._onFocusOut)
+            this._onFocusOut = null
+          }
         }
       }
     </script>
