@@ -229,8 +229,6 @@ defmodule Pulsar.Components.FlashGroup do
     # Extract and process flash messages
     flash_messages = extract_flash_messages(assigns.flash, assigns.max_items)
 
-    IO.inspect(flash_messages, label: "DEBUG flash_messages")
-
     assigns = assign(assigns, :flash_messages, flash_messages)
 
     # Get position configuration
