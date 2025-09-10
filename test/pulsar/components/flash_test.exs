@@ -184,6 +184,7 @@ defmodule Pulsar.Components.FlashTest do
         """)
 
       assert html =~ ~s(role="status")
+      # Default live="auto" with role="status" should result in "polite"
       assert html =~ ~s(aria-live="polite")
     end
 
@@ -197,6 +198,28 @@ defmodule Pulsar.Components.FlashTest do
 
       assert html =~ ~s(role="alert")
       assert html =~ ~s(aria-live="assertive")
+    end
+
+    test "automatically sets aria-live based on role when using auto" do
+      assigns = %{}
+
+      # Alert role should get assertive aria-live automatically
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash role="alert" live="auto">Auto alert</Flash.flash>
+        """)
+
+      assert html =~ ~s(role="alert")
+      assert html =~ ~s(aria-live="assertive")
+
+      # Status role should get polite aria-live automatically  
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash role="status" live="auto">Auto status</Flash.flash>
+        """)
+
+      assert html =~ ~s(role="status")
+      assert html =~ ~s(aria-live="polite")
     end
 
     test "includes phx-hook for JavaScript functionality" do

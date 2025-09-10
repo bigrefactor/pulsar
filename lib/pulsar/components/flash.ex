@@ -99,7 +99,9 @@ defmodule Pulsar.Components.Flash do
     "font-medium shadow-md",
     "transition-all duration-200 ease-in-out",
     "focus-within:outline-none focus-within:ring-2",
-    "focus-within:ring-current focus-within:ring-offset-2"
+    "focus-within:ring-current focus-within:ring-offset-2",
+    # Restore pointer events for individual flashes
+    "pointer-events-auto"
   ]
 
   # Color configuration for each variant
@@ -195,9 +197,9 @@ defmodule Pulsar.Components.Flash do
   )
 
   attr(:live, :string,
-    default: "polite",
-    values: ~w(polite assertive off),
-    doc: "ARIA live region behavior"
+    default: "auto",
+    values: ~w(polite assertive off auto),
+    doc: "ARIA live region behavior (auto-determined from role if not specified)"
   )
 
   # Core attributes
@@ -278,7 +280,7 @@ defmodule Pulsar.Components.Flash do
       id={@id}
       phx-hook=".PulsarFlash"
       role={@role}
-      aria-live={@live}
+      aria-live={get_aria_live(@live, @role)}
       class={@merged_classes}
       data-auto-dismiss={data_tf(@auto_dismiss)}
       data-dismiss-after={@dismiss_after}
@@ -300,13 +302,7 @@ defmodule Pulsar.Components.Flash do
         type="button"
         class={close_button_classes(@size)}
         aria-label="Dismiss"
-        phx-click={
-          Phoenix.LiveView.JS.hide(
-            to: "##{@id}",
-            transition: {"ease-in duration-200", "opacity-100 translate-y-0", "opacity-0 -translate-y-2"}
-          )
-          |> push_dismiss_event(@on_dismiss, @flash_key)
-        }
+        phx-click={JS.dispatch("pulsar:flash-dismiss", to: "##{@id}")}
       >
         <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
           <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
@@ -386,11 +382,13 @@ defmodule Pulsar.Components.Flash do
           this._onMouseLeave = () => this.resume()
           this._onFocusIn = () => this.pause()
           this._onFocusOut = () => this.resume()
+          this._onManualDismiss = () => this.dismiss()
 
           this.el.addEventListener('mouseenter', this._onMouseEnter)
           this.el.addEventListener('mouseleave', this._onMouseLeave)
           this.el.addEventListener('focusin', this._onFocusIn)
           this.el.addEventListener('focusout', this._onFocusOut)
+          this.el.addEventListener('pulsar:flash-dismiss', this._onManualDismiss)
         },
 
         // Start the auto-dismiss timer
@@ -516,6 +514,10 @@ defmodule Pulsar.Components.Flash do
             this.el.removeEventListener('focusout', this._onFocusOut)
             this._onFocusOut = null
           }
+          if (this._onManualDismiss) {
+            this.el.removeEventListener('pulsar:flash-dismiss', this._onManualDismiss)
+            this._onManualDismiss = null
+          }
         }
       }
     </script>
@@ -554,16 +556,10 @@ defmodule Pulsar.Components.Flash do
     ])
   end
 
-  # Helper for pushing dismiss events
-  defp push_dismiss_event(js, nil, _flash_key), do: js
-
-  defp push_dismiss_event(js, event, flash_key) when is_binary(event) do
-    if flash_key do
-      JS.push(js, event, value: %{key: flash_key})
-    else
-      JS.push(js, event)
-    end
-  end
+  # Get appropriate aria-live value based on role
+  defp get_aria_live(live, _role) when live in ["polite", "assertive", "off"], do: live
+  defp get_aria_live("auto", "alert"), do: "assertive"
+  defp get_aria_live("auto", _role), do: "polite"
 
   # Data attribute helpers
   defp data_tf(true), do: "true"

@@ -2,16 +2,16 @@ defmodule Pulsar.Components.FlashGroup do
   @moduledoc """
   Container component for managing multiple flash notifications from Phoenix.Flash.
 
-  Provides intelligent positioning, stacking, and orchestration of Flash components
-  with automatic type-to-color mapping and FIFO queue management. Designed to be
-  the single integration point with Phoenix.Flash in your application.
+   Provides intelligent positioning, stacking, and orchestration of Flash components
+   with automatic type-to-color mapping and item limiting. Designed to be
+   the single integration point with Phoenix.Flash in your application.
 
   ## Features
 
   - **Phoenix.Flash Integration**: Reads flash messages directly from @flash assigns
   - **Intelligent Positioning**: 6 position options with automatic stacking
   - **Type-to-Color Mapping**: Automatic mapping of flash types to semantic colors
-  - **FIFO Queue**: Configurable maximum items with oldest-first dismissal
+   - **Item Limiting**: Configurable maximum number of flash messages to display
   - **Consistent Styling**: Single variant applied to all flashes in group
   - **Staggered Animations**: Smooth entry/exit with coordinated timing
 
@@ -53,28 +53,38 @@ defmodule Pulsar.Components.FlashGroup do
        # In LiveViews
        socket |> put_flash(:info, "Welcome back!")
 
-   ## Required Event Handler
+   ## Optional Event Handler
 
-   FlashGroup requires an event handler in your LiveView to clear flash messages:
+   FlashGroup can optionally push dismiss events for tracking or custom behavior.
+   Most applications don't need this since flash messages auto-clear on navigation.
 
        defmodule MyAppWeb.PageLive do
          use MyAppWeb, :live_view
 
          def render(assigns) do
            ~H\"\"\"
-           <.flash_group flash={@flash} />
+           <.flash_group flash={@flash} on_dismiss="track_dismissal" />
            <!-- your page content -->
            \"\"\"
          end
 
-         # Handle flash dismissal with flash key
-         def handle_event("clear_flash", %{"key" => key}, socket) do
-           {:noreply, clear_flash(socket, String.to_existing_atom(key))}
-         end
+         # Optional: Handle dismissal events for analytics/tracking
+         def handle_event("track_dismissal", %{"key" => key}, socket) do
+           # Safe atom handling to prevent atom exhaustion attacks
+           key_atom =
+             try do
+               String.to_existing_atom(key)
+             rescue
+               ArgumentError -> nil
+             end
 
-         # Handle flash dismissal without key (clear all)
-         def handle_event("clear_flash", _params, socket) do
-           {:noreply, clear_flash(socket)}
+           # Track the dismissal (optional)
+           case key_atom do
+             nil -> MyApp.Analytics.track("flash_dismissed", %{type: "unknown"})
+             k when is_atom(k) -> MyApp.Analytics.track("flash_dismissed", %{type: k})
+           end
+
+           {:noreply, socket}
          end
        end
 
@@ -90,7 +100,7 @@ defmodule Pulsar.Components.FlashGroup do
              {:ok, user} ->
                conn
                |> put_flash(:success, "User created successfully!")
-               |> redirect(to: ~p"/users/#{user}")
+                 |> redirect(to: "/users/\#{user.id}")
 
              {:error, %Ecto.Changeset{} = changeset} ->
                conn
@@ -276,7 +286,7 @@ defmodule Pulsar.Components.FlashGroup do
 
   attr(:max_items, :integer,
     default: 5,
-    doc: "Maximum number of flashes to display (FIFO removal)"
+    doc: "Maximum number of flashes to display (limits displayed items)"
   )
 
   attr(:auto_dismiss, :boolean,
@@ -326,11 +336,11 @@ defmodule Pulsar.Components.FlashGroup do
 
   ## Flash Message Processing
 
-  1. **Read Flash Messages**: Extracts all messages from the @flash map
-  2. **Apply FIFO Limit**: Keeps only the most recent max_items messages
-  3. **Type Mapping**: Maps each flash type to appropriate color and ARIA role
-  4. **Render Components**: Creates Flash components with consistent styling
-  5. **Coordinate Animations**: Manages staggered entry and exit animations
+   1. **Read Flash Messages**: Extracts all messages from the @flash map
+   2. **Apply Item Limit**: Limits displayed messages to max_items (Phoenix.Flash stores one message per type)
+   3. **Type Mapping**: Maps each flash type to appropriate color and ARIA role
+   4. **Render Components**: Creates Flash components with consistent styling
+   5. **Coordinate Animations**: Manages staggered entry and exit animations
 
   ## Event Handling
 
@@ -364,7 +374,13 @@ defmodule Pulsar.Components.FlashGroup do
     # Extract and process flash messages
     flash_messages = extract_flash_messages(assigns.flash, assigns.max_items)
 
-    assigns = assign(assigns, :flash_messages, flash_messages)
+    # Generate unique component ID to prevent collisions
+    component_id = System.unique_integer([:positive])
+
+    assigns =
+      assigns
+      |> assign(:flash_messages, flash_messages)
+      |> assign(:component_id, component_id)
 
     # Get position configuration with validation
     position_config = get_position_config(assigns.position)
@@ -376,6 +392,8 @@ defmodule Pulsar.Components.FlashGroup do
         merge([
           position_config.container,
           get_z_index_class(assigns.z_index),
+          # Allow click-through container
+          "pointer-events-none",
           assigns.class
         ])
       )
@@ -388,7 +406,7 @@ defmodule Pulsar.Components.FlashGroup do
     >
       <Flash.flash
         :for={{{type, message}, index} <- Enum.with_index(@flash_messages)}
-        id={"flash-#{type}"}
+        id={"flash-#{@component_id}-#{type}"}
         variant={@variant}
         color={get_flash_color(type)}
         size={@size}
@@ -402,7 +420,7 @@ defmodule Pulsar.Components.FlashGroup do
         phx-mounted={
           Phoenix.LiveView.JS.show(
             transition: {
-              "ease-out duration-300",
+              "ease-out duration-200",
               "opacity-0 #{get_entry_from(@position)}",
               "opacity-100 #{get_entry_to(@position)}"
             }
@@ -420,7 +438,9 @@ defmodule Pulsar.Components.FlashGroup do
 
   # === Helper Functions ===
 
-  # Extract flash messages with FIFO limiting and exit animation for displaced items
+  # Extract flash messages with item limiting
+  # Note: Phoenix.Flash stores one message per type (not a true queue),
+  # so max_items effectively limits how many different flash types are shown
   defp extract_flash_messages(flash, max_items) when is_map(flash) do
     all_messages =
       flash
@@ -429,13 +449,12 @@ defmodule Pulsar.Components.FlashGroup do
         is_nil(message) or (is_binary(message) and String.trim(message) == "")
       end)
 
-    # Take only the most recent messages, but add exit class to displaced ones
+    # Limit to max_items (Map.to_list order is undefined)
     case length(all_messages) do
       count when count <= max_items ->
         all_messages
 
       _count ->
-        # Keep the most recent messages
         Enum.take(all_messages, max_items)
     end
   end
@@ -500,7 +519,7 @@ defmodule Pulsar.Components.FlashGroup do
   # Get animation style with stagger delay
   defp get_animation_style(index, stagger_delay) when stagger_delay > 0 do
     delay_ms = index * stagger_delay
-    "animation-delay: #{delay_ms}ms;"
+    "transition-delay: #{delay_ms}ms;"
   end
 
   defp get_animation_style(_, _), do: nil

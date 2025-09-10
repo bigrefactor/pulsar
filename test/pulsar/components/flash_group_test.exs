@@ -6,6 +6,39 @@ defmodule Pulsar.Components.FlashGroupTest do
 
   alias Pulsar.Components.FlashGroup
 
+  describe "flash_group/1 stagger delay functionality" do
+    test "applies transition-delay for stagger animation" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group
+          flash={%{info: "Message 1", success: "Message 2"}}
+          stagger_delay={100}
+        />
+        """)
+
+      # Should use transition-delay, not animation-delay
+      assert html =~ "transition-delay: 0ms"
+      assert html =~ "transition-delay: 100ms"
+      refute html =~ "animation-delay"
+    end
+
+    test "applies pointer-events for click-through behavior" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{info: "Test message"}} />
+        """)
+
+      # Container should have pointer-events-none for click-through
+      assert html =~ "pointer-events-none"
+      # Individual flashes should have pointer-events-auto to remain interactive
+      assert html =~ "pointer-events-auto"
+    end
+  end
+
   describe "flash_group/1 basic functionality" do
     test "renders empty when no flash messages" do
       assigns = %{}
@@ -32,8 +65,8 @@ defmodule Pulsar.Components.FlashGroupTest do
       # Default position (top-right)
       assert html =~ "top-4"
       assert html =~ "right-4"
-      # Should render Flash component with specific ID
-      assert html =~ ~s(id="flash-info")
+      # Should render Flash component with unique ID format: flash-{component_id}-{type}
+      assert html =~ ~r/id="flash-\d+-info"/
     end
 
     test "renders multiple flash messages" do
@@ -503,6 +536,30 @@ defmodule Pulsar.Components.FlashGroupTest do
     end
   end
 
+  describe "flash_group/1 ID collision prevention" do
+    test "generates different component IDs for multiple flash groups" do
+      assigns = %{}
+
+      # Render two flash groups
+      html1 =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{info: "Message 1"}} />
+        """)
+
+      html2 =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{info: "Message 2"}} />
+        """)
+
+      # Extract the component IDs from both rendered HTML
+      [_, id1] = Regex.run(~r/id="flash-(\d+)-info"/, html1)
+      [_, id2] = Regex.run(~r/id="flash-(\d+)-info"/, html2)
+
+      # Component IDs should be different
+      assert id1 != id2
+    end
+  end
+
   describe "flash_group/1 edge cases" do
     test "handles non-map flash gracefully" do
       assigns = %{}
@@ -544,9 +601,9 @@ defmodule Pulsar.Components.FlashGroupTest do
         <FlashGroup.flash_group flash={@flash} />
         """)
 
-      # Should have unique IDs for each flash
-      assert html =~ ~s(id="flash-error")
-      assert html =~ ~s(id="flash-info")
+      # Should have unique IDs for each flash with component ID
+      assert html =~ ~r/id="flash-\d+-error"/
+      assert html =~ ~r/id="flash-\d+-info"/
     end
 
     test "falls back to default position for invalid position" do
