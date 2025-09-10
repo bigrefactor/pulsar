@@ -152,7 +152,7 @@ defmodule Pulsar.Components.Table do
   ]
 
   @container_base_classes [
-    "relative overflow-hidden"
+    "relative overflow-x-auto"
   ]
 
   # Alignment classes for columns
@@ -231,9 +231,9 @@ defmodule Pulsar.Components.Table do
     default: nil,
     doc: "Unique identifier for the table (auto-generated if not provided)"
 
-  attr :rows, :list,
+  attr :rows, :any,
     required: true,
-    doc: "List of rows to display or Phoenix.LiveView.LiveStream"
+    doc: "List of rows to display or Phoenix.LiveView.LiveStream for real-time updates"
 
   # Styling attributes
   attr :variant, :string,
@@ -354,7 +354,16 @@ defmodule Pulsar.Components.Table do
 
     ~H"""
     <div class={@container_classes}>
-      <table {@rest} class={@table_classes}>
+      <!-- Loading status announcement for screen readers -->
+      <div
+        :if={@loading}
+        role="status"
+        aria-live="polite"
+        class="sr-only"
+      >
+        Loading rows
+      </div>
+      <table {@rest} aria-busy={to_string(@loading)} class={@table_classes}>
         <thead class={@header_classes}>
           <tr>
             <th
@@ -378,7 +387,7 @@ defmodule Pulsar.Components.Table do
           <tr
             :for={row <- @rows}
             id={@row_id && @row_id.(row)}
-            phx-click={@row_click && @row_click.(row)}
+            phx-click={@row_click && @row_click.(@row_item.(row))}
             phx-hook={@row_click && ".PulsarTableRow"}
             tabindex={@row_click && "0"}
             role={@row_click && "button"}
