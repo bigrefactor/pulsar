@@ -1,5 +1,5 @@
 defmodule Pulsar.Components.FlashGroupTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   import ExUnit.CaptureLog
   import Phoenix.Component
@@ -49,8 +49,8 @@ defmodule Pulsar.Components.FlashGroupTest do
         <FlashGroup.flash_group flash={%{}} />
         """)
 
-      # Should not render container when no messages
-      refute html =~ ~s(<div)
+      # Should not render anything when no messages
+      assert String.trim(html) == ""
     end
 
     test "renders container with flash messages" do
@@ -244,9 +244,10 @@ defmodule Pulsar.Components.FlashGroupTest do
         <FlashGroup.flash_group flash={%{info: "Info", success: "Success"}} />
         """)
 
-      # Should have status roles
+      # Should have status roles and polite live region behavior
       status_count = html |> String.split(~s(role="status")) |> length() |> Kernel.-(1)
       assert status_count == 2
+      assert html =~ ~s(aria-live="polite")
     end
   end
 
@@ -452,6 +453,19 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       assert html =~ ~s(data-flash-key="error")
       assert html =~ ~s(data-flash-key="info")
+    end
+
+    test "renders dismiss button with accessible label by default" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{info: "Info message"}} />
+        """)
+
+      assert html =~ ~s(<button)
+      assert html =~ ~s(type="button")
+      assert html =~ ~s(aria-label="Dismiss")
     end
   end
 

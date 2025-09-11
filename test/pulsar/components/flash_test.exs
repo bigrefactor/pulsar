@@ -133,7 +133,7 @@ defmodule Pulsar.Components.FlashTest do
         """)
 
       assert html =~ ~s(phx-click=)
-      # Should contain the JS.push event
+      # Dismiss event name appears via data-on-dismiss; the hook performs pushEvent
       assert html =~ "remove_flash"
     end
   end
@@ -495,7 +495,7 @@ defmodule Pulsar.Components.FlashTest do
 
       assert html_normal =~ ~s(data-dismiss-after="3000")
 
-      # Test very large value (should be limited to 60000)
+      # Very large value: rendered as given; the JS hook clamps to 60000 at runtime
       html_large =
         rendered_to_string(~H"""
         <Flash.flash dismiss_after={120_000}>Large timeout</Flash.flash>
@@ -503,7 +503,7 @@ defmodule Pulsar.Components.FlashTest do
 
       assert html_large =~ ~s(data-dismiss-after="120000")
 
-      # Test very small value (should fallback to 5000)
+      # Very small value: rendered as given; the JS hook falls back to 5000 at runtime
       html_small =
         rendered_to_string(~H"""
         <Flash.flash dismiss_after={50}>Small timeout</Flash.flash>
