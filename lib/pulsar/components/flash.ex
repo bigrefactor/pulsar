@@ -50,12 +50,11 @@ defmodule Pulsar.Components.Flash do
       # In your layout or LiveView
       <.flash_group flash={@flash} />
 
-  ## Accessibility Features
+   ## Accessibility Features
 
-  - **Screen Reader Support**: Proper ARIA roles and live regions
-  - **Keyboard Navigation**: Dismissible flashes are keyboard accessible
-  - **Focus Management**: Focus handling for modal-style important flashes
-  - **Color Independence**: Icons and text provide non-color-based communication
+   - **Screen Reader Support**: Proper ARIA roles and live regions
+   - **Keyboard Navigation**: Dismissible flashes are keyboard accessible
+   - **Color Independence**: Icons and text provide non-color-based communication
   """
 
   use Phoenix.Component
@@ -281,6 +280,7 @@ defmodule Pulsar.Components.Flash do
       phx-hook=".PulsarFlash"
       role={@role}
       aria-live={get_aria_live(@live, @role)}
+      aria-atomic="true"
       class={@merged_classes}
       data-auto-dismiss={data_tf(@auto_dismiss)}
       data-dismiss-after={@dismiss_after}
@@ -302,6 +302,7 @@ defmodule Pulsar.Components.Flash do
         type="button"
         class={close_button_classes(@size)}
         aria-label="Dismiss"
+        aria-controls={@id}
         phx-click={JS.dispatch("pulsar:flash-dismiss", to: "##{@id}")}
       >
         <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -331,12 +332,11 @@ defmodule Pulsar.Components.Flash do
           this.onDismissEvent = this.el.dataset.onDismiss
           this.flashKey = this.el.dataset.flashKey
           this.remainingTime = this.dismissAfter
-          this.timer = null
-          this.isVisible = false
-          this.isPaused = false
-          this.startTime = null
-          this.operationInProgress = false
-          this._dismissed = false
+           this.timer = null
+           this.isVisible = false
+           this.isPaused = false
+           this.startTime = null
+           this._dismissed = false
         },
 
         // Set up IntersectionObserver for visibility detection
@@ -400,35 +400,31 @@ defmodule Pulsar.Components.Flash do
           this.el.addEventListener('pulsar:flash-dismiss', this._onManualDismiss)
         },
 
-        // Start the auto-dismiss timer
-        startTimer() {
-          if (!this.autoDismiss || this.timer || this.operationInProgress) return
+         // Start the auto-dismiss timer
+         startTimer() {
+           if (!this.autoDismiss || this.timer) return
+           
+           this.startTime = Date.now()
+           this.timer = setTimeout(() => this.dismiss(), this.remainingTime)
+         },
 
-          this.operationInProgress = true
-          this.startTime = Date.now()
-          this.timer = setTimeout(() => this.dismiss(), this.remainingTime)
-          this.operationInProgress = false
-        },
+         // Pause the auto-dismiss timer
+         pause() {
+           if (!this.timer || !this.autoDismiss) return
+           
+           clearTimeout(this.timer)
+           this.remainingTime -= (Date.now() - this.startTime)
+           this.timer = null
+           this.isPaused = true
+         },
 
-        // Pause the auto-dismiss timer
-        pause() {
-          if (!this.timer || !this.autoDismiss || this.operationInProgress) return
-
-          this.operationInProgress = true
-          clearTimeout(this.timer)
-          this.remainingTime -= (Date.now() - this.startTime)
-          this.timer = null
-          this.isPaused = true
-          this.operationInProgress = false
-        },
-
-        // Resume the auto-dismiss timer
-        resume() {
-          if (!this.isPaused || !this.autoDismiss || this.operationInProgress) return
-
-          this.isPaused = false
-          this.startTimer()
-        },
+         // Resume the auto-dismiss timer
+         resume() {
+           if (!this.isPaused || !this.autoDismiss) return
+           
+           this.isPaused = false
+           this.startTimer()
+         },
 
         // Dismiss the flash with animation
         dismiss() {
@@ -574,7 +570,7 @@ defmodule Pulsar.Components.Flash do
   # Close button size classes based on flash size
   defp close_button_classes(size) do
     merge([
-      "flex-shrink-0 rounded-md p-1 transition-colors",
+      "flex-shrink-0 rounded-md transition-colors",
       "hover:bg-black/10 dark:hover:bg-white/10",
       "focus:outline-none focus:ring-2 focus:ring-current focus:ring-offset-2",
       @size_config[size][:close_button]
