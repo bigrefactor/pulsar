@@ -336,6 +336,7 @@ defmodule Pulsar.Components.Flash do
           this.isPaused = false
           this.startTime = null
           this.operationInProgress = false
+          this._dismissed = false
         },
 
         // Set up IntersectionObserver for visibility detection
@@ -431,6 +432,8 @@ defmodule Pulsar.Components.Flash do
 
         // Dismiss the flash with animation
         dismiss() {
+          if (this._dismissed) return
+          this._dismissed = true
           this.clearTimer()
           this.animateExit()
           this.scheduleDismissEvent()
@@ -458,6 +461,9 @@ defmodule Pulsar.Components.Flash do
               this.pushEvent(this.onDismissEvent, {key: this.flashKey})
             } else if (this.onDismissEvent) {
               this.pushEvent(this.onDismissEvent, {})
+            } else {
+              // No dismiss handler, remove from DOM
+              this.el.remove()
             }
           }, 200)
         },

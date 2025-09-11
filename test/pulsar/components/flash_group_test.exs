@@ -360,13 +360,13 @@ defmodule Pulsar.Components.FlashGroupTest do
       assigns = %{}
 
       flash = %{
-        msg1: "Message 1",
-        msg2: "Message 2",
-        msg3: "Message 3",
-        msg4: "Message 4",
-        msg5: "Message 5",
+        error: "Error message",
+        warning: "Warning message",
+        info: "Info message",
+        success: "Success message",
+        custom1: "Custom message 1",
         # Should be excluded with max_items=3
-        msg6: "Message 6"
+        custom2: "Custom message 2"
       }
 
       assigns = Map.put(assigns, :flash, flash)
@@ -380,10 +380,10 @@ defmodule Pulsar.Components.FlashGroupTest do
       flash_count = Regex.scan(~r/id=\"flash-[^\"]+\"/, html) |> length()
       assert flash_count == 3
 
-      # Should contain first 3 messages (Map.to_list behavior)
-      assert html =~ "Message 1"
-      assert html =~ "Message 2"
-      assert html =~ "Message 3"
+      # Should contain first 3 messages by priority (error, warning, info)
+      assert html =~ "Error message"
+      assert html =~ "Warning message"
+      assert html =~ "Info message"
     end
 
     test "handles empty and nil messages" do
