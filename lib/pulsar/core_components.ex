@@ -15,6 +15,7 @@ defmodule Pulsar.CoreComponents do
   alias Pulsar.Components.FlashGroup
   alias Pulsar.Components.Header
   alias Pulsar.Components.Icon
+  alias Pulsar.Components.List
   alias Pulsar.Components.Table
 
   @doc """
@@ -592,6 +593,101 @@ defmodule Pulsar.CoreComponents do
         {render_slot(action, row)}
       </:action>
     </Table.table>
+    """
+  end
+
+  @doc """
+  Renders a data list.
+
+  Drop-in replacement for Phoenix core_components list with Pulsar enhancements.
+  Maintains full API compatibility while providing optional Pulsar features.
+
+  ## Phoenix Compatibility Examples
+
+      <.list>
+        <:item title="Title">{@post.title}</:item>
+        <:item title="Views">{@post.views}</:item>
+      </.list>
+
+  ## Pulsar Enhanced Examples
+
+      <.list variant="outline" color="primary" size="lg">
+        <:item title="Name">John Doe</:item>
+        <:item title="Email">john@example.com</:item>
+      </.list>
+
+      <.list variant="solid" color="neutral" striped={true}>
+        <:item title="Created">2024-01-15</:item>
+        <:item title="Modified">2024-03-20</:item>
+      </.list>
+  """
+  # Phoenix core_components compatibility slots
+  slot(:item, required: true, doc: "List items with title and content") do
+    attr(:title, :string, required: true, doc: "The label/key for the item")
+    attr(:class, :string, doc: "Additional classes for the item")
+  end
+
+  # Pulsar enhancement attributes (optional)
+  attr(:variant, :string,
+    default: "ghost",
+    values: ~w(solid outline ghost),
+    doc: "Pulsar visual style variant"
+  )
+
+  attr(:color, :string,
+    default: "neutral",
+    values: ~w(neutral primary secondary success danger warning info),
+    doc: "Pulsar color scheme"
+  )
+
+  attr(:size, :string,
+    default: "md",
+    values: ~w(xs sm md lg xl),
+    doc: "Pulsar list size"
+  )
+
+  attr(:striped, :boolean,
+    default: false,
+    doc: "Enable zebra striping for rows"
+  )
+
+  attr(:dividers, :boolean,
+    default: true,
+    doc: "Show dividers between items"
+  )
+
+  attr(:class, :string, default: "", doc: "Additional CSS classes")
+  attr(:rest, :global, doc: "Additional HTML attributes")
+
+  # Pulsar enhancement slots (optional)
+  slot(:empty, doc: "Content to display when no items are present")
+  slot(:title, doc: "Optional title for the list")
+  slot(:description, doc: "Optional description for the list")
+
+  def list(assigns) do
+    # Extract attributes to pass to Pulsar list
+    extra = assigns_to_attributes(assigns, [:variant, :color, :size, :striped, :dividers, :class])
+
+    assigns = assign(assigns, :extra, extra)
+
+    ~H"""
+    <List.list
+      variant={@variant}
+      color={@color}
+      size={@size}
+      striped={@striped}
+      dividers={@dividers}
+      class={@class}
+      {@extra}
+      {@rest}
+    >
+      <:item :for={item <- @item} title={item.title} class={item[:class]}>
+        {render_slot(item)}
+      </:item>
+      <:empty :if={@empty != []}>{render_slot(@empty)}</:empty>
+      <:title :if={@title != []}>{render_slot(@title)}</:title>
+      <:description :if={@description != []}>{render_slot(@description)}</:description>
+    </List.list>
     """
   end
 
