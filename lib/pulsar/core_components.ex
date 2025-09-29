@@ -15,6 +15,7 @@ defmodule Pulsar.CoreComponents do
   alias Pulsar.Components.FlashGroup
   alias Pulsar.Components.Header
   alias Pulsar.Components.Icon
+  alias Pulsar.Components.Table
 
   @doc """
   Renders flash notices.
@@ -449,6 +450,148 @@ defmodule Pulsar.CoreComponents do
         {render_slot(breadcrumb)}
       </:breadcrumb>
     </Header.header>
+    """
+  end
+
+  @doc """
+  Renders a table with generic styling and LiveStream support.
+
+  Drop-in replacement for Phoenix core_components table with Pulsar enhancements.
+  Maintains full API compatibility while providing optional Pulsar features.
+
+  ## Phoenix Compatibility Examples
+
+      <.table id="users" rows={@users}>
+        <:col :let={user} label="id">{user.id}</:col>
+        <:col :let={user} label="username">{user.username}</:col>
+      </.table>
+
+      <.table id="posts" rows={@posts} class="table-zebra">
+        <:col :let={post} label="Title">{post.title}</:col>
+        <:action :let={post}>
+          <.link navigate={~p"/posts/\#{post.id}"}>Show</.link>
+        </:action>
+      </.table>
+
+  ## Pulsar Enhanced Examples
+
+      <.table
+        id="products"
+        rows={@products}
+        variant="outline"
+        color="primary"
+        size="sm"
+        striped={true}
+      >
+        <:col :let={product} label="Name">{product.name}</:col>
+        <:col :let={product} label="Price" align="right">${product.price}</:col>
+      </.table>
+
+      <.table
+        id="events"
+        rows={@streams.events}
+        variant="solid"
+        sticky_header={true}
+        loading={@loading}
+      >
+        <:col :let={{_id, event}} label="Event">{event.name}</:col>
+        <:col :let={{_id, event}} label="Time">{event.timestamp}</:col>
+      </.table>
+  """
+  # Phoenix core_components compatibility attributes
+  attr :id, :string, required: true, doc: "Unique identifier for the table"
+  attr :rows, :list, required: true, doc: "List of rows to display or Phoenix.LiveView.LiveStream"
+  attr :row_id, :any, default: nil, doc: "Function for generating the row id"
+  attr :row_click, :any, default: nil, doc: "Function for handling phx-click on each row"
+  attr :row_item, :any,
+    default: &Function.identity/1,
+    doc: "Function for mapping each row before calling the :col and :action slots"
+
+  # Phoenix core_components compatibility slots
+  slot :col, required: true do
+    attr :label, :string
+  end
+  slot :action, doc: "The slot for showing user actions in the last table column"
+
+  # Pulsar enhancement attributes (optional)
+  attr :variant, :string,
+    default: "ghost",
+    values: ~w(solid outline ghost),
+    doc: "Pulsar visual style variant"
+
+  attr :color, :string,
+    default: "neutral",
+    values: ~w(neutral primary secondary success danger warning info),
+    doc: "Pulsar color scheme"
+
+  attr :size, :string,
+    default: "md",
+    values: ~w(xs sm md lg xl),
+    doc: "Pulsar table size"
+
+  attr :striped, :boolean,
+    default: false,
+    doc: "Enable zebra striping for rows"
+
+  attr :sticky_header, :boolean,
+    default: false,
+    doc: "Whether header should stick to top when scrolling"
+
+  attr :loading, :boolean,
+    default: false,
+    doc: "Show loading skeleton rows"
+
+  attr :class, :string, default: "", doc: "Additional CSS classes"
+  attr :rest, :global, doc: "Additional HTML attributes"
+
+  def table(assigns) do
+    # Detect Phoenix table-zebra class and enable striping
+    striped = assigns.striped || (assigns.class && String.contains?(assigns.class, "table-zebra"))
+
+    # Remove table-zebra from class if present since Pulsar handles it via striped attribute
+    cleaned_class =
+      if assigns.class && String.contains?(assigns.class, "table-zebra") do
+        assigns.class
+        |> String.replace("table-zebra", "")
+        |> String.replace(~r/\s+/, " ")
+        |> String.trim()
+      else
+        assigns.class
+      end
+
+    # Extract attributes to pass to Pulsar table
+    extra = assigns_to_attributes(assigns, [:variant, :color, :size, :striped, :sticky_header, :loading, :class])
+
+    assigns =
+      assigns
+      |> assign(:striped, striped)
+      |> assign(:cleaned_class, cleaned_class)
+      |> assign(:extra, extra)
+
+    ~H"""
+    <Table.table
+      id={@id}
+      rows={@rows}
+      row_id={@row_id}
+      row_click={@row_click}
+      row_item={@row_item}
+      variant={@variant}
+      color={@color}
+      size={@size}
+      striped={@striped}
+      sticky_header={@sticky_header}
+      loading={@loading}
+      class={@cleaned_class}
+      {@extra}
+      {@rest}
+    >
+      <:col :for={col <- @col} :let={row} {col |> Map.take([:label])}>
+        {render_slot(col, row)}
+      </:col>
+      <:action :for={action <- @action} :let={row}>
+        {render_slot(action, row)}
+      </:action>
+    </Table.table>
     """
   end
 
