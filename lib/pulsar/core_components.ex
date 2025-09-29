@@ -10,8 +10,10 @@ defmodule Pulsar.CoreComponents do
 
   alias Phoenix.LiveView.JS
   alias Pulsar.Components.Button
+  alias Pulsar.Components.Field
   alias Pulsar.Components.Flash
   alias Pulsar.Components.FlashGroup
+  alias Pulsar.Components.Header
   alias Pulsar.Components.Icon
 
   @doc """
@@ -202,6 +204,253 @@ defmodule Pulsar.CoreComponents do
       <.icon name="hero-check" variant="solid" color="success" size="lg" />
   """
   defdelegate icon(assigns), to: Icon
+
+  @doc """
+  Renders an input with label and error messages.
+
+  Drop-in replacement for Phoenix core_components input with Pulsar enhancements.
+  Maintains full API compatibility while providing optional Pulsar features.
+
+  A `Phoenix.HTML.FormField` may be passed as argument,
+  which is used to retrieve the input name, id, and values.
+  Otherwise all attributes may be passed explicitly.
+
+  ## Types
+
+  This function accepts all HTML input types, considering that:
+
+    * You may also set `type=\"select\"` to render a `<select>` tag
+
+    * `type=\"checkbox\"` is used exclusively to render boolean values
+
+    * For live file uploads, see `Phoenix.Component.live_file_input/1`
+
+  See https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
+  for more information. Unsupported types, such as hidden and radio,
+  are best written directly in your templates.
+
+  ## Phoenix Compatibility Examples
+
+      <.input field={@form[:email]} type=\"email\" />
+      <.input name=\"my-input\" errors={[\"oh no!\"]} />
+
+  ## Pulsar Enhanced Examples
+
+      <.input field={@form[:email]} type=\"email\" variant=\"outline\" color=\"primary\" size=\"lg\" />
+      <.input field={@form[:amount]} type=\"number\" variant=\"solid\" color=\"success\">
+        <:start_decorator>$</:start_decorator>
+        <:end_decorator>USD</:end_decorator>
+      </.input>
+  """
+  # Phoenix core_components compatibility attributes
+  attr :id, :any, default: nil
+  attr :name, :any
+  attr :label, :string, default: nil
+  attr :value, :any
+
+  attr :type, :string,
+    default: "text",
+    values: ~w(checkbox color date datetime-local email file month number password
+               search select tel text textarea time url week)
+
+  attr :field, Phoenix.HTML.FormField,
+    doc: "a form field struct retrieved from the form, for example: @form[:email]"
+
+  attr :errors, :list, default: []
+  attr :checked, :boolean, doc: "the checked flag for checkbox inputs"
+  attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
+  attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
+  attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
+  attr :class, :string, default: nil, doc: "the input class to use over defaults"
+  attr :error_class, :string, default: nil, doc: "the input error class to use over defaults"
+
+  attr :rest, :global,
+    include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
+                multiple pattern placeholder readonly required rows size step)
+
+  # Pulsar enhancement attributes (optional)
+  attr :variant, :string,
+    default: "outline",
+    values: ~w(outline solid ghost),
+    doc: "Pulsar visual style variant"
+
+  attr :color, :string,
+    default: "neutral",
+    values: ~w(neutral primary secondary success danger warning info),
+    doc: "Pulsar color scheme"
+
+  attr :size, :string,
+    default: "md",
+    values: ~w(xs sm md lg xl),
+    doc: "Pulsar input size"
+
+  # Pulsar decorator slots
+  slot :start_decorator, doc: "Leading decorator content (icons, text, buttons)"
+  slot :end_decorator, doc: "Trailing decorator content (icons, text, buttons)"
+
+  def input(assigns) do
+
+    ~H"""
+    <Field.field
+      field={@field}
+      type={@type}
+      id={@id}
+      name={@name}
+      value={@value}
+      variant={@variant}
+      color={@color}
+      size={@size}
+      placeholder={@rest[:placeholder]}
+      required={@rest[:required]}
+      disabled={@rest[:disabled]}
+      readonly={@rest[:readonly]}
+      options={@options}
+      prompt={@prompt}
+      multiple={@multiple}
+      checked={@checked}
+      class={@class}
+      {@rest}
+    >
+      <:label :if={@label}>{@label}</:label>
+      <:start_decorator :if={@start_decorator != []}>
+        {render_slot(@start_decorator)}
+      </:start_decorator>
+      <:end_decorator :if={@end_decorator != []}>
+        {render_slot(@end_decorator)}
+      </:end_decorator>
+    </Field.field>
+    """
+  end
+
+  @doc """
+  Renders a header with title, optional subtitle, actions, and navigation.
+
+  Drop-in replacement for Phoenix core_components header with Pulsar enhancements.
+  Maintains full API compatibility while providing optional Pulsar features.
+
+  ## Phoenix Compatibility Examples
+
+      <.header>
+        Dashboard
+      </.header>
+
+      <.header>
+        User Management
+        <:subtitle>
+          Manage users, roles, and permissions
+        </:subtitle>
+        <:actions>
+          <.button>Add User</.button>
+        </:actions>
+      </.header>
+
+  ## Pulsar Enhanced Examples
+
+      <.header variant="solid" color="primary" size="lg">
+        Welcome Back!
+        <:subtitle>
+          Here's what's happening with your projects
+        </:subtitle>
+      </.header>
+
+      <.header variant="outline" sticky={true} divider={true}>
+        Article Title
+        <:subtitle>Published on {@article.published_at}</:subtitle>
+        <:actions>
+          <.button variant="ghost">Edit</.button>
+          <.button variant="ghost">Share</.button>
+        </:actions>
+      </.header>
+
+      <.header as="h2" size="lg">
+        <:breadcrumb navigate={~p"/"}>Home</:breadcrumb>
+        <:breadcrumb navigate={~p"/products"}>Products</:breadcrumb>
+        <:breadcrumb>Electronics</:breadcrumb>
+
+        Electronics
+        <:subtitle>Browse our selection of electronic products</:subtitle>
+      </.header>
+  """
+  # Phoenix core_components compatibility slots
+  slot(:inner_block, required: true, doc: "The main title content")
+  slot(:subtitle, doc: "Optional subtitle or description text")
+  slot(:actions, doc: "Optional actions like buttons or links, aligned to the right on desktop")
+
+  # Pulsar enhancement attributes (optional)
+  attr(:variant, :string,
+    default: "ghost",
+    values: ~w(solid outline ghost),
+    doc: "Pulsar visual style variant"
+  )
+
+  attr(:color, :string,
+    default: "neutral",
+    values: ~w(neutral primary secondary success danger warning info),
+    doc: "Pulsar color scheme"
+  )
+
+  attr(:size, :string,
+    default: "md",
+    values: ~w(xs sm md lg xl),
+    doc: "Pulsar header text size"
+  )
+
+  attr(:as, :string,
+    default: "h1",
+    values: ~w(h1 h2 h3 h4 h5 h6),
+    doc: "HTML heading element to use for semantic structure"
+  )
+
+  attr(:sticky, :boolean,
+    default: false,
+    doc: "Whether header sticks to top of viewport when scrolling"
+  )
+
+  attr(:divider, :boolean,
+    default: false,
+    doc: "Show a divider line below the header (in addition to variant styling)"
+  )
+
+  attr(:class, :string,
+    default: "",
+    doc: "Additional CSS classes"
+  )
+
+  attr(:rest, :global, doc: "Additional HTML attributes")
+
+  # Pulsar breadcrumb slot (enhancement)
+  slot(:breadcrumb, doc: "Breadcrumb navigation items with automatic chevron separators") do
+    attr(:navigate, :any, doc: "Phoenix LiveView navigation path")
+    attr(:patch, :any, doc: "Phoenix LiveView patch path")
+    attr(:href, :string, doc: "Direct href for external links")
+  end
+
+  def header(assigns) do
+    extra = assigns_to_attributes(assigns, [:variant, :color, :size, :as, :sticky, :divider, :class])
+
+    assigns = assign(assigns, :extra, extra)
+
+    ~H"""
+    <Header.header
+      variant={@variant}
+      color={@color}
+      size={@size}
+      as={@as}
+      sticky={@sticky}
+      divider={@divider}
+      class={@class}
+      {@extra}
+      {@rest}
+    >
+      {render_slot(@inner_block)}
+      <:subtitle :if={@subtitle != []}>{render_slot(@subtitle)}</:subtitle>
+      <:actions :if={@actions != []}>{render_slot(@actions)}</:actions>
+      <:breadcrumb :for={breadcrumb <- @breadcrumb} {breadcrumb |> Map.take([:navigate, :patch, :href])}>
+        {render_slot(breadcrumb)}
+      </:breadcrumb>
+    </Header.header>
+    """
+  end
 
   # === Helper Functions ===
 
