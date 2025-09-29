@@ -9,6 +9,7 @@ defmodule Pulsar.CoreComponents do
   use Phoenix.Component
 
   alias Phoenix.LiveView.JS
+  alias Pulsar.Components.Button
   alias Pulsar.Components.Flash
   alias Pulsar.Components.FlashGroup
   alias Pulsar.Components.Icon
@@ -108,6 +109,89 @@ defmodule Pulsar.CoreComponents do
       <.flash_group flash={@flash} variant="outline" position="bottom-right" />
   """
   defdelegate flash_group(assigns), to: FlashGroup
+
+  @doc """
+  Renders a button with navigation support and Pulsar styling.
+
+  Drop-in replacement for Phoenix core_components button with Pulsar enhancements.
+  Maintains full API compatibility while providing optional Pulsar features.
+
+  ## Phoenix Compatibility Examples
+
+      <.button>Send!</.button>
+      <.button phx-click="go" variant="primary">Send!</.button>
+      <.button navigate={~p"/"}>Home</.button>
+
+  ## Pulsar Enhanced Examples
+
+      <.button variant="outline" color="success" size="lg">Large Success</.button>
+      <.button variant="ghost" color="danger" loading={@saving}>Delete</.button>
+  """
+  # Phoenix core_components compatibility attributes
+  attr(:rest, :global,
+    include: ~w(href navigate patch method download name value disabled),
+    doc: "Phoenix navigation and form attributes"
+  )
+  attr(:class, :string, default: "", doc: "Additional CSS classes")
+  attr(:variant, :string,
+    values: ~w(primary solid outline ghost link),
+    doc: "Button variant (Phoenix: primary or nil; Pulsar: solid/outline/ghost/link)"
+  )
+
+  # Pulsar enhancement attributes (optional)
+  attr(:color, :string,
+    values: ~w(neutral primary secondary success danger warning info),
+    doc: "Pulsar color scheme (enhances or overrides Phoenix variant)"
+  )
+  attr(:size, :string,
+    default: "md",
+    values: ~w(xs sm md lg xl),
+    doc: "Pulsar button size"
+  )
+  attr(:loading, :boolean, default: false, doc: "Pulsar loading state")
+
+  slot(:inner_block, required: true, doc: "Button content")
+
+  def button(assigns) do
+    # Map Phoenix variants to Pulsar equivalents
+    {pulsar_variant, pulsar_color} = map_phoenix_to_pulsar_variant(assigns[:variant], assigns[:color])
+
+    # Extract attributes to pass to Pulsar button
+    extra = assigns_to_attributes(assigns, [:variant, :color])
+
+    assigns =
+      assigns
+      |> assign(:pulsar_variant, pulsar_variant)
+      |> assign(:pulsar_color, pulsar_color)
+      |> assign(:extra, extra)
+
+    ~H"""
+    <Button.button variant={@pulsar_variant} color={@pulsar_color} {@extra} {@rest}>
+      {render_slot(@inner_block)}
+    </Button.button>
+    """
+  end
+
+  # Map Phoenix core_components variants to Pulsar equivalents
+  # Phoenix: "primary" -> btn-primary (solid primary)
+  # Phoenix: nil -> btn-primary btn-soft (outline primary)
+  defp map_phoenix_to_pulsar_variant("primary", color) do
+    {"solid", color || "primary"}
+  end
+
+  defp map_phoenix_to_pulsar_variant(nil, color) do
+    {"outline", color || "primary"}
+  end
+
+  # Direct Pulsar variants pass through
+  defp map_phoenix_to_pulsar_variant(variant, color) when variant in ~w(solid outline ghost link) do
+    {variant, color || "primary"}
+  end
+
+  # Fallback to solid primary
+  defp map_phoenix_to_pulsar_variant(_, color) do
+    {"solid", color || "primary"}
+  end
 
   @doc """
   Renders an icon.
