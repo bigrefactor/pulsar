@@ -463,7 +463,7 @@ defmodule Pulsar.Components.CardTest do
       colors = ~w(neutral primary secondary success danger warning info)
 
       for variant <- variants, color <- colors do
-        assigns = %{variant: variant, color: color}
+        assigns = %{color: color, variant: variant}
 
         html =
           rendered_to_string(~H"""

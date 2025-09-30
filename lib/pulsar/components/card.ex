@@ -198,20 +198,13 @@ defmodule Pulsar.Components.Card do
   # Color configuration for each variant
   @color_config %{
     "elevated" => %{
-      "danger" =>
-        "bg-background dark:bg-dark-background shadow-md",
-      "info" =>
-        "bg-background dark:bg-dark-background shadow-md",
-      "neutral" =>
-        "bg-background dark:bg-dark-background shadow-md",
-      "primary" =>
-        "bg-background dark:bg-dark-background shadow-md",
-      "secondary" =>
-        "bg-background dark:bg-dark-background shadow-md",
-      "success" =>
-        "bg-background dark:bg-dark-background shadow-md",
-      "warning" =>
-        "bg-background dark:bg-dark-background shadow-md"
+      "danger" => "bg-background dark:bg-dark-background shadow-md",
+      "info" => "bg-background dark:bg-dark-background shadow-md",
+      "neutral" => "bg-background dark:bg-dark-background shadow-md",
+      "primary" => "bg-background dark:bg-dark-background shadow-md",
+      "secondary" => "bg-background dark:bg-dark-background shadow-md",
+      "success" => "bg-background dark:bg-dark-background shadow-md",
+      "warning" => "bg-background dark:bg-dark-background shadow-md"
     },
     "ghost" => %{
       "danger" => "bg-transparent border border-transparent",
@@ -223,43 +216,30 @@ defmodule Pulsar.Components.Card do
       "warning" => "bg-transparent border border-transparent"
     },
     "outline" => %{
-      "danger" =>
-        "bg-background dark:bg-dark-background border-2 border-danger dark:border-dark-danger",
-      "info" =>
-        "bg-background dark:bg-dark-background border-2 border-info dark:border-dark-info",
-      "neutral" =>
-        "bg-background dark:bg-dark-background border-2 border-border dark:border-dark-border",
-      "primary" =>
-        "bg-background dark:bg-dark-background border-2 border-primary dark:border-dark-primary",
-      "secondary" =>
-        "bg-background dark:bg-dark-background border-2 border-secondary dark:border-dark-secondary",
-      "success" =>
-        "bg-background dark:bg-dark-background border-2 border-success dark:border-dark-success",
-      "warning" =>
-        "bg-background dark:bg-dark-background border-2 border-warning dark:border-dark-warning"
+      "danger" => "bg-background dark:bg-dark-background border-2 border-danger dark:border-dark-danger",
+      "info" => "bg-background dark:bg-dark-background border-2 border-info dark:border-dark-info",
+      "neutral" => "bg-background dark:bg-dark-background border-2 border-border dark:border-dark-border",
+      "primary" => "bg-background dark:bg-dark-background border-2 border-primary dark:border-dark-primary",
+      "secondary" => "bg-background dark:bg-dark-background border-2 border-secondary dark:border-dark-secondary",
+      "success" => "bg-background dark:bg-dark-background border-2 border-success dark:border-dark-success",
+      "warning" => "bg-background dark:bg-dark-background border-2 border-warning dark:border-dark-warning"
     },
     "solid" => %{
-      "danger" =>
-        "bg-danger/10 dark:bg-dark-danger/10 border-2 border-danger/20 dark:border-dark-danger/20",
-      "info" =>
-        "bg-info/10 dark:bg-dark-info/10 border-2 border-info/20 dark:border-dark-info/20",
-      "neutral" =>
-        "bg-surface-1 dark:bg-dark-surface-1 border-2 border-border dark:border-dark-border",
-      "primary" =>
-        "bg-primary/10 dark:bg-dark-primary/10 border-2 border-primary/20 dark:border-dark-primary/20",
+      "danger" => "bg-danger/10 dark:bg-dark-danger/10 border-2 border-danger/20 dark:border-dark-danger/20",
+      "info" => "bg-info/10 dark:bg-dark-info/10 border-2 border-info/20 dark:border-dark-info/20",
+      "neutral" => "bg-surface-1 dark:bg-dark-surface-1 border-2 border-border dark:border-dark-border",
+      "primary" => "bg-primary/10 dark:bg-dark-primary/10 border-2 border-primary/20 dark:border-dark-primary/20",
       "secondary" =>
         "bg-secondary/10 dark:bg-dark-secondary/10 border-2 border-secondary/20 dark:border-dark-secondary/20",
-      "success" =>
-        "bg-success/10 dark:bg-dark-success/10 border-2 border-success/20 dark:border-dark-success/20",
-      "warning" =>
-        "bg-warning/10 dark:bg-dark-warning/10 border-2 border-warning/20 dark:border-dark-warning/20"
+      "success" => "bg-success/10 dark:bg-dark-success/10 border-2 border-success/20 dark:border-dark-success/20",
+      "warning" => "bg-warning/10 dark:bg-dark-warning/10 border-2 border-warning/20 dark:border-dark-warning/20"
     }
   }
 
   # Compile-time validation: Ensure all variant/color combinations are defined
   for variant <- @valid_variants,
       color <- @valid_colors do
-    unless get_in(@color_config, [variant, color]) do
+    if !get_in(@color_config, [variant, color]) do
       raise CompileError,
         description: "Missing color config for variant=#{variant}, color=#{color}"
     end
