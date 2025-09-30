@@ -535,9 +535,8 @@ defmodule Pulsar.Components.CardTest do
         </Card.card>
         """)
 
-      # TailwindMerge should resolve the conflict
-      # The exact behavior depends on TailwindMerge, but the class should be present
-      assert html =~ ~r/p-/
+      assert html =~ ~s(p-0)
+      refute html =~ ~s(p-6)
     end
 
     test "custom background overrides variant background" do
