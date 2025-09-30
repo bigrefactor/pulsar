@@ -8,6 +8,7 @@ defmodule Pulsar.CoreComponents do
 
   use Phoenix.Component
 
+  alias Phoenix.HTML.FormField
   alias Phoenix.LiveView.JS
   alias Pulsar.Components.Button
   alias Pulsar.Components.Field
@@ -78,7 +79,7 @@ defmodule Pulsar.CoreComponents do
       <Flash.flash
         id={"#{@id}-flash"}
         variant={@variant}
-        color={@kind && map_kind_to_color(@kind) || @color}
+        color={(@kind && map_kind_to_color(@kind)) || @color}
         size={@size}
         auto_dismiss={@auto_dismiss}
         dismiss_after={@dismiss_after}
@@ -136,7 +137,9 @@ defmodule Pulsar.CoreComponents do
     include: ~w(href navigate patch method download name value disabled),
     doc: "Phoenix navigation and form attributes"
   )
+
   attr(:class, :string, default: "", doc: "Additional CSS classes")
+
   attr(:variant, :string,
     values: ~w(primary solid outline ghost link),
     doc: "Button variant (Phoenix: primary or nil; Pulsar: solid/outline/ghost/link)"
@@ -147,11 +150,13 @@ defmodule Pulsar.CoreComponents do
     values: ~w(neutral primary secondary success danger warning info),
     doc: "Pulsar color scheme (enhances or overrides Phoenix variant)"
   )
+
   attr(:size, :string,
     default: "md",
     values: ~w(xs sm md lg xl),
     doc: "Pulsar button size"
   )
+
   attr(:loading, :boolean, default: false, doc: "Pulsar loading state")
 
   slot(:inner_block, required: true, doc: "Button content")
@@ -255,8 +260,7 @@ defmodule Pulsar.CoreComponents do
     values: ~w(checkbox color date datetime-local email file month number password
                search select tel text textarea time url week)
 
-  attr :field, Phoenix.HTML.FormField,
-    doc: "a form field struct retrieved from the form, for example: @form[:email]"
+  attr :field, FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
   attr :errors, :list, default: []
   attr :checked, :boolean, doc: "the checked flag for checkbox inputs"
@@ -266,8 +270,7 @@ defmodule Pulsar.CoreComponents do
   attr :class, :string, default: nil, doc: "the input class to use over defaults"
   attr :error_class, :string, default: nil, doc: "the input error class to use over defaults"
 
-  attr :rest, :global,
-    include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
+  attr :rest, :global, include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
                 multiple pattern placeholder readonly required rows size step)
 
   # Pulsar enhancement attributes (optional)
@@ -291,7 +294,6 @@ defmodule Pulsar.CoreComponents do
   slot :end_decorator, doc: "Trailing decorator content (icons, text, buttons)"
 
   def input(assigns) do
-
     ~H"""
     <Field.field
       field={@field}
@@ -504,6 +506,7 @@ defmodule Pulsar.CoreComponents do
   attr :rows, :list, required: true, doc: "List of rows to display or Phoenix.LiveView.LiveStream"
   attr :row_id, :any, default: nil, doc: "Function for generating the row id"
   attr :row_click, :any, default: nil, doc: "Function for handling phx-click on each row"
+
   attr :row_item, :any,
     default: &Function.identity/1,
     doc: "Function for mapping each row before calling the :col and :action slots"
@@ -512,6 +515,7 @@ defmodule Pulsar.CoreComponents do
   slot :col, required: true do
     attr :label, :string
   end
+
   slot :action, doc: "The slot for showing user actions in the last table column"
 
   # Pulsar enhancement attributes (optional)
@@ -586,10 +590,10 @@ defmodule Pulsar.CoreComponents do
       {@extra}
       {@rest}
     >
-      <:col :for={col <- @col} :let={row} {col |> Map.take([:label])}>
+      <:col :let={row} :for={col <- @col} {col |> Map.take([:label])}>
         {render_slot(col, row)}
       </:col>
-      <:action :for={action <- @action} :let={row}>
+      <:action :let={row} :for={action <- @action}>
         {render_slot(action, row)}
       </:action>
     </Table.table>
