@@ -530,14 +530,19 @@ defmodule Pulsar.Components.CardTest do
 
       html =
         rendered_to_string(~H"""
-        <Card.card size="lg" class="p-0">
+        <Card.card size="lg" class="p-0" data-testid="card-wrapper">
           Content
         </Card.card>
         """)
 
+      # Extract the wrapper div's class attribute (class comes before data-testid)
+      [_, wrapper_class] = Regex.run(~r/<div class="([^"]*)"[^>]*data-testid="card-wrapper"/, html)
+
       # TailwindMerge should apply p-0 to the outer div
-      assert html =~ ~s(p-0)
-      # Body div still has its own padding (not affected by outer class override)
+      assert wrapper_class =~ "p-0"
+      # Wrapper should not have p-6 (size padding)
+      refute wrapper_class =~ "p-6"
+      # Body div still has its own padding
       assert html =~ ~s(p-6 gap-6)
     end
 
