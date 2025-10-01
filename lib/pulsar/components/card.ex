@@ -198,13 +198,13 @@ defmodule Pulsar.Components.Card do
   # Color configuration for each variant
   @color_config %{
     "elevated" => %{
-      "danger" => "bg-background dark:bg-dark-background shadow-md",
-      "info" => "bg-background dark:bg-dark-background shadow-md",
-      "neutral" => "bg-background dark:bg-dark-background shadow-md",
-      "primary" => "bg-background dark:bg-dark-background shadow-md",
-      "secondary" => "bg-background dark:bg-dark-background shadow-md",
-      "success" => "bg-background dark:bg-dark-background shadow-md",
-      "warning" => "bg-background dark:bg-dark-background shadow-md"
+      "danger" => "bg-surface-1 dark:bg-dark-surface-1 shadow-md",
+      "info" => "bg-surface-1 dark:bg-dark-surface-1 shadow-md",
+      "neutral" => "bg-surface-1 dark:bg-dark-surface-1 shadow-md",
+      "primary" => "bg-surface-1 dark:bg-dark-surface-1 shadow-md",
+      "secondary" => "bg-surface-1 dark:bg-dark-surface-1 shadow-md",
+      "success" => "bg-surface-1 dark:bg-dark-surface-1 shadow-md",
+      "warning" => "bg-surface-1 dark:bg-dark-surface-1 shadow-md"
     },
     "ghost" => %{
       "danger" => "bg-transparent border border-transparent",
@@ -216,13 +216,13 @@ defmodule Pulsar.Components.Card do
       "warning" => "bg-transparent border border-transparent"
     },
     "outline" => %{
-      "danger" => "bg-background dark:bg-dark-background border-2 border-danger dark:border-dark-danger",
-      "info" => "bg-background dark:bg-dark-background border-2 border-info dark:border-dark-info",
-      "neutral" => "bg-background dark:bg-dark-background border-2 border-border dark:border-dark-border",
-      "primary" => "bg-background dark:bg-dark-background border-2 border-primary dark:border-dark-primary",
-      "secondary" => "bg-background dark:bg-dark-background border-2 border-secondary dark:border-dark-secondary",
-      "success" => "bg-background dark:bg-dark-background border-2 border-success dark:border-dark-success",
-      "warning" => "bg-background dark:bg-dark-background border-2 border-warning dark:border-dark-warning"
+      "danger" => "bg-surface-1 dark:bg-dark-surface-1 border-2 border-danger dark:border-dark-danger",
+      "info" => "bg-surface-1 dark:bg-dark-surface-1 border-2 border-info dark:border-dark-info",
+      "neutral" => "bg-surface-1 dark:bg-dark-surface-1 border-2 border-border dark:border-dark-border",
+      "primary" => "bg-surface-1 dark:bg-dark-surface-1 border-2 border-primary dark:border-dark-primary",
+      "secondary" => "bg-surface-1 dark:bg-dark-surface-1 border-2 border-secondary dark:border-dark-secondary",
+      "success" => "bg-surface-1 dark:bg-dark-surface-1 border-2 border-success dark:border-dark-success",
+      "warning" => "bg-surface-1 dark:bg-dark-surface-1 border-2 border-warning dark:border-dark-warning"
     },
     "solid" => %{
       "danger" => "bg-danger/10 dark:bg-dark-danger/10 border-2 border-danger/20 dark:border-dark-danger/20",

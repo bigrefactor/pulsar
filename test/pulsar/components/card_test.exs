@@ -13,7 +13,7 @@ defmodule Pulsar.Components.CardTest do
 
       assert html =~ ~s(<div)
       assert html =~ "Card content"
-      assert html =~ ~s(bg-background)
+      assert html =~ ~s(bg-surface-1)
       assert html =~ ~s(shadow-md)
       assert html =~ ~s(rounded-lg)
     end
@@ -53,7 +53,7 @@ defmodule Pulsar.Components.CardTest do
       html = rendered_to_string(~H[<Card.card variant="elevated">Elevated</Card.card>])
 
       assert html =~ ~s(shadow-md)
-      assert html =~ ~s(bg-background dark:bg-dark-background)
+      assert html =~ ~s(bg-surface-1 dark:bg-dark-surface-1)
     end
 
     test "renders outline variant" do
@@ -62,7 +62,7 @@ defmodule Pulsar.Components.CardTest do
 
       assert html =~ ~s(border-2)
       assert html =~ ~s(border-border dark:border-dark-border)
-      assert html =~ ~s(bg-background dark:bg-dark-background)
+      assert html =~ ~s(bg-surface-1 dark:bg-dark-surface-1)
     end
 
     test "renders ghost variant" do
@@ -87,7 +87,7 @@ defmodule Pulsar.Components.CardTest do
       assigns = %{}
       html = rendered_to_string(~H[<Card.card color="neutral">Neutral</Card.card>])
 
-      assert html =~ ~s(bg-background dark:bg-dark-background)
+      assert html =~ ~s(bg-surface-1 dark:bg-dark-surface-1)
     end
 
     test "renders primary color" do
@@ -309,7 +309,7 @@ defmodule Pulsar.Components.CardTest do
 
       assert html =~ ~s(border-2)
       assert html =~ ~s(border-primary dark:border-dark-primary)
-      assert html =~ ~s(bg-background dark:bg-dark-background)
+      assert html =~ ~s(bg-surface-1 dark:bg-dark-surface-1)
     end
 
     test "solid variant with danger color" do
@@ -333,7 +333,7 @@ defmodule Pulsar.Components.CardTest do
       assigns = %{}
       html = rendered_to_string(~H[<Card.card variant="elevated" color="primary">Elevated</Card.card>])
 
-      assert html =~ ~s(bg-background dark:bg-dark-background)
+      assert html =~ ~s(bg-surface-1 dark:bg-dark-surface-1)
       assert html =~ ~s(shadow-md)
     end
   end
@@ -679,7 +679,7 @@ defmodule Pulsar.Components.CardTest do
       assigns = %{}
       html = rendered_to_string(~H[<Card.card variant="elevated">Content</Card.card>])
 
-      assert html =~ "dark:bg-dark-background"
+      assert html =~ "dark:bg-dark-surface-1"
     end
 
     test "outline variant includes dark mode border classes" do
