@@ -391,7 +391,7 @@ defmodule Pulsar.Components.Card do
   # Interactive classes for clickable cards
   @spec interactive_classes(map()) :: String.t()
   defp interactive_classes(rest) do
-    if is_interactive?(rest) do
+    if interactive?(rest) do
       [
         "cursor-pointer",
         "focus-visible:outline-none",
@@ -406,15 +406,15 @@ defmodule Pulsar.Components.Card do
   end
 
   # Check if card has interactive event handlers
-  @spec is_interactive?(map()) :: boolean()
-  defp is_interactive?(rest) do
+  @spec interactive?(map()) :: boolean()
+  defp interactive?(rest) do
     Map.has_key?(rest, :"phx-click")
   end
 
   # Add keyboard accessibility attributes for interactive cards
   @spec add_interactive_attrs(map()) :: map()
   defp add_interactive_attrs(%{rest: rest} = assigns) do
-    if is_interactive?(rest) do
+    if interactive?(rest) do
       rest =
         rest
         |> Map.put_new(:role, "button")
