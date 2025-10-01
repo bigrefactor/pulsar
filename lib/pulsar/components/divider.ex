@@ -92,55 +92,55 @@ defmodule Pulsar.Components.Divider do
         border: "border-t-4",
         spacing: "my-8"
       },
+      label: "text-lg mx-4",
       vertical: %{
         border: "border-l-4",
         spacing: "mx-8"
-      },
-      label: "text-lg mx-4"
+      }
     },
     "md" => %{
       horizontal: %{
         border: "border-t-2",
         spacing: "my-6"
       },
+      label: "text-base mx-3",
       vertical: %{
         border: "border-l-2",
         spacing: "mx-6"
-      },
-      label: "text-base mx-3"
+      }
     },
     "sm" => %{
       horizontal: %{
         border: "border-t",
         spacing: "my-4"
       },
+      label: "text-sm mx-2",
       vertical: %{
         border: "border-l",
         spacing: "mx-4"
-      },
-      label: "text-sm mx-2"
+      }
     },
     "xl" => %{
       horizontal: %{
         border: "border-t-8",
         spacing: "my-10"
       },
+      label: "text-xl mx-6",
       vertical: %{
         border: "border-l-8",
         spacing: "mx-10"
-      },
-      label: "text-xl mx-6"
+      }
     },
     "xs" => %{
       horizontal: %{
         border: "border-t",
         spacing: "my-2"
       },
+      label: "text-xs mx-1.5",
       vertical: %{
         border: "border-l",
         spacing: "mx-2"
-      },
-      label: "text-xs mx-1.5"
+      }
     }
   }
 
