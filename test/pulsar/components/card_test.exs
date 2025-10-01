@@ -535,8 +535,10 @@ defmodule Pulsar.Components.CardTest do
         </Card.card>
         """)
 
+      # TailwindMerge should apply p-0 to the outer div
       assert html =~ ~s(p-0)
-      refute html =~ ~s(p-6)
+      # Body div still has its own padding (not affected by outer class override)
+      assert html =~ ~s(p-6 gap-6)
     end
 
     test "custom background overrides variant background" do
@@ -555,12 +557,12 @@ defmodule Pulsar.Components.CardTest do
   end
 
   describe "accessibility for interactive cards" do
-    test "adds role and tabindex for clickable cards" do
+    test "automatically adds role and tabindex for phx-click cards" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <Card.card phx-click="select" role="button" tabindex="0">
+        <Card.card phx-click="select">
           Clickable
         </Card.card>
         """)
@@ -568,6 +570,67 @@ defmodule Pulsar.Components.CardTest do
       assert html =~ ~s(role="button")
       assert html =~ ~s(tabindex="0")
       assert html =~ ~s(phx-click="select")
+      assert html =~ "cursor-pointer"
+      assert html =~ "focus-visible:ring-2"
+    end
+
+    test "does not add button role for phx-change (form input handler)" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Card.card phx-change="update">
+          Form content
+        </Card.card>
+        """)
+
+      refute html =~ ~s(role="button")
+      refute html =~ ~s(tabindex="0")
+      refute html =~ "cursor-pointer"
+    end
+
+    test "does not add button role for phx-submit (form handler)" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Card.card phx-submit="save">
+          Form content
+        </Card.card>
+        """)
+
+      refute html =~ ~s(role="button")
+      refute html =~ ~s(tabindex="0")
+      refute html =~ "cursor-pointer"
+    end
+
+    test "respects explicitly provided role attribute" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Card.card phx-click="select" role="link">
+          Clickable
+        </Card.card>
+        """)
+
+      assert html =~ ~s(role="link")
+      refute html =~ ~s(role="button")
+      assert html =~ ~s(tabindex="0")
+    end
+
+    test "respects explicitly provided tabindex attribute" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Card.card phx-click="select" tabindex="-1">
+          Clickable
+        </Card.card>
+        """)
+
+      assert html =~ ~s(tabindex="-1")
+      refute html =~ ~s(tabindex="0")
     end
 
     test "supports custom aria-label" do
@@ -581,14 +644,28 @@ defmodule Pulsar.Components.CardTest do
         """)
 
       assert html =~ ~s(aria-label="Select this card")
+      assert html =~ ~s(role="button")
+      assert html =~ ~s(tabindex="0")
     end
 
-    test "non-interactive cards do not require role or tabindex" do
+    test "non-interactive cards do not get role or tabindex" do
       assigns = %{}
       html = rendered_to_string(~H[<Card.card>Static content</Card.card>])
 
       refute html =~ ~s(role=)
       refute html =~ ~s(tabindex=)
+      refute html =~ "cursor-pointer"
+    end
+
+    test "interactive cards include focus ring styles" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Card.card phx-click="select">Click me</Card.card>])
+
+      assert html =~ "focus-visible:outline-none"
+      assert html =~ "focus-visible:ring-2"
+      assert html =~ "focus-visible:ring-primary"
+      assert html =~ "dark:focus-visible:ring-dark-primary"
+      assert html =~ "focus-visible:ring-offset-2"
     end
   end
 

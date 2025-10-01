@@ -335,10 +335,15 @@ defmodule Pulsar.Components.Card do
         base_card_classes(),
         color_classes(assigns.variant, assigns.color),
         size_classes(assigns.size, :radius),
+        interactive_classes(assigns.rest),
         assigns.class
       ])
 
-    assigns = assign(assigns, :card_class, card_class)
+    # Add keyboard accessibility defaults for interactive cards
+    assigns =
+      assigns
+      |> assign(:card_class, card_class)
+      |> add_interactive_attrs()
 
     ~H"""
     <div class={@card_class} {@rest}>
@@ -381,5 +386,43 @@ defmodule Pulsar.Components.Card do
   @spec size_classes(String.t(), atom()) :: String.t()
   defp size_classes(size, part) do
     @size_config[size][part]
+  end
+
+  # Interactive classes for clickable cards
+  @spec interactive_classes(map()) :: String.t()
+  defp interactive_classes(rest) do
+    if is_interactive?(rest) do
+      [
+        "cursor-pointer",
+        "focus-visible:outline-none",
+        "focus-visible:ring-2",
+        "focus-visible:ring-primary",
+        "dark:focus-visible:ring-dark-primary",
+        "focus-visible:ring-offset-2"
+      ]
+    else
+      []
+    end
+  end
+
+  # Check if card has interactive event handlers
+  @spec is_interactive?(map()) :: boolean()
+  defp is_interactive?(rest) do
+    Map.has_key?(rest, :"phx-click")
+  end
+
+  # Add keyboard accessibility attributes for interactive cards
+  @spec add_interactive_attrs(map()) :: map()
+  defp add_interactive_attrs(%{rest: rest} = assigns) do
+    if is_interactive?(rest) do
+      rest =
+        rest
+        |> Map.put_new(:role, "button")
+        |> Map.put_new(:tabindex, "0")
+
+      assign(assigns, :rest, rest)
+    else
+      assigns
+    end
   end
 end
