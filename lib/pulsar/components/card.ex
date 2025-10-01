@@ -363,6 +363,39 @@ defmodule Pulsar.Components.Card do
         {render_slot(@footer)}
       </div>
     </div>
+    <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarCard">
+      export default {
+        mounted() {
+          const el = this.el
+          if (el.getAttribute("role") !== "button") return
+
+          this._onKeydown = (e) => {
+            if (e.code === "Space" || e.key === " ") {
+              e.preventDefault() // prevent scroll
+            }
+            if (e.code === "Enter") {
+              e.preventDefault()
+              el.click() // Triggers phx-click with all parameters
+            }
+          }
+
+          this._onKeyup = (e) => {
+            if (e.code === "Space" || e.key === " ") {
+              e.preventDefault()
+              el.click() // Triggers phx-click with all parameters
+            }
+          }
+
+          el.addEventListener("keydown", this._onKeydown)
+          el.addEventListener("keyup", this._onKeyup)
+        },
+
+        destroyed() {
+          if (this._onKeydown) this.el.removeEventListener("keydown", this._onKeydown)
+          if (this._onKeyup) this.el.removeEventListener("keyup", this._onKeyup)
+        }
+      }
+    </script>
     """
   end
 
@@ -419,6 +452,7 @@ defmodule Pulsar.Components.Card do
         rest
         |> Map.put_new(:role, "button")
         |> Map.put_new(:tabindex, "0")
+        |> Map.put_new(:"phx-hook", ".PulsarCard")
 
       assign(assigns, :rest, rest)
     else

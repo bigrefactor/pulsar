@@ -672,6 +672,54 @@ defmodule Pulsar.Components.CardTest do
       assert html =~ "dark:focus-visible:ring-dark-primary"
       assert html =~ "focus-visible:ring-offset-2"
     end
+
+    test "adds keyboard activation hook for interactive cards" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Card.card phx-click="select">Clickable</Card.card>])
+
+      # Verify phx-hook attribute is present
+      assert html =~ ~s(phx-hook=".PulsarCard")
+    end
+
+    test "respects caller-provided phx-hook attribute" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Card.card phx-click="select" phx-hook="CustomHook">
+          Clickable
+        </Card.card>
+        """)
+
+      # Caller's hook takes precedence (Map.put_new behavior)
+      assert html =~ ~s(phx-hook="CustomHook")
+      refute html =~ ~s(phx-hook=".PulsarCard")
+    end
+
+    test "non-interactive cards do not get keyboard hook attribute" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Card.card>Static content</Card.card>])
+
+      # Static cards don't get phx-hook
+      refute html =~ ~s(phx-hook=)
+      refute html =~ ~s(role="button")
+    end
+
+    test "keyboard activation works with phx-value parameters" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Card.card phx-click="select" phx-value-id="123">
+          Clickable with data
+        </Card.card>
+        """)
+
+      # Hook is present and phx-value parameters are preserved
+      assert html =~ ~s(phx-hook=".PulsarCard")
+      assert html =~ ~s(phx-click="select")
+      assert html =~ ~s(phx-value-id="123")
+    end
   end
 
   describe "dark mode classes" do
