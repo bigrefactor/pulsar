@@ -389,7 +389,7 @@ defmodule Pulsar.Components.Card do
   end
 
   # Interactive classes for clickable cards
-  @spec interactive_classes(map()) :: String.t()
+  @spec interactive_classes(map()) :: [String.t()]
   defp interactive_classes(rest) do
     if interactive?(rest) do
       [
