@@ -71,20 +71,23 @@ defmodule Pulsar.Components.FlashGroup do
          # Optional: Handle dismissal events for analytics/tracking
          def handle_event("track_dismissal", %{"key" => key}, socket) do
            # Safe atom handling to prevent atom exhaustion attacks
-           key_atom =
-             try do
-               String.to_existing_atom(key)
-             rescue
-               ArgumentError -> nil
-             end
+           case safe_to_existing_atom(key) do
+             {:ok, key_atom} ->
+               # Track the dismissal with the actual flash type
+               MyApp.Analytics.track("flash_dismissed", %{type: key_atom})
+               {:noreply, socket}
 
-           # Track the dismissal (optional)
-           case key_atom do
-             nil -> MyApp.Analytics.track("flash_dismissed", %{type: "unknown"})
-             k when is_atom(k) -> MyApp.Analytics.track("flash_dismissed", %{type: k})
+             :error ->
+               # Invalid key, log or track as unknown but don't crash
+               MyApp.Analytics.track("flash_dismissed", %{type: "invalid_key"})
+               {:noreply, socket}
            end
+         end
 
-           {:noreply, socket}
+         defp safe_to_existing_atom(string) when is_binary(string) do
+           {:ok, String.to_existing_atom(string)}
+         rescue
+           ArgumentError -> :error
          end
        end
 
@@ -349,18 +352,23 @@ defmodule Pulsar.Components.FlashGroup do
 
       def handle_event("clear_flash", %{"key" => key}, socket) do
         # Safe atom handling to prevent atom exhaustion attacks
-        key_atom =
-          try do
-            String.to_existing_atom(key)
-          rescue
-            ArgumentError -> :info
-          end
-
-        {:noreply, clear_flash(socket, key_atom)}
+        # Only clear flash if the key is a valid existing atom AND exists in flash
+        with {:ok, key_atom} <- safe_to_existing_atom(key),
+             true <- Map.has_key?(socket.assigns.flash, key_atom) do
+          {:noreply, clear_flash(socket, key_atom)}
+        else
+          _ -> {:noreply, socket}
+        end
       end
 
       def handle_event("clear_flash", _params, socket) do
         {:noreply, clear_flash(socket)}
+      end
+
+      defp safe_to_existing_atom(string) when is_binary(string) do
+        {:ok, String.to_existing_atom(string)}
+      rescue
+        ArgumentError -> :error
       end
 
   ## Examples
