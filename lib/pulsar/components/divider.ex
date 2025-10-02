@@ -27,7 +27,7 @@ defmodule Pulsar.Components.Divider do
       <.divider>OR</.divider>
 
       # Dashed section divider with label
-      <.divider style="dashed" color="neutral">
+      <.divider line_style="dashed" color="neutral">
         Section 2
       </.divider>
 
@@ -237,7 +237,7 @@ defmodule Pulsar.Components.Divider do
     values: ~w(horizontal vertical),
     doc: "Orientation of the divider"
 
-  attr :style, :string,
+  attr :line_style, :string,
     default: "solid",
     values: ~w(solid dashed dotted),
     doc: "Line style pattern"
@@ -342,7 +342,7 @@ defmodule Pulsar.Components.Divider do
     merge([
       size_config[:border],
       size_config[:spacing],
-      border_style_classes(assigns.style),
+      border_style_classes(assigns.line_style),
       color_classes(assigns.variant, assigns.color),
       orientation_classes(assigns.orientation),
       assigns.class
@@ -377,7 +377,7 @@ defmodule Pulsar.Components.Divider do
     merge([
       flex_class,
       border,
-      border_style_classes(assigns.style),
+      border_style_classes(assigns.line_style),
       color_classes(assigns.variant, assigns.color)
     ])
   end
