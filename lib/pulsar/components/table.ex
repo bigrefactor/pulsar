@@ -379,11 +379,36 @@ defmodule Pulsar.Components.Table do
           </tr>
         </thead>
         <tbody
-          :if={!@loading && @has_rows}
+          :if={!@loading}
           id={"#{@id}-tbody"}
           phx-update={@is_stream && "stream"}
           class={@tbody_classes}
         >
+          <!-- Empty state row for streams (shown via CSS :only-child when no data) -->
+          <tr
+            :if={@is_stream}
+            id={"#{@id}-empty"}
+            class="only:table-row hidden"
+          >
+            <td :if={@empty != []} colspan={length(@col) + if(@action != [], do: 1, else: 0)} class="p-8">
+              {render_slot(@empty)}
+            </td>
+            <td :if={@empty == []} colspan={length(@col) + if(@action != [], do: 1, else: 0)} class="text-center py-12">
+              <div class="text-muted-foreground dark:text-dark-muted-foreground">
+                <svg class="mx-auto h-12 w-12 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                <p class="font-medium">No data available</p>
+                <p class="text-sm mt-1">Data will appear here when available</p>
+              </div>
+            </td>
+          </tr>
+
           <tr
             :for={row <- @rows}
             id={@row_id && @row_id.(row)}
@@ -419,10 +444,11 @@ defmodule Pulsar.Components.Table do
           </tr>
         </tbody>
       </table>
-      <div :if={!@loading && !@has_rows && @empty != []} class="p-8">
+      <!-- Empty state for lists (streams use CSS :only-child pattern above) -->
+      <div :if={!@loading && !@is_stream && @rows == [] && @empty != []} class="p-8">
         {render_slot(@empty)}
       </div>
-      <div :if={!@loading && !@has_rows && @empty == []} class="text-center py-12">
+      <div :if={!@loading && !@is_stream && @rows == [] && @empty == []} class="text-center py-12">
         <div class="text-muted-foreground dark:text-dark-muted-foreground">
           <svg class="mx-auto h-12 w-12 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path
@@ -472,23 +498,12 @@ defmodule Pulsar.Components.Table do
   defp setup_stream_handling(assigns) do
     case assigns.rows do
       %LiveStream{} ->
-        # For LiveStreams, we can't efficiently check emptiness without enumeration.
-        # Always assume data exists and let the :for loop handle rendering.
-        # Empty state won't show for LiveStreams - use list for empty state support.
         assigns
         |> assign(:is_stream, true)
         |> assign(:row_id, assigns.row_id || fn {id, _item} -> id end)
-        |> assign(:has_rows, true)
-
-      rows when is_list(rows) ->
-        assigns
-        |> assign(:is_stream, false)
-        |> assign(:has_rows, rows != [])
 
       _ ->
-        assigns
-        |> assign(:is_stream, false)
-        |> assign(:has_rows, false)
+        assign(assigns, :is_stream, false)
     end
   end
 
