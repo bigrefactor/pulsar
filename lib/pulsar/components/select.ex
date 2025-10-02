@@ -561,7 +561,7 @@ defmodule Pulsar.Components.Select do
   # Compute attributes (from Stellar)
   defp assign_computed_attributes(assigns) do
     # ARIA describedby merging
-    caller_describedby = assigns[:aria_describedby]
+    caller_describedby = assigns[:"aria-describedby"]
 
     errors_id =
       if assigns.field_provided and has_field_errors(assigns),

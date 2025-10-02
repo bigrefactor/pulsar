@@ -379,7 +379,7 @@ defmodule Pulsar.Components.Table do
           </tr>
         </thead>
         <tbody
-          :if={!@loading && @rows != []}
+          :if={!@loading && @has_rows}
           id={"#{@id}-tbody"}
           phx-update={@is_stream && "stream"}
           class={@tbody_classes}
@@ -419,10 +419,10 @@ defmodule Pulsar.Components.Table do
           </tr>
         </tbody>
       </table>
-      <div :if={!@loading && @rows == [] && @empty != []} class="p-8">
+      <div :if={!@loading && !@has_rows && @empty != []} class="p-8">
         {render_slot(@empty)}
       </div>
-      <div :if={!@loading && @rows == [] && @empty == []} class="text-center py-12">
+      <div :if={!@loading && !@has_rows && @empty == []} class="text-center py-12">
         <div class="text-muted-foreground dark:text-dark-muted-foreground">
           <svg class="mx-auto h-12 w-12 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path
@@ -472,12 +472,23 @@ defmodule Pulsar.Components.Table do
   defp setup_stream_handling(assigns) do
     case assigns.rows do
       %LiveStream{} ->
+        # For LiveStreams, we can't efficiently check emptiness without enumeration.
+        # Always assume data exists and let the :for loop handle rendering.
+        # Empty state won't show for LiveStreams - use list for empty state support.
         assigns
         |> assign(:is_stream, true)
         |> assign(:row_id, assigns.row_id || fn {id, _item} -> id end)
+        |> assign(:has_rows, true)
+
+      rows when is_list(rows) ->
+        assigns
+        |> assign(:is_stream, false)
+        |> assign(:has_rows, rows != [])
 
       _ ->
-        assign(assigns, :is_stream, false)
+        assigns
+        |> assign(:is_stream, false)
+        |> assign(:has_rows, false)
     end
   end
 

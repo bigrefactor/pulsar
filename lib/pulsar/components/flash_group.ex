@@ -348,7 +348,15 @@ defmodule Pulsar.Components.FlashGroup do
   (default: "clear_flash"). Your LiveView should handle this event:
 
       def handle_event("clear_flash", %{"key" => key}, socket) do
-        {:noreply, clear_flash(socket, String.to_atom(key))}
+        # Safe atom handling to prevent atom exhaustion attacks
+        key_atom =
+          try do
+            String.to_existing_atom(key)
+          rescue
+            ArgumentError -> :info
+          end
+
+        {:noreply, clear_flash(socket, key_atom)}
       end
 
       def handle_event("clear_flash", _params, socket) do

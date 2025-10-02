@@ -153,21 +153,21 @@ defmodule Pulsar.Components.DividerTest do
   describe "divider line styles" do
     test "renders solid style (default)" do
       assigns = %{}
-      html = rendered_to_string(~H[<Divider.divider style="solid" />])
+      html = rendered_to_string(~H[<Divider.divider line_style="solid" />])
 
       assert html =~ ~s(border-solid)
     end
 
     test "renders dashed style" do
       assigns = %{}
-      html = rendered_to_string(~H[<Divider.divider style="dashed" />])
+      html = rendered_to_string(~H[<Divider.divider line_style="dashed" />])
 
       assert html =~ ~s(border-dashed)
     end
 
     test "renders dotted style" do
       assigns = %{}
-      html = rendered_to_string(~H[<Divider.divider style="dotted" />])
+      html = rendered_to_string(~H[<Divider.divider line_style="dotted" />])
 
       assert html =~ ~s(border-dotted)
     end
@@ -285,7 +285,7 @@ defmodule Pulsar.Components.DividerTest do
 
       html =
         rendered_to_string(
-          ~H[<Divider.divider style="dashed" color="primary" variant="solid">Section</Divider.divider>]
+          ~H[<Divider.divider line_style="dashed" color="primary" variant="solid">Section</Divider.divider>]
         )
 
       assert html =~ ~s(border-dashed)
@@ -295,7 +295,7 @@ defmodule Pulsar.Components.DividerTest do
 
     test "vertical divider with custom size and style" do
       assigns = %{}
-      html = rendered_to_string(~H[<Divider.divider orientation="vertical" size="lg" style="dotted" />])
+      html = rendered_to_string(~H[<Divider.divider orientation="vertical" size="lg" line_style="dotted" />])
 
       assert html =~ ~s(border-l-4)
       assert html =~ ~s(mx-8)
@@ -307,7 +307,7 @@ defmodule Pulsar.Components.DividerTest do
 
       html =
         rendered_to_string(
-          ~H[<Divider.divider variant="solid" color="primary" size="lg" style="dashed">Custom</Divider.divider>]
+          ~H[<Divider.divider variant="solid" color="primary" size="lg" line_style="dashed">Custom</Divider.divider>]
         )
 
       assert html =~ ~s(border-dashed)
