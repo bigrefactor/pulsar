@@ -266,21 +266,23 @@ if Code.ensure_loaded?(Igniter) do
             acc
 
           [h | t] ->
-            {new_queue, new_acc} =
-              Enum.reduce(deps_of.(h), {t, acc}, fn d, {q, a} ->
-                if MapSet.member?(a, d) do
-                  {q, a}
-                else
-                  {[d | q], MapSet.put(a, d)}
-                end
-              end)
-
+            {new_queue, new_acc} = process_component_dependencies(deps_of.(h), t, acc)
             resolver.(resolver, new_queue, new_acc)
         end
       end
 
       resolver.(resolver, selected, MapSet.new(selected))
       |> MapSet.to_list()
+    end
+
+    defp process_component_dependencies(dependencies, queue, acc) do
+      Enum.reduce(dependencies, {queue, acc}, fn dependency, {q, a} ->
+        if MapSet.member?(a, dependency) do
+          {q, a}
+        else
+          {[dependency | q], MapSet.put(a, dependency)}
+        end
+      end)
     end
 
     defp missing_dependencies(all, selected) do

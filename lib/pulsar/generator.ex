@@ -1,4 +1,12 @@
 defmodule Pulsar.Generator do
+  @moduledoc """
+  Provides core component generation functionality for Pulsar.
+
+  This module handles the installation and generation of Pulsar components
+  into Phoenix applications using Igniter's code generation capabilities.
+  It manages component module creation, namespace resolution, and template rendering.
+  """
+
   alias Igniter.Libs.Phoenix
 
   def install_component(igniter, component_name, assigns) do
