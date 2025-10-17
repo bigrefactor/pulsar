@@ -103,5 +103,30 @@ defmodule Mix.Tasks.Pulsar.InstallTest do
       |> assert_creates("lib/test_web/components/badge.ex")
       |> apply_igniter!()
     end
+
+    test "installs theme by default" do
+      test_project()
+      |> Igniter.compose_task("pulsar.install", ["--component", "badge", "--no-core-components", "--yes"])
+      |> assert_creates("assets/css/theme.css")
+      |> assert_creates("assets/css/app.css")
+      |> apply_igniter!()
+    end
+
+    test "can skip theme with --no-theme flag" do
+      test_project()
+      |> Igniter.compose_task("pulsar.install", ["--component", "badge", "--no-core-components", "--no-theme", "--yes"])
+      |> refute_creates("assets/css/theme.css")
+      |> refute_creates("assets/css/app.css")
+      |> apply_igniter!()
+    end
+
+    test "adds tailwind_merge as dependency to mix.exs" do
+      igniter =
+        test_project()
+        |> Igniter.compose_task("pulsar.install", ["--component", "badge", "--no-core-components", "--yes"])
+
+      # Verify tailwind_merge dependency was added
+      assert Igniter.Project.Deps.has_dep?(igniter, :tailwind_merge)
+    end
   end
 end
