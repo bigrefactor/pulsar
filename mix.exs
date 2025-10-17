@@ -61,12 +61,12 @@ defmodule Pulsar.MixProject do
 
   defp deps do
     [
+      {:igniter, "~> 0.6", optional: true, runtime: false},
       {:phoenix, "~> 1.8"},
       {:phoenix_live_view, "~> 1.1"},
       {:phoenix_html, "~> 4.0"},
       {:phoenix_html_helpers, "~> 1.0"},
       {:tailwind_merge, github: "bigrefactor/tailwind_merge"},
-      {:igniter, "~> 0.6"},
 
       # Quality tools
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
