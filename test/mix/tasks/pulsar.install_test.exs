@@ -3,6 +3,8 @@ defmodule Mix.Tasks.Pulsar.InstallTest do
 
   import Igniter.Test
 
+  alias Igniter.Project.Deps
+
   describe "pulsar.install" do
     test "installs all components by default with --all flag" do
       test_project()
@@ -126,7 +128,7 @@ defmodule Mix.Tasks.Pulsar.InstallTest do
         |> Igniter.compose_task("pulsar.install", ["--component", "badge", "--no-core-components", "--yes"])
 
       # Verify tailwind_merge dependency was added
-      assert Igniter.Project.Deps.has_dep?(igniter, :tailwind_merge)
+      assert Deps.has_dep?(igniter, :tailwind_merge)
     end
   end
 end

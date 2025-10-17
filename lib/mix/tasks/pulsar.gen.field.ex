@@ -77,7 +77,6 @@ end
 
 if Code.ensure_loaded?(Igniter) do
   defmodule Mix.Tasks.Pulsar.Gen.Field do
-
     @moduledoc __MODULE__.Docs.long_doc()
 
     use Igniter.Mix.Task
@@ -127,7 +126,6 @@ if Code.ensure_loaded?(Igniter) do
   end
 else
   defmodule Mix.Tasks.Pulsar.Gen.Field do
-
     @moduledoc __MODULE__.Docs.long_doc()
 
     use Mix.Task

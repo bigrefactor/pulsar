@@ -83,6 +83,7 @@ if Code.ensure_loaded?(Igniter) do
     use Igniter.Mix.Task
 
     alias Igniter.Mix.Task.Info
+    alias Igniter.Project.Deps
 
     @components %{
       badge: [],
@@ -186,7 +187,7 @@ if Code.ensure_loaded?(Igniter) do
       components = gather_components(igniter)
 
       igniter
-      |> Igniter.Project.Deps.add_dep({:tailwind_merge, github: "bigrefactor/tailwind_merge"}, on_exists: :skip)
+      |> Deps.add_dep({:tailwind_merge, github: "bigrefactor/tailwind_merge"}, on_exists: :skip)
       |> maybe_compose_task("pulsar.gen.theme", options[:theme])
       |> Pulsar.Generator.set_default_component_module()
       |> compose_components(components)
@@ -208,7 +209,7 @@ if Code.ensure_loaded?(Igniter) do
       end
     end
 
-    defp validate_component_dependencies!() do
+    defp validate_component_dependencies! do
       keys = @components |> Map.keys() |> MapSet.new()
 
       invalid =
@@ -220,8 +221,7 @@ if Code.ensure_loaded?(Igniter) do
       if invalid != [] do
         details =
           invalid
-          |> Enum.map(fn {c, d} -> "#{Atom.to_string(c)} -> #{Atom.to_string(d)}" end)
-          |> Enum.join(", ")
+          |> Enum.map_join(", ", fn {c, d} -> "#{Atom.to_string(c)} -> #{Atom.to_string(d)}" end)
 
         raise "Invalid component dependencies found: #{details}"
       end

@@ -88,11 +88,11 @@ end
 
 if Code.ensure_loaded?(Igniter) do
   defmodule Mix.Tasks.Pulsar.Gen.CoreComponents do
-
     @moduledoc __MODULE__.Docs.long_doc()
 
     use Igniter.Mix.Task
 
+    alias Igniter.Libs.Phoenix
     alias Igniter.Mix.Task.Info
 
     @impl Igniter.Mix.Task
@@ -134,7 +134,7 @@ if Code.ensure_loaded?(Igniter) do
       # core_components follows Phoenix convention: MyAppWeb.CoreComponents
       # (not nested under Components namespace, but file goes in components/ directory)
       igniter = Igniter.compose_task(igniter, "igniter.add_extension", ["phoenix"])
-      web_module = Igniter.Libs.Phoenix.web_module(igniter)
+      web_module = Phoenix.web_module(igniter)
 
       igniter
       |> update_in([Access.key(:args), Access.key(:options)], fn opts ->
@@ -146,7 +146,6 @@ if Code.ensure_loaded?(Igniter) do
   end
 else
   defmodule Mix.Tasks.Pulsar.Gen.CoreComponents do
-
     @moduledoc __MODULE__.Docs.long_doc()
 
     use Mix.Task
