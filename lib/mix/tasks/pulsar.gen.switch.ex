@@ -3,12 +3,12 @@ defmodule Mix.Tasks.Pulsar.Gen.Switch.Docs do
 
   @spec short_doc() :: String.t()
   def short_doc do
-    "A short description of your task"
+    "Generates an iOS-style toggle switch component for Phoenix forms"
   end
 
   @spec example() :: String.t()
   def example do
-    "mix pulsar.gen.switch --example arg"
+    "mix pulsar.gen.switch"
   end
 
   @spec long_doc() :: String.t()
@@ -16,17 +16,57 @@ defmodule Mix.Tasks.Pulsar.Gen.Switch.Docs do
     """
     #{short_doc()}
 
-    Longer explanation of your task
+    Creates a beautiful toggle switch with iOS-inspired design, smooth animations,
+    loading states, and seamless Phoenix form integration using native checkbox input.
 
     ## Example
 
     ```sh
     #{example()}
+
+    # With custom module namespace
+    mix pulsar.gen.switch --components-module=MyAppWeb.UI
+    ```
+
+    ## Features
+
+    - Variants: solid, outline, ghost
+    - Colors: neutral, primary, secondary, success, danger, warning, info
+    - Sizes: xs, sm, md, lg, xl
+    - Native checkbox input for proper form submission
+    - iOS-inspired design with rounded track and sliding thumb
+    - Smooth animations for all state changes
+    - Loading state with spinner animation
+    - Keyboard accessible (Space key toggles, Tab navigation)
+    - Phoenix form integration with automatic error styling
+    - Screen reader support with proper ARIA attributes
+    - Automatic dark mode support
+
+    ## Usage Examples
+
+    ```elixir
+    # Basic switch
+    <.switch field={@form[:notifications_enabled]} />
+
+    # With variant, color, and size
+    <.switch
+      field={@form[:dark_mode]}
+      variant="outline"
+      color="primary"
+      size="lg"
+    />
+
+    # Loading state during async operation
+    <.switch
+      field={@form[:public_profile]}
+      loading={@updating_privacy}
+      color="success"
+    />
     ```
 
     ## Options
 
-    * `--example-option` or `-e` - Docs for your option
+    * `--components-module=MODULE` or `-M` - Target module namespace (default: YourAppWeb.Components)
     """
   end
 end

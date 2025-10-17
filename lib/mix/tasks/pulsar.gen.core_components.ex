@@ -3,12 +3,12 @@ defmodule Mix.Tasks.Pulsar.Gen.CoreComponents.Docs do
 
   @spec short_doc() :: String.t()
   def short_doc do
-    "A short description of your task"
+    "Generates core Phoenix components with Pulsar styling (replaces default core_components)"
   end
 
   @spec example() :: String.t()
   def example do
-    "mix pulsar.gen.core_components --example arg"
+    "mix pulsar.gen.core_components"
   end
 
   @spec long_doc() :: String.t()
@@ -16,17 +16,72 @@ defmodule Mix.Tasks.Pulsar.Gen.CoreComponents.Docs do
     """
     #{short_doc()}
 
-    Longer explanation of your task
+    Creates a CoreComponents module that provides essential UI components with Pulsar's
+    enhanced styling and behavior. This module follows Phoenix convention as
+    YourAppWeb.CoreComponents (not nested under Components namespace) and replaces
+    the default core_components.ex file.
 
     ## Example
 
     ```sh
     #{example()}
+
+    # With custom module namespace (rare - follows Phoenix convention)
+    mix pulsar.gen.core_components --components-module=MyAppWeb
     ```
+
+    ## Features
+
+    - Replaces default Phoenix core_components.ex with Pulsar-enhanced versions
+    - Follows Phoenix naming convention (CoreComponents, not Components.CoreComponents)
+    - Provides flash notifications, headers, lists, tables, and icons
+    - Uses Pulsar's theme system and styling patterns
+    - Maintains Phoenix API compatibility for easy migration
+    - Integrates seamlessly with Phoenix.HTML and Phoenix.LiveView
+
+    ## Included Components
+
+    - flash/1: Flash notification rendering with Pulsar styling
+    - flash_group/1: Container for multiple flash messages
+    - header/1: Page headers with breadcrumbs and actions
+    - list/1: Key-value data display lists
+    - table/1: Data tables with LiveStream support
+    - simple_form/1: Form wrapper with enhanced styling
+
+    ## Usage Examples
+
+    ```elixir
+    # In your layout or LiveView
+    <.flash_group flash={@flash} />
+
+    # Page header
+    <.header>
+      Dashboard
+      <:subtitle>Welcome back!</:subtitle>
+    </.header>
+
+    # Data list
+    <.list>
+      <:item title="Name">John Doe</:item>
+      <:item title="Email">john@example.com</:item>
+    </.list>
+
+    # Data table
+    <.table id="users" rows={@users}>
+      <:col :let={user} label="Name"><%= user.name %></:col>
+      <:col :let={user} label="Email"><%= user.email %></:col>
+    </.table>
+    ```
+
+    ## Dependencies
+
+    This component requires: button, field, flash, flash_group, header, icon, list, table
 
     ## Options
 
-    * `--example-option` or `-e` - Docs for your option
+    * `--components-module=MODULE` or `-M` - Target module namespace (default: YourAppWeb)
+      Note: Unlike other generators, this defaults to YourAppWeb (not YourAppWeb.Components)
+      to follow Phoenix convention for core_components.ex
     """
   end
 end

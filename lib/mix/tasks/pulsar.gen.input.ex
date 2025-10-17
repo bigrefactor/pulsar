@@ -3,12 +3,12 @@ defmodule Mix.Tasks.Pulsar.Gen.Input.Docs do
 
   @spec short_doc() :: String.t()
   def short_doc do
-    "A short description of your task"
+    "Generates a text input component with decorator support and validation"
   end
 
   @spec example() :: String.t()
   def example do
-    "mix pulsar.gen.input --example arg"
+    "mix pulsar.gen.input"
   end
 
   @spec long_doc() :: String.t()
@@ -16,17 +16,61 @@ defmodule Mix.Tasks.Pulsar.Gen.Input.Docs do
     """
     #{short_doc()}
 
-    Longer explanation of your task
+    Creates a beautiful text input component with start and end decorators for icons,
+    text, or interactive elements. Includes automatic error styling when used with
+    Phoenix forms and seamless validation integration.
 
     ## Example
 
     ```sh
     #{example()}
+
+    # With custom module namespace
+    mix pulsar.gen.input --components-module=MyAppWeb.UI
+    ```
+
+    ## Features
+
+    - Variants: outline, ghost, solid
+    - Colors: neutral, primary, secondary, success, danger, warning, info
+    - Sizes: xs, sm, md, lg, xl
+    - Start/end decorator slots for icons, text, or buttons
+    - Phoenix form integration with automatic error styling
+    - Accessibility built-in with proper ARIA attributes
+    - Automatic dark mode support
+    - Security with proper input validation
+
+    ## Usage Examples
+
+    ```elixir
+    # Basic input
+    <.input field={@form[:email]} type="email" />
+
+    # With decorators and color
+    <.input field={@form[:amount]} variant="outline" color="success">
+      <:start_decorator>$</:start_decorator>
+      <:end_decorator>USD</:end_decorator>
+    </.input>
+
+    # URL input with protocol decorator
+    <.input field={@form[:website]} type="url" color="primary">
+      <:start_decorator>https://</:start_decorator>
+    </.input>
+
+    # Search input with solid variant
+    <.input field={@form[:search]} variant="solid" color="secondary">
+      <:start_decorator>
+        <.icon name="hero-magnifying-glass" />
+      </:start_decorator>
+      <:end_decorator>
+        <.button variant="ghost" size="sm">Search</.button>
+      </:end_decorator>
+    </.input>
     ```
 
     ## Options
 
-    * `--example-option` or `-e` - Docs for your option
+    * `--components-module=MODULE` or `-M` - Target module namespace (default: YourAppWeb.Components)
     """
   end
 end

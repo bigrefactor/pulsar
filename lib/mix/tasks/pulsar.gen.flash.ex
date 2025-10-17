@@ -3,12 +3,12 @@ defmodule Mix.Tasks.Pulsar.Gen.Flash.Docs do
 
   @spec short_doc() :: String.t()
   def short_doc do
-    "A short description of your task"
+    "Generates a toast-style notification component for flash messages and alerts"
   end
 
   @spec example() :: String.t()
   def example do
-    "mix pulsar.gen.flash --example arg"
+    "mix pulsar.gen.flash"
   end
 
   @spec long_doc() :: String.t()
@@ -16,17 +16,62 @@ defmodule Mix.Tasks.Pulsar.Gen.Flash.Docs do
     """
     #{short_doc()}
 
-    Longer explanation of your task
+    Creates a flash notification component with dismissible controls, auto-dismiss
+    functionality, and smooth animations. Perfect for user feedback, status updates,
+    and temporary notifications that integrate with Phoenix.Flash.
 
     ## Example
 
     ```sh
     #{example()}
+
+    # With custom module namespace
+    mix pulsar.gen.flash --components-module=MyAppWeb.UI
+    ```
+
+    ## Features
+
+    - Variants: solid, outline, ghost
+    - Colors: neutral, primary, secondary, success, danger, warning, info
+    - Auto-dismiss with configurable timeout
+    - Pause-on-hover functionality
+    - Manual dismiss with close button
+    - Smooth entry/exit animations using Phoenix.LiveView.JS
+    - Icon support for status indicators
+    - WCAG 2.1 AA accessibility compliance
+    - Automatic dark mode support
+
+    ## Usage Examples
+
+    ```elixir
+    # Basic flash notification
+    <.flash color="success">Changes saved successfully!</.flash>
+
+    # Flash with close button
+    <.flash color="danger" dismissible>
+      Unable to save changes
+    </.flash>
+
+    # Flash with icon and auto-dismiss
+    <.flash color="info" auto_dismiss dismiss_after={3000}>
+      <:start_icon>
+        <.icon name="hero-information-circle" variant="mini" size="sm" />
+      </:start_icon>
+      New feature available
+    </.flash>
+
+    # Custom styled flash
+    <.flash variant="outline" color="warning" dismissible>
+      <:start_icon>
+        <.icon name="hero-exclamation-triangle" variant="mini" size="sm" />
+      </:start_icon>
+      <strong>Warning:</strong> This action cannot be undone
+    </.flash>
     ```
 
     ## Options
 
-    * `--example-option` or `-e` - Docs for your option
+    * `--components-module=MODULE` or `-M` - Target module namespace (default: YourAppWeb.Components)
     """
   end
 end

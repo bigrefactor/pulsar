@@ -3,7 +3,7 @@ defmodule Mix.Tasks.Pulsar.Install.Docs do
 
   @spec short_doc() :: String.t()
   def short_doc do
-    "Installs Pulsar Components"
+    "Installs Pulsar components into your Phoenix application"
   end
 
   @spec example() :: String.t()
@@ -16,17 +16,47 @@ defmodule Mix.Tasks.Pulsar.Install.Docs do
     """
     #{short_doc()}
 
-    Longer explanation of your task
+    Generates all Pulsar component modules into your Phoenix application, providing
+    production-ready, accessible UI components with beautiful Tailwind CSS styling.
+    By default, installs all components and the core_components module.
 
     ## Example
 
     ```sh
+    # Install all components (default)
     #{example()}
+
+    # Install specific components only
+    mix pulsar.install --component=button,input,checkbox
+
+    # Install without core_components
+    mix pulsar.install --no-core-components
+
+    # Auto-confirm all prompts
+    mix pulsar.install --yes
+
+    # Custom components module namespace
+    mix pulsar.install --components-module=MyAppWeb.UI
     ```
 
     ## Options
 
-    * `--example-option` or `-e` - Docs for your option
+    * `--all` or `-a` - Install all available components (default: true)
+    * `--component=NAMES` or `-c` - Comma-separated list of specific components to install
+    * `--core-components` or `--cc` - Include core_components module (default: true)
+    * `--components-module=MODULE` or `-M` - Target module namespace (default: YourAppWeb.Components)
+    * `--yes` or `-y` - Auto-confirm dependency installation prompts
+
+    ## Available Components
+
+    Form components: badge, button, checkbox, field, input, label, radio_group, select, switch, textarea
+
+    UI components: card, divider, flash, flash_group, header, icon, link, list, table
+
+    ## Component Dependencies
+
+    Some components require others to function properly. When you select a component
+    with dependencies, you'll be prompted to include them automatically.
     """
   end
 end

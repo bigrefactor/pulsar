@@ -3,12 +3,12 @@ defmodule Mix.Tasks.Pulsar.Gen.Select.Docs do
 
   @spec short_doc() :: String.t()
   def short_doc do
-    "A short description of your task"
+    "Generates a select dropdown component with multi-select badge display"
   end
 
   @spec example() :: String.t()
   def example do
-    "mix pulsar.gen.select --example arg"
+    "mix pulsar.gen.select"
   end
 
   @spec long_doc() :: String.t()
@@ -16,17 +16,59 @@ defmodule Mix.Tasks.Pulsar.Gen.Select.Docs do
     """
     #{short_doc()}
 
-    Longer explanation of your task
+    Creates a beautiful select dropdown with optional multi-select mode displaying
+    selected options as removable badges. Includes automatic error styling and
+    seamless Phoenix form integration.
 
     ## Example
 
     ```sh
     #{example()}
+
+    # With custom module namespace
+    mix pulsar.gen.select --components-module=MyAppWeb.UI
+    ```
+
+    ## Features
+
+    - Variants: outline, ghost, solid
+    - Colors: neutral, primary, secondary, success, danger, warning, info
+    - Sizes: xs, sm, md, lg, xl
+    - Multi-select with badge display (requires Badge component)
+    - Custom styled dropdown arrow
+    - Option groups with consistent styling
+    - Phoenix form integration with automatic error styling
+    - Accessibility with proper select semantics
+    - Automatic dark mode support
+
+    ## Dependencies
+
+    This component requires: badge (for multi-select mode), icon (for dropdown arrow)
+
+    ## Usage Examples
+
+    ```elixir
+    # Basic select
+    <.select field={@form[:country]} options={@countries} />
+
+    # With variant and color
+    <.select field={@form[:priority]} options={@priorities} variant="outline" color="primary" />
+
+    # Multi-select with badges
+    <.select field={@form[:skills]} options={@skills} multiple />
+
+    # Custom badge removal handler
+    <.select
+      field={@form[:tags]}
+      options={@tags}
+      multiple
+      on_badge_remove={JS.push("remove_tag")}
+    />
     ```
 
     ## Options
 
-    * `--example-option` or `-e` - Docs for your option
+    * `--components-module=MODULE` or `-M` - Target module namespace (default: YourAppWeb.Components)
     """
   end
 end

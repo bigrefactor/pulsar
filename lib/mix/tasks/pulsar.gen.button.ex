@@ -3,12 +3,12 @@ defmodule Mix.Tasks.Pulsar.Gen.Button.Docs do
 
   @spec short_doc() :: String.t()
   def short_doc do
-    "A short description of your task"
+    "Generates a beautiful, accessible button component with polymorphic rendering"
   end
 
   @spec example() :: String.t()
   def example do
-    "mix pulsar.gen.button --example arg"
+    "mix pulsar.gen.button"
   end
 
   @spec long_doc() :: String.t()
@@ -16,17 +16,56 @@ defmodule Mix.Tasks.Pulsar.Gen.Button.Docs do
     """
     #{short_doc()}
 
-    Longer explanation of your task
+    Creates a fully-featured button component supporting multiple variants, colors,
+    sizes, loading states, and smart navigation. Renders as button, link, or div
+    elements with proper accessibility and XSS protection.
 
     ## Example
 
     ```sh
     #{example()}
+
+    # With custom module namespace
+    mix pulsar.gen.button --components-module=MyAppWeb.UI
+    ```
+
+    ## Features
+
+    - Polymorphic rendering (button, a, or div elements)
+    - Variants: solid, outline, ghost, link
+    - Colors: neutral, primary, secondary, success, danger, warning, info
+    - Sizes: xs, sm, md, lg, xl
+    - Loading states with spinner
+    - Phoenix navigation support (navigate, patch, href)
+    - XSS protection for href attributes
+    - WCAG 2.1 AA accessibility compliance
+    - Keyboard navigation for pseudo-buttons
+
+    ## Usage Examples
+
+    ```elixir
+    # Basic button
+    <.button variant="solid" color="primary">Save Changes</.button>
+
+    # With loading state
+    <.button variant="solid" color="success" loading={@saving}>
+      Submit Form
+    </.button>
+
+    # Navigation button
+    <.button variant="outline" navigate={~p"/dashboard"}>
+      Go to Dashboard
+    </.button>
+
+    # Link variant
+    <.button variant="link" color="primary" href="https://example.com">
+      Learn More
+    </.button>
     ```
 
     ## Options
 
-    * `--example-option` or `-e` - Docs for your option
+    * `--components-module=MODULE` or `-M` - Target module namespace (default: YourAppWeb.Components)
     """
   end
 end

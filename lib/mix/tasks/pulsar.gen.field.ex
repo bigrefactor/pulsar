@@ -3,12 +3,12 @@ defmodule Mix.Tasks.Pulsar.Gen.Field.Docs do
 
   @spec short_doc() :: String.t()
   def short_doc do
-    "A short description of your task"
+    "Generates a composable field component that wraps inputs with labels and error handling"
   end
 
   @spec example() :: String.t()
   def example do
-    "mix pulsar.gen.field --example arg"
+    "mix pulsar.gen.field"
   end
 
   @spec long_doc() :: String.t()
@@ -16,17 +16,61 @@ defmodule Mix.Tasks.Pulsar.Gen.Field.Docs do
     """
     #{short_doc()}
 
-    Longer explanation of your task
+    Creates a unified field component that automatically handles labels, descriptions,
+    error messages, and input rendering based on type. Provides a consistent,
+    accessible interface for all form inputs with standardized spacing and layout.
 
     ## Example
 
     ```sh
     #{example()}
+
+    # With custom module namespace
+    mix pulsar.gen.field --components-module=MyAppWeb.UI
+    ```
+
+    ## Features
+
+    - Type-based rendering (automatically uses the right Pulsar component)
+    - Automatic label generation from field names
+    - Error integration with Phoenix forms
+    - Decorator support passed through to compatible inputs
+    - Consistent layout and spacing
+    - Accessibility with proper label association
+    - Phoenix form and changeset integration
+
+    ## Dependencies
+
+    This component requires: checkbox, icon, input, label, radio_group, select, switch, textarea
+
+    ## Usage Examples
+
+    ```elixir
+    # Basic text field with auto-generated label
+    <.field field={@form[:email]} type="email" />
+
+    # Field with custom label and description
+    <.field field={@form[:username]} type="text" placeholder="Choose a username">
+      <:label>Username</:label>
+      <:description>This will be your public display name</:description>
+    </.field>
+
+    # Field with decorators
+    <.field field={@form[:price]} type="number" step="0.01">
+      <:label>Price</:label>
+      <:start_decorator>$</:start_decorator>
+      <:end_decorator>USD</:end_decorator>
+    </.field>
+
+    # Select field
+    <.field field={@form[:country]} type="select" options={@countries}>
+      <:label>Country</:label>
+    </.field>
     ```
 
     ## Options
 
-    * `--example-option` or `-e` - Docs for your option
+    * `--components-module=MODULE` or `-M` - Target module namespace (default: YourAppWeb.Components)
     """
   end
 end
