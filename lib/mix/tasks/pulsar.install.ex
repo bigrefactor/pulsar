@@ -16,21 +16,24 @@ defmodule Mix.Tasks.Pulsar.Install.Docs do
     """
     #{short_doc()}
 
-    Generates all Pulsar component modules into your Phoenix application, providing
-    production-ready, accessible UI components with beautiful Tailwind CSS styling.
-    By default, installs all components and the core_components module.
+    Generates all Pulsar component modules and theme CSS into your Phoenix application,
+    providing production-ready, accessible UI components with beautiful Tailwind CSS styling.
+    By default, installs the theme system, all components, and the core_components module.
 
     ## Example
 
     ```sh
-    # Install all components (default)
+    # Install everything (theme + all components)
     #{example()}
 
-    # Install specific components only
-    mix pulsar.install --component=button,input,checkbox
+    # Install specific components only (no theme)
+    mix pulsar.install --component=button,input,checkbox --no-theme
 
     # Install without core_components
     mix pulsar.install --no-core-components
+
+    # Install components only, no theme
+    mix pulsar.install --no-theme
 
     # Auto-confirm all prompts
     mix pulsar.install --yes
@@ -43,9 +46,19 @@ defmodule Mix.Tasks.Pulsar.Install.Docs do
 
     * `--all` or `-a` - Install all available components (default: true)
     * `--component=NAMES` or `-c` - Comma-separated list of specific components to install
+    * `--theme` or `-t` - Install Pulsar theme CSS with semantic color tokens (default: true)
     * `--core-components` or `--cc` - Include core_components module (default: true)
     * `--components-module=MODULE` or `-M` - Target module namespace (default: YourAppWeb.Components)
     * `--yes` or `-y` - Auto-confirm dependency installation prompts
+
+    ## Theme System
+
+    The Pulsar theme system provides:
+    - Semantic color tokens (primary, secondary, success, warning, danger, info)
+    - Complete light/dark mode support with data-theme attribute strategy
+    - Design tokens for radius, spacing, typography, shadows, and z-index
+    - Custom animations with accessibility (respects prefers-reduced-motion)
+    - Automatic integration with Phoenix LiveView
 
     ## Available Components
 
@@ -114,6 +127,7 @@ if Code.ensure_loaded?(Igniter) do
         # Other tasks your task composes using `Igniter.compose_task`, passing in the CLI argv
         # This ensures your option schema includes options from nested tasks
         composes: [
+          "pulsar.gen.theme",
           "pulsar.gen.badge",
           "pulsar.gen.button",
           "pulsar.gen.card",
@@ -140,19 +154,22 @@ if Code.ensure_loaded?(Igniter) do
           all: :boolean,
           component: :csv,
           core_components: :boolean,
+          theme: :boolean,
           components_module: :string,
           yes: :boolean
         ],
         # Default values for the options in the `schema`
         defaults: [
           all: true,
-          core_components: true
+          core_components: true,
+          theme: true
         ],
         # CLI aliases
         aliases: [
           a: :all,
           c: :component,
           cc: :core_components,
+          t: :theme,
           M: :components_module,
           y: :yes
         ],
@@ -169,6 +186,7 @@ if Code.ensure_loaded?(Igniter) do
       components = gather_components(igniter)
 
       igniter
+      |> maybe_compose_task("pulsar.gen.theme", options[:theme])
       |> Pulsar.Generator.set_default_component_module()
       |> compose_components(components)
       |> maybe_compose_task("pulsar.gen.core_components", options[:core_components])

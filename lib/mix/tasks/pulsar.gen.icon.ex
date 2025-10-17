@@ -74,7 +74,6 @@ end
 
 if Code.ensure_loaded?(Igniter) do
   defmodule Mix.Tasks.Pulsar.Gen.Icon do
-    @shortdoc "#{__MODULE__.Docs.short_doc()}"
 
     @moduledoc __MODULE__.Docs.long_doc()
 
@@ -125,7 +124,6 @@ if Code.ensure_loaded?(Igniter) do
   end
 else
   defmodule Mix.Tasks.Pulsar.Gen.Icon do
-    @shortdoc "#{__MODULE__.Docs.short_doc()} | Install `igniter` to use"
 
     @moduledoc __MODULE__.Docs.long_doc()
 
