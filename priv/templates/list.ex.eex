@@ -1,8 +1,7 @@
-@moduledoc """
 List component for displaying key-value data pairs with semantic HTML.
 
 Provides styled lists for displaying structured data with consistent theming.
-Perfect for showing entity details, metadata, or any key-value information
+Perfect for showing entity details, metadata, or any key-value information 
 with proper accessibility.
 
 ## Features
@@ -20,66 +19,66 @@ with proper accessibility.
 
     # Basic list
     <.list>
-    <:item title="Name">John Doe</:item>
-    <:item title="Email">john@example.com</:item>
-    <:item title="Role">Administrator</:item>
+      <:item title="Name">John Doe</:item>
+      <:item title="Email">john@example.com</:item>
+      <:item title="Role">Administrator</:item>
     </.list>
 
     # With variant and color
     <.list variant="outline" color="primary">
-    <:item title="Project">Phoenix App</:item>
-    <:item title="Version">1.7.0</:item>
-    <:item title="Status">
+      <:item title="Project">Phoenix App</:item>
+      <:item title="Version">1.7.0</:item>
+      <:item title="Status">
         <.badge color="success">Active</.badge>
-    </:item>
+      </:item>
     </.list>
 
-    # Vertical stacked items (override default horizontal layout)
-    <.list class="[&_[data-list-item]]:flex-col">
-        <:item title="Description">
-        This is a longer description that works better
-        when stacked vertically below the title.
-        </:item>
-        <:item title="Notes">
-        Additional notes and commentary that span
-        multiple lines work well in this layout.
-        </:item>
-    </.list>
+     # Vertical stacked items (override default horizontal layout)
+     <.list class="[&_[data-list-item]]:flex-col">
+       <:item title="Description">
+         This is a longer description that works better
+         when stacked vertically below the title.
+       </:item>
+       <:item title="Notes">
+         Additional notes and commentary that span
+         multiple lines work well in this layout.
+       </:item>
+     </.list>
 
     # Custom container layouts with Tailwind classes
     # Grid layout (responsive 2-column)
     <.list class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <:item title="First Name">Jane</:item>
-    <:item title="Last Name">Smith</:item>
-    <:item title="Department">Engineering</:item>
-    <:item title="Location">New York</:item>
+      <:item title="First Name">Jane</:item>
+      <:item title="Last Name">Smith</:item>
+      <:item title="Department">Engineering</:item>
+      <:item title="Location">New York</:item>
     </.list>
 
     # With visual features (striping enabled, dividers are on by default)
     <.list striped={true} variant="outline">
-    <:item title="Created">2024-01-15</:item>
-    <:item title="Modified">2024-03-20</:item>
-    <:item title="Author">System Admin</:item>
+      <:item title="Created">2024-01-15</:item>
+      <:item title="Modified">2024-03-20</:item>
+      <:item title="Author">System Admin</:item>
     </.list>
 
     # Empty state with custom content
     <.list variant="outline">
-    <:empty>
+      <:empty>
         <div class="py-8">
-        <.icon name="document-text" class="mx-auto h-12 w-12 text-muted-foreground" />
-        <p class="mt-2">No data available</p>
+          <.icon name="document-text" class="mx-auto h-12 w-12 text-muted-foreground" />
+          <p class="mt-2">No data available</p>
         </div>
-    </:empty>
+      </:empty>
     </.list>
 
     # With title and description
     <.list variant="outline" color="neutral">
-    <:title>Applicant Information</:title>
-    <:description>Personal details and application.</:description>
-    <:item title="Full name">Margot Foster</:item>
-    <:item title="Application for">Backend Developer</:item>
-    <:item title="Email address">margotfoster@example.com</:item>
-    <:item title="Salary expectation">$120,000</:item>
+      <:title>Applicant Information</:title>
+      <:description>Personal details and application.</:description>
+      <:item title="Full name">Margot Foster</:item>
+      <:item title="Application for">Backend Developer</:item>
+      <:item title="Email address">margotfoster@example.com</:item>
+      <:item title="Salary expectation">$120,000</:item>
     </.list>
 """
 
@@ -96,36 +95,36 @@ alias Phoenix.LiveView.Socket
 
 # Size configuration for container, items, and typography
 @size_config %{
-"lg" => %{
+  "lg" => %{
     container: "text-lg",
     content: "text-lg",
     item: "py-8 px-6 gap-6",
     title: "font-semibold text-lg"
-},
-"md" => %{
+  },
+  "md" => %{
     container: "text-base",
     content: "text-base",
     item: "py-6 px-4 gap-4",
     title: "font-medium text-base"
-},
-"sm" => %{
+  },
+  "sm" => %{
     container: "text-sm",
     content: "text-sm",
     item: "py-4 px-3 gap-3",
     title: "font-medium text-sm"
-},
-"xl" => %{
+  },
+  "xl" => %{
     container: "text-xl",
     content: "text-xl",
     item: "py-10 px-8 gap-8",
     title: "font-semibold text-xl"
-},
-"xs" => %{
+  },
+  "xs" => %{
     container: "text-xs",
     content: "text-xs",
     item: "py-3 px-2 gap-2",
     title: "font-medium text-xs"
-}
+  }
 }
 
 # Base classes for the list container
@@ -133,119 +132,119 @@ alias Phoenix.LiveView.Socket
 
 # Base classes for list items
 @item_base_classes [
-"flex"
+  "flex"
 ]
 
 # Variant-specific classes for container
 @variant_container_classes %{
-"ghost" => [],
-"outline" => [
+  "ghost" => [],
+  "outline" => [
     "border rounded-lg"
-],
-"solid" => [
+  ],
+  "solid" => [
     "rounded-lg"
-]
+  ]
 }
 
 # Color configuration for each variant
 @color_config %{
-"ghost" => %{
+  "ghost" => %{
     "danger" => %{
-    container: "",
-    title: "text-danger dark:text-dark-danger"
+      container: "",
+      title: "text-danger dark:text-dark-danger"
     },
     "info" => %{
-    container: "",
-    title: "text-info dark:text-dark-info"
+      container: "",
+      title: "text-info dark:text-dark-info"
     },
     "neutral" => %{
-    container: "",
-    title: "text-foreground dark:text-dark-foreground"
+      container: "",
+      title: "text-foreground dark:text-dark-foreground"
     },
     "primary" => %{
-    container: "",
-    title: "text-primary dark:text-dark-primary"
+      container: "",
+      title: "text-primary dark:text-dark-primary"
     },
     "secondary" => %{
-    container: "",
-    title: "text-secondary dark:text-dark-secondary"
+      container: "",
+      title: "text-secondary dark:text-dark-secondary"
     },
     "success" => %{
-    container: "",
-    title: "text-success dark:text-dark-success"
+      container: "",
+      title: "text-success dark:text-dark-success"
     },
     "warning" => %{
-    container: "",
-    title: "text-warning dark:text-dark-warning"
+      container: "",
+      title: "text-warning dark:text-dark-warning"
     }
-},
-"outline" => %{
+  },
+  "outline" => %{
     "danger" => %{
-    container: "border-danger dark:border-dark-danger bg-background dark:bg-dark-background",
-    hover: "hover:bg-danger/5 dark:hover:bg-dark-danger/10",
-    title: "text-danger dark:text-dark-danger"
+      container: "border-danger dark:border-dark-danger bg-background dark:bg-dark-background",
+      hover: "hover:bg-danger/5 dark:hover:bg-dark-danger/10",
+      title: "text-danger dark:text-dark-danger"
     },
     "info" => %{
-    container: "border-info dark:border-dark-info bg-background dark:bg-dark-background",
-    hover: "hover:bg-info/5 dark:hover:bg-dark-info/10",
-    title: "text-info dark:text-dark-info"
+      container: "border-info dark:border-dark-info bg-background dark:bg-dark-background",
+      hover: "hover:bg-info/5 dark:hover:bg-dark-info/10",
+      title: "text-info dark:text-dark-info"
     },
     "neutral" => %{
-    container: "border-border dark:border-dark-border bg-background dark:bg-dark-background",
-    hover: "hover:bg-muted/50 dark:hover:bg-dark-muted/50",
-    title: "text-foreground dark:text-dark-foreground"
+      container: "border-border dark:border-dark-border bg-background dark:bg-dark-background",
+      hover: "hover:bg-muted/50 dark:hover:bg-dark-muted/50",
+      title: "text-foreground dark:text-dark-foreground"
     },
     "primary" => %{
-    container: "border-primary dark:border-dark-primary bg-background dark:bg-dark-background",
-    hover: "hover:bg-primary/5 dark:hover:bg-dark-primary/10",
-    title: "text-primary dark:text-dark-primary"
+      container: "border-primary dark:border-dark-primary bg-background dark:bg-dark-background",
+      hover: "hover:bg-primary/5 dark:hover:bg-dark-primary/10",
+      title: "text-primary dark:text-dark-primary"
     },
     "secondary" => %{
-    container: "border-secondary dark:border-dark-secondary bg-background dark:bg-dark-background",
-    hover: "hover:bg-secondary/5 dark:hover:bg-dark-secondary/10",
-    title: "text-secondary dark:text-dark-secondary"
+      container: "border-secondary dark:border-dark-secondary bg-background dark:bg-dark-background",
+      hover: "hover:bg-secondary/5 dark:hover:bg-dark-secondary/10",
+      title: "text-secondary dark:text-dark-secondary"
     },
     "success" => %{
-    container: "border-success dark:border-dark-success bg-background dark:bg-dark-background",
-    hover: "hover:bg-success/5 dark:hover:bg-dark-success/10",
-    title: "text-success dark:text-dark-success"
+      container: "border-success dark:border-dark-success bg-background dark:bg-dark-background",
+      hover: "hover:bg-success/5 dark:hover:bg-dark-success/10",
+      title: "text-success dark:text-dark-success"
     },
     "warning" => %{
-    container: "border-warning dark:border-dark-warning bg-background dark:bg-dark-background",
-    hover: "hover:bg-warning/5 dark:hover:bg-dark-warning/10",
-    title: "text-warning dark:text-dark-warning"
+      container: "border-warning dark:border-dark-warning bg-background dark:bg-dark-background",
+      hover: "hover:bg-warning/5 dark:hover:bg-dark-warning/10",
+      title: "text-warning dark:text-dark-warning"
     }
-},
-"solid" => %{
+  },
+  "solid" => %{
     "danger" => %{
-    container: "bg-danger/5 dark:bg-dark-danger/10 border border-danger/20 dark:border-dark-danger/30",
-    title: "text-danger dark:text-dark-danger"
+      container: "bg-danger/5 dark:bg-dark-danger/10 border border-danger/20 dark:border-dark-danger/30",
+      title: "text-danger dark:text-dark-danger"
     },
     "info" => %{
-    container: "bg-info/5 dark:bg-dark-info/10 border border-info/20 dark:border-dark-info/30",
-    title: "text-info dark:text-dark-info"
+      container: "bg-info/5 dark:bg-dark-info/10 border border-info/20 dark:border-dark-info/30",
+      title: "text-info dark:text-dark-info"
     },
     "neutral" => %{
-    container: "bg-muted dark:bg-dark-muted border border-border dark:border-dark-border",
-    title: "text-foreground dark:text-dark-foreground"
+      container: "bg-muted dark:bg-dark-muted border border-border dark:border-dark-border",
+      title: "text-foreground dark:text-dark-foreground"
     },
     "primary" => %{
-    container: "bg-primary/5 dark:bg-dark-primary/10 border border-primary/20 dark:border-dark-primary/30",
-    title: "text-primary dark:text-dark-primary"
+      container: "bg-primary/5 dark:bg-dark-primary/10 border border-primary/20 dark:border-dark-primary/30",
+      title: "text-primary dark:text-dark-primary"
     },
     "secondary" => %{
-    container: "bg-secondary/5 dark:bg-dark-secondary/10 border border-secondary/20 dark:border-dark-secondary/30",
-    title: "text-secondary dark:text-dark-secondary"
+      container: "bg-secondary/5 dark:bg-dark-secondary/10 border border-secondary/20 dark:border-dark-secondary/30",
+      title: "text-secondary dark:text-dark-secondary"
     },
     "success" => %{
-    container: "bg-success/5 dark:bg-dark-success/10 border border-success/20 dark:border-dark-success/30",
-    title: "text-success dark:text-dark-success"
+      container: "bg-success/5 dark:bg-dark-success/10 border border-success/20 dark:border-dark-success/30",
+      title: "text-success dark:text-dark-success"
     },
     "warning" => %{
-    container: "bg-warning/5 dark:bg-dark-warning/10 border border-warning/20 dark:border-dark-warning/30",
-    title: "text-warning dark:text-dark-warning"
+      container: "bg-warning/5 dark:bg-dark-warning/10 border border-warning/20 dark:border-dark-warning/30",
+      title: "text-warning dark:text-dark-warning"
     }
-}
+  }
 }
 
 # ============================================================================
@@ -253,40 +252,40 @@ alias Phoenix.LiveView.Socket
 # ============================================================================
 
 attr :variant, :string,
-default: "ghost",
-values: ~w(solid outline ghost),
-doc: "Visual style variant of the list"
+  default: "ghost",
+  values: ~w(solid outline ghost),
+  doc: "Visual style variant of the list"
 
 attr :color, :string,
-default: "neutral",
-values: ~w(neutral primary secondary success danger warning info),
-doc: "Color scheme of the list"
+  default: "neutral",
+  values: ~w(neutral primary secondary success danger warning info),
+  doc: "Color scheme of the list"
 
 attr :size, :string,
-default: "md",
-values: ~w(xs sm md lg xl),
-doc: "Size affecting spacing and typography"
+  default: "md",
+  values: ~w(xs sm md lg xl),
+  doc: "Size affecting spacing and typography"
 
 attr :striped, :boolean,
-default: false,
-doc: "Enable zebra striping for rows"
+  default: false,
+  doc: "Enable zebra striping for rows"
 
 attr :dividers, :boolean,
-default: true,
-doc: "Show dividers between items"
+  default: true,
+  doc: "Show dividers between items"
 
 attr :class, :string,
-default: "",
-doc: "Additional CSS classes"
+  default: "",
+  doc: "Additional CSS classes"
 
 attr :rest, :global
 
 slot :item do
-attr :title, :string,
+  attr :title, :string,
     required: true,
     doc: "The label/key for the item"
 
-attr :class, :string, doc: "Additional classes for the item"
+  attr :class, :string, doc: "Additional classes for the item"
 end
 
 slot :empty, doc: "Content to display when no items are present"
@@ -307,20 +306,20 @@ and screen reader support. Supports multiple variants and visual options.
 """
 @spec list(Socket.assigns()) :: Rendered.t()
 def list(assigns) do
-# Check if we have header content first
-has_header = assigns[:title] != [] || assigns[:description] != []
+  # Check if we have header content first
+  has_header = assigns[:title] != [] || assigns[:description] != []
 
-# Build container classes (aware of header state)
-container_classes = build_container_classes(assigns, has_header)
+  # Build container classes (aware of header state)
+  container_classes = build_container_classes(assigns, has_header)
 
-# Build item classes
-item_base = build_item_base_classes(assigns)
+  # Build item classes
+  item_base = build_item_base_classes(assigns)
 
-# Check if items are empty
-items = Map.get(assigns, :item, [])
-has_items = not Enum.empty?(items)
+  # Check if items are empty
+  items = Map.get(assigns, :item, [])
+  has_items = not Enum.empty?(items)
 
-assigns =
+  assigns =
     assigns
     |> assign(:container_classes, container_classes)
     |> assign(:item_base, item_base)
@@ -328,80 +327,80 @@ assigns =
     |> assign(:has_items, has_items)
     |> assign(:has_header, has_header)
 
-~H"""
-<div :if={@has_header} class={wrapper_classes(@variant, @color, @class)} {@rest}>
+  ~H"""
+  <div :if={@has_header} class={wrapper_classes(@variant, @color, @class)} {@rest}>
     <div class={header_classes(@size)}>
-    <h3 :if={@title != []} class={title_header_classes(@variant, @color, @size)}>
+      <h3 :if={@title != []} class={title_header_classes(@variant, @color, @size)}>
         {render_slot(@title)}
-    </h3>
-    <p :if={@description != []} class={description_classes(@size)}>
+      </h3>
+      <p :if={@description != []} class={description_classes(@size)}>
         {render_slot(@description)}
-    </p>
+      </p>
     </div>
     <div class={content_wrapper_classes(@variant)}>
-    <dl class={@container_classes} data-list>
+      <dl class={@container_classes} data-list>
         <div
-        :for={{item, index} <- Enum.with_index(@items)}
-        :if={@has_items}
-        class={
+          :for={{item, index} <- Enum.with_index(@items)}
+          :if={@has_items}
+          class={
             merge([
-            @item_base,
-            item_variant_classes(@variant, @color, index, @striped, length(@items)),
-            @dividers && index > 0 && "border-t border-border dark:border-dark-border",
-            item[:class] || ""
+              @item_base,
+              item_variant_classes(@variant, @color, index, @striped, length(@items)),
+              @dividers && index > 0 && "border-t border-border dark:border-dark-border",
+              item[:class] || ""
             ])
-        }
-        data-list-item
+          }
+          data-list-item
         >
-        <dt class={title_classes(@variant, @color, @size)}>
+          <dt class={title_classes(@variant, @color, @size)}>
             {item.title}
-        </dt>
-        <dd class={content_classes(@size)}>
+          </dt>
+          <dd class={content_classes(@size)}>
             {render_slot(item)}
-        </dd>
+          </dd>
         </div>
         <div :if={!@has_items} class={empty_classes(@size)}>
-        <div :if={@empty != []}>
+          <div :if={@empty != []}>
             {render_slot(@empty)}
-        </div>
-        <div :if={@empty == []}>
+          </div>
+          <div :if={@empty == []}>
             No items to display
+          </div>
         </div>
-        </div>
-    </dl>
+      </dl>
     </div>
-</div>
-<dl :if={!@has_header} class={merge([@container_classes, @class])} data-list {@rest}>
+  </div>
+  <dl :if={!@has_header} class={merge([@container_classes, @class])} data-list {@rest}>
     <div
-    :for={{item, index} <- Enum.with_index(@items)}
-    :if={@has_items}
-    class={
+      :for={{item, index} <- Enum.with_index(@items)}
+      :if={@has_items}
+      class={
         merge([
-        @item_base,
-        item_variant_classes(@variant, @color, index, @striped, length(@items)),
-        @dividers && index > 0 && "border-t border-border dark:border-dark-border",
-        item[:class] || ""
+          @item_base,
+          item_variant_classes(@variant, @color, index, @striped, length(@items)),
+          @dividers && index > 0 && "border-t border-border dark:border-dark-border",
+          item[:class] || ""
         ])
-    }
-    data-list-item
+      }
+      data-list-item
     >
-    <dt class={title_classes(@variant, @color, @size)}>
+      <dt class={title_classes(@variant, @color, @size)}>
         {item.title}
-    </dt>
-    <dd class={content_classes(@size)}>
+      </dt>
+      <dd class={content_classes(@size)}>
         {render_slot(item)}
-    </dd>
+      </dd>
     </div>
     <div :if={!@has_items} class={empty_classes(@size)}>
-    <div :if={@empty != []}>
+      <div :if={@empty != []}>
         {render_slot(@empty)}
-    </div>
-    <div :if={@empty == []}>
+      </div>
+      <div :if={@empty == []}>
         No items to display
+      </div>
     </div>
-    </div>
-</dl>
-"""
+  </dl>
+  """
 end
 
 # ============================================================================
@@ -409,171 +408,172 @@ end
 # ============================================================================
 
 defp build_container_classes(assigns, has_header) do
-size_classes = Map.get(@size_config, assigns.size).container
+  size_classes = Map.get(@size_config, assigns.size).container
 
-# When we have a header, don't apply variant styling to container (wrapper handles it)
-variant_classes =
+  # When we have a header, don't apply variant styling to container (wrapper handles it)
+  variant_classes =
     if has_header do
-    []
+      []
     else
-    Map.get(@variant_container_classes, assigns.variant)
+      Map.get(@variant_container_classes, assigns.variant)
     end
 
-color_config = get_in(@color_config, [assigns.variant, assigns.color])
-# When we have a header, don't apply background colors to container (wrapper handles it)
-color_classes =
+  color_config = get_in(@color_config, [assigns.variant, assigns.color])
+  # When we have a header, don't apply background colors to container (wrapper handles it)
+  color_classes =
     if has_header do
-    ""
+      ""
     else
-    Map.get(color_config, :container, "")
+      Map.get(color_config, :container, "")
     end
 
-# Only apply user classes when no header (otherwise wrapper gets them)
-user_classes = if has_header, do: "", else: assigns.class
+  # Only apply user classes when no header (otherwise wrapper gets them)
+  user_classes = if has_header, do: "", else: assigns.class
 
-merge([
+  merge([
     @container_base_classes,
     size_classes,
     variant_classes,
     color_classes,
     user_classes
-])
+  ])
 end
 
 defp build_item_base_classes(assigns) do
-size_config = Map.get(@size_config, assigns.size)
-item_spacing = Map.get(size_config, :item)
+  size_config = Map.get(@size_config, assigns.size)
+  item_spacing = Map.get(size_config, :item)
 
-merge([
+  merge([
     @item_base_classes,
     item_spacing,
     "sm:grid sm:grid-cols-3 sm:gap-4"
-])
+  ])
 end
 
 defp item_variant_classes(variant, color, index, striped, total_items) do
-color_config = get_in(@color_config, [variant, color])
-hover_classes = Map.get(color_config, :hover, "")
+  color_config = get_in(@color_config, [variant, color])
+  hover_classes = Map.get(color_config, :hover, "")
 
-# Only apply striping if there's more than one item and striping is enabled
-striped_classes =
+  # Only apply striping if there's more than one item and striping is enabled
+  striped_classes =
     if striped && total_items > 1 && rem(index, 2) == 0 do
-    case variant do
+      case variant do
         "ghost" -> "bg-muted/30 dark:bg-dark-muted/20"
         "outline" -> "bg-muted/20 dark:bg-dark-muted/10"
         "solid" -> "bg-foreground/5 dark:bg-dark-foreground/5"
-    end
+      end
     else
-    ""
+      ""
     end
 
-merge([hover_classes, striped_classes])
+  merge([hover_classes, striped_classes])
 end
 
 defp title_classes(variant, color, size) do
-size_config = Map.get(@size_config, size)
-base_title = Map.get(size_config, :title)
+  size_config = Map.get(@size_config, size)
+  base_title = Map.get(size_config, :title)
 
-color_config = get_in(@color_config, [variant, color])
-color_classes = Map.get(color_config, :title, "")
+  color_config = get_in(@color_config, [variant, color])
+  color_classes = Map.get(color_config, :title, "")
 
-merge([base_title, color_classes])
+  merge([base_title, color_classes])
 end
 
 defp content_classes(size) do
-size_config = Map.get(@size_config, size)
-base_content = Map.get(size_config, :content)
+  size_config = Map.get(@size_config, size)
+  base_content = Map.get(size_config, :content)
 
-merge([base_content, "mt-1 sm:col-span-2 sm:mt-0"])
+  merge([base_content, "mt-1 sm:col-span-2 sm:mt-0"])
 end
 
 defp empty_classes(size) do
-size_config = Map.get(@size_config, size)
-padding = Map.get(size_config, :item)
-text_size = Map.get(size_config, :content)
+  size_config = Map.get(@size_config, size)
+  padding = Map.get(size_config, :item)
+  text_size = Map.get(size_config, :content)
 
-merge([
+  merge([
     padding,
     text_size,
     "text-center text-muted-foreground dark:text-dark-muted-foreground"
-])
+  ])
 end
 
 defp wrapper_classes(variant, color, user_class) do
-base_classes = ["overflow-hidden"]
+  base_classes = ["overflow-hidden"]
 
-variant_classes =
+  variant_classes =
     case variant do
-    "outline" ->
+      "outline" ->
         color_config = get_in(@color_config, [variant, color])
         container_styles = Map.get(color_config, :container, "")
 
         [
-        "border rounded-lg",
-        container_styles
+          "border rounded-lg",
+          container_styles
         ]
 
-    "solid" ->
+      "solid" ->
         color_config = get_in(@color_config, [variant, color])
         container_styles = Map.get(color_config, :container, "")
 
         [
-        "rounded-lg",
-        container_styles
+          "rounded-lg",
+          container_styles
         ]
 
-    "ghost" ->
+      "ghost" ->
         [
-        "rounded-lg bg-background/30 dark:bg-dark-background/30 border border-border/20 dark:border-dark-border/20"
+          "rounded-lg bg-background/30 dark:bg-dark-background/30 border border-border/20 dark:border-dark-border/20"
         ]
     end
 
-merge([base_classes, variant_classes, user_class])
+  merge([base_classes, variant_classes, user_class])
 end
 
 defp header_classes(size) do
-padding =
+  padding =
     case size do
-    "xs" -> "px-3 py-4"
-    "sm" -> "px-4 py-5"
-    "md" -> "px-4 py-6 sm:px-6"
-    "lg" -> "px-6 py-7"
-    "xl" -> "px-8 py-8"
+      "xs" -> "px-3 py-4"
+      "sm" -> "px-4 py-5"
+      "md" -> "px-4 py-6 sm:px-6"
+      "lg" -> "px-6 py-7"
+      "xl" -> "px-8 py-8"
     end
 
-padding
+  padding
 end
 
 defp title_header_classes(variant, color, size) do
-base_typography =
+  base_typography =
     case size do
-    "xs" -> "text-sm/6 font-semibold"
-    "sm" -> "text-base/6 font-semibold"
-    "md" -> "text-base/7 font-semibold"
-    "lg" -> "text-lg/7 font-semibold"
-    "xl" -> "text-xl/8 font-semibold"
+      "xs" -> "text-sm/6 font-semibold"
+      "sm" -> "text-base/6 font-semibold"
+      "md" -> "text-base/7 font-semibold"
+      "lg" -> "text-lg/7 font-semibold"
+      "xl" -> "text-xl/8 font-semibold"
     end
 
-color_config = get_in(@color_config, [variant, color])
-color_classes = Map.get(color_config, :title, "text-foreground dark:text-dark-foreground")
+  color_config = get_in(@color_config, [variant, color])
+  color_classes = Map.get(color_config, :title, "text-foreground dark:text-dark-foreground")
 
-merge([color_classes, base_typography])
+  merge([color_classes, base_typography])
 end
 
 defp description_classes(size) do
-typography =
+  typography =
     case size do
-    "xs" -> "mt-1 text-xs/5"
-    "sm" -> "mt-1 text-sm/5"
-    "md" -> "mt-1 max-w-2xl text-sm/6"
-    "lg" -> "mt-1 max-w-2xl text-base/6"
-    "xl" -> "mt-2 max-w-2xl text-lg/7"
+      "xs" -> "mt-1 text-xs/5"
+      "sm" -> "mt-1 text-sm/5"
+      "md" -> "mt-1 max-w-2xl text-sm/6"
+      "lg" -> "mt-1 max-w-2xl text-base/6"
+      "xl" -> "mt-2 max-w-2xl text-lg/7"
     end
 
-merge(["text-muted-foreground dark:text-dark-muted-foreground", typography])
+  merge(["text-muted-foreground dark:text-dark-muted-foreground", typography])
 end
 
 defp content_wrapper_classes(_variant) do
-# Clear border between header and content for all variants
-"border-t border-border dark:border-dark-border"
+  # Clear border between header and content for all variants
+  "border-t border-border dark:border-dark-border"
+end
 end

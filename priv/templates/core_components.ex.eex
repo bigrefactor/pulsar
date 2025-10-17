@@ -1,724 +1,724 @@
-  @moduledoc """
-  Core UI components using Pulsar styling.
+Core UI components using Pulsar styling.
 
-  Provides essential components like flash notifications and icons with
-  Pulsar's enhanced styling and behavior.
-  """
+Provides essential components like flash notifications and icons with
+Pulsar's enhanced styling and behavior.
+"""
 
-  use Phoenix.Component
+use Phoenix.Component
 
-  alias Phoenix.HTML.FormField
-  alias Phoenix.LiveView.JS
-  alias Pulsar.Components.Button
-  alias Pulsar.Components.Field
-  alias Pulsar.Components.Flash
-  alias Pulsar.Components.FlashGroup
-  alias Pulsar.Components.Header
-  alias Pulsar.Components.Icon
-  alias Pulsar.Components.List
-  alias Pulsar.Components.Table
+alias Phoenix.HTML.FormField
+alias Phoenix.LiveView.JS
+alias <%= @component_namespace %>.Button
+alias <%= @component_namespace %>.Field
+alias <%= @component_namespace %>.Flash
+alias <%= @component_namespace %>.FlashGroup
+alias <%= @component_namespace %>.Header
+alias <%= @component_namespace %>.Icon
+alias <%= @component_namespace %>.List
+alias <%= @component_namespace %>.Table
 
-  @doc """
-  Renders flash notices.
+@doc """
+Renders flash notices.
 
-  ## Examples
+## Examples
 
-      <.flash kind={:info} flash={@flash} />
-      <.flash kind={:error} flash={@flash} title="Error" />
-      <.flash kind={:info} variant="outline" flash={@flash} />
-      <.flash color="warning" variant="ghost" flash={@flash} />
-  """
-  attr :id, :string, doc: "the optional id of flash container"
-  attr :flash, :map, default: %{}, doc: "the map of flash messages to display"
-  attr :title, :string, default: nil
-  attr :kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup"
-  attr :rest, :global, doc: "the arbitrary HTML attributes to add to the flash container"
+    <.flash kind={:info} flash={@flash} />
+    <.flash kind={:error} flash={@flash} title="Error" />
+    <.flash kind={:info} variant="outline" flash={@flash} />
+    <.flash color="warning" variant="ghost" flash={@flash} />
+"""
+attr :id, :string, doc: "the optional id of flash container"
+attr :flash, :map, default: %{}, doc: "the map of flash messages to display"
+attr :title, :string, default: nil
+attr :kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup"
+attr :rest, :global, doc: "the arbitrary HTML attributes to add to the flash container"
 
-  # Pulsar enhancement attributes
-  attr :variant, :string,
-    default: "solid",
-    values: ~w(solid outline ghost),
-    doc: "Visual style variant of the flash"
+# Pulsar enhancement attributes
+attr :variant, :string,
+  default: "solid",
+  values: ~w(solid outline ghost),
+  doc: "Visual style variant of the flash"
 
-  attr :color, :string,
-    default: "neutral",
-    values: ~w(neutral primary secondary success danger warning info),
-    doc: "Color scheme (used when kind is not provided)"
+attr :color, :string,
+  default: "neutral",
+  values: ~w(neutral primary secondary success danger warning info),
+  doc: "Color scheme (used when kind is not provided)"
 
-  attr :size, :string,
-    default: "md",
-    values: ~w(sm md lg),
-    doc: "Size of the flash notification"
+attr :size, :string,
+  default: "md",
+  values: ~w(sm md lg),
+  doc: "Size of the flash notification"
 
-  attr :auto_dismiss, :boolean,
-    default: true,
-    doc: "Automatically dismiss after timeout"
+attr :auto_dismiss, :boolean,
+  default: true,
+  doc: "Automatically dismiss after timeout"
 
-  attr :dismiss_after, :integer,
-    default: 5000,
-    doc: "Milliseconds before auto-dismiss"
+attr :dismiss_after, :integer,
+  default: 5000,
+  doc: "Milliseconds before auto-dismiss"
 
-  attr :dismissible, :boolean,
-    default: true,
-    doc: "Show close button for manual dismissal"
+attr :dismissible, :boolean,
+  default: true,
+  doc: "Show close button for manual dismissal"
 
-  slot :inner_block, doc: "the optional inner block that renders the flash message"
+slot :inner_block, doc: "the optional inner block that renders the flash message"
 
-  def flash(assigns) do
-    assigns = assign_new(assigns, :id, fn -> "flash-#{assigns.kind}" end)
+def flash(assigns) do
+  assigns = assign_new(assigns, :id, fn -> "flash-#{assigns.kind}" end)
 
-    ~H"""
-    <div
-      :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
-      id={@id}
-      class="fixed top-4 right-4 z-50 max-w-sm w-full"
-      phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide_flash("##{@id}")}
+  ~H"""
+  <div
+    :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
+    id={@id}
+    class="fixed top-4 right-4 z-50 max-w-sm w-full"
+    phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide_flash("##{@id}")}
+    role={map_kind_to_role(@kind)}
+  >
+    <Flash.flash
+      id={"#{@id}-flash"}
+      variant={@variant}
+      color={(@kind && map_kind_to_color(@kind)) || @color}
+      size={@size}
+      auto_dismiss={@auto_dismiss}
+      dismiss_after={@dismiss_after}
+      dismissible={@dismissible}
       role={map_kind_to_role(@kind)}
+      on_dismiss="lv:clear-flash"
+      flash_key={@kind && to_string(@kind)}
+      class={@rest[:class] || ""}
+      {Map.drop(@rest, [:class])}
     >
-      <Flash.flash
-        id={"#{@id}-flash"}
-        variant={@variant}
-        color={(@kind && map_kind_to_color(@kind)) || @color}
-        size={@size}
-        auto_dismiss={@auto_dismiss}
-        dismiss_after={@dismiss_after}
-        dismissible={@dismissible}
-        role={map_kind_to_role(@kind)}
-        on_dismiss="lv:clear-flash"
-        flash_key={@kind && to_string(@kind)}
-        class={@rest[:class] || ""}
-        {Map.drop(@rest, [:class])}
-      >
-        <:start_icon>
-          <Icon.icon name={get_flash_icon(@kind)} variant="mini" size="sm" />
-        </:start_icon>
-        <div :if={@title}>
-          <p class="font-semibold">{@title}</p>
-          <p>{msg}</p>
-        </div>
-        <div :if={!@title}>
-          {msg}
-        </div>
-      </Flash.flash>
-    </div>
-    """
-  end
-
-  @doc """
-  Renders a group of flash notifications.
-
-  ## Examples
-
-      <.flash_group flash={@flash} />
-      <.flash_group flash={@flash} variant="outline" position="bottom-right" />
+      <:start_icon>
+        <Icon.icon name={get_flash_icon(@kind)} variant="mini" size="sm" />
+      </:start_icon>
+      <div :if={@title}>
+        <p class="font-semibold">{@title}</p>
+        <p>{msg}</p>
+      </div>
+      <div :if={!@title}>
+        {msg}
+      </div>
+    </Flash.flash>
+  </div>
   """
-  defdelegate flash_group(assigns), to: FlashGroup
+end
 
-  @doc """
-  Renders a button with navigation support and Pulsar styling.
+@doc """
+Renders a group of flash notifications.
 
-  Drop-in replacement for Phoenix core_components button with Pulsar enhancements.
-  Maintains full API compatibility while providing optional Pulsar features.
+## Examples
 
-  ## Phoenix Compatibility Examples
+    <.flash_group flash={@flash} />
+    <.flash_group flash={@flash} variant="outline" position="bottom-right" />
+"""
+defdelegate flash_group(assigns), to: FlashGroup
 
-      <.button>Send!</.button>
-      <.button phx-click="go" variant="primary">Send!</.button>
-      <.button navigate={~p"/"}>Home</.button>
+@doc """
+Renders a button with navigation support and Pulsar styling.
 
-  ## Pulsar Enhanced Examples
+Drop-in replacement for Phoenix core_components button with Pulsar enhancements.
+Maintains full API compatibility while providing optional Pulsar features.
 
-      <.button variant="outline" color="success" size="lg">Large Success</.button>
-      <.button variant="ghost" color="danger" loading={@saving}>Delete</.button>
+## Phoenix Compatibility Examples
+
+    <.button>Send!</.button>
+    <.button phx-click="go" variant="primary">Send!</.button>
+    <.button navigate={~p"/"}>Home</.button>
+
+## Pulsar Enhanced Examples
+
+    <.button variant="outline" color="success" size="lg">Large Success</.button>
+    <.button variant="ghost" color="danger" loading={@saving}>Delete</.button>
+"""
+# Phoenix core_components compatibility attributes
+attr(:rest, :global,
+  include: ~w(href navigate patch method download name value disabled),
+  doc: "Phoenix navigation and form attributes"
+)
+
+attr(:class, :string, default: "", doc: "Additional CSS classes")
+
+attr(:variant, :string,
+  values: ~w(primary solid outline ghost link),
+  doc: "Button variant (Phoenix: primary or nil; Pulsar: solid/outline/ghost/link)"
+)
+
+# Pulsar enhancement attributes (optional)
+attr(:color, :string,
+  values: ~w(neutral primary secondary success danger warning info),
+  doc: "Pulsar color scheme (enhances or overrides Phoenix variant)"
+)
+
+attr(:size, :string,
+  default: "md",
+  values: ~w(xs sm md lg xl),
+  doc: "Pulsar button size"
+)
+
+attr(:loading, :boolean, default: false, doc: "Pulsar loading state")
+
+slot(:inner_block, required: true, doc: "Button content")
+
+def button(assigns) do
+  # Map Phoenix variants to Pulsar equivalents
+  {pulsar_variant, pulsar_color} = map_phoenix_to_pulsar_variant(assigns[:variant], assigns[:color])
+
+  # Extract attributes to pass to Pulsar button
+  extra = assigns_to_attributes(assigns, [:variant, :color])
+
+  assigns =
+    assigns
+    |> assign(:pulsar_variant, pulsar_variant)
+    |> assign(:pulsar_color, pulsar_color)
+    |> assign(:extra, extra)
+
+  ~H"""
+  <Button.button variant={@pulsar_variant} color={@pulsar_color} {@extra} {@rest}>
+    {render_slot(@inner_block)}
+  </Button.button>
   """
-  # Phoenix core_components compatibility attributes
-  attr(:rest, :global,
-    include: ~w(href navigate patch method download name value disabled),
-    doc: "Phoenix navigation and form attributes"
-  )
+end
 
-  attr(:class, :string, default: "", doc: "Additional CSS classes")
+# Map Phoenix core_components variants to Pulsar equivalents
+# Phoenix: "primary" -> btn-primary (solid primary)
+# Phoenix: nil -> btn-primary btn-soft (outline primary)
+defp map_phoenix_to_pulsar_variant("primary", color) do
+  {"solid", color || "primary"}
+end
 
-  attr(:variant, :string,
-    values: ~w(primary solid outline ghost link),
-    doc: "Button variant (Phoenix: primary or nil; Pulsar: solid/outline/ghost/link)"
-  )
+defp map_phoenix_to_pulsar_variant(nil, color) do
+  {"outline", color || "primary"}
+end
 
-  # Pulsar enhancement attributes (optional)
-  attr(:color, :string,
-    values: ~w(neutral primary secondary success danger warning info),
-    doc: "Pulsar color scheme (enhances or overrides Phoenix variant)"
-  )
+# Direct Pulsar variants pass through
+defp map_phoenix_to_pulsar_variant(variant, color) when variant in ~w(solid outline ghost link) do
+  {variant, color || "primary"}
+end
 
-  attr(:size, :string,
-    default: "md",
-    values: ~w(xs sm md lg xl),
-    doc: "Pulsar button size"
-  )
+# Fallback to solid primary
+defp map_phoenix_to_pulsar_variant(_, color) do
+  {"solid", color || "primary"}
+end
 
-  attr(:loading, :boolean, default: false, doc: "Pulsar loading state")
+@doc """
+Renders an icon.
 
-  slot(:inner_block, required: true, doc: "Button content")
+## Examples
 
-  def button(assigns) do
-    # Map Phoenix variants to Pulsar equivalents
-    {pulsar_variant, pulsar_color} = map_phoenix_to_pulsar_variant(assigns[:variant], assigns[:color])
+    <.icon name="hero-check" class="size-4" />
+    <.icon name="hero-check" variant="solid" color="success" size="lg" />
+"""
+defdelegate icon(assigns), to: Icon
 
-    # Extract attributes to pass to Pulsar button
-    extra = assigns_to_attributes(assigns, [:variant, :color])
+@doc """
+Renders an input with label and error messages.
 
-    assigns =
-      assigns
-      |> assign(:pulsar_variant, pulsar_variant)
-      |> assign(:pulsar_color, pulsar_color)
-      |> assign(:extra, extra)
+Drop-in replacement for Phoenix core_components input with Pulsar enhancements.
+Maintains full API compatibility while providing optional Pulsar features.
 
-    ~H"""
-    <Button.button variant={@pulsar_variant} color={@pulsar_color} {@extra} {@rest}>
-      {render_slot(@inner_block)}
-    </Button.button>
-    """
-  end
+A `Phoenix.HTML.FormField` may be passed as argument,
+which is used to retrieve the input name, id, and values.
+Otherwise all attributes may be passed explicitly.
 
-  # Map Phoenix core_components variants to Pulsar equivalents
-  # Phoenix: "primary" -> btn-primary (solid primary)
-  # Phoenix: nil -> btn-primary btn-soft (outline primary)
-  defp map_phoenix_to_pulsar_variant("primary", color) do
-    {"solid", color || "primary"}
-  end
+## Types
 
-  defp map_phoenix_to_pulsar_variant(nil, color) do
-    {"outline", color || "primary"}
-  end
+This function accepts all HTML input types, considering that:
 
-  # Direct Pulsar variants pass through
-  defp map_phoenix_to_pulsar_variant(variant, color) when variant in ~w(solid outline ghost link) do
-    {variant, color || "primary"}
-  end
+  * You may also set `type=\"select\"` to render a `<select>` tag
 
-  # Fallback to solid primary
-  defp map_phoenix_to_pulsar_variant(_, color) do
-    {"solid", color || "primary"}
-  end
+  * `type=\"checkbox\"` is used exclusively to render boolean values
 
-  @doc """
-  Renders an icon.
+  * For live file uploads, see `Phoenix.Component.live_file_input/1`
 
-  ## Examples
+See https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
+for more information. Unsupported types, such as hidden and radio,
+are best written directly in your templates.
 
-      <.icon name="hero-check" class="size-4" />
-      <.icon name="hero-check" variant="solid" color="success" size="lg" />
+## Phoenix Compatibility Examples
+
+    <.input field={@form[:email]} type=\"email\" />
+    <.input name=\"my-input\" errors={[\"oh no!\"]} />
+
+## Pulsar Enhanced Examples
+
+    <.input field={@form[:email]} type=\"email\" variant=\"outline\" color=\"primary\" size=\"lg\" />
+    <.input field={@form[:amount]} type=\"number\" variant=\"solid\" color=\"success\">
+      <:start_decorator>$</:start_decorator>
+      <:end_decorator>USD</:end_decorator>
+    </.input>
+"""
+# Phoenix core_components compatibility attributes
+attr :id, :any, default: nil
+attr :name, :any
+attr :label, :string, default: nil
+attr :value, :any
+
+attr :type, :string,
+  default: "text",
+  values: ~w(checkbox color date datetime-local email file month number password
+             search select tel text textarea time url week)
+
+attr :field, FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
+
+attr :errors, :list, default: []
+attr :checked, :boolean, doc: "the checked flag for checkbox inputs"
+attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
+attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
+attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
+attr :class, :string, default: nil, doc: "the input class to use over defaults"
+attr :error_class, :string, default: nil, doc: "the input error class to use over defaults"
+
+attr :rest, :global, include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
+              multiple pattern placeholder readonly required rows size step)
+
+# Pulsar enhancement attributes (optional)
+attr :variant, :string,
+  default: "outline",
+  values: ~w(outline solid ghost),
+  doc: "Pulsar visual style variant"
+
+attr :color, :string,
+  default: "neutral",
+  values: ~w(neutral primary secondary success danger warning info),
+  doc: "Pulsar color scheme"
+
+attr :size, :string,
+  default: "md",
+  values: ~w(xs sm md lg xl),
+  doc: "Pulsar input size"
+
+# Pulsar decorator slots
+slot :start_decorator, doc: "Leading decorator content (icons, text, buttons)"
+slot :end_decorator, doc: "Trailing decorator content (icons, text, buttons)"
+
+def input(assigns) do
+  ~H"""
+  <Field.field
+    field={@field}
+    type={@type}
+    id={@id}
+    name={@name}
+    value={@value}
+    variant={@variant}
+    color={@color}
+    size={@size}
+    placeholder={@rest[:placeholder]}
+    required={@rest[:required]}
+    disabled={@rest[:disabled]}
+    readonly={@rest[:readonly]}
+    options={@options}
+    prompt={@prompt}
+    multiple={@multiple}
+    checked={@checked}
+    class={@class}
+    {@rest}
+  >
+    <:label :if={@label}>{@label}</:label>
+    <:start_decorator :if={@start_decorator != []}>
+      {render_slot(@start_decorator)}
+    </:start_decorator>
+    <:end_decorator :if={@end_decorator != []}>
+      {render_slot(@end_decorator)}
+    </:end_decorator>
+  </Field.field>
   """
-  defdelegate icon(assigns), to: Icon
+end
 
-  @doc """
-  Renders an input with label and error messages.
+@doc """
+Renders a header with title, optional subtitle, actions, and navigation.
 
-  Drop-in replacement for Phoenix core_components input with Pulsar enhancements.
-  Maintains full API compatibility while providing optional Pulsar features.
+Drop-in replacement for Phoenix core_components header with Pulsar enhancements.
+Maintains full API compatibility while providing optional Pulsar features.
 
-  A `Phoenix.HTML.FormField` may be passed as argument,
-  which is used to retrieve the input name, id, and values.
-  Otherwise all attributes may be passed explicitly.
+## Phoenix Compatibility Examples
 
-  ## Types
+    <.header>
+      Dashboard
+    </.header>
 
-  This function accepts all HTML input types, considering that:
+    <.header>
+      User Management
+      <:subtitle>
+        Manage users, roles, and permissions
+      </:subtitle>
+      <:actions>
+        <.button>Add User</.button>
+      </:actions>
+    </.header>
 
-    * You may also set `type=\"select\"` to render a `<select>` tag
+## Pulsar Enhanced Examples
 
-    * `type=\"checkbox\"` is used exclusively to render boolean values
+    <.header variant="solid" color="primary" size="lg">
+      Welcome Back!
+      <:subtitle>
+        Here's what's happening with your projects
+      </:subtitle>
+    </.header>
 
-    * For live file uploads, see `Phoenix.Component.live_file_input/1`
+    <.header variant="outline" sticky={true} divider={true}>
+      Article Title
+      <:subtitle>Published on {@article.published_at}</:subtitle>
+      <:actions>
+        <.button variant="ghost">Edit</.button>
+        <.button variant="ghost">Share</.button>
+      </:actions>
+    </.header>
 
-  See https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
-  for more information. Unsupported types, such as hidden and radio,
-  are best written directly in your templates.
+    <.header as="h2" size="lg">
+      <:breadcrumb navigate={~p"/"}>Home</:breadcrumb>
+      <:breadcrumb navigate={~p"/products"}>Products</:breadcrumb>
+      <:breadcrumb>Electronics</:breadcrumb>
 
-  ## Phoenix Compatibility Examples
+      Electronics
+      <:subtitle>Browse our selection of electronic products</:subtitle>
+    </.header>
+"""
+# Phoenix core_components compatibility slots
+slot(:inner_block, required: true, doc: "The main title content")
+slot(:subtitle, doc: "Optional subtitle or description text")
+slot(:actions, doc: "Optional actions like buttons or links, aligned to the right on desktop")
 
-      <.input field={@form[:email]} type=\"email\" />
-      <.input name=\"my-input\" errors={[\"oh no!\"]} />
+# Pulsar enhancement attributes (optional)
+attr(:variant, :string,
+  default: "ghost",
+  values: ~w(solid outline ghost),
+  doc: "Pulsar visual style variant"
+)
 
-  ## Pulsar Enhanced Examples
+attr(:color, :string,
+  default: "neutral",
+  values: ~w(neutral primary secondary success danger warning info),
+  doc: "Pulsar color scheme"
+)
 
-      <.input field={@form[:email]} type=\"email\" variant=\"outline\" color=\"primary\" size=\"lg\" />
-      <.input field={@form[:amount]} type=\"number\" variant=\"solid\" color=\"success\">
-        <:start_decorator>$</:start_decorator>
-        <:end_decorator>USD</:end_decorator>
-      </.input>
+attr(:size, :string,
+  default: "md",
+  values: ~w(xs sm md lg xl),
+  doc: "Pulsar header text size"
+)
+
+attr(:as, :string,
+  default: "h1",
+  values: ~w(h1 h2 h3 h4 h5 h6),
+  doc: "HTML heading element to use for semantic structure"
+)
+
+attr(:sticky, :boolean,
+  default: false,
+  doc: "Whether header sticks to top of viewport when scrolling"
+)
+
+attr(:divider, :boolean,
+  default: false,
+  doc: "Show a divider line below the header (in addition to variant styling)"
+)
+
+attr(:class, :string,
+  default: "",
+  doc: "Additional CSS classes"
+)
+
+attr(:rest, :global, doc: "Additional HTML attributes")
+
+# Pulsar breadcrumb slot (enhancement)
+slot(:breadcrumb, doc: "Breadcrumb navigation items with automatic chevron separators") do
+  attr(:navigate, :any, doc: "Phoenix LiveView navigation path")
+  attr(:patch, :any, doc: "Phoenix LiveView patch path")
+  attr(:href, :string, doc: "Direct href for external links")
+end
+
+def header(assigns) do
+  extra = assigns_to_attributes(assigns, [:variant, :color, :size, :as, :sticky, :divider, :class])
+
+  assigns = assign(assigns, :extra, extra)
+
+  ~H"""
+  <Header.header
+    variant={@variant}
+    color={@color}
+    size={@size}
+    as={@as}
+    sticky={@sticky}
+    divider={@divider}
+    class={@class}
+    {@extra}
+    {@rest}
+  >
+    {render_slot(@inner_block)}
+    <:subtitle :if={@subtitle != []}>{render_slot(@subtitle)}</:subtitle>
+    <:actions :if={@actions != []}>{render_slot(@actions)}</:actions>
+    <:breadcrumb :for={breadcrumb <- @breadcrumb} {breadcrumb |> Map.take([:navigate, :patch, :href])}>
+      {render_slot(breadcrumb)}
+    </:breadcrumb>
+  </Header.header>
   """
-  # Phoenix core_components compatibility attributes
-  attr :id, :any, default: nil
-  attr :name, :any
-  attr :label, :string, default: nil
-  attr :value, :any
+end
 
-  attr :type, :string,
-    default: "text",
-    values: ~w(checkbox color date datetime-local email file month number password
-               search select tel text textarea time url week)
+@doc """
+Renders a table with generic styling and LiveStream support.
 
-  attr :field, FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
+Drop-in replacement for Phoenix core_components table with Pulsar enhancements.
+Maintains full API compatibility while providing optional Pulsar features.
 
-  attr :errors, :list, default: []
-  attr :checked, :boolean, doc: "the checked flag for checkbox inputs"
-  attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
-  attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
-  attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
-  attr :class, :string, default: nil, doc: "the input class to use over defaults"
-  attr :error_class, :string, default: nil, doc: "the input error class to use over defaults"
+## Phoenix Compatibility Examples
 
-  attr :rest, :global, include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
-                multiple pattern placeholder readonly required rows size step)
+    <.table id="users" rows={@users}>
+      <:col :let={user} label="id">{user.id}</:col>
+      <:col :let={user} label="username">{user.username}</:col>
+    </.table>
 
-  # Pulsar enhancement attributes (optional)
-  attr :variant, :string,
-    default: "outline",
-    values: ~w(outline solid ghost),
-    doc: "Pulsar visual style variant"
-
-  attr :color, :string,
-    default: "neutral",
-    values: ~w(neutral primary secondary success danger warning info),
-    doc: "Pulsar color scheme"
-
-  attr :size, :string,
-    default: "md",
-    values: ~w(xs sm md lg xl),
-    doc: "Pulsar input size"
-
-  # Pulsar decorator slots
-  slot :start_decorator, doc: "Leading decorator content (icons, text, buttons)"
-  slot :end_decorator, doc: "Trailing decorator content (icons, text, buttons)"
-
-  def input(assigns) do
-    ~H"""
-    <Field.field
-      field={@field}
-      type={@type}
-      id={@id}
-      name={@name}
-      value={@value}
-      variant={@variant}
-      color={@color}
-      size={@size}
-      placeholder={@rest[:placeholder]}
-      required={@rest[:required]}
-      disabled={@rest[:disabled]}
-      readonly={@rest[:readonly]}
-      options={@options}
-      prompt={@prompt}
-      multiple={@multiple}
-      checked={@checked}
-      class={@class}
-      {@rest}
-    >
-      <:label :if={@label}>{@label}</:label>
-      <:start_decorator :if={@start_decorator != []}>
-        {render_slot(@start_decorator)}
-      </:start_decorator>
-      <:end_decorator :if={@end_decorator != []}>
-        {render_slot(@end_decorator)}
-      </:end_decorator>
-    </Field.field>
-    """
-  end
-
-  @doc """
-  Renders a header with title, optional subtitle, actions, and navigation.
-
-  Drop-in replacement for Phoenix core_components header with Pulsar enhancements.
-  Maintains full API compatibility while providing optional Pulsar features.
-
-  ## Phoenix Compatibility Examples
-
-      <.header>
-        Dashboard
-      </.header>
-
-      <.header>
-        User Management
-        <:subtitle>
-          Manage users, roles, and permissions
-        </:subtitle>
-        <:actions>
-          <.button>Add User</.button>
-        </:actions>
-      </.header>
-
-  ## Pulsar Enhanced Examples
-
-      <.header variant="solid" color="primary" size="lg">
-        Welcome Back!
-        <:subtitle>
-          Here's what's happening with your projects
-        </:subtitle>
-      </.header>
-
-      <.header variant="outline" sticky={true} divider={true}>
-        Article Title
-        <:subtitle>Published on {@article.published_at}</:subtitle>
-        <:actions>
-          <.button variant="ghost">Edit</.button>
-          <.button variant="ghost">Share</.button>
-        </:actions>
-      </.header>
-
-      <.header as="h2" size="lg">
-        <:breadcrumb navigate={~p"/"}>Home</:breadcrumb>
-        <:breadcrumb navigate={~p"/products"}>Products</:breadcrumb>
-        <:breadcrumb>Electronics</:breadcrumb>
-
-        Electronics
-        <:subtitle>Browse our selection of electronic products</:subtitle>
-      </.header>
-  """
-  # Phoenix core_components compatibility slots
-  slot(:inner_block, required: true, doc: "The main title content")
-  slot(:subtitle, doc: "Optional subtitle or description text")
-  slot(:actions, doc: "Optional actions like buttons or links, aligned to the right on desktop")
-
-  # Pulsar enhancement attributes (optional)
-  attr(:variant, :string,
-    default: "ghost",
-    values: ~w(solid outline ghost),
-    doc: "Pulsar visual style variant"
-  )
-
-  attr(:color, :string,
-    default: "neutral",
-    values: ~w(neutral primary secondary success danger warning info),
-    doc: "Pulsar color scheme"
-  )
-
-  attr(:size, :string,
-    default: "md",
-    values: ~w(xs sm md lg xl),
-    doc: "Pulsar header text size"
-  )
-
-  attr(:as, :string,
-    default: "h1",
-    values: ~w(h1 h2 h3 h4 h5 h6),
-    doc: "HTML heading element to use for semantic structure"
-  )
-
-  attr(:sticky, :boolean,
-    default: false,
-    doc: "Whether header sticks to top of viewport when scrolling"
-  )
-
-  attr(:divider, :boolean,
-    default: false,
-    doc: "Show a divider line below the header (in addition to variant styling)"
-  )
-
-  attr(:class, :string,
-    default: "",
-    doc: "Additional CSS classes"
-  )
-
-  attr(:rest, :global, doc: "Additional HTML attributes")
-
-  # Pulsar breadcrumb slot (enhancement)
-  slot(:breadcrumb, doc: "Breadcrumb navigation items with automatic chevron separators") do
-    attr(:navigate, :any, doc: "Phoenix LiveView navigation path")
-    attr(:patch, :any, doc: "Phoenix LiveView patch path")
-    attr(:href, :string, doc: "Direct href for external links")
-  end
-
-  def header(assigns) do
-    extra = assigns_to_attributes(assigns, [:variant, :color, :size, :as, :sticky, :divider, :class])
-
-    assigns = assign(assigns, :extra, extra)
-
-    ~H"""
-    <Header.header
-      variant={@variant}
-      color={@color}
-      size={@size}
-      as={@as}
-      sticky={@sticky}
-      divider={@divider}
-      class={@class}
-      {@extra}
-      {@rest}
-    >
-      {render_slot(@inner_block)}
-      <:subtitle :if={@subtitle != []}>{render_slot(@subtitle)}</:subtitle>
-      <:actions :if={@actions != []}>{render_slot(@actions)}</:actions>
-      <:breadcrumb :for={breadcrumb <- @breadcrumb} {breadcrumb |> Map.take([:navigate, :patch, :href])}>
-        {render_slot(breadcrumb)}
-      </:breadcrumb>
-    </Header.header>
-    """
-  end
-
-  @doc """
-  Renders a table with generic styling and LiveStream support.
-
-  Drop-in replacement for Phoenix core_components table with Pulsar enhancements.
-  Maintains full API compatibility while providing optional Pulsar features.
-
-  ## Phoenix Compatibility Examples
-
-      <.table id="users" rows={@users}>
-        <:col :let={user} label="id">{user.id}</:col>
-        <:col :let={user} label="username">{user.username}</:col>
-      </.table>
-
-      <.table id="posts" rows={@posts} class="table-zebra">
-        <:col :let={post} label="Title">{post.title}</:col>
-        <:action :let={post}>
-          <.link navigate={~p"/posts/\#{post.id}"}>Show</.link>
-        </:action>
-      </.table>
-
-  ## Pulsar Enhanced Examples
-
-      <.table
-        id="products"
-        rows={@products}
-        variant="outline"
-        color="primary"
-        size="sm"
-        striped={true}
-      >
-        <:col :let={product} label="Name">{product.name}</:col>
-        <:col :let={product} label="Price" align="right">${product.price}</:col>
-      </.table>
-
-      <.table
-        id="events"
-        rows={@streams.events}
-        variant="solid"
-        sticky_header={true}
-        loading={@loading}
-      >
-        <:col :let={{_id, event}} label="Event">{event.name}</:col>
-        <:col :let={{_id, event}} label="Time">{event.timestamp}</:col>
-      </.table>
-  """
-  # Phoenix core_components compatibility attributes
-  attr :id, :string, required: true, doc: "Unique identifier for the table"
-  attr :rows, :list, required: true, doc: "List of rows to display or Phoenix.LiveView.LiveStream"
-  attr :row_id, :any, default: nil, doc: "Function for generating the row id"
-  attr :row_click, :any, default: nil, doc: "Function for handling phx-click on each row"
-
-  attr :row_item, :any,
-    default: &Function.identity/1,
-    doc: "Function for mapping each row before calling the :col and :action slots"
-
-  # Phoenix core_components compatibility slots
-  slot :col, required: true do
-    attr :label, :string
-  end
-
-  slot :action, doc: "The slot for showing user actions in the last table column"
-
-  # Pulsar enhancement attributes (optional)
-  attr :variant, :string,
-    default: "ghost",
-    values: ~w(solid outline ghost),
-    doc: "Pulsar visual style variant"
-
-  attr :color, :string,
-    default: "neutral",
-    values: ~w(neutral primary secondary success danger warning info),
-    doc: "Pulsar color scheme"
-
-  attr :size, :string,
-    default: "md",
-    values: ~w(xs sm md lg xl),
-    doc: "Pulsar table size"
-
-  attr :striped, :boolean,
-    default: false,
-    doc: "Enable zebra striping for rows"
-
-  attr :sticky_header, :boolean,
-    default: false,
-    doc: "Whether header should stick to top when scrolling"
-
-  attr :loading, :boolean,
-    default: false,
-    doc: "Show loading skeleton rows"
-
-  attr :class, :string, default: "", doc: "Additional CSS classes"
-  attr :rest, :global, doc: "Additional HTML attributes"
-
-  def table(assigns) do
-    # Detect Phoenix table-zebra class and enable striping
-    striped = assigns.striped || (assigns.class && String.contains?(assigns.class, "table-zebra"))
-
-    # Remove table-zebra from class if present since Pulsar handles it via striped attribute
-    cleaned_class =
-      if assigns.class && String.contains?(assigns.class, "table-zebra") do
-        assigns.class
-        |> String.replace("table-zebra", "")
-        |> String.replace(~r/\s+/, " ")
-        |> String.trim()
-      else
-        assigns.class
-      end
-
-    # Extract attributes to pass to Pulsar table
-    extra = assigns_to_attributes(assigns, [:variant, :color, :size, :striped, :sticky_header, :loading, :class])
-
-    assigns =
-      assigns
-      |> assign(:striped, striped)
-      |> assign(:cleaned_class, cleaned_class)
-      |> assign(:extra, extra)
-
-    ~H"""
-    <Table.table
-      id={@id}
-      rows={@rows}
-      row_id={@row_id}
-      row_click={@row_click}
-      row_item={@row_item}
-      variant={@variant}
-      color={@color}
-      size={@size}
-      striped={@striped}
-      sticky_header={@sticky_header}
-      loading={@loading}
-      class={@cleaned_class}
-      {@extra}
-      {@rest}
-    >
-      <:col :let={row} :for={col <- @col} {col |> Map.take([:label])}>
-        {render_slot(col, row)}
-      </:col>
-      <:action :let={row} :for={action <- @action}>
-        {render_slot(action, row)}
+    <.table id="posts" rows={@posts} class="table-zebra">
+      <:col :let={post} label="Title">{post.title}</:col>
+      <:action :let={post}>
+        <.link navigate={~p"/posts/\#{post.id}"}>Show</.link>
       </:action>
-    </Table.table>
-    """
-  end
+    </.table>
 
-  @doc """
-  Renders a data list.
+## Pulsar Enhanced Examples
 
-  Drop-in replacement for Phoenix core_components list with Pulsar enhancements.
-  Maintains full API compatibility while providing optional Pulsar features.
-
-  ## Phoenix Compatibility Examples
-
-      <.list>
-        <:item title="Title">{@post.title}</:item>
-        <:item title="Views">{@post.views}</:item>
-      </.list>
-
-  ## Pulsar Enhanced Examples
-
-      <.list variant="outline" color="primary" size="lg">
-        <:item title="Name">John Doe</:item>
-        <:item title="Email">john@example.com</:item>
-      </.list>
-
-      <.list variant="solid" color="neutral" striped={true}>
-        <:item title="Created">2024-01-15</:item>
-        <:item title="Modified">2024-03-20</:item>
-      </.list>
-  """
-  # Phoenix core_components compatibility slots
-  slot(:item, required: true, doc: "List items with title and content") do
-    attr(:title, :string, required: true, doc: "The label/key for the item")
-    attr(:class, :string, doc: "Additional classes for the item")
-  end
-
-  # Pulsar enhancement attributes (optional)
-  attr(:variant, :string,
-    default: "ghost",
-    values: ~w(solid outline ghost),
-    doc: "Pulsar visual style variant"
-  )
-
-  attr(:color, :string,
-    default: "neutral",
-    values: ~w(neutral primary secondary success danger warning info),
-    doc: "Pulsar color scheme"
-  )
-
-  attr(:size, :string,
-    default: "md",
-    values: ~w(xs sm md lg xl),
-    doc: "Pulsar list size"
-  )
-
-  attr(:striped, :boolean,
-    default: false,
-    doc: "Enable zebra striping for rows"
-  )
-
-  attr(:dividers, :boolean,
-    default: true,
-    doc: "Show dividers between items"
-  )
-
-  attr(:class, :string, default: "", doc: "Additional CSS classes")
-  attr(:rest, :global, doc: "Additional HTML attributes")
-
-  # Pulsar enhancement slots (optional)
-  slot(:empty, doc: "Content to display when no items are present")
-  slot(:title, doc: "Optional title for the list")
-  slot(:description, doc: "Optional description for the list")
-
-  def list(assigns) do
-    # Extract attributes to pass to Pulsar list
-    extra = assigns_to_attributes(assigns, [:variant, :color, :size, :striped, :dividers, :class])
-
-    assigns = assign(assigns, :extra, extra)
-
-    ~H"""
-    <List.list
-      variant={@variant}
-      color={@color}
-      size={@size}
-      striped={@striped}
-      dividers={@dividers}
-      class={@class}
-      {@extra}
-      {@rest}
+    <.table
+      id="products"
+      rows={@products}
+      variant="outline"
+      color="primary"
+      size="sm"
+      striped={true}
     >
-      <:item :for={item <- @item} title={item.title} class={item[:class]}>
-        {render_slot(item)}
-      </:item>
-      <:empty :if={@empty != []}>{render_slot(@empty)}</:empty>
-      <:title :if={@title != []}>{render_slot(@title)}</:title>
-      <:description :if={@description != []}>{render_slot(@description)}</:description>
-    </List.list>
-    """
-  end
+      <:col :let={product} label="Name">{product.name}</:col>
+      <:col :let={product} label="Price" align="right">${product.price}</:col>
+    </.table>
 
-  # === Helper Functions ===
+    <.table
+      id="events"
+      rows={@streams.events}
+      variant="solid"
+      sticky_header={true}
+      loading={@loading}
+    >
+      <:col :let={{_id, event}} label="Event">{event.name}</:col>
+      <:col :let={{_id, event}} label="Time">{event.timestamp}</:col>
+    </.table>
+"""
+# Phoenix core_components compatibility attributes
+attr :id, :string, required: true, doc: "Unique identifier for the table"
+attr :rows, :list, required: true, doc: "List of rows to display or Phoenix.LiveView.LiveStream"
+attr :row_id, :any, default: nil, doc: "Function for generating the row id"
+attr :row_click, :any, default: nil, doc: "Function for handling phx-click on each row"
 
-  # Map Phoenix flash kinds to Pulsar colors
-  defp map_kind_to_color(:info), do: "info"
-  defp map_kind_to_color(:error), do: "danger"
-  defp map_kind_to_color(_), do: "neutral"
+attr :row_item, :any,
+  default: &Function.identity/1,
+  doc: "Function for mapping each row before calling the :col and :action slots"
 
-  # Map Phoenix flash kinds to ARIA roles
-  defp map_kind_to_role(:error), do: "alert"
-  defp map_kind_to_role(_), do: "status"
+# Phoenix core_components compatibility slots
+slot :col, required: true do
+  attr :label, :string
+end
 
-  # Get appropriate icon for flash kind
-  defp get_flash_icon(:info), do: "hero-information-circle"
-  defp get_flash_icon(:error), do: "hero-exclamation-circle"
-  defp get_flash_icon(_), do: "hero-bell"
+slot :action, doc: "The slot for showing user actions in the last table column"
 
-  # Hide flash with animation
-  defp hide_flash(js, selector) do
-    JS.hide(js,
-      to: selector,
-      time: 200,
-      transition: {
-        "transition-all ease-in duration-200",
-        "opacity-100 translate-y-0 sm:scale-100",
-        "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-      }
-    )
-  end
+# Pulsar enhancement attributes (optional)
+attr :variant, :string,
+  default: "ghost",
+  values: ~w(solid outline ghost),
+  doc: "Pulsar visual style variant"
+
+attr :color, :string,
+  default: "neutral",
+  values: ~w(neutral primary secondary success danger warning info),
+  doc: "Pulsar color scheme"
+
+attr :size, :string,
+  default: "md",
+  values: ~w(xs sm md lg xl),
+  doc: "Pulsar table size"
+
+attr :striped, :boolean,
+  default: false,
+  doc: "Enable zebra striping for rows"
+
+attr :sticky_header, :boolean,
+  default: false,
+  doc: "Whether header should stick to top when scrolling"
+
+attr :loading, :boolean,
+  default: false,
+  doc: "Show loading skeleton rows"
+
+attr :class, :string, default: "", doc: "Additional CSS classes"
+attr :rest, :global, doc: "Additional HTML attributes"
+
+def table(assigns) do
+  # Detect Phoenix table-zebra class and enable striping
+  striped = assigns.striped || (assigns.class && String.contains?(assigns.class, "table-zebra"))
+
+  # Remove table-zebra from class if present since Pulsar handles it via striped attribute
+  cleaned_class =
+    if assigns.class && String.contains?(assigns.class, "table-zebra") do
+      assigns.class
+      |> String.replace("table-zebra", "")
+      |> String.replace(~r/\s+/, " ")
+      |> String.trim()
+    else
+      assigns.class
+    end
+
+  # Extract attributes to pass to Pulsar table
+  extra = assigns_to_attributes(assigns, [:variant, :color, :size, :striped, :sticky_header, :loading, :class])
+
+  assigns =
+    assigns
+    |> assign(:striped, striped)
+    |> assign(:cleaned_class, cleaned_class)
+    |> assign(:extra, extra)
+
+  ~H"""
+  <Table.table
+    id={@id}
+    rows={@rows}
+    row_id={@row_id}
+    row_click={@row_click}
+    row_item={@row_item}
+    variant={@variant}
+    color={@color}
+    size={@size}
+    striped={@striped}
+    sticky_header={@sticky_header}
+    loading={@loading}
+    class={@cleaned_class}
+    {@extra}
+    {@rest}
+  >
+    <:col :let={row} :for={col <- @col} {col |> Map.take([:label])}>
+      {render_slot(col, row)}
+    </:col>
+    <:action :let={row} :for={action <- @action}>
+      {render_slot(action, row)}
+    </:action>
+  </Table.table>
+  """
+end
+
+@doc """
+Renders a data list.
+
+Drop-in replacement for Phoenix core_components list with Pulsar enhancements.
+Maintains full API compatibility while providing optional Pulsar features.
+
+## Phoenix Compatibility Examples
+
+    <.list>
+      <:item title="Title">{@post.title}</:item>
+      <:item title="Views">{@post.views}</:item>
+    </.list>
+
+## Pulsar Enhanced Examples
+
+    <.list variant="outline" color="primary" size="lg">
+      <:item title="Name">John Doe</:item>
+      <:item title="Email">john@example.com</:item>
+    </.list>
+
+    <.list variant="solid" color="neutral" striped={true}>
+      <:item title="Created">2024-01-15</:item>
+      <:item title="Modified">2024-03-20</:item>
+    </.list>
+"""
+# Phoenix core_components compatibility slots
+slot(:item, required: true, doc: "List items with title and content") do
+  attr(:title, :string, required: true, doc: "The label/key for the item")
+  attr(:class, :string, doc: "Additional classes for the item")
+end
+
+# Pulsar enhancement attributes (optional)
+attr(:variant, :string,
+  default: "ghost",
+  values: ~w(solid outline ghost),
+  doc: "Pulsar visual style variant"
+)
+
+attr(:color, :string,
+  default: "neutral",
+  values: ~w(neutral primary secondary success danger warning info),
+  doc: "Pulsar color scheme"
+)
+
+attr(:size, :string,
+  default: "md",
+  values: ~w(xs sm md lg xl),
+  doc: "Pulsar list size"
+)
+
+attr(:striped, :boolean,
+  default: false,
+  doc: "Enable zebra striping for rows"
+)
+
+attr(:dividers, :boolean,
+  default: true,
+  doc: "Show dividers between items"
+)
+
+attr(:class, :string, default: "", doc: "Additional CSS classes")
+attr(:rest, :global, doc: "Additional HTML attributes")
+
+# Pulsar enhancement slots (optional)
+slot(:empty, doc: "Content to display when no items are present")
+slot(:title, doc: "Optional title for the list")
+slot(:description, doc: "Optional description for the list")
+
+def list(assigns) do
+  # Extract attributes to pass to Pulsar list
+  extra = assigns_to_attributes(assigns, [:variant, :color, :size, :striped, :dividers, :class])
+
+  assigns = assign(assigns, :extra, extra)
+
+  ~H"""
+  <List.list
+    variant={@variant}
+    color={@color}
+    size={@size}
+    striped={@striped}
+    dividers={@dividers}
+    class={@class}
+    {@extra}
+    {@rest}
+  >
+    <:item :for={item <- @item} title={item.title} class={item[:class]}>
+      {render_slot(item)}
+    </:item>
+    <:empty :if={@empty != []}>{render_slot(@empty)}</:empty>
+    <:title :if={@title != []}>{render_slot(@title)}</:title>
+    <:description :if={@description != []}>{render_slot(@description)}</:description>
+  </List.list>
+  """
+end
+
+# === Helper Functions ===
+
+# Map Phoenix flash kinds to Pulsar colors
+defp map_kind_to_color(:info), do: "info"
+defp map_kind_to_color(:error), do: "danger"
+defp map_kind_to_color(_), do: "neutral"
+
+# Map Phoenix flash kinds to ARIA roles
+defp map_kind_to_role(:error), do: "alert"
+defp map_kind_to_role(_), do: "status"
+
+# Get appropriate icon for flash kind
+defp get_flash_icon(:info), do: "hero-information-circle"
+defp get_flash_icon(:error), do: "hero-exclamation-circle"
+defp get_flash_icon(_), do: "hero-bell"
+
+# Hide flash with animation
+defp hide_flash(js, selector) do
+  JS.hide(js,
+    to: selector,
+    time: 200,
+    transition: {
+      "transition-all ease-in duration-200",
+      "opacity-100 translate-y-0 sm:scale-100",
+      "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+    }
+  )
+end
+end

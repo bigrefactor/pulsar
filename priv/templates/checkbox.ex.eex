@@ -1,4 +1,3 @@
-@moduledoc """
 Accessible checkbox component with built-in accessibility patterns.
 
 Provides beautiful, accessible checkboxes with animated checkmark, semantic variants,
@@ -26,38 +25,38 @@ color tokens that support both light and dark modes.
     <.checkbox field={@form[:newsletter]} color="primary" size="lg" />
 
     # Indeterminate state for "select all" scenarios
-    <.checkbox
-    field={@form[:select_all]}
-    indeterminate={@partial_selection}
-    color="success"
+    <.checkbox 
+      field={@form[:select_all]} 
+      indeterminate={@partial_selection}
+      color="success"
     />
 
-    # Card-style checkbox for rich layouts
-    <.checkbox
-        field={@form[:plan]}
-        card
-        variant="outline"
-        color="primary"
-        size="lg"
-        value="premium"
-    >
-        <div class="font-medium">Premium Plan</div>
-        <div class="text-sm text-muted-foreground mt-1">Advanced features and priority support</div>
-        <div class="text-sm font-semibold mt-2">$29/month</div>
-    </.checkbox>
+     # Card-style checkbox for rich layouts
+     <.checkbox 
+       field={@form[:plan]} 
+       card
+       variant="outline"
+       color="primary" 
+       size="lg"
+       value="premium"
+     >
+       <div class="font-medium">Premium Plan</div>
+       <div class="text-sm text-muted-foreground mt-1">Advanced features and priority support</div>
+       <div class="text-sm font-semibold mt-2">$29/month</div>
+     </.checkbox>
 
-    # Card-only selection (no visible checkbox)
-    <.checkbox
-        field={@form[:theme]}
-        card
-        hide_checkbox
-        variant="outline"
-        color="primary"
-        value="dark"
-    >
-        <div class="font-medium">Dark Theme</div>
-        <div class="text-sm text-muted-foreground mt-1">Easy on the eyes</div>
-    </.checkbox>
+     # Card-only selection (no visible checkbox)
+     <.checkbox 
+       field={@form[:theme]} 
+       card
+       hide_checkbox
+       variant="outline"
+       color="primary"
+       value="dark"
+     >
+       <div class="font-medium">Dark Theme</div>
+       <div class="text-sm text-muted-foreground mt-1">Easy on the eyes</div>
+     </.checkbox>
 
 ## Error State Handling
 
@@ -88,90 +87,90 @@ alias Phoenix.LiveView.Rendered
 
 # Size configuration for both checkbox input and card variants
 @size_config %{
-"lg" => %{
+  "lg" => %{
     card: "p-5 gap-4 text-lg",
     input: "h-6 w-6 rounded-md before:rounded-md after:text-sm"
-},
-"md" => %{
+  },
+  "md" => %{
     card: "p-4 gap-3",
     input: "h-5 w-5 rounded-md before:rounded-md after:text-xs"
-},
-"sm" => %{
+  },
+  "sm" => %{
     card: "p-3 gap-2 text-sm",
     input: "h-4 w-4 rounded before:rounded after:text-[10px]"
-},
-"xl" => %{
+  },
+  "xl" => %{
     card: "p-6 gap-5 text-xl",
     input: "h-7 w-7 rounded-lg before:rounded-lg after:text-base"
-},
-"xs" => %{
+  },
+  "xs" => %{
     card: "p-2 gap-2 text-xs",
     input: "h-3 w-3 rounded before:rounded after:text-[8px]"
-}
+  }
 }
 
 # Base checkbox styling classes
 @checkbox_base_classes [
-"appearance-none relative cursor-pointer transition-all duration-200 ease-in-out",
-"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-"focus-visible:ring-ring dark:focus-visible:ring-dark-ring",
-"disabled:cursor-not-allowed disabled:opacity-50",
-"before:content-[''] before:absolute before:inset-0 before:rounded-[inherit]",
-"before:border-2 before:transition-all before:duration-200 before:ease-in-out",
-"after:content-['✓'] after:absolute after:inset-0 after:flex after:items-center after:justify-center",
-"after:text-current after:font-bold after:transition-all after:duration-200 after:ease-in-out",
-"after:scale-0 after:opacity-0",
-"data-[checked=true]:after:scale-100 data-[checked=true]:after:opacity-100",
-"data-[indeterminate=true]:after:content-['−'] data-[indeterminate=true]:after:scale-100 data-[indeterminate=true]:after:opacity-100"
+  "appearance-none relative cursor-pointer transition-all duration-200 ease-in-out",
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+  "focus-visible:ring-ring dark:focus-visible:ring-dark-ring",
+  "disabled:cursor-not-allowed disabled:opacity-50",
+  "before:content-[''] before:absolute before:inset-0 before:rounded-[inherit]",
+  "before:border-2 before:transition-all before:duration-200 before:ease-in-out",
+  "after:content-['✓'] after:absolute after:inset-0 after:flex after:items-center after:justify-center",
+  "after:text-current after:font-bold after:transition-all after:duration-200 after:ease-in-out",
+  "after:scale-0 after:opacity-0",
+  "data-[checked=true]:after:scale-100 data-[checked=true]:after:opacity-100",
+  "data-[indeterminate=true]:after:content-['−'] data-[indeterminate=true]:after:scale-100 data-[indeterminate=true]:after:opacity-100"
 ]
 
 # Base card container styling classes
 @card_base_classes [
-"flex items-center gap-3 rounded-lg cursor-pointer transition-all duration-200 ease-in-out",
-"focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-ring",
-"dark:focus-within:ring-dark-ring has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50"
+  "flex items-center gap-3 rounded-lg cursor-pointer transition-all duration-200 ease-in-out",
+  "focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-ring",
+  "dark:focus-within:ring-dark-ring has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50"
 ]
 
 # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
 defp generate_id(prefix) do
-"#{prefix}-#{System.unique_integer([:positive])}"
+  "#{prefix}-#{System.unique_integer([:positive])}"
 end
 
 # Essential Stellar helpers copied locally for normalization
 defp normalize_field_props(assigns) do
-field = assigns[:field]
+  field = assigns[:field]
 
-if field do
+  if field do
     %{
-    checked: checked?(field.value, assigns[:value] || "true"),
-    errors: field.errors || [],
-    id: assigns[:id] || field.id || generate_id("checkbox"),
-    name: assigns[:name] || field.name
+      checked: checked?(field.value, assigns[:value] || "true"),
+      errors: field.errors || [],
+      id: assigns[:id] || field.id || generate_id("checkbox"),
+      name: assigns[:name] || field.name
     }
-else
+  else
     %{
-    checked: assigns[:checked] || false,
-    errors: [],
-    id: assigns[:id] || generate_id("checkbox"),
-    name: assigns[:name]
+      checked: assigns[:checked] || false,
+      errors: [],
+      id: assigns[:id] || generate_id("checkbox"),
+      name: assigns[:name]
     }
-end
+  end
 end
 
 defp checked?(field_value, checkbox_value) when is_list(field_value) do
-to_string(checkbox_value) in Enum.map(field_value, &to_string/1)
+  to_string(checkbox_value) in Enum.map(field_value, &to_string/1)
 end
 
 defp checked?(field_value, checkbox_value) do
-to_string(field_value) == to_string(checkbox_value)
+  to_string(field_value) == to_string(checkbox_value)
 end
 
 defp assign_computed_attributes(assigns, normalized) do
-assigns
-|> assign(:id, normalized.id)
-|> assign(:name, normalized.name)
-|> assign(:checked, normalized.checked)
-|> assign(:field_errors, normalized.errors)
+  assigns
+  |> assign(:id, normalized.id)
+  |> assign(:name, normalized.name)
+  |> assign(:checked, normalized.checked)
+  |> assign(:field_errors, normalized.errors)
 end
 
 # ============================================================================
@@ -180,65 +179,65 @@ end
 
 # Validates required attributes for the checkbox component
 defp validates_attributes!(assigns) do
-if is_nil(assigns[:field]) and is_nil(assigns[:name]) do
+  if is_nil(assigns[:field]) and is_nil(assigns[:name]) do
     raise ArgumentError,
-        "Checkbox requires :field or :name; provide :name only when not using a Phoenix form field"
-end
+          "Checkbox requires :field or :name; provide :name only when not using a Phoenix form field"
+  end
 end
 
 # Computes the effective color based on error state
 defp compute_effective_color(assigns, normalized) do
-has_errors = not Enum.empty?(normalized.errors)
-user_invalid = Map.get(assigns, :invalid)
-invalid = if is_nil(user_invalid), do: has_errors, else: user_invalid
-effective_color = if invalid, do: "danger", else: assigns.color
-{effective_color, invalid}
+  has_errors = not Enum.empty?(normalized.errors)
+  user_invalid = Map.get(assigns, :invalid)
+  invalid = if is_nil(user_invalid), do: has_errors, else: user_invalid
+  effective_color = if invalid, do: "danger", else: assigns.color
+  {effective_color, invalid}
 end
 
 # Builds the merged class string for checkbox input
 defp build_checkbox_input_classes(assigns, effective_color, invalid) do
-merge([
+  merge([
     base_checkbox_classes(),
     size_classes(assigns.size),
     color_classes(effective_color),
     state_classes(assigns.disabled, invalid),
     assigns.class
-])
+  ])
 end
 
 # Pulsar-specific styling attributes
 attr(:card, :boolean,
-default: false,
-doc: "Render as a clickable card layout"
+  default: false,
+  doc: "Render as a clickable card layout"
 )
 
 attr(:hide_checkbox, :boolean,
-default: false,
-doc: "Hide the checkbox input (useful for card-only selection interfaces)"
+  default: false,
+  doc: "Hide the checkbox input (useful for card-only selection interfaces)"
 )
 
 attr(:variant, :string,
-default: "solid",
-values: ~w(solid outline ghost),
-doc: "Visual style variant (applies to card when card=true)"
+  default: "solid",
+  values: ~w(solid outline ghost),
+  doc: "Visual style variant (applies to card when card=true)"
 )
 
 attr(:color, :string,
-default: "primary",
-values: ~w(neutral primary secondary success danger warning info),
-doc: "Color scheme of the checkbox (overridden by error state)"
+  default: "primary",
+  values: ~w(neutral primary secondary success danger warning info),
+  doc: "Color scheme of the checkbox (overridden by error state)"
 )
 
 attr(:size, :string,
-default: "md",
-values: ~w(xs sm md lg xl),
-doc: "Size of the checkbox"
+  default: "md",
+  values: ~w(xs sm md lg xl),
+  doc: "Size of the checkbox"
 )
 
 # Card container customization
 attr(:container_class, :string,
-default: "",
-doc: "Additional CSS classes for the card container (label element in card mode)"
+  default: "",
+  doc: "Additional CSS classes for the card container (label element in card mode)"
 )
 
 # Stellar checkbox attributes - copied from Stellar.Components.Checkbox
@@ -246,61 +245,61 @@ attr(:field, FormField, default: nil, doc: "Phoenix form field")
 
 # Core attributes
 attr(:id, :string,
-default: nil,
-doc: "Checkbox ID (auto-generated if not provided)"
+  default: nil,
+  doc: "Checkbox ID (auto-generated if not provided)"
 )
 
 attr(:name, :string,
-default: nil,
-doc: "Checkbox name (from field if not provided)"
+  default: nil,
+  doc: "Checkbox name (from field if not provided)"
 )
 
 attr(:value, :any,
-default: "true",
-doc: "Value when checkbox is checked"
+  default: "true",
+  doc: "Value when checkbox is checked"
 )
 
 attr(:checked, :boolean,
-default: false,
-doc: "Checkbox state (from field if not provided)"
+  default: false,
+  doc: "Checkbox state (from field if not provided)"
 )
 
 attr(:unchecked_value, :string,
-default: "false",
-doc: "Hidden input value when unchecked"
+  default: "false",
+  doc: "Hidden input value when unchecked"
 )
 
 attr(:indeterminate, :boolean,
-default: false,
-doc: "Tri-state checkbox support"
+  default: false,
+  doc: "Tri-state checkbox support"
 )
 
 attr(:render_hidden, :boolean,
-default: true,
-doc: "Render hidden input for unchecked value"
+  default: true,
+  doc: "Render hidden input for unchecked value"
 )
 
 # State attributes
 attr(:required, :boolean,
-default: false,
-doc: "Mark checkbox as required"
+  default: false,
+  doc: "Mark checkbox as required"
 )
 
 attr(:disabled, :boolean,
-default: false,
-doc: "Disable the checkbox"
+  default: false,
+  doc: "Disable the checkbox"
 )
 
 # State override (optional)
 attr(:invalid, :boolean,
-default: nil,
-doc: "Force invalid state; defaults to Phoenix field errors when nil"
+  default: nil,
+  doc: "Force invalid state; defaults to Phoenix field errors when nil"
 )
 
 # Styling
 attr(:class, :string,
-default: "",
-doc: "Additional CSS classes"
+  default: "",
+  doc: "Additional CSS classes"
 )
 
 # Global attributes (applies to container in card mode, input in default mode)
@@ -329,57 +328,57 @@ data attributes, with automatic error state handling for Phoenix forms.
     # Standard checkbox
     <.checkbox field={@form[:terms]} color="primary" />
 
-    # Rich card layout with custom spacing
-    <.checkbox card field={@form[:plan]} value="pro" container_class="mb-4">
-        <div class="font-medium">Pro Plan</div>
-        <div class="text-sm text-muted-foreground mt-1">Everything in Basic plus advanced features</div>
-        <div class="text-sm font-semibold mt-2">$19/month</div>
-    </.checkbox>
+     # Rich card layout with custom spacing
+     <.checkbox card field={@form[:plan]} value="pro" container_class="mb-4">
+       <div class="font-medium">Pro Plan</div>
+       <div class="text-sm text-muted-foreground mt-1">Everything in Basic plus advanced features</div>
+       <div class="text-sm font-semibold mt-2">$19/month</div>
+     </.checkbox>
 
-    # Card-only selection with event handling on container
-    <.checkbox
-        card
-        hide_checkbox
-        field={@form[:theme]}
-        value="light"
-        phx-click="select_theme"
-    >
-        <div class="font-medium">Light Theme</div>
-        <div class="text-sm text-muted-foreground mt-1">Clean and bright interface</div>
-    </.checkbox>
+     # Card-only selection with event handling on container
+     <.checkbox 
+       card 
+       hide_checkbox 
+       field={@form[:theme]} 
+       value="light"
+       phx-click="select_theme"
+     >
+       <div class="font-medium">Light Theme</div>
+       <div class="text-sm text-muted-foreground mt-1">Clean and bright interface</div>
+     </.checkbox>
 """
 @spec checkbox(map()) :: Rendered.t()
 def checkbox(assigns) do
-validates_attributes!(assigns)
-normalized = normalize_field_props(assigns)
-{effective_color, invalid} = compute_effective_color(assigns, normalized)
-input_class = build_checkbox_input_classes(assigns, effective_color, invalid)
+  validates_attributes!(assigns)
+  normalized = normalize_field_props(assigns)
+  {effective_color, invalid} = compute_effective_color(assigns, normalized)
+  input_class = build_checkbox_input_classes(assigns, effective_color, invalid)
 
-assigns =
+  assigns =
     assigns
     |> assign_computed_attributes(normalized)
     |> assign(:input_class, input_class)
     |> assign(:effective_color, effective_color)
     |> assign(:invalid, invalid)
 
-if assigns.card do
+  if assigns.card do
     render_card_checkbox(assigns)
-else
+  else
     render_default_checkbox(assigns)
-end
+  end
 end
 
 # Default checkbox variant
 defp render_default_checkbox(assigns) do
-~H"""
-<input
+  ~H"""
+  <input
     :if={@render_hidden}
     type="hidden"
     name={@name}
     value={@unchecked_value}
     disabled={@disabled}
-/>
-<input
+  />
+  <input
     type="checkbox"
     id={@id}
     name={@name}
@@ -395,33 +394,33 @@ defp render_default_checkbox(assigns) do
     aria-invalid={@invalid && "true"}
     aria-checked={@indeterminate && "mixed"}
     {@rest}
-/>
-"""
+  />
+  """
 end
 
 # Card variant with generic content slot
 defp render_card_checkbox(assigns) do
-base_container_class =
+  base_container_class =
     [
-    [card_base_classes()],
-    card_variant_classes(assigns.variant, assigns.effective_color),
-    [card_size_classes(assigns.size)],
-    [card_state_classes(assigns.disabled, assigns.invalid)]
+      [card_base_classes()],
+      card_variant_classes(assigns.variant, assigns.effective_color),
+      [card_size_classes(assigns.size)],
+      [card_state_classes(assigns.disabled, assigns.invalid)]
     ]
     |> List.flatten()
 
-# Merge base classes with user-provided container_class
-final_container_class = merge([base_container_class, assigns[:container_class] || ""])
+  # Merge base classes with user-provided container_class
+  final_container_class = merge([base_container_class, assigns[:container_class] || ""])
 
-checkbox_class = if assigns.hide_checkbox, do: "sr-only", else: assigns.input_class
+  checkbox_class = if assigns.hide_checkbox, do: "sr-only", else: assigns.input_class
 
-assigns =
+  assigns =
     assigns
     |> assign(:final_container_class, final_container_class)
     |> assign(:checkbox_class, checkbox_class)
 
-~H"""
-<label
+  ~H"""
+  <label
     class={@final_container_class}
     data-checked={(@checked && "true") || "false"}
     data-indeterminate={(@indeterminate && "true") || "false"}
@@ -429,62 +428,62 @@ assigns =
     data-required={(@required && "true") || "false"}
     for={@id}
     {@rest}
->
+  >
     <input
-    :if={@render_hidden}
-    type="hidden"
-    name={@name}
-    value={@unchecked_value}
-    disabled={@disabled}
+      :if={@render_hidden}
+      type="hidden"
+      name={@name}
+      value={@unchecked_value}
+      disabled={@disabled}
     />
     <input
-    type="checkbox"
-    id={@id}
-    name={@name}
-    value={@value}
-    checked={@checked}
-    data-checked={@checked && "true"}
-    data-indeterminate={@indeterminate && "true"}
-    data-disabled={@disabled && "true"}
-    data-required={@required && "true"}
-    class={@checkbox_class}
-    required={@required}
-    disabled={@disabled}
-    aria-invalid={@invalid && "true"}
-    aria-checked={@indeterminate && "mixed"}
-    aria-describedby={"#{@id}-content"}
+      type="checkbox"
+      id={@id}
+      name={@name}
+      value={@value}
+      checked={@checked}
+      data-checked={@checked && "true"}
+      data-indeterminate={@indeterminate && "true"}
+      data-disabled={@disabled && "true"}
+      data-required={@required && "true"}
+      class={@checkbox_class}
+      required={@required}
+      disabled={@disabled}
+      aria-invalid={@invalid && "true"}
+      aria-checked={@indeterminate && "mixed"}
+      aria-describedby={"#{@id}-content"}
     />
 
     <div class="flex-1 min-w-0" id={"#{@id}-content"}>
-    {render_slot(@inner_block)}
+      {render_slot(@inner_block)}
     </div>
-</label>
-"""
+  </label>
+  """
 end
 
 # Base styles for checkbox input with custom checkmark
 @spec base_checkbox_classes() :: list(String.t())
 defp base_checkbox_classes do
-@checkbox_base_classes
+  @checkbox_base_classes
 end
 
 # Size classes for checkbox
 @spec size_classes(String.t()) :: String.t()
 defp size_classes(size) do
-@size_config[size][:input]
+  @size_config[size][:input]
 end
 
 # Color classes for checkbox
 @spec color_classes(String.t()) :: String.t()
 defp color_classes(color) do
-[
+  [
     "before:border-border dark:before:border-dark-border",
     checkbox_border_classes(color),
     checkbox_background_classes(color),
     checkbox_text_classes(color)
-]
-|> List.flatten()
-|> Enum.join(" ")
+  ]
+  |> List.flatten()
+  |> Enum.join(" ")
 end
 
 # ============================================================================
@@ -505,154 +504,154 @@ end
 # Border classes for each color
 @spec checkbox_border_classes(String.t()) :: list(String.t())
 defp checkbox_border_classes("neutral") do
-[
+  [
     "data-[checked=true]:before:border-neutral dark:data-[checked=true]:before:border-dark-neutral",
     "data-[indeterminate=true]:before:border-neutral dark:data-[indeterminate=true]:before:border-dark-neutral"
-]
+  ]
 end
 
 defp checkbox_border_classes("primary") do
-[
+  [
     "data-[checked=true]:before:border-primary dark:data-[checked=true]:before:border-dark-primary",
     "data-[indeterminate=true]:before:border-primary dark:data-[indeterminate=true]:before:border-dark-primary"
-]
+  ]
 end
 
 defp checkbox_border_classes("secondary") do
-[
+  [
     "data-[checked=true]:before:border-secondary dark:data-[checked=true]:before:border-dark-secondary",
     "data-[indeterminate=true]:before:border-secondary dark:data-[indeterminate=true]:before:border-dark-secondary"
-]
+  ]
 end
 
 defp checkbox_border_classes("success") do
-[
+  [
     "data-[checked=true]:before:border-success dark:data-[checked=true]:before:border-dark-success",
     "data-[indeterminate=true]:before:border-success dark:data-[indeterminate=true]:before:border-dark-success"
-]
+  ]
 end
 
 defp checkbox_border_classes("danger") do
-[
+  [
     "data-[checked=true]:before:border-danger dark:data-[checked=true]:before:border-dark-danger",
     "data-[indeterminate=true]:before:border-danger dark:data-[indeterminate=true]:before:border-dark-danger"
-]
+  ]
 end
 
 defp checkbox_border_classes("warning") do
-[
+  [
     "data-[checked=true]:before:border-warning dark:data-[checked=true]:before:border-dark-warning",
     "data-[indeterminate=true]:before:border-warning dark:data-[indeterminate=true]:before:border-dark-warning"
-]
+  ]
 end
 
 defp checkbox_border_classes("info") do
-[
+  [
     "data-[checked=true]:before:border-info dark:data-[checked=true]:before:border-dark-info",
     "data-[indeterminate=true]:before:border-info dark:data-[indeterminate=true]:before:border-dark-info"
-]
+  ]
 end
 
 # Background classes for each color
 @spec checkbox_background_classes(String.t()) :: list(String.t())
 defp checkbox_background_classes("neutral") do
-[
+  [
     "data-[checked=true]:before:bg-neutral dark:data-[checked=true]:before:bg-dark-neutral",
     "data-[indeterminate=true]:before:bg-neutral dark:data-[indeterminate=true]:before:bg-dark-neutral"
-]
+  ]
 end
 
 defp checkbox_background_classes("primary") do
-[
+  [
     "data-[checked=true]:before:bg-primary dark:data-[checked=true]:before:bg-dark-primary",
     "data-[indeterminate=true]:before:bg-primary dark:data-[indeterminate=true]:before:bg-dark-primary"
-]
+  ]
 end
 
 defp checkbox_background_classes("secondary") do
-[
+  [
     "data-[checked=true]:before:bg-secondary dark:data-[checked=true]:before:bg-dark-secondary",
     "data-[indeterminate=true]:before:bg-secondary dark:data-[indeterminate=true]:before:bg-dark-secondary"
-]
+  ]
 end
 
 defp checkbox_background_classes("success") do
-[
+  [
     "data-[checked=true]:before:bg-success dark:data-[checked=true]:before:bg-dark-success",
     "data-[indeterminate=true]:before:bg-success dark:data-[indeterminate=true]:before:bg-dark-success"
-]
+  ]
 end
 
 defp checkbox_background_classes("danger") do
-[
+  [
     "data-[checked=true]:before:bg-danger dark:data-[checked=true]:before:bg-dark-danger",
     "data-[indeterminate=true]:before:bg-danger dark:data-[indeterminate=true]:before:bg-dark-danger"
-]
+  ]
 end
 
 defp checkbox_background_classes("warning") do
-[
+  [
     "data-[checked=true]:before:bg-warning dark:data-[checked=true]:before:bg-dark-warning",
     "data-[indeterminate=true]:before:bg-warning dark:data-[indeterminate=true]:before:bg-dark-warning"
-]
+  ]
 end
 
 defp checkbox_background_classes("info") do
-[
+  [
     "data-[checked=true]:before:bg-info dark:data-[checked=true]:before:bg-dark-info",
     "data-[indeterminate=true]:before:bg-info dark:data-[indeterminate=true]:before:bg-dark-info"
-]
+  ]
 end
 
 # Text/checkmark classes for each color using semantic foreground colors
 @spec checkbox_text_classes(String.t()) :: list(String.t())
 defp checkbox_text_classes("neutral") do
-[
+  [
     "data-[checked=true]:after:text-neutral-foreground dark:data-[checked=true]:after:text-dark-neutral-foreground",
     "data-[indeterminate=true]:after:text-neutral-foreground dark:data-[indeterminate=true]:after:text-dark-neutral-foreground"
-]
+  ]
 end
 
 defp checkbox_text_classes("primary") do
-[
+  [
     "data-[checked=true]:after:text-primary-foreground dark:data-[checked=true]:after:text-dark-primary-foreground",
     "data-[indeterminate=true]:after:text-primary-foreground dark:data-[indeterminate=true]:after:text-dark-primary-foreground"
-]
+  ]
 end
 
 defp checkbox_text_classes("secondary") do
-[
+  [
     "data-[checked=true]:after:text-secondary-foreground dark:data-[checked=true]:after:text-dark-secondary-foreground",
     "data-[indeterminate=true]:after:text-secondary-foreground dark:data-[indeterminate=true]:after:text-dark-secondary-foreground"
-]
+  ]
 end
 
 defp checkbox_text_classes("success") do
-[
+  [
     "data-[checked=true]:after:text-success-foreground dark:data-[checked=true]:after:text-dark-success-foreground",
     "data-[indeterminate=true]:after:text-success-foreground dark:data-[indeterminate=true]:after:text-dark-success-foreground"
-]
+  ]
 end
 
 defp checkbox_text_classes("danger") do
-[
+  [
     "data-[checked=true]:after:text-danger-foreground dark:data-[checked=true]:after:text-dark-danger-foreground",
     "data-[indeterminate=true]:after:text-danger-foreground dark:data-[indeterminate=true]:after:text-dark-danger-foreground"
-]
+  ]
 end
 
 defp checkbox_text_classes("warning") do
-[
+  [
     "data-[checked=true]:after:text-warning-foreground dark:data-[checked=true]:after:text-dark-warning-foreground",
     "data-[indeterminate=true]:after:text-warning-foreground dark:data-[indeterminate=true]:after:text-dark-warning-foreground"
-]
+  ]
 end
 
 defp checkbox_text_classes("info") do
-[
+  [
     "data-[checked=true]:after:text-info-foreground dark:data-[checked=true]:after:text-dark-info-foreground",
     "data-[indeterminate=true]:after:text-info-foreground dark:data-[indeterminate=true]:after:text-dark-info-foreground"
-]
+  ]
 end
 
 # ============================================================================
@@ -662,13 +661,13 @@ end
 # State classes for disabled/invalid states
 @spec state_classes(boolean(), boolean()) :: String.t()
 defp state_classes(disabled, invalid) do
-[
+  [
     disabled &&
-    "before:bg-surface-2 dark:before:bg-dark-surface-2 before:border-border/50 dark:before:border-dark-border/50",
+      "before:bg-surface-2 dark:before:bg-dark-surface-2 before:border-border/50 dark:before:border-dark-border/50",
     invalid && "before:border-danger dark:before:border-dark-danger"
-]
-|> Enum.filter(& &1)
-|> Enum.join(" ")
+  ]
+  |> Enum.filter(& &1)
+  |> Enum.join(" ")
 end
 
 # ============================================================================
@@ -682,306 +681,307 @@ end
 # Base card classes shared by all card variants
 @spec card_base_classes() :: list(String.t())
 defp card_base_classes do
-@card_base_classes
+  @card_base_classes
 end
 
 # Card size classes
 @spec card_size_classes(String.t()) :: String.t()
 defp card_size_classes(size) do
-@size_config[size][:card]
+  @size_config[size][:card]
 end
 
 # Card variant classes using helper functions to reduce repetition
 @spec card_variant_classes(String.t(), String.t()) :: list(String.t())
 defp card_variant_classes("solid", color) do
-[
+  [
     card_solid_background(color),
     "border-2 border-transparent",
     "hover:shadow-sm"
-]
+  ]
 end
 
 defp card_variant_classes("outline", color) do
-[
+  [
     card_outline_background(color),
     card_outline_border(color),
     "hover:shadow-md"
-]
+  ]
 end
 
 defp card_variant_classes("ghost", color) do
-[
+  [
     card_ghost_background(color),
     "border-2 border-transparent",
     "hover:shadow-sm"
-]
+  ]
 end
 
 # Helper functions for card variant styling
 @spec card_solid_background(String.t()) :: String.t()
 defp card_solid_background("neutral") do
-[
+  [
     "bg-neutral/10 hover:bg-neutral/20 dark:bg-dark-neutral/20 dark:hover:bg-dark-neutral/30",
     "has-[:checked]:bg-neutral/25 has-[:checked]:hover:bg-neutral/35",
     "dark:has-[:checked]:bg-dark-neutral/35 dark:has-[:checked]:hover:bg-dark-neutral/45"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_solid_background("primary") do
-[
+  [
     "bg-primary/10 hover:bg-primary/20 dark:bg-dark-primary/20 dark:hover:bg-dark-primary/30",
     "has-[:checked]:bg-primary/25 has-[:checked]:hover:bg-primary/35",
     "dark:has-[:checked]:bg-dark-primary/35 dark:has-[:checked]:hover:bg-dark-primary/45"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_solid_background("secondary") do
-[
+  [
     "bg-secondary/10 hover:bg-secondary/20 dark:bg-dark-secondary/20 dark:hover:bg-dark-secondary/30",
     "has-[:checked]:bg-secondary/25 has-[:checked]:hover:bg-secondary/35",
     "dark:has-[:checked]:bg-dark-secondary/35 dark:has-[:checked]:hover:bg-dark-secondary/45"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_solid_background("success") do
-[
+  [
     "bg-success/10 hover:bg-success/20 dark:bg-dark-success/20 dark:hover:bg-dark-success/30",
     "has-[:checked]:bg-success/25 has-[:checked]:hover:bg-success/35",
     "dark:has-[:checked]:bg-dark-success/35 dark:has-[:checked]:hover:bg-dark-success/45"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_solid_background("danger") do
-[
+  [
     "bg-danger/10 hover:bg-danger/20 dark:bg-dark-danger/20 dark:hover:bg-dark-danger/30",
     "has-[:checked]:bg-danger/25 has-[:checked]:hover:bg-danger/35",
     "dark:has-[:checked]:bg-dark-danger/35 dark:has-[:checked]:hover:bg-dark-danger/45"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_solid_background("warning") do
-[
+  [
     "bg-warning/10 hover:bg-warning/20 dark:bg-dark-warning/20 dark:hover:bg-dark-warning/30",
     "has-[:checked]:bg-warning/25 has-[:checked]:hover:bg-warning/35",
     "dark:has-[:checked]:bg-dark-warning/35 dark:has-[:checked]:hover:bg-dark-warning/45"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_solid_background("info") do
-[
+  [
     "bg-info/10 hover:bg-info/20 dark:bg-dark-info/20 dark:hover:bg-dark-info/30",
     "has-[:checked]:bg-info/25 has-[:checked]:hover:bg-info/35",
     "dark:has-[:checked]:bg-dark-info/35 dark:has-[:checked]:hover:bg-dark-info/45"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 @spec card_outline_background(String.t()) :: String.t()
 defp card_outline_background("neutral") do
-[
+  [
     "bg-background dark:bg-dark-background",
     "has-[:checked]:bg-primary/10 has-[:checked]:hover:bg-primary/15",
     "dark:has-[:checked]:bg-dark-primary/15 dark:has-[:checked]:hover:bg-dark-primary/20"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_outline_background("primary") do
-[
+  [
     "bg-background hover:bg-primary/5 dark:bg-dark-background dark:hover:bg-dark-primary/10",
     "has-[:checked]:bg-primary/15 has-[:checked]:hover:bg-primary/20",
     "dark:has-[:checked]:bg-dark-primary/20 dark:has-[:checked]:hover:bg-dark-primary/25"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_outline_background("secondary") do
-[
+  [
     "bg-background hover:bg-secondary/5 dark:bg-dark-background dark:hover:bg-dark-secondary/10",
     "has-[:checked]:bg-secondary/15 has-[:checked]:hover:bg-secondary/20",
     "dark:has-[:checked]:bg-dark-secondary/20 dark:has-[:checked]:hover:bg-dark-secondary/25"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_outline_background("success") do
-[
+  [
     "bg-background hover:bg-success/5 dark:bg-dark-background dark:hover:bg-dark-success/10",
     "has-[:checked]:bg-success/15 has-[:checked]:hover:bg-success/20",
     "dark:has-[:checked]:bg-dark-success/20 dark:has-[:checked]:hover:bg-dark-success/25"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_outline_background("danger") do
-[
+  [
     "bg-background hover:bg-danger/5 dark:bg-dark-background dark:hover:bg-dark-danger/10",
     "has-[:checked]:bg-danger/15 has-[:checked]:hover:bg-danger/20",
     "dark:has-[:checked]:bg-dark-danger/20 dark:has-[:checked]:hover:bg-dark-danger/25"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_outline_background("warning") do
-[
+  [
     "bg-background hover:bg-warning/5 dark:bg-dark-background dark:hover:bg-dark-warning/10",
     "has-[:checked]:bg-warning/15 has-[:checked]:hover:bg-warning/20",
     "dark:has-[:checked]:bg-dark-warning/20 dark:has-[:checked]:hover:bg-dark-warning/25"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_outline_background("info") do
-[
+  [
     "bg-background hover:bg-info/5 dark:bg-dark-background dark:hover:bg-dark-info/10",
     "has-[:checked]:bg-info/15 has-[:checked]:hover:bg-info/20",
     "dark:has-[:checked]:bg-dark-info/20 dark:has-[:checked]:hover:bg-dark-info/25"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 @spec card_outline_border(String.t()) :: String.t()
 defp card_outline_border("neutral") do
-[
+  [
     "border-2 border-border hover:border-primary/50 dark:border-dark-border dark:hover:border-dark-primary/50",
     "has-[:checked]:border-primary has-[:checked]:hover:border-primary",
     "dark:has-[:checked]:border-dark-primary dark:has-[:checked]:hover:border-dark-primary"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_outline_border("primary") do
-[
+  [
     "border-2 border-primary/30 hover:border-primary dark:border-dark-primary/30 dark:hover:border-dark-primary",
     "has-[:checked]:border-primary has-[:checked]:hover:border-primary",
     "dark:has-[:checked]:border-dark-primary dark:has-[:checked]:hover:border-dark-primary"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_outline_border("secondary") do
-[
+  [
     "border-2 border-secondary/30 hover:border-secondary dark:border-dark-secondary/30 dark:hover:border-dark-secondary",
     "has-[:checked]:border-secondary has-[:checked]:hover:border-secondary",
     "dark:has-[:checked]:border-dark-secondary dark:has-[:checked]:hover:border-dark-secondary"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_outline_border("success") do
-[
+  [
     "border-2 border-success/30 hover:border-success dark:border-dark-success/30 dark:hover:border-dark-success",
     "has-[:checked]:border-success has-[:checked]:hover:border-success",
     "dark:has-[:checked]:border-dark-success dark:has-[:checked]:hover:border-dark-success"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_outline_border("danger") do
-[
+  [
     "border-2 border-danger/30 hover:border-danger dark:border-dark-danger/30 dark:hover:border-dark-danger",
     "has-[:checked]:border-danger has-[:checked]:hover:border-danger",
     "dark:has-[:checked]:border-dark-danger dark:has-[:checked]:hover:border-dark-danger"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_outline_border("warning") do
-[
+  [
     "border-2 border-warning/30 hover:border-warning dark:border-dark-warning/30 dark:hover:border-dark-warning",
     "has-[:checked]:border-warning has-[:checked]:hover:border-warning",
     "dark:has-[:checked]:border-dark-warning dark:has-[:checked]:hover:border-dark-warning"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_outline_border("info") do
-[
+  [
     "border-2 border-info/30 hover:border-info dark:border-dark-info/30 dark:hover:border-dark-info",
     "has-[:checked]:border-info has-[:checked]:hover:border-info",
     "dark:has-[:checked]:border-dark-info dark:has-[:checked]:hover:border-dark-info"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 @spec card_ghost_background(String.t()) :: String.t()
 defp card_ghost_background("neutral") do
-[
+  [
     "bg-transparent hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover",
     "has-[:checked]:bg-primary/10 has-[:checked]:hover:bg-primary/15",
     "dark:has-[:checked]:bg-dark-primary/15 dark:has-[:checked]:hover:bg-dark-primary/20"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_ghost_background("primary") do
-[
+  [
     "bg-transparent hover:bg-primary/10 dark:hover:bg-dark-primary/10",
     "has-[:checked]:bg-primary/15 has-[:checked]:hover:bg-primary/20",
     "dark:has-[:checked]:bg-dark-primary/20 dark:has-[:checked]:hover:bg-dark-primary/25"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_ghost_background("secondary") do
-[
+  [
     "bg-transparent hover:bg-secondary/10 dark:hover:bg-dark-secondary/10",
     "has-[:checked]:bg-secondary/15 has-[:checked]:hover:bg-secondary/20",
     "dark:has-[:checked]:bg-dark-secondary/20 dark:has-[:checked]:hover:bg-dark-secondary/25"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_ghost_background("success") do
-[
+  [
     "bg-transparent hover:bg-success/10 dark:hover:bg-dark-success/10",
     "has-[:checked]:bg-success/15 has-[:checked]:hover:bg-success/20",
     "dark:has-[:checked]:bg-dark-success/20 dark:has-[:checked]:hover:bg-dark-success/25"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_ghost_background("danger") do
-[
+  [
     "bg-transparent hover:bg-danger/10 dark:hover:bg-dark-danger/10",
     "has-[:checked]:bg-danger/15 has-[:checked]:hover:bg-danger/20",
     "dark:has-[:checked]:bg-dark-danger/20 dark:has-[:checked]:hover:bg-dark-danger/25"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_ghost_background("warning") do
-[
+  [
     "bg-transparent hover:bg-warning/10 dark:hover:bg-dark-warning/10",
     "has-[:checked]:bg-warning/15 has-[:checked]:hover:bg-warning/20",
     "dark:has-[:checked]:bg-dark-warning/20 dark:has-[:checked]:hover:bg-dark-warning/25"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 defp card_ghost_background("info") do
-[
+  [
     "bg-transparent hover:bg-info/10 dark:hover:bg-dark-info/10",
     "has-[:checked]:bg-info/15 has-[:checked]:hover:bg-info/20",
     "dark:has-[:checked]:bg-dark-info/20 dark:has-[:checked]:hover:bg-dark-info/25"
-]
-|> Enum.join(" ")
+  ]
+  |> Enum.join(" ")
 end
 
 # Card state classes
 @spec card_state_classes(boolean(), boolean()) :: String.t()
 defp card_state_classes(disabled, invalid) do
-[
+  [
     disabled &&
-    "bg-surface-2 dark:bg-dark-surface-2 border-border/50 dark:border-dark-border/50",
+      "bg-surface-2 dark:bg-dark-surface-2 border-border/50 dark:border-dark-border/50",
     invalid && "border-danger dark:border-dark-danger bg-danger/5 dark:bg-dark-danger/10"
-]
-|> Enum.filter(& &1)
-|> Enum.join(" ")
+  ]
+  |> Enum.filter(& &1)
+  |> Enum.join(" ")
+end
 end

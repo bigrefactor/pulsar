@@ -64,7 +64,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Table.Docs do
       variant="outline"
       color="primary"
       size="sm"
-      row_click={&JS.navigate(~p"/products/#{&1.id}")}
+      row_click={&JS.navigate(~p"/products/\#{&1.id}")}
     >
       <:col :let={product} label="Name"><%= product.name %></:col>
       <:col :let={product} label="Price">$<%= product.price %></:col>
