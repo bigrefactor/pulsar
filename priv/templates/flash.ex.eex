@@ -585,4 +585,3 @@ defp get_aria_live("auto", _role), do: "polite"
 defp data_tf(true), do: "true"
 defp data_tf(false), do: "false"
 defp data_tf(nil), do: "false"
-end

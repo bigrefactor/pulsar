@@ -188,8 +188,8 @@ if Code.ensure_loaded?(Igniter) do
 
       igniter
       |> Deps.add_dep({:tailwind_merge, github: "bigrefactor/tailwind_merge"}, on_exists: :skip)
-      |> maybe_compose_task("pulsar.gen.theme", options[:theme])
       |> Pulsar.Generator.set_default_component_module()
+      |> maybe_compose_task("pulsar.gen.theme", options[:theme])
       |> compose_components(components)
       |> maybe_compose_task("pulsar.gen.core_components", options[:core_components])
     end
