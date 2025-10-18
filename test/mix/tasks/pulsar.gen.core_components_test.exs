@@ -31,6 +31,35 @@ defmodule Mix.Tasks.Pulsar.Gen.CoreComponentsTest do
       |> assert_changed("lib/test_web/components/core_components.ex")
       |> apply_igniter!()
     end
+
+    test "generated component uses correct namespace for component aliases" do
+      core_components_path = "lib/test_web/components/core_components.ex"
+
+      result =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.gen.core_components", [])
+        |> assert_changed(core_components_path)
+        |> apply_igniter!()
+
+      # Read the generated file content
+      {:ok, source} = Map.fetch(result.rewrite.sources, core_components_path)
+      content = Rewrite.Source.get(source, :content)
+
+      # Verify component aliases use TestWeb.Components namespace, not TestWeb
+      assert content =~ "alias TestWeb.Components.Button"
+      assert content =~ "alias TestWeb.Components.Field"
+      assert content =~ "alias TestWeb.Components.Flash"
+      assert content =~ "alias TestWeb.Components.Header"
+      assert content =~ "alias TestWeb.Components.Icon"
+      assert content =~ "alias TestWeb.Components.List"
+      assert content =~ "alias TestWeb.Components.Table"
+
+      # Verify it doesn't have incorrect Elixir. prefix
+      refute content =~ "alias Elixir.TestWeb"
+      # Verify it doesn't alias from the wrong namespace (TestWeb instead of TestWeb.Components)
+      refute content =~ ~r/alias TestWeb\.Button(?!\w)/
+      refute content =~ ~r/alias TestWeb\.Field(?!\w)/
+    end
   end
 
   defp assert_changed(igniter, path_or_paths) do
