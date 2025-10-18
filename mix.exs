@@ -78,7 +78,8 @@ defmodule Pulsar.MixProject do
       {:ex_doc, "~> 0.36", only: :dev, runtime: false},
       {:excoveralls, "~> 0.18", only: :test},
       {:ecto, "~> 3.12", only: :test},
-      {:phoenix_ecto, "~> 4.6", only: :test}
+      {:phoenix_ecto, "~> 4.6", only: :test},
+      {:phx_new, "~> 1.7", only: :test, runtime: false}
     ]
   end
 
