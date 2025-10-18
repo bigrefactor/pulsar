@@ -1,0 +1,202 @@
+@moduledoc """
+Badge component for displaying labels, tags, and status indicators.
+
+Provides styled badges with optional start and end addon content. Perfect for
+tags, status indicators, and multi-select displays that need additional
+interactivity or decoration.
+
+## Features
+
+- **Multiple Variants**: solid, outline, and ghost for different visual styles
+- **Full Color Palette**: All semantic colors with automatic dark mode support
+- **Multiple Sizes**: xs, sm, md, lg, xl matching other Pulsar components
+- **Start/End Addons**: Add icons, buttons, or other content before or after text
+
+## Examples
+
+    # Simple badge
+    <.badge>New</.badge>
+
+    # Colored badge with variant
+    <.badge color="primary" variant="outline">Featured</.badge>
+
+    # Badge with status icon
+    <.badge color="success">
+      <:start_addon>
+        <.icon name="hero-check-circle" variant="micro" size="xs" />
+      </:start_addon>
+      Completed
+    </.badge>
+
+    # Badge with remove button
+    <.badge color="danger">
+      Error
+      <:end_addon>
+        <button phx-click="remove_error">
+          <.icon name="hero-x-mark" variant="micro" size="xs" />
+        </button>
+      </:end_addon>
+    </.badge>
+
+    # Badge with both start and end content
+    <.badge color="info">
+      <:start_addon>
+        <.icon name="hero-star" variant="micro" size="xs" />
+      </:start_addon>
+      Featured
+      <:end_addon>
+        <button phx-click="remove_featured">
+          <.icon name="hero-x-mark" variant="micro" size="xs" />
+        </button>
+      </:end_addon>
+    </.badge>
+
+## Composition
+
+The badge is a pure display component. All interactivity is added through
+the addon slots, giving you complete control over behavior and styling.
+"""
+
+use Phoenix.Component
+
+import TailwindMerge, only: [merge: 1]
+
+# ============================================================================
+# CONFIGURATION & CONSTANTS
+# ============================================================================
+
+alias Phoenix.LiveView.Rendered
+
+# Size configuration for badges
+@size_config %{
+  "lg" => "text-base px-3 py-1 gap-1.5",
+  "md" => "text-sm px-2.5 py-0.5 gap-1.5",
+  "sm" => "text-sm px-2 py-0.5 gap-1",
+  "xl" => "text-lg px-3.5 py-1 gap-2",
+  "xs" => "text-xs px-2 py-0.5 gap-1"
+}
+
+# Base badge styling classes
+@badge_base_classes [
+  "inline-flex items-center font-medium rounded-md",
+  "transition-colors duration-200",
+  "focus-within:outline-none focus-within:ring-2",
+  "focus-within:ring-current focus-within:ring-offset-2"
+]
+
+# Color configuration for each variant
+@color_config %{
+  "ghost" => %{
+    "danger" => "text-danger dark:text-dark-danger hover:bg-danger/10 dark:hover:bg-dark-danger/10",
+    "info" => "text-info dark:text-dark-info hover:bg-info/10 dark:hover:bg-dark-info/10",
+    "neutral" => "text-neutral dark:text-dark-neutral hover:bg-neutral/10 dark:hover:bg-dark-neutral/10",
+    "primary" => "text-primary dark:text-dark-primary hover:bg-primary/10 dark:hover:bg-dark-primary/10",
+    "secondary" => "text-secondary dark:text-dark-secondary hover:bg-secondary/10 dark:hover:bg-dark-secondary/10",
+    "success" => "text-success dark:text-dark-success hover:bg-success/10 dark:hover:bg-dark-success/10",
+    "warning" => "text-warning dark:text-dark-warning hover:bg-warning/10 dark:hover:bg-dark-warning/10"
+  },
+  "outline" => %{
+    "danger" =>
+      "border border-danger dark:border-dark-danger text-danger dark:text-dark-danger bg-background dark:bg-dark-background",
+    "info" =>
+      "border border-info dark:border-dark-info text-info dark:text-dark-info bg-background dark:bg-dark-background",
+    "neutral" =>
+      "border border-border dark:border-dark-border text-neutral dark:text-dark-neutral bg-background dark:bg-dark-background",
+    "primary" =>
+      "border border-primary dark:border-dark-primary text-primary dark:text-dark-primary bg-background dark:bg-dark-background",
+    "secondary" =>
+      "border border-secondary dark:border-dark-secondary text-secondary dark:text-dark-secondary bg-background dark:bg-dark-background",
+    "success" =>
+      "border border-success dark:border-dark-success text-success dark:text-dark-success bg-background dark:bg-dark-background",
+    "warning" =>
+      "border border-warning dark:border-dark-warning text-warning dark:text-dark-warning bg-background dark:bg-dark-background"
+  },
+  "solid" => %{
+    "danger" => "bg-danger text-danger-foreground dark:bg-dark-danger dark:text-dark-danger-foreground",
+    "info" => "bg-info text-info-foreground dark:bg-dark-info dark:text-dark-info-foreground",
+    "neutral" => "bg-neutral text-neutral-foreground dark:bg-dark-neutral dark:text-dark-neutral-foreground",
+    "primary" => "bg-primary text-primary-foreground dark:bg-dark-primary dark:text-dark-primary-foreground",
+    "secondary" =>
+      "bg-secondary text-secondary-foreground dark:bg-dark-secondary dark:text-dark-secondary-foreground",
+    "success" => "bg-success text-success-foreground dark:bg-dark-success dark:text-dark-success-foreground",
+    "warning" => "bg-warning text-warning-foreground dark:bg-dark-warning dark:text-dark-warning-foreground"
+  }
+}
+
+# ============================================================================
+# BADGE COMPONENT
+# ============================================================================
+
+attr :variant, :string,
+  default: "solid",
+  values: ~w(solid outline ghost),
+  doc: "Visual style variant of the badge"
+
+attr :color, :string,
+  default: "neutral",
+  values: ~w(neutral primary secondary success danger warning info),
+  doc: "Color scheme of the badge"
+
+attr :size, :string,
+  default: "md",
+  values: ~w(xs sm md lg xl),
+  doc: "Size of the badge"
+
+attr :class, :string,
+  default: "",
+  doc: "Additional CSS classes"
+
+attr :rest, :global, doc: "Additional HTML attributes"
+
+slot :inner_block, required: true, doc: "Badge content"
+slot :start_addon, doc: "Content at the start of the badge (before text)"
+slot :end_addon, doc: "Content at the end of the badge (after text)"
+
+@doc """
+Renders a styled badge with optional start and end addon content.
+
+The badge uses semantic color tokens and supports all standard variants.
+Any interactivity is added through the addon slots.
+"""
+@spec badge(map()) :: Rendered.t()
+def badge(assigns) do
+  class = build_badge_classes(assigns)
+  assigns = assign(assigns, :class, class)
+
+  ~H"""
+  <span class={@class} {@rest}>
+    {render_slot(@start_addon)}
+    {render_slot(@inner_block)}
+    {render_slot(@end_addon)}
+  </span>
+  """
+end
+
+# ============================================================================
+# BADGE HELPER FUNCTIONS
+# ============================================================================
+
+# Builds the merged class string for badge
+defp build_badge_classes(assigns) do
+  merge([
+    base_badge_classes(),
+    variant_color_classes(assigns.variant, assigns.color),
+    size_classes(assigns.size),
+    assigns.class
+  ])
+end
+
+# Base styles shared by all badge variants
+defp base_badge_classes do
+  @badge_base_classes
+end
+
+# Get size classes from config
+defp size_classes(size) do
+  @size_config[size]
+end
+
+# Get variant and color classes from config
+defp variant_color_classes(variant, color) do
+  @color_config[variant][color]
+end

@@ -46,7 +46,7 @@ defmodule Pulsar.MixProject do
       # Dialyzer configuration
       dialyzer: [
         plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
-        plt_add_apps: [:ex_unit, :mix],
+        plt_add_apps: [:ex_unit, :mix, :igniter, :phoenix, :phoenix_live_view, :phoenix_html, :eex, :rewrite],
         list_unused_filters: true,
         ignore_warnings: ".dialyzer_ignore.exs"
       ]
@@ -61,12 +61,12 @@ defmodule Pulsar.MixProject do
 
   defp deps do
     [
-      {:phoenix, "~> 1.8"},
-      {:phoenix_live_view, "~> 1.1"},
-      {:phoenix_html, "~> 4.0"},
-      {:phoenix_html_helpers, "~> 1.0"},
+      {:igniter, "~> 0.6", optional: true},
+      {:phoenix, "~> 1.8", optional: true, runtime: false},
+      {:phoenix_live_view, "~> 1.1", optional: true, runtime: false},
+      {:phoenix_html, "~> 4.0", optional: true, runtime: false},
+      {:phoenix_html_helpers, "~> 1.0", optional: true, runtime: false},
       {:tailwind_merge, github: "bigrefactor/tailwind_merge"},
-      {:igniter, "~> 0.6"},
 
       # Quality tools
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
@@ -78,7 +78,8 @@ defmodule Pulsar.MixProject do
       {:ex_doc, "~> 0.36", only: :dev, runtime: false},
       {:excoveralls, "~> 0.18", only: :test},
       {:ecto, "~> 3.12", only: :test},
-      {:phoenix_ecto, "~> 4.6", only: :test}
+      {:phoenix_ecto, "~> 4.6", only: :test},
+      {:phx_new, "~> 1.7", only: :test, runtime: false}
     ]
   end
 
