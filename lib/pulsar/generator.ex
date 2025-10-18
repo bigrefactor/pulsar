@@ -12,17 +12,34 @@ defmodule Pulsar.Generator do
   def install_component(igniter, component_name, assigns) do
     namespace = Igniter.Project.Module.parse(to_string(igniter.args.options[:components_module]))
     component = component_module(igniter, component_name)
-    contents = contents(component_name, Keyword.put_new(assigns, :component_namespace, namespace))
+    # Convert namespace to inspect format to avoid Elixir. prefix in templates
+    namespace_inspected = inspect(namespace)
+
+    # For core_components, we need both the web module and the components namespace
+    # Core components module goes under web module, but it needs to alias components
+    assigns =
+      assigns
+      |> Keyword.put_new(:component_namespace, namespace_inspected)
+      |> Keyword.put_new(:components_namespace, get_components_namespace(igniter, namespace_inspected))
+
+    contents = contents(component_name, assigns)
     {exists, igniter} = Igniter.Project.Module.module_exists(igniter, component)
 
     if exists do
       {igniter, source, _} = Igniter.Project.Module.find_module!(igniter, component)
 
+      # Wrap template contents in module definition for existing files
+      wrapped_contents = """
+      defmodule #{inspect(component)} do
+        #{contents}
+      end
+      """
+
       igniter
       |> backup_existing_component(source.path)
       |> Igniter.compose_task("igniter.add_extension", ["phoenix"])
       |> Igniter.update_file(source.path, fn source ->
-        Rewrite.Source.update(source, :content, contents)
+        Rewrite.Source.update(source, :content, wrapped_contents)
       end)
     else
       igniter
@@ -63,6 +80,12 @@ defmodule Pulsar.Generator do
 
   defp namespace(igniter) do
     Igniter.Project.Module.parse(to_string(igniter.args.options[:components_module]))
+  end
+
+  defp get_components_namespace(igniter, _namespace_inspected) do
+    # Get the default components namespace (e.g., MyAppWeb.Components)
+    default = Phoenix.web_module_name(igniter, "Components")
+    inspect(default)
   end
 
   defp contents(component_name, assigns) do

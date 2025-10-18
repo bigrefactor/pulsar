@@ -9,14 +9,13 @@ use Phoenix.Component
 
 alias Phoenix.HTML.FormField
 alias Phoenix.LiveView.JS
-alias <%= @component_namespace %>.Button
-alias <%= @component_namespace %>.Field
-alias <%= @component_namespace %>.Flash
-alias <%= @component_namespace %>.FlashGroup
-alias <%= @component_namespace %>.Header
-alias <%= @component_namespace %>.Icon
-alias <%= @component_namespace %>.List
-alias <%= @component_namespace %>.Table
+alias <%= @components_namespace %>.Button
+alias <%= @components_namespace %>.Field
+alias <%= @components_namespace %>.Flash
+alias <%= @components_namespace %>.Header
+alias <%= @components_namespace %>.Icon
+alias <%= @components_namespace %>.List
+alias <%= @components_namespace %>.Table
 
 @doc """
 Renders flash notices.
@@ -72,7 +71,7 @@ def flash(assigns) do
     :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
     id={@id}
     class="fixed top-4 right-4 z-50 max-w-sm w-full"
-    phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide_flash("##{@id}")}
+    phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
     role={map_kind_to_role(@kind)}
   >
     <Flash.flash
@@ -103,16 +102,6 @@ def flash(assigns) do
   </div>
   """
 end
-
-@doc """
-Renders a group of flash notifications.
-
-## Examples
-
-    <.flash_group flash={@flash} />
-    <.flash_group flash={@flash} variant="outline" position="bottom-right" />
-"""
-defdelegate flash_group(assigns), to: FlashGroup
 
 @doc """
 Renders a button with navigation support and Pulsar styling.
@@ -710,15 +699,25 @@ defp get_flash_icon(:info), do: "hero-information-circle"
 defp get_flash_icon(:error), do: "hero-exclamation-circle"
 defp get_flash_icon(_), do: "hero-bell"
 
-# Hide flash with animation
-defp hide_flash(js, selector) do
+## JS Commands
+
+def show(js \\ %JS{}, selector) do
+  JS.show(js,
+    to: selector,
+    time: 300,
+    transition:
+      {"transition-all ease-out duration-300",
+       "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
+       "opacity-100 translate-y-0 sm:scale-100"}
+  )
+end
+
+def hide(js \\ %JS{}, selector) do
   JS.hide(js,
     to: selector,
     time: 200,
-    transition: {
-      "transition-all ease-in duration-200",
-      "opacity-100 translate-y-0 sm:scale-100",
-      "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-    }
+    transition:
+      {"transition-all ease-in duration-200", "opacity-100 translate-y-0 sm:scale-100",
+       "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
   )
 end
