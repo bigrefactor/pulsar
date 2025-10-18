@@ -46,7 +46,7 @@ defmodule Pulsar.MixProject do
       # Dialyzer configuration
       dialyzer: [
         plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
-        plt_add_apps: [:ex_unit, :mix],
+        plt_add_apps: [:ex_unit, :mix, :igniter, :phoenix, :phoenix_live_view, :phoenix_html, :eex, :rewrite],
         list_unused_filters: true,
         ignore_warnings: ".dialyzer_ignore.exs"
       ]
