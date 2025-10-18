@@ -41,6 +41,6 @@ defmodule Pulsar.Generator do
       |> Path.join("templates")
       |> Path.join("#{component_name}.ex.eex")
 
-    EEx.eval_file(template, assigns: assigns)
+    EEx.eval_file(template, assigns: assigns, engine: EEx.SmartEngine)
   end
 end
