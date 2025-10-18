@@ -106,24 +106,26 @@ if Code.ensure_loaded?(Igniter) do
       web_dir = Phoenix.web_module(igniter) |> Macro.underscore()
 
       igniter
-      |> Igniter.copy_template(theme_css_template, "assets/css/theme.css", web_directory: web_dir)
-      |> then(fn ig ->
-        # Backup existing app.css if it exists
-        path = "assets/css/app.css"
-
-        case Map.fetch(ig.rewrite.sources, path) do
-          {:ok, source} ->
-            ts = NaiveDateTime.utc_now() |> NaiveDateTime.to_iso8601(:basic)
-            backup_path = "assets/css/app.css.bak.#{ts}"
-            content = Rewrite.Source.get(source, :content)
-
-            Igniter.create_new_file(ig, backup_path, content)
-
-          :error ->
-            ig
-        end
-      end)
+      |> backup_existing_file("assets/css/theme.css")
+      |> Igniter.copy_template(theme_css_template, "assets/css/theme.css", web_directory: web_dir, on_exists: :overwrite)
+      |> backup_existing_file("assets/css/app.css")
       |> Igniter.copy_template(app_css_template, "assets/css/app.css", [web_directory: web_dir], on_exists: :overwrite)
+    end
+
+    defp backup_existing_file(igniter, path) do
+      igniter = Igniter.include_existing_file(igniter, path)
+
+      case Map.fetch(igniter.rewrite.sources, path) do
+        {:ok, source} ->
+          ts = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second) |> NaiveDateTime.to_iso8601(:basic)
+          backup_path = "#{path}.bak.#{ts}"
+          content = Rewrite.Source.get(source, :content)
+
+          Igniter.create_new_file(igniter, backup_path, content)
+
+        :error ->
+          igniter
+      end
     end
   end
 else

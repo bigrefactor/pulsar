@@ -34,7 +34,7 @@ defmodule Pulsar.Generator do
   defp backup_existing_component(igniter, path) do
     case Map.fetch(igniter.rewrite.sources, path) do
       {:ok, source} ->
-        ts = NaiveDateTime.utc_now() |> NaiveDateTime.to_iso8601(:basic)
+        ts = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second) |> NaiveDateTime.to_iso8601(:basic)
         backup_path = "#{path}.bak.#{ts}"
         content = Rewrite.Source.get(source, :content)
 
