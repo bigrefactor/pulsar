@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Pulsar.Gen.RadioUgroupTest do
+defmodule Mix.Tasks.Pulsar.Gen.RadioGroupTest do
   use ExUnit.Case, async: true
 
   import Igniter.Test
