@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
 
 env:
   MIX_ENV: test
@@ -16,14 +16,14 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: '1.18'
-            otp: '27'
+          - elixir: "1.18"
+            otp: "27"
             check_formatted: true
             check_credo: true
-          - elixir: '1.17'
-            otp: '26'
-          - elixir: '1.15'
-            otp: '25'
+          - elixir: "1.17"
+            otp: "26"
+          - elixir: "1.15"
+            otp: "25"
 
     steps:
       - name: Checkout code
@@ -75,6 +75,9 @@ jobs:
 
       - name: Install dependencies
         run: |
+          mix local.hex --force
+          mix local.rebar --force
+          mix archive.install hex phx_new --force
           mix deps.get
           mix deps.compile
 
@@ -125,8 +128,8 @@ jobs:
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: '1.18'
-          otp-version: '27'
+          elixir-version: "1.18"
+          otp-version: "27"
           version-type: loose
 
       - name: Cache deps
@@ -201,4 +204,4 @@ jobs:
   #         tar -tzf pulsar-*.tar | grep -E "(lib/|priv/|README.md|CHANGELOG.md|LICENSE|mix.exs)"
   #
   #         # Check that build artifacts are excluded
-   #         ! tar -tzf pulsar-*.tar | grep -E "(_build/|deps/|\.git/|\.beam$)"
+  #         ! tar -tzf pulsar-*.tar | grep -E "(_build/|deps/|\.git/|\.beam$)"
