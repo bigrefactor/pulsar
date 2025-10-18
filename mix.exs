@@ -61,7 +61,7 @@ defmodule Pulsar.MixProject do
 
   defp deps do
     [
-      {:igniter, "~> 0.6", optional: true, runtime: false},
+      {:igniter, "~> 0.6", optional: true},
       {:phoenix, "~> 1.8", optional: true, runtime: false},
       {:phoenix_live_view, "~> 1.1", optional: true, runtime: false},
       {:phoenix_html, "~> 4.0", optional: true, runtime: false},
