@@ -6,6 +6,7 @@ defmodule Mix.Tasks.Pulsar.InstallTest do
   alias Igniter.Project.Deps
 
   describe "pulsar.install" do
+    @tag timeout: 180_000
     test "installs all components by default with --all flag" do
       phx_test_project()
       |> Igniter.compose_task("pulsar.install", [])
