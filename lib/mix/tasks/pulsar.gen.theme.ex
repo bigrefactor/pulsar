@@ -107,7 +107,10 @@ if Code.ensure_loaded?(Igniter) do
 
       igniter
       |> backup_existing_file("assets/css/theme.css")
-      |> Igniter.copy_template(theme_css_template, "assets/css/theme.css", web_directory: web_dir, on_exists: :overwrite)
+      |> Igniter.copy_template(theme_css_template, "assets/css/theme.css",
+        web_directory: web_dir,
+        on_exists: :overwrite
+      )
       |> backup_existing_file("assets/css/app.css")
       |> Igniter.copy_template(app_css_template, "assets/css/app.css", [web_directory: web_dir], on_exists: :overwrite)
     end
