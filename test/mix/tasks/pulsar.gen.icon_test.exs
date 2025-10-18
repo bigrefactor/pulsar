@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Pulsar.Gen.UiconTest do
+defmodule Mix.Tasks.Pulsar.Gen.IconTest do
   use ExUnit.Case, async: true
 
   import Igniter.Test

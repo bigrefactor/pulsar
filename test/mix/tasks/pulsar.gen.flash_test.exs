@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Pulsar.Gen.UflashTest do
+defmodule Mix.Tasks.Pulsar.Gen.FlashTest do
   use ExUnit.Case, async: true
 
   import Igniter.Test

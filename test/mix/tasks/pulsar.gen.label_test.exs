@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Pulsar.Gen.UlabelTest do
+defmodule Mix.Tasks.Pulsar.Gen.LabelTest do
   use ExUnit.Case, async: true
 
   import Igniter.Test

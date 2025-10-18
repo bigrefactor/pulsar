@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Pulsar.Gen.UbadgeTest do
+defmodule Mix.Tasks.Pulsar.Gen.BadgeTest do
   use ExUnit.Case, async: true
 
   import Igniter.Test

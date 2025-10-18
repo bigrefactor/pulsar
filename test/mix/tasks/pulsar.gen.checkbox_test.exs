@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Pulsar.Gen.UcheckboxTest do
+defmodule Mix.Tasks.Pulsar.Gen.CheckboxTest do
   use ExUnit.Case, async: true
 
   import Igniter.Test

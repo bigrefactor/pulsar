@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Pulsar.Gen.UheaderTest do
+defmodule Mix.Tasks.Pulsar.Gen.HeaderTest do
   use ExUnit.Case, async: true
 
   import Igniter.Test

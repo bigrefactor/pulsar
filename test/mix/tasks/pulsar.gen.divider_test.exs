@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Pulsar.Gen.UdividerTest do
+defmodule Mix.Tasks.Pulsar.Gen.DividerTest do
   use ExUnit.Case, async: true
 
   import Igniter.Test

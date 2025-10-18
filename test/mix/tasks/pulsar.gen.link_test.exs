@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Pulsar.Gen.UlinkTest do
+defmodule Mix.Tasks.Pulsar.Gen.LinkTest do
   use ExUnit.Case, async: true
 
   import Igniter.Test

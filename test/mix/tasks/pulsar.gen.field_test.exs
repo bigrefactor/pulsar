@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Pulsar.Gen.UfieldTest do
+defmodule Mix.Tasks.Pulsar.Gen.FieldTest do
   use ExUnit.Case, async: true
 
   import Igniter.Test
