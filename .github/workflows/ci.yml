@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -38,7 +38,7 @@ jobs:
 
       - name: Cache deps
         id: cache-deps
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: deps
           key: ${{ runner.os }}-deps-quality-${{ matrix.elixir }}-${{ matrix.otp }}-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
@@ -50,7 +50,7 @@ jobs:
 
       - name: Cache _build
         id: cache-build
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: _build
           key: ${{ runner.os }}-build-quality-${{ matrix.elixir }}-${{ matrix.otp }}-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
@@ -62,7 +62,7 @@ jobs:
 
       - name: Cache Dialyzer PLT
         id: cache-plt
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: priv/plts
           key: ${{ runner.os }}-plt-${{ matrix.elixir }}-${{ matrix.otp }}-${{ hashFiles('mix.lock') }}
@@ -120,7 +120,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -131,7 +131,7 @@ jobs:
 
       - name: Cache deps
         id: cache-deps-security
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: deps
           key: ${{ runner.os }}-deps-security-test-${{ hashFiles('mix.lock') }}
@@ -142,7 +142,7 @@ jobs:
 
       - name: Cache _build
         id: cache-build-security
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: _build
           key: ${{ runner.os }}-build-security-test-${{ hashFiles('mix.lock') }}
@@ -171,7 +171,7 @@ jobs:
   #   runs-on: ubuntu-22.04
   #   steps:
   #     - name: Checkout code
-  #       uses: actions/checkout@v5
+  #       uses: actions/checkout@v6
   #
   #     - name: Set up Elixir
   #       uses: erlef/setup-beam@v1
@@ -181,7 +181,7 @@ jobs:
   #         version-type: loose
   #
   #     - name: Cache deps
-  #       uses: actions/cache@v4
+  #       uses: actions/cache@v5
   #       with:
   #         path: deps
   #         key: ${{ runner.os }}-deps-package-${{ hashFiles('mix.lock') }}
