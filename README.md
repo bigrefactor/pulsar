@@ -6,7 +6,7 @@ Pulsar provides production-ready, styled components with gorgeous Tailwind CSS s
 
 ## Features
 
-- 🚀 **Single Dependency** - Only requires TailwindMerge for intelligent class merging
+- 🚀 **Single Dependency** - Only requires [Twm](https://hex.pm/packages/twm) for intelligent Tailwind class merging (Tailwind v4 ready)
 - ♿ **Full Accessibility** - WCAG 2.1 AA compliant with proper ARIA attributes and keyboard navigation
 - 🎨 **Tailwind-first** - Styled with Tailwind CSS utilities and semantic color tokens
 - 🌙 **Dark mode ready** - Automatic light/dark mode support via CSS custom properties  
@@ -25,7 +25,7 @@ Add Pulsar to your Phoenix application:
 ```bash
 # Add to mix.exs dependencies
 {:pulsar, "~> 0.1"},
-{:tailwind_merge, "~> 0.2"}
+{:twm, "~> 0.1"}
 
 # Install dependencies
 mix deps.get
@@ -179,7 +179,7 @@ def button(assigns) do
   normalized_assigns = normalize_field_props(assigns)
   
   # Merge styling classes intelligently
-  classes = TailwindMerge.merge([
+  classes = Twm.merge([
     button_base_classes(),
     variant_classes(assigns.variant), 
     size_classes(assigns.size),
@@ -197,7 +197,7 @@ end
 This approach provides:
 - **Complete independence** - No external component dependencies
 - **Full accessibility** - ARIA attributes, keyboard navigation, screen reader support
-- **Intelligent class merging** - TailwindMerge prevents style conflicts
+- **Intelligent class merging** - Twm prevents style conflicts
 - **Phoenix integration** - Seamless form field support with validation
 - **Security first** - XSS protection and proper escaping built-in
 
@@ -213,7 +213,7 @@ If you were using an older version of Pulsar:
 
 - [x] **Core Form Components** - Button, Input, Textarea, Select, Checkbox, Switch, RadioGroup
 - [x] **UI Components** - Label, Link
-- [x] **Self-Contained Components** - Zero external dependencies beyond TailwindMerge
+- [x] **Self-Contained Components** - Zero external dependencies beyond Twm
 - [ ] Card component
 - [ ] Alert component  
 - [ ] Badge component (partial implementation available)
@@ -228,7 +228,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 ## Credits
 
 Built with:
-- [TailwindMerge](https://hex.pm/packages/tailwind_merge) - Intelligent Tailwind class merging
+- [Twm](https://hex.pm/packages/twm) - Intelligent Tailwind CSS class merging
 - [Tailwind CSS](https://tailwindcss.com) - Utility-first CSS framework  
 - [Phoenix LiveView](https://hexdocs.pm/phoenix_live_view) - Rich, interactive web applications
 

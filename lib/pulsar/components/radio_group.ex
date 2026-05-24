@@ -101,7 +101,7 @@ defmodule Pulsar.Components.RadioGroup do
 
   use Phoenix.Component
 
-  import TailwindMerge, only: [merge: 1]
+  import Twm, only: [merge: 1]
 
   alias Phoenix.HTML.Form
   alias Phoenix.HTML.FormField

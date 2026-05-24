@@ -115,7 +115,7 @@ if Code.ensure_loaded?(Igniter) do
         group: :pulsar,
         # *other* dependencies to add
         # i.e `{:foo, "~> 2.0"}`
-        adds_deps: [{:tailwind_merge, github: "bigrefactor/tailwind_merge"}],
+        adds_deps: [{:twm, "~> 0.1"}],
         # *other* dependencies to add and call their associated installers, if they exist
         # i.e `{:foo, "~> 2.0"}`
         installs: [],
@@ -187,7 +187,8 @@ if Code.ensure_loaded?(Igniter) do
       components = gather_components(igniter)
 
       igniter
-      |> Deps.add_dep({:tailwind_merge, github: "bigrefactor/tailwind_merge"}, on_exists: :skip)
+      |> Deps.add_dep({:twm, "~> 0.1"}, on_exists: :skip)
+      |> Igniter.Project.Application.add_new_child({Twm.Cache, []})
       |> Pulsar.Generator.set_default_component_module()
       |> maybe_compose_task("pulsar.gen.theme", options[:theme])
       |> compose_components(components)

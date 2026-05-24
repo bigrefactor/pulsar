@@ -108,7 +108,7 @@ defmodule Pulsar.Components.Table do
 
   use Phoenix.Component
 
-  import TailwindMerge, only: [merge: 1]
+  import Twm, only: [merge: 1]
 
   alias Phoenix.LiveView.LiveStream
   alias Phoenix.LiveView.Rendered
@@ -305,7 +305,7 @@ defmodule Pulsar.Components.Table do
   Renders a styled table component.
 
   Self-contained table component with LiveStream support and Pulsar's styling system.
-  Styling is controlled via configuration maps and TailwindMerge for intelligent
+  Styling is controlled via configuration maps and Twm for intelligent
   class composition and conflict resolution.
 
   ## Size Behavior
@@ -349,7 +349,7 @@ defmodule Pulsar.Components.Table do
     # Detect LiveStream and set up row handling
     assigns = setup_stream_handling(assigns)
 
-    # Build complete class strings using TailwindMerge
+    # Build complete class strings using Twm
     assigns = build_table_classes(assigns)
 
     ~H"""

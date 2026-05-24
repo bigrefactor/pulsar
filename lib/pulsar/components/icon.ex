@@ -61,7 +61,7 @@ defmodule Pulsar.Components.Icon do
 
   use Phoenix.Component
 
-  import TailwindMerge, only: [merge: 1]
+  import Twm, only: [merge: 1]
 
   # ============================================================================
   # CONFIGURATION & CONSTANTS
@@ -173,7 +173,7 @@ defmodule Pulsar.Components.Icon do
   # ASSIGNMENT HELPERS
   # ============================================================================
 
-  # Assign CSS classes with TailwindMerge
+  # Assign CSS classes with Twm
   defp assign_classes(assigns) do
     heroicon_class = build_heroicon_class(assigns.name, assigns.variant)
 

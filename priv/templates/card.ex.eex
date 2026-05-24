@@ -142,7 +142,7 @@ render their content without modification, giving you complete control:
 
 use Phoenix.Component
 
-import TailwindMerge, only: [merge: 1]
+import Twm, only: [merge: 1]
 
 alias Phoenix.LiveView.Rendered
 
@@ -328,7 +328,7 @@ Cards are just styled containers. Add interactivity as needed:
 """
 @spec card(map()) :: Rendered.t()
 def card(assigns) do
-  # Build complete class string using TailwindMerge
+  # Build complete class string using Twm
   card_class =
     merge([
       base_card_classes(),

@@ -43,7 +43,7 @@ themes/
 
 Pulsar components are self-contained modules with all functionality inlined:
 
-- **No External Dependencies**: Only requires TailwindMerge for class conflict resolution
+- **No External Dependencies**: Only requires Twm for class conflict resolution
 - **Inlined Accessibility**: All ARIA attributes and keyboard navigation built-in
 - **Phoenix Integration**: Seamless form field support with proper validation
 - **Security Built-in**: XSS protection and input sanitization included
@@ -192,7 +192,7 @@ document.documentElement.dataset.theme = 'light'; // Disable
 ## Dependencies
 
 ### Runtime Dependencies (Minimal)
-- **TailwindMerge**: Class conflict resolution for intelligent class merging (`~> 0.2`)
+- **Twm**: Tailwind v4-aware class conflict resolution for intelligent class merging (`~> 0.1`)
 - **Phoenix LiveView**: Component system and reactivity (standard Phoenix dependency)
 
 ### Development Dependencies  
@@ -203,7 +203,7 @@ document.documentElement.dataset.theme = 'light'; // Disable
 ### Component Showcase
 Component examples and interactive testing are available in the standalone storybook app located at `../storybook/`. This is a separate Phoenix application that imports Pulsar as a dependency.
 
-**Self-Contained Implementation**: Components include all accessibility and behavior patterns directly, with only TailwindMerge as the single external dependency.
+**Self-Contained Implementation**: Components include all accessibility and behavior patterns directly, with only Twm as the single external dependency.
 
 **Complete Component Library Includes:**
 - **Badge**: Flexible labels with variants/sizes, removable option, and action slot (partial implementation)
@@ -218,7 +218,7 @@ Component examples and interactive testing are available in the standalone story
 - **Switch**: Toggle switches with Phoenix form support
 - **Textarea**: Multi-line input with character counting and validation
 - **Self-contained implementation** with all accessibility patterns built-in
-- **TailwindMerge integration** for intelligent class composition  
+- **Twm integration** for intelligent class composition  
 - **Complete accessibility features** with ARIA attributes and keyboard navigation
 - **Security-first approach** with XSS protection and input validation
 
@@ -226,7 +226,7 @@ Component examples and interactive testing are available in the standalone story
 
 ### Development
 ```bash
-mix deps.get             # Install dependencies (only TailwindMerge)
+mix deps.get             # Install dependencies (only Twm)
 mix compile              # Compile the library
 mix test                 # Run all tests  
 mix dialyzer             # Type checking
@@ -238,7 +238,7 @@ mix format               # Format code
 ```elixir
 # Add to mix.exs
 {:pulsar, "~> 0.1"},
-{:tailwind_merge, "~> 0.2"}
+{:twm, "~> 0.1"}
 
 # Import components in LiveViews/Components
 import Pulsar.Components.{Button, Input, Select, Checkbox}
@@ -273,7 +273,7 @@ end
 - Validates size classes and responsive behavior
 - Checks state handling (loading, disabled, pressed)
 
-**TailwindMerge Integration:**
+**Twm Integration:**
 - Tests class conflict resolution
 - Validates custom class overrides
 - Ensures proper class deduplication
@@ -340,7 +340,7 @@ end
 
 **Code Generation Validation:**
 - Verifies correct file paths and module names
-- Tests code generation (component code with tailwind_merge integration)
+- Tests code generation (component code with twm integration)
 - Validates component import updates
 - Checks error handling for edge cases
 
@@ -408,12 +408,12 @@ Components integrate seamlessly with LiveView:
 </.simple_form>
 ```
 
-### Tailwind CSS & TailwindMerge
+### Tailwind CSS & Twm
 All styling through Tailwind utilities with intelligent class merging:
 
-**TailwindMerge Integration:**
+**Twm Integration:**
 ```elixir
-# Components use TailwindMerge for class conflict resolution
+# Components use Twm for class conflict resolution
 assigns = assign(assigns, :merged_classes,
   merge([
     button_base(@variant),           # Base component classes

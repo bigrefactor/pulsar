@@ -143,7 +143,7 @@ defmodule Pulsar.Components.Card do
 
   use Phoenix.Component
 
-  import TailwindMerge, only: [merge: 1]
+  import Twm, only: [merge: 1]
 
   alias Phoenix.LiveView.Rendered
 
@@ -329,7 +329,7 @@ defmodule Pulsar.Components.Card do
   """
   @spec card(map()) :: Rendered.t()
   def card(assigns) do
-    # Build complete class string using TailwindMerge
+    # Build complete class string using Twm
     card_class =
       merge([
         base_card_classes(),

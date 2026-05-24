@@ -115,7 +115,7 @@ defmodule Pulsar.Components.Header do
   use Phoenix.Component
 
   import Pulsar.Components.Icon, only: [icon: 1]
-  import TailwindMerge, only: [merge: 1]
+  import Twm, only: [merge: 1]
 
   alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Link

@@ -359,7 +359,7 @@ defmodule Pulsar.Components.ButtonTest do
       assert html =~ "focus-visible:ring-2"
       assert html =~ "focus-visible:ring-ring"
 
-      # Note: ring-offset-2 is in the component but may be stripped by TailwindMerge or not showing in output
+      # Note: ring-offset-2 is in the component but may be stripped by Twm or not showing in output
       # The key focus functionality is present
     end
 
@@ -564,7 +564,7 @@ defmodule Pulsar.Components.ButtonTest do
     end
   end
 
-  describe "TailwindMerge integration" do
+  describe "Twm integration" do
     test "properly merges conflicting classes" do
       assigns = %{}
 
@@ -573,13 +573,13 @@ defmodule Pulsar.Components.ButtonTest do
         <Button.button variant="solid" color="primary" class="bg-red-500 h-16">Custom</Button.button>
         """)
 
-      # TailwindMerge should resolve conflicts, keeping the custom classes
+      # Twm should resolve conflicts, keeping the custom classes
       # Custom background should be present
       assert html =~ "bg-red-500"
       # Custom height should be present
       assert html =~ "h-16"
 
-      # Note: TailwindMerge puts conflicting classes later in the string so they take precedence
+      # Note: Twm puts conflicting classes later in the string so they take precedence
       # The presence of both is expected - CSS cascade will apply the later one
     end
 
@@ -597,8 +597,8 @@ defmodule Pulsar.Components.ButtonTest do
       assert html =~ "focus-visible:underline"
 
       # Should not have the base ring classes
-      # (TailwindMerge should resolve the conflict in favor of ring-0)
-      # This tests that our TailwindMerge integration properly handles ring conflicts
+      # (Twm should resolve the conflict in favor of ring-0)
+      # This tests that our Twm integration properly handles ring conflicts
     end
 
     test "custom focus classes override component defaults" do
@@ -613,7 +613,7 @@ defmodule Pulsar.Components.ButtonTest do
       assert html =~ "focus-visible:ring-4"
       assert html =~ "focus-visible:ring-purple-500"
 
-      # TailwindMerge should ensure custom classes take precedence
+      # Twm should ensure custom classes take precedence
       # Component's ring-2 might be present but custom ring-4 will have priority
     end
 

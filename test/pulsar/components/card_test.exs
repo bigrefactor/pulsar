@@ -509,7 +509,7 @@ defmodule Pulsar.Components.CardTest do
     end
   end
 
-  describe "TailwindMerge class overrides" do
+  describe "Twm class overrides" do
     test "custom classes override component defaults" do
       assigns = %{}
 
@@ -538,7 +538,7 @@ defmodule Pulsar.Components.CardTest do
       # Extract the wrapper div's class attribute (class comes before data-testid)
       [_, wrapper_class] = Regex.run(~r/<div class="([^"]*)"[^>]*data-testid="card-wrapper"/, html)
 
-      # TailwindMerge should apply p-0 to the outer div
+      # Twm should apply p-0 to the outer div
       assert wrapper_class =~ "p-0"
       # Wrapper should not have p-6 (size padding)
       refute wrapper_class =~ "p-6"

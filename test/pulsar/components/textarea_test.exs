@@ -731,7 +731,7 @@ defmodule Pulsar.Components.TextareaTest do
     end
   end
 
-  describe "TailwindMerge integration" do
+  describe "Twm integration" do
     test "properly merges conflicting classes" do
       assigns = %{}
 
@@ -740,7 +740,7 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" class="border-red-500 min-h-20" />
         """)
 
-      # TailwindMerge should resolve conflicts
+      # Twm should resolve conflicts
       # Custom border should override
       assert html =~ "border-red-500"
       # Custom height should override

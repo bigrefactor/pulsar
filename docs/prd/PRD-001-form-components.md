@@ -47,7 +47,7 @@ This PRD defines the implementation of styled form components for the Pulsar des
    - Components must support variant props (default, filled, outlined, error)
    - Size variants must be available (xs, sm, md, lg, xl)
    - Components must support the `class` attribute for custom styling overrides
-   - TailwindMerge must resolve class conflicts intelligently
+   - Twm must resolve class conflicts intelligently
 
 4. **Compositional Addon System**
    - Input components must support leading and trailing slots

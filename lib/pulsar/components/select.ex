@@ -83,7 +83,7 @@ defmodule Pulsar.Components.Select do
   use Phoenix.Component
 
   import Pulsar.Components.Icon, only: [icon: 1]
-  import TailwindMerge, only: [merge: 1]
+  import Twm, only: [merge: 1]
 
   alias Phoenix.HTML.Form
   alias Phoenix.HTML.FormField

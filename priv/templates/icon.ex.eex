@@ -60,7 +60,7 @@ You can override the default behavior by setting `aria-hidden` in the rest attri
 
 use Phoenix.Component
 
-import TailwindMerge, only: [merge: 1]
+import Twm, only: [merge: 1]
 
 # ============================================================================
 # CONFIGURATION & CONSTANTS
@@ -172,7 +172,7 @@ end
 # ASSIGNMENT HELPERS
 # ============================================================================
 
-# Assign CSS classes with TailwindMerge
+# Assign CSS classes with Twm
 defp assign_classes(assigns) do
   heroicon_class = build_heroicon_class(assigns.name, assigns.variant)
 

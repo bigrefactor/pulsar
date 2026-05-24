@@ -419,7 +419,7 @@ defmodule Pulsar.Components.HeaderTest do
       assert html =~ "sticky"
       assert html =~ "top-0"
       assert html =~ "z-10"
-      # Variant background should win over sticky background due to TailwindMerge
+      # Variant background should win over sticky background due to Twm
       assert html =~ "bg-primary-100"
       refute html =~ "bg-background"
     end

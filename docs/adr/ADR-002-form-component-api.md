@@ -109,7 +109,7 @@ The self-contained component pattern with slots provides the best balance of fle
 ```elixir
 defmodule Pulsar.Components.Form.Input do
   use Phoenix.Component
-  import TailwindMerge, only: [merge: 1]
+  import Twm, only: [merge: 1]
 
   # Consistent prop pattern across all components
   attr :variant, :string, default: "solid", values: ~w(outline ghost solid)
@@ -141,7 +141,7 @@ defmodule Pulsar.Components.Form.Input do
     invalid = assigns.invalid || has_errors
     effective_color = if invalid, do: "danger", else: assigns.color
     
-    # Class merging with TailwindMerge
+    # Class merging with Twm
     class = merge([
       base_classes(),
       variant_classes(assigns.variant),
@@ -267,7 +267,7 @@ How will we know this decision was correct?
 ### Research Links
 - [Phoenix.Component Documentation](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html)
 - [Phoenix LiveView Components](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html)
-- [TailwindMerge for Class Resolution](https://github.com/dcastil/tailwind-merge)
+- [Twm for Class Resolution](https://github.com/dcastil/tailwind-merge)
 
 ### Component Conventions
 
@@ -291,7 +291,7 @@ How will we know this decision was correct?
 **Theme Integration**:
 - All colors reference semantic tokens from `/themes/pulsar.css`
 - Dark mode via `dark:` prefix utilities
-- TailwindMerge resolves conflicts
+- Twm resolves conflicts
 
 ### Related ADRs
 - [ADR-001: Theme Design System](/docs/adr/ADR-001-theme-design-system.md) - Semantic color system
