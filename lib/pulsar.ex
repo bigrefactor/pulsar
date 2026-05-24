@@ -42,10 +42,14 @@ defmodule Pulsar do
         Save Changes
       </.button>
 
-  Components can also be used directly from Pulsar without generation
-  (`import Pulsar.Components.Button`), but generation is recommended for
-  production: the generated source lives in your project, Tailwind picks up
-  the classes automatically, and you can customize freely.
+  Components can also be used directly from Pulsar without generation. For
+  a Phoenix-style one-line on-ramp, `import Pulsar.CoreComponents` exposes
+  the same `flash/1`, `flash_group/1`, `header/1`, `button/1`, `input/1`,
+  `icon/1`, `table/1`, and `list/1` functions that `mix pulsar.gen.core_components`
+  would generate into your app. For granular control, import individual
+  components (`import Pulsar.Components.Button`). Generation is recommended
+  for production: the generated source lives in your project, Tailwind
+  picks up the classes automatically, and you can customize freely.
 
   ## Features
 

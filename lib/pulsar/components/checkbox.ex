@@ -27,38 +27,38 @@ defmodule Pulsar.Components.Checkbox do
       <.checkbox field={@form[:newsletter]} color="primary" size="lg" />
 
       # Indeterminate state for "select all" scenarios
-      <.checkbox 
-        field={@form[:select_all]} 
+      <.checkbox
+        field={@form[:select_all]}
         indeterminate={@partial_selection}
         color="success"
       />
 
-       # Card-style checkbox for rich layouts
-       <.checkbox 
-         field={@form[:plan]} 
-         card
-         variant="outline"
-         color="primary" 
-         size="lg"
-         value="premium"
-       >
-         <div class="font-medium">Premium Plan</div>
-         <div class="text-sm text-muted-foreground mt-1">Advanced features and priority support</div>
-         <div class="text-sm font-semibold mt-2">$29/month</div>
-       </.checkbox>
+        # Card-style checkbox for rich layouts
+        <.checkbox
+          field={@form[:plan]}
+          card
+          variant="outline"
+          color="primary"
+          size="lg"
+          value="premium"
+        >
+          <div class="font-medium">Premium Plan</div>
+          <div class="text-sm text-muted-foreground mt-1">Advanced features and priority support</div>
+          <div class="text-sm font-semibold mt-2">$29/month</div>
+        </.checkbox>
 
-       # Card-only selection (no visible checkbox)
-       <.checkbox 
-         field={@form[:theme]} 
-         card
-         hide_checkbox
-         variant="outline"
-         color="primary"
-         value="dark"
-       >
-         <div class="font-medium">Dark Theme</div>
-         <div class="text-sm text-muted-foreground mt-1">Easy on the eyes</div>
-       </.checkbox>
+        # Card-only selection (no visible checkbox)
+        <.checkbox
+          field={@form[:theme]}
+          card
+          hide_checkbox
+          variant="outline"
+          color="primary"
+          value="dark"
+        >
+          <div class="font-medium">Dark Theme</div>
+          <div class="text-sm text-muted-foreground mt-1">Easy on the eyes</div>
+        </.checkbox>
 
   ## Error State Handling
 
@@ -330,24 +330,24 @@ defmodule Pulsar.Components.Checkbox do
       # Standard checkbox
       <.checkbox field={@form[:terms]} color="primary" />
 
-       # Rich card layout with custom spacing
-       <.checkbox card field={@form[:plan]} value="pro" container_class="mb-4">
-         <div class="font-medium">Pro Plan</div>
-         <div class="text-sm text-muted-foreground mt-1">Everything in Basic plus advanced features</div>
-         <div class="text-sm font-semibold mt-2">$19/month</div>
-       </.checkbox>
+        # Rich card layout with custom spacing
+        <.checkbox card field={@form[:plan]} value="pro" container_class="mb-4">
+          <div class="font-medium">Pro Plan</div>
+          <div class="text-sm text-muted-foreground mt-1">Everything in Basic plus advanced features</div>
+          <div class="text-sm font-semibold mt-2">$19/month</div>
+        </.checkbox>
 
-       # Card-only selection with event handling on container
-       <.checkbox 
-         card 
-         hide_checkbox 
-         field={@form[:theme]} 
-         value="light"
-         phx-click="select_theme"
-       >
-         <div class="font-medium">Light Theme</div>
-         <div class="text-sm text-muted-foreground mt-1">Clean and bright interface</div>
-       </.checkbox>
+        # Card-only selection with event handling on container
+        <.checkbox
+          card
+          hide_checkbox
+          field={@form[:theme]}
+          value="light"
+          phx-click="select_theme"
+        >
+          <div class="font-medium">Light Theme</div>
+          <div class="text-sm text-muted-foreground mt-1">Clean and bright interface</div>
+        </.checkbox>
   """
   @spec checkbox(map()) :: Rendered.t()
   def checkbox(assigns) do

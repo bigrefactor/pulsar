@@ -24,16 +24,16 @@ defmodule Pulsar.Components.Switch do
       <.switch field={@form[:notifications_enabled]} />
 
       # With variant, color and size
-      <.switch 
-        field={@form[:dark_mode]} 
-        variant="outline" 
-        color="primary" 
-        size="lg" 
+      <.switch
+        field={@form[:dark_mode]}
+        variant="outline"
+        color="primary"
+        size="lg"
       />
 
       # Loading state during async operation
-      <.switch 
-        field={@form[:public_profile]} 
+      <.switch
+        field={@form[:public_profile]}
         loading={@updating_privacy}
         color="success"
       />
@@ -41,16 +41,16 @@ defmodule Pulsar.Components.Switch do
 
 
       # Ghost variant for compact UI
-      <.switch 
-        field={@form[:compact_mode]} 
-        variant="ghost" 
-        size="sm" 
+      <.switch
+        field={@form[:compact_mode]}
+        variant="ghost"
+        size="sm"
         color="neutral"
       />
 
       # Custom loading content
-      <.switch 
-        field={@form[:sync_enabled]} 
+      <.switch
+        field={@form[:sync_enabled]}
         loading={@syncing}
       >
         <:loading_content>
@@ -63,7 +63,7 @@ defmodule Pulsar.Components.Switch do
   ## Switch vs Checkbox
 
   Use a switch for immediate on/off actions that take effect instantly (like toggling
-  a setting), and checkboxes for selections that may require form submission. 
+  a setting), and checkboxes for selections that may require form submission.
   Switches imply the action happens now, like a physical light switch.
 
   ## Form Integration
@@ -81,7 +81,7 @@ defmodule Pulsar.Components.Switch do
 
   The switch provides full keyboard and screen reader support:
   - Space key toggles the switch
-  - Tab key moves focus to/from the switch  
+  - Tab key moves focus to/from the switch
   - Screen readers announce the switch state
   - ARIA attributes provide proper semantic information
   """
@@ -412,21 +412,21 @@ defmodule Pulsar.Components.Switch do
 
   ## Examples
 
-       # Standard switch
-       <.switch field={@form[:notifications]} />
+        # Standard switch
+        <.switch field={@form[:notifications]} />
 
-       # Outline variant 
-       <.switch 
-         field={@form[:dark_mode]} 
-         variant="outline" 
-       />
+        # Outline variant
+        <.switch
+          field={@form[:dark_mode]}
+          variant="outline"
+        />
 
-       # Large success switch
-       <.switch 
-         field={@form[:feature_enabled]} 
-         color="success" 
-         size="lg" 
-       />
+        # Large success switch
+        <.switch
+          field={@form[:feature_enabled]}
+          color="success"
+          size="lg"
+        />
   """
   @spec switch(map()) :: Rendered.t()
   def switch(assigns) do

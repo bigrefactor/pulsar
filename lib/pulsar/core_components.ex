@@ -258,7 +258,7 @@ defmodule Pulsar.CoreComponents do
   attr :type, :string,
     default: "text",
     values: ~w(checkbox color date datetime-local email file month number password
-               search select tel text textarea time url week)
+                search select tel text textarea time url week)
 
   attr :field, FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
@@ -711,16 +711,40 @@ defmodule Pulsar.CoreComponents do
   defp get_flash_icon(:error), do: "hero-exclamation-circle"
   defp get_flash_icon(_), do: "hero-bell"
 
-  # Hide flash with animation
-  defp hide_flash(js, selector) do
+  ## JS Commands
+
+  @doc """
+  Shows a flash element at `selector` with the standard flash entry animation
+  (slide-in from below + fade-in over 300ms).
+
+  Exposed for callers that need to programmatically reveal a flash; the bundled
+  flash component animates itself in via the underlying `Flash` markup and does
+  not call this helper directly.
+  """
+  def show_flash(js \\ %JS{}, selector) do
+    JS.show(js,
+      to: selector,
+      time: 300,
+      transition:
+        {"transition-all ease-out duration-300", "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
+         "opacity-100 translate-y-0 sm:scale-100"}
+    )
+  end
+
+  @doc """
+  Hides a flash element at `selector` with the standard flash exit animation
+  (slide-out + fade-out over 200ms).
+
+  Used by the bundled flash component's phx-click handler to animate dismissal
+  after `lv:clear-flash` is pushed.
+  """
+  def hide_flash(js \\ %JS{}, selector) do
     JS.hide(js,
       to: selector,
       time: 200,
-      transition: {
-        "transition-all ease-in duration-200",
-        "opacity-100 translate-y-0 sm:scale-100",
-        "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-      }
+      transition:
+        {"transition-all ease-in duration-200", "opacity-100 translate-y-0 sm:scale-100",
+         "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
     )
   end
 end

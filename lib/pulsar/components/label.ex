@@ -3,7 +3,7 @@ defmodule Pulsar.Components.Label do
   Beautiful, accessible label component with typography variants and visual indicators.
 
   Provides styled form labels with required indicators and error state styling.
-  All styling is applied via Tailwind CSS utilities with semantic color tokens 
+  All styling is applied via Tailwind CSS utilities with semantic color tokens
   supporting both light and dark modes.
 
   ## Features
@@ -55,7 +55,7 @@ defmodule Pulsar.Components.Label do
   ## Data Attributes for Styling
 
   - `data-required="true|false"` - Required field state
-  - `data-error="true|false"` - Error state  
+  - `data-error="true|false"` - Error state
   - `data-size="xs|sm|md|lg|xl"` - Size variant
 
   ## Screen Reader Support

@@ -9,7 +9,7 @@ defmodule Pulsar.Components.Table do
   ## Features
 
   - **LiveStream Support**: Real-time data updates with Phoenix LiveView streams
-  - **Multiple Variants**: solid, outline, and ghost for different visual styles  
+  - **Multiple Variants**: solid, outline, and ghost for different visual styles
   - **Full Color Palette**: All semantic colors with automatic dark mode support
   - **Multiple Sizes**: xs, sm, md, lg, xl for different data densities
   - **Interactive Rows**: Row click handlers for navigation and actions
@@ -23,71 +23,71 @@ defmodule Pulsar.Components.Table do
 
       # Basic table
       <.table id="users" rows={@users}>
-        <:col :let={user} label="Name"><%%= user.name %></:col>
-        <:col :let={user} label="Email"><%%= user.email %></:col>
+        <:col :let={user} label="Name"><%= user.name %></:col>
+        <:col :let={user} label="Email"><%= user.email %></:col>
         <:col :let={user} label="Status">
           <.badge color={status_color(user.status)}>
-            <%%= user.status %>
+            <%= user.status %>
           </.badge>
         </:col>
       </.table>
 
       # With variant and size
-      <.table 
-        id="products" 
+      <.table
+        id="products"
         rows={@products}
         variant="outline"
         color="primary"
         size="sm"
       >
-        <:col :let={product} label="Name"><%%= product.name %></:col>
+        <:col :let={product} label="Name"><%= product.name %></:col>
         <:col :let={product} label="Price" align="right">
-          $<%%= product.price %>
+          $<%= product.price %>
         </:col>
       </.table>
 
       # With row actions
       <.table id="posts" rows={@posts}>
-        <:col :let={post} label="Title"><%%= post.title %></:col>
-        <:col :let={post} label="Author"><%%= post.author %></:col>
+        <:col :let={post} label="Title"><%= post.title %></:col>
+        <:col :let={post} label="Author"><%= post.author %></:col>
         <:action :let={post}>
-          <.link navigate={~p"/posts/<%%= post.id %>"}>View</.link>
-          <.link navigate={~p"/posts/<%%= post.id %>/edit"}>Edit</.link>
+          <.link navigate={~p"/posts/<%= post.id %>"}>View</.link>
+          <.link navigate={~p"/posts/<%= post.id %>/edit"}>Edit</.link>
         </:action>
       </.table>
 
       # With LiveStream
       <.table id="events" rows={@streams.events}>
-        <:col :let={{_id, event}} label="Event"><%%= event.name %></:col>
-        <:col :let={{_id, event}} label="Time"><%%= event.timestamp %></:col>
+        <:col :let={{_id, event}} label="Event"><%= event.name %></:col>
+        <:col :let={{_id, event}} label="Time"><%= event.timestamp %></:col>
       </.table>
 
       # With row click handler
-      <.table 
-        id="items" 
+      <.table
+        id="items"
         rows={@items}
-        row_click={fn item -> JS.navigate(~p"/items/<%%= item.id %>") end}
+        row_click={fn item -> JS.navigate(~p"/items/<%= item.id %>") end}
       >
-        <:col :let={item} label="Name"><%%= item.name %></:col>
-        <:col :let={item} label="Description"><%%= item.description %></:col>
+        <:col :let={item} label="Name"><%= item.name %></:col>
+        <:col :let={item} label="Description"><%= item.description %></:col>
       </.table>
 
       # With striped rows and sticky header
-      <.table 
-        id="transactions" 
+      <.table
+        id="transactions"
         rows={@transactions}
         striped={true}
         sticky_header={true}
         variant="outline"
       >
-        <:col :let={tx} label="ID"><%%= tx.id %></:col>
-        <:col :let={tx} label="Amount" align="right"><%%= tx.amount %></:col>
+        <:col :let={tx} label="ID"><%= tx.id %></:col>
+        <:col :let={tx} label="Amount" align="right"><%= tx.amount %></:col>
       </.table>
 
       # With empty state
       <.table id="results" rows={@search_results}>
-        <:col :let={result} label="Name"><%%= result.name %></:col>
-        <:col :let={result} label="Score"><%%= result.score %></:col>
+        <:col :let={result} label="Name"><%= result.name %></:col>
+        <:col :let={result} label="Score"><%= result.score %></:col>
         <:empty>
           <div class="text-center py-8 text-muted-foreground dark:text-dark-muted-foreground">
             <.icon name="hero-magnifying-glass" class="mx-auto h-12 w-12 mb-4" />
@@ -319,23 +319,23 @@ defmodule Pulsar.Components.Table do
 
       # Minimal table
       <.table id="users" rows={@users}>
-        <:col :let={user} label="Name"><%%= user.name %></:col>
+        <:col :let={user} label="Name"><%= user.name %></:col>
       </.table>
-      
+
       # Full featured table
-      <.table 
+      <.table
         id="orders"
         rows={@orders}
         variant="solid"
-        color="primary" 
+        color="primary"
         size="lg"
         striped={true}
         sticky_header={true}
         row_click={&navigate_to_order/1}
       >
-        <:col :let={order} label="ID"><%%= order.id %></:col>
-        <:col :let={order} label="Customer"><%%= order.customer %></:col>
-        <:col :let={order} label="Total" align="right">$<%%= order.total %></:col>
+        <:col :let={order} label="ID"><%= order.id %></:col>
+        <:col :let={order} label="Customer"><%= order.customer %></:col>
+        <:col :let={order} label="Total" align="right">$<%= order.total %></:col>
         <:action :let={order}>
           <.button size="sm">Edit</.button>
         </:action>

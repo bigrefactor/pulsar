@@ -4,7 +4,7 @@ defmodule Pulsar.Components.Link do
 
   ## Features
   - Security-first: XSS protection and external link security
-  - Semantic variants: solid, ghost, outline  
+  - Semantic variants: solid, ghost, outline
   - Color schemes: primary, secondary, danger, etc.
   - Automatic external detection with security attributes
   - Phoenix navigation support (navigate, patch, href)
