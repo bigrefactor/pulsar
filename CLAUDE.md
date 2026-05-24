@@ -32,9 +32,6 @@ lib/pulsar/
     ├── select.ex         # Select dropdowns
     ├── switch.ex         # Toggle switches
     └── textarea.ex       # Multi-line text input
-
-themes/
-└── pulsar.css           # CSS custom properties for theming
 ```
 
 ## Development Patterns
@@ -107,7 +104,7 @@ Pulsar uses a sophisticated semantic color system built on CSS custom properties
 
 **1. CSS Custom Properties Layer**
 ```css
-/* priv/static/themes/pulsar.css */
+/* priv/templates/theme.css.eex (source) — generated into assets/css/theme.css in your app */
 @theme inline {
   /* Semantic aliases pointing to Tailwind colors */
   --color-primary-500: var(--color-blue-500);
