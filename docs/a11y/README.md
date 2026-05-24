@@ -29,6 +29,11 @@ GAP entries carry a severity tag (`blocker` / `serious` / `minor`) and
 either a Linear sub-issue ID or a reference to
 [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
 
+**Companion audit:** [`apg-audit.md`](apg-audit.md) — code-only
+cross-check of Pulsar's 7 interactive components against the WAI-ARIA
+Authoring Practices Guide (APG) patterns. Tracked under
+[PUL-20](https://linear.app/bigrefactor/issue/PUL-20).
+
 **References:**
 
 - [WCAG 2.2 specification](https://www.w3.org/TR/WCAG22/)
