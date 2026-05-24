@@ -59,7 +59,10 @@
                ~r/\.(DataCase|ConnCase|ComponentCase)$/,
                ~r/TestHelpers/,
                ~r/Support\./,
-               ~r/Fixtures\./
+               ~r/Fixtures\./,
+               # Generator tasks set @moduledoc via the `use Pulsar.Generator` macro;
+               # Credo's static analysis can't see the macro injection.
+               ~r/^Mix\.Tasks\.Pulsar\.Gen\./
              ]
            ]},
           {Credo.Check.Readability.ModuleNames, []},
