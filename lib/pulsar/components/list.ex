@@ -3,7 +3,7 @@ defmodule Pulsar.Components.List do
   List component for displaying key-value data pairs with semantic HTML.
 
   Provides styled lists for displaying structured data with consistent theming.
-  Perfect for showing entity details, metadata, or any key-value information 
+  Perfect for showing entity details, metadata, or any key-value information
   with proper accessibility.
 
   ## Features
@@ -35,17 +35,17 @@ defmodule Pulsar.Components.List do
         </:item>
       </.list>
 
-       # Vertical stacked items (override default horizontal layout)
-       <.list class="[&_[data-list-item]]:flex-col">
-         <:item title="Description">
-           This is a longer description that works better
-           when stacked vertically below the title.
-         </:item>
-         <:item title="Notes">
-           Additional notes and commentary that span
-           multiple lines work well in this layout.
-         </:item>
-       </.list>
+        # Vertical stacked items (override default horizontal layout)
+        <.list class="[&_[data-list-item]]:flex-col">
+          <:item title="Description">
+            This is a longer description that works better
+            when stacked vertically below the title.
+          </:item>
+          <:item title="Notes">
+            Additional notes and commentary that span
+            multiple lines work well in this layout.
+          </:item>
+        </.list>
 
       # Custom container layouts with Tailwind classes
       # Grid layout (responsive 2-column)

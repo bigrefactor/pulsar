@@ -11,7 +11,7 @@ defmodule Pulsar.Components.RadioGroup do
   - **Accessible by Default**: Proper radiogroup semantics with keyboard support and roving tabindex
   - **Custom Radio Design**: Styled radio buttons with smooth animations
   - **Card-style Options**: Rich card layouts with descriptions and custom content
-   - **Flexible Layouts**: Use the `class` attribute for any layout (flex, grid, etc.)
+    - **Flexible Layouts**: Use the `class` attribute for any layout (flex, grid, etc.)
   - **Size Variants**: xs, sm, md, lg, xl for complete range
   - **Color Variants**: neutral, primary, secondary, success, danger, warning, info for consistent theming
   - **Hover and Focus States**: Smooth interactive feedback

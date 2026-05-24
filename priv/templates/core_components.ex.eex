@@ -12,6 +12,7 @@ alias Phoenix.LiveView.JS
 alias <%= @components_namespace %>.Button
 alias <%= @components_namespace %>.Field
 alias <%= @components_namespace %>.Flash
+alias <%= @components_namespace %>.FlashGroup
 alias <%= @components_namespace %>.Header
 alias <%= @components_namespace %>.Icon
 alias <%= @components_namespace %>.List
@@ -102,6 +103,16 @@ def flash(assigns) do
   </div>
   """
 end
+
+@doc """
+Renders a group of flash notifications.
+
+## Examples
+
+    <.flash_group flash={@flash} />
+    <.flash_group flash={@flash} variant="outline" position="bottom-right" />
+"""
+defdelegate flash_group(assigns), to: FlashGroup
 
 @doc """
 Renders a button with navigation support and Pulsar styling.

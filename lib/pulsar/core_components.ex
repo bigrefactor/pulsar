@@ -73,7 +73,7 @@ defmodule Pulsar.CoreComponents do
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       id={@id}
       class="fixed top-4 right-4 z-50 max-w-sm w-full"
-      phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide_flash("##{@id}")}
+      phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role={map_kind_to_role(@kind)}
     >
       <Flash.flash
@@ -258,7 +258,7 @@ defmodule Pulsar.CoreComponents do
   attr :type, :string,
     default: "text",
     values: ~w(checkbox color date datetime-local email file month number password
-               search select tel text textarea time url week)
+                search select tel text textarea time url week)
 
   attr :field, FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
@@ -711,16 +711,25 @@ defmodule Pulsar.CoreComponents do
   defp get_flash_icon(:error), do: "hero-exclamation-circle"
   defp get_flash_icon(_), do: "hero-bell"
 
-  # Hide flash with animation
-  defp hide_flash(js, selector) do
+  ## JS Commands
+
+  def show(js \\ %JS{}, selector) do
+    JS.show(js,
+      to: selector,
+      time: 300,
+      transition:
+        {"transition-all ease-out duration-300", "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
+         "opacity-100 translate-y-0 sm:scale-100"}
+    )
+  end
+
+  def hide(js \\ %JS{}, selector) do
     JS.hide(js,
       to: selector,
       time: 200,
-      transition: {
-        "transition-all ease-in duration-200",
-        "opacity-100 translate-y-0 sm:scale-100",
-        "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-      }
+      transition:
+        {"transition-all ease-in duration-200", "opacity-100 translate-y-0 sm:scale-100",
+         "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
     )
   end
 end

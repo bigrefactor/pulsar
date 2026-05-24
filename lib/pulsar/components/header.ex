@@ -6,15 +6,15 @@ defmodule Pulsar.Components.Header do
   smart layout handling. All styling is applied via Tailwind CSS utilities with
   semantic color tokens that support both light and dark modes.
 
-   ## Features
+    ## Features
 
-   - **Variants**: solid, outline, ghost for different visual emphasis levels
-   - **Colors**: All semantic colors (neutral, primary, secondary, success, danger, warning, info)
-   - **Typography Scaling**: Multiple sizes (xs, sm, md, lg, xl) for proper hierarchy
-   - **Semantic Headings**: Configurable heading level (h1-h6) for proper document structure
-   - **Breadcrumb Navigation**: Automatic chevron separators with ARIA support
-   - **Responsive Layout**: Actions stack on mobile, inline on desktop
-   - **Accessibility-First**: WCAG 2.1 AA compliance with proper ARIA attributes
+    - **Variants**: solid, outline, ghost for different visual emphasis levels
+    - **Colors**: All semantic colors (neutral, primary, secondary, success, danger, warning, info)
+    - **Typography Scaling**: Multiple sizes (xs, sm, md, lg, xl) for proper hierarchy
+    - **Semantic Headings**: Configurable heading level (h1-h6) for proper document structure
+    - **Breadcrumb Navigation**: Automatic chevron separators with ARIA support
+    - **Responsive Layout**: Actions stack on mobile, inline on desktop
+    - **Accessibility-First**: WCAG 2.1 AA compliance with proper ARIA attributes
 
   ## Examples
 
@@ -43,29 +43,29 @@ defmodule Pulsar.Components.Header do
         </:actions>
       </.header>
 
-       # Header with variant and color styling
-       <.header variant="solid" color="primary" size="lg">
-         Welcome Back!
-         <:subtitle>
-           Here's what's happening with your projects
-         </:subtitle>
-       </.header>
+        # Header with variant and color styling
+        <.header variant="solid" color="primary" size="lg">
+          Welcome Back!
+          <:subtitle>
+            Here's what's happening with your projects
+          </:subtitle>
+        </.header>
 
-       # Section header with proper heading level
-       <.header as="h2" size="lg">
-         User Profile
-         <:subtitle>
-           Manage your account settings and preferences
-         </:subtitle>
-       </.header>
+        # Section header with proper heading level
+        <.header as="h2" size="lg">
+          User Profile
+          <:subtitle>
+            Manage your account settings and preferences
+          </:subtitle>
+        </.header>
 
-       # Minimal header with ghost variant
-       <.header variant="ghost" size="sm">
-         Settings
-         <:actions>
-           <.link navigate={~p"/help"}>Help</.link>
-         </:actions>
-       </.header>
+        # Minimal header with ghost variant
+        <.header variant="ghost" size="sm">
+          Settings
+          <:actions>
+            <.link navigate={~p"/help"}>Help</.link>
+          </:actions>
+        </.header>
 
       # Header with breadcrumb navigation
       <.header>

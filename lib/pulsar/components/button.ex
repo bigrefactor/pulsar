@@ -3,14 +3,14 @@ defmodule Pulsar.Components.Button do
   Beautiful, accessible button component with polymorphic rendering and styling.
 
   Provides styled buttons with semantic variants, consistent accessibility, and
-  smart navigation handling. All styling is applied via Tailwind CSS utilities 
+  smart navigation handling. All styling is applied via Tailwind CSS utilities
   with semantic color tokens that support both light and dark modes.
 
   ## Features
 
   - **Polymorphic Rendering**: Renders as `<button>`, `<a>`, or `<div>` elements
   - **Accessibility-First**: WCAG 2.1 AA compliance with proper ARIA attributes
-  - **Variants**: solid, outline, ghost, link with semantic styling  
+  - **Variants**: solid, outline, ghost, link with semantic styling
   - **Colors**: neutral, primary, secondary, success, danger, warning for theming
   - **Multiple Sizes**: xs, sm, md, lg, xl for complete range
   - **Smart Navigation**: Phoenix LiveView navigation with security
@@ -53,7 +53,7 @@ defmodule Pulsar.Components.Button do
 
   The component automatically chooses the appropriate HTML element:
   - `<button>` for interactive buttons (default)
-  - `<a>` for navigation (when href/navigate/patch provided)  
+  - `<a>` for navigation (when href/navigate/patch provided)
   - Custom element when explicitly set via `:as`
 
   ## Accessibility Features
@@ -352,7 +352,7 @@ defmodule Pulsar.Components.Button do
 
       # Link buttons ignore size - they flow with surrounding text
       <.button variant="link" size="lg">Download</.button>  # size ignored
-      
+
       # Other variants respect size
       <.button variant="solid" size="lg">Download</.button>  # h-12, px-6, text-lg
   """

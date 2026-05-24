@@ -2,8 +2,8 @@ defmodule Pulsar.Components.Input do
   @moduledoc """
   Self-contained styled input component with decorator support.
 
-  Provides beautiful, accessible input fields with optional start and end decorators 
-  for icons, text, or interactive elements. All styling is applied via Tailwind CSS 
+  Provides beautiful, accessible input fields with optional start and end decorators
+  for icons, text, or interactive elements. All styling is applied via Tailwind CSS
   utilities with semantic color tokens supporting both light and dark modes.
 
   ## Features

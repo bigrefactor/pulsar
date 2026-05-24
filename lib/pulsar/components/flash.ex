@@ -50,11 +50,11 @@ defmodule Pulsar.Components.Flash do
       # In your layout or LiveView
       <.flash_group flash={@flash} />
 
-   ## Accessibility Features
+    ## Accessibility Features
 
-   - **Screen Reader Support**: Proper ARIA roles and live regions
-   - **Keyboard Navigation**: Dismissible flashes are keyboard accessible
-   - **Color Independence**: Icons and text provide non-color-based communication
+    - **Screen Reader Support**: Proper ARIA roles and live regions
+    - **Keyboard Navigation**: Dismissible flashes are keyboard accessible
+    - **Color Independence**: Icons and text provide non-color-based communication
   """
 
   use Phoenix.Component
@@ -228,7 +228,7 @@ defmodule Pulsar.Components.Flash do
   Renders a styled flash notification component.
 
   Self-contained flash component with auto-dismiss functionality and accessibility
-  built-in. Styling is controlled via configuration maps and Twm for 
+  built-in. Styling is controlled via configuration maps and Twm for
   intelligent class composition and conflict resolution.
 
   ## Auto-dismiss Behavior
@@ -324,19 +324,19 @@ defmodule Pulsar.Components.Flash do
         initializeState() {
           const dismissAfterValue = parseInt(this.el.dataset.dismissAfter || 5000)
           // Validate dismissAfter: must be positive number, max 60 seconds, fallback to 5 seconds
-          this.dismissAfter = isNaN(dismissAfterValue) || dismissAfterValue < 100 
-            ? 5000 
+          this.dismissAfter = isNaN(dismissAfterValue) || dismissAfterValue < 100
+            ? 5000
             : Math.min(dismissAfterValue, 60000)
-          
+
           this.autoDismiss = this.el.dataset.autoDismiss === "true"
           this.onDismissEvent = this.el.dataset.onDismiss
           this.flashKey = this.el.dataset.flashKey
           this.remainingTime = this.dismissAfter
-           this.timer = null
-           this.isVisible = false
-           this.isPaused = false
-           this.startTime = null
-           this._dismissed = false
+            this.timer = null
+            this.isVisible = false
+            this.isPaused = false
+            this.startTime = null
+            this._dismissed = false
         },
 
         // Set up IntersectionObserver for visibility detection
@@ -349,7 +349,7 @@ defmodule Pulsar.Components.Flash do
               }
             })
           }, { threshold: 0.1 })
-          
+
           this.observer.observe(this.el)
         },
 
@@ -359,10 +359,10 @@ defmodule Pulsar.Components.Flash do
 
           const rect = this.el.getBoundingClientRect()
           const style = window.getComputedStyle(this.el)
-          
+
           const inViewport = this.isElementInViewport(rect)
           const isDisplayed = this.isElementDisplayed(style)
-          
+
           if (inViewport && isDisplayed) {
             this.isVisible = true
             this.startTimer()
@@ -378,9 +378,9 @@ defmodule Pulsar.Components.Flash do
 
         // Check if element is displayed (not hidden by CSS)
         isElementDisplayed(style) {
-          return style.display !== 'none' && 
-                 style.visibility !== 'hidden' && 
-                 parseFloat(style.opacity || '1') > 0
+          return style.display !== 'none' &&
+                  style.visibility !== 'hidden' &&
+                  parseFloat(style.opacity || '1') > 0
         },
 
         // Set up mouse and keyboard interaction handlers
@@ -400,31 +400,31 @@ defmodule Pulsar.Components.Flash do
           this.el.addEventListener('pulsar:flash-dismiss', this._onManualDismiss)
         },
 
-         // Start the auto-dismiss timer
-         startTimer() {
-           if (!this.autoDismiss || this.timer) return
-           
-           this.startTime = Date.now()
-           this.timer = setTimeout(() => this.dismiss(), this.remainingTime)
-         },
+          // Start the auto-dismiss timer
+          startTimer() {
+            if (!this.autoDismiss || this.timer) return
 
-         // Pause the auto-dismiss timer
-         pause() {
-           if (!this.timer || !this.autoDismiss) return
-           
-           clearTimeout(this.timer)
-           this.remainingTime -= (Date.now() - this.startTime)
-           this.timer = null
-           this.isPaused = true
-         },
+            this.startTime = Date.now()
+            this.timer = setTimeout(() => this.dismiss(), this.remainingTime)
+          },
 
-         // Resume the auto-dismiss timer
-         resume() {
-           if (!this.isPaused || !this.autoDismiss) return
-           
-           this.isPaused = false
-           this.startTimer()
-         },
+          // Pause the auto-dismiss timer
+          pause() {
+            if (!this.timer || !this.autoDismiss) return
+
+            clearTimeout(this.timer)
+            this.remainingTime -= (Date.now() - this.startTime)
+            this.timer = null
+            this.isPaused = true
+          },
+
+          // Resume the auto-dismiss timer
+          resume() {
+            if (!this.isPaused || !this.autoDismiss) return
+
+            this.isPaused = false
+            this.startTimer()
+          },
 
         // Dismiss the flash with animation
         dismiss() {
@@ -468,7 +468,7 @@ defmodule Pulsar.Components.Flash do
         updated() {
           const newDismissAfter = parseInt(this.el.dataset.dismissAfter || 5000)
           const newAutoDismiss = this.el.dataset.autoDismiss === "true"
-          
+
           this.updateDismissAfter(newDismissAfter)
           this.updateAutoDismiss(newAutoDismiss)
         },
@@ -479,7 +479,7 @@ defmodule Pulsar.Components.Flash do
           const validatedTimeout = isNaN(newDismissAfter) || newDismissAfter < 100
             ? 5000
             : Math.min(newDismissAfter, 60000)
-            
+
           if (validatedTimeout !== this.dismissAfter) {
             this.dismissAfter = validatedTimeout
             if (!this.isVisible) {

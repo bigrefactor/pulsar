@@ -2,16 +2,16 @@ defmodule Pulsar.Components.FlashGroup do
   @moduledoc """
   Container component for managing multiple flash notifications from Phoenix.Flash.
 
-   Provides intelligent positioning, stacking, and orchestration of Flash components
-   with automatic type-to-color mapping and item limiting. Designed to be
-   the single integration point with Phoenix.Flash in your application.
+    Provides intelligent positioning, stacking, and orchestration of Flash components
+    with automatic type-to-color mapping and item limiting. Designed to be
+    the single integration point with Phoenix.Flash in your application.
 
   ## Features
 
   - **Phoenix.Flash Integration**: Reads flash messages directly from @flash assigns
   - **Intelligent Positioning**: 6 position options with automatic stacking
   - **Type-to-Color Mapping**: Automatic mapping of flash types to semantic colors
-   - **Item Limiting**: Configurable maximum number of flash messages to display
+    - **Item Limiting**: Configurable maximum number of flash messages to display
   - **Consistent Styling**: Single variant applied to all flashes in group
   - **Staggered Animations**: Smooth entry/exit with coordinated timing
 
@@ -21,9 +21,9 @@ defmodule Pulsar.Components.FlashGroup do
       <.flash_group flash={@flash} />
 
       # Custom positioning and styling
-      <.flash_group 
-        flash={@flash} 
-        variant="outline" 
+      <.flash_group
+        flash={@flash}
+        variant="outline"
         position="bottom-right"
         max_items={3}
       />
@@ -36,156 +36,156 @@ defmodule Pulsar.Components.FlashGroup do
 
   FlashGroup automatically maps Phoenix flash types to appropriate colors:
   - `:error` → `danger` color
-  - `:warning` → `warning` color  
+  - `:warning` → `warning` color
   - `:info` → `info` color
   - `:success` → `success` color
   - Custom types → `neutral` color
 
-   ## Usage in Phoenix Applications
+    ## Usage in Phoenix Applications
 
-       # In your root layout or LiveView
-       <.flash_group flash={@flash} position="top-right" />
+        # In your root layout or LiveView
+        <.flash_group flash={@flash} position="top-right" />
 
-       # Set flash messages in controllers/LiveViews
-       conn |> put_flash(:error, "Something went wrong")
-       conn |> put_flash(:success, "Changes saved!")
+        # Set flash messages in controllers/LiveViews
+        conn |> put_flash(:error, "Something went wrong")
+        conn |> put_flash(:success, "Changes saved!")
 
-       # In LiveViews
-       socket |> put_flash(:info, "Welcome back!")
+        # In LiveViews
+        socket |> put_flash(:info, "Welcome back!")
 
-   ## Optional Event Handler
+    ## Optional Event Handler
 
-   FlashGroup can optionally push dismiss events for tracking or custom behavior.
-   Most applications don't need this since flash messages auto-clear on navigation.
+    FlashGroup can optionally push dismiss events for tracking or custom behavior.
+    Most applications don't need this since flash messages auto-clear on navigation.
 
-       defmodule MyAppWeb.PageLive do
-         use MyAppWeb, :live_view
+        defmodule MyAppWeb.PageLive do
+          use MyAppWeb, :live_view
 
-         def render(assigns) do
-           ~H\"\"\"
-           <.flash_group flash={@flash} on_dismiss="track_dismissal" />
-           <!-- your page content -->
-           \"\"\"
-         end
+          def render(assigns) do
+            ~H\"\"\"
+            <.flash_group flash={@flash} on_dismiss="track_dismissal" />
+            <!-- your page content -->
+            \"\"\"
+          end
 
-         # Optional: Handle dismissal events for analytics/tracking
-         def handle_event("track_dismissal", %{"key" => key}, socket) do
-           # Safe atom handling to prevent atom exhaustion attacks
-           case safe_to_existing_atom(key) do
-             {:ok, key_atom} ->
-               # Track the dismissal with the actual flash type
-               MyApp.Analytics.track("flash_dismissed", %{type: key_atom})
-               {:noreply, socket}
+          # Optional: Handle dismissal events for analytics/tracking
+          def handle_event("track_dismissal", %{"key" => key}, socket) do
+            # Safe atom handling to prevent atom exhaustion attacks
+            case safe_to_existing_atom(key) do
+              {:ok, key_atom} ->
+                # Track the dismissal with the actual flash type
+                MyApp.Analytics.track("flash_dismissed", %{type: key_atom})
+                {:noreply, socket}
 
-             :error ->
-               # Invalid key, log or track as unknown but don't crash
-               MyApp.Analytics.track("flash_dismissed", %{type: "invalid_key"})
-               {:noreply, socket}
-           end
-         end
+              :error ->
+                # Invalid key, log or track as unknown but don't crash
+                MyApp.Analytics.track("flash_dismissed", %{type: "invalid_key"})
+                {:noreply, socket}
+            end
+          end
 
-         defp safe_to_existing_atom(string) when is_binary(string) do
-           {:ok, String.to_existing_atom(string)}
-         rescue
-           ArgumentError -> :error
-         end
-       end
+          defp safe_to_existing_atom(string) when is_binary(string) do
+            {:ok, String.to_existing_atom(string)}
+          rescue
+            ArgumentError -> :error
+          end
+        end
 
-   ## Controller Integration
+    ## Controller Integration
 
-   FlashGroup works seamlessly with controller-set flashes:
+    FlashGroup works seamlessly with controller-set flashes:
 
-       defmodule MyAppWeb.UserController do
-         use MyAppWeb, :controller
+        defmodule MyAppWeb.UserController do
+          use MyAppWeb, :controller
 
-         def create(conn, %{"user" => user_params}) do
-           case Users.create_user(user_params) do
-             {:ok, user} ->
-               conn
-               |> put_flash(:success, "User created successfully!")
-                 |> redirect(to: "/users/\#{user.id}")
+          def create(conn, %{"user" => user_params}) do
+            case Users.create_user(user_params) do
+              {:ok, user} ->
+                conn
+                |> put_flash(:success, "User created successfully!")
+                  |> redirect(to: "/users/\#{user.id}")
 
-             {:error, %Ecto.Changeset{} = changeset} ->
-               conn
-               |> put_flash(:error, "Please check the errors below")
-               |> render(:new, changeset: changeset)
-         end
-       end
+              {:error, %Ecto.Changeset{} = changeset} ->
+                conn
+                |> put_flash(:error, "Please check the errors below")
+                |> render(:new, changeset: changeset)
+          end
+        end
 
-   ## Testing FlashGroup Components
+    ## Testing FlashGroup Components
 
-   ### Testing Flash Messages in LiveView Tests
+    ### Testing Flash Messages in LiveView Tests
 
-       test "displays flash messages with appropriate icons and colors", %{conn: conn} do
-         {:ok, view, _html} = live(conn, "/")
-         
-         # Set flash messages
-         view |> put_flash(:success, "Changes saved!")
-         view |> put_flash(:error, "Something went wrong")
-         
-         # Assert flash messages are displayed
-         assert has_element?(view, "[role='status']", "Changes saved!")
-         assert has_element?(view, "[role='alert']", "Something went wrong") 
-         
-         # Assert icons are present
-         assert has_element?(view, ".hero-check-circle") # success icon
-         assert has_element?(view, ".hero-x-circle")     # error icon
-       end
+        test "displays flash messages with appropriate icons and colors", %{conn: conn} do
+          {:ok, view, _html} = live(conn, "/")
 
-   ### Testing Flash Dismissal
+          # Set flash messages
+          view |> put_flash(:success, "Changes saved!")
+          view |> put_flash(:error, "Something went wrong")
 
-       test "handles flash dismissal correctly", %{conn: conn} do
-         {:ok, view, _html} = live(conn, "/")
-         
-         view |> put_flash(:info, "Test message")
-         assert has_element?(view, "[role='status']", "Test message")
-         
-         # Simulate manual dismiss
-         view |> element("[aria-label='Dismiss']") |> render_click()
-         
-         # Flash should be cleared
-         refute has_element?(view, "[role='status']", "Test message")
-       end
+          # Assert flash messages are displayed
+          assert has_element?(view, "[role='status']", "Changes saved!")
+          assert has_element?(view, "[role='alert']", "Something went wrong")
 
-   ### Testing Custom Configuration
+          # Assert icons are present
+          assert has_element?(view, ".hero-check-circle") # success icon
+          assert has_element?(view, ".hero-x-circle")     # error icon
+        end
 
-       test "respects custom positioning and styling", %{conn: conn} do
-         {:ok, view, _html} = live(conn, "/custom-flash")
-         
-         view |> put_flash(:warning, "Custom styled flash")
-         
-         # Assert custom positioning
-         assert has_element?(view, ".bottom-4.left-4")   # bottom-left position
-         assert has_element?(view, ".z-30")              # custom z-index
-         
-         # Assert custom variant
-         assert has_element?(view, ".border.border-warning") # outline variant
-       end
+    ### Testing Flash Dismissal
 
-   ### Helper Functions for Testing
+        test "handles flash dismissal correctly", %{conn: conn} do
+          {:ok, view, _html} = live(conn, "/")
 
-   Add these helpers to your test support modules:
+          view |> put_flash(:info, "Test message")
+          assert has_element?(view, "[role='status']", "Test message")
 
-       def put_flash(view, type, message) do
-         Phoenix.LiveViewTest.put_flash(view, type, message)
-       end
+          # Simulate manual dismiss
+          view |> element("[aria-label='Dismiss']") |> render_click()
 
-       def assert_flash(view, type, message) do
-         role = if type in [:error, :warning], do: "alert", else: "status"
-         assert has_element?(view, "[role='\#{role}']", message)
-       end
+          # Flash should be cleared
+          refute has_element?(view, "[role='status']", "Test message")
+        end
 
-       def refute_flash(view, type, message) do
-         role = if type in [:error, :warning], do: "alert", else: "status" 
-         refute has_element?(view, "[role='\#{role}']", message)
-       end
-       end
+    ### Testing Custom Configuration
+
+        test "respects custom positioning and styling", %{conn: conn} do
+          {:ok, view, _html} = live(conn, "/custom-flash")
+
+          view |> put_flash(:warning, "Custom styled flash")
+
+          # Assert custom positioning
+          assert has_element?(view, ".bottom-4.left-4")   # bottom-left position
+          assert has_element?(view, ".z-30")              # custom z-index
+
+          # Assert custom variant
+          assert has_element?(view, ".border.border-warning") # outline variant
+        end
+
+    ### Helper Functions for Testing
+
+    Add these helpers to your test support modules:
+
+        def put_flash(view, type, message) do
+          Phoenix.LiveViewTest.put_flash(view, type, message)
+        end
+
+        def assert_flash(view, type, message) do
+          role = if type in [:error, :warning], do: "alert", else: "status"
+          assert has_element?(view, "[role='\#{role}']", message)
+        end
+
+        def refute_flash(view, type, message) do
+          role = if type in [:error, :warning], do: "alert", else: "status"
+          refute has_element?(view, "[role='\#{role}']", message)
+        end
+        end
 
   ## Positioning
 
   Six built-in positions with appropriate animations:
   - `top-right` (default) - Slide in from right
-  - `top-center` - Slide down from top  
+  - `top-center` - Slide down from top
   - `top-left` - Slide in from left
   - `bottom-right` - Slide up from bottom-right
   - `bottom-center` - Slide up from bottom
@@ -339,11 +339,11 @@ defmodule Pulsar.Components.FlashGroup do
 
   ## Flash Message Processing
 
-   1. **Read Flash Messages**: Extracts all messages from the @flash map
-   2. **Apply Item Limit**: Limits displayed messages to max_items (Phoenix.Flash stores one message per type)
-   3. **Type Mapping**: Maps each flash type to appropriate color and ARIA role
-   4. **Render Components**: Creates Flash components with consistent styling
-   5. **Coordinate Animations**: Manages staggered entry and exit animations
+    1. **Read Flash Messages**: Extracts all messages from the @flash map
+    2. **Apply Item Limit**: Limits displayed messages to max_items (Phoenix.Flash stores one message per type)
+    3. **Type Mapping**: Maps each flash type to appropriate color and ARIA role
+    4. **Render Components**: Creates Flash components with consistent styling
+    5. **Coordinate Animations**: Manages staggered entry and exit animations
 
   ## Event Handling
 
@@ -354,7 +354,7 @@ defmodule Pulsar.Components.FlashGroup do
         # Safe atom handling to prevent atom exhaustion attacks
         # Only clear flash if the key is a valid existing atom AND exists in flash
         with {:ok, key_atom} <- safe_to_existing_atom(key),
-             true <- Map.has_key?(socket.assigns.flash, key_atom) do
+              true <- Map.has_key?(socket.assigns.flash, key_atom) do
           {:noreply, clear_flash(socket, key_atom)}
         else
           _ -> {:noreply, socket}
@@ -377,7 +377,7 @@ defmodule Pulsar.Components.FlashGroup do
       <.flash_group flash={@flash} />
 
       # Custom styling and position
-      <.flash_group 
+      <.flash_group
         flash={@flash}
         variant="outline"
         position="bottom-center"

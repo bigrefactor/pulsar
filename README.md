@@ -33,7 +33,23 @@ mix deps.get
 
 ### Library Mode
 
-Import components directly:
+Either import the `Pulsar.CoreComponents` aggregate for a one-line on-ramp:
+
+```elixir
+# In your component/LiveView
+import Pulsar.CoreComponents
+
+# In templates
+<.flash kind={:info} flash={@flash} />
+<.flash_group flash={@flash} />
+<.header>Dashboard<:subtitle>Welcome back!</:subtitle></.header>
+<.button variant="primary">Save</.button>
+<.table id="users" rows={@users}>
+  <:col :let={user} label="Name">{user.name}</:col>
+</.table>
+```
+
+Or import individual components for granular control:
 
 ```elixir
 # In your component/LiveView

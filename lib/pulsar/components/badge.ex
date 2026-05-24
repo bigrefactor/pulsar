@@ -2,8 +2,8 @@ defmodule Pulsar.Components.Badge do
   @moduledoc """
   Badge component for displaying labels, tags, and status indicators.
 
-  Provides styled badges with optional start and end addon content. Perfect for 
-  tags, status indicators, and multi-select displays that need additional 
+  Provides styled badges with optional start and end addon content. Perfect for
+  tags, status indicators, and multi-select displays that need additional
   interactivity or decoration.
 
   ## Features
