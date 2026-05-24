@@ -27,7 +27,7 @@ Accessible link component with semantic variants, security, and Phoenix navigati
 
 use Phoenix.Component
 
-import TailwindMerge, only: [merge: 1]
+import Twm, only: [merge: 1]
 
 alias Phoenix.LiveView.Rendered
 alias <%= @component_namespace %>.Icon

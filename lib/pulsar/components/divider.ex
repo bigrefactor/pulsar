@@ -77,7 +77,7 @@ defmodule Pulsar.Components.Divider do
 
   use Phoenix.Component
 
-  import TailwindMerge, only: [merge: 1]
+  import Twm, only: [merge: 1]
 
   # ============================================================================
   # CONFIGURATION & CONSTANTS

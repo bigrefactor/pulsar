@@ -8,7 +8,7 @@ defmodule Pulsar.Components.Input do
 
   ## Features
 
-  - **Self-Contained**: No external dependencies beyond TailwindMerge
+  - **Self-Contained**: No external dependencies beyond Twm
   - **Decorator System**: Start/end decorators for icons, text, or interactive elements
   - **Multiple Variants**: outline, ghost, and solid for different use cases
   - **Full Color Palette**: All semantic colors with automatic error override
@@ -69,7 +69,7 @@ defmodule Pulsar.Components.Input do
 
   use Phoenix.Component
 
-  import TailwindMerge, only: [merge: 1]
+  import Twm, only: [merge: 1]
 
   alias Phoenix.HTML.FormField
   alias Phoenix.LiveView.Rendered

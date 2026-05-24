@@ -67,7 +67,7 @@ defmodule Pulsar.Components.Button do
 
   use Phoenix.Component
 
-  import TailwindMerge, only: [merge: 1]
+  import Twm, only: [merge: 1]
 
   alias Phoenix.LiveView.Rendered
   alias Phoenix.VerifiedRoutes.Route
@@ -337,7 +337,7 @@ defmodule Pulsar.Components.Button do
   Renders a styled button component.
 
   Self-contained button component with polymorphic rendering and security built-in.
-  Styling is controlled via configuration maps and TailwindMerge for intelligent
+  Styling is controlled via configuration maps and Twm for intelligent
   class composition and conflict resolution.
 
   ## Size Behavior
@@ -368,7 +368,7 @@ defmodule Pulsar.Components.Button do
     as = resolve_as_from_props(assigns)
     assigns = %{assigns | as: as}
 
-    # Build complete class string using TailwindMerge
+    # Build complete class string using Twm
     assigns =
       assign(
         assigns,

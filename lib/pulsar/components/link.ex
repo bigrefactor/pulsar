@@ -28,7 +28,7 @@ defmodule Pulsar.Components.Link do
 
   use Phoenix.Component
 
-  import TailwindMerge, only: [merge: 1]
+  import Twm, only: [merge: 1]
 
   alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Icon

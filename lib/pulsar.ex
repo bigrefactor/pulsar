@@ -4,9 +4,9 @@ defmodule Pulsar do
 
   Pulsar is a self-contained component library for Phoenix LiveView. It ships
   accessible, styled components with all WAI-ARIA behavior built in and only
-  TailwindMerge as a runtime dependency. Components are designed to be
-  generated into your application, giving you full ownership of the source
-  and predictable Tailwind class purging.
+  Twm as a runtime dependency. Components are designed to be generated into
+  your application, giving you full ownership of the source and predictable
+  Tailwind class purging.
 
   ## Installation
 
@@ -15,7 +15,7 @@ defmodule Pulsar do
       def deps do
         [
           {:pulsar, "~> 0.1"},
-          {:tailwind_merge, "~> 0.2"}
+          {:twm, "~> 0.1"}
         ]
       end
 
@@ -50,7 +50,7 @@ defmodule Pulsar do
   ## Features
 
   - **Self-Contained**: All accessibility and behavior inlined; only
-    TailwindMerge as a runtime dependency
+    Twm as a runtime dependency
   - **Tailwind CSS**: Utility-first styling with semantic color tokens
   - **Dark Mode**: Automatic light/dark mode support via CSS custom properties
   - **Documented Attrs**: Full attr documentation with `:values` validation

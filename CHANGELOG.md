@@ -7,10 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed - Twm Adoption
+
+- **BREAKING**: Replaced `bigrefactor/tailwind_merge` runtime dependency with [`twm`](https://hex.pm/packages/twm) (`~> 0.1`). Apps must update `mix.exs` and re-run `mix deps.get`. Generated components now `import Twm, only: [merge: 1]` instead of `TailwindMerge`. The install task adds `{Twm.Cache, []}` to the host app's supervision tree for LRU class-merge caching by default.
+- **Tailwind v4 utility coverage**: Twm is a port of `tailwind-merge` JS v3.3.0, with native conflict-resolution for v4 utilities (`text-shadow-*`, `inset-shadow-*`, `field-sizing-*`, `mask-*`, etc.) that the previous merger did not know about.
+
 ### Changed - Self-Contained Component Library
 
 - **BREAKING**: Complete self-contained component library implementation 
-- **Single Dependency**: Only requires TailwindMerge for intelligent class merging
+- **Single Dependency**: Only requires Twm for intelligent class merging
 - **Self-Contained Components**: All 11 core components now include inlined accessibility and behavior
 - **Production Ready**: Complete component coverage for Phoenix applications
 - **Clean Architecture**: Zero compilation warnings, full test coverage maintained
@@ -52,7 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependencies
 
 - Phoenix LiveView integration
-- TailwindMerge for intelligent class composition
+- Twm for intelligent class composition (Tailwind v4-aware)
 - Tailwind CSS utility-first styling
 
 [0.1.0]: https://github.com/bigrefactor/pulsar/releases/tag/v0.1.0

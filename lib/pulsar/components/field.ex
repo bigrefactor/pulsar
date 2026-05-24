@@ -127,7 +127,7 @@ defmodule Pulsar.Components.Field do
 
   use Phoenix.Component
 
-  import TailwindMerge, only: [merge: 1]
+  import Twm, only: [merge: 1]
 
   alias Phoenix.HTML.Form
   alias Phoenix.HTML.FormField
@@ -187,8 +187,11 @@ defmodule Pulsar.Components.Field do
   # Label section wrapper classes
   @label_section_classes "flex flex-col gap-1"
 
-  # Inline label base classes for checkbox/switch
-  @inline_label_base_classes "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+  # Inline label base classes for checkbox/switch.
+  # Note: `text-{size}` is added by `size_class` and would reset line-height in
+  # Tailwind v4, so `leading-none` is appended AFTER `size_class` in the merge
+  # below rather than declared here.
+  @inline_label_base_classes "font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 
   # ============================================================================
   # MAIN FIELD COMPONENT
@@ -630,6 +633,7 @@ defmodule Pulsar.Components.Field do
     merge([
       @inline_label_base_classes,
       size_class,
+      "leading-none",
       color_class,
       custom_class
     ])

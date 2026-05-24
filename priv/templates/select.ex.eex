@@ -82,7 +82,7 @@ the select element with individual remove buttons for better UX.
 use Phoenix.Component
 
 import <%= @component_namespace %>.Icon, only: [icon: 1]
-import TailwindMerge, only: [merge: 1]
+import Twm, only: [merge: 1]
 
 alias Phoenix.HTML.Form
 alias Phoenix.HTML.FormField

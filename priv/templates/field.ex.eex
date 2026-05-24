@@ -126,7 +126,7 @@ The field wrapper can be customized with CSS classes for different layouts:
 
 use Phoenix.Component
 
-import TailwindMerge, only: [merge: 1]
+import Twm, only: [merge: 1]
 
 alias Phoenix.HTML.Form
 alias Phoenix.HTML.FormField
@@ -629,6 +629,7 @@ defp get_inline_label_classes(size, has_errors, color, custom_class) do
   merge([
     @inline_label_base_classes,
     size_class,
+    "leading-none",
     color_class,
     custom_class
   ])

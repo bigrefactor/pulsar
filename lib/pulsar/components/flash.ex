@@ -59,7 +59,7 @@ defmodule Pulsar.Components.Flash do
 
   use Phoenix.Component
 
-  import TailwindMerge, only: [merge: 1]
+  import Twm, only: [merge: 1]
 
   alias Phoenix.LiveView.JS
   alias Phoenix.LiveView.Rendered
@@ -228,7 +228,7 @@ defmodule Pulsar.Components.Flash do
   Renders a styled flash notification component.
 
   Self-contained flash component with auto-dismiss functionality and accessibility
-  built-in. Styling is controlled via configuration maps and TailwindMerge for 
+  built-in. Styling is controlled via configuration maps and Twm for 
   intelligent class composition and conflict resolution.
 
   ## Auto-dismiss Behavior
@@ -261,7 +261,7 @@ defmodule Pulsar.Components.Flash do
     # Ensure ID exists for hook functionality
     assigns = assign(assigns, :id, assigns[:id] || generate_id())
 
-    # Build complete class string using TailwindMerge
+    # Build complete class string using Twm
     assigns =
       assign(
         assigns,

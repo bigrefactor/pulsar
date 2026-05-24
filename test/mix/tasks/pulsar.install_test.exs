@@ -112,13 +112,13 @@ defmodule Mix.Tasks.Pulsar.InstallTest do
       |> apply_igniter!()
     end
 
-    test "adds tailwind_merge as dependency to mix.exs" do
+    test "adds twm as dependency to mix.exs" do
       igniter =
         phx_test_project()
         |> Igniter.compose_task("pulsar.install", ["--component", "badge", "--no-core-components", "--yes"])
 
-      # Verify tailwind_merge dependency was added
-      assert Deps.has_dep?(igniter, :tailwind_merge)
+      # Verify twm dependency was added
+      assert Deps.has_dep?(igniter, :twm)
     end
   end
 

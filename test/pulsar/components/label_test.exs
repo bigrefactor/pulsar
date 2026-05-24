@@ -261,7 +261,7 @@ defmodule Pulsar.Components.LabelTest do
       assert html =~ "Custom"
     end
 
-    test "merges classes with TailwindMerge" do
+    test "merges classes with Twm" do
       assigns = %{}
 
       # Test that custom classes can override defaults

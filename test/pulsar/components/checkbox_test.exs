@@ -675,7 +675,7 @@ defmodule Pulsar.Components.CheckboxTest do
   end
 
   describe "checkbox/1 custom styling" do
-    test "merges custom classes with TailwindMerge" do
+    test "merges custom classes with Twm" do
       assigns = %{}
 
       html =

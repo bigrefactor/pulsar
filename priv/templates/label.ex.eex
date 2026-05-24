@@ -77,7 +77,7 @@ Uses a `.sr-only` class for screen reader-only text. Ensure this class is availa
 
 use Phoenix.Component
 
-import TailwindMerge, only: [merge: 1]
+import Twm, only: [merge: 1]
 
 alias Phoenix.LiveView.Rendered
 

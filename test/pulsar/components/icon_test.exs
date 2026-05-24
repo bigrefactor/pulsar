@@ -182,12 +182,12 @@ defmodule Pulsar.Components.IconTest do
     end
   end
 
-  describe "icon/1 class merging with TailwindMerge" do
+  describe "icon/1 class merging with Twm" do
     test "user classes override component defaults" do
       assigns = %{}
       html = rendered_to_string(~H[<Icon.icon name="hero-check" size="md" class="w-10 h-10 text-red-500" />])
 
-      # TailwindMerge should resolve conflicts - user classes win
+      # Twm should resolve conflicts - user classes win
       assert html =~ ~s(w-10 h-10)
       assert html =~ ~s(text-red-500)
       # Component defaults should be overridden

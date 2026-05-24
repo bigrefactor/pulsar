@@ -66,7 +66,7 @@ defmodule Pulsar.MixProject do
       {:phoenix_live_view, "~> 1.1", optional: true, runtime: false},
       {:phoenix_html, "~> 4.0", optional: true, runtime: false},
       {:phoenix_html_helpers, "~> 1.0", optional: true, runtime: false},
-      {:tailwind_merge, github: "bigrefactor/tailwind_merge"},
+      {:twm, "~> 0.1"},
 
       # Quality tools
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
