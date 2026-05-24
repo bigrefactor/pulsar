@@ -142,8 +142,8 @@ defmodule Pulsar.Generator do
   end
 
   def install_component(igniter, component_name, assigns) do
-    namespace = Igniter.Project.Module.parse(to_string(igniter.args.options[:components_module]))
-    component = component_module(igniter, component_name)
+    namespace = parse_components_module(igniter.args.options[:components_module])
+    component = component_module(namespace, component_name)
     # Convert namespace to inspect format to avoid Elixir. prefix in templates
     namespace_inspected = inspect(namespace)
 
@@ -204,14 +204,8 @@ defmodule Pulsar.Generator do
     end)
   end
 
-  defp component_module(igniter, component_name) do
-    namespace = namespace(igniter)
-
+  defp component_module(namespace, component_name) do
     Module.concat(namespace, Macro.camelize(to_string(component_name)))
-  end
-
-  defp namespace(igniter) do
-    Igniter.Project.Module.parse(to_string(igniter.args.options[:components_module]))
   end
 
   defp get_components_namespace(igniter, _namespace_inspected) do
@@ -221,12 +215,39 @@ defmodule Pulsar.Generator do
   end
 
   defp contents(component_name, assigns) do
-    template =
-      :pulsar
-      |> :code.priv_dir()
-      |> Path.join("templates")
-      |> Path.join("#{component_name}.ex.eex")
+    template = template_path(component_name)
+
+    if !File.exists?(template) do
+      raise ArgumentError,
+            "Pulsar template missing for component :#{component_name} " <>
+              "(expected at #{template})"
+    end
 
     EEx.eval_file(template, assigns: assigns, engine: EEx.SmartEngine)
+  end
+
+  defp template_path(component_name) do
+    :pulsar
+    |> :code.priv_dir()
+    |> Path.join("templates")
+    |> Path.join("#{component_name}.ex.eex")
+  end
+
+  defp parse_components_module(raw) do
+    value = raw |> to_string() |> String.trim() |> String.trim_trailing(".")
+
+    cond do
+      value == "" ->
+        raise ArgumentError,
+              "Pulsar requires --components-module to be a non-empty module name"
+
+      !Regex.match?(~r/^[A-Z][A-Za-z0-9_]*(\.[A-Z][A-Za-z0-9_]*)*$/, value) ->
+        raise ArgumentError,
+              "Pulsar received an invalid module name for --components-module: " <>
+                "#{inspect(raw)}"
+
+      true ->
+        Igniter.Project.Module.parse(value)
+    end
   end
 end
