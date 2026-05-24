@@ -662,6 +662,47 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ "focus:ring-neutral/60"
     end
 
+    test "does not render a dangling aria-describedby when field has errors but no caller-provided describedby" do
+      field = %FormField{
+        errors: [{"is required", []}],
+        field: :country,
+        form: %Form{},
+        id: "user_country",
+        name: "user[country]",
+        value: ""
+      }
+
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select field={@field} options={[{"US", "us"}]} />
+        """)
+
+      refute html =~ "aria-describedby="
+    end
+
+    test "passes caller-provided aria-describedby through unchanged (no merging with internal IDs)" do
+      field = %FormField{
+        errors: [{"is required", []}],
+        field: :country,
+        form: %Form{},
+        id: "user_country",
+        name: "user[country]",
+        value: ""
+      }
+
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select field={@field} options={[{"US", "us"}]} aria-describedby="caller-help" />
+        """)
+
+      assert html =~ ~s(aria-describedby="caller-help")
+      refute html =~ ~s(aria-describedby="caller-help user_country-errors")
+    end
+
     test "includes custom arrow styling" do
       assigns = %{}
 

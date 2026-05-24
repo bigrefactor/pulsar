@@ -364,7 +364,7 @@ def select(assigns) do
         required={@required}
         disabled={@disabled}
         class={@class}
-        aria-describedby={@computed_aria_describedby}
+        aria-describedby={assigns[:"aria-describedby"]}
         aria-invalid={@invalid && "true"}
         data-disabled={@data_disabled}
         data-required={@data_required}
@@ -559,21 +559,6 @@ end
 
 # Compute attributes (from Stellar)
 defp assign_computed_attributes(assigns) do
-  # ARIA describedby merging
-  caller_describedby = assigns[:"aria-describedby"]
-
-  errors_id =
-    if assigns.field_provided and has_field_errors(assigns),
-      do: "#{assigns.id}-errors"
-
-  computed_aria_describedby =
-    case {caller_describedby, errors_id} do
-      {nil, nil} -> nil
-      {caller, nil} -> caller
-      {nil, errors} -> errors
-      {caller, errors} -> "#{caller} #{errors}"
-    end
-
   # Compute data_has_value considering arrays and empty values
   data_has_value =
     case assigns.value do
@@ -584,7 +569,6 @@ defp assign_computed_attributes(assigns) do
     end
 
   assigns
-  |> assign(:computed_aria_describedby, computed_aria_describedby)
   |> assign(:data_disabled, data_boolean(assigns.disabled))
   |> assign(:data_multiple, data_boolean(assigns.multiple))
   |> assign(:data_required, data_boolean(assigns.required))

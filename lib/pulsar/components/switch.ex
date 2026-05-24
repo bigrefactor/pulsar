@@ -493,6 +493,8 @@ defmodule Pulsar.Components.Switch do
         class="sr-only peer"
         required={@required}
         disabled={@disabled}
+        role="switch"
+        aria-checked={if @checked, do: "true", else: "false"}
         aria-label={@aria_label}
         aria-labelledby={@aria_labelledby}
         aria-invalid={@invalid && "true"}

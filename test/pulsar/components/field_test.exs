@@ -443,6 +443,18 @@ defmodule Pulsar.Components.FieldTest do
       assert html =~ ~s(required)
     end
 
+    test "passes required attribute to underlying select" do
+      field = create_field(:country)
+      assigns = %{field: field, options: [{"US", "us"}, {"UK", "uk"}]}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="select" options={@options} required />
+        """)
+
+      assert html =~ ~r/<select[^>]*\srequired[\s>]/
+    end
+
     test "passes field-specific attributes" do
       field = create_field(:age)
       assigns = %{field: field}

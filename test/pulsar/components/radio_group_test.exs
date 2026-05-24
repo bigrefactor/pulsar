@@ -492,4 +492,49 @@ defmodule Pulsar.Components.RadioGroupTest do
       assert html =~ ~s(data-disabled="true") && html =~ "Pro Plan"
     end
   end
+
+  describe "radio_group/1 accessibility (ARIA)" do
+    test "renders role=\"radiogroup\" on the container" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic">
+          <:option value="basic">Basic</:option>
+        </.radio_group>
+        """)
+
+      assert html =~ ~r/<div[^>]*role="radiogroup"/
+    end
+
+    test "forwards aria-labelledby to the container via the global rest attrs" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic" aria-labelledby="plan-label">
+          <:option value="basic">Basic</:option>
+        </.radio_group>
+        """)
+
+      assert html =~ ~s(aria-labelledby="plan-label")
+    end
+
+    test "checks the radio matching the group value (native aria-checked propagation)" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="pro">
+          <:option value="basic">Basic</:option>
+          <:option value="pro">Pro</:option>
+        </.radio_group>
+        """)
+
+      # Native <input type="radio"> derives aria-checked from the `checked` attribute.
+      # Require whitespace around `checked` to avoid matching Tailwind's `checked:` variant in class strings.
+      assert html =~ ~r/value="pro"[^>]*\schecked\s/
+      refute html =~ ~r/value="basic"[^>]*\schecked\s/
+    end
+  end
 end

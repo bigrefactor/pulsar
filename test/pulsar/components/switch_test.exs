@@ -272,6 +272,31 @@ defmodule Pulsar.Components.SwitchTest do
 
       refute html =~ ~s(aria-invalid)
     end
+
+    test "renders role=\"switch\" on the input" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Switch.switch name="notifications" />])
+
+      assert html =~ ~r/type="checkbox"[^>]*role="switch"/
+    end
+
+    test "renders aria-checked=\"true\" when checked" do
+      field = create_field("notifications", "true")
+      assigns = %{field: field}
+
+      html = rendered_to_string(~H[<Switch.switch field={@field} />])
+
+      assert html =~ ~s(aria-checked="true")
+    end
+
+    test "renders aria-checked=\"false\" when not checked" do
+      field = create_field("notifications", false)
+      assigns = %{field: field}
+
+      html = rendered_to_string(~H[<Switch.switch field={@field} />])
+
+      assert html =~ ~s(aria-checked="false")
+    end
   end
 
   describe "switch/1 form integration" do
