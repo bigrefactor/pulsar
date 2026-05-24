@@ -23,8 +23,8 @@ jobs:
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: '1.18'
-          otp-version: '27'
+          elixir-version: '1.19'
+          otp-version: '28'
           version-type: loose
 
       - name: Cache deps
@@ -115,8 +115,8 @@ jobs:
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: '1.18'
-          otp-version: '27'
+          elixir-version: '1.19'
+          otp-version: '28'
           version-type: loose
 
       - name: Cache deps
@@ -209,8 +209,8 @@ jobs:
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: '1.18'
-          otp-version: '27'
+          elixir-version: '1.19'
+          otp-version: '28'
           version-type: loose
 
       - name: Cache deps
@@ -242,9 +242,9 @@ jobs:
         uses: actions/cache@v5
         with:
           path: priv/plts
-          key: ${{ runner.os }}-plt-1.18-27-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-plt-1.19-28-${{ hashFiles('mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-plt-1.18-27-
+            ${{ runner.os }}-plt-1.19-28-
             ${{ runner.os }}-plt-
 
       - name: Configure Git for private repos

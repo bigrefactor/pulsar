@@ -13,17 +13,9 @@ jobs:
   quality:
     name: Code Quality
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        include:
-          - elixir: "1.18"
-            otp: "27"
-            check_formatted: true
-            check_credo: true
-          - elixir: "1.17"
-            otp: "26"
-          - elixir: "1.15"
-            otp: "25"
+    env:
+      ELIXIR_VERSION: "1.19"
+      OTP_VERSION: "28"
 
     steps:
       - name: Checkout code
@@ -32,8 +24,8 @@ jobs:
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: ${{ matrix.elixir }}
-          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ env.ELIXIR_VERSION }}
+          otp-version: ${{ env.OTP_VERSION }}
           version-type: loose
 
       - name: Cache deps
@@ -41,11 +33,11 @@ jobs:
         uses: actions/cache@v5
         with:
           path: deps
-          key: ${{ runner.os }}-deps-quality-${{ matrix.elixir }}-${{ matrix.otp }}-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-deps-quality-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-deps-quality-${{ matrix.elixir }}-${{ matrix.otp }}-${{ env.MIX_ENV }}-
-            ${{ runner.os }}-deps-${{ matrix.elixir }}-${{ matrix.otp }}-${{ env.MIX_ENV }}-
-            ${{ runner.os }}-deps-${{ matrix.elixir }}-${{ matrix.otp }}-
+            ${{ runner.os }}-deps-quality-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-deps-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-
             ${{ runner.os }}-deps-
 
       - name: Cache _build
@@ -53,11 +45,11 @@ jobs:
         uses: actions/cache@v5
         with:
           path: _build
-          key: ${{ runner.os }}-build-quality-${{ matrix.elixir }}-${{ matrix.otp }}-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-build-quality-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-build-quality-${{ matrix.elixir }}-${{ matrix.otp }}-${{ env.MIX_ENV }}-
-            ${{ runner.os }}-build-${{ matrix.elixir }}-${{ matrix.otp }}-${{ env.MIX_ENV }}-
-            ${{ runner.os }}-build-${{ matrix.elixir }}-${{ matrix.otp }}-
+            ${{ runner.os }}-build-quality-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-${{ env.MIX_ENV }}-
+            ${{ runner.os }}-build-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-
             ${{ runner.os }}-build-
 
       - name: Cache Dialyzer PLT
@@ -65,9 +57,9 @@ jobs:
         uses: actions/cache@v5
         with:
           path: priv/plts
-          key: ${{ runner.os }}-plt-${{ matrix.elixir }}-${{ matrix.otp }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-plt-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-${{ hashFiles('mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-plt-${{ matrix.elixir }}-${{ matrix.otp }}-
+            ${{ runner.os }}-plt-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-
             ${{ runner.os }}-plt-
 
       - name: Configure Git for private repos
@@ -80,24 +72,21 @@ jobs:
 
       - name: Cache Status Report
         run: |
-          echo "Cache status for quality job (Elixir ${{ matrix.elixir }}/OTP ${{ matrix.otp }}):"
+          echo "Cache status for quality job (Elixir ${{ env.ELIXIR_VERSION }}/OTP ${{ env.OTP_VERSION }}):"
           echo "- Deps cache hit: ${{ steps.cache-deps.outputs.cache-hit || 'false' }}"
           echo "- Build cache hit: ${{ steps.cache-build.outputs.cache-hit || 'false' }}"
           echo "- PLT cache hit: ${{ steps.cache-plt.outputs.cache-hit || 'false' }}"
 
       - name: Check formatting
-        if: matrix.check_formatted
         run: mix format --check-formatted
 
       - name: Check for unused dependencies
-        if: matrix.check_formatted
         run: mix deps.unlock --check-unused
 
       - name: Compile with warnings as errors
         run: mix compile --warnings-as-errors
 
       - name: Run Credo
-        if: matrix.check_credo
         run: mix credo --strict
 
       - name: Build PLT for Dialyzer
@@ -106,11 +95,7 @@ jobs:
       - name: Run Dialyzer
         run: mix dialyzer
 
-      - name: Run tests
-        run: mix test
-
-      - name: Run tests with coverage (latest version only)
-        if: matrix.elixir == '1.18' && matrix.otp == '27'
+      - name: Run tests with coverage
         run: mix test --cover
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -125,8 +110,8 @@ jobs:
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: "1.18"
-          otp-version: "27"
+          elixir-version: "1.19"
+          otp-version: "28"
           version-type: loose
 
       - name: Cache deps
@@ -176,8 +161,8 @@ jobs:
   #     - name: Set up Elixir
   #       uses: erlef/setup-beam@v1
   #       with:
-  #         elixir-version: '1.18'
-  #         otp-version: '27'
+  #         elixir-version: '1.19'
+  #         otp-version: '28'
   #         version-type: loose
   #
   #     - name: Cache deps
