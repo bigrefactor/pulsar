@@ -1,45 +1,61 @@
 defmodule Pulsar do
   @moduledoc """
-  Pulsar - Styled Phoenix LiveView components built on Stellar.
+  Pulsar — production-ready Phoenix LiveView components.
 
-  Pulsar provides production-ready, styled components that wrap Stellar's headless components
-  with beautiful Tailwind CSS styling. Components use semantic color names and support both
-  light and dark modes through CSS custom properties.
+  Pulsar is a self-contained component library for Phoenix LiveView. It ships
+  accessible, styled components with all WAI-ARIA behavior built in and only
+  TailwindMerge as a runtime dependency. Components are designed to be
+  generated into your application, giving you full ownership of the source
+  and predictable Tailwind class purging.
+
+  ## Installation
+
+  Add Pulsar to your `mix.exs` dependencies:
+
+      def deps do
+        [
+          {:pulsar, "~> 0.1"},
+          {:tailwind_merge, "~> 0.2"}
+        ]
+      end
+
+  Then install components and the theme into your Phoenix app:
+
+      mix pulsar.install
+
+  This generates the theme CSS, every component, and a `core_components`
+  module under your app's namespace (default `YourAppWeb.Components`). See
+  `Mix.Tasks.Pulsar.Install` for selective options such as
+  `--component=button,input` or `--no-theme`. Individual generators are also
+  available:
+
+      mix pulsar.gen.button
+      mix pulsar.gen.card
 
   ## Usage
 
-  ### Library Mode
+  Import the generated components in your LiveViews or component modules:
 
-  Import components directly into your application:
+      import YourAppWeb.Components.Button
 
-      # In your component module
-      import Pulsar.Components.Button
-      import Pulsar.Components.Header
-      # ... or use the convenience macro
-      use PulsarWeb, :components
-
-      # In your templates
       <.button variant="primary" size="lg">
         Save Changes
       </.button>
 
-  ### Generator Mode
-
-  Generate components into your project for full customization:
-
-      mix pulsar.gen.button
-      mix pulsar.gen.card
-      # Or generate all components
-      mix pulsar.gen.all
+  Components can also be used directly from Pulsar without generation
+  (`import Pulsar.Components.Button`), but generation is recommended for
+  production: the generated source lives in your project, Tailwind picks up
+  the classes automatically, and you can customize freely.
 
   ## Features
 
-  - **Stellar Foundation**: Built on Stellar's accessible, headless components
-  - **Tailwind CSS**: Utility-first styling with semantic color tokens  
+  - **Self-Contained**: All accessibility and behavior inlined; only
+    TailwindMerge as a runtime dependency
+  - **Tailwind CSS**: Utility-first styling with semantic color tokens
   - **Dark Mode**: Automatic light/dark mode support via CSS custom properties
-  - **TypeScript-like Docs**: Full attr documentation with `:values` validation
+  - **Documented Attrs**: Full attr documentation with `:values` validation
   - **Flexible**: Use as library or generate for customization
-  - **No external JS**: Uses Phoenix.LiveView.JS and colocated hooks
+  - **No external JS**: Uses `Phoenix.LiveView.JS` and colocated hooks
 
   ## Components
 
@@ -51,22 +67,25 @@ defmodule Pulsar do
   - `Input` - Text inputs with decorators and validation
   - `Select` - Dropdown selects with multi-select badge display
   - `Checkbox` - Checkboxes with card variants and form integration
-   - `Switch` - Toggle switches with proper ARIA semantics
-   - `Link` - Secure navigation links with XSS protection
-   - `Icon` - Heroicons with flexible sizing and semantic colors
-   - `Table` - Data tables with LiveStream support and actions
-   - More components available...
+  - `Switch` - Toggle switches with proper ARIA semantics
+  - `Link` - Secure navigation links with XSS protection
+  - `Icon` - Heroicons with flexible sizing and semantic colors
+  - `Table` - Data tables with LiveStream support and actions
+  - More components available...
 
   ## Theme Customization
 
-  The theme uses CSS custom properties that reference Tailwind's color palette:
+  `mix pulsar.gen.theme` (run as part of `mix pulsar.install`) writes
+  `assets/css/theme.css` into your project. Edit that file to remap semantic
+  tokens to any Tailwind palette:
 
       @theme inline {
         /* Change primary from blue to indigo */
         --color-primary-500: var(--color-indigo-500);
       }
 
-  See the theme file at `priv/static/themes/pulsar.css` for all available tokens.
+  See `Mix.Tasks.Pulsar.Gen.Theme` for the complete set of tokens the task
+  generates.
   """
 
   @doc """
