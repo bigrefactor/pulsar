@@ -679,7 +679,7 @@ defmodule Pulsar.Components.SelectTest do
         <Select.select field={@field} options={[{"US", "us"}]} />
         """)
 
-      refute html =~ ~s(aria-describedby="user_country-errors")
+      refute html =~ "aria-describedby="
     end
 
     test "passes caller-provided aria-describedby through unchanged (no merging with internal IDs)" do

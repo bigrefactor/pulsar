@@ -365,7 +365,7 @@ defmodule Pulsar.Components.Select do
           required={@required}
           disabled={@disabled}
           class={@class}
-          aria-describedby={@computed_aria_describedby}
+          aria-describedby={assigns[:"aria-describedby"]}
           aria-invalid={@invalid && "true"}
           data-disabled={@data_disabled}
           data-required={@data_required}
@@ -570,7 +570,6 @@ defmodule Pulsar.Components.Select do
       end
 
     assigns
-    |> assign(:computed_aria_describedby, assigns[:"aria-describedby"])
     |> assign(:data_disabled, data_boolean(assigns.disabled))
     |> assign(:data_multiple, data_boolean(assigns.multiple))
     |> assign(:data_required, data_boolean(assigns.required))
