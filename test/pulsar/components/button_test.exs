@@ -374,6 +374,73 @@ defmodule Pulsar.Components.ButtonTest do
       assert html =~ ~s(aria-label="Add item")
       assert html =~ "+"
     end
+
+    test "renders role=\"button\" when rendered as a non-button element" do
+      assigns = %{}
+
+      html_div =
+        rendered_to_string(~H"""
+        <Button.button as={:div}>Div Button</Button.button>
+        """)
+
+      assert html_div =~ ~s(<div)
+      assert html_div =~ ~s(role="button")
+
+      html_a =
+        rendered_to_string(~H"""
+        <Button.button as={:a}>Anchor Button</Button.button>
+        """)
+
+      assert html_a =~ ~s(<a)
+      assert html_a =~ ~s(role="button")
+    end
+
+    test "renders aria-busy=\"true\" while loading" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Button.button loading={true}>Saving</Button.button>
+        """)
+
+      assert html =~ ~s(aria-busy="true")
+    end
+
+    test "renders aria-disabled=\"true\" when disabled" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Button.button disabled={true}>Disabled</Button.button>
+        """)
+
+      assert html =~ ~s(aria-disabled="true")
+    end
+
+    test "renders aria-pressed reflecting the pressed value" do
+      assigns = %{}
+
+      html_true =
+        rendered_to_string(~H"""
+        <Button.button pressed={true}>Toggle</Button.button>
+        """)
+
+      assert html_true =~ ~s(aria-pressed="true")
+
+      html_false =
+        rendered_to_string(~H"""
+        <Button.button pressed={false}>Toggle</Button.button>
+        """)
+
+      assert html_false =~ ~s(aria-pressed="false")
+
+      html_nil =
+        rendered_to_string(~H"""
+        <Button.button>Toggle</Button.button>
+        """)
+
+      refute html_nil =~ ~s(aria-pressed)
+    end
   end
 
   describe "navigation" do
