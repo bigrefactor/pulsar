@@ -1,0 +1,248 @@
+# Checkbox · WCAG 2.2 AA audit
+
+**Source:** [`lib/pulsar/components/checkbox.ex`](../../lib/pulsar/components/checkbox.ex)
+**Tests:** [`test/pulsar/components/checkbox_test.exs`](../../test/pulsar/components/checkbox_test.exs)
+**Audited:** 2026-05-24 (code-only)
+
+Native `<input type="checkbox">` leaf with a CSS-only custom checkmark
+(`::before`/`::after` pseudo elements), tri-state (indeterminate)
+support, optional hidden companion input for the unchecked value, and
+an optional "card" variant that wraps the input in a clickable `<label>`.
+
+## Applicable criteria
+
+### 1.1.1 Non-text Content (A) — ✓ PASS
+
+**Evidence:** Checkmark glyph (`✓`) and indeterminate dash (`−`) are
+CSS `content` pseudo-elements with no DOM presence —
+`lib/pulsar/components/checkbox.ex:122, 126`. They reinforce the state
+visually; AT relies on the native `checked` / `aria-checked` semantics.
+
+### 1.3.1 Info and Relationships (A) — ✓ PASS
+
+**Evidence:**
+- Native `<input type="checkbox">` —
+  `lib/pulsar/components/checkbox.ex:384`
+- Card variant uses `<label for={@id}>` wrapping the input —
+  `lib/pulsar/components/checkbox.ex:425, 431`
+- Card content gets an `id="#{@id}-content"` referenced by the input's
+  `aria-describedby` — `lib/pulsar/components/checkbox.ex:456, 459`
+
+### 1.3.2 Meaningful Sequence (A) — ✓ PASS
+
+**Evidence:** DOM order: hidden companion (if any) → checkbox →
+optional content slot — `lib/pulsar/components/checkbox.ex:374–463`.
+
+### 1.3.3 Sensory Characteristics (A) — ✓ PASS
+
+**Evidence:** Checked state combines color fill + checkmark glyph +
+native `checked` attr + `aria-checked` for indeterminate —
+`lib/pulsar/components/checkbox.ex:122–126, 388, 397`. Disabled state
+combines opacity + `disabled:cursor-not-allowed` + native `disabled`.
+
+### 1.4.1 Use of Color (A) — ✓ PASS
+
+**Evidence:** Checked state is signaled by checkmark glyph (not just
+fill color) — `lib/pulsar/components/checkbox.ex:122, 125`. Error
+state combines danger border + `aria-invalid="true"` —
+`lib/pulsar/components/checkbox.ex:396, 669`.
+
+### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (minor) — needs browser verification
+
+**Evidence:** Color matrix with semantic foreground/background tokens
+for each of 7 colors —
+`lib/pulsar/components/checkbox.ex:508–657`. Card variant adds another
+matrix — `lib/pulsar/components/checkbox.ex:697–976`.
+
+**Notes:** Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+
+### 1.4.4 Resize Text (AA) — ✓ PASS
+
+**Evidence:** Sizes use Tailwind `h-*`/`w-*` rem-based classes
+(`h-3`/`h-7`) — `lib/pulsar/components/checkbox.ex:91–112`. Text inside
+checkmark uses rem-based `text-*`.
+
+**Notes:** `h-*` (not `min-h-*`) sets fixed sizes; needed for the square
+appearance, but they're rem-based so they scale.
+
+### 1.4.10 Reflow (AA) — ✓ PASS
+
+**Evidence:** Checkbox is inline-sized; card variant uses `flex
+items-center` with no fixed widths —
+`lib/pulsar/components/checkbox.ex:131`.
+
+### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — needs browser verification
+
+**Evidence:** Border `before:border-2` —
+`lib/pulsar/components/checkbox.ex:121`. Focus ring `focus-visible:ring-2
+focus-visible:ring-offset-2 focus-visible:ring-ring` —
+`lib/pulsar/components/checkbox.ex:117–118`.
+
+**Notes:** Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+
+### 1.4.12 Text Spacing (AA) — ⚠ GAP (minor) — needs browser verification
+
+**Evidence:** Fixed `h-*`/`w-*` square sizes by design —
+`lib/pulsar/components/checkbox.ex:91–112`. Card text uses standard
+Tailwind classes.
+
+**Notes:** Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+
+### 2.1.1 Keyboard (A) — ✓ PASS
+
+**Evidence:** Native `<input type="checkbox">` is keyboard-operable
+(Space) — `lib/pulsar/components/checkbox.ex:384`. Card variant uses
+native `<label for=>` so clicks/Enter activate the input via browser
+defaults.
+
+### 2.1.2 No Keyboard Trap (A) — ✓ PASS
+
+**Evidence:** No custom keydown handlers; native checkbox Tab behavior.
+
+### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
+
+**Evidence:** Only smooth scale/opacity transitions on the checkmark —
+`lib/pulsar/components/checkbox.ex:120, 123`. No essential motion.
+
+### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
+
+**Evidence:** No flashing; smooth 200ms transitions only.
+
+### 2.4.3 Focus Order (A) — ✓ PASS
+
+**Evidence:** No positive `tabindex`. Card variant places content after
+the input in DOM (visually after); focus lands on the checkbox first.
+
+### 2.4.6 Headings and Labels (AA) — ✓ PASS
+
+**Evidence:** Label is the caller's responsibility via `field`; card
+variant has its own inline content slot. The `field` wrapper enforces
+labels for default mode.
+
+### 2.4.7 Focus Visible (AA) — ⚠ GAP (minor) — needs browser verification
+
+**Evidence:** Default checkbox: `focus-visible:outline-none
+focus-visible:ring-2 focus-visible:ring-offset-2
+focus-visible:ring-ring` — `lib/pulsar/components/checkbox.ex:117–118`.
+Card uses `focus-within:ring-2 focus-within:ring-offset-2
+focus-within:ring-ring` — `lib/pulsar/components/checkbox.ex:132–133`.
+Tests assert focus ring classes —
+`test/pulsar/components/checkbox_test.exs:651–662`.
+
+**Notes:** Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+
+### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
+
+**Evidence:** Single-element render (with optional inline card content);
+no sticky overlap.
+
+### 2.5.2 Pointer Cancellation (A) — ✓ PASS
+
+**Evidence:** Native checkbox; activation on click (mouseup).
+
+### 2.5.3 Label in Name (A) — ✓ PASS
+
+**Evidence:** No `aria-label` set; accessible name flows from the
+associated label or card content.
+
+### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ⚠ GAP (minor) — needs browser verification
+
+**Evidence:** Sizes `xs`=12px (`h-3 w-3`), `sm`=16px, `md`=20px,
+`lg`=24px, `xl`=28px — `lib/pulsar/components/checkbox.ex:91–112`. `xs`,
+`sm`, and `md` are below the 24×24 floor for the checkbox hit area
+itself. The associated `<label>` element typically expands the
+effective click target, but the focus-visible ring is on the checkbox.
+
+**Notes:** Default `md` is 20×20, which is below the 24×24 floor. The
+2.5.8 exception clause allows below-minimum targets when there is
+sufficient spacing or when the target is "inline in a sentence." Inline
+field labels expand the practical click area via `<label for=>`.
+Tracked under browser audit for measured spacing context.
+
+### 3.2.1 On Focus (A) — ✓ PASS
+
+**Evidence:** No focus handler in the component template.
+
+### 3.2.2 On Input (A) — ✓ PASS
+
+**Evidence:** `:rest` forwards `phx-click`/`phx-change`, but component
+itself triggers no navigation/submit —
+`lib/pulsar/components/checkbox.ex:308`.
+
+### 3.3.1 Error Identification (A) — ✓ PASS
+
+**Evidence:** `aria-invalid={@invalid && "true"}` —
+`lib/pulsar/components/checkbox.ex:396, 454`. Test
+`sets aria-invalid when invalid` —
+`test/pulsar/components/checkbox_test.exs:618–627`.
+
+### 3.3.2 Labels or Instructions (A) — ✓ PASS
+
+**Evidence:** Label is caller's responsibility via `field`.
+
+### 3.3.3 Error Suggestion (AA) — ✓ PASS
+
+**Evidence:** Error text is rendered at the `field` wrapper level;
+checkbox doesn't suppress.
+
+### 4.1.2 Name, Role, Value (A) — ✓ PASS
+
+**Evidence:**
+- Role: native `<input type="checkbox">` —
+  `lib/pulsar/components/checkbox.ex:384`
+- Name: from `name=` attr —
+  `lib/pulsar/components/checkbox.ex:386`
+- Value: from `value=` (checked-value) and the hidden companion's
+  unchecked value — `lib/pulsar/components/checkbox.ex:377–399`
+- State: native `checked`, `disabled`, `required`; `aria-invalid`;
+  `aria-checked="mixed"` for indeterminate —
+  `lib/pulsar/components/checkbox.ex:388–397`
+- Tests assert `aria-checked="mixed"` for indeterminate —
+  `test/pulsar/components/checkbox_test.exs:629–638`
+
+**Notes:** Indeterminate state is exposed via `aria-checked="mixed"` —
+correct WAI-ARIA pattern for tri-state checkboxes. (Native `<input>`
+indeterminate is a JS-only property; this component supplements with the
+ARIA attr.)
+
+### 4.1.3 Status Messages (AA) — ✓ PASS
+
+**Evidence:** `aria-invalid` reflects validation state —
+`lib/pulsar/components/checkbox.ex:396`. Field-level error region carries
+`aria-live="polite"`.
+
+## Not applicable
+
+- **1.2.1 Audio-only and Video-only (Prerecorded) (A)** — no media.
+- **1.2.2 Captions (Prerecorded) (A)** — no media.
+- **1.2.3 Audio Description or Media Alternative (Prerecorded) (A)** — no media.
+- **1.2.4 Captions (Live) (AA)** — no media.
+- **1.2.5 Audio Description (Prerecorded) (AA)** — no media.
+- **1.3.4 Orientation (AA)** — no orientation lock.
+- **1.3.5 Identify Input Purpose (AA)** — checkboxes don't carry user
+  identity / personal info; `autocomplete` doesn't apply.
+- **1.4.2 Audio Control (A)** — no audio.
+- **1.4.5 Images of Text (AA)** — no rendered text images.
+- **1.4.13 Content on Hover or Focus (AA)** — no tooltip/popover.
+- **2.1.4 Character Key Shortcuts (A)** — none registered.
+- **2.2.1 Timing Adjustable (A)** — no time limit.
+- **2.4.1 Bypass Blocks (A)** — page-level concern.
+- **2.4.2 Page Titled (A)** — page-level concern.
+- **2.4.4 Link Purpose (In Context) (A)** — not a link.
+- **2.4.5 Multiple Ways (AA)** — page-level concern.
+- **2.5.1 Pointer Gestures (A)** — no gestures.
+- **2.5.4 Motion Actuation (A)** — none.
+- **2.5.7 Dragging Movements (AA, new in 2.2)** — no drag.
+- **3.1.1 Language of Page (A)** — page-level concern.
+- **3.1.2 Language of Parts (AA)** — page-level concern.
+- **3.2.3 Consistent Navigation (AA)** — page-level concern.
+- **3.2.4 Consistent Identification (AA)** — page-level concern.
+- **3.2.6 Consistent Help (A, new in 2.2)** — page-level concern.
+- **3.3.4 Error Prevention (AA)** — form-level concern.
+- **3.3.7 Redundant Entry (A, new in 2.2)** — form/app-level concern.
+- **3.3.8 Accessible Authentication (AA, new in 2.2)** — not authentication.
+
+## AAA wins (bonus)
+
+- **2.4.13 Focus Appearance (AAA, new in 2.2)** — `ring-2` (2px) meets
+  AAA minimum thickness. Contrast still needs browser verification.

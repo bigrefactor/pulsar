@@ -12,7 +12,7 @@ Pulsar is a **single-dependency component library** for Phoenix LiveView. This s
 - **Self-Contained**: Single dependency library with all accessibility and behavior inlined
 - **Utility-First**: Built on Tailwind CSS classes, not custom CSS
 - **Phoenix-Native**: Uses Phoenix.LiveView.JS exclusively, zero external JavaScript
-- **Accessible by Default**: WCAG 2.1 AA compliance with ARIA attributes built-in
+- **Accessible by Default**: WCAG 2.2 AA compliance with ARIA attributes built-in (per-component audit evidence lives in [`docs/a11y/`](docs/a11y/README.md))
 - **Production Ready**: High-quality components for Phoenix applications
 - **Security First**: XSS protection and proper input validation built-in
 
