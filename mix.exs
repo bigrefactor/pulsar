@@ -47,7 +47,11 @@ defmodule Pulsar.MixProject do
       dialyzer: [
         plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
         plt_add_apps: [:ex_unit, :mix, :igniter, :phoenix, :phoenix_live_view, :phoenix_html, :eex, :rewrite],
-        list_unused_filters: true,
+        # `list_unused_filters: true` is incompatible with the multi-version
+        # CI matrix here: dialyzer in different Elixir/OTP versions categorizes
+        # the same warning differently (e.g. invalid_contract on 1.19 shows
+        # as an unparsed "Legacy warning" on 1.15), so filter entries that are
+        # used on one version look "unused" on another and fail the build.
         ignore_warnings: ".dialyzer_ignore.exs"
       ]
     ]
