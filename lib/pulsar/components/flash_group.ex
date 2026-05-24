@@ -179,7 +179,6 @@ defmodule Pulsar.Components.FlashGroup do
           role = if type in [:error, :warning], do: "alert", else: "status"
           refute has_element?(view, "[role='\#{role}']", message)
         end
-        end
 
   ## Positioning
 

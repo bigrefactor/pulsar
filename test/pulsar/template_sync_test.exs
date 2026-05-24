@@ -1,17 +1,19 @@
 defmodule Pulsar.TemplateSyncTest do
   use ExUnit.Case, async: true
 
-  # Each pair: {component_name, lib_path, component_namespace, components_namespace, module_name}
+  # Each pair: {component_name, lib_path, component_namespace, module_name}
   #
   # `component_namespace` is the parent namespace the generator writes the file
   # under (e.g. "Pulsar.Components" for Button, "Pulsar" for CoreComponents so
   # it lands as `Pulsar.CoreComponents` per Phoenix convention).
   #
-  # `components_namespace` is always the components root — used by templates
-  # that need to alias sibling components (e.g. CoreComponents aliasing Flash).
-  #
   # `module_name` is the fully qualified module the template produces in
   # library mode, used to wrap the EEx body in `defmodule ... do/end`.
+  #
+  # `components_namespace` (the components root) is not part of the tuple —
+  # it's provided to every template via `@components_root` below. Templates
+  # that alias sibling components (e.g. CoreComponents aliasing Flash) read
+  # it from there.
   @components_root "Pulsar.Components"
 
   @pairs [
@@ -87,5 +89,15 @@ defmodule Pulsar.TemplateSyncTest do
     |> IO.iodata_to_binary()
     |> String.replace(~r/[ \t]+$/m, "")
     |> String.trim_trailing("\n")
+  end
+
+  describe "format/1" do
+    test "distinguishes meaningfully different source" do
+      a = "defmodule A do\n  :a\nend\n"
+      b = "defmodule A do\n  :b\nend\n"
+
+      refute format(a) == format(b),
+             "format/1 collapsed two distinct modules — drift detection is no longer load-bearing"
+    end
   end
 end

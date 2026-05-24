@@ -73,7 +73,7 @@ defmodule Pulsar.CoreComponents do
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       id={@id}
       class="fixed top-4 right-4 z-50 max-w-sm w-full"
-      phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
+      phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide_flash("##{@id}")}
       role={map_kind_to_role(@kind)}
     >
       <Flash.flash
@@ -713,7 +713,15 @@ defmodule Pulsar.CoreComponents do
 
   ## JS Commands
 
-  def show(js \\ %JS{}, selector) do
+  @doc """
+  Shows a flash element at `selector` with the standard flash entry animation
+  (slide-in from below + fade-in over 300ms).
+
+  Exposed for callers that need to programmatically reveal a flash; the bundled
+  flash component animates itself in via the underlying `Flash` markup and does
+  not call this helper directly.
+  """
+  def show_flash(js \\ %JS{}, selector) do
     JS.show(js,
       to: selector,
       time: 300,
@@ -723,7 +731,14 @@ defmodule Pulsar.CoreComponents do
     )
   end
 
-  def hide(js \\ %JS{}, selector) do
+  @doc """
+  Hides a flash element at `selector` with the standard flash exit animation
+  (slide-out + fade-out over 200ms).
+
+  Used by the bundled flash component's phx-click handler to animate dismissal
+  after `lv:clear-flash` is pushed.
+  """
+  def hide_flash(js \\ %JS{}, selector) do
     JS.hide(js,
       to: selector,
       time: 200,
