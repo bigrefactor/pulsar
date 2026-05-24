@@ -560,21 +560,6 @@ defmodule Pulsar.Components.Select do
 
   # Compute attributes (from Stellar)
   defp assign_computed_attributes(assigns) do
-    # ARIA describedby merging
-    caller_describedby = assigns[:"aria-describedby"]
-
-    errors_id =
-      if assigns.field_provided and has_field_errors(assigns),
-        do: "#{assigns.id}-errors"
-
-    computed_aria_describedby =
-      case {caller_describedby, errors_id} do
-        {nil, nil} -> nil
-        {caller, nil} -> caller
-        {nil, errors} -> errors
-        {caller, errors} -> "#{caller} #{errors}"
-      end
-
     # Compute data_has_value considering arrays and empty values
     data_has_value =
       case assigns.value do
@@ -585,7 +570,7 @@ defmodule Pulsar.Components.Select do
       end
 
     assigns
-    |> assign(:computed_aria_describedby, computed_aria_describedby)
+    |> assign(:computed_aria_describedby, assigns[:"aria-describedby"])
     |> assign(:data_disabled, data_boolean(assigns.disabled))
     |> assign(:data_multiple, data_boolean(assigns.multiple))
     |> assign(:data_required, data_boolean(assigns.required))
