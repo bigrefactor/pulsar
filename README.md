@@ -18,45 +18,63 @@ Pulsar provides production-ready, styled components with gorgeous Tailwind CSS s
 
 ## Quick Start
 
+Pulsar is **generator-first**: the recommended workflow is to copy component source directly into your Phoenix application using `mix pulsar.install` (and the per-component `mix pulsar.gen.*` tasks). You own the generated code and can modify it freely. Library mode — importing components straight from the Pulsar package — is available but [secondary](#library-mode-secondary).
+
 ### Installation
 
-Add Pulsar to your Phoenix application:
+Add Pulsar as a dev dependency to use its generators:
+
+```elixir
+# mix.exs
+defp deps do
+  [
+    {:pulsar, "~> 0.1", only: :dev},
+    {:twm, "~> 0.1"}
+  ]
+end
+```
 
 ```bash
-# Add to mix.exs dependencies
-{:pulsar, "~> 0.1"},
-{:twm, "~> 0.1"}
-
-# Install dependencies
 mix deps.get
 ```
 
-### Library Mode
+### Generate Components
 
-Either import the `Pulsar.CoreComponents` aggregate for a one-line on-ramp:
+Run the installer to copy the theme CSS, all components, and a `CoreComponents` aggregate module into your app:
 
-```elixir
-# In your component/LiveView
-import Pulsar.CoreComponents
+```bash
+# Install everything (theme + all components + core_components module)
+mix pulsar.install
 
-# In templates
-<.flash kind={:info} flash={@flash} />
-<.flash_group flash={@flash} />
-<.header>Dashboard<:subtitle>Welcome back!</:subtitle></.header>
-<.button variant="primary">Save</.button>
-<.table id="users" rows={@users}>
-  <:col :let={user} label="Name">{user.name}</:col>
-</.table>
+# Install specific components only
+mix pulsar.install --component=button,input,checkbox --no-theme
+
+# Custom module namespace (default: YourAppWeb.Components)
+mix pulsar.install --components-module=MyAppWeb.UI
+
+# Auto-confirm all prompts
+mix pulsar.install --yes
 ```
 
-Or import individual components for granular control:
+Or generate components individually with `mix pulsar.gen.<component>`:
+
+```bash
+mix pulsar.gen.button
+mix pulsar.gen.input
+mix pulsar.gen.select
+mix pulsar.gen.theme
+```
+
+After generation, the components live under `lib/your_app_web/components/` and are yours to customize.
+
+### Use the Generated Components
 
 ```elixir
 # In your component/LiveView
-import Pulsar.Components.{Button, Label, Link, Input, Textarea, Select, Checkbox, Switch, RadioGroup}
+import YourAppWeb.CoreComponents
 
 # In templates
-<.button variant="primary" size="lg">
+<.button variant="primary" size="lg" loading={@saving}>
   Save Changes
 </.button>
 
@@ -65,6 +83,32 @@ import Pulsar.Components.{Button, Label, Link, Input, Textarea, Select, Checkbox
 
 <.label for="category-select">Category</.label>
 <.select field={@form[:category]} options={@categories} id="category-select" />
+```
+
+### Library Mode (secondary)
+
+If you'd rather not copy source into your app, you can import components directly from the Pulsar package. This trades generator-mode customizability for a smaller diff in your repo, and means you take Pulsar as a runtime dependency rather than a dev-only tool.
+
+```elixir
+# mix.exs — promote Pulsar out of `only: :dev`
+{:pulsar, "~> 0.1"},
+{:twm, "~> 0.1"}
+```
+
+```elixir
+# Aggregate import
+import Pulsar.CoreComponents
+
+# Or granular imports
+import Pulsar.Components.{Button, Label, Link, Input, Textarea, Select, Checkbox, Switch, RadioGroup}
+```
+
+```heex
+<.flash kind={:info} flash={@flash} />
+<.button variant="primary">Save</.button>
+<.table id="users" rows={@users}>
+  <:col :let={user} label="Name">{user.name}</:col>
+</.table>
 ```
 
 ## Components
@@ -162,21 +206,6 @@ Dark mode works automatically with Tailwind's `dark:` variant:
 ```
 
 ## Development
-
-### Component Showcase
-
-See all components in action in the standalone storybook app:
-
-```bash
-# Navigate to storybook directory
-cd ../storybook
-
-# Install dependencies and run
-mix deps.get
-mix phx.server
-```
-
-Visit `http://localhost:4000` to browse components with interactive examples.
 
 ### Testing
 

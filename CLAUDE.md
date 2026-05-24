@@ -197,9 +197,6 @@ document.documentElement.dataset.theme = 'light'; // Disable
 - **Credo**: Static analysis for code quality
 - **Dialyzer**: Type checking and analysis
 
-### Component Showcase
-Component examples and interactive testing are available in the standalone storybook app located at `../storybook/`. This is a separate Phoenix application that imports Pulsar as a dependency.
-
 **Self-Contained Implementation**: Components include all accessibility and behavior patterns directly, with only Twm as the single external dependency.
 
 **Complete Component Library Includes:**
@@ -277,15 +274,6 @@ end
 
 ### Visual Testing with Playwright-MCP
 
-**Component Appearance Testing:**
-```bash
-# Start the showcase app for visual testing (in ../storybook/)
-mix phx.server
-
-# Test components visually using Claude Code's browser tools
-# Screenshots are automatically saved to .playwright-mcp/
-```
-
 **Visual Test Coverage:**
 - **Spacing and Layout**: Button automatic spacing, gap handling
 - **Theme Switching**: Light/dark mode transitions and colors
@@ -341,20 +329,11 @@ end
 - Validates component import updates
 - Checks error handling for edge cases
 
-### Showcase App Integration Testing
-
-**Component Showcase Validation:**
-- All variants rendered correctly
-- Interactive examples function properly
-- Code snippets match actual implementation
-- Dark/light mode toggle works across all components
-
 **Development Workflow:**
 1. **Component Development**: Build component with comprehensive ExUnit tests
 2. **Visual Validation**: Use Playwright-MCP to capture screenshots and verify appearance
-3. **Showcase Update**: Add comprehensive examples and usage patterns in the storybook app
-4. **Accessibility Audit**: Test keyboard navigation and screen reader compatibility
-5. **Generator Testing**: Ensure code generation works in target projects
+3. **Accessibility Audit**: Test keyboard navigation and screen reader compatibility
+4. **Generator Testing**: Ensure code generation works in target projects
 
 ### Testing Commands
 
@@ -368,9 +347,6 @@ mix test test/pulsar/components/button_test.exs
 # Run generator tests
 mix test test/mix/tasks/pulsar/gen/
 
-# Start showcase app for visual testing (in ../storybook/)
-mix phx.server
-
 # Test with coverage
 mix test --cover
 ```
@@ -380,9 +356,8 @@ mix test --cover
 **When Adding New Components:**
 1. Write comprehensive unit tests covering all variants
 2. Add accessibility tests for ARIA attributes and keyboard nav
-3. Create storybook page with all examples
-4. Use Playwright-MCP to capture visual validation screenshots
-5. Test generator functionality in a sample Phoenix app
+3. Use Playwright-MCP to capture visual validation screenshots
+4. Test generator functionality in a sample Phoenix app
 
 **Visual Test Maintenance:**
 - Screenshots are gitignored but can be regenerated for validation
@@ -441,44 +416,18 @@ JS.add_class("border-red-500", to: "#field-#{field}")
 |> JS.show(to: "#error-#{field}")
 ```
 
-## Component Showcase Development
-
-Component examples are developed in the standalone storybook app located at `../storybook/`. The storybook provides:
-
-- **Live component preview** with all variants, sizes, and states
-- **Dark/light mode toggle** for testing theme support
-- **Usage examples** with code snippets
-- **Interactive testing** of component behavior
-
-### Showcase Requirements
-
-**All new components should have showcase pages** that demonstrate:
-1. **All variants** (primary, secondary, success, error, etc.)
-2. **All sizes** (sm, md, lg, icon, etc.)
-3. **All states** (normal, loading, disabled, etc.)
-4. **Usage examples** with realistic code snippets
-5. **Dark mode compatibility** for theme switching
-
-To add a component to the showcase:
-1. Navigate to `../storybook/` directory
-2. Add component to the showcase app's LiveView pages
-3. Import Pulsar component and create comprehensive examples
-4. Test all variants and states
-
 ## Contributing Guidelines
 
 When adding new components:
 1. Create generator in `lib/pulsar/generators/`
 2. Add template in `priv/templates/`
-3. **Add showcase page** in the storybook app with all variants, states, and examples
-4. Write comprehensive tests
-5. Document usage patterns
-6. Ensure accessibility compliance
-7. Test with various Tailwind themes
+3. Write comprehensive tests
+4. Document usage patterns
+5. Ensure accessibility compliance
+6. Test with various Tailwind themes
 
 When modifying existing components:
 1. Update both generator and template
-2. **Update showcase examples** in the storybook app to reflect changes
-3. Maintain backwards compatibility where possible
-4. Update documentation and examples
-5. Test generation in sample Phoenix app
+2. Maintain backwards compatibility where possible
+3. Update documentation and examples
+4. Test generation in sample Phoenix app
