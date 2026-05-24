@@ -4,8 +4,6 @@ defmodule Pulsar.GeneratorTest do
   import Igniter.Test
   import Pulsar.BackupTestHelper
 
-  @moduletag timeout: 180_000
-
   describe "use Pulsar.Generator argument validation" do
     test ":component must be a non-nil atom" do
       assert_raise ArgumentError, ~r/:component to be an atom/, fn ->
@@ -89,6 +87,8 @@ defmodule Pulsar.GeneratorTest do
   end
 
   describe "install_component (shared codepath)" do
+    @describetag timeout: 180_000
+
     test "backs up existing component before overwriting" do
       igniter =
         phx_test_project()

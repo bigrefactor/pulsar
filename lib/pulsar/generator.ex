@@ -143,7 +143,7 @@ defmodule Pulsar.Generator do
 
   def install_component(igniter, component_name, assigns) do
     namespace = parse_components_module(igniter.args.options[:components_module])
-    component = component_module(igniter, component_name)
+    component = component_module(namespace, component_name)
     # Convert namespace to inspect format to avoid Elixir. prefix in templates
     namespace_inspected = inspect(namespace)
 
@@ -204,14 +204,8 @@ defmodule Pulsar.Generator do
     end)
   end
 
-  defp component_module(igniter, component_name) do
-    namespace = namespace(igniter)
-
+  defp component_module(namespace, component_name) do
     Module.concat(namespace, Macro.camelize(to_string(component_name)))
-  end
-
-  defp namespace(igniter) do
-    parse_components_module(igniter.args.options[:components_module])
   end
 
   defp get_components_namespace(igniter, _namespace_inspected) do
@@ -242,20 +236,18 @@ defmodule Pulsar.Generator do
   defp parse_components_module(raw) do
     value = raw |> to_string() |> String.trim() |> String.trim_trailing(".")
 
-    if value == "" do
-      raise ArgumentError,
-            "Pulsar requires --components-module to be a non-empty module name"
+    cond do
+      value == "" ->
+        raise ArgumentError,
+              "Pulsar requires --components-module to be a non-empty module name"
+
+      !Regex.match?(~r/^[A-Z][A-Za-z0-9_]*(\.[A-Z][A-Za-z0-9_]*)*$/, value) ->
+        raise ArgumentError,
+              "Pulsar received an invalid module name for --components-module: " <>
+                "#{inspect(raw)}"
+
+      true ->
+        Igniter.Project.Module.parse(value)
     end
-
-    parsed = Igniter.Project.Module.parse(value)
-    module_string = inspect(parsed)
-
-    if !Regex.match?(~r/^[A-Z][A-Za-z0-9_]*(\.[A-Z][A-Za-z0-9_]*)*$/, module_string) do
-      raise ArgumentError,
-            "Pulsar received an invalid module name for --components-module: " <>
-              "#{inspect(raw)}"
-    end
-
-    parsed
   end
 end
