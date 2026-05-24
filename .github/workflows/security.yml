@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -29,7 +29,7 @@ jobs:
 
       - name: Cache deps
         id: cache-deps-security-audit
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: deps
           key: ${{ runner.os }}-deps-security-audit-dev-${{ hashFiles('mix.lock') }}
@@ -41,7 +41,7 @@ jobs:
 
       - name: Cache _build
         id: cache-build-security-audit
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: _build
           key: ${{ runner.os }}-build-security-audit-dev-${{ hashFiles('mix.lock') }}
@@ -110,7 +110,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -121,7 +121,7 @@ jobs:
 
       - name: Cache deps
         id: cache-deps-license-compliance
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: deps
           key: ${{ runner.os }}-deps-license-compliance-dev-${{ hashFiles('mix.lock') }}
@@ -133,7 +133,7 @@ jobs:
 
       - name: Cache _build
         id: cache-build-license-compliance
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: _build
           key: ${{ runner.os }}-build-license-compliance-dev-${{ hashFiles('mix.lock') }}
@@ -204,7 +204,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -215,7 +215,7 @@ jobs:
 
       - name: Cache deps
         id: cache-deps-security-credo
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: deps
           key: ${{ runner.os }}-deps-security-credo-dev-${{ hashFiles('mix.lock') }}
@@ -227,7 +227,7 @@ jobs:
 
       - name: Cache _build
         id: cache-build-security-credo
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: _build
           key: ${{ runner.os }}-build-security-credo-dev-${{ hashFiles('mix.lock') }}
@@ -239,7 +239,7 @@ jobs:
 
       - name: Cache Dialyzer PLT
         id: cache-plt-security-credo
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: priv/plts
           key: ${{ runner.os }}-plt-1.18-27-${{ hashFiles('mix.lock') }}
@@ -271,7 +271,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Scan for hardcoded secrets
         run: |
