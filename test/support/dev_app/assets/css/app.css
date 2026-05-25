@@ -26,8 +26,20 @@
 .pulsar-sandbox {
   font-family: var(--font-sans);
   color: var(--color-foreground);
+  background-color: var(--color-surface-0);
 }
 
 .pulsar-sandbox * {
   font-family: inherit;
+}
+
+/* PSB stamps the selected theme class (e.g. `theme-dark`) onto the same
+ * sandbox container that already wears .pulsar-sandbox. When the user
+ * picks dark from the chrome theme dropdown, flip the box's surface +
+ * text to the dark tokens. Component utilities inside the box still
+ * flip via @custom-variant dark, which already matches .theme-dark.
+ */
+.theme-dark.pulsar-sandbox {
+  background-color: var(--color-dark-surface-0);
+  color: var(--color-dark-foreground);
 }

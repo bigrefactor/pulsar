@@ -7,7 +7,7 @@ defmodule Pulsar.DevApp.Storybook do
     css_path: "/assets/app.css",
     sandbox_class: "pulsar-sandbox",
     themes: [
-      light: [label: "Light"],
-      dark: [label: "Dark"]
+      light: [name: "Light"],
+      dark: [name: "Dark"]
     ]
 end
