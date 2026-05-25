@@ -19,6 +19,7 @@ defmodule Pulsar.DevApp.Storybook.Welcome do
           class="psb:text-indigo-600 psb:underline psb:hover:text-indigo-800"
           href="https://hex.pm/packages/twm"
           target="_blank"
+          rel="noopener noreferrer"
         >
           Twm
         </a>
@@ -71,8 +72,8 @@ defmodule Pulsar.DevApp.Storybook.Welcome do
         </code>
         attribute on the root element — no separate class-based toggle required. To remap any
         token to a different palette color or a custom hex value, override the corresponding
-        CSS custom property in your <code class="psb:font-mono psb:text-sm psb:bg-slate-100 psb:px-1 psb:rounded">
-          app.css
+        CSS custom property in your generated <code class="psb:font-mono psb:text-sm psb:bg-slate-100 psb:px-1 psb:rounded">
+          assets/css/theme.css
         </code>:
         for example, changing
         <code class="psb:font-mono psb:text-sm psb:bg-slate-100 psb:px-1 psb:rounded">
@@ -95,6 +96,7 @@ defmodule Pulsar.DevApp.Storybook.Welcome do
             class="psb:text-indigo-600 psb:underline psb:hover:text-indigo-800"
             href="https://github.com/bigrefactor/pulsar"
             target="_blank"
+            rel="noopener noreferrer"
           >
             GitHub — bigrefactor/pulsar
           </a>
@@ -104,6 +106,7 @@ defmodule Pulsar.DevApp.Storybook.Welcome do
             class="psb:text-indigo-600 psb:underline psb:hover:text-indigo-800"
             href="https://hex.pm/packages/pulsar"
             target="_blank"
+            rel="noopener noreferrer"
           >
             Hex package — hex.pm/packages/pulsar
           </a>
@@ -122,6 +125,7 @@ defmodule Pulsar.DevApp.Storybook.Welcome do
             class="psb:text-indigo-600 psb:underline psb:hover:text-indigo-800"
             href="https://hexdocs.pm/phoenix_storybook"
             target="_blank"
+            rel="noopener noreferrer"
           >
             phoenix_storybook docs — hexdocs.pm/phoenix_storybook
           </a>
