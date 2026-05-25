@@ -58,7 +58,7 @@ defmodule Pulsar.DevApp.StorybookTest do
     end
   end
 
-  describe "flat_list/0" do
+  describe "leaves/0 paths" do
     test "includes the welcome story" do
       paths = leaf_paths()
       assert "/welcome" in paths
