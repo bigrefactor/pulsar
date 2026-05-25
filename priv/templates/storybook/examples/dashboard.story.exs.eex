@@ -1,0 +1,129 @@
+defmodule <%= @web_module %>.Storybook.Examples.Dashboard do
+  use PhoenixStorybook.Story, :example
+
+  alias <%= @components_module %>.Badge
+  alias <%= @components_module %>.Button
+  alias <%= @components_module %>.Card
+  alias <%= @components_module %>.Flash
+  alias <%= @components_module %>.Header
+  alias <%= @components_module %>.Table
+
+  def doc, do: "Dashboard fragment"
+
+  @events [
+    %{time: "09:41", event: "User registered", status: "success", id: 1},
+    %{time: "09:38", event: "Payment processed", status: "success", id: 2},
+    %{time: "09:35", event: "Export requested", status: "pending", id: 3},
+    %{time: "09:30", event: "API rate limit warning", status: "warning", id: 4},
+    %{time: "09:22", event: "Backup completed", status: "success", id: 5},
+    %{time: "09:15", event: "Failed login attempt", status: "danger", id: 6},
+    %{time: "08:59", event: "Config updated", status: "success", id: 7},
+    %{time: "08:47", event: "Webhook delivery failed", status: "danger", id: 8}
+  ]
+
+  @kpi_cards [
+    %{label: "Active users", value: "12", color: "primary"},
+    %{label: "Pending tasks", value: "3", color: "warning"},
+    %{label: "Uptime", value: "98%", color: "success"}
+  ]
+
+  @impl Phoenix.LiveView
+  def mount(_params, _session, socket) do
+    {:ok, assign(socket, events: @events, kpi_cards: @kpi_cards)}
+  end
+
+  @impl Phoenix.LiveView
+  def render(assigns) do
+    ~H"""
+    <div class="space-y-6 p-6">
+      <Flash.flash
+        id="sync-status"
+        color="info"
+        variant="outline"
+        auto_dismiss={false}
+        dismissible={false}
+        role="status"
+      >
+        Last sync 5 minutes ago
+      </Flash.flash>
+
+      <Header.header>
+        Recent activity
+        <:subtitle>Live feed of system events and user actions.</:subtitle>
+        <:breadcrumb>Home</:breadcrumb>
+        <:breadcrumb>Dashboard</:breadcrumb>
+        <:actions>
+          <Button.button variant="solid" color="primary" phx-click="new_entry">
+            New entry
+          </Button.button>
+        </:actions>
+      </Header.header>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <Card.card
+          :for={kpi <- @kpi_cards}
+          variant="elevated"
+          color={kpi.color}
+          size="md"
+        >
+          <p class="text-sm font-medium text-neutral-500 dark:text-neutral-400">
+            {kpi.label}
+          </p>
+          <p class="mt-1 text-3xl font-bold text-neutral-900 dark:text-neutral-100">
+            {kpi.value}
+          </p>
+        </Card.card>
+      </div>
+
+      <Table.table id="activity-table" rows={@events} variant="outline" striped>
+        <:col :let={row} label="Time">
+          <span class="font-mono text-sm">{row.time}</span>
+        </:col>
+        <:col :let={row} label="Event">{row.event}</:col>
+        <:col :let={row} label="Status">
+          <Badge.badge
+            color={status_color(row.status)}
+            variant="ghost"
+            size="sm"
+          >
+            {row.status}
+          </Badge.badge>
+        </:col>
+        <:action :let={row}>
+          <div class="flex gap-2">
+            <Button.button
+              variant="ghost"
+              color="neutral"
+              size="xs"
+              phx-click="edit_entry"
+              phx-value-id={row.id}
+            >
+              Edit
+            </Button.button>
+            <Button.button
+              variant="ghost"
+              color="danger"
+              size="xs"
+              phx-click="delete_entry"
+              phx-value-id={row.id}
+            >
+              Delete
+            </Button.button>
+          </div>
+        </:action>
+      </Table.table>
+    </div>
+    """
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("new_entry", _params, socket), do: {:noreply, socket}
+  def handle_event("edit_entry", _params, socket), do: {:noreply, socket}
+  def handle_event("delete_entry", _params, socket), do: {:noreply, socket}
+
+  defp status_color("success"), do: "success"
+  defp status_color("danger"), do: "danger"
+  defp status_color("warning"), do: "warning"
+  defp status_color("pending"), do: "info"
+  defp status_color(_), do: "neutral"
+end
