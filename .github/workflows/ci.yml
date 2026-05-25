@@ -154,8 +154,6 @@ jobs:
   browser:
     name: Browser a11y
     runs-on: ubuntu-22.04
-    env:
-      MIX_ENV: test
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -202,6 +200,13 @@ jobs:
           key: ${{ runner.os }}-playwright-${{ hashFiles('test/support/test_app/assets/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-playwright-
+
+      - name: Cache Status Report
+        run: |
+          echo "Cache status for browser a11y job:"
+          echo "- Deps cache hit: ${{ steps.cache-deps-browser.outputs.cache-hit || 'false' }}"
+          echo "- Build cache hit: ${{ steps.cache-build-browser.outputs.cache-hit || 'false' }}"
+          echo "- Playwright cache hit: ${{ steps.cache-playwright.outputs.cache-hit || 'false' }}"
 
       - name: Configure Git for private repos
         run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
