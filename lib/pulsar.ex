@@ -90,6 +90,13 @@ defmodule Pulsar do
 
   See `Mix.Tasks.Pulsar.Gen.Theme` for the complete set of tokens the task
   generates.
+
+  ## Storybook
+
+  Pulsar ships an optional [`phoenix_storybook`](https://hexdocs.pm/phoenix_storybook)
+  integration. Pass `--storybook` to `mix pulsar.install` (or run
+  `mix pulsar.gen.storybook` later) to generate a storybook catalog of every
+  component you install. See `docs/storybook.md` for details.
   """
 
   @doc """
