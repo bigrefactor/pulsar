@@ -159,3 +159,11 @@ needed.
 ## AAA wins (bonus)
 
 - None directly applicable to a static label primitive.
+
+## Browser a11y findings (PUL-11)
+
+Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+
+| Rule | Affected variant(s) | Themes | Ticket |
+|------|---------------------|--------|--------|
+| `color-contrast` | danger label | dark | [PUL-35](https://linear.app/bigrefactor/issue/PUL-35/label-fix-axe-color-contrast-violation) |

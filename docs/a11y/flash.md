@@ -319,3 +319,11 @@ auto-announced; the role↔live-region mapping (`alert→assertive`,
   interruption.
 - **2.5.5 Target Size (Enhanced) (AAA)** — not met by any size;
   largest close button is exactly 24×24 (lg). Below the AAA 44×44 target.
+
+## Browser a11y findings (PUL-11)
+
+Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+
+| Rule | Affected variant(s) | Themes | Ticket |
+|------|---------------------|--------|--------|
+| `color-contrast` | light: success solid; dark: primary/secondary solid | both | [PUL-32](https://linear.app/bigrefactor/issue/PUL-32/flash-fix-axe-color-contrast-violation) |

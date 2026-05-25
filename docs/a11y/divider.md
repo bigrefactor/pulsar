@@ -170,3 +170,11 @@ slot content where present.
 - None notable. Divider is intentionally minimal; semantic separator
   role and decorative-line `aria-hidden` together cover the AA bar
   without overreach.
+
+## Browser a11y findings (PUL-11)
+
+Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+
+| Rule | Affected variant(s) | Themes | Ticket |
+|------|---------------------|--------|--------|
+| `color-contrast` | section label | dark | [PUL-30](https://linear.app/bigrefactor/issue/PUL-30/divider-fix-axe-color-contrast-violation) |

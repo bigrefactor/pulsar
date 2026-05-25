@@ -235,3 +235,12 @@ should add their own `aria-live` region — out of scope here.
   `xl`=160px) exceed the AAA 44×44 floor.
 - **2.4.13 Focus Appearance (AAA, new in 2.2)** — `ring-2` (2px) meets
   AAA minimum thickness. Contrast still needs browser verification.
+
+## Browser a11y findings (PUL-11)
+
+Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+
+| Rule | Affected variant(s) | Themes | Ticket |
+|------|---------------------|--------|--------|
+| `label` | unlabelled textarea-cc | both | [PUL-42](https://linear.app/bigrefactor/issue/PUL-42/textarea-fix-axe-label-violation) |
+| `color-contrast` | success outline variant | both | [PUL-43](https://linear.app/bigrefactor/issue/PUL-43/textarea-fix-axe-color-contrast-violation) |

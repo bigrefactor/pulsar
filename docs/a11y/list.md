@@ -165,3 +165,11 @@ roles. Header `<h3>` renders only when a `:title` slot is supplied —
 - Definition-list semantics (`<dl>`/`<dt>`/`<dd>`) for key/value data
   exceed what most data-list components ship — many comparable libraries
   use plain `<div>` rows.
+
+## Browser a11y findings (PUL-11)
+
+Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+
+| Rule | Affected variant(s) | Themes | Ticket |
+|------|---------------------|--------|--------|
+| `color-contrast` | light: success dt on tinted bg; dark: dark text on dark bg (~1:1) | both | [PUL-37](https://linear.app/bigrefactor/issue/PUL-37/list-fix-axe-color-contrast-violation) |
