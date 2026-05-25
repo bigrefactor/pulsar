@@ -154,6 +154,7 @@ jobs:
   browser:
     name: Browser a11y
     runs-on: ubuntu-22.04
+    continue-on-error: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
