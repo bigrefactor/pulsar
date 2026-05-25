@@ -53,8 +53,7 @@ defmodule Pulsar.MixProject do
           # from the PLT by default. test/support/dev_app/a11y.ex calls
           # PhoenixTest.Playwright.evaluate/{2,4}, so include the app
           # explicitly to avoid `unknown_function` warnings.
-          :phoenix_test_playwright,
-          :phoenix_storybook
+          :phoenix_test_playwright
         ],
         # `list_unused_filters: true` is incompatible with the multi-version
         # CI matrix here: dialyzer in different Elixir/OTP versions categorizes
