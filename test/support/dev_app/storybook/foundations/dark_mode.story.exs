@@ -35,6 +35,8 @@ defmodule Pulsar.DevApp.Storybook.Foundations.DarkMode do
   """
 
   def render(assigns) do
+    # HEEx @variable always refers to assigns, not Elixir module attributes —
+    # inject module attrs into assigns so the ~H sigil can reference them.
     assigns =
       assigns
       |> Map.put(:global_toggle_code, @global_toggle_code)
@@ -62,7 +64,7 @@ defmodule Pulsar.DevApp.Storybook.Foundations.DarkMode do
             Side-by-side comparison
           </h2>
 
-          <div class="psb:grid psb:grid-cols-1 psb:md:grid-cols-2 psb:gap-6">
+          <div class="psb:grid psb:grid-cols-1 md:grid-cols-2 psb:gap-6">
             <%!-- Light mode card --%>
             <div>
               <p class="psb:text-sm psb:font-semibold psb:text-slate-500 psb:uppercase psb:tracking-wide psb:mb-3">
@@ -79,6 +81,7 @@ defmodule Pulsar.DevApp.Storybook.Foundations.DarkMode do
                   <div>
                     <Label.label for="light_email">Email address</Label.label>
                     <Input.input
+                      id="light_email"
                       name="light_email"
                       type="email"
                       placeholder="you@example.com"
@@ -88,6 +91,7 @@ defmodule Pulsar.DevApp.Storybook.Foundations.DarkMode do
                   <div>
                     <Label.label for="light_password">Password</Label.label>
                     <Input.input
+                      id="light_password"
                       name="light_password"
                       type="password"
                       placeholder="••••••••"
@@ -122,6 +126,7 @@ defmodule Pulsar.DevApp.Storybook.Foundations.DarkMode do
                   <div>
                     <Label.label for="dark_email">Email address</Label.label>
                     <Input.input
+                      id="dark_email"
                       name="dark_email"
                       type="email"
                       placeholder="you@example.com"
@@ -131,6 +136,7 @@ defmodule Pulsar.DevApp.Storybook.Foundations.DarkMode do
                   <div>
                     <Label.label for="dark_password">Password</Label.label>
                     <Input.input
+                      id="dark_password"
                       name="dark_password"
                       type="password"
                       placeholder="••••••••"

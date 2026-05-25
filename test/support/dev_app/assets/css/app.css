@@ -5,6 +5,7 @@
 @source "../../live";
 @source "../../layouts";
 @source "../../components.ex";
+@source "../../storybook";
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 @custom-variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);

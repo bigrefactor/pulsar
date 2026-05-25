@@ -1,6 +1,38 @@
 defmodule Pulsar.DevApp.Storybook.Foundations.Colors do
   use PhoenixStorybook.Story, :page
 
+  # Tailwind v4 is a static scanner and cannot detect class names constructed
+  # via string interpolation ("bg-#{token}-#{shade}"). List all generated
+  # swatch classes here so the scanner includes them in the build.
+  #
+  # primary:
+  # bg-primary-50 bg-primary-100 bg-primary-200 bg-primary-300 bg-primary-400
+  # bg-primary-500 bg-primary-600 bg-primary-700 bg-primary-800 bg-primary-900
+  # bg-primary-950
+  # secondary:
+  # bg-secondary-50 bg-secondary-100 bg-secondary-200 bg-secondary-300
+  # bg-secondary-400 bg-secondary-500 bg-secondary-600 bg-secondary-700
+  # bg-secondary-800 bg-secondary-900 bg-secondary-950
+  # success:
+  # bg-success-50 bg-success-100 bg-success-200 bg-success-300 bg-success-400
+  # bg-success-500 bg-success-600 bg-success-700 bg-success-800 bg-success-900
+  # bg-success-950
+  # warning:
+  # bg-warning-50 bg-warning-100 bg-warning-200 bg-warning-300 bg-warning-400
+  # bg-warning-500 bg-warning-600 bg-warning-700 bg-warning-800 bg-warning-900
+  # bg-warning-950
+  # danger:
+  # bg-danger-50 bg-danger-100 bg-danger-200 bg-danger-300 bg-danger-400
+  # bg-danger-500 bg-danger-600 bg-danger-700 bg-danger-800 bg-danger-900
+  # bg-danger-950
+  # info:
+  # bg-info-50 bg-info-100 bg-info-200 bg-info-300 bg-info-400 bg-info-500
+  # bg-info-600 bg-info-700 bg-info-800 bg-info-900 bg-info-950
+  # neutral:
+  # bg-neutral-50 bg-neutral-100 bg-neutral-200 bg-neutral-300 bg-neutral-400
+  # bg-neutral-500 bg-neutral-600 bg-neutral-700 bg-neutral-800 bg-neutral-900
+  # bg-neutral-950
+
   def doc, do: "Semantic color tokens"
 
   def render(assigns) do
@@ -80,7 +112,7 @@ defmodule Pulsar.DevApp.Storybook.Foundations.Colors do
             "bg-#{@token}-#{shade}"
           ]}>
           </div>
-          <p class="psb:text-center psb:text-slate-500 psb:mt-1" style="font-size: 0.6rem; line-height: 1.2;">
+          <p class="psb:text-center psb:text-slate-500 psb:mt-1 psb:text-[0.6rem] psb:leading-tight">
             {shade}
           </p>
         </div>
