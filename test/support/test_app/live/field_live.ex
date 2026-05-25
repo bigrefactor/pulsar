@@ -34,7 +34,7 @@ defmodule Pulsar.TestApp.FieldLive do
         <.form for={@form} class="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
           <Field.field
             :for={type <- @types}
-            field={@form[String.to_atom(type)]}
+            field={@form[type]}
             type={type}
             options={if type in ["select", "radio"], do: [{"One", "1"}, {"Two", "2"}], else: nil}
             data-fixture-cell={"type-#{type}"}

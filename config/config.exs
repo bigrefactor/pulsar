@@ -9,6 +9,12 @@ config :logger, :console,
 # Only loaded in dev/test; the :tailwind and :esbuild deps are themselves dev/test-only,
 # so consumers of the library never see these profiles.
 if config_env() in [:dev, :test] do
+  node_path_sep =
+    case :os.type() do
+      {:win32, _} -> ";"
+      _ -> ":"
+    end
+
   config :esbuild,
     version: "0.25.0",
     test_app: [
@@ -17,7 +23,7 @@ if config_env() in [:dev, :test] do
         --bundle
         --target=es2022
         --format=esm
-        --outfile=priv/static/assets/app.js
+        --outfile=test/support/test_app/priv/static/assets/app.js
       ),
       cd: Path.expand("..", __DIR__),
       env: %{
@@ -27,7 +33,7 @@ if config_env() in [:dev, :test] do
               Path.expand("../deps", __DIR__),
               Path.expand("../_build/#{config_env()}", __DIR__)
             ],
-            ":"
+            node_path_sep
           )
       }
     ]
@@ -37,7 +43,7 @@ if config_env() in [:dev, :test] do
     test_app: [
       args: ~w(
         --input=test/support/test_app/assets/css/app.css
-        --output=priv/static/assets/app.css
+        --output=test/support/test_app/priv/static/assets/app.css
       ),
       cd: Path.expand("..", __DIR__)
     ]

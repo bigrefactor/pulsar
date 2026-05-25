@@ -40,7 +40,7 @@ defmodule Pulsar.TestApp.Components do
           <.link
             navigate={path}
             class="block rounded px-3 py-1 text-sm hover:bg-neutral-100 aria-[current=page]:bg-primary-100 aria-[current=page]:font-semibold"
-            aria-current={if @current_path == path, do: "page", else: "false"}
+            aria-current={if @current_path == path, do: "page"}
           >
             {label}
           </.link>
@@ -83,14 +83,25 @@ defmodule Pulsar.TestApp.Components do
   def theme_toggle(assigns) do
     ~H"""
     <button
+      id="pulsar-theme-toggle"
       type="button"
       class="rounded border px-3 py-1 text-sm"
       data-fixture-theme-toggle
       aria-label="Toggle dark mode"
-      onclick="const r=document.documentElement; r.dataset.theme = r.dataset.theme === 'dark' ? 'light' : 'dark'"
+      phx-hook=".PulsarThemeToggle"
     >
       Toggle theme
     </button>
+    <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarThemeToggle">
+      export default {
+        mounted() {
+          this.el.addEventListener("click", () => {
+            const root = document.documentElement;
+            root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
+          });
+        }
+      }
+    </script>
     """
   end
 end

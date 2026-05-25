@@ -5,8 +5,26 @@ defmodule Pulsar.TestApp.Web do
     quote do
       use Phoenix.LiveView, layout: {Pulsar.TestApp.Layouts, :app}
 
+      alias Pulsar.TestApp.Web
+
+      on_mount({Web, :assign_current_path})
+
       unquote(html_helpers())
     end
+  end
+
+  def on_mount(:assign_current_path, _params, _session, socket) do
+    socket =
+      Phoenix.LiveView.attach_hook(
+        socket,
+        :assign_current_path,
+        :handle_params,
+        fn _params, uri, socket ->
+          {:cont, Phoenix.Component.assign(socket, :current_path, URI.parse(uri).path)}
+        end
+      )
+
+    {:cont, socket}
   end
 
   defp html_helpers do
@@ -14,9 +32,7 @@ defmodule Pulsar.TestApp.Web do
       use Phoenix.Component
 
       import Phoenix.HTML
-
-      import Pulsar.TestApp.Components,
-        only: [fixture_nav: 1, theme_toggle: 1, fixture_page: 1, fixture_section: 1]
+      import Pulsar.TestApp.Components, only: [fixture_page: 1, fixture_section: 1]
 
       alias Phoenix.LiveView.JS
       alias Pulsar.TestApp.Endpoint

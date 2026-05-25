@@ -174,7 +174,7 @@ defmodule Pulsar.MixProject do
       },
       files: ~w(
         lib
-        priv
+        priv/templates
         .formatter.exs
         mix.exs
         README.md

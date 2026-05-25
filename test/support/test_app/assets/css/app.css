@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* @source paths below are relative to this file: test/support/test_app/assets/css/ */
 @source "../../../../../lib/pulsar/components";
 @source "../../live";
 @source "../../layouts";

@@ -18,7 +18,7 @@ defmodule Pulsar.TestApp.Endpoint do
 
   plug Plug.Static,
     at: "/assets",
-    from: {:pulsar, "priv/static/assets"},
+    from: Path.expand("priv/static/assets", __DIR__),
     gzip: false,
     only: ~w(app.css app.js)
 
