@@ -1,0 +1,121 @@
+defmodule <%= @web_module %>.Storybook.Components.Header do
+  use PhoenixStorybook.Story, :component
+
+  alias <%= @components_module %>.Header
+
+  def function, do: &Header.header/1
+  def render_source, do: :function
+
+  def attributes do
+    [
+      %Attr{
+        id: :variant,
+        type: :string,
+        values: ~w(solid outline ghost),
+        default: "ghost",
+        doc: "Visual style variant of the header"
+      },
+      %Attr{
+        id: :color,
+        type: :string,
+        values: ~w(neutral primary secondary success danger warning info),
+        default: "neutral",
+        doc: "Color scheme of the header"
+      },
+      %Attr{
+        id: :size,
+        type: :string,
+        values: ~w(xs sm md lg xl),
+        default: "md",
+        doc: "Size of the header text"
+      },
+      %Attr{
+        id: :as,
+        type: :string,
+        values: ~w(h1 h2 h3 h4 h5 h6),
+        default: "h1",
+        doc: "HTML heading element to use"
+      },
+      %Attr{
+        id: :sticky,
+        type: :boolean,
+        default: false,
+        doc: "Whether header sticks to top of viewport when scrolling"
+      },
+      %Attr{
+        id: :divider,
+        type: :boolean,
+        default: false,
+        doc: "Show a divider line below the header"
+      },
+      %Attr{
+        id: :class,
+        type: :string,
+        default: "",
+        doc: "Additional CSS classes"
+      }
+    ]
+  end
+
+  def slots do
+    [
+      %Slot{id: :inner_block, required: true, doc: "The main title content"},
+      %Slot{id: :subtitle, doc: "Optional subtitle or description text"},
+      %Slot{id: :actions, doc: "Optional actions aligned to the right on desktop"},
+      %Slot{id: :breadcrumb, doc: "Breadcrumb navigation items with automatic chevron separators"}
+    ]
+  end
+
+  def variations do
+    [
+      %Variation{
+        id: :default,
+        description: "Default page header",
+        attributes: %{},
+        slots: ["Page Title"]
+      },
+      %Variation{
+        id: :with_subtitle,
+        description: "Header with subtitle",
+        attributes: %{},
+        slots: [
+          "Dashboard",
+          "<:subtitle>Overview of your account activity</:subtitle>"
+        ]
+      },
+      %Variation{
+        id: :h2_level,
+        description: "Section heading (h2)",
+        attributes: %{as: "h2", size: "lg"},
+        slots: ["Section Title"]
+      },
+      %Variation{
+        id: :primary_color,
+        description: "Primary colored header",
+        attributes: %{color: "primary", variant: "ghost"},
+        slots: ["Featured Section"]
+      },
+      %Variation{
+        id: :with_divider,
+        description: "Header with bottom divider",
+        attributes: %{divider: true},
+        slots: [
+          "Settings",
+          "<:subtitle>Manage your account preferences</:subtitle>"
+        ]
+      },
+      %Variation{
+        id: :size_xl,
+        description: "Extra-large header",
+        attributes: %{size: "xl"},
+        slots: ["Welcome Back"]
+      },
+      %Variation{
+        id: :solid_variant,
+        description: "Solid background header",
+        attributes: %{variant: "solid", color: "primary"},
+        slots: ["Admin Panel"]
+      }
+    ]
+  end
+end

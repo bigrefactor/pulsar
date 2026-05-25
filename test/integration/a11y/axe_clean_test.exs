@@ -1,7 +1,7 @@
 defmodule Pulsar.Integration.A11y.AxeCleanTest do
   @moduledoc """
   Per-fixture axe-clean assertion. One test per (fixture LiveView, theme)
-  combination — adding a fixture to `Pulsar.TestApp.Components.fixtures/0`
+  combination — adding a fixture to `Pulsar.DevApp.Components.fixtures/0`
   automatically gets light + dark coverage here.
 
   Tagged `:integration`; excluded from `mix test` by default. Run with
@@ -15,8 +15,8 @@ defmodule Pulsar.Integration.A11y.AxeCleanTest do
 
   use PhoenixTest.Playwright.Case, async: true
 
-  alias Pulsar.TestApp.A11y
-  alias Pulsar.TestApp.Components
+  alias Pulsar.DevApp.A11y
+  alias Pulsar.DevApp.Components
 
   @moduletag :integration
 

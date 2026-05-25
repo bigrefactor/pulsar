@@ -1,0 +1,100 @@
+defmodule <%= @web_module %>.Storybook.Components.Card do
+  use PhoenixStorybook.Story, :component
+
+  alias <%= @components_module %>.Card
+
+  def function, do: &Card.card/1
+  def render_source, do: :function
+
+  def attributes do
+    [
+      %Attr{
+        id: :variant,
+        type: :string,
+        values: ~w(solid outline ghost elevated),
+        default: "elevated",
+        doc: "Visual style variant of the card"
+      },
+      %Attr{
+        id: :color,
+        type: :string,
+        values: ~w(neutral primary secondary success danger warning info),
+        default: "neutral",
+        doc: "Color scheme of the card"
+      },
+      %Attr{
+        id: :size,
+        type: :string,
+        values: ~w(xs sm md lg xl),
+        default: "md",
+        doc: "Size of the card (controls padding and spacing)"
+      },
+      %Attr{
+        id: :class,
+        type: :string,
+        default: "",
+        doc: "Additional CSS classes"
+      }
+    ]
+  end
+
+  def slots do
+    [
+      %Slot{id: :inner_block, required: true, doc: "Main card content"},
+      %Slot{id: :media, doc: "Media section (images, videos) — full width, no padding"},
+      %Slot{id: :header, doc: "Header section with padding"},
+      %Slot{id: :footer, doc: "Footer section with padding"}
+    ]
+  end
+
+  def variations do
+    [
+      %Variation{
+        id: :default,
+        description: "Default elevated neutral card",
+        attributes: %{},
+        slots: ["<p>Simple card content</p>"]
+      },
+      %Variation{
+        id: :outline_primary,
+        description: "Outline primary card",
+        attributes: %{variant: "outline", color: "primary"},
+        slots: ["<p>Outlined primary card</p>"]
+      },
+      %Variation{
+        id: :solid_success,
+        description: "Solid success card",
+        attributes: %{variant: "solid", color: "success"},
+        slots: ["<p>Success card content</p>"]
+      },
+      %Variation{
+        id: :ghost_card,
+        description: "Ghost card (no background or border)",
+        attributes: %{variant: "ghost"},
+        slots: ["<p>Ghost card — transparent with no border</p>"]
+      },
+      %Variation{
+        id: :with_header_and_footer,
+        description: "Card with header and footer slots",
+        attributes: %{variant: "outline", color: "neutral"},
+        slots: [
+          "<:header><h3 class=\"font-semibold text-lg\">Card Title</h3></:header>",
+          "<p>Main body content of the card.</p>",
+          "<:footer><span class=\"text-sm text-gray-500\">Updated 2 hours ago</span></:footer>"
+        ]
+      },
+      %Variation{
+        id: :size_lg,
+        description: "Large card with generous padding",
+        attributes: %{size: "lg", variant: "elevated"},
+        slots: ["<p>Large card with more padding and spacing.</p>"]
+      },
+      %Variation{
+        id: :danger_outline,
+        description: "Danger outline card",
+        attributes: %{variant: "outline", color: "danger"},
+        slots: ["<p>Warning: something needs attention.</p>"]
+      }
+    ]
+  end
+end

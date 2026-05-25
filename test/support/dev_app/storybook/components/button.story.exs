@@ -1,0 +1,142 @@
+defmodule Pulsar.DevApp.Storybook.Components.Button do
+  use PhoenixStorybook.Story, :component
+
+  alias Pulsar.Components.Button
+
+  def function, do: &Button.button/1
+  def render_source, do: :function
+
+  def attributes do
+    [
+      %Attr{
+        id: :variant,
+        type: :string,
+        values: ~w(solid outline ghost link),
+        default: "solid",
+        doc: "Visual style variant of the button"
+      },
+      %Attr{
+        id: :color,
+        type: :string,
+        values: ~w(neutral primary secondary success danger warning info),
+        default: "primary",
+        doc: "Color scheme of the button"
+      },
+      %Attr{
+        id: :size,
+        type: :string,
+        values: ~w(xs sm md lg xl),
+        default: "md",
+        doc: "Size of the button"
+      },
+      %Attr{
+        id: :type,
+        type: :string,
+        values: ~w(button submit reset),
+        default: "button",
+        doc: "Button type attribute"
+      },
+      %Attr{
+        id: :loading,
+        type: :boolean,
+        default: false,
+        doc: "Show loading state"
+      },
+      %Attr{
+        id: :disabled,
+        type: :boolean,
+        default: false,
+        doc: "Disable the button"
+      },
+      %Attr{
+        id: :as,
+        type: :atom,
+        values: [:button, :a, :div],
+        default: :button,
+        doc: "Polymorphic element type"
+      },
+      %Attr{
+        id: :href,
+        type: :string,
+        doc: "External URL to navigate to"
+      },
+      %Attr{
+        id: :aria_label,
+        type: :string,
+        doc: "Accessible label, required for icon-only buttons"
+      },
+      %Attr{
+        id: :class,
+        type: :string,
+        default: "",
+        doc: "Additional CSS classes"
+      }
+    ]
+  end
+
+  def slots do
+    [
+      %Slot{id: :inner_block, required: true, doc: "Button content"},
+      %Slot{id: :loading_content, doc: "Custom loading content (replaces inner_block when loading)"}
+    ]
+  end
+
+  def variations do
+    [
+      %Variation{
+        id: :default,
+        description: "Default primary solid button",
+        attributes: %{},
+        slots: ["Click Me"]
+      },
+      %Variation{
+        id: :outline_primary,
+        description: "Outline primary button",
+        attributes: %{variant: "outline", color: "primary"},
+        slots: ["Outline"]
+      },
+      %Variation{
+        id: :ghost_neutral,
+        description: "Ghost neutral button",
+        attributes: %{variant: "ghost", color: "neutral"},
+        slots: ["Ghost"]
+      },
+      %Variation{
+        id: :link_variant,
+        description: "Link variant button",
+        attributes: %{variant: "link", color: "primary"},
+        slots: ["Link Button"]
+      },
+      %Variation{
+        id: :danger_solid,
+        description: "Danger solid button",
+        attributes: %{variant: "solid", color: "danger"},
+        slots: ["Delete"]
+      },
+      %Variation{
+        id: :loading_state,
+        description: "Loading state",
+        attributes: %{loading: true},
+        slots: ["Saving…"]
+      },
+      %Variation{
+        id: :disabled_state,
+        description: "Disabled state",
+        attributes: %{disabled: true},
+        slots: ["Disabled"]
+      },
+      %Variation{
+        id: :size_xl,
+        description: "Extra-large size",
+        attributes: %{size: "xl", color: "success"},
+        slots: ["Large Button"]
+      },
+      %Variation{
+        id: :as_link,
+        description: "Polymorphic rendering as anchor element",
+        attributes: %{as: :a, href: "https://hex.pm", variant: "solid", color: "primary"},
+        slots: ["Open Hex"]
+      }
+    ]
+  end
+end

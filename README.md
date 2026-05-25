@@ -67,6 +67,26 @@ mix pulsar.gen.theme
 
 After generation, the components live under `lib/your_app_web/components/` and are yours to customize.
 
+### Adding a storybook
+
+Pulsar can also generate [phoenix_storybook](https://hexdocs.pm/phoenix_storybook)
+stories for every component you install. Pass `--storybook` to the installer:
+
+```bash
+mix pulsar.install --storybook
+```
+
+This generates a `lib/<app>_web/storybook/` directory with one story per
+installed component, plus foundation pages and example UIs. You will need to
+add `phoenix_storybook` to your `mix.exs` and wire it into your router — the
+generator prints the exact setup instructions when it finishes.
+
+To add storybook stories after components are already installed:
+
+```bash
+mix pulsar.gen.storybook
+```
+
 ### Use the Generated Components
 
 ```elixir

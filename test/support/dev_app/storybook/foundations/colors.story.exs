@@ -1,0 +1,123 @@
+defmodule Pulsar.DevApp.Storybook.Foundations.Colors do
+  use PhoenixStorybook.Story, :page
+
+  # Tailwind v4 is a static scanner and cannot detect class names constructed
+  # via string interpolation ("bg-#{token}-#{shade}"). List all generated
+  # swatch classes here so the scanner includes them in the build.
+  #
+  # primary:
+  # bg-primary-50 bg-primary-100 bg-primary-200 bg-primary-300 bg-primary-400
+  # bg-primary-500 bg-primary-600 bg-primary-700 bg-primary-800 bg-primary-900
+  # bg-primary-950
+  # secondary:
+  # bg-secondary-50 bg-secondary-100 bg-secondary-200 bg-secondary-300
+  # bg-secondary-400 bg-secondary-500 bg-secondary-600 bg-secondary-700
+  # bg-secondary-800 bg-secondary-900 bg-secondary-950
+  # success:
+  # bg-success-50 bg-success-100 bg-success-200 bg-success-300 bg-success-400
+  # bg-success-500 bg-success-600 bg-success-700 bg-success-800 bg-success-900
+  # bg-success-950
+  # warning:
+  # bg-warning-50 bg-warning-100 bg-warning-200 bg-warning-300 bg-warning-400
+  # bg-warning-500 bg-warning-600 bg-warning-700 bg-warning-800 bg-warning-900
+  # bg-warning-950
+  # danger:
+  # bg-danger-50 bg-danger-100 bg-danger-200 bg-danger-300 bg-danger-400
+  # bg-danger-500 bg-danger-600 bg-danger-700 bg-danger-800 bg-danger-900
+  # bg-danger-950
+  # info:
+  # bg-info-50 bg-info-100 bg-info-200 bg-info-300 bg-info-400 bg-info-500
+  # bg-info-600 bg-info-700 bg-info-800 bg-info-900 bg-info-950
+  # neutral:
+  # bg-neutral-50 bg-neutral-100 bg-neutral-200 bg-neutral-300 bg-neutral-400
+  # bg-neutral-500 bg-neutral-600 bg-neutral-700 bg-neutral-800 bg-neutral-900
+  # bg-neutral-950
+
+  def doc, do: "Semantic color tokens"
+
+  def render(assigns) do
+    ~H"""
+    <div class="psb:max-w-5xl psb:mx-auto psb:py-8 psb:px-4">
+      <h1 class="psb:text-2xl psb:font-bold psb:text-slate-900 psb:mb-2">Color Tokens</h1>
+
+      <p class="psb:text-base psb:leading-relaxed psb:text-slate-700 psb:mb-8">
+        Pulsar defines 7 semantic color tokens — each is a full 11-shade ladder (50–950) backed by a
+        Tailwind palette color. Override any token in your generated
+        <code class="psb:font-mono psb:text-sm psb:bg-slate-100 psb:px-1 psb:rounded">
+          assets/css/theme.css
+        </code>
+        to retheme every component at once.
+      </p>
+
+      <div class="psb:space-y-12">
+        <div>
+          <h2 class="psb:text-xl psb:font-semibold psb:text-slate-900 psb:mb-6">
+            Light mode
+          </h2>
+          <div class="pulsar-sandbox psb:space-y-4">
+            {color_row("primary", "blue", assigns)}
+            {color_row("secondary", "violet", assigns)}
+            {color_row("success", "green", assigns)}
+            {color_row("warning", "amber", assigns)}
+            {color_row("danger", "red", assigns)}
+            {color_row("info", "cyan", assigns)}
+            {color_row("neutral", "gray", assigns)}
+          </div>
+        </div>
+
+        <div>
+          <h2 class="psb:text-xl psb:font-semibold psb:text-slate-900 psb:mb-6">
+            Dark mode
+          </h2>
+          <div data-theme="dark" class="pulsar-sandbox psb:bg-gray-950 psb:rounded-lg psb:p-4 psb:space-y-4">
+            {color_row("primary", "blue", assigns)}
+            {color_row("secondary", "violet", assigns)}
+            {color_row("success", "green", assigns)}
+            {color_row("warning", "amber", assigns)}
+            {color_row("danger", "red", assigns)}
+            {color_row("info", "cyan", assigns)}
+            {color_row("neutral", "gray", assigns)}
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  defp color_row(token, base, assigns) do
+    shades = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
+
+    assigns =
+      assigns
+      |> Map.put(:token, token)
+      |> Map.put(:base, base)
+      |> Map.put(:shades, shades)
+
+    ~H"""
+    <div>
+      <p class="psb:text-xs psb:font-semibold psb:uppercase psb:tracking-wide psb:text-slate-500 psb:mb-2">
+        {@token}
+        <span class="psb:font-normal psb:normal-case psb:tracking-normal psb:text-slate-400">
+          → {@base}
+        </span>
+      </p>
+      <div class="psb:flex psb:gap-1">
+        <div
+          :for={shade <- @shades}
+          class="psb:flex-1 psb:rounded psb:overflow-hidden psb:min-w-0"
+          title={"#{@token}-#{shade} → #{@base}-#{shade}"}
+        >
+          <div class={[
+            "psb:h-10",
+            "bg-#{@token}-#{shade}"
+          ]}>
+          </div>
+          <p class="psb:text-center psb:text-slate-500 psb:mt-1 psb:text-[0.6rem] psb:leading-tight">
+            {shade}
+          </p>
+        </div>
+      </div>
+    </div>
+    """
+  end
+end

@@ -50,7 +50,7 @@ defmodule Pulsar.MixProject do
           :eex,
           :rewrite,
           # phoenix_test_playwright is `runtime: false`, so dialyxir omits it
-          # from the PLT by default. test/support/test_app/a11y.ex calls
+          # from the PLT by default. test/support/dev_app/a11y.ex calls
           # PhoenixTest.Playwright.evaluate/{2,4}, so include the app
           # explicitly to avoid `unknown_function` warnings.
           :phoenix_test_playwright
@@ -82,8 +82,11 @@ defmodule Pulsar.MixProject do
         test: :test,
         check: :test,
         "check.ci": :test,
+        "dev_app.server": :test,
+        "dev.storybook": :test,
         "test_app.server": :test,
         "assets.build": :test,
+        "pulsar.dev_app.theme": :test,
         "pulsar.test_app.theme": :test
       ]
     ]
@@ -114,11 +117,12 @@ defmodule Pulsar.MixProject do
       {:phoenix_test_playwright, "~> 0.14", only: :test, runtime: false},
       {:a11y_audit, "~> 0.3", only: :test},
 
-      # Test app build pipeline (test/support/test_app) — never ships to consumers.
+      # Test app build pipeline (test/support/dev_app) — never ships to consumers.
       # jason is pulled in transitively (ex_ast) so it's available in every env.
       {:bandit, "~> 1.5", only: [:dev, :test]},
       {:tailwind, "~> 0.4", only: [:dev, :test], runtime: false},
       {:esbuild, "~> 0.10", only: [:dev, :test], runtime: false},
+      {:phoenix_storybook, "~> 1.1", only: [:dev, :test]},
       {:heroicons,
        github: "tailwindlabs/heroicons",
        tag: "v2.1.1",
@@ -142,14 +146,26 @@ defmodule Pulsar.MixProject do
         "esbuild.install --if-missing"
       ],
       "assets.build": [
-        "pulsar.test_app.theme",
-        "tailwind test_app",
-        "esbuild test_app"
+        "pulsar.dev_app.theme",
+        "tailwind dev_app",
+        "esbuild dev_app"
       ],
-      "test_app.server": [
+      "dev_app.server": [
         "assets.build",
-        "run --no-halt -e '{:ok, sup} = Pulsar.TestApp.Application.start(:normal, []); Process.unlink(sup)'"
+        "run --no-halt -e '{:ok, sup} = Pulsar.DevApp.Application.start(:normal, []); Process.unlink(sup)'"
       ],
+      # Shadow phoenix_storybook's own `mix dev.storybook` task. PSB's version
+      # assumes a PSB git checkout with source assets/ (runs npm ci / mix
+      # assets.build inside the dep) and always fails against the hex package,
+      # which strips assets/ from its tarball. Mix aliases take precedence over
+      # dep-provided task modules, so this makes `mix dev.storybook` do what
+      # a Pulsar contributor expects: boot the in-repo dev_app endpoint that
+      # serves /storybook on port 4002.
+      "dev.storybook": ["dev_app.server"],
+      # Backward-compat aliases — remove in a follow-up after contributor muscle
+      # memory and CI workflows have migrated to the dev_app.* names.
+      "test_app.server": ["dev_app.server"],
+      "pulsar.test_app.theme": ["pulsar.dev_app.theme"],
       check: [
         "compile --warnings-as-errors",
         "format --check-formatted",

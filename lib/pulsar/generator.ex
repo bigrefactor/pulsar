@@ -44,6 +44,7 @@ defmodule Pulsar.Generator do
   """
 
   alias Igniter.Libs.Phoenix
+  alias Pulsar.Generator.Storybook
 
   @doc """
   Generates the `Mix.Tasks.Pulsar.Gen.<X>` boilerplate. See the module doc for options.
@@ -107,9 +108,9 @@ defmodule Pulsar.Generator do
             example: unquote(example),
             positional: [],
             composes: [],
-            schema: [components_module: :string],
+            schema: [components_module: :string, storybook: :boolean, print_setup_notice: :boolean],
             defaults: [],
-            aliases: [M: :components_module],
+            aliases: [M: :components_module, s: :storybook],
             required: []
           }
         end
@@ -157,26 +158,50 @@ defmodule Pulsar.Generator do
     contents = contents(component_name, assigns)
     {exists, igniter} = Igniter.Project.Module.module_exists(igniter, component)
 
-    if exists do
-      {igniter, source, _} = Igniter.Project.Module.find_module!(igniter, component)
+    igniter =
+      if exists do
+        {igniter, source, _} = Igniter.Project.Module.find_module!(igniter, component)
 
-      # Wrap template contents in module definition for existing files
-      wrapped_contents = """
-      defmodule #{inspect(component)} do
-        #{contents}
+        # Wrap template contents in module definition for existing files
+        wrapped_contents = """
+        defmodule #{inspect(component)} do
+          #{contents}
+        end
+        """
+
+        igniter
+        |> backup_existing_component(source.path)
+        |> Igniter.compose_task("igniter.add_extension", ["phoenix"])
+        |> Igniter.update_file(source.path, fn source ->
+          Rewrite.Source.update(source, :content, wrapped_contents)
+        end)
+      else
+        igniter
+        |> Igniter.compose_task("igniter.add_extension", ["phoenix"])
+        |> Igniter.Project.Module.create_module(component, contents)
       end
-      """
 
+    maybe_install_story(igniter, component_name)
+  end
+
+  defp maybe_install_story(igniter, component_name) do
+    if igniter.args.options[:storybook] do
       igniter
-      |> backup_existing_component(source.path)
-      |> Igniter.compose_task("igniter.add_extension", ["phoenix"])
-      |> Igniter.update_file(source.path, fn source ->
-        Rewrite.Source.update(source, :content, wrapped_contents)
-      end)
+      |> Storybook.install_component_story(component_name)
+      |> maybe_print_setup_notice()
     else
       igniter
-      |> Igniter.compose_task("igniter.add_extension", ["phoenix"])
-      |> Igniter.Project.Module.create_module(component, contents)
+    end
+  end
+
+  # Print the setup notice unless `--no-print-setup-notice` was passed.
+  # `pulsar.install --storybook` suppresses it on every composed component
+  # generator so the notice prints exactly once (from the final
+  # `pulsar.gen.storybook --skip-components` composition).
+  defp maybe_print_setup_notice(igniter) do
+    case igniter.args.options[:print_setup_notice] do
+      false -> igniter
+      _ -> Storybook.print_setup_notice(igniter)
     end
   end
 

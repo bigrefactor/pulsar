@@ -1,24 +1,24 @@
 import Config
 
-alias Pulsar.TestApp.Endpoint
-alias Pulsar.TestApp.ErrorHTML
-alias Pulsar.TestApp.PubSub
+alias Pulsar.DevApp.Endpoint
+alias Pulsar.DevApp.ErrorHTML
+alias Pulsar.DevApp.PubSub
 
 # Print only warnings and errors during test
 config :logger, level: :warning
 
-# Playwright (and the playwright npm package) lives under the test_app's assets
+# Playwright (and the playwright npm package) lives under the dev_app's assets
 # directory, not the project's default `./assets`.
 # Raise the default navigation timeout to 10 s — the fixture pages include
 # Tailwind / LiveView assets that need a moment to load.
 config :phoenix_test, :playwright,
-  assets_dir: "test/support/test_app/assets",
+  assets_dir: "test/support/dev_app/assets",
   timeout: 10_000
 
 # PhoenixTest.Playwright resolves the OTP app to find the endpoint module.
 config :phoenix_test, otp_app: :pulsar
 
-# In-repo fixture app endpoint (test/support/test_app).
+# In-repo fixture app endpoint (test/support/dev_app).
 # `server: true` so phoenix_test_playwright can drive the real listener on every
 # `mix test` invocation. Unit tests ignore the bind; browser tests rely on it.
 # Side effect: port 4002 is bound for the lifetime of any test run, so two
