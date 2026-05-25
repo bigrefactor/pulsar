@@ -1,0 +1,133 @@
+defmodule Pulsar.DevApp.Storybook.Foundations.Spacing do
+  use PhoenixStorybook.Story, :page
+
+  alias Pulsar.Components.Button
+  alias Pulsar.Components.Input
+  alias Pulsar.Components.Label
+
+  def doc, do: "Sizing scale"
+
+  def render(assigns) do
+    ~H"""
+    <div class="psb:max-w-4xl psb:mx-auto psb:py-8 psb:px-4">
+      <h1 class="psb:text-2xl psb:font-bold psb:text-slate-900 psb:mb-2">Sizing Scale</h1>
+
+      <p class="psb:text-base psb:leading-relaxed psb:text-slate-700 psb:mb-10">
+        All interactive components share a unified size axis: <code class="psb:font-mono psb:text-sm psb:bg-slate-100 psb:px-1 psb:rounded">xs</code>, <code class="psb:font-mono psb:text-sm psb:bg-slate-100 psb:px-1 psb:rounded">sm</code>,
+        <code class="psb:font-mono psb:text-sm psb:bg-slate-100 psb:px-1 psb:rounded">md</code>
+        (default), <code class="psb:font-mono psb:text-sm psb:bg-slate-100 psb:px-1 psb:rounded">lg</code>, <code class="psb:font-mono psb:text-sm psb:bg-slate-100 psb:px-1 psb:rounded">xl</code>.
+        Pass <code class="psb:font-mono psb:text-sm psb:bg-slate-100 psb:px-1 psb:rounded">size="lg"</code>
+        to any component and the height, padding, font size, and border radius all scale together.
+      </p>
+
+      <div class="psb:space-y-12">
+        <section>
+          <h2 class="psb:text-lg psb:font-semibold psb:text-slate-700 psb:mb-4 psb:border-b psb:border-slate-200 psb:pb-2">
+            Buttons
+          </h2>
+          <div class="pulsar-sandbox psb:flex psb:flex-wrap psb:items-end psb:gap-4">
+            <div class="psb:flex psb:flex-col psb:items-center psb:gap-1">
+              <Button.button size="xl" variant="solid" color="primary">Extra Large</Button.button>
+              <span class="psb:text-xs psb:font-mono psb:text-slate-400">xl</span>
+            </div>
+            <div class="psb:flex psb:flex-col psb:items-center psb:gap-1">
+              <Button.button size="lg" variant="solid" color="primary">Large</Button.button>
+              <span class="psb:text-xs psb:font-mono psb:text-slate-400">lg</span>
+            </div>
+            <div class="psb:flex psb:flex-col psb:items-center psb:gap-1">
+              <Button.button size="md" variant="solid" color="primary">Medium</Button.button>
+              <span class="psb:text-xs psb:font-mono psb:text-slate-400">md</span>
+            </div>
+            <div class="psb:flex psb:flex-col psb:items-center psb:gap-1">
+              <Button.button size="sm" variant="solid" color="primary">Small</Button.button>
+              <span class="psb:text-xs psb:font-mono psb:text-slate-400">sm</span>
+            </div>
+            <div class="psb:flex psb:flex-col psb:items-center psb:gap-1">
+              <Button.button size="xs" variant="solid" color="primary">Extra Small</Button.button>
+              <span class="psb:text-xs psb:font-mono psb:text-slate-400">xs</span>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="psb:text-lg psb:font-semibold psb:text-slate-700 psb:mb-4 psb:border-b psb:border-slate-200 psb:pb-2">
+            Button variants at medium size
+          </h2>
+          <div class="pulsar-sandbox psb:flex psb:flex-wrap psb:items-center psb:gap-4">
+            <Button.button size="md" variant="solid" color="primary">Solid</Button.button>
+            <Button.button size="md" variant="outline" color="primary">Outline</Button.button>
+            <Button.button size="md" variant="ghost" color="primary">Ghost</Button.button>
+            <Button.button size="md" variant="link" color="primary">Link</Button.button>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="psb:text-lg psb:font-semibold psb:text-slate-700 psb:mb-4 psb:border-b psb:border-slate-200 psb:pb-2">
+            Inputs
+          </h2>
+          <div class="pulsar-sandbox psb:space-y-3 psb:max-w-sm">
+            <div class="psb:flex psb:items-center psb:gap-4">
+              <span class="psb:w-6 psb:shrink-0 psb:text-xs psb:font-mono psb:text-slate-400">xl</span>
+              <div class="psb:flex-1">
+                <Input.input size="xl" name="xl_input" placeholder="Extra large input" />
+              </div>
+            </div>
+            <div class="psb:flex psb:items-center psb:gap-4">
+              <span class="psb:w-6 psb:shrink-0 psb:text-xs psb:font-mono psb:text-slate-400">lg</span>
+              <div class="psb:flex-1">
+                <Input.input size="lg" name="lg_input" placeholder="Large input" />
+              </div>
+            </div>
+            <div class="psb:flex psb:items-center psb:gap-4">
+              <span class="psb:w-6 psb:shrink-0 psb:text-xs psb:font-mono psb:text-slate-400">md</span>
+              <div class="psb:flex-1">
+                <Input.input size="md" name="md_input" placeholder="Medium input (default)" />
+              </div>
+            </div>
+            <div class="psb:flex psb:items-center psb:gap-4">
+              <span class="psb:w-6 psb:shrink-0 psb:text-xs psb:font-mono psb:text-slate-400">sm</span>
+              <div class="psb:flex-1">
+                <Input.input size="sm" name="sm_input" placeholder="Small input" />
+              </div>
+            </div>
+            <div class="psb:flex psb:items-center psb:gap-4">
+              <span class="psb:w-6 psb:shrink-0 psb:text-xs psb:font-mono psb:text-slate-400">xs</span>
+              <div class="psb:flex-1">
+                <Input.input size="xs" name="xs_input" placeholder="Extra small input" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="psb:text-lg psb:font-semibold psb:text-slate-700 psb:mb-4 psb:border-b psb:border-slate-200 psb:pb-2">
+            Labels
+          </h2>
+          <div class="pulsar-sandbox psb:space-y-3">
+            <div class="psb:flex psb:items-center psb:gap-4">
+              <span class="psb:w-6 psb:shrink-0 psb:text-xs psb:font-mono psb:text-slate-400">xl</span>
+              <Label.label for="label_xl" size="xl">Label extra large</Label.label>
+            </div>
+            <div class="psb:flex psb:items-center psb:gap-4">
+              <span class="psb:w-6 psb:shrink-0 psb:text-xs psb:font-mono psb:text-slate-400">lg</span>
+              <Label.label for="label_lg" size="lg">Label large</Label.label>
+            </div>
+            <div class="psb:flex psb:items-center psb:gap-4">
+              <span class="psb:w-6 psb:shrink-0 psb:text-xs psb:font-mono psb:text-slate-400">md</span>
+              <Label.label for="label_md" size="md">Label medium (default)</Label.label>
+            </div>
+            <div class="psb:flex psb:items-center psb:gap-4">
+              <span class="psb:w-6 psb:shrink-0 psb:text-xs psb:font-mono psb:text-slate-400">sm</span>
+              <Label.label for="label_sm" size="sm">Label small</Label.label>
+            </div>
+            <div class="psb:flex psb:items-center psb:gap-4">
+              <span class="psb:w-6 psb:shrink-0 psb:text-xs psb:font-mono psb:text-slate-400">xs</span>
+              <Label.label for="label_xs" size="xs">Label extra small</Label.label>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+    """
+  end
+end
