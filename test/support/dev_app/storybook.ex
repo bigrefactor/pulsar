@@ -1,0 +1,9 @@
+defmodule Pulsar.DevApp.Storybook do
+  @moduledoc false
+  use PhoenixStorybook,
+    otp_app: :pulsar,
+    content_path: Path.expand("storybook", __DIR__),
+    title: "Pulsar",
+    css_path: "/assets/app.css",
+    sandbox_class: "pulsar-sandbox"
+end

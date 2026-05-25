@@ -3,8 +3,14 @@ defmodule Pulsar.DevApp.Router do
   use Phoenix.Router, helpers: false
 
   import Phoenix.LiveView.Router
+  import PhoenixStorybook.Router
 
   alias Pulsar.DevApp.Layouts
+  alias Pulsar.DevApp.Storybook
+
+  scope "/" do
+    storybook_assets()
+  end
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -13,6 +19,12 @@ defmodule Pulsar.DevApp.Router do
     plug :put_root_layout, html: {Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+  end
+
+  scope "/" do
+    pipe_through :browser
+
+    live_storybook("/storybook", backend_module: Storybook)
   end
 
   scope "/", Pulsar.DevApp do
