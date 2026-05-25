@@ -253,3 +253,12 @@ the `field` wrapper level.
 - **2.5.5 Target Size (Enhanced) (AAA)** — sizes `lg` (`min-h-12`=48px)
   and `xl` (`min-h-14`=56px) exceed the AAA 44×44 floor. Smaller sizes
   do not.
+
+## Browser a11y findings (PUL-11)
+
+Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+
+| Rule | Affected variant(s) | Themes | Ticket |
+|------|---------------------|--------|--------|
+| `select-name` | unlabelled selects in fixture | both | [PUL-38](https://linear.app/bigrefactor/issue/PUL-38/select-fix-axe-select-name-violation) |
+| `color-contrast` | success outline variant | both | [PUL-39](https://linear.app/bigrefactor/issue/PUL-39/select-fix-axe-color-contrast-violation) |

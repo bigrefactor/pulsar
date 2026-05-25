@@ -40,7 +40,21 @@ defmodule Pulsar.MixProject do
       # Dialyzer configuration
       dialyzer: [
         plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
-        plt_add_apps: [:ex_unit, :mix, :igniter, :phoenix, :phoenix_live_view, :phoenix_html, :eex, :rewrite],
+        plt_add_apps: [
+          :ex_unit,
+          :mix,
+          :igniter,
+          :phoenix,
+          :phoenix_live_view,
+          :phoenix_html,
+          :eex,
+          :rewrite,
+          # phoenix_test_playwright is `runtime: false`, so dialyxir omits it
+          # from the PLT by default. test/support/test_app/a11y.ex calls
+          # PhoenixTest.Playwright.evaluate/{2,4}, so include the app
+          # explicitly to avoid `unknown_function` warnings.
+          :phoenix_test_playwright
+        ],
         # `list_unused_filters: true` is incompatible with the multi-version
         # CI matrix here: dialyzer in different Elixir/OTP versions categorizes
         # the same warning differently (e.g. invalid_contract on 1.19 shows
@@ -97,6 +111,8 @@ defmodule Pulsar.MixProject do
       {:phoenix_ecto, "~> 4.6", only: :test},
       {:phx_new, "~> 1.7", only: :test, runtime: false},
       {:lazy_html, ">= 0.1.0", only: :test},
+      {:phoenix_test_playwright, "~> 0.14", only: :test, runtime: false},
+      {:a11y_audit, "~> 0.3", only: :test},
 
       # Test app build pipeline (test/support/test_app) — never ships to consumers.
       # jason is pulled in transitively (ex_ast) so it's available in every env.

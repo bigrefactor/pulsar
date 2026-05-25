@@ -151,6 +151,84 @@ jobs:
       - name: Run security audit
         run: mix deps.audit
 
+  browser:
+    name: Browser a11y
+    runs-on: ubuntu-22.04
+    continue-on-error: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.19"
+          otp-version: "28"
+          version-type: loose
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Cache deps
+        id: cache-deps-browser
+        uses: actions/cache@v5
+        with:
+          path: deps
+          key: ${{ runner.os }}-deps-browser-test-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-browser-test-
+            ${{ runner.os }}-deps-test-
+            ${{ runner.os }}-deps-
+
+      - name: Cache _build
+        id: cache-build-browser
+        uses: actions/cache@v5
+        with:
+          path: _build
+          key: ${{ runner.os }}-build-browser-test-${{ hashFiles('mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-browser-test-
+            ${{ runner.os }}-build-test-
+            ${{ runner.os }}-build-
+
+      - name: Cache Playwright browsers
+        id: cache-playwright
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('test/support/test_app/assets/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Cache Status Report
+        run: |
+          echo "Cache status for browser a11y job:"
+          echo "- Deps cache hit: ${{ steps.cache-deps-browser.outputs.cache-hit || 'false' }}"
+          echo "- Build cache hit: ${{ steps.cache-build-browser.outputs.cache-hit || 'false' }}"
+          echo "- Playwright cache hit: ${{ steps.cache-playwright.outputs.cache-hit || 'false' }}"
+
+      - name: Configure Git for private repos
+        run: git config --global url."https://${{ secrets.PAT }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Install Elixir deps
+        run: mix deps.get
+
+      - name: Install Playwright npm package
+        run: npm --prefix test/support/test_app/assets ci
+
+      - name: Install Playwright browsers
+        run: npx --prefix test/support/test_app/assets playwright install --with-deps chromium
+
+      - name: Run browser a11y tests (with 1 retry)
+        run: |
+          if mix test --only integration; then
+            exit 0
+          fi
+          echo "::warning::Browser a11y tests failed on first run; retrying once. Check for flakes."
+          mix test --only integration --failed
+
   # package:
   #   name: Package Validation
   #   runs-on: ubuntu-22.04

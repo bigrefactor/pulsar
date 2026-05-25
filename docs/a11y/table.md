@@ -285,3 +285,11 @@ noting.
 - Native semantic `<table>` markup with `<th scope="col">` is a
   meaningful structural win over many comparable libraries that ship
   `<div role="table">` shells.
+
+## Browser a11y findings (PUL-11)
+
+Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+
+| Rule | Affected variant(s) | Themes | Ticket |
+|------|---------------------|--------|--------|
+| `color-contrast` | light: success header; dark: dark text on dark bg | both | [PUL-41](https://linear.app/bigrefactor/issue/PUL-41/table-fix-axe-color-contrast-violation) |

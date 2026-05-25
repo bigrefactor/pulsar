@@ -260,3 +260,11 @@ correct signal for assistive tech.
 - **2.4.13 Focus Appearance (AAA, new in 2.2)** — track focus background
   swap + thumb scale-110 provides a clear, thick indicator. Contrast
   still needs browser verification.
+
+## Browser a11y findings (PUL-11)
+
+Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+
+| Rule | Affected variant(s) | Themes | Ticket |
+|------|---------------------|--------|--------|
+| `button-name` | toggle button lacks accessible name | both | [PUL-40](https://linear.app/bigrefactor/issue/PUL-40/switch-fix-axe-button-name-violation) |

@@ -250,3 +250,11 @@ where needed.
 - **2.4.13 Focus Appearance (AAA, new in 2.2)** — focus ring is `ring-2`
   (2px), meeting AAA minimum thickness. Contrast still needs browser
   verification.
+
+## Browser a11y findings (PUL-11)
+
+Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+
+| Rule | Affected variant(s) | Themes | Ticket |
+|------|---------------------|--------|--------|
+| `color-contrast` | success outline variant | both | [PUL-34](https://linear.app/bigrefactor/issue/PUL-34/input-fix-axe-color-contrast-violation) |

@@ -240,3 +240,12 @@ than `assertive` / `role="alert"`); the tradeoff is acknowledged.
 ## AAA wins (bonus)
 
 - None directly applicable to a static wrapper.
+
+## Browser a11y findings (PUL-11)
+
+Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+
+| Rule | Affected variant(s) | Themes | Ticket |
+|------|---------------------|--------|--------|
+| `color-contrast` | help text gray-400 on light background | dark | [PUL-31](https://linear.app/bigrefactor/issue/PUL-31/field-fix-axe-color-contrast-violation) |
+| `color-contrast` | help text + dark-mode label (surfaced via Form fixture) | dark | [PUL-33](https://linear.app/bigrefactor/issue/PUL-33/form-fix-axe-color-contrast-violation) |

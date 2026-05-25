@@ -208,3 +208,11 @@ no state attributes are needed.
 - **2.4.13 Focus Appearance (AAA, new in 2.2)** — focus-within ring uses
   `ring-2` (2px) with `ring-offset-2`, meeting AAA minimum thickness.
   Contrast still needs browser verification.
+
+## Browser a11y findings (PUL-11)
+
+Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+
+| Rule | Affected variant(s) | Themes | Ticket |
+|------|---------------------|--------|--------|
+| `color-contrast` | success solid | both | [PUL-26](https://linear.app/bigrefactor/issue/PUL-26/badge-fix-axe-color-contrast-violation) |

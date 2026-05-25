@@ -246,3 +246,12 @@ ARIA attr.)
 
 - **2.4.13 Focus Appearance (AAA, new in 2.2)** — `ring-2` (2px) meets
   AAA minimum thickness. Contrast still needs browser verification.
+
+## Browser a11y findings (PUL-11)
+
+Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+
+| Rule | Affected variant(s) | Themes | Ticket |
+|------|---------------------|--------|--------|
+| `label` | unlabelled checkboxes in fixture | both | [PUL-28](https://linear.app/bigrefactor/issue/PUL-28/checkbox-fix-axe-label-violation) |
+| `aria-conditional-attr` | aria-checked on indeterminate state | both | [PUL-29](https://linear.app/bigrefactor/issue/PUL-29/checkbox-fix-axe-aria-conditional-attr-violation) |
