@@ -49,6 +49,23 @@ defmodule Pulsar.DevApp.Storybook.Components.Button do
         doc: "Disable the button"
       },
       %Attr{
+        id: :as,
+        type: :atom,
+        values: [:button, :a, :div],
+        default: :button,
+        doc: "Polymorphic element type"
+      },
+      %Attr{
+        id: :href,
+        type: :string,
+        doc: "External URL to navigate to"
+      },
+      %Attr{
+        id: :aria_label,
+        type: :string,
+        doc: "Accessible label, required for icon-only buttons"
+      },
+      %Attr{
         id: :class,
         type: :string,
         default: "",
@@ -113,6 +130,12 @@ defmodule Pulsar.DevApp.Storybook.Components.Button do
         description: "Extra-large size",
         attributes: %{size: "xl", color: "success"},
         slots: ["Large Button"]
+      },
+      %Variation{
+        id: :as_link,
+        description: "Polymorphic rendering as anchor element",
+        attributes: %{as: :a, href: "https://hex.pm", variant: "solid", color: "primary"},
+        slots: ["Open Hex"]
       }
     ]
   end

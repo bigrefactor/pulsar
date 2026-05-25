@@ -11,7 +11,7 @@ defmodule Pulsar.DevApp.Storybook.Components.Select do
       %Attr{
         id: :variant,
         type: :string,
-        values: ~w(outline ghost solid),
+        values: ~w(solid outline ghost),
         default: "solid",
         doc: "Visual style variant of the select"
       },
@@ -76,6 +76,12 @@ defmodule Pulsar.DevApp.Storybook.Components.Select do
         type: :boolean,
         default: nil,
         doc: "Force invalid state"
+      },
+      %Attr{
+        id: :auto_name_array,
+        type: :boolean,
+        default: true,
+        doc: "Append [] to name when multiple=true"
       },
       %Attr{
         id: :class,

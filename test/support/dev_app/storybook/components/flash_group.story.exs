@@ -48,6 +48,24 @@ defmodule Pulsar.DevApp.Storybook.Components.FlashGroup do
         doc: "Enable auto-dismiss for all flashes in group"
       },
       %Attr{
+        id: :max_items,
+        type: :integer,
+        default: 5,
+        doc: "Maximum number of flashes to display"
+      },
+      %Attr{
+        id: :stagger_delay,
+        type: :integer,
+        default: 100,
+        doc: "Milliseconds between staggered flash animations (0 to disable)"
+      },
+      %Attr{
+        id: :dismiss_after,
+        type: :integer,
+        default: 5000,
+        doc: "Default dismiss timeout in milliseconds"
+      },
+      %Attr{
         id: :class,
         type: :string,
         default: "",
@@ -108,6 +126,13 @@ defmodule Pulsar.DevApp.Storybook.Components.FlashGroup do
           flash: %{"info" => "Changes autosaved."},
           position: "top-center",
           auto_dismiss: false
+        }
+      },
+      %Variation{
+        id: :auto_dismiss_default,
+        description: "Default auto-dismiss behavior (dismisses after 5 seconds)",
+        attributes: %{
+          flash: %{"info" => "This message will auto-dismiss in 5 seconds."}
         }
       }
     ]

@@ -1,6 +1,7 @@
 defmodule Pulsar.DevApp.Storybook.Components.Link do
-  use PhoenixStorybook.Story, :component
   # Note: the component function is `a/1`, not `link/1`
+  use PhoenixStorybook.Story, :component
+
   alias Pulsar.Components.Link
 
   def function, do: &Link.a/1

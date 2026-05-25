@@ -11,7 +11,7 @@ defmodule Pulsar.DevApp.Storybook.Components.Input do
       %Attr{
         id: :variant,
         type: :string,
-        values: ~w(outline ghost solid),
+        values: ~w(solid outline ghost),
         default: "solid",
         doc: "Visual style variant of the input"
       },
@@ -70,6 +70,11 @@ defmodule Pulsar.DevApp.Storybook.Components.Input do
         type: :boolean,
         default: nil,
         doc: "Force invalid state"
+      },
+      %Attr{
+        id: :placeholder,
+        type: :string,
+        doc: "Placeholder text shown when input is empty"
       },
       %Attr{
         id: :class,

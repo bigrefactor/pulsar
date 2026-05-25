@@ -11,7 +11,7 @@ defmodule Pulsar.DevApp.Storybook.Components.Textarea do
       %Attr{
         id: :variant,
         type: :string,
-        values: ~w(outline ghost solid),
+        values: ~w(solid outline ghost),
         default: "solid",
         doc: "Visual style variant of the textarea"
       },

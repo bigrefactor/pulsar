@@ -79,6 +79,13 @@ defmodule Pulsar.DevApp.Storybook.Components.RadioGroup do
         doc: "Mark the radio group as required"
       },
       %Attr{
+        id: :label_color,
+        type: :string,
+        values: ~w(neutral inherit),
+        default: "neutral",
+        doc: "Label text color: neutral (default) or inherit to match radio color"
+      },
+      %Attr{
         id: :class,
         type: :string,
         default: "",

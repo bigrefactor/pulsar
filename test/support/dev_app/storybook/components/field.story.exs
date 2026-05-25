@@ -2,6 +2,8 @@ defmodule Pulsar.DevApp.Storybook.Components.Field do
   # NOTE: Field strictly requires Phoenix.HTML.FormField via the :field attr.
   # We use PSB's template/0 feature to wrap variations in a <.form> context
   # and pass the form field to each variation via <.psb-variation field={...}/>.
+  # Every variation uses f[:demo] so labels auto-humanize to "Demo" unless
+  # overridden by a <:label> slot.
   use PhoenixStorybook.Story, :component
 
   alias Pulsar.Components.Field
@@ -84,6 +86,25 @@ defmodule Pulsar.DevApp.Storybook.Components.Field do
         type: :integer,
         default: 4,
         doc: "Number of rows for textarea"
+      },
+      %Attr{
+        id: :show_errors,
+        type: :atom,
+        values: [:touched, :always, :never],
+        default: :touched,
+        doc: "When to show errors: :touched (default), :always, :never"
+      },
+      %Attr{
+        id: :prompt,
+        type: :string,
+        default: nil,
+        doc: "Prompt option for select"
+      },
+      %Attr{
+        id: :checked,
+        type: :boolean,
+        default: nil,
+        doc: "Checked state (checkbox/switch)"
       },
       %Attr{
         id: :class,
