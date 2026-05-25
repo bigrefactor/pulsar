@@ -101,7 +101,7 @@ defmodule Pulsar.MixProject do
       # Test app build pipeline (test/support/test_app) — never ships to consumers.
       # jason is pulled in transitively (ex_ast) so it's available in every env.
       {:bandit, "~> 1.5", only: [:dev, :test]},
-      {:tailwind, "~> 0.3", only: [:dev, :test], runtime: false},
+      {:tailwind, "~> 0.4", only: [:dev, :test], runtime: false},
       {:esbuild, "~> 0.10", only: [:dev, :test], runtime: false},
       {:heroicons,
        github: "tailwindlabs/heroicons",
