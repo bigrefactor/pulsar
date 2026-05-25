@@ -23,3 +23,7 @@ config :pulsar, Endpoint,
 
 # PhoenixTest.Playwright resolves the OTP app to find the endpoint module.
 config :phoenix_test, otp_app: :pulsar
+
+# Playwright (and the playwright npm package) lives under the test_app's assets
+# directory, not the project's default `./assets`.
+config :phoenix_test, :playwright, assets_dir: "test/support/test_app/assets"
