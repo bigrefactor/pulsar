@@ -5,5 +5,9 @@ defmodule Pulsar.DevApp.Storybook do
     content_path: Path.expand("storybook", __DIR__),
     title: "Pulsar",
     css_path: "/assets/app.css",
-    sandbox_class: "pulsar-sandbox"
+    sandbox_class: "pulsar-sandbox",
+    themes: [
+      light: [label: "Light"],
+      dark: [label: "Dark"]
+    ]
 end

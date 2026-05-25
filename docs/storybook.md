@@ -60,6 +60,22 @@ level — so it reaches story content.
 See the PSB sandboxing guide for the full mechanism:
 <https://hexdocs.pm/phoenix_storybook/sandboxing.html>
 
+### Light/dark theme switcher
+
+The dev app's `Pulsar.DevApp.Storybook` backend declares two themes via
+PhoenixStorybook's `themes:` option — `light` and `dark`. PSB renders a
+dropdown in the chrome header for these and applies a `theme-<id>` class
+(e.g. `theme-dark`) to every story container.
+
+Pulsar's `@custom-variant dark` in
+`test/support/dev_app/assets/css/app.css` matches both the `.theme-dark`
+class and the `[data-theme=dark]` attribute, so the chrome switcher and
+the document-level toggle documented in `foundations/dark_mode` end up
+flipping the same dark tokens.
+
+PSB persists the selected theme via a `?theme=dark` URL parameter — no
+extra wiring needed.
+
 ## Story types
 
 The catalog is organized into four sections:

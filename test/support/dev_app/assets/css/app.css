@@ -7,7 +7,7 @@
 @source "../../components.ex";
 @source "../../storybook";
 
-@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *, .theme-dark, .theme-dark *));
 @custom-variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);
 
 @plugin "../vendor/heroicons";
