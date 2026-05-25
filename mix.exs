@@ -102,7 +102,15 @@ defmodule Pulsar.MixProject do
       # jason is pulled in transitively (ex_ast) so it's available in every env.
       {:bandit, "~> 1.5", only: [:dev, :test]},
       {:tailwind, "~> 0.3", only: [:dev, :test], runtime: false},
-      {:esbuild, "~> 0.10", only: [:dev, :test], runtime: false}
+      {:esbuild, "~> 0.10", only: [:dev, :test], runtime: false},
+      {:heroicons,
+       github: "tailwindlabs/heroicons",
+       tag: "v2.1.1",
+       sparse: "optimized",
+       app: false,
+       compile: false,
+       depth: 1,
+       only: [:dev, :test]}
     ]
   end
 
@@ -124,7 +132,7 @@ defmodule Pulsar.MixProject do
       ],
       "test_app.server": [
         "assets.build",
-        "run --no-halt -e 'Pulsar.TestApp.Application.start(:normal, [])'"
+        "run --no-halt -e '{:ok, sup} = Pulsar.TestApp.Application.start(:normal, []); Process.unlink(sup)'"
       ],
       check: [
         "compile --warnings-as-errors",
