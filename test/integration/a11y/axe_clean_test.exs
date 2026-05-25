@@ -13,7 +13,7 @@ defmodule Pulsar.Integration.A11y.AxeCleanTest do
   like `:chromium`, not `true`. Using `:integration` avoids that conflict.
   """
 
-  use PhoenixTest.Playwright.Case, async: false
+  use PhoenixTest.Playwright.Case, async: true
 
   alias Pulsar.TestApp.A11y
   alias Pulsar.TestApp.Components

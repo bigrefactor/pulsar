@@ -7,17 +7,24 @@ defmodule Pulsar.TestApp.A11y do
   `assert_axe_clean/1`; both return the conn so they compose with `visit/2`.
   """
 
-  # axe-core can be slow on complex pages; allow up to 30 s for the audit.
-  @axe_timeout 30_000
+  # axe-core typically completes in well under a second on small fixture
+  # pages; cap the audit at 10 s so a wedged page surfaces quickly. A
+  # complex fixture can override per-test with `@tag timeout: …`.
+  @axe_timeout 10_000
 
   @doc """
   Sets `document.documentElement.dataset.theme` on the current page.
   """
   def set_theme(conn, theme) when theme in [:light, :dark] do
-    PhoenixTest.Playwright.evaluate(
-      conn,
-      "document.documentElement.dataset.theme = '#{theme}'"
-    )
+    # Hard-coded JS payloads (no interpolation) so this call site stays
+    # un-injectable even if the guard above is widened to accept strings later.
+    js =
+      case theme do
+        :light -> "document.documentElement.dataset.theme = 'light'"
+        :dark -> "document.documentElement.dataset.theme = 'dark'"
+      end
+
+    PhoenixTest.Playwright.evaluate(conn, js)
   end
 
   @doc """

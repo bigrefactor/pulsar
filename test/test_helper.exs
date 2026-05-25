@@ -9,9 +9,11 @@
 {:ok, _} = Application.ensure_all_started(:phoenix_live_view)
 {:ok, _} = Pulsar.TestApp.Application.start(:normal, [])
 
-if :integration in ExUnit.configuration()[:include] do
-  {:ok, _} = PhoenixTest.Playwright.Supervisor.start_link()
-end
+# Start the Playwright supervisor unconditionally. It's a cheap idle process
+# when no integration tests run, and starting it always avoids subtle gating
+# bugs (e.g. running a single browser test by file path, or unusual orderings
+# of --include / --only flags).
+{:ok, _} = PhoenixTest.Playwright.Supervisor.start_link()
 
 Application.put_env(:phoenix_test, :base_url, Pulsar.TestApp.Endpoint.url())
 

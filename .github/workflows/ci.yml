@@ -222,7 +222,12 @@ jobs:
         run: npx --prefix test/support/test_app/assets playwright install --with-deps chromium
 
       - name: Run browser a11y tests (with 1 retry)
-        run: mix test --only integration || mix test --only integration --failed
+        run: |
+          if mix test --only integration; then
+            exit 0
+          fi
+          echo "::warning::Browser a11y tests failed on first run; retrying once. Check for flakes."
+          mix test --only integration --failed
 
   # package:
   #   name: Package Validation
