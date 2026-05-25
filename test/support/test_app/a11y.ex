@@ -7,16 +7,17 @@ defmodule Pulsar.TestApp.A11y do
   `assert_axe_clean/1`; both return the conn so they compose with `visit/2`.
   """
 
+  # axe-core can be slow on complex pages; allow up to 30 s for the audit.
+  @axe_timeout 30_000
+
   @doc """
   Sets `document.documentElement.dataset.theme` on the current page.
   """
   def set_theme(conn, theme) when theme in [:light, :dark] do
-    {:ok, _} =
-      PlaywrightEx.Frame.evaluate(conn.frame_id,
-        expression: "document.documentElement.dataset.theme = '#{theme}'"
-      )
-
-    conn
+    PhoenixTest.Playwright.evaluate(
+      conn,
+      "document.documentElement.dataset.theme = '#{theme}'"
+    )
   end
 
   @doc """
@@ -24,18 +25,24 @@ defmodule Pulsar.TestApp.A11y do
   zero violations via `A11yAudit.Assertions.assert_no_violations/1`.
   """
   def assert_axe_clean(conn) do
-    {:ok, _} =
-      PlaywrightEx.Frame.evaluate(conn.frame_id, expression: A11yAudit.JS.axe_core())
+    # Inject the axe-core library into the page.
+    conn = PhoenixTest.Playwright.evaluate(conn, A11yAudit.JS.axe_core())
 
-    {:ok, json} =
-      PlaywrightEx.Frame.evaluate(conn.frame_id,
-        expression: A11yAudit.JS.await_audit_results()
-      )
+    # Run the audit. A11yAudit.JS.await_audit_results/0 returns
+    # "return await axe.run();" which is a bare return statement — not a
+    # complete function expression. Playwright's `is_function: true` requires
+    # a complete arrow/function expression, so we wrap it ourselves.
+    audit_fn = "async () => { #{A11yAudit.JS.await_audit_results()} }"
 
-    json
-    |> A11yAudit.Results.from_json()
-    |> A11yAudit.Assertions.assert_no_violations()
-
-    conn
+    PhoenixTest.Playwright.evaluate(
+      conn,
+      audit_fn,
+      [is_function: true, timeout: @axe_timeout],
+      fn json ->
+        json
+        |> A11yAudit.Results.from_json()
+        |> A11yAudit.Assertions.assert_no_violations()
+      end
+    )
   end
 end
