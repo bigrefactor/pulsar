@@ -108,7 +108,7 @@ defmodule Pulsar.Generator do
             example: unquote(example),
             positional: [],
             composes: [],
-            schema: [components_module: :string, storybook: :boolean],
+            schema: [components_module: :string, storybook: :boolean, print_setup_notice: :boolean],
             defaults: [],
             aliases: [M: :components_module, s: :storybook],
             required: []
@@ -186,9 +186,22 @@ defmodule Pulsar.Generator do
 
   defp maybe_install_story(igniter, component_name) do
     if igniter.args.options[:storybook] do
-      Storybook.install_component_story(igniter, component_name)
+      igniter
+      |> Storybook.install_component_story(component_name)
+      |> maybe_print_setup_notice()
     else
       igniter
+    end
+  end
+
+  # Print the setup notice unless `--no-print-setup-notice` was passed.
+  # `pulsar.install --storybook` suppresses it on every composed component
+  # generator so the notice prints exactly once (from the final
+  # `pulsar.gen.storybook --skip-components` composition).
+  defp maybe_print_setup_notice(igniter) do
+    case igniter.args.options[:print_setup_notice] do
+      false -> igniter
+      _ -> Storybook.print_setup_notice(igniter)
     end
   end
 

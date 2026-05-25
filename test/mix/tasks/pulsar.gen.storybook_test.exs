@@ -104,4 +104,55 @@ defmodule Mix.Tasks.Pulsar.Gen.StorybookTest do
       |> apply_igniter!()
     end
   end
+
+  describe "pulsar.install --storybook" do
+    test "creates component + story for every installed component plus extras" do
+      igniter =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.install", ["--storybook", "--yes"])
+
+      # Spot-check a couple of components get both files.
+      refute is_nil(igniter.rewrite.sources["lib/test_web/components/button.ex"])
+      refute is_nil(igniter.rewrite.sources["lib/test_web/storybook/components/button.story.exs"])
+      refute is_nil(igniter.rewrite.sources["lib/test_web/components/badge.ex"])
+      refute is_nil(igniter.rewrite.sources["lib/test_web/storybook/components/badge.story.exs"])
+
+      # Foundations, examples, welcome get emitted by the composed
+      # pulsar.gen.storybook --skip-components call.
+      refute is_nil(igniter.rewrite.sources["lib/test_web/storybook/welcome.story.exs"])
+      refute is_nil(igniter.rewrite.sources["lib/test_web/storybook/foundations/colors.story.exs"])
+      refute is_nil(igniter.rewrite.sources["lib/test_web/storybook/examples/login.story.exs"])
+
+      apply_igniter!(igniter)
+    end
+
+    test "forwards --components-module to component stories and storybook extras" do
+      igniter =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.install", [
+          "--storybook",
+          "--components-module",
+          "Custom.UI",
+          "--yes"
+        ])
+
+      # Component story (emitted by per-component generator) should alias Custom.UI.
+      button_story = igniter.rewrite.sources["lib/test_web/storybook/components/button.story.exs"]
+      refute is_nil(button_story), "expected button story to be created"
+      assert Rewrite.Source.get(button_story, :content) =~ "alias Custom.UI.Button"
+
+      # Foundation/example stories (emitted by pulsar.gen.storybook --skip-components)
+      # should also see Custom.UI — this is the bug Fix 3 addresses: argv_flags
+      # must propagate from pulsar.install to the composed storybook task.
+      spacing_story = igniter.rewrite.sources["lib/test_web/storybook/foundations/spacing.story.exs"]
+      refute is_nil(spacing_story), "expected spacing foundation to be created"
+      assert Rewrite.Source.get(spacing_story, :content) =~ "alias Custom.UI"
+
+      login_story = igniter.rewrite.sources["lib/test_web/storybook/examples/login.story.exs"]
+      refute is_nil(login_story), "expected login example to be created"
+      assert Rewrite.Source.get(login_story, :content) =~ "alias Custom.UI"
+
+      apply_igniter!(igniter)
+    end
+  end
 end

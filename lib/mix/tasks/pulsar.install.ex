@@ -210,41 +210,18 @@ if Code.ensure_loaded?(Igniter) do
     end
 
     defp compose_components(igniter, components) do
-      storybook = igniter.args.options[:storybook]
+      # When --storybook is set, suppress the per-component setup notice; the
+      # final `pulsar.gen.storybook --skip-components` composition prints it
+      # exactly once. Pass argv_flags + suppression so the child receives the
+      # parent's --storybook / --components-module / etc. unchanged.
+      child_argv =
+        if igniter.args.options[:storybook] do
+          (igniter.args.argv_flags || []) ++ ["--no-print-setup-notice"]
+        end
 
       Enum.reduce(components, igniter, fn component, acc ->
-        if storybook do
-          # compose_task with nil argv inherits parent argv_flags, but
-          # explicitly passing ["--storybook"] drops those — rebuild so
-          # --components-module also propagates if set.
-          argv = build_component_argv(acc, storybook: true)
-          Igniter.compose_task(acc, "pulsar.gen.#{component}", argv)
-        else
-          Igniter.compose_task(acc, "pulsar.gen.#{component}")
-        end
+        Igniter.compose_task(acc, "pulsar.gen.#{component}", child_argv)
       end)
-    end
-
-    defp build_component_argv(igniter, opts) do
-      argv = []
-
-      argv =
-        if opts[:storybook] do
-          ["--storybook" | argv]
-        else
-          argv
-        end
-
-      case igniter.args.options[:components_module] do
-        nil ->
-          argv
-
-        mod when is_atom(mod) ->
-          ["--components-module", inspect(mod) | argv]
-
-        mod ->
-          ["--components-module", to_string(mod) | argv]
-      end
     end
 
     defp maybe_compose_task(igniter, task, enabled) do
@@ -256,9 +233,11 @@ if Code.ensure_loaded?(Igniter) do
       end
     end
 
+    # Merge the user's argv_flags (which carry --components-module, --yes,
+    # etc.) with --skip-components so the storybook task sees both.
     defp maybe_install_storybook_extras(igniter, true) do
-      igniter
-      |> Igniter.compose_task("pulsar.gen.storybook", ["--skip-components"])
+      argv = (igniter.args.argv_flags || []) ++ ["--skip-components"]
+      Igniter.compose_task(igniter, "pulsar.gen.storybook", argv)
     end
 
     defp maybe_install_storybook_extras(igniter, _), do: igniter

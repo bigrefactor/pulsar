@@ -48,12 +48,18 @@ defmodule Pulsar.Generator.Storybook do
   Installs a component story file for the given component.
 
   Called when `--storybook` is passed to a `pulsar.gen.<component>` task.
+  Components not in `@components` (e.g. `:core_components`, which has no
+  storybook template) are silently skipped — there is no story to emit.
   """
   def install_component_story(igniter, component_name) do
-    assigns = build_assigns(igniter)
-    story_path = component_story_path(igniter, component_name)
-    contents = render_template([:components, component_name], assigns)
-    create_story_file(igniter, story_path, contents)
+    if component_name in @components do
+      assigns = build_assigns(igniter)
+      story_path = component_story_path(igniter, component_name)
+      contents = render_template([:components, component_name], assigns)
+      create_story_file(igniter, story_path, contents)
+    else
+      igniter
+    end
   end
 
   @doc """
