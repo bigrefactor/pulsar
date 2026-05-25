@@ -1,0 +1,91 @@
+defmodule Pulsar.DevApp.Storybook.Components.Label do
+  use PhoenixStorybook.Story, :component
+
+  alias Pulsar.Components.Label
+
+  def function, do: &Label.label/1
+  def render_source, do: :function
+
+  def attributes do
+    [
+      %Attr{
+        id: :for,
+        type: :string,
+        required: true,
+        doc: "ID of the associated input element"
+      },
+      %Attr{
+        id: :required,
+        type: :boolean,
+        default: false,
+        doc: "Whether the associated field is required"
+      },
+      %Attr{
+        id: :error,
+        type: :boolean,
+        default: false,
+        doc: "Whether the label should show error styling"
+      },
+      %Attr{
+        id: :size,
+        type: :string,
+        values: ~w(xs sm md lg xl),
+        default: "md",
+        doc: "Size of the label text"
+      },
+      %Attr{
+        id: :class,
+        type: :string,
+        default: "",
+        doc: "Additional CSS classes"
+      }
+    ]
+  end
+
+  def slots do
+    [
+      %Slot{id: :inner_block, required: true, doc: "Label text content"}
+    ]
+  end
+
+  def variations do
+    [
+      %Variation{
+        id: :default,
+        description: "Default label",
+        attributes: %{for: "username"},
+        slots: ["Username"]
+      },
+      %Variation{
+        id: :required,
+        description: "Required field label",
+        attributes: %{for: "email", required: true},
+        slots: ["Email Address"]
+      },
+      %Variation{
+        id: :error_state,
+        description: "Label with error styling",
+        attributes: %{for: "email", error: true},
+        slots: ["Email Address"]
+      },
+      %Variation{
+        id: :required_with_error,
+        description: "Required label in error state",
+        attributes: %{for: "password", required: true, error: true},
+        slots: ["Password"]
+      },
+      %Variation{
+        id: :size_sm,
+        description: "Small label",
+        attributes: %{for: "hint", size: "sm"},
+        slots: ["Helper Text"]
+      },
+      %Variation{
+        id: :size_lg,
+        description: "Large label",
+        attributes: %{for: "heading", size: "lg"},
+        slots: ["Section Heading"]
+      }
+    ]
+  end
+end

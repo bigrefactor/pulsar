@@ -1,0 +1,166 @@
+defmodule Pulsar.DevApp.Storybook.Components.RadioGroup do
+  use PhoenixStorybook.Story, :component
+
+  alias Pulsar.Components.RadioGroup
+
+  def function, do: &RadioGroup.radio_group/1
+  def render_source, do: :function
+
+  def attributes do
+    [
+      %Attr{
+        id: :card,
+        type: :boolean,
+        default: false,
+        doc: "Render options as clickable cards"
+      },
+      %Attr{
+        id: :hide_radios,
+        type: :boolean,
+        default: false,
+        doc: "Hide the radio inputs (useful for card-only selection)"
+      },
+      %Attr{
+        id: :variant,
+        type: :string,
+        values: ~w(solid outline ghost),
+        default: "solid",
+        doc: "Visual style variant (applies when card=true)"
+      },
+      %Attr{
+        id: :color,
+        type: :string,
+        values: ~w(neutral primary secondary success danger warning info),
+        default: "primary",
+        doc: "Color scheme of the radio group"
+      },
+      %Attr{
+        id: :size,
+        type: :string,
+        values: ~w(xs sm md lg xl),
+        default: "md",
+        doc: "Size of the radio buttons and cards"
+      },
+      %Attr{
+        id: :name,
+        type: :string,
+        default: nil,
+        doc: "Name for the radio group"
+      },
+      %Attr{
+        id: :value,
+        type: :any,
+        default: nil,
+        doc: "Currently selected value"
+      },
+      %Attr{
+        id: :orientation,
+        type: :string,
+        values: ~w(horizontal vertical),
+        default: "vertical",
+        doc: "Orientation affects arrow key navigation"
+      },
+      %Attr{
+        id: :disabled,
+        type: :boolean,
+        default: false,
+        doc: "Disable the entire radio group"
+      },
+      %Attr{
+        id: :invalid,
+        type: :boolean,
+        default: nil,
+        doc: "Mark the radio group as having validation errors"
+      },
+      %Attr{
+        id: :required,
+        type: :boolean,
+        default: false,
+        doc: "Mark the radio group as required"
+      },
+      %Attr{
+        id: :class,
+        type: :string,
+        default: "",
+        doc: "Additional CSS classes"
+      }
+    ]
+  end
+
+  def slots do
+    [
+      %Slot{id: :option, required: true, doc: "Radio option"}
+    ]
+  end
+
+  def variations do
+    [
+      %Variation{
+        id: :default,
+        description: "Default vertical radio group",
+        attributes: %{name: "plan"},
+        slots: [
+          "<:option value=\"starter\">Starter</:option>",
+          "<:option value=\"pro\">Pro</:option>",
+          "<:option value=\"enterprise\">Enterprise</:option>"
+        ]
+      },
+      %Variation{
+        id: :horizontal,
+        description: "Horizontal orientation",
+        attributes: %{name: "size_choice", orientation: "horizontal"},
+        slots: [
+          "<:option value=\"sm\">Small</:option>",
+          "<:option value=\"md\">Medium</:option>",
+          "<:option value=\"lg\">Large</:option>"
+        ]
+      },
+      %Variation{
+        id: :with_selected_value,
+        description: "Radio group with pre-selected value",
+        attributes: %{name: "color", value: "blue", color: "primary"},
+        slots: [
+          "<:option value=\"red\">Red</:option>",
+          "<:option value=\"blue\">Blue</:option>",
+          "<:option value=\"green\">Green</:option>"
+        ]
+      },
+      %Variation{
+        id: :card_variant,
+        description: "Card-style radio options",
+        attributes: %{name: "subscription", card: true, color: "primary"},
+        slots: [
+          "<:option value=\"monthly\">Monthly Billing</:option>",
+          "<:option value=\"annual\">Annual Billing</:option>"
+        ]
+      },
+      %Variation{
+        id: :success_color,
+        description: "Success colored radio group",
+        attributes: %{name: "confirm", color: "success"},
+        slots: [
+          "<:option value=\"yes\">Yes</:option>",
+          "<:option value=\"no\">No</:option>"
+        ]
+      },
+      %Variation{
+        id: :disabled,
+        description: "Disabled radio group",
+        attributes: %{name: "disabled_group", disabled: true},
+        slots: [
+          "<:option value=\"a\">Option A</:option>",
+          "<:option value=\"b\">Option B</:option>"
+        ]
+      },
+      %Variation{
+        id: :invalid_state,
+        description: "Invalid/error state",
+        attributes: %{name: "required_choice", invalid: true},
+        slots: [
+          "<:option value=\"a\">Option A</:option>",
+          "<:option value=\"b\">Option B</:option>"
+        ]
+      }
+    ]
+  end
+end
