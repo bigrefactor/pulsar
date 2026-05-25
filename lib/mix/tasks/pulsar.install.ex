@@ -26,6 +26,9 @@ defmodule Mix.Tasks.Pulsar.Install.Docs do
     # Install everything (theme + all components)
     #{example()}
 
+    # Install with PhoenixStorybook stories
+    mix pulsar.install --storybook
+
     # Install specific components only (no theme)
     mix pulsar.install --component=button,input,checkbox --no-theme
 
@@ -49,6 +52,7 @@ defmodule Mix.Tasks.Pulsar.Install.Docs do
     * `--theme` or `-t` - Install Pulsar theme CSS with semantic color tokens (default: true)
     * `--core-components` or `--cc` - Include core_components module (default: true)
     * `--components-module=MODULE` or `-M` - Target module namespace (default: YourAppWeb.Components)
+    * `--storybook` or `-s` - Generate PhoenixStorybook story files for all installed components
     * `--yes` or `-y` - Auto-confirm dependency installation prompts
 
     ## Theme System
@@ -70,6 +74,12 @@ defmodule Mix.Tasks.Pulsar.Install.Docs do
 
     Some components require others to function properly. When you select a component
     with dependencies, you'll be prompted to include them automatically.
+
+    ## Storybook Setup
+
+    When using `--storybook`, story files are generated for all installed components plus
+    foundation pages and examples. phoenix_storybook is NOT added to your deps automatically.
+    The generator prints setup instructions after completing so you can wire it up manually.
     """
   end
 end
@@ -148,7 +158,8 @@ if Code.ensure_loaded?(Igniter) do
           "pulsar.gen.switch",
           "pulsar.gen.table",
           "pulsar.gen.textarea",
-          "pulsar.gen.core_components"
+          "pulsar.gen.core_components",
+          "pulsar.gen.storybook"
         ],
         # `OptionParser` schema
         schema: [
@@ -157,6 +168,7 @@ if Code.ensure_loaded?(Igniter) do
           core_components: :boolean,
           theme: :boolean,
           components_module: :string,
+          storybook: :boolean,
           yes: :boolean
         ],
         # Default values for the options in the `schema`
@@ -172,6 +184,7 @@ if Code.ensure_loaded?(Igniter) do
           cc: :core_components,
           t: :theme,
           M: :components_module,
+          s: :storybook,
           y: :yes
         ],
         # A list of options in the schema that are required
@@ -193,12 +206,51 @@ if Code.ensure_loaded?(Igniter) do
       |> maybe_compose_task("pulsar.gen.theme", options[:theme])
       |> compose_components(components)
       |> maybe_compose_task("pulsar.gen.core_components", options[:core_components])
+      |> maybe_install_storybook_extras(options[:storybook])
     end
 
     defp compose_components(igniter, components) do
+      storybook = igniter.args.options[:storybook]
+
       Enum.reduce(components, igniter, fn component, acc ->
-        maybe_compose_task(acc, "pulsar.gen.#{component}", Enum.member?(components, component))
+        if Enum.member?(components, component) do
+          if storybook do
+            # When storybook is requested, pass --storybook plus any
+            # --components-module from the parent so the child task
+            # knows both the namespace and the storybook flag.
+            # (compose_task with nil argv inherits parent argv_flags, but
+            # explicitly passing ["--storybook"] drops those, so we rebuild.)
+            argv = build_component_argv(acc, storybook: true)
+            Igniter.compose_task(acc, "pulsar.gen.#{component}", argv)
+          else
+            Igniter.compose_task(acc, "pulsar.gen.#{component}")
+          end
+        else
+          acc
+        end
       end)
+    end
+
+    defp build_component_argv(igniter, opts) do
+      argv = []
+
+      argv =
+        if opts[:storybook] do
+          ["--storybook" | argv]
+        else
+          argv
+        end
+
+      case igniter.args.options[:components_module] do
+        nil ->
+          argv
+
+        mod when is_atom(mod) ->
+          ["--components-module", inspect(mod) | argv]
+
+        mod ->
+          ["--components-module", to_string(mod) | argv]
+      end
     end
 
     defp maybe_compose_task(igniter, task, enabled) do
@@ -209,6 +261,13 @@ if Code.ensure_loaded?(Igniter) do
         igniter
       end
     end
+
+    defp maybe_install_storybook_extras(igniter, true) do
+      igniter
+      |> Igniter.compose_task("pulsar.gen.storybook", ["--skip-components"])
+    end
+
+    defp maybe_install_storybook_extras(igniter, _), do: igniter
 
     defp validate_component_dependencies! do
       keys = @components |> Map.keys() |> MapSet.new()
