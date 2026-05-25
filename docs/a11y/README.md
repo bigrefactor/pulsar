@@ -42,6 +42,39 @@ Authoring Practices Guide (APG) patterns. Tracked under
 
 ---
 
+## Browser test gate (PUL-11)
+
+A `phoenix_test_playwright` + `a11y_audit` suite runs axe-core against every
+fixture LiveView in `test/support/test_app/`. Each fixture is exercised twice
+(light + dark theme), producing one named ExUnit test per (fixture, theme)
+combination. This is the automated half of the
+[PUL-19](https://linear.app/bigrefactor/issue/PUL-19) browser-audit work for
+axe-detectable issues; contrast measurements, focus indicators, and screen
+reader testing remain manual.
+
+### Running locally
+
+```bash
+npm --prefix test/support/test_app/assets ci                          # once per checkout
+npx --prefix test/support/test_app/assets playwright install chromium # once per machine
+mix test --only integration
+```
+
+The default `mix test` excludes the `:integration` tag, so contributors without
+Chromium installed are unaffected.
+
+### Policy when axe finds a violation
+
+Violations are **not** allowlisted. Each (component, rule) failure is tracked
+two ways:
+
+1. A Linear ticket filed under the Pulsar team, parented to PUL-15.
+2. An entry in this directory's `<component>.md` referencing that ticket.
+
+The test stays red until the violation is fixed. The CI `browser` job is
+**not** a required check while cleanup is in progress; a follow-up ticket
+flips it to required once all fixtures pass.
+
 ## Status matrix
 
 Components are rows, criteria are columns grouped by principle. Cells:
