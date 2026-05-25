@@ -35,6 +35,31 @@ ships prebuilt JS/CSS under `priv/static/`. Pulsar's `mix.exs` shadows the
 broken task with an alias to `dev_app.server` so the command behaves the way
 contributors intuitively expect.
 
+### Sandbox styling
+
+PhoenixStorybook renders stories inline and scopes its own Tailwind
+preflight to `.psb`. To prevent its reset from affecting your components,
+PSB wraps every story container in a sandbox class — `pulsar-sandbox`
+in our case, declared via `sandbox_class:` in
+`test/support/dev_app/storybook.ex`. The host app is responsible for
+providing the baseline styling (font, color, etc.) inside that wrapper.
+
+The dev app does this in two places:
+
+- `test/support/dev_app/assets/css/app.css` defines
+  `.pulsar-sandbox { font-family: var(--font-sans); ... }` plus a
+  child `*` rule so descendants inherit the font.
+- `test/support/dev_app/layouts/root.html.heex` puts `pulsar-sandbox`
+  on the `<body>` element so non-storybook routes pick up the same
+  baseline.
+
+If you add a new globally-applied rule (font, base color, default
+spacing), put it inside the `.pulsar-sandbox` block — not at the root
+level — so it reaches story content.
+
+See the PSB sandboxing guide for the full mechanism:
+<https://hexdocs.pm/phoenix_storybook/sandboxing.html>
+
 ## Story types
 
 The catalog is organized into four sections:

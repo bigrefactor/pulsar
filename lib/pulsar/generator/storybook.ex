@@ -162,7 +162,29 @@ defmodule Pulsar.Generator.Storybook do
              live_storybook "/storybook", backend_module: #{web_module}.Storybook
            end
 
-    4. Visit http://localhost:4000/storybook
+    4. Scope your styles to match the sandbox class.
+
+       Add the following to your app.css (or equivalent) so story content
+       uses your app's font baseline. Without this, PSB stories render
+       with the browser default font (Times serif on most systems):
+
+           .pulsar-sandbox {
+             font-family: var(--font-sans);
+             color: var(--color-foreground);
+           }
+
+           .pulsar-sandbox * {
+             font-family: inherit;
+           }
+
+       Then apply the class to your root layout body so the same baseline
+       applies outside the storybook too:
+
+           <body class="pulsar-sandbox ...">
+
+       Background: https://hexdocs.pm/phoenix_storybook/sandboxing.html
+
+    5. Visit http://localhost:4000/storybook
 
     Full setup guide: https://hexdocs.pm/phoenix_storybook/setup.html
     """

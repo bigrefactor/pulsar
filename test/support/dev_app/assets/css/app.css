@@ -13,3 +13,21 @@
 @plugin "../vendor/heroicons";
 
 @import "./theme.css";
+
+/* PSB sandbox scoping.
+ *
+ * PSB renders stories inline and scopes its own Tailwind preflight to .psb.
+ * That means story content does not inherit the document's font-family from
+ * preflight — we have to set it ourselves on the sandbox wrapper that PSB
+ * applies to every story container (configured via sandbox_class: in
+ * Pulsar.DevApp.Storybook). Without this rule, story content falls back to
+ * the browser default serif. See deps/phoenix_storybook/guides/sandboxing.md.
+ */
+.pulsar-sandbox {
+  font-family: var(--font-sans);
+  color: var(--color-foreground);
+}
+
+.pulsar-sandbox * {
+  font-family: inherit;
+}
