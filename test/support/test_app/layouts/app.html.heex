@@ -1,0 +1,12 @@
+<div class="flex min-h-screen">
+  <aside class="w-56 shrink-0 border-r border-border bg-surface-1 p-4">
+    <header class="mb-4 flex items-center justify-between">
+      <.link navigate={~p"/"} class="font-semibold">Pulsar</.link>
+      <.theme_toggle />
+    </header>
+    <.fixture_nav current_path={assigns[:current_path]} />
+  </aside>
+  <div class="flex-1 overflow-x-auto">
+    {@inner_content}
+  </div>
+</div>
