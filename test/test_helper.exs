@@ -9,11 +9,19 @@
 {:ok, _} = Application.ensure_all_started(:phoenix_live_view)
 {:ok, _} = Pulsar.TestApp.Application.start(:normal, [])
 
-# Start the Playwright supervisor unconditionally. It's a cheap idle process
-# when no integration tests run, and starting it always avoids subtle gating
-# bugs (e.g. running a single browser test by file path, or unusual orderings
-# of --include / --only flags).
-{:ok, _} = PhoenixTest.Playwright.Supervisor.start_link()
+# Start the Playwright supervisor whenever Playwright is installed under
+# test/support/test_app/assets. Gating on installation (rather than on the
+# `:integration` ExUnit include-list) keeps the supervisor available for any
+# invocation that could run a browser test — including single-file or
+# unusual --include / --only orderings — without breaking environments that
+# never install Playwright (e.g. the Code Quality CI job, which runs
+# `mix test --cover` but does not run `npm install playwright`).
+playwright_pkg_json =
+  Path.join(["test/support/test_app/assets", "node_modules", "playwright", "package.json"])
+
+if File.exists?(playwright_pkg_json) do
+  {:ok, _} = PhoenixTest.Playwright.Supervisor.start_link()
+end
 
 Application.put_env(:phoenix_test, :base_url, Pulsar.TestApp.Endpoint.url())
 
