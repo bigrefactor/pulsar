@@ -213,20 +213,14 @@ if Code.ensure_loaded?(Igniter) do
       storybook = igniter.args.options[:storybook]
 
       Enum.reduce(components, igniter, fn component, acc ->
-        if Enum.member?(components, component) do
-          if storybook do
-            # When storybook is requested, pass --storybook plus any
-            # --components-module from the parent so the child task
-            # knows both the namespace and the storybook flag.
-            # (compose_task with nil argv inherits parent argv_flags, but
-            # explicitly passing ["--storybook"] drops those, so we rebuild.)
-            argv = build_component_argv(acc, storybook: true)
-            Igniter.compose_task(acc, "pulsar.gen.#{component}", argv)
-          else
-            Igniter.compose_task(acc, "pulsar.gen.#{component}")
-          end
+        if storybook do
+          # compose_task with nil argv inherits parent argv_flags, but
+          # explicitly passing ["--storybook"] drops those — rebuild so
+          # --components-module also propagates if set.
+          argv = build_component_argv(acc, storybook: true)
+          Igniter.compose_task(acc, "pulsar.gen.#{component}", argv)
         else
-          acc
+          Igniter.compose_task(acc, "pulsar.gen.#{component}")
         end
       end)
     end
