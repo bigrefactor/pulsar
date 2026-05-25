@@ -21,6 +21,19 @@ Then open [http://localhost:4002/storybook](http://localhost:4002/storybook).
 The storybook recompiles story files on every request in development mode,
 so changes to story files appear immediately on the next browser refresh.
 
+### Do not run `mix dev.storybook`
+
+`phoenix_storybook` ships a `mix dev.storybook` task that gets exposed as a
+top-level Mix task once the dep is fetched. It is **not** for Pulsar
+contributors. The task assumes a PSB git checkout with source `assets/` and
+runs `npm ci` / `mix assets.build` against the dep — both fail because the
+hex package strips `assets/` from its tarball (only `priv/`, `lib`, `guides`,
+etc. are published) and ships prebuilt JS/CSS under `priv/static/`.
+
+For Pulsar, `mix dev_app.server` is the only command you need. PSB's
+prebuilt assets are served directly from the hex package; no extra build
+step is required.
+
 ## Story types
 
 The catalog is organized into four sections:
