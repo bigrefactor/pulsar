@@ -21,18 +21,19 @@ Then open [http://localhost:4002/storybook](http://localhost:4002/storybook).
 The storybook recompiles story files on every request in development mode,
 so changes to story files appear immediately on the next browser refresh.
 
-### Do not run `mix dev.storybook`
+### `mix dev.storybook` and `mix dev_app.server` are equivalent
 
-`phoenix_storybook` ships a `mix dev.storybook` task that gets exposed as a
-top-level Mix task once the dep is fetched. It is **not** for Pulsar
-contributors. The task assumes a PSB git checkout with source `assets/` and
-runs `npm ci` / `mix assets.build` against the dep — both fail because the
-hex package strips `assets/` from its tarball (only `priv/`, `lib`, `guides`,
-etc. are published) and ships prebuilt JS/CSS under `priv/static/`.
+Both commands boot the in-repo dev app on port 4002. `mix dev.storybook` is
+a Pulsar alias that delegates to `mix dev_app.server`.
 
-For Pulsar, `mix dev_app.server` is the only command you need. PSB's
-prebuilt assets are served directly from the hex package; no extra build
-step is required.
+The alias exists because `phoenix_storybook` ships its own `mix dev.storybook`
+task — intended for PSB contributors working against a git checkout — that
+fails against the hex package. PSB's version runs `npm ci` and
+`mix assets.build` inside `deps/phoenix_storybook/assets/`, but the hex tarball
+strips that directory (only `priv/`, `lib`, `guides`, etc. are published) and
+ships prebuilt JS/CSS under `priv/static/`. Pulsar's `mix.exs` shadows the
+broken task with an alias to `dev_app.server` so the command behaves the way
+contributors intuitively expect.
 
 ## Story types
 

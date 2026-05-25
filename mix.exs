@@ -83,6 +83,7 @@ defmodule Pulsar.MixProject do
         check: :test,
         "check.ci": :test,
         "dev_app.server": :test,
+        "dev.storybook": :test,
         "test_app.server": :test,
         "assets.build": :test,
         "pulsar.dev_app.theme": :test,
@@ -153,6 +154,14 @@ defmodule Pulsar.MixProject do
         "assets.build",
         "run --no-halt -e '{:ok, sup} = Pulsar.DevApp.Application.start(:normal, []); Process.unlink(sup)'"
       ],
+      # Shadow phoenix_storybook's own `mix dev.storybook` task. PSB's version
+      # assumes a PSB git checkout with source assets/ (runs npm ci / mix
+      # assets.build inside the dep) and always fails against the hex package,
+      # which strips assets/ from its tarball. Mix aliases take precedence over
+      # dep-provided task modules, so this makes `mix dev.storybook` do what
+      # a Pulsar contributor expects: boot the in-repo dev_app endpoint that
+      # serves /storybook on port 4002.
+      "dev.storybook": ["dev_app.server"],
       # Backward-compat aliases — remove in a follow-up after contributor muscle
       # memory and CI workflows have migrated to the dev_app.* names.
       "test_app.server": ["dev_app.server"],
