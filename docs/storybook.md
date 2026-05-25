@@ -81,7 +81,7 @@ and the dev-app router wires it up at `/storybook`.
 2. Name the new file `test/support/dev_app/storybook/components/<name>.story.exs`
    and update the module name to match (e.g. `Pulsar.DevApp.Storybook.Components.MyComp`).
 
-3. Set `def component, do: &Pulsar.Components.MyComp.my_comp/1` (or the
+3. Set `def function, do: &Pulsar.Components.MyComp.my_comp/1` (or the
    relevant function reference).
 
 4. Define `def attributes` and `def slots` to match the component's `attr`
