@@ -21,6 +21,8 @@ defmodule Pulsar.MixProject do
       app: :pulsar,
       version: @version,
       elixir: "~> 1.15",
+      elixirc_paths: elixirc_paths(Mix.env()),
+      compilers: [:phoenix_live_view] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases(),
@@ -63,7 +65,12 @@ defmodule Pulsar.MixProject do
         "coveralls.post": :test,
         "coveralls.html": :test,
         "coveralls.cobertura": :test,
-        test: :test
+        test: :test,
+        check: :test,
+        "check.ci": :test,
+        "test_app.server": :test,
+        "assets.build": :test,
+        "pulsar.test_app.theme": :test
       ]
     ]
   end
@@ -71,10 +78,10 @@ defmodule Pulsar.MixProject do
   defp deps do
     [
       {:igniter, "~> 0.6", optional: true},
-      {:phoenix, "~> 1.8", optional: true, runtime: false},
-      {:phoenix_live_view, "~> 1.1", optional: true, runtime: false},
-      {:phoenix_html, "~> 4.0", optional: true, runtime: false},
-      {:phoenix_html_helpers, "~> 1.0", optional: true, runtime: false},
+      {:phoenix, "~> 1.8", optional: true},
+      {:phoenix_live_view, "~> 1.1", optional: true},
+      {:phoenix_html, "~> 4.0", optional: true},
+      {:phoenix_html_helpers, "~> 1.0", optional: true},
       {:twm, "~> 0.1"},
 
       # Quality tools
@@ -88,13 +95,45 @@ defmodule Pulsar.MixProject do
       {:excoveralls, "~> 0.18", only: :test},
       {:ecto, "~> 3.12", only: :test},
       {:phoenix_ecto, "~> 4.6", only: :test},
-      {:phx_new, "~> 1.7", only: :test, runtime: false}
+      {:phx_new, "~> 1.7", only: :test, runtime: false},
+      {:lazy_html, ">= 0.1.0", only: :test},
+
+      # Test app build pipeline (test/support/test_app) — never ships to consumers.
+      # jason is pulled in transitively (ex_ast) so it's available in every env.
+      {:bandit, "~> 1.5", only: [:dev, :test]},
+      {:tailwind, "~> 0.4", only: [:dev, :test], runtime: false},
+      {:esbuild, "~> 0.10", only: [:dev, :test], runtime: false},
+      {:heroicons,
+       github: "tailwindlabs/heroicons",
+       tag: "v2.1.1",
+       sparse: "optimized",
+       app: false,
+       compile: false,
+       depth: 1,
+       only: [:dev, :test]}
     ]
   end
 
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
+
   defp aliases do
     [
-      setup: ["deps.get", "compile"],
+      setup: [
+        "deps.get",
+        "compile",
+        "tailwind.install --if-missing",
+        "esbuild.install --if-missing"
+      ],
+      "assets.build": [
+        "pulsar.test_app.theme",
+        "tailwind test_app",
+        "esbuild test_app"
+      ],
+      "test_app.server": [
+        "assets.build",
+        "run --no-halt -e '{:ok, sup} = Pulsar.TestApp.Application.start(:normal, []); Process.unlink(sup)'"
+      ],
       check: [
         "compile --warnings-as-errors",
         "format --check-formatted",
@@ -135,7 +174,7 @@ defmodule Pulsar.MixProject do
       },
       files: ~w(
         lib
-        priv
+        priv/templates
         .formatter.exs
         mix.exs
         README.md
