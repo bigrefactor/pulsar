@@ -16,7 +16,7 @@ defmodule Pulsar.DevApp.Storybook.Welcome do
         Pulsar is a production-ready component library for Phoenix LiveView. It ships
         accessible, styled components with all WAI-ARIA behavior built in, using only
         <a
-          class="psb:text-indigo-600 psb:underline hover:psb:text-indigo-800"
+          class="psb:text-indigo-600 psb:underline psb:hover:text-indigo-800"
           href="https://hex.pm/packages/twm"
           target="_blank"
         >
@@ -92,7 +92,7 @@ defmodule Pulsar.DevApp.Storybook.Welcome do
       <ul class="psb:space-y-2 psb:text-base psb:text-slate-700">
         <li>
           <a
-            class="psb:text-indigo-600 psb:underline hover:psb:text-indigo-800"
+            class="psb:text-indigo-600 psb:underline psb:hover:text-indigo-800"
             href="https://github.com/bigrefactor/pulsar"
             target="_blank"
           >
@@ -101,7 +101,7 @@ defmodule Pulsar.DevApp.Storybook.Welcome do
         </li>
         <li>
           <a
-            class="psb:text-indigo-600 psb:underline hover:psb:text-indigo-800"
+            class="psb:text-indigo-600 psb:underline psb:hover:text-indigo-800"
             href="https://hex.pm/packages/pulsar"
             target="_blank"
           >
@@ -119,7 +119,7 @@ defmodule Pulsar.DevApp.Storybook.Welcome do
         </li>
         <li>
           <a
-            class="psb:text-indigo-600 psb:underline hover:psb:text-indigo-800"
+            class="psb:text-indigo-600 psb:underline psb:hover:text-indigo-800"
             href="https://hexdocs.pm/phoenix_storybook"
             target="_blank"
           >
