@@ -105,7 +105,7 @@ defmodule Pulsar.Components.HeaderTest do
       assert html =~ "bg-neutral-100"
       assert html =~ "text-neutral-900"
       assert html =~ "p-6"
-      assert html =~ "rounded-lg"
+      assert html =~ "rounded-box"
     end
   end
 
@@ -353,7 +353,7 @@ defmodule Pulsar.Components.HeaderTest do
 
       assert html =~ "sticky"
       assert html =~ "top-0"
-      assert html =~ "z-10"
+      assert html =~ "z-docked"
       assert html =~ "bg-background"
     end
 
@@ -418,7 +418,7 @@ defmodule Pulsar.Components.HeaderTest do
       # Should have sticky positioning
       assert html =~ "sticky"
       assert html =~ "top-0"
-      assert html =~ "z-10"
+      assert html =~ "z-docked"
       # Variant background should win over sticky background due to Twm
       assert html =~ "bg-primary-100"
       refute html =~ "bg-background"

@@ -286,7 +286,7 @@ defmodule Pulsar.Components.Link do
   end
 
   @base_classes """
-  group inline-flex items-center cursor-pointer transition-all duration-200 ease-in-out
+  group inline-flex items-center cursor-pointer transition-all duration-normal ease-standard
   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50
   focus-visible:ring-offset-1
   """

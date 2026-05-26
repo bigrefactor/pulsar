@@ -90,11 +90,11 @@ alias Phoenix.LiveView.Rendered
 @size_config %{
   "lg" => %{
     card: "p-5 gap-4 text-lg",
-    input: "h-6 w-6 rounded-md before:rounded-md after:text-sm"
+    input: "h-6 w-6 rounded-field before:rounded-field after:text-sm"
   },
   "md" => %{
     card: "p-4 gap-3",
-    input: "h-5 w-5 rounded-md before:rounded-md after:text-xs"
+    input: "h-5 w-5 rounded-field before:rounded-field after:text-xs"
   },
   "sm" => %{
     card: "p-3 gap-2 text-sm",
@@ -102,7 +102,7 @@ alias Phoenix.LiveView.Rendered
   },
   "xl" => %{
     card: "p-6 gap-5 text-xl",
-    input: "h-7 w-7 rounded-lg before:rounded-lg after:text-base"
+    input: "h-7 w-7 rounded-box before:rounded-box after:text-base"
   },
   "xs" => %{
     card: "p-2 gap-2 text-xs",
@@ -112,14 +112,14 @@ alias Phoenix.LiveView.Rendered
 
 # Base checkbox styling classes
 @checkbox_base_classes [
-  "appearance-none relative cursor-pointer transition-all duration-200 ease-in-out",
+  "appearance-none relative cursor-pointer transition-all duration-normal ease-standard",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
   "focus-visible:ring-ring",
-  "disabled:cursor-not-allowed disabled:opacity-50",
+  "disabled:cursor-not-allowed disabled:opacity-disabled",
   "before:content-[''] before:absolute before:inset-0 before:rounded-[inherit]",
-  "before:border-2 before:transition-all before:duration-200 before:ease-in-out",
+  "before:border-2 before:transition-all before:duration-normal before:ease-standard",
   "after:content-['✓'] after:absolute after:inset-0 after:flex after:items-center after:justify-center",
-  "after:text-current after:font-bold after:transition-all after:duration-200 after:ease-in-out",
+  "after:text-current after:font-bold after:transition-all after:duration-normal after:ease-standard",
   "after:scale-0 after:opacity-0",
   "data-[checked=true]:after:scale-100 data-[checked=true]:after:opacity-100",
   "data-[indeterminate=true]:after:content-['−'] data-[indeterminate=true]:after:scale-100 data-[indeterminate=true]:after:opacity-100"
@@ -127,9 +127,9 @@ alias Phoenix.LiveView.Rendered
 
 # Base card container styling classes
 @card_base_classes [
-  "flex items-center gap-3 rounded-lg cursor-pointer transition-all duration-200 ease-in-out",
+  "flex items-center gap-3 rounded-box cursor-pointer transition-all duration-normal ease-standard",
   "focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-ring",
-  "has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50"
+  "has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-disabled"
 ]
 
 # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
@@ -697,7 +697,7 @@ defp card_variant_classes("solid", color) do
   [
     card_solid_background(color),
     "border-2 border-transparent",
-    "hover:shadow-sm"
+    "hover:shadow-card"
   ]
 end
 
@@ -705,7 +705,7 @@ defp card_variant_classes("outline", color) do
   [
     card_outline_background(color),
     card_outline_border(color),
-    "hover:shadow-md"
+    "hover:shadow-dropdown"
   ]
 end
 
@@ -713,7 +713,7 @@ defp card_variant_classes("ghost", color) do
   [
     card_ghost_background(color),
     "border-2 border-transparent",
-    "hover:shadow-sm"
+    "hover:shadow-card"
   ]
 end
 

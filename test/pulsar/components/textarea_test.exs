@@ -506,7 +506,7 @@ defmodule Pulsar.Components.TextareaTest do
 
       assert html =~ ~s(disabled)
       assert html =~ "cursor-not-allowed"
-      assert html =~ "opacity-50"
+      assert html =~ "opacity-disabled"
       assert html =~ "pointer-events-none"
     end
 

@@ -191,7 +191,7 @@ defmodule Pulsar.Components.Field do
   # Note: `text-{size}` is added by `size_class` and would reset line-height in
   # Tailwind v4, so `leading-none` is appended AFTER `size_class` in the merge
   # below rather than declared here.
-  @inline_label_base_classes "font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+  @inline_label_base_classes "font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-disabled"
 
   # ============================================================================
   # MAIN FIELD COMPONENT

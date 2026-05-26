@@ -30,7 +30,7 @@ defmodule Pulsar.Components.BadgeTest do
       assigns = %{}
       html = rendered_to_string(~H[<Badge.badge variant="solid">Solid</Badge.badge>])
 
-      assert html =~ ~s(rounded-md)
+      assert html =~ ~s(rounded-field)
       assert html =~ ~s(bg-neutral)
     end
 
@@ -47,7 +47,7 @@ defmodule Pulsar.Components.BadgeTest do
       assigns = %{}
       html = rendered_to_string(~H[<Badge.badge variant="ghost">Ghost</Badge.badge>])
 
-      assert html =~ ~s(rounded-md)
+      assert html =~ ~s(rounded-field)
       assert html =~ ~s(hover:bg-neutral/10)
     end
   end

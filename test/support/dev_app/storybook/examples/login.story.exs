@@ -18,7 +18,7 @@ defmodule Pulsar.DevApp.Storybook.Examples.Login do
   def render(assigns) do
     ~H"""
     <div class="flex min-h-96 items-center justify-center p-8">
-      <div class="w-full max-w-sm rounded-xl border border-border bg-surface-0 p-8 shadow-sm">
+      <div class="w-full max-w-sm rounded-xl border border-border bg-surface-0 p-8 shadow-card">
         <div class="mb-6 text-center">
           <Badge.badge color="primary" variant="ghost" class="mb-3">Pulsar Example</Badge.badge>
           <h1 class="text-2xl font-semibold text-foreground">

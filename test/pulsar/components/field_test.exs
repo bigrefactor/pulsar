@@ -633,7 +633,7 @@ defmodule Pulsar.Components.FieldTest do
       # Should include custom classes and base classes (where not conflicting)
       assert html =~ "font-bold text-blue-600"
       assert html =~ "leading-none"
-      assert html =~ "peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+      assert html =~ "peer-disabled:cursor-not-allowed peer-disabled:opacity-disabled"
     end
   end
 

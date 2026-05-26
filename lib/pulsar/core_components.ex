@@ -72,7 +72,7 @@ defmodule Pulsar.CoreComponents do
     <div
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       id={@id}
-      class="fixed top-4 right-4 z-50 max-w-sm w-full"
+      class="fixed top-4 right-4 z-toast max-w-sm w-full"
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide_flash("##{@id}")}
       role={map_kind_to_role(@kind)}
     >
@@ -726,7 +726,7 @@ defmodule Pulsar.CoreComponents do
       to: selector,
       time: 300,
       transition:
-        {"transition-all ease-out duration-300", "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
+        {"transition-all ease-standard duration-300", "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
          "opacity-100 translate-y-0 sm:scale-100"}
     )
   end
@@ -743,7 +743,7 @@ defmodule Pulsar.CoreComponents do
       to: selector,
       time: 200,
       transition:
-        {"transition-all ease-in duration-200", "opacity-100 translate-y-0 sm:scale-100",
+        {"transition-all ease-standard duration-normal", "opacity-100 translate-y-0 sm:scale-100",
          "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
     )
   end

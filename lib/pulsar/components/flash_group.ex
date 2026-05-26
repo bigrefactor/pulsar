@@ -435,7 +435,7 @@ defmodule Pulsar.Components.FlashGroup do
         phx-mounted={
           Phoenix.LiveView.JS.show(
             transition: {
-              "ease-out duration-200",
+              "ease-standard duration-normal",
               "opacity-0 #{get_entry_from(@position)}",
               "opacity-100 #{get_entry_to(@position)}"
             }
@@ -545,5 +545,5 @@ defmodule Pulsar.Components.FlashGroup do
     "z-#{z_index}"
   end
 
-  defp get_z_index_class(_), do: "z-50"
+  defp get_z_index_class(_), do: "z-toast"
 end

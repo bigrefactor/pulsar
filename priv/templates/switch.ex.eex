@@ -231,12 +231,12 @@ alias Phoenix.LiveView.Rendered
 # Base switch track classes
 @switch_base_classes [
   "relative inline-flex rounded-full cursor-pointer",
-  "transition-all duration-200 ease-in-out",
+  "transition-all duration-normal ease-standard",
   "transform-gpu",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
   "focus-visible:ring-ring",
   "focus-visible:ring-offset-background",
-  "data-[disabled=true]:opacity-50 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:pointer-events-none",
+  "data-[disabled=true]:opacity-disabled data-[disabled=true]:cursor-not-allowed data-[disabled=true]:pointer-events-none",
   "data-[loading=true]:cursor-wait",
   "shadow-inner shadow-black/5",
   "hover:shadow-inner hover:shadow-black/10"
@@ -245,7 +245,7 @@ alias Phoenix.LiveView.Rendered
 # Base thumb classes
 @thumb_base_classes [
   "absolute rounded-full",
-  "transition-all duration-200 ease-in-out",
+  "transition-all duration-normal ease-standard",
   "transform-gpu",
   "flex items-center justify-center pointer-events-none",
   "data-[loading=true]:bg-background data-[loading=true]:",
@@ -617,15 +617,15 @@ end
 # Thumb variant classes (shadow and border)
 @spec thumb_variant_classes(String.t()) :: String.t()
 defp thumb_variant_classes("solid") do
-  "bg-background shadow-lg shadow-black/10"
+  "bg-background shadow-modal shadow-black/10"
 end
 
 defp thumb_variant_classes("outline") do
-  "bg-background shadow-md shadow-black/8 border border-border/30"
+  "bg-background shadow-dropdown shadow-black/8 border border-border/30"
 end
 
 defp thumb_variant_classes("ghost") do
-  "bg-background shadow-md shadow-black/6"
+  "bg-background shadow-dropdown shadow-black/6"
 end
 
 # State classes for invalid states

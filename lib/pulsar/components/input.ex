@@ -146,15 +146,15 @@ defmodule Pulsar.Components.Input do
 
   # Base input container classes
   @base_input_classes [
-    "flex group overflow-hidden transition-all duration-200 ease-in-out",
+    "flex group overflow-hidden transition-all duration-normal ease-standard",
     "focus-within:ring-2 focus-within:ring-offset-2"
   ]
 
   # Variant base configuration
   @variant_config %{
-    "ghost" => "rounded-lg",
-    "outline" => "border-2 rounded-lg",
-    "solid" => "rounded-lg"
+    "ghost" => "rounded-box",
+    "outline" => "border-2 rounded-box",
+    "solid" => "rounded-box"
   }
 
   # Color configuration organized by variant and color
@@ -430,7 +430,7 @@ defmodule Pulsar.Components.Input do
       <input
         class={
           [
-            "w-full outline-0 transition-all duration-200 ease-in-out",
+            "w-full outline-0 transition-all duration-normal ease-standard",
             get_input_padding_classes(@size, @variant, @has_start_decorator, @has_end_decorator),
             (@disabled && "cursor-not-allowed") || (@readonly && "cursor-default") || nil
           ]
@@ -541,7 +541,7 @@ defmodule Pulsar.Components.Input do
 
   defp get_state_classes(disabled, readonly) do
     [
-      disabled && "cursor-not-allowed opacity-50 pointer-events-none",
+      disabled && "cursor-not-allowed opacity-disabled pointer-events-none",
       readonly && "cursor-default"
     ]
     |> Enum.filter(& &1)

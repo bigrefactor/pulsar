@@ -93,7 +93,7 @@ defmodule Pulsar.Components.ListTest do
         """)
 
       assert html =~ ~s(border)
-      assert html =~ ~s(rounded-lg)
+      assert html =~ ~s(rounded-box)
       assert html =~ ~s(bg-background)
     end
 
@@ -107,7 +107,7 @@ defmodule Pulsar.Components.ListTest do
         </List.list>
         """)
 
-      assert html =~ ~s(rounded-lg)
+      assert html =~ ~s(rounded-box)
       assert html =~ ~s(bg-muted)
       assert html =~ ~s(border-border)
     end
@@ -360,7 +360,7 @@ defmodule Pulsar.Components.ListTest do
 
       # Check variant
       assert html =~ ~s(border)
-      assert html =~ ~s(rounded-lg)
+      assert html =~ ~s(rounded-box)
 
       # Check color
       assert html =~ ~s(border-primary)

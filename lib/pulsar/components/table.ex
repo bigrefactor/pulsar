@@ -173,8 +173,8 @@ defmodule Pulsar.Components.Table do
   # Container variant classes
   @container_variant_config %{
     "ghost" => "",
-    "outline" => "rounded-lg border border-border",
-    "solid" => "rounded-lg overflow-hidden"
+    "outline" => "rounded-box border border-border",
+    "solid" => "rounded-box overflow-hidden"
   }
 
   # Header variant/color classes
@@ -217,7 +217,7 @@ defmodule Pulsar.Components.Table do
 
   # Row base classes
   @row_base_classes [
-    "transition-colors duration-150",
+    "transition-colors duration-quick",
     "border-b border-border/50 last:border-b-0"
   ]
 
@@ -527,7 +527,7 @@ defmodule Pulsar.Components.Table do
     [
       @container_base_classes,
       @container_variant_config[assigns.variant],
-      assigns.sticky_header && "[&_thead_th]:sticky [&_thead_th]:top-0 [&_thead_th]:z-10",
+      assigns.sticky_header && "[&_thead_th]:sticky [&_thead_th]:top-0 [&_thead_th]:z-docked",
       assigns.striped && @striped_variant_config[assigns.variant],
       assigns.class
     ]

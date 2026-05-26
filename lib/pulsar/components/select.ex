@@ -114,13 +114,13 @@ defmodule Pulsar.Components.Select do
   }
 
   # Base select styling classes
-  @base_select_classes "block w-full appearance-none transition-all duration-200 ease-in-out focus:ring-2 focus:ring-offset-2 focus:outline-none"
+  @base_select_classes "block w-full appearance-none transition-all duration-normal ease-standard focus:ring-2 focus:ring-offset-2 focus:outline-none"
 
   # Variant-specific layout classes
   @variant_config %{
-    "ghost" => "rounded-lg border-0",
-    "outline" => "border-2 rounded-lg",
-    "solid" => "rounded-lg border-0"
+    "ghost" => "rounded-box border-0",
+    "outline" => "border-2 rounded-box",
+    "solid" => "rounded-box border-0"
   }
 
   # Color configuration for different variants
@@ -363,7 +363,7 @@ defmodule Pulsar.Components.Select do
         <div class={[
           "absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none",
           get_arrow_classes(@variant, @effective_color),
-          @disabled && "opacity-50"
+          @disabled && "opacity-disabled"
         ]}>
           <.icon name="hero-chevron-down" size="sm" color="current" />
         </div>
@@ -447,7 +447,7 @@ defmodule Pulsar.Components.Select do
 
   defp get_state_classes(disabled) do
     [
-      disabled && "cursor-not-allowed opacity-50 pointer-events-none"
+      disabled && "cursor-not-allowed opacity-disabled pointer-events-none"
     ]
     |> Enum.filter(& &1)
     |> Enum.join(" ")

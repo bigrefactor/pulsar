@@ -80,7 +80,7 @@ defmodule Pulsar.Components.RadioGroupTest do
 
       # Card should be rendered as a label
       assert html =~ ~s(<label)
-      assert html =~ "rounded-lg border-2"
+      assert html =~ "rounded-box border-2"
       assert html =~ "cursor-pointer"
       # Should have padding classes
       assert html =~ "p-4 gap-3"

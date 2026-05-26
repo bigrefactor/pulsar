@@ -619,7 +619,7 @@ defmodule Pulsar.Components.SelectTest do
 
       assert html =~ ~s(disabled)
       assert html =~ "cursor-not-allowed"
-      assert html =~ "opacity-50"
+      assert html =~ "opacity-disabled"
       assert html =~ "pointer-events-none"
     end
 
@@ -631,9 +631,9 @@ defmodule Pulsar.Components.SelectTest do
         <Select.select name="test" options={["A", "B", "C"]} disabled={true} />
         """)
 
-      # Should have arrow container with opacity-50 when disabled
+      # Should have arrow container with opacity-disabled when disabled
       assert html =~
-               ~s(class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-neutral opacity-50")
+               ~s(class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-neutral opacity-disabled")
     end
 
     test "handles required state" do

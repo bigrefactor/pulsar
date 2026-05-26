@@ -111,7 +111,7 @@ defmodule Pulsar.Components.Label do
   }
 
   # Base label styling classes
-  @label_base_classes "font-medium transition-colors duration-200 cursor-pointer"
+  @label_base_classes "font-medium transition-colors duration-normal cursor-pointer"
 
   @doc """
   Renders a styled label component with typography variants and visual indicators.

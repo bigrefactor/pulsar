@@ -141,10 +141,10 @@ defmodule Pulsar.Components.List do
   @variant_container_classes %{
     "ghost" => [],
     "outline" => [
-      "border rounded-lg"
+      "border rounded-box"
     ],
     "solid" => [
-      "rounded-lg"
+      "rounded-box"
     ]
   }
 
@@ -510,7 +510,7 @@ defmodule Pulsar.Components.List do
           container_styles = Map.get(color_config, :container, "")
 
           [
-            "border rounded-lg",
+            "border rounded-box",
             container_styles
           ]
 
@@ -519,13 +519,13 @@ defmodule Pulsar.Components.List do
           container_styles = Map.get(color_config, :container, "")
 
           [
-            "rounded-lg",
+            "rounded-box",
             container_styles
           ]
 
         "ghost" ->
           [
-            "rounded-lg bg-background/30 border border-border/20"
+            "rounded-box bg-background/30 border border-border/20"
           ]
       end
 

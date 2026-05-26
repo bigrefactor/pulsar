@@ -127,7 +127,7 @@ defmodule Pulsar.DevApp.Storybook.Foundations.Typography do
             Monospace
           </h2>
           <div class="pulsar-sandbox">
-            <code class="text-sm font-mono text-foreground bg-muted px-2 py-1 rounded-md">
+            <code class="text-sm font-mono text-foreground bg-muted px-2 py-1 rounded-field">
               mix pulsar.install --component Button
             </code>
           </div>

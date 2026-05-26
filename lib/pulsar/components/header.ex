@@ -174,13 +174,13 @@ defmodule Pulsar.Components.Header do
       "warning" => "border-b border-warning-200 pb-4 text-warning"
     },
     "solid" => %{
-      "danger" => "bg-danger-100 text-danger-900 p-6 rounded-lg",
-      "info" => "bg-info-100 text-info-900 p-6 rounded-lg",
-      "neutral" => "bg-neutral-100 text-neutral-900 p-6 rounded-lg",
-      "primary" => "bg-primary-100 text-primary-900 p-6 rounded-lg",
-      "secondary" => "bg-secondary-100 text-secondary-900 p-6 rounded-lg",
-      "success" => "bg-success-100 text-success-900 p-6 rounded-lg",
-      "warning" => "bg-warning-100 text-warning-900 p-6 rounded-lg"
+      "danger" => "bg-danger-100 text-danger-900 p-6 rounded-box",
+      "info" => "bg-info-100 text-info-900 p-6 rounded-box",
+      "neutral" => "bg-neutral-100 text-neutral-900 p-6 rounded-box",
+      "primary" => "bg-primary-100 text-primary-900 p-6 rounded-box",
+      "secondary" => "bg-secondary-100 text-secondary-900 p-6 rounded-box",
+      "success" => "bg-success-100 text-success-900 p-6 rounded-box",
+      "warning" => "bg-warning-100 text-warning-900 p-6 rounded-box"
     }
   }
 
@@ -361,7 +361,7 @@ defmodule Pulsar.Components.Header do
   end
 
   # Get sticky positioning classes
-  defp sticky_classes(true), do: "sticky top-0 z-10 bg-background"
+  defp sticky_classes(true), do: "sticky top-0 z-docked bg-background"
   defp sticky_classes(false), do: ""
 
   # Validate breadcrumb slots don't have multiple navigation props

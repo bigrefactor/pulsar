@@ -390,7 +390,7 @@ defmodule Pulsar.Components.RadioGroup do
     ~H"""
     <div class={
       merge(
-        [radio_option_base_classes(), @option_disabled && "opacity-50", Map.get(@option, :class, "")]
+        [radio_option_base_classes(), @option_disabled && "opacity-disabled", Map.get(@option, :class, "")]
         |> Enum.filter(& &1)
       )
     }>
@@ -492,49 +492,49 @@ defmodule Pulsar.Components.RadioGroup do
       background: "bg-background checked:bg-danger",
       border: "border-border checked:border-danger",
       foreground: "before:bg-danger-foreground",
-      hover: "hover:border-danger/70 hover:shadow-sm",
+      hover: "hover:border-danger/70 hover:shadow-card",
       ring: "focus-visible:ring-danger"
     },
     "info" => %{
       background: "bg-background checked:bg-info",
       border: "border-border checked:border-info",
       foreground: "before:bg-info-foreground",
-      hover: "hover:border-info/70 hover:shadow-sm",
+      hover: "hover:border-info/70 hover:shadow-card",
       ring: "focus-visible:ring-info"
     },
     "neutral" => %{
       background: "bg-background checked:bg-neutral",
       border: "border-border checked:border-neutral",
       foreground: "before:bg-neutral-foreground",
-      hover: "hover:border-neutral/70 hover:shadow-sm",
+      hover: "hover:border-neutral/70 hover:shadow-card",
       ring: "focus-visible:ring-neutral"
     },
     "primary" => %{
       background: "bg-background checked:bg-primary",
       border: "border-border checked:border-primary",
       foreground: "before:bg-primary-foreground",
-      hover: "hover:border-primary/70 hover:shadow-sm",
+      hover: "hover:border-primary/70 hover:shadow-card",
       ring: "focus-visible:ring-primary"
     },
     "secondary" => %{
       background: "bg-background checked:bg-secondary",
       border: "border-border checked:border-secondary",
       foreground: "before:bg-secondary-foreground",
-      hover: "hover:border-secondary/70 hover:shadow-sm",
+      hover: "hover:border-secondary/70 hover:shadow-card",
       ring: "focus-visible:ring-secondary"
     },
     "success" => %{
       background: "bg-background checked:bg-success",
       border: "border-border checked:border-success",
       foreground: "before:bg-success-foreground",
-      hover: "hover:border-success/70 hover:shadow-sm",
+      hover: "hover:border-success/70 hover:shadow-card",
       ring: "focus-visible:ring-success"
     },
     "warning" => %{
       background: "bg-background checked:bg-warning",
       border: "border-border checked:border-warning",
       foreground: "before:bg-warning-foreground",
-      hover: "hover:border-warning/70 hover:shadow-sm",
+      hover: "hover:border-warning/70 hover:shadow-card",
       ring: "focus-visible:ring-warning"
     }
   }
@@ -589,12 +589,12 @@ defmodule Pulsar.Components.RadioGroup do
   @spec radio_input_base_classes() :: String.t()
   defp radio_input_base_classes do
     """
-    appearance-none relative cursor-pointer transition-all duration-200 ease-in-out
+    appearance-none relative cursor-pointer transition-all duration-normal ease-standard
     rounded-full border-2
     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
-    disabled:cursor-not-allowed disabled:opacity-50
+    disabled:cursor-not-allowed disabled:opacity-disabled
     before:content-[''] before:absolute before:rounded-full
-    before:transition-all before:duration-200
+    before:transition-all before:duration-normal
     before:scale-0 before:opacity-0
     checked:before:scale-100 checked:before:opacity-100
     """
@@ -603,7 +603,7 @@ defmodule Pulsar.Components.RadioGroup do
   # Classes for radio labels (standard non-card)
   @spec radio_label_classes(String.t(), String.t(), String.t()) :: String.t()
   defp radio_label_classes(size, color, label_color) do
-    base_classes = "cursor-pointer select-none transition-all duration-200 flex-1 min-w-0"
+    base_classes = "cursor-pointer select-none transition-all duration-normal flex-1 min-w-0"
     effective_label_color = if label_color == "inherit", do: color, else: "neutral"
 
     [
@@ -624,8 +624,8 @@ defmodule Pulsar.Components.RadioGroup do
   @spec card_base_classes(String.t(), String.t()) :: String.t()
   defp card_base_classes(color, size) do
     [
-      "relative flex items-start rounded-lg border-2",
-      "cursor-pointer transition-all duration-200 ease-in-out",
+      "relative flex items-start rounded-box border-2",
+      "cursor-pointer transition-all duration-normal ease-standard",
       "focus-within:ring-2 focus-within:ring-offset-2",
       @size_config[size][:card_padding],
       @size_config[size][:card_text],
@@ -838,7 +838,7 @@ defmodule Pulsar.Components.RadioGroup do
   @spec card_state_classes(boolean(), boolean()) :: String.t()
   defp card_state_classes(disabled, invalid) do
     [
-      disabled && "opacity-50 cursor-not-allowed",
+      disabled && "opacity-disabled cursor-not-allowed",
       invalid && "border-danger ring-1 ring-danger ring-offset-1"
     ]
     |> Enum.filter(& &1)

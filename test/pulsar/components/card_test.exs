@@ -14,8 +14,8 @@ defmodule Pulsar.Components.CardTest do
       assert html =~ ~s(<div)
       assert html =~ "Card content"
       assert html =~ ~s(bg-surface-1)
-      assert html =~ ~s(shadow-md)
-      assert html =~ ~s(rounded-lg)
+      assert html =~ ~s(shadow-dropdown)
+      assert html =~ ~s(rounded-box)
     end
 
     test "renders card content correctly" do
@@ -52,7 +52,7 @@ defmodule Pulsar.Components.CardTest do
       assigns = %{}
       html = rendered_to_string(~H[<Card.card variant="elevated">Elevated</Card.card>])
 
-      assert html =~ ~s(shadow-md)
+      assert html =~ ~s(shadow-dropdown)
       assert html =~ ~s(bg-surface-1)
     end
 
@@ -139,7 +139,7 @@ defmodule Pulsar.Components.CardTest do
       html = rendered_to_string(~H[<Card.card size="xs">XS</Card.card>])
 
       assert html =~ ~s(p-3 gap-3)
-      assert html =~ ~s(rounded-md)
+      assert html =~ ~s(rounded-field)
     end
 
     test "renders sm size" do
@@ -147,7 +147,7 @@ defmodule Pulsar.Components.CardTest do
       html = rendered_to_string(~H[<Card.card size="sm">SM</Card.card>])
 
       assert html =~ ~s(p-4 gap-4)
-      assert html =~ ~s(rounded-lg)
+      assert html =~ ~s(rounded-box)
     end
 
     test "renders md size (default)" do
@@ -155,7 +155,7 @@ defmodule Pulsar.Components.CardTest do
       html = rendered_to_string(~H[<Card.card size="md">MD</Card.card>])
 
       assert html =~ ~s(p-5 gap-5)
-      assert html =~ ~s(rounded-lg)
+      assert html =~ ~s(rounded-box)
     end
 
     test "renders lg size" do
@@ -334,7 +334,7 @@ defmodule Pulsar.Components.CardTest do
       html = rendered_to_string(~H[<Card.card variant="elevated" color="primary">Elevated</Card.card>])
 
       assert html =~ ~s(bg-surface-1)
-      assert html =~ ~s(shadow-md)
+      assert html =~ ~s(shadow-dropdown)
     end
   end
 
@@ -499,9 +499,9 @@ defmodule Pulsar.Components.CardTest do
         assert html =~ "Content"
         # Should have appropriate classes based on size
         case size do
-          "xs" -> assert html =~ ~r/p-3|rounded-md/
-          "sm" -> assert html =~ ~r/p-4|rounded-lg/
-          "md" -> assert html =~ ~r/p-5|rounded-lg/
+          "xs" -> assert html =~ ~r/p-3|rounded-field/
+          "sm" -> assert html =~ ~r/p-4|rounded-box/
+          "md" -> assert html =~ ~r/p-5|rounded-box/
           "lg" -> assert html =~ ~r/p-6|rounded-xl/
           "xl" -> assert html =~ ~r/p-8|rounded-2xl/
         end

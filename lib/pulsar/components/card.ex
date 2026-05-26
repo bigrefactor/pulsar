@@ -62,7 +62,7 @@ defmodule Pulsar.Components.Card do
       # Clickable card with hover states
       <.card
         phx-click="select"
-        class="cursor-pointer hover:scale-[1.01] hover:shadow-lg"
+        class="cursor-pointer hover:scale-[1.01] hover:shadow-modal"
         variant="outline"
       >
         <p>Custom hover effects</p>
@@ -163,13 +163,13 @@ defmodule Pulsar.Components.Card do
       body: "flex flex-col p-5 gap-5",
       footer: "p-5 pt-0",
       header: "p-5 pb-0",
-      radius: "rounded-lg"
+      radius: "rounded-box"
     },
     "sm" => %{
       body: "flex flex-col p-4 gap-4",
       footer: "p-4 pt-0",
       header: "p-4 pb-0",
-      radius: "rounded-lg"
+      radius: "rounded-box"
     },
     "xl" => %{
       body: "flex flex-col p-8 gap-8",
@@ -181,14 +181,14 @@ defmodule Pulsar.Components.Card do
       body: "flex flex-col p-3 gap-3",
       footer: "p-3 pt-0",
       header: "p-3 pb-0",
-      radius: "rounded-md"
+      radius: "rounded-field"
     }
   }
 
   # Base card styling classes
   @card_base_classes [
     "block w-full overflow-hidden",
-    "transition-colors duration-200 ease-in-out"
+    "transition-colors duration-normal ease-standard"
   ]
 
   # Valid variants and colors for compile-time validation
@@ -198,13 +198,13 @@ defmodule Pulsar.Components.Card do
   # Color configuration for each variant
   @color_config %{
     "elevated" => %{
-      "danger" => "bg-surface-1 shadow-md",
-      "info" => "bg-surface-1 shadow-md",
-      "neutral" => "bg-surface-1 shadow-md",
-      "primary" => "bg-surface-1 shadow-md",
-      "secondary" => "bg-surface-1 shadow-md",
-      "success" => "bg-surface-1 shadow-md",
-      "warning" => "bg-surface-1 shadow-md"
+      "danger" => "bg-surface-1 shadow-dropdown",
+      "info" => "bg-surface-1 shadow-dropdown",
+      "neutral" => "bg-surface-1 shadow-dropdown",
+      "primary" => "bg-surface-1 shadow-dropdown",
+      "secondary" => "bg-surface-1 shadow-dropdown",
+      "success" => "bg-surface-1 shadow-dropdown",
+      "warning" => "bg-surface-1 shadow-dropdown"
     },
     "ghost" => %{
       "danger" => "bg-transparent border border-transparent",
@@ -300,7 +300,7 @@ defmodule Pulsar.Components.Card do
 
       # With navigation (wrap in link)
       <.link navigate={~p"/path"}>
-        <.card class="hover:shadow-lg">
+        <.card class="hover:shadow-modal">
           Content
         </.card>
       </.link>

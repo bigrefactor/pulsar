@@ -77,17 +77,17 @@ defmodule Pulsar.Components.Flash do
   @size_config %{
     "lg" => %{
       close_button: "h-6 w-6 p-1",
-      container: "p-4 text-base gap-3 rounded-lg",
+      container: "p-4 text-base gap-3 rounded-box",
       icon: "h-6 w-6"
     },
     "md" => %{
       close_button: "h-5 w-5 p-0.5",
-      container: "p-3 text-sm gap-2 rounded-md",
+      container: "p-3 text-sm gap-2 rounded-field",
       icon: "h-5 w-5"
     },
     "sm" => %{
       close_button: "h-4 w-4 p-0.5",
-      container: "p-2 text-sm gap-2 rounded-md",
+      container: "p-2 text-sm gap-2 rounded-field",
       icon: "h-4 w-4"
     }
   }
@@ -95,8 +95,8 @@ defmodule Pulsar.Components.Flash do
   # Base flash styling classes
   @flash_base_classes [
     "flex items-start justify-between",
-    "font-medium shadow-md",
-    "transition-all duration-200 ease-in-out",
+    "font-medium shadow-dropdown",
+    "transition-all duration-normal ease-standard",
     "focus-within:outline-none focus-within:ring-2",
     "focus-within:ring-current focus-within:ring-offset-2",
     # Restore pointer events for individual flashes
@@ -562,7 +562,7 @@ defmodule Pulsar.Components.Flash do
   # Close button size classes based on flash size
   defp close_button_classes(size) do
     merge([
-      "flex-shrink-0 rounded-md transition-colors",
+      "flex-shrink-0 rounded-field transition-colors",
       "hover:bg-black/10",
       "focus:outline-none focus:ring-2 focus:ring-current focus:ring-offset-2",
       @size_config[size][:close_button]

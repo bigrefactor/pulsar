@@ -136,15 +136,15 @@ defmodule Pulsar.Components.Textarea do
 
   # Base textarea classes
   @textarea_base_classes [
-    "w-full transition-all duration-200 ease-in-out",
+    "w-full transition-all duration-normal ease-standard",
     "focus:ring-2 focus:ring-offset-2 resize-none"
   ]
 
   # Variant configuration
   @variant_config %{
-    "ghost" => "rounded-lg border-transparent",
-    "outline" => "border-2 rounded-lg",
-    "solid" => "rounded-lg border-transparent"
+    "ghost" => "rounded-box border-transparent",
+    "outline" => "border-2 rounded-box",
+    "solid" => "rounded-box border-transparent"
   }
 
   # Color configuration by variant
@@ -614,7 +614,7 @@ defmodule Pulsar.Components.Textarea do
 
   defp get_state_classes(disabled, readonly) do
     [
-      disabled && "cursor-not-allowed opacity-50 pointer-events-none",
+      disabled && "cursor-not-allowed opacity-disabled pointer-events-none",
       readonly && "cursor-default"
     ]
     |> Enum.filter(& &1)

@@ -73,7 +73,7 @@ defmodule Pulsar.Components.TableTest do
         </Table.table>
         """)
 
-      assert html =~ ~s(rounded-lg overflow-hidden)
+      assert html =~ ~s(rounded-box overflow-hidden)
       assert html =~ ~s(bg-neutral)
     end
 
@@ -87,7 +87,7 @@ defmodule Pulsar.Components.TableTest do
         </Table.table>
         """)
 
-      assert html =~ ~s(rounded-lg border)
+      assert html =~ ~s(rounded-box border)
       assert html =~ ~s(border-border)
       assert html =~ ~s(border-b-2)
     end
@@ -274,7 +274,7 @@ defmodule Pulsar.Components.TableTest do
 
       assert html =~ "[&amp;_thead_th]:sticky"
       assert html =~ "[&amp;_thead_th]:top-0"
-      assert html =~ "[&amp;_thead_th]:z-10"
+      assert html =~ "[&amp;_thead_th]:z-docked"
     end
 
     test "no sticky classes when disabled" do

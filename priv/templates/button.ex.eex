@@ -87,15 +87,15 @@ end
 # Size configuration for button variants
 @size_config %{
   "lg" => %{
-    button: "h-12 px-6 text-lg gap-2 rounded-lg",
+    button: "h-12 px-6 text-lg gap-2 rounded-box",
     spinner: "h-5 w-5 animate-spin"
   },
   "md" => %{
-    button: "h-10 px-4 gap-2 rounded-lg",
+    button: "h-10 px-4 gap-2 rounded-box",
     spinner: "h-4 w-4 animate-spin"
   },
   "sm" => %{
-    button: "h-8 px-3 text-sm gap-1 rounded-md",
+    button: "h-8 px-3 text-sm gap-1 rounded-field",
     spinner: "h-4 w-4 animate-spin"
   },
   "xl" => %{
@@ -103,25 +103,25 @@ end
     spinner: "h-6 w-6 animate-spin"
   },
   "xs" => %{
-    button: "h-6 px-2 text-xs gap-1 rounded-md",
+    button: "h-6 px-2 text-xs gap-1 rounded-field",
     spinner: "h-3 w-3 animate-spin"
   }
 }
 
 # Base button styling classes
 @button_base_classes [
-  "font-medium cursor-pointer transition-shadow transition-transform duration-200 ease-in-out",
+  "font-medium cursor-pointer transition-shadow transition-transform duration-normal ease-standard",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
   "focus-visible:ring-ring",
-  "disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed",
-  "data-[loading=true]:pointer-events-none data-[loading=true]:opacity-50 data-[loading=true]:cursor-wait",
-  "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[disabled=true]:cursor-not-allowed"
+  "disabled:pointer-events-none disabled:opacity-disabled disabled:cursor-not-allowed",
+  "data-[loading=true]:pointer-events-none data-[loading=true]:opacity-disabled data-[loading=true]:cursor-wait",
+  "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-disabled data-[disabled=true]:cursor-not-allowed"
 ]
 
 # Variant-specific layout and behavior classes
 @variant_classes %{
   "ghost" => [
-    "inline-flex items-center justify-center shadow-sm hover:shadow-md",
+    "inline-flex items-center justify-center shadow-card hover:shadow-dropdown",
     "hover:scale-[1.02] active:scale-[0.98]",
     "motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none"
   ],
@@ -129,12 +129,12 @@ end
     "inline underline-offset-4 hover:underline focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:underline"
   ],
   "outline" => [
-    "inline-flex items-center justify-center shadow-sm hover:shadow-md",
+    "inline-flex items-center justify-center shadow-card hover:shadow-dropdown",
     "hover:scale-[1.02] active:scale-[0.98]",
     "motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none"
   ],
   "solid" => [
-    "inline-flex items-center justify-center shadow-sm hover:shadow-md",
+    "inline-flex items-center justify-center shadow-card hover:shadow-dropdown",
     "hover:scale-[1.02] active:scale-[0.98]",
     "motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none"
   ]

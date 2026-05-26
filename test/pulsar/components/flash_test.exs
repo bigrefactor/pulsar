@@ -338,7 +338,7 @@ defmodule Pulsar.Components.FlashTest do
       assert html =~ "custom-bg"
       # Should still have base component classes
       assert html =~ "font-medium"
-      assert html =~ "shadow-md"
+      assert html =~ "shadow-dropdown"
     end
 
     test "generates unique IDs when not provided" do
