@@ -15,34 +15,28 @@ with `<dt>` / `<dd>` pairs for each item slot. Supports optional title
 **Evidence:** Component renders no non-text content of its own; icons
 or images in slot content are caller-supplied.
 
-### 1.3.1 Info and Relationships (A) — ⚠ GAP (serious)
+### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:**
-- Container is a `<dl>` —
-  `lib/pulsar/components/list.ex:343, 375`
+- Populated path uses `<dl>` only when items are present —
+  `lib/pulsar/components/list.ex:343, 376`
 - Each item renders `<dt>` (label) and `<dd>` (value) —
-  `lib/pulsar/components/list.ex:357–362, 389–394`
-- Test `renders with semantic HTML structure` verifies the `<dl>`/`<dt>`/`<dd>` —
-  `test/pulsar/components/list_test.exs:31–47`
+  `lib/pulsar/components/list.ex:356–361, 389–394`
+- Empty-state path renders a plain `<div data-list-empty>` in place of
+  `<dl>` — no `<dl>`/`<dt>`/`<dd>` semantics are emitted when there are
+  no items — `lib/pulsar/components/list.ex:363–370, 404–415`
+- Tests assert the populated path produces `<dl>`/`<dt>`/`<dd>` and the
+  empty path does not —
+  `test/pulsar/components/list_test.exs:31–47, 430–488, 605–622`
 
-**Notes:** Item DOM is `<dl> > <div> > <dt> + <dd>` — the `<dt>`/`<dd>`
-pair is wrapped in a non-semantic `<div>` —
-`lib/pulsar/components/list.ex:344–355, 376–387`. Strict HTML5 allows
-`<dl>` to contain `<div>` wrappers only when the wrapping is around one
-or more `<dt>` + `<dd>` groups, which is what the component does, so
-this is technically valid. However, the empty-state branch renders a
-plain `<div>` (with text "No items to display") as a direct `<dl>`
-child — `lib/pulsar/components/list.ex:364–371, 396–403`. A `<div>`
-inside a `<dl>` that contains neither `<dt>` nor `<dd>` is invalid
-markup that some screen readers may surface oddly.
+**Notes:** Item DOM in the populated path is `<dl> > <div> > <dt> + <dd>`.
+Strict HTML5 allows `<dl>` to contain `<div>` wrappers only when the
+wrapping is around one or more `<dt>` + `<dd>` groups, which is what the
+component does. The empty-state path previously rendered a plain `<div>`
+("No items to display") as a direct child of `<dl>`, which is invalid
+HTML5; PUL-17 resolved this by dropping `<dl>` entirely when empty.
 
-**Status reasoning:** The everyday rendering path (items present) is
-correct. The empty-state path puts non-term/non-description content
-inside `<dl>`. Severity is **serious** because it produces invalid
-markup in a documented usage path, not blocker, because the empty
-content is still readable.
-
-**Linear:** [PUL-17](https://linear.app/bigrefactor/issue/PUL-17).
+**Resolved:** [PUL-17](https://linear.app/bigrefactor/issue/PUL-17).
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 

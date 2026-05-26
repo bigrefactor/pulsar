@@ -40,6 +40,15 @@ defmodule Pulsar.DevApp.ListLive do
           <:item title="Status">Active</:item>
         </List.list>
       </.fixture_section>
+      <.fixture_section name="empty-state" title="Empty state">
+        <div class="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
+          <List.list variant="outline" color="neutral" data-fixture-cell="empty-headerless" />
+          <List.list variant="outline" color="primary" data-fixture-cell="empty-with-header">
+            <:title>Recent activity</:title>
+            <:description>Nothing has happened yet.</:description>
+          </List.list>
+        </div>
+      </.fixture_section>
     </.fixture_page>
     """
   end

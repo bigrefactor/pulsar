@@ -8,7 +8,7 @@ defmodule Pulsar.Components.List do
 
   ## Features
 
-  - **Semantic HTML**: Uses `<dl>`, `<dt>`, `<dd>` for proper accessibility
+  - **Semantic HTML**: Uses `<dl>`, `<dt>`, `<dd>` for key/value pairs when items are present; renders a plain `<div data-list-empty>` in the empty branch (HTML5-valid)
   - **Multiple Variants**: solid, outline, and ghost for different visual emphasis
   - **Full Color Palette**: All semantic colors with automatic dark mode support
   - **Multiple Sizes**: xs, sm, md, lg, xl matching other Pulsar components
@@ -303,8 +303,9 @@ defmodule Pulsar.Components.List do
   @doc """
   Renders a semantic list component.
 
-  Uses definition list markup (`<dl>`, `<dt>`, `<dd>`) for proper accessibility
-  and screen reader support. Supports multiple variants and visual options.
+  Uses definition list markup (`<dl>`, `<dt>`, `<dd>`) when items are present,
+  and a plain `<div data-list-empty>` for the empty branch to keep the markup
+  HTML5-valid. Supports multiple variants and visual options.
   """
   @spec list(Socket.assigns()) :: Rendered.t()
   def list(assigns) do
@@ -326,6 +327,7 @@ defmodule Pulsar.Components.List do
       |> assign(:container_classes, container_classes)
       |> assign(:item_base, item_base)
       |> assign(:items, items)
+      |> assign(:item_count, length(items))
       |> assign(:has_items, has_items)
       |> assign(:has_header, has_header)
 
@@ -340,14 +342,13 @@ defmodule Pulsar.Components.List do
         </p>
       </div>
       <div class={content_wrapper_classes(@variant)}>
-        <dl class={@container_classes} data-list>
+        <dl :if={@has_items} class={@container_classes} data-list>
           <div
             :for={{item, index} <- Enum.with_index(@items)}
-            :if={@has_items}
             class={
               merge([
                 @item_base,
-                item_variant_classes(@variant, @color, index, @striped, length(@items)),
+                item_variant_classes(@variant, @color, index, @striped, @item_count),
                 @dividers && index > 0 && "border-t border-border",
                 item[:class] || ""
               ])
@@ -361,7 +362,9 @@ defmodule Pulsar.Components.List do
               {render_slot(item)}
             </dd>
           </div>
-          <div :if={!@has_items} class={empty_classes(@size)}>
+        </dl>
+        <div :if={!@has_items} class={empty_classes(@size)} data-list-empty>
+          <div class="flex flex-col items-center justify-center">
             <div :if={@empty != []}>
               {render_slot(@empty)}
             </div>
@@ -369,17 +372,21 @@ defmodule Pulsar.Components.List do
               No items to display
             </div>
           </div>
-        </dl>
+        </div>
       </div>
     </div>
-    <dl :if={!@has_header} class={merge([@container_classes, @class])} data-list {@rest}>
+    <dl
+      :if={!@has_header and @has_items}
+      class={merge([@container_classes, @class])}
+      data-list
+      {@rest}
+    >
       <div
         :for={{item, index} <- Enum.with_index(@items)}
-        :if={@has_items}
         class={
           merge([
             @item_base,
-            item_variant_classes(@variant, @color, index, @striped, length(@items)),
+            item_variant_classes(@variant, @color, index, @striped, @item_count),
             @dividers && index > 0 && "border-t border-border",
             item[:class] || ""
           ])
@@ -393,7 +400,14 @@ defmodule Pulsar.Components.List do
           {render_slot(item)}
         </dd>
       </div>
-      <div :if={!@has_items} class={empty_classes(@size)}>
+    </dl>
+    <div
+      :if={!@has_header and !@has_items}
+      class={merge([@container_classes, @class, empty_classes(@size)])}
+      data-list-empty
+      {@rest}
+    >
+      <div class="flex flex-col items-center justify-center">
         <div :if={@empty != []}>
           {render_slot(@empty)}
         </div>
@@ -401,7 +415,7 @@ defmodule Pulsar.Components.List do
           No items to display
         </div>
       </div>
-    </dl>
+    </div>
     """
   end
 
