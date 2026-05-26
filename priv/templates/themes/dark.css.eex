@@ -1,0 +1,44 @@
+/*
+  Dark theme — applied when `data-theme="dark"` is set on any ancestor.
+
+  This block overrides the semantic tokens declared in `themes/light.css`.
+  Tailwind utilities (e.g. `.bg-primary`) resolve through `var()` at runtime,
+  so components don't need a `dark:` variant — the variable value swaps
+  beneath them when the attribute flips.
+*/
+[data-theme="dark"] {
+  --color-background: var(--color-gray-950);
+  --color-foreground: var(--color-gray-50);
+  --color-muted: var(--color-gray-900);
+  --color-muted-foreground: var(--color-gray-400);
+
+  --color-surface-0: var(--color-gray-950);  /* Canvas/page background */
+  --color-surface-1: var(--color-gray-900);  /* Card/section background */
+  --color-surface-2: var(--color-gray-800);  /* Elevated content */
+  --color-surface-3: var(--color-gray-700);  /* Modal/popover background */
+  --color-surface-1-hover: var(--color-gray-800);
+  --color-surface-1-active: var(--color-gray-700);
+  --color-surface-2-hover: var(--color-gray-700);
+  --color-surface-2-active: var(--color-gray-600);
+
+  --color-border: var(--color-gray-800);
+  --color-border-subtle: var(--color-gray-800);
+  --color-border-strong: var(--color-gray-700);
+  --color-input: var(--color-gray-800);
+  --color-ring: var(--color-primary-400);
+
+  --color-neutral: var(--color-neutral-500);
+  --color-neutral-foreground: var(--color-white);
+  --color-primary: var(--color-primary-400);
+  --color-primary-foreground: var(--color-gray-950);
+  --color-secondary: var(--color-secondary-400);
+  --color-secondary-foreground: var(--color-gray-950);
+  --color-success: var(--color-success-400);
+  --color-success-foreground: var(--color-gray-950);
+  --color-warning: var(--color-warning-400);
+  --color-warning-foreground: var(--color-gray-950);
+  --color-danger: var(--color-danger-400);
+  --color-danger-foreground: var(--color-gray-950);
+  --color-info: var(--color-info-400);
+  --color-info-foreground: var(--color-gray-950);
+}

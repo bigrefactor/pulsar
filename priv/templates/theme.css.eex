@@ -1,25 +1,29 @@
 @import "tailwindcss";
 
 /*
-  Pulsar theme system
+  Pulsar theme system — entry point.
 
   Two-tier token model:
 
-  1. **Palette + non-color design tokens** live in `@theme inline` below. Values
-     are constants (e.g. `--color-primary-500: var(--color-blue-500)`) and never
-     need to swap — Tailwind inlines them into generated utilities at build
-     time. This keeps utility output identical to a stock Tailwind v4 project.
+  1. **Palette + non-color design tokens** are declared in the `@theme inline`
+     block below. Values are constants (e.g. `--color-primary-500: var(--color-blue-500)`)
+     and never need to swap — Tailwind inlines them into utilities at build
+     time.
 
-  2. **Semantic color tokens** (`--color-background`, `--color-primary`,
-     `--color-foreground`, etc.) live in `@theme` (non-inline). Tailwind
+  2. **Semantic color tokens** (`--color-background`, `--color-primary`, etc.)
+     live inside `themes/light.css` as a non-inline `@theme` block. Tailwind
      generates utilities like `.bg-primary { background-color: var(--color-primary); }`
-     that resolve through `var()` at runtime. The `[data-theme="dark"]` block
-     below overrides those variables so the utility renders dark-mode colors —
-     no `dark:` variant required in component class strings.
+     that resolve through `var()` at runtime. Sibling files under `themes/`
+     override the same tokens inside `[data-theme="<name>"]` blocks so the
+     utility renders different colors when the attribute is set — no `dark:`
+     variant required in component class strings.
 
-  To add a new theme, copy the `[data-theme="dark"]` block, rename the
-  selector, and override the same tokens. See `mix pulsar.gen.theme <name>`.
+  To add a theme: `mix pulsar.gen.theme <name>`. This scaffolds
+  `themes/<name>.css` and inserts an `@import` line below.
 */
+
+@import "./themes/light.css";
+@import "./themes/dark.css";
 
 @theme inline {
   /* Palette: Primary - References Tailwind's blue */
@@ -183,89 +187,6 @@
   --z-modal: 50;
   --z-popover: 60;
   --z-toast: 70;
-}
-
-/*
-  Semantic color tokens — declared in `@theme` (NOT `@theme inline`) so the
-  generated utilities resolve through var() at runtime. This is what lets the
-  `[data-theme="dark"]` block below swap colors without any `dark:` variant in
-  component markup.
-
-  Values here are the light defaults that apply at `:root`.
-*/
-@theme {
-  --color-background: var(--color-white);
-  --color-foreground: var(--color-gray-950);
-  --color-muted: var(--color-gray-100);
-  --color-muted-foreground: var(--color-gray-600);
-
-  --color-surface-0: var(--color-white);     /* Canvas/page background */
-  --color-surface-1: var(--color-gray-50);   /* Card/section background */
-  --color-surface-2: var(--color-gray-100);  /* Elevated content */
-  --color-surface-3: var(--color-gray-200);  /* Modal/popover background */
-  --color-surface-1-hover: var(--color-gray-100);
-  --color-surface-1-active: var(--color-gray-200);
-  --color-surface-2-hover: var(--color-gray-200);
-  --color-surface-2-active: var(--color-gray-300);
-
-  --color-border: var(--color-gray-200);
-  --color-border-subtle: var(--color-gray-200);
-  --color-border-strong: var(--color-gray-300);
-  --color-input: var(--color-gray-200);
-  --color-ring: var(--color-primary-600);
-
-  --color-neutral: var(--color-neutral-600);
-  --color-neutral-foreground: var(--color-white);
-  --color-primary: var(--color-primary-600);
-  --color-primary-foreground: var(--color-white);
-  --color-secondary: var(--color-secondary-600);
-  --color-secondary-foreground: var(--color-white);
-  --color-success: var(--color-success-600);
-  --color-success-foreground: var(--color-white);
-  --color-warning: var(--color-warning-600);
-  --color-warning-foreground: var(--color-gray-950);
-  --color-danger: var(--color-danger-600);
-  --color-danger-foreground: var(--color-white);
-  --color-info: var(--color-info-600);
-  --color-info-foreground: var(--color-white);
-}
-
-/* Dark theme overrides */
-[data-theme="dark"] {
-  --color-background: var(--color-gray-950);
-  --color-foreground: var(--color-gray-50);
-  --color-muted: var(--color-gray-900);
-  --color-muted-foreground: var(--color-gray-400);
-
-  --color-surface-0: var(--color-gray-950);  /* Canvas/page background */
-  --color-surface-1: var(--color-gray-900);  /* Card/section background */
-  --color-surface-2: var(--color-gray-800);  /* Elevated content */
-  --color-surface-3: var(--color-gray-700);  /* Modal/popover background */
-  --color-surface-1-hover: var(--color-gray-800);
-  --color-surface-1-active: var(--color-gray-700);
-  --color-surface-2-hover: var(--color-gray-700);
-  --color-surface-2-active: var(--color-gray-600);
-
-  --color-border: var(--color-gray-800);
-  --color-border-subtle: var(--color-gray-800);
-  --color-border-strong: var(--color-gray-700);
-  --color-input: var(--color-gray-800);
-  --color-ring: var(--color-primary-400);
-
-  --color-neutral: var(--color-neutral-500);
-  --color-neutral-foreground: var(--color-white);
-  --color-primary: var(--color-primary-400);
-  --color-primary-foreground: var(--color-gray-950);
-  --color-secondary: var(--color-secondary-400);
-  --color-secondary-foreground: var(--color-gray-950);
-  --color-success: var(--color-success-400);
-  --color-success-foreground: var(--color-gray-950);
-  --color-warning: var(--color-warning-400);
-  --color-warning-foreground: var(--color-gray-950);
-  --color-danger: var(--color-danger-400);
-  --color-danger-foreground: var(--color-gray-950);
-  --color-info: var(--color-info-400);
-  --color-info-foreground: var(--color-gray-950);
 }
 
 /* Custom animations for Pulsar components */
