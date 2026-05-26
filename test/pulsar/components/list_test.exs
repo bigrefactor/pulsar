@@ -93,7 +93,7 @@ defmodule Pulsar.Components.ListTest do
         """)
 
       assert html =~ ~s(border)
-      assert html =~ ~s(rounded-lg)
+      assert html =~ ~s(rounded-box)
       assert html =~ ~s(bg-background)
     end
 
@@ -107,7 +107,7 @@ defmodule Pulsar.Components.ListTest do
         </List.list>
         """)
 
-      assert html =~ ~s(rounded-lg)
+      assert html =~ ~s(rounded-box)
       assert html =~ ~s(bg-muted)
       assert html =~ ~s(border-border)
     end
@@ -125,7 +125,6 @@ defmodule Pulsar.Components.ListTest do
         """)
 
       assert html =~ ~s(text-primary)
-      assert html =~ ~s(dark:text-dark-primary)
     end
 
     test "renders primary color with outline variant" do
@@ -139,7 +138,6 @@ defmodule Pulsar.Components.ListTest do
         """)
 
       assert html =~ ~s(border-primary)
-      assert html =~ ~s(dark:border-dark-primary)
       assert html =~ ~s(text-primary)
       assert html =~ ~s(hover:bg-primary/5)
     end
@@ -170,7 +168,6 @@ defmodule Pulsar.Components.ListTest do
         """)
 
       assert html =~ ~s(text-danger)
-      assert html =~ ~s(dark:text-dark-danger)
     end
 
     test "renders success color" do
@@ -184,7 +181,6 @@ defmodule Pulsar.Components.ListTest do
         """)
 
       assert html =~ ~s(text-success)
-      assert html =~ ~s(dark:text-dark-success)
     end
   end
 
@@ -364,7 +360,7 @@ defmodule Pulsar.Components.ListTest do
 
       # Check variant
       assert html =~ ~s(border)
-      assert html =~ ~s(rounded-lg)
+      assert html =~ ~s(rounded-box)
 
       # Check color
       assert html =~ ~s(border-primary)
@@ -524,7 +520,6 @@ defmodule Pulsar.Components.ListTest do
 
       assert html =~ "Personal details and application."
       assert html =~ ~s(<p)
-      assert html =~ ~s(dark:text-dark-muted-foreground)
     end
 
     test "renders with both title and description" do
@@ -589,7 +584,6 @@ defmodule Pulsar.Components.ListTest do
       assert html =~ ~s(text-lg/7 font-semibold)
       # Large description
       assert html =~ ~s(text-base/6)
-      assert html =~ ~s(dark:text-dark-muted-foreground)
       # Large padding
       assert html =~ ~s(px-6 py-7)
     end
@@ -606,7 +600,6 @@ defmodule Pulsar.Components.ListTest do
         """)
 
       assert html =~ ~s(text-primary)
-      assert html =~ ~s(dark:text-dark-primary)
     end
 
     test "empty state works with header" do

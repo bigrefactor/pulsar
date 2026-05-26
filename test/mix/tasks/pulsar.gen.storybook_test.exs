@@ -19,6 +19,7 @@ defmodule Mix.Tasks.Pulsar.Gen.StorybookTest do
       |> assert_creates("lib/test_web/storybook/foundations/colors.story.exs")
       |> assert_creates("lib/test_web/storybook/foundations/dark_mode.story.exs")
       |> assert_creates("lib/test_web/storybook/foundations/spacing.story.exs")
+      |> assert_creates("lib/test_web/storybook/foundations/themes.story.exs")
       |> assert_creates("lib/test_web/storybook/foundations/typography.story.exs")
       |> apply_igniter!()
     end

@@ -286,8 +286,8 @@ defmodule Pulsar.Components.Link do
   end
 
   @base_classes """
-  group inline-flex items-center cursor-pointer transition-all duration-200 ease-in-out
-  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 dark:focus-visible:ring-dark-ring/50
+  group inline-flex items-center cursor-pointer transition-all duration-normal ease-standard
+  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50
   focus-visible:ring-offset-1
   """
 
@@ -298,15 +298,14 @@ defmodule Pulsar.Components.Link do
   }
 
   @color_classes %{
-    "danger" => "text-danger hover:text-danger/80 dark:text-dark-danger dark:hover:text-dark-danger/80",
-    "info" => "text-info hover:text-info/80 dark:text-dark-info dark:hover:text-dark-info/80",
+    "danger" => "text-danger hover:text-danger/80",
+    "info" => "text-info hover:text-info/80",
     "inherit" => "text-inherit",
-    "muted" =>
-      "text-muted-foreground hover:text-muted-foreground/70 dark:text-dark-muted-foreground dark:hover:text-dark-muted-foreground/70",
-    "primary" => "text-primary hover:text-primary/80 dark:text-dark-primary dark:hover:text-dark-primary/80",
-    "secondary" => "text-secondary hover:text-secondary/80 dark:text-dark-secondary dark:hover:text-dark-secondary/80",
-    "success" => "text-success hover:text-success/80 dark:text-dark-success dark:hover:text-dark-success/80",
-    "warning" => "text-warning hover:text-warning/80 dark:text-dark-warning dark:hover:text-dark-warning/80"
+    "muted" => "text-muted-foreground hover:text-muted-foreground/70",
+    "primary" => "text-primary hover:text-primary/80",
+    "secondary" => "text-secondary hover:text-secondary/80",
+    "success" => "text-success hover:text-success/80",
+    "warning" => "text-warning hover:text-warning/80"
   }
 
   @size_classes %{

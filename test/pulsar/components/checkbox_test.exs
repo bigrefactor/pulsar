@@ -51,7 +51,7 @@ defmodule Pulsar.Components.CheckboxTest do
       # Check for size classes (default is md)
       assert html =~ "h-5"
       assert html =~ "w-5"
-      assert html =~ "rounded-md"
+      assert html =~ "rounded-field"
 
       # Check for color classes (default is primary)
       assert html =~ "primary"
@@ -379,7 +379,7 @@ defmodule Pulsar.Components.CheckboxTest do
       assert html =~ ~s(<label)
       assert html =~ "flex items-center"
       assert html =~ "border-2"
-      assert html =~ "rounded-lg"
+      assert html =~ "rounded-box"
       assert html =~ "Premium Plan"
     end
 
@@ -430,7 +430,7 @@ defmodule Pulsar.Components.CheckboxTest do
 
       assert html =~ "primary"
       assert html =~ "border-transparent"
-      assert html =~ "hover:shadow-sm"
+      assert html =~ "hover:shadow-card"
     end
 
     test "applies card variant classes - outline" do
@@ -445,7 +445,7 @@ defmodule Pulsar.Components.CheckboxTest do
 
       assert html =~ "success"
       assert html =~ "border-success/30"
-      assert html =~ "hover:shadow-md"
+      assert html =~ "hover:shadow-dropdown"
     end
 
     test "applies card variant classes - ghost" do
@@ -460,7 +460,7 @@ defmodule Pulsar.Components.CheckboxTest do
 
       assert html =~ "bg-transparent"
       assert html =~ "border-transparent"
-      assert html =~ "hover:shadow-sm"
+      assert html =~ "hover:shadow-card"
     end
 
     test "renders card with all content slots" do
@@ -512,7 +512,6 @@ defmodule Pulsar.Components.CheckboxTest do
       assert html =~ "has-[:checked]:bg-primary/15"
       assert html =~ "has-[:checked]:hover:bg-primary/20"
       assert html =~ "has-[:checked]:border-primary"
-      assert html =~ "dark:has-[:checked]:bg-dark-primary/20"
     end
 
     test "applies container_class to card container" do
@@ -753,7 +752,7 @@ defmodule Pulsar.Components.CheckboxTest do
       assert html =~ "after:scale-0"
       assert html =~ "after:opacity-0"
       assert html =~ "after:transition-all"
-      assert html =~ "after:duration-200"
+      assert html =~ "after:duration-normal"
     end
 
     test "includes rounded classes for pseudo elements" do
@@ -764,8 +763,8 @@ defmodule Pulsar.Components.CheckboxTest do
         <.checkbox name="terms" />
         """)
 
-      # Default size (md) should have before:rounded-md
-      assert html =~ "before:rounded-md"
+      # Default size (md) should have before:rounded-field
+      assert html =~ "before:rounded-field"
       # Should not have the old broken syntax
       refute html =~ "before:rounded-inherit"
     end

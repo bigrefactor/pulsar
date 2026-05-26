@@ -40,13 +40,13 @@ defmodule Pulsar.Components.Card do
         </:header>
 
         <p>Main content with automatic spacing between sections.</p>
-        <p class="text-sm text-muted-foreground dark:text-dark-muted-foreground">
+        <p class="text-sm text-muted-foreground">
           Additional content flows naturally.
         </p>
 
         <:footer>
           <div class="flex items-center justify-between text-sm">
-            <span class="text-muted-foreground dark:text-dark-muted-foreground">
+            <span class="text-muted-foreground">
               Updated 2 hours ago
             </span>
             <.button variant="link" size="sm">View Details</.button>
@@ -62,7 +62,7 @@ defmodule Pulsar.Components.Card do
       # Clickable card with hover states
       <.card
         phx-click="select"
-        class="cursor-pointer hover:scale-[1.01] hover:shadow-lg"
+        class="cursor-pointer hover:scale-[1.01] hover:shadow-modal"
         variant="outline"
       >
         <p>Custom hover effects</p>
@@ -70,7 +70,7 @@ defmodule Pulsar.Components.Card do
 
       # Navigation wrapped card
       <.link navigate={~p"/products/\#{product.id}"}>
-        <.card variant="outline" class="hover:border-primary dark:hover:border-dark-primary">
+        <.card variant="outline" class="hover:border-primary">
           <:header>
             <h3 class="font-semibold">{product.name}</h3>
           </:header>
@@ -163,13 +163,13 @@ defmodule Pulsar.Components.Card do
       body: "flex flex-col p-5 gap-5",
       footer: "p-5 pt-0",
       header: "p-5 pb-0",
-      radius: "rounded-lg"
+      radius: "rounded-box"
     },
     "sm" => %{
       body: "flex flex-col p-4 gap-4",
       footer: "p-4 pt-0",
       header: "p-4 pb-0",
-      radius: "rounded-lg"
+      radius: "rounded-box"
     },
     "xl" => %{
       body: "flex flex-col p-8 gap-8",
@@ -181,14 +181,14 @@ defmodule Pulsar.Components.Card do
       body: "flex flex-col p-3 gap-3",
       footer: "p-3 pt-0",
       header: "p-3 pb-0",
-      radius: "rounded-md"
+      radius: "rounded-field"
     }
   }
 
   # Base card styling classes
   @card_base_classes [
     "block w-full overflow-hidden",
-    "transition-colors duration-200 ease-in-out"
+    "transition-colors duration-normal ease-standard"
   ]
 
   # Valid variants and colors for compile-time validation
@@ -198,13 +198,13 @@ defmodule Pulsar.Components.Card do
   # Color configuration for each variant
   @color_config %{
     "elevated" => %{
-      "danger" => "bg-surface-1 dark:bg-dark-surface-1 shadow-md",
-      "info" => "bg-surface-1 dark:bg-dark-surface-1 shadow-md",
-      "neutral" => "bg-surface-1 dark:bg-dark-surface-1 shadow-md",
-      "primary" => "bg-surface-1 dark:bg-dark-surface-1 shadow-md",
-      "secondary" => "bg-surface-1 dark:bg-dark-surface-1 shadow-md",
-      "success" => "bg-surface-1 dark:bg-dark-surface-1 shadow-md",
-      "warning" => "bg-surface-1 dark:bg-dark-surface-1 shadow-md"
+      "danger" => "bg-surface-1 shadow-dropdown",
+      "info" => "bg-surface-1 shadow-dropdown",
+      "neutral" => "bg-surface-1 shadow-dropdown",
+      "primary" => "bg-surface-1 shadow-dropdown",
+      "secondary" => "bg-surface-1 shadow-dropdown",
+      "success" => "bg-surface-1 shadow-dropdown",
+      "warning" => "bg-surface-1 shadow-dropdown"
     },
     "ghost" => %{
       "danger" => "bg-transparent border border-transparent",
@@ -216,23 +216,22 @@ defmodule Pulsar.Components.Card do
       "warning" => "bg-transparent border border-transparent"
     },
     "outline" => %{
-      "danger" => "bg-surface-1 dark:bg-dark-surface-1 border-2 border-danger dark:border-dark-danger",
-      "info" => "bg-surface-1 dark:bg-dark-surface-1 border-2 border-info dark:border-dark-info",
-      "neutral" => "bg-surface-1 dark:bg-dark-surface-1 border-2 border-border dark:border-dark-border",
-      "primary" => "bg-surface-1 dark:bg-dark-surface-1 border-2 border-primary dark:border-dark-primary",
-      "secondary" => "bg-surface-1 dark:bg-dark-surface-1 border-2 border-secondary dark:border-dark-secondary",
-      "success" => "bg-surface-1 dark:bg-dark-surface-1 border-2 border-success dark:border-dark-success",
-      "warning" => "bg-surface-1 dark:bg-dark-surface-1 border-2 border-warning dark:border-dark-warning"
+      "danger" => "bg-surface-1 border-2 border-danger",
+      "info" => "bg-surface-1 border-2 border-info",
+      "neutral" => "bg-surface-1 border-2 border-border",
+      "primary" => "bg-surface-1 border-2 border-primary",
+      "secondary" => "bg-surface-1 border-2 border-secondary",
+      "success" => "bg-surface-1 border-2 border-success",
+      "warning" => "bg-surface-1 border-2 border-warning"
     },
     "solid" => %{
-      "danger" => "bg-danger/10 dark:bg-dark-danger/10 border-2 border-danger/20 dark:border-dark-danger/20",
-      "info" => "bg-info/10 dark:bg-dark-info/10 border-2 border-info/20 dark:border-dark-info/20",
-      "neutral" => "bg-surface-1 dark:bg-dark-surface-1 border-2 border-border dark:border-dark-border",
-      "primary" => "bg-primary/10 dark:bg-dark-primary/10 border-2 border-primary/20 dark:border-dark-primary/20",
-      "secondary" =>
-        "bg-secondary/10 dark:bg-dark-secondary/10 border-2 border-secondary/20 dark:border-dark-secondary/20",
-      "success" => "bg-success/10 dark:bg-dark-success/10 border-2 border-success/20 dark:border-dark-success/20",
-      "warning" => "bg-warning/10 dark:bg-dark-warning/10 border-2 border-warning/20 dark:border-dark-warning/20"
+      "danger" => "bg-danger/10 border-2 border-danger/20",
+      "info" => "bg-info/10 border-2 border-info/20",
+      "neutral" => "bg-surface-1 border-2 border-border",
+      "primary" => "bg-primary/10 border-2 border-primary/20",
+      "secondary" => "bg-secondary/10 border-2 border-secondary/20",
+      "success" => "bg-success/10 border-2 border-success/20",
+      "warning" => "bg-warning/10 border-2 border-warning/20"
     }
   }
 
@@ -301,7 +300,7 @@ defmodule Pulsar.Components.Card do
 
       # With navigation (wrap in link)
       <.link navigate={~p"/path"}>
-        <.card class="hover:shadow-lg">
+        <.card class="hover:shadow-modal">
           Content
         </.card>
       </.link>
@@ -430,7 +429,6 @@ defmodule Pulsar.Components.Card do
         "focus-visible:outline-none",
         "focus-visible:ring-2",
         "focus-visible:ring-primary",
-        "dark:focus-visible:ring-dark-primary",
         "focus-visible:ring-offset-2"
       ]
     else

@@ -46,7 +46,7 @@ defmodule <%= @web_module %>.Storybook.Examples.SettingsPanel do
         class="mt-8 space-y-6"
       >
         <section>
-          <h2 class="mb-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100">Profile</h2>
+          <h2 class="mb-4 text-lg font-semibold text-foreground">Profile</h2>
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field.field field={@form[:display_name]} type="text">
               <:label>Display name</:label>
@@ -69,7 +69,7 @@ defmodule <%= @web_module %>.Storybook.Examples.SettingsPanel do
         <Divider.divider />
 
         <section>
-          <h2 class="mb-4 text-lg font-semibold text-neutral-900 dark:text-neutral-100">
+          <h2 class="mb-4 text-lg font-semibold text-foreground">
             Notifications
           </h2>
           <div class="space-y-4">

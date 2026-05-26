@@ -21,10 +21,20 @@ defmodule <%= @web_module %>.Storybook.Foundations.DarkMode do
 </div>)
 
   @token_resolution_code """
-  @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+  /* theme.css — semantic tokens declared with light defaults */
+  @theme {
+    --color-primary: var(--color-primary-600);
+    --color-primary-foreground: var(--color-white);
+  }
 
-  /* Resulting component classes */
-  "bg-primary text-primary-foreground dark:bg-dark-primary dark:text-dark-primary-foreground"\
+  /* Dark theme overrides the same tokens — no `dark:` variant needed */
+  [data-theme="dark"] {
+    --color-primary: var(--color-primary-400);
+    --color-primary-foreground: var(--color-gray-950);
+  }
+
+  /* Resulting component classes — single source of truth */
+  "bg-primary text-primary-foreground"\
   """
 
   @system_preference_code """
@@ -190,17 +200,14 @@ defmodule <%= @web_module %>.Storybook.Foundations.DarkMode do
                 3. How tokens resolve
               </h3>
               <p class="psb:text-sm psb:text-slate-600 psb:mb-3">
-                Each semantic token has both a light and a dark variant. The Tailwind custom variant
-                <code class="psb:font-mono psb:text-xs psb:bg-slate-100 psb:px-1 psb:rounded">
-                  dark:
-                </code>
-                matches elements inside a
+                Each semantic token is declared once with a light default and overridden inside
                 <code class="psb:font-mono psb:text-xs psb:bg-slate-100 psb:px-1 psb:rounded">
                   [data-theme="dark"]
-                </code>
-                ancestor. Components use both bare and <code class="psb:font-mono psb:text-xs psb:bg-slate-100 psb:px-1 psb:rounded">
+                </code>. Components reference the token by name — no
+                <code class="psb:font-mono psb:text-xs psb:bg-slate-100 psb:px-1 psb:rounded">
                   dark:
-                </code>-prefixed classes side by side:
+                </code>
+                variant required, because the CSS variable swaps values at runtime:
               </p>
               <pre class="psb:bg-slate-800 psb:text-slate-100 psb:font-mono psb:text-sm psb:rounded-lg psb:px-5 psb:py-4"><code>{@token_resolution_code}</code></pre>
             </div>

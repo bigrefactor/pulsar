@@ -311,39 +311,6 @@ defmodule Pulsar.Components.FlashTest do
     end
   end
 
-  describe "flash/1 dark mode support" do
-    test "includes dark mode classes for all variants" do
-      assigns = %{}
-
-      # Solid variant
-      html_solid =
-        rendered_to_string(~H"""
-        <Flash.flash variant="solid" color="primary">Solid flash</Flash.flash>
-        """)
-
-      assert html_solid =~ "dark:bg-dark-primary"
-      assert html_solid =~ "dark:text-dark-primary-foreground"
-
-      # Outline variant
-      html_outline =
-        rendered_to_string(~H"""
-        <Flash.flash variant="outline" color="success">Outline flash</Flash.flash>
-        """)
-
-      assert html_outline =~ "dark:border-dark-success"
-      assert html_outline =~ "dark:text-dark-success"
-
-      # Ghost variant
-      html_ghost =
-        rendered_to_string(~H"""
-        <Flash.flash variant="ghost" color="warning">Ghost flash</Flash.flash>
-        """)
-
-      assert html_ghost =~ "dark:text-dark-warning"
-      assert html_ghost =~ "dark:bg-dark-warning/10"
-    end
-  end
-
   describe "flash/1 custom attributes" do
     test "passes through custom HTML attributes" do
       assigns = %{}
@@ -371,7 +338,7 @@ defmodule Pulsar.Components.FlashTest do
       assert html =~ "custom-bg"
       # Should still have base component classes
       assert html =~ "font-medium"
-      assert html =~ "shadow-md"
+      assert html =~ "shadow-dropdown"
     end
 
     test "generates unique IDs when not provided" do
@@ -426,8 +393,6 @@ defmodule Pulsar.Components.FlashTest do
 
         assert html =~ "bg-#{color}"
         assert html =~ "text-#{color}-foreground"
-        assert html =~ "dark:bg-dark-#{color}"
-        assert html =~ "dark:text-dark-#{color}-foreground"
       end
     end
 
@@ -448,14 +413,6 @@ defmodule Pulsar.Components.FlashTest do
           assert html =~ "text-foreground"
         else
           assert html =~ "text-#{color}"
-        end
-
-        assert html =~ "dark:border-dark-#{color}"
-
-        if color == "neutral" do
-          assert html =~ "dark:text-dark-foreground"
-        else
-          assert html =~ "dark:text-dark-#{color}"
         end
       end
     end

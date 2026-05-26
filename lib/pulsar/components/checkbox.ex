@@ -91,11 +91,11 @@ defmodule Pulsar.Components.Checkbox do
   @size_config %{
     "lg" => %{
       card: "p-5 gap-4 text-lg",
-      input: "h-6 w-6 rounded-md before:rounded-md after:text-sm"
+      input: "h-6 w-6 rounded-field before:rounded-field after:text-sm"
     },
     "md" => %{
       card: "p-4 gap-3",
-      input: "h-5 w-5 rounded-md before:rounded-md after:text-xs"
+      input: "h-5 w-5 rounded-field before:rounded-field after:text-xs"
     },
     "sm" => %{
       card: "p-3 gap-2 text-sm",
@@ -103,7 +103,7 @@ defmodule Pulsar.Components.Checkbox do
     },
     "xl" => %{
       card: "p-6 gap-5 text-xl",
-      input: "h-7 w-7 rounded-lg before:rounded-lg after:text-base"
+      input: "h-7 w-7 rounded-box before:rounded-box after:text-base"
     },
     "xs" => %{
       card: "p-2 gap-2 text-xs",
@@ -113,14 +113,14 @@ defmodule Pulsar.Components.Checkbox do
 
   # Base checkbox styling classes
   @checkbox_base_classes [
-    "appearance-none relative cursor-pointer transition-all duration-200 ease-in-out",
+    "appearance-none relative cursor-pointer transition-all duration-normal ease-standard",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-    "focus-visible:ring-ring dark:focus-visible:ring-dark-ring",
-    "disabled:cursor-not-allowed disabled:opacity-50",
+    "focus-visible:ring-ring",
+    "disabled:cursor-not-allowed disabled:opacity-disabled",
     "before:content-[''] before:absolute before:inset-0 before:rounded-[inherit]",
-    "before:border-2 before:transition-all before:duration-200 before:ease-in-out",
+    "before:border-2 before:transition-all before:duration-normal before:ease-standard",
     "after:content-['✓'] after:absolute after:inset-0 after:flex after:items-center after:justify-center",
-    "after:text-current after:font-bold after:transition-all after:duration-200 after:ease-in-out",
+    "after:text-current after:font-bold after:transition-all after:duration-normal after:ease-standard",
     "after:scale-0 after:opacity-0",
     "data-[checked=true]:after:scale-100 data-[checked=true]:after:opacity-100",
     "data-[indeterminate=true]:after:content-['−'] data-[indeterminate=true]:after:scale-100 data-[indeterminate=true]:after:opacity-100"
@@ -128,9 +128,9 @@ defmodule Pulsar.Components.Checkbox do
 
   # Base card container styling classes
   @card_base_classes [
-    "flex items-center gap-3 rounded-lg cursor-pointer transition-all duration-200 ease-in-out",
+    "flex items-center gap-3 rounded-box cursor-pointer transition-all duration-normal ease-standard",
     "focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-ring",
-    "dark:focus-within:ring-dark-ring has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50"
+    "has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-disabled"
   ]
 
   # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
@@ -479,7 +479,7 @@ defmodule Pulsar.Components.Checkbox do
   @spec color_classes(String.t()) :: String.t()
   defp color_classes(color) do
     [
-      "before:border-border dark:before:border-dark-border",
+      "before:border-border",
       checkbox_border_classes(color),
       checkbox_background_classes(color),
       checkbox_text_classes(color)
@@ -507,50 +507,50 @@ defmodule Pulsar.Components.Checkbox do
   @spec checkbox_border_classes(String.t()) :: list(String.t())
   defp checkbox_border_classes("neutral") do
     [
-      "data-[checked=true]:before:border-neutral dark:data-[checked=true]:before:border-dark-neutral",
-      "data-[indeterminate=true]:before:border-neutral dark:data-[indeterminate=true]:before:border-dark-neutral"
+      "data-[checked=true]:before:border-neutral",
+      "data-[indeterminate=true]:before:border-neutral"
     ]
   end
 
   defp checkbox_border_classes("primary") do
     [
-      "data-[checked=true]:before:border-primary dark:data-[checked=true]:before:border-dark-primary",
-      "data-[indeterminate=true]:before:border-primary dark:data-[indeterminate=true]:before:border-dark-primary"
+      "data-[checked=true]:before:border-primary",
+      "data-[indeterminate=true]:before:border-primary"
     ]
   end
 
   defp checkbox_border_classes("secondary") do
     [
-      "data-[checked=true]:before:border-secondary dark:data-[checked=true]:before:border-dark-secondary",
-      "data-[indeterminate=true]:before:border-secondary dark:data-[indeterminate=true]:before:border-dark-secondary"
+      "data-[checked=true]:before:border-secondary",
+      "data-[indeterminate=true]:before:border-secondary"
     ]
   end
 
   defp checkbox_border_classes("success") do
     [
-      "data-[checked=true]:before:border-success dark:data-[checked=true]:before:border-dark-success",
-      "data-[indeterminate=true]:before:border-success dark:data-[indeterminate=true]:before:border-dark-success"
+      "data-[checked=true]:before:border-success",
+      "data-[indeterminate=true]:before:border-success"
     ]
   end
 
   defp checkbox_border_classes("danger") do
     [
-      "data-[checked=true]:before:border-danger dark:data-[checked=true]:before:border-dark-danger",
-      "data-[indeterminate=true]:before:border-danger dark:data-[indeterminate=true]:before:border-dark-danger"
+      "data-[checked=true]:before:border-danger",
+      "data-[indeterminate=true]:before:border-danger"
     ]
   end
 
   defp checkbox_border_classes("warning") do
     [
-      "data-[checked=true]:before:border-warning dark:data-[checked=true]:before:border-dark-warning",
-      "data-[indeterminate=true]:before:border-warning dark:data-[indeterminate=true]:before:border-dark-warning"
+      "data-[checked=true]:before:border-warning",
+      "data-[indeterminate=true]:before:border-warning"
     ]
   end
 
   defp checkbox_border_classes("info") do
     [
-      "data-[checked=true]:before:border-info dark:data-[checked=true]:before:border-dark-info",
-      "data-[indeterminate=true]:before:border-info dark:data-[indeterminate=true]:before:border-dark-info"
+      "data-[checked=true]:before:border-info",
+      "data-[indeterminate=true]:before:border-info"
     ]
   end
 
@@ -558,50 +558,50 @@ defmodule Pulsar.Components.Checkbox do
   @spec checkbox_background_classes(String.t()) :: list(String.t())
   defp checkbox_background_classes("neutral") do
     [
-      "data-[checked=true]:before:bg-neutral dark:data-[checked=true]:before:bg-dark-neutral",
-      "data-[indeterminate=true]:before:bg-neutral dark:data-[indeterminate=true]:before:bg-dark-neutral"
+      "data-[checked=true]:before:bg-neutral",
+      "data-[indeterminate=true]:before:bg-neutral"
     ]
   end
 
   defp checkbox_background_classes("primary") do
     [
-      "data-[checked=true]:before:bg-primary dark:data-[checked=true]:before:bg-dark-primary",
-      "data-[indeterminate=true]:before:bg-primary dark:data-[indeterminate=true]:before:bg-dark-primary"
+      "data-[checked=true]:before:bg-primary",
+      "data-[indeterminate=true]:before:bg-primary"
     ]
   end
 
   defp checkbox_background_classes("secondary") do
     [
-      "data-[checked=true]:before:bg-secondary dark:data-[checked=true]:before:bg-dark-secondary",
-      "data-[indeterminate=true]:before:bg-secondary dark:data-[indeterminate=true]:before:bg-dark-secondary"
+      "data-[checked=true]:before:bg-secondary",
+      "data-[indeterminate=true]:before:bg-secondary"
     ]
   end
 
   defp checkbox_background_classes("success") do
     [
-      "data-[checked=true]:before:bg-success dark:data-[checked=true]:before:bg-dark-success",
-      "data-[indeterminate=true]:before:bg-success dark:data-[indeterminate=true]:before:bg-dark-success"
+      "data-[checked=true]:before:bg-success",
+      "data-[indeterminate=true]:before:bg-success"
     ]
   end
 
   defp checkbox_background_classes("danger") do
     [
-      "data-[checked=true]:before:bg-danger dark:data-[checked=true]:before:bg-dark-danger",
-      "data-[indeterminate=true]:before:bg-danger dark:data-[indeterminate=true]:before:bg-dark-danger"
+      "data-[checked=true]:before:bg-danger",
+      "data-[indeterminate=true]:before:bg-danger"
     ]
   end
 
   defp checkbox_background_classes("warning") do
     [
-      "data-[checked=true]:before:bg-warning dark:data-[checked=true]:before:bg-dark-warning",
-      "data-[indeterminate=true]:before:bg-warning dark:data-[indeterminate=true]:before:bg-dark-warning"
+      "data-[checked=true]:before:bg-warning",
+      "data-[indeterminate=true]:before:bg-warning"
     ]
   end
 
   defp checkbox_background_classes("info") do
     [
-      "data-[checked=true]:before:bg-info dark:data-[checked=true]:before:bg-dark-info",
-      "data-[indeterminate=true]:before:bg-info dark:data-[indeterminate=true]:before:bg-dark-info"
+      "data-[checked=true]:before:bg-info",
+      "data-[indeterminate=true]:before:bg-info"
     ]
   end
 
@@ -609,50 +609,50 @@ defmodule Pulsar.Components.Checkbox do
   @spec checkbox_text_classes(String.t()) :: list(String.t())
   defp checkbox_text_classes("neutral") do
     [
-      "data-[checked=true]:after:text-neutral-foreground dark:data-[checked=true]:after:text-dark-neutral-foreground",
-      "data-[indeterminate=true]:after:text-neutral-foreground dark:data-[indeterminate=true]:after:text-dark-neutral-foreground"
+      "data-[checked=true]:after:text-neutral-foreground",
+      "data-[indeterminate=true]:after:text-neutral-foreground"
     ]
   end
 
   defp checkbox_text_classes("primary") do
     [
-      "data-[checked=true]:after:text-primary-foreground dark:data-[checked=true]:after:text-dark-primary-foreground",
-      "data-[indeterminate=true]:after:text-primary-foreground dark:data-[indeterminate=true]:after:text-dark-primary-foreground"
+      "data-[checked=true]:after:text-primary-foreground",
+      "data-[indeterminate=true]:after:text-primary-foreground"
     ]
   end
 
   defp checkbox_text_classes("secondary") do
     [
-      "data-[checked=true]:after:text-secondary-foreground dark:data-[checked=true]:after:text-dark-secondary-foreground",
-      "data-[indeterminate=true]:after:text-secondary-foreground dark:data-[indeterminate=true]:after:text-dark-secondary-foreground"
+      "data-[checked=true]:after:text-secondary-foreground",
+      "data-[indeterminate=true]:after:text-secondary-foreground"
     ]
   end
 
   defp checkbox_text_classes("success") do
     [
-      "data-[checked=true]:after:text-success-foreground dark:data-[checked=true]:after:text-dark-success-foreground",
-      "data-[indeterminate=true]:after:text-success-foreground dark:data-[indeterminate=true]:after:text-dark-success-foreground"
+      "data-[checked=true]:after:text-success-foreground",
+      "data-[indeterminate=true]:after:text-success-foreground"
     ]
   end
 
   defp checkbox_text_classes("danger") do
     [
-      "data-[checked=true]:after:text-danger-foreground dark:data-[checked=true]:after:text-dark-danger-foreground",
-      "data-[indeterminate=true]:after:text-danger-foreground dark:data-[indeterminate=true]:after:text-dark-danger-foreground"
+      "data-[checked=true]:after:text-danger-foreground",
+      "data-[indeterminate=true]:after:text-danger-foreground"
     ]
   end
 
   defp checkbox_text_classes("warning") do
     [
-      "data-[checked=true]:after:text-warning-foreground dark:data-[checked=true]:after:text-dark-warning-foreground",
-      "data-[indeterminate=true]:after:text-warning-foreground dark:data-[indeterminate=true]:after:text-dark-warning-foreground"
+      "data-[checked=true]:after:text-warning-foreground",
+      "data-[indeterminate=true]:after:text-warning-foreground"
     ]
   end
 
   defp checkbox_text_classes("info") do
     [
-      "data-[checked=true]:after:text-info-foreground dark:data-[checked=true]:after:text-dark-info-foreground",
-      "data-[indeterminate=true]:after:text-info-foreground dark:data-[indeterminate=true]:after:text-dark-info-foreground"
+      "data-[checked=true]:after:text-info-foreground",
+      "data-[indeterminate=true]:after:text-info-foreground"
     ]
   end
 
@@ -665,8 +665,8 @@ defmodule Pulsar.Components.Checkbox do
   defp state_classes(disabled, invalid) do
     [
       disabled &&
-        "before:bg-surface-2 dark:before:bg-dark-surface-2 before:border-border/50 dark:before:border-dark-border/50",
-      invalid && "before:border-danger dark:before:border-dark-danger"
+        "before:bg-surface-2 before:border-border/50",
+      invalid && "before:border-danger"
     ]
     |> Enum.filter(& &1)
     |> Enum.join(" ")
@@ -698,7 +698,7 @@ defmodule Pulsar.Components.Checkbox do
     [
       card_solid_background(color),
       "border-2 border-transparent",
-      "hover:shadow-sm"
+      "hover:shadow-card"
     ]
   end
 
@@ -706,7 +706,7 @@ defmodule Pulsar.Components.Checkbox do
     [
       card_outline_background(color),
       card_outline_border(color),
-      "hover:shadow-md"
+      "hover:shadow-dropdown"
     ]
   end
 
@@ -714,7 +714,7 @@ defmodule Pulsar.Components.Checkbox do
     [
       card_ghost_background(color),
       "border-2 border-transparent",
-      "hover:shadow-sm"
+      "hover:shadow-card"
     ]
   end
 
@@ -722,63 +722,56 @@ defmodule Pulsar.Components.Checkbox do
   @spec card_solid_background(String.t()) :: String.t()
   defp card_solid_background("neutral") do
     [
-      "bg-neutral/10 hover:bg-neutral/20 dark:bg-dark-neutral/20 dark:hover:bg-dark-neutral/30",
-      "has-[:checked]:bg-neutral/25 has-[:checked]:hover:bg-neutral/35",
-      "dark:has-[:checked]:bg-dark-neutral/35 dark:has-[:checked]:hover:bg-dark-neutral/45"
+      "bg-neutral/10 hover:bg-neutral/20",
+      "has-[:checked]:bg-neutral/25 has-[:checked]:hover:bg-neutral/35"
     ]
     |> Enum.join(" ")
   end
 
   defp card_solid_background("primary") do
     [
-      "bg-primary/10 hover:bg-primary/20 dark:bg-dark-primary/20 dark:hover:bg-dark-primary/30",
-      "has-[:checked]:bg-primary/25 has-[:checked]:hover:bg-primary/35",
-      "dark:has-[:checked]:bg-dark-primary/35 dark:has-[:checked]:hover:bg-dark-primary/45"
+      "bg-primary/10 hover:bg-primary/20",
+      "has-[:checked]:bg-primary/25 has-[:checked]:hover:bg-primary/35"
     ]
     |> Enum.join(" ")
   end
 
   defp card_solid_background("secondary") do
     [
-      "bg-secondary/10 hover:bg-secondary/20 dark:bg-dark-secondary/20 dark:hover:bg-dark-secondary/30",
-      "has-[:checked]:bg-secondary/25 has-[:checked]:hover:bg-secondary/35",
-      "dark:has-[:checked]:bg-dark-secondary/35 dark:has-[:checked]:hover:bg-dark-secondary/45"
+      "bg-secondary/10 hover:bg-secondary/20",
+      "has-[:checked]:bg-secondary/25 has-[:checked]:hover:bg-secondary/35"
     ]
     |> Enum.join(" ")
   end
 
   defp card_solid_background("success") do
     [
-      "bg-success/10 hover:bg-success/20 dark:bg-dark-success/20 dark:hover:bg-dark-success/30",
-      "has-[:checked]:bg-success/25 has-[:checked]:hover:bg-success/35",
-      "dark:has-[:checked]:bg-dark-success/35 dark:has-[:checked]:hover:bg-dark-success/45"
+      "bg-success/10 hover:bg-success/20",
+      "has-[:checked]:bg-success/25 has-[:checked]:hover:bg-success/35"
     ]
     |> Enum.join(" ")
   end
 
   defp card_solid_background("danger") do
     [
-      "bg-danger/10 hover:bg-danger/20 dark:bg-dark-danger/20 dark:hover:bg-dark-danger/30",
-      "has-[:checked]:bg-danger/25 has-[:checked]:hover:bg-danger/35",
-      "dark:has-[:checked]:bg-dark-danger/35 dark:has-[:checked]:hover:bg-dark-danger/45"
+      "bg-danger/10 hover:bg-danger/20",
+      "has-[:checked]:bg-danger/25 has-[:checked]:hover:bg-danger/35"
     ]
     |> Enum.join(" ")
   end
 
   defp card_solid_background("warning") do
     [
-      "bg-warning/10 hover:bg-warning/20 dark:bg-dark-warning/20 dark:hover:bg-dark-warning/30",
-      "has-[:checked]:bg-warning/25 has-[:checked]:hover:bg-warning/35",
-      "dark:has-[:checked]:bg-dark-warning/35 dark:has-[:checked]:hover:bg-dark-warning/45"
+      "bg-warning/10 hover:bg-warning/20",
+      "has-[:checked]:bg-warning/25 has-[:checked]:hover:bg-warning/35"
     ]
     |> Enum.join(" ")
   end
 
   defp card_solid_background("info") do
     [
-      "bg-info/10 hover:bg-info/20 dark:bg-dark-info/20 dark:hover:bg-dark-info/30",
-      "has-[:checked]:bg-info/25 has-[:checked]:hover:bg-info/35",
-      "dark:has-[:checked]:bg-dark-info/35 dark:has-[:checked]:hover:bg-dark-info/45"
+      "bg-info/10 hover:bg-info/20",
+      "has-[:checked]:bg-info/25 has-[:checked]:hover:bg-info/35"
     ]
     |> Enum.join(" ")
   end
@@ -786,63 +779,56 @@ defmodule Pulsar.Components.Checkbox do
   @spec card_outline_background(String.t()) :: String.t()
   defp card_outline_background("neutral") do
     [
-      "bg-background dark:bg-dark-background",
-      "has-[:checked]:bg-primary/10 has-[:checked]:hover:bg-primary/15",
-      "dark:has-[:checked]:bg-dark-primary/15 dark:has-[:checked]:hover:bg-dark-primary/20"
+      "bg-background",
+      "has-[:checked]:bg-primary/10 has-[:checked]:hover:bg-primary/15"
     ]
     |> Enum.join(" ")
   end
 
   defp card_outline_background("primary") do
     [
-      "bg-background hover:bg-primary/5 dark:bg-dark-background dark:hover:bg-dark-primary/10",
-      "has-[:checked]:bg-primary/15 has-[:checked]:hover:bg-primary/20",
-      "dark:has-[:checked]:bg-dark-primary/20 dark:has-[:checked]:hover:bg-dark-primary/25"
+      "bg-background hover:bg-primary/5",
+      "has-[:checked]:bg-primary/15 has-[:checked]:hover:bg-primary/20"
     ]
     |> Enum.join(" ")
   end
 
   defp card_outline_background("secondary") do
     [
-      "bg-background hover:bg-secondary/5 dark:bg-dark-background dark:hover:bg-dark-secondary/10",
-      "has-[:checked]:bg-secondary/15 has-[:checked]:hover:bg-secondary/20",
-      "dark:has-[:checked]:bg-dark-secondary/20 dark:has-[:checked]:hover:bg-dark-secondary/25"
+      "bg-background hover:bg-secondary/5",
+      "has-[:checked]:bg-secondary/15 has-[:checked]:hover:bg-secondary/20"
     ]
     |> Enum.join(" ")
   end
 
   defp card_outline_background("success") do
     [
-      "bg-background hover:bg-success/5 dark:bg-dark-background dark:hover:bg-dark-success/10",
-      "has-[:checked]:bg-success/15 has-[:checked]:hover:bg-success/20",
-      "dark:has-[:checked]:bg-dark-success/20 dark:has-[:checked]:hover:bg-dark-success/25"
+      "bg-background hover:bg-success/5",
+      "has-[:checked]:bg-success/15 has-[:checked]:hover:bg-success/20"
     ]
     |> Enum.join(" ")
   end
 
   defp card_outline_background("danger") do
     [
-      "bg-background hover:bg-danger/5 dark:bg-dark-background dark:hover:bg-dark-danger/10",
-      "has-[:checked]:bg-danger/15 has-[:checked]:hover:bg-danger/20",
-      "dark:has-[:checked]:bg-dark-danger/20 dark:has-[:checked]:hover:bg-dark-danger/25"
+      "bg-background hover:bg-danger/5",
+      "has-[:checked]:bg-danger/15 has-[:checked]:hover:bg-danger/20"
     ]
     |> Enum.join(" ")
   end
 
   defp card_outline_background("warning") do
     [
-      "bg-background hover:bg-warning/5 dark:bg-dark-background dark:hover:bg-dark-warning/10",
-      "has-[:checked]:bg-warning/15 has-[:checked]:hover:bg-warning/20",
-      "dark:has-[:checked]:bg-dark-warning/20 dark:has-[:checked]:hover:bg-dark-warning/25"
+      "bg-background hover:bg-warning/5",
+      "has-[:checked]:bg-warning/15 has-[:checked]:hover:bg-warning/20"
     ]
     |> Enum.join(" ")
   end
 
   defp card_outline_background("info") do
     [
-      "bg-background hover:bg-info/5 dark:bg-dark-background dark:hover:bg-dark-info/10",
-      "has-[:checked]:bg-info/15 has-[:checked]:hover:bg-info/20",
-      "dark:has-[:checked]:bg-dark-info/20 dark:has-[:checked]:hover:bg-dark-info/25"
+      "bg-background hover:bg-info/5",
+      "has-[:checked]:bg-info/15 has-[:checked]:hover:bg-info/20"
     ]
     |> Enum.join(" ")
   end
@@ -850,63 +836,56 @@ defmodule Pulsar.Components.Checkbox do
   @spec card_outline_border(String.t()) :: String.t()
   defp card_outline_border("neutral") do
     [
-      "border-2 border-border hover:border-primary/50 dark:border-dark-border dark:hover:border-dark-primary/50",
-      "has-[:checked]:border-primary has-[:checked]:hover:border-primary",
-      "dark:has-[:checked]:border-dark-primary dark:has-[:checked]:hover:border-dark-primary"
+      "border-2 border-border hover:border-primary/50",
+      "has-[:checked]:border-primary has-[:checked]:hover:border-primary"
     ]
     |> Enum.join(" ")
   end
 
   defp card_outline_border("primary") do
     [
-      "border-2 border-primary/30 hover:border-primary dark:border-dark-primary/30 dark:hover:border-dark-primary",
-      "has-[:checked]:border-primary has-[:checked]:hover:border-primary",
-      "dark:has-[:checked]:border-dark-primary dark:has-[:checked]:hover:border-dark-primary"
+      "border-2 border-primary/30 hover:border-primary",
+      "has-[:checked]:border-primary has-[:checked]:hover:border-primary"
     ]
     |> Enum.join(" ")
   end
 
   defp card_outline_border("secondary") do
     [
-      "border-2 border-secondary/30 hover:border-secondary dark:border-dark-secondary/30 dark:hover:border-dark-secondary",
-      "has-[:checked]:border-secondary has-[:checked]:hover:border-secondary",
-      "dark:has-[:checked]:border-dark-secondary dark:has-[:checked]:hover:border-dark-secondary"
+      "border-2 border-secondary/30 hover:border-secondary",
+      "has-[:checked]:border-secondary has-[:checked]:hover:border-secondary"
     ]
     |> Enum.join(" ")
   end
 
   defp card_outline_border("success") do
     [
-      "border-2 border-success/30 hover:border-success dark:border-dark-success/30 dark:hover:border-dark-success",
-      "has-[:checked]:border-success has-[:checked]:hover:border-success",
-      "dark:has-[:checked]:border-dark-success dark:has-[:checked]:hover:border-dark-success"
+      "border-2 border-success/30 hover:border-success",
+      "has-[:checked]:border-success has-[:checked]:hover:border-success"
     ]
     |> Enum.join(" ")
   end
 
   defp card_outline_border("danger") do
     [
-      "border-2 border-danger/30 hover:border-danger dark:border-dark-danger/30 dark:hover:border-dark-danger",
-      "has-[:checked]:border-danger has-[:checked]:hover:border-danger",
-      "dark:has-[:checked]:border-dark-danger dark:has-[:checked]:hover:border-dark-danger"
+      "border-2 border-danger/30 hover:border-danger",
+      "has-[:checked]:border-danger has-[:checked]:hover:border-danger"
     ]
     |> Enum.join(" ")
   end
 
   defp card_outline_border("warning") do
     [
-      "border-2 border-warning/30 hover:border-warning dark:border-dark-warning/30 dark:hover:border-dark-warning",
-      "has-[:checked]:border-warning has-[:checked]:hover:border-warning",
-      "dark:has-[:checked]:border-dark-warning dark:has-[:checked]:hover:border-dark-warning"
+      "border-2 border-warning/30 hover:border-warning",
+      "has-[:checked]:border-warning has-[:checked]:hover:border-warning"
     ]
     |> Enum.join(" ")
   end
 
   defp card_outline_border("info") do
     [
-      "border-2 border-info/30 hover:border-info dark:border-dark-info/30 dark:hover:border-dark-info",
-      "has-[:checked]:border-info has-[:checked]:hover:border-info",
-      "dark:has-[:checked]:border-dark-info dark:has-[:checked]:hover:border-dark-info"
+      "border-2 border-info/30 hover:border-info",
+      "has-[:checked]:border-info has-[:checked]:hover:border-info"
     ]
     |> Enum.join(" ")
   end
@@ -914,63 +893,56 @@ defmodule Pulsar.Components.Checkbox do
   @spec card_ghost_background(String.t()) :: String.t()
   defp card_ghost_background("neutral") do
     [
-      "bg-transparent hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover",
-      "has-[:checked]:bg-primary/10 has-[:checked]:hover:bg-primary/15",
-      "dark:has-[:checked]:bg-dark-primary/15 dark:has-[:checked]:hover:bg-dark-primary/20"
+      "bg-transparent hover:bg-surface-1-hover",
+      "has-[:checked]:bg-primary/10 has-[:checked]:hover:bg-primary/15"
     ]
     |> Enum.join(" ")
   end
 
   defp card_ghost_background("primary") do
     [
-      "bg-transparent hover:bg-primary/10 dark:hover:bg-dark-primary/10",
-      "has-[:checked]:bg-primary/15 has-[:checked]:hover:bg-primary/20",
-      "dark:has-[:checked]:bg-dark-primary/20 dark:has-[:checked]:hover:bg-dark-primary/25"
+      "bg-transparent hover:bg-primary/10",
+      "has-[:checked]:bg-primary/15 has-[:checked]:hover:bg-primary/20"
     ]
     |> Enum.join(" ")
   end
 
   defp card_ghost_background("secondary") do
     [
-      "bg-transparent hover:bg-secondary/10 dark:hover:bg-dark-secondary/10",
-      "has-[:checked]:bg-secondary/15 has-[:checked]:hover:bg-secondary/20",
-      "dark:has-[:checked]:bg-dark-secondary/20 dark:has-[:checked]:hover:bg-dark-secondary/25"
+      "bg-transparent hover:bg-secondary/10",
+      "has-[:checked]:bg-secondary/15 has-[:checked]:hover:bg-secondary/20"
     ]
     |> Enum.join(" ")
   end
 
   defp card_ghost_background("success") do
     [
-      "bg-transparent hover:bg-success/10 dark:hover:bg-dark-success/10",
-      "has-[:checked]:bg-success/15 has-[:checked]:hover:bg-success/20",
-      "dark:has-[:checked]:bg-dark-success/20 dark:has-[:checked]:hover:bg-dark-success/25"
+      "bg-transparent hover:bg-success/10",
+      "has-[:checked]:bg-success/15 has-[:checked]:hover:bg-success/20"
     ]
     |> Enum.join(" ")
   end
 
   defp card_ghost_background("danger") do
     [
-      "bg-transparent hover:bg-danger/10 dark:hover:bg-dark-danger/10",
-      "has-[:checked]:bg-danger/15 has-[:checked]:hover:bg-danger/20",
-      "dark:has-[:checked]:bg-dark-danger/20 dark:has-[:checked]:hover:bg-dark-danger/25"
+      "bg-transparent hover:bg-danger/10",
+      "has-[:checked]:bg-danger/15 has-[:checked]:hover:bg-danger/20"
     ]
     |> Enum.join(" ")
   end
 
   defp card_ghost_background("warning") do
     [
-      "bg-transparent hover:bg-warning/10 dark:hover:bg-dark-warning/10",
-      "has-[:checked]:bg-warning/15 has-[:checked]:hover:bg-warning/20",
-      "dark:has-[:checked]:bg-dark-warning/20 dark:has-[:checked]:hover:bg-dark-warning/25"
+      "bg-transparent hover:bg-warning/10",
+      "has-[:checked]:bg-warning/15 has-[:checked]:hover:bg-warning/20"
     ]
     |> Enum.join(" ")
   end
 
   defp card_ghost_background("info") do
     [
-      "bg-transparent hover:bg-info/10 dark:hover:bg-dark-info/10",
-      "has-[:checked]:bg-info/15 has-[:checked]:hover:bg-info/20",
-      "dark:has-[:checked]:bg-dark-info/20 dark:has-[:checked]:hover:bg-dark-info/25"
+      "bg-transparent hover:bg-info/10",
+      "has-[:checked]:bg-info/15 has-[:checked]:hover:bg-info/20"
     ]
     |> Enum.join(" ")
   end
@@ -980,8 +952,8 @@ defmodule Pulsar.Components.Checkbox do
   defp card_state_classes(disabled, invalid) do
     [
       disabled &&
-        "bg-surface-2 dark:bg-dark-surface-2 border-border/50 dark:border-dark-border/50",
-      invalid && "border-danger dark:border-dark-danger bg-danger/5 dark:bg-dark-danger/10"
+        "bg-surface-2 border-border/50",
+      invalid && "border-danger bg-danger/5"
     ]
     |> Enum.filter(& &1)
     |> Enum.join(" ")

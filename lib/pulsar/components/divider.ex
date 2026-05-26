@@ -154,62 +154,62 @@ defmodule Pulsar.Components.Divider do
   # Color and opacity by variant
   @color_config %{
     "ghost" => %{
-      "danger" => "border-danger/30 dark:border-dark-danger/30",
-      "info" => "border-info/30 dark:border-dark-info/30",
-      "neutral" => "border-border/30 dark:border-dark-border/30",
-      "primary" => "border-primary/30 dark:border-dark-primary/30",
-      "secondary" => "border-secondary/30 dark:border-dark-secondary/30",
-      "success" => "border-success/30 dark:border-dark-success/30",
-      "warning" => "border-warning/30 dark:border-dark-warning/30"
+      "danger" => "border-danger/30",
+      "info" => "border-info/30",
+      "neutral" => "border-border/30",
+      "primary" => "border-primary/30",
+      "secondary" => "border-secondary/30",
+      "success" => "border-success/30",
+      "warning" => "border-warning/30"
     },
     "outline" => %{
-      "danger" => "border-danger/60 dark:border-dark-danger/60",
-      "info" => "border-info/60 dark:border-dark-info/60",
-      "neutral" => "border-border dark:border-dark-border",
-      "primary" => "border-primary/60 dark:border-dark-primary/60",
-      "secondary" => "border-secondary/60 dark:border-dark-secondary/60",
-      "success" => "border-success/60 dark:border-dark-success/60",
-      "warning" => "border-warning/60 dark:border-dark-warning/60"
+      "danger" => "border-danger/60",
+      "info" => "border-info/60",
+      "neutral" => "border-border",
+      "primary" => "border-primary/60",
+      "secondary" => "border-secondary/60",
+      "success" => "border-success/60",
+      "warning" => "border-warning/60"
     },
     "solid" => %{
-      "danger" => "border-danger dark:border-dark-danger",
-      "info" => "border-info dark:border-dark-info",
-      "neutral" => "border-neutral dark:border-dark-neutral",
-      "primary" => "border-primary dark:border-dark-primary",
-      "secondary" => "border-secondary dark:border-dark-secondary",
-      "success" => "border-success dark:border-dark-success",
-      "warning" => "border-warning dark:border-dark-warning"
+      "danger" => "border-danger",
+      "info" => "border-info",
+      "neutral" => "border-neutral",
+      "primary" => "border-primary",
+      "secondary" => "border-secondary",
+      "success" => "border-success",
+      "warning" => "border-warning"
     }
   }
 
   # Label text colors by variant and color
   @label_color_config %{
     "ghost" => %{
-      "danger" => "text-danger/70 dark:text-dark-danger/70",
-      "info" => "text-info/70 dark:text-dark-info/70",
-      "neutral" => "text-muted-foreground dark:text-dark-muted-foreground",
-      "primary" => "text-primary/70 dark:text-dark-primary/70",
-      "secondary" => "text-secondary/70 dark:text-dark-secondary/70",
-      "success" => "text-success/70 dark:text-dark-success/70",
-      "warning" => "text-warning/70 dark:text-dark-warning/70"
+      "danger" => "text-danger/70",
+      "info" => "text-info/70",
+      "neutral" => "text-muted-foreground",
+      "primary" => "text-primary/70",
+      "secondary" => "text-secondary/70",
+      "success" => "text-success/70",
+      "warning" => "text-warning/70"
     },
     "outline" => %{
-      "danger" => "text-danger dark:text-dark-danger",
-      "info" => "text-info dark:text-dark-info",
-      "neutral" => "text-foreground dark:text-dark-foreground",
-      "primary" => "text-primary dark:text-dark-primary",
-      "secondary" => "text-secondary dark:text-dark-secondary",
-      "success" => "text-success dark:text-dark-success",
-      "warning" => "text-warning dark:text-dark-warning"
+      "danger" => "text-danger",
+      "info" => "text-info",
+      "neutral" => "text-foreground",
+      "primary" => "text-primary",
+      "secondary" => "text-secondary",
+      "success" => "text-success",
+      "warning" => "text-warning"
     },
     "solid" => %{
-      "danger" => "text-danger dark:text-dark-danger",
-      "info" => "text-info dark:text-dark-info",
-      "neutral" => "text-foreground dark:text-dark-foreground",
-      "primary" => "text-primary dark:text-dark-primary",
-      "secondary" => "text-secondary dark:text-dark-secondary",
-      "success" => "text-success dark:text-dark-success",
-      "warning" => "text-warning dark:text-dark-warning"
+      "danger" => "text-danger",
+      "info" => "text-info",
+      "neutral" => "text-foreground",
+      "primary" => "text-primary",
+      "secondary" => "text-secondary",
+      "success" => "text-success",
+      "warning" => "text-warning"
     }
   }
 

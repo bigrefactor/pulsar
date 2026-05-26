@@ -81,13 +81,13 @@ defmodule Pulsar.Components.Icon do
   # Color configuration for icon component
   @color_config %{
     "current" => "text-current",
-    "danger" => "text-danger dark:text-dark-danger",
-    "info" => "text-info dark:text-dark-info",
-    "neutral" => "text-neutral dark:text-dark-neutral",
-    "primary" => "text-primary dark:text-dark-primary",
-    "secondary" => "text-secondary dark:text-dark-secondary",
-    "success" => "text-success dark:text-dark-success",
-    "warning" => "text-warning dark:text-dark-warning"
+    "danger" => "text-danger",
+    "info" => "text-info",
+    "neutral" => "text-neutral",
+    "primary" => "text-primary",
+    "secondary" => "text-secondary",
+    "success" => "text-success",
+    "warning" => "text-warning"
   }
 
   attr :name, :string,

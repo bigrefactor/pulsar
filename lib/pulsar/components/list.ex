@@ -141,10 +141,10 @@ defmodule Pulsar.Components.List do
   @variant_container_classes %{
     "ghost" => [],
     "outline" => [
-      "border rounded-lg"
+      "border rounded-box"
     ],
     "solid" => [
-      "rounded-lg"
+      "rounded-box"
     ]
   }
 
@@ -153,98 +153,98 @@ defmodule Pulsar.Components.List do
     "ghost" => %{
       "danger" => %{
         container: "",
-        title: "text-danger dark:text-dark-danger"
+        title: "text-danger"
       },
       "info" => %{
         container: "",
-        title: "text-info dark:text-dark-info"
+        title: "text-info"
       },
       "neutral" => %{
         container: "",
-        title: "text-foreground dark:text-dark-foreground"
+        title: "text-foreground"
       },
       "primary" => %{
         container: "",
-        title: "text-primary dark:text-dark-primary"
+        title: "text-primary"
       },
       "secondary" => %{
         container: "",
-        title: "text-secondary dark:text-dark-secondary"
+        title: "text-secondary"
       },
       "success" => %{
         container: "",
-        title: "text-success dark:text-dark-success"
+        title: "text-success"
       },
       "warning" => %{
         container: "",
-        title: "text-warning dark:text-dark-warning"
+        title: "text-warning"
       }
     },
     "outline" => %{
       "danger" => %{
-        container: "border-danger dark:border-dark-danger bg-background dark:bg-dark-background",
-        hover: "hover:bg-danger/5 dark:hover:bg-dark-danger/10",
-        title: "text-danger dark:text-dark-danger"
+        container: "border-danger bg-background",
+        hover: "hover:bg-danger/5",
+        title: "text-danger"
       },
       "info" => %{
-        container: "border-info dark:border-dark-info bg-background dark:bg-dark-background",
-        hover: "hover:bg-info/5 dark:hover:bg-dark-info/10",
-        title: "text-info dark:text-dark-info"
+        container: "border-info bg-background",
+        hover: "hover:bg-info/5",
+        title: "text-info"
       },
       "neutral" => %{
-        container: "border-border dark:border-dark-border bg-background dark:bg-dark-background",
-        hover: "hover:bg-muted/50 dark:hover:bg-dark-muted/50",
-        title: "text-foreground dark:text-dark-foreground"
+        container: "border-border bg-background",
+        hover: "hover:bg-muted/50",
+        title: "text-foreground"
       },
       "primary" => %{
-        container: "border-primary dark:border-dark-primary bg-background dark:bg-dark-background",
-        hover: "hover:bg-primary/5 dark:hover:bg-dark-primary/10",
-        title: "text-primary dark:text-dark-primary"
+        container: "border-primary bg-background",
+        hover: "hover:bg-primary/5",
+        title: "text-primary"
       },
       "secondary" => %{
-        container: "border-secondary dark:border-dark-secondary bg-background dark:bg-dark-background",
-        hover: "hover:bg-secondary/5 dark:hover:bg-dark-secondary/10",
-        title: "text-secondary dark:text-dark-secondary"
+        container: "border-secondary bg-background",
+        hover: "hover:bg-secondary/5",
+        title: "text-secondary"
       },
       "success" => %{
-        container: "border-success dark:border-dark-success bg-background dark:bg-dark-background",
-        hover: "hover:bg-success/5 dark:hover:bg-dark-success/10",
-        title: "text-success dark:text-dark-success"
+        container: "border-success bg-background",
+        hover: "hover:bg-success/5",
+        title: "text-success"
       },
       "warning" => %{
-        container: "border-warning dark:border-dark-warning bg-background dark:bg-dark-background",
-        hover: "hover:bg-warning/5 dark:hover:bg-dark-warning/10",
-        title: "text-warning dark:text-dark-warning"
+        container: "border-warning bg-background",
+        hover: "hover:bg-warning/5",
+        title: "text-warning"
       }
     },
     "solid" => %{
       "danger" => %{
-        container: "bg-danger/5 dark:bg-dark-danger/10 border border-danger/20 dark:border-dark-danger/30",
-        title: "text-danger dark:text-dark-danger"
+        container: "bg-danger/5 border border-danger/20",
+        title: "text-danger"
       },
       "info" => %{
-        container: "bg-info/5 dark:bg-dark-info/10 border border-info/20 dark:border-dark-info/30",
-        title: "text-info dark:text-dark-info"
+        container: "bg-info/5 border border-info/20",
+        title: "text-info"
       },
       "neutral" => %{
-        container: "bg-muted dark:bg-dark-muted border border-border dark:border-dark-border",
-        title: "text-foreground dark:text-dark-foreground"
+        container: "bg-muted border border-border",
+        title: "text-foreground"
       },
       "primary" => %{
-        container: "bg-primary/5 dark:bg-dark-primary/10 border border-primary/20 dark:border-dark-primary/30",
-        title: "text-primary dark:text-dark-primary"
+        container: "bg-primary/5 border border-primary/20",
+        title: "text-primary"
       },
       "secondary" => %{
-        container: "bg-secondary/5 dark:bg-dark-secondary/10 border border-secondary/20 dark:border-dark-secondary/30",
-        title: "text-secondary dark:text-dark-secondary"
+        container: "bg-secondary/5 border border-secondary/20",
+        title: "text-secondary"
       },
       "success" => %{
-        container: "bg-success/5 dark:bg-dark-success/10 border border-success/20 dark:border-dark-success/30",
-        title: "text-success dark:text-dark-success"
+        container: "bg-success/5 border border-success/20",
+        title: "text-success"
       },
       "warning" => %{
-        container: "bg-warning/5 dark:bg-dark-warning/10 border border-warning/20 dark:border-dark-warning/30",
-        title: "text-warning dark:text-dark-warning"
+        container: "bg-warning/5 border border-warning/20",
+        title: "text-warning"
       }
     }
   }
@@ -348,7 +348,7 @@ defmodule Pulsar.Components.List do
               merge([
                 @item_base,
                 item_variant_classes(@variant, @color, index, @striped, length(@items)),
-                @dividers && index > 0 && "border-t border-border dark:border-dark-border",
+                @dividers && index > 0 && "border-t border-border",
                 item[:class] || ""
               ])
             }
@@ -380,7 +380,7 @@ defmodule Pulsar.Components.List do
           merge([
             @item_base,
             item_variant_classes(@variant, @color, index, @striped, length(@items)),
-            @dividers && index > 0 && "border-t border-border dark:border-dark-border",
+            @dividers && index > 0 && "border-t border-border",
             item[:class] || ""
           ])
         }
@@ -460,9 +460,9 @@ defmodule Pulsar.Components.List do
     striped_classes =
       if striped && total_items > 1 && rem(index, 2) == 0 do
         case variant do
-          "ghost" -> "bg-muted/30 dark:bg-dark-muted/20"
-          "outline" -> "bg-muted/20 dark:bg-dark-muted/10"
-          "solid" -> "bg-foreground/5 dark:bg-dark-foreground/5"
+          "ghost" -> "bg-muted/30"
+          "outline" -> "bg-muted/20"
+          "solid" -> "bg-foreground/5"
         end
       else
         ""
@@ -496,7 +496,7 @@ defmodule Pulsar.Components.List do
     merge([
       padding,
       text_size,
-      "text-center text-muted-foreground dark:text-dark-muted-foreground"
+      "text-center text-muted-foreground"
     ])
   end
 
@@ -510,7 +510,7 @@ defmodule Pulsar.Components.List do
           container_styles = Map.get(color_config, :container, "")
 
           [
-            "border rounded-lg",
+            "border rounded-box",
             container_styles
           ]
 
@@ -519,13 +519,13 @@ defmodule Pulsar.Components.List do
           container_styles = Map.get(color_config, :container, "")
 
           [
-            "rounded-lg",
+            "rounded-box",
             container_styles
           ]
 
         "ghost" ->
           [
-            "rounded-lg bg-background/30 dark:bg-dark-background/30 border border-border/20 dark:border-dark-border/20"
+            "rounded-box bg-background/30 border border-border/20"
           ]
       end
 
@@ -556,7 +556,7 @@ defmodule Pulsar.Components.List do
       end
 
     color_config = get_in(@color_config, [variant, color])
-    color_classes = Map.get(color_config, :title, "text-foreground dark:text-dark-foreground")
+    color_classes = Map.get(color_config, :title, "text-foreground")
 
     merge([color_classes, base_typography])
   end
@@ -571,11 +571,11 @@ defmodule Pulsar.Components.List do
         "xl" -> "mt-2 max-w-2xl text-lg/7"
       end
 
-    merge(["text-muted-foreground dark:text-dark-muted-foreground", typography])
+    merge(["text-muted-foreground", typography])
   end
 
   defp content_wrapper_classes(_variant) do
     # Clear border between header and content for all variants
-    "border-t border-border dark:border-dark-border"
+    "border-t border-border"
   end
 end

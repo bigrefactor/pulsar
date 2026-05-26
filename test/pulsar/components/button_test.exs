@@ -145,7 +145,7 @@ defmodule Pulsar.Components.ButtonTest do
         end
 
         # All solid variants should have shadow
-        assert html =~ "shadow-sm"
+        assert html =~ "shadow-card"
       end
     end
 
@@ -172,7 +172,7 @@ defmodule Pulsar.Components.ButtonTest do
 
         # All outline variants should have border and shadow
         assert html =~ "border-2"
-        assert html =~ "shadow-sm"
+        assert html =~ "shadow-card"
       end
     end
 
@@ -199,7 +199,7 @@ defmodule Pulsar.Components.ButtonTest do
 
         # Ghost variants should not have border but do have shadow
         refute html =~ "border-2"
-        assert html =~ "shadow-sm"
+        assert html =~ "shadow-card"
       end
     end
 
@@ -251,27 +251,27 @@ defmodule Pulsar.Components.ButtonTest do
             assert html =~ "px-2"
             assert html =~ "text-xs"
             assert html =~ "gap-1"
-            assert html =~ "rounded-md"
+            assert html =~ "rounded-field"
 
           "sm" ->
             assert html =~ "h-8"
             assert html =~ "px-3"
             assert html =~ "text-sm"
             assert html =~ "gap-1"
-            assert html =~ "rounded-md"
+            assert html =~ "rounded-field"
 
           "md" ->
             assert html =~ "h-10"
             assert html =~ "px-4"
             assert html =~ "gap-2"
-            assert html =~ "rounded-lg"
+            assert html =~ "rounded-box"
 
           "lg" ->
             assert html =~ "h-12"
             assert html =~ "px-6"
             assert html =~ "text-lg"
             assert html =~ "gap-2"
-            assert html =~ "rounded-lg"
+            assert html =~ "rounded-box"
 
           "xl" ->
             assert html =~ "h-14"
@@ -329,7 +329,7 @@ defmodule Pulsar.Components.ButtonTest do
       assert html =~ ~s(disabled)
       # Should include disabled styling from base classes
       assert html =~ "disabled:pointer-events-none"
-      assert html =~ "disabled:opacity-50"
+      assert html =~ "disabled:opacity-disabled"
     end
 
     test "handles disabled state for link variant" do
@@ -343,7 +343,7 @@ defmodule Pulsar.Components.ButtonTest do
       assert html =~ ~s(disabled)
       # Link variant should also include disabled styling
       assert html =~ "disabled:pointer-events-none"
-      assert html =~ "disabled:opacity-50"
+      assert html =~ "disabled:opacity-disabled"
       assert html =~ "disabled:cursor-not-allowed"
     end
 
@@ -624,8 +624,6 @@ defmodule Pulsar.Components.ButtonTest do
         """)
 
       # Should include dark mode variants for semantic tokens
-      assert html =~ "dark:bg-dark-primary"
-      assert html =~ "dark:hover:bg-dark-primary/90"
       # Focus ring uses semantic token without dark- duplication
       assert html =~ "focus-visible:ring-ring"
     end

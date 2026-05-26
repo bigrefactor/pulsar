@@ -38,7 +38,6 @@ defmodule Pulsar.Components.SelectTest do
 
       # Default solid variant with neutral color
       assert html =~ "bg-neutral/10"
-      assert html =~ "dark:bg-dark-neutral/20"
     end
 
     test "renders with outline variant" do
@@ -124,7 +123,6 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ "border-2"
       assert html =~ "border-border"
       assert html =~ "bg-background"
-      assert html =~ "dark:bg-dark-background"
     end
 
     test "renders ghost variant" do
@@ -621,7 +619,7 @@ defmodule Pulsar.Components.SelectTest do
 
       assert html =~ ~s(disabled)
       assert html =~ "cursor-not-allowed"
-      assert html =~ "opacity-50"
+      assert html =~ "opacity-disabled"
       assert html =~ "pointer-events-none"
     end
 
@@ -633,9 +631,9 @@ defmodule Pulsar.Components.SelectTest do
         <Select.select name="test" options={["A", "B", "C"]} disabled={true} />
         """)
 
-      # Should have arrow container with opacity-50 when disabled
+      # Should have arrow container with opacity-disabled when disabled
       assert html =~
-               ~s(class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-neutral dark:text-dark-neutral opacity-50")
+               ~s(class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-neutral opacity-disabled")
     end
 
     test "handles required state" do
@@ -742,9 +740,7 @@ defmodule Pulsar.Components.SelectTest do
 
       # Should show danger styling automatically
       assert html =~ "bg-danger/10"
-      assert html =~ "dark:bg-dark-danger/20"
       assert html =~ "text-danger"
-      assert html =~ "dark:text-dark-danger"
     end
 
     test "no error state uses neutral color" do

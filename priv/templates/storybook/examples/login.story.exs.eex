@@ -18,13 +18,13 @@ defmodule <%= @web_module %>.Storybook.Examples.Login do
   def render(assigns) do
     ~H"""
     <div class="flex min-h-96 items-center justify-center p-8">
-      <div class="w-full max-w-sm rounded-xl border border-neutral-200 bg-white p-8 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+      <div class="w-full max-w-sm rounded-xl border border-border bg-surface-0 p-8 shadow-card">
         <div class="mb-6 text-center">
           <Badge.badge color="primary" variant="ghost" class="mb-3">Pulsar Example</Badge.badge>
-          <h1 class="text-2xl font-semibold text-neutral-900 dark:text-neutral-100">
+          <h1 class="text-2xl font-semibold text-foreground">
             Sign in to your account
           </h1>
-          <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+          <p class="mt-1 text-sm text-muted-foreground">
             Welcome back! Please enter your details.
           </p>
         </div>
@@ -59,7 +59,7 @@ defmodule <%= @web_module %>.Storybook.Examples.Login do
 
         <Divider.divider class="my-6" />
 
-        <p class="text-center text-sm text-neutral-500 dark:text-neutral-400">
+        <p class="text-center text-sm text-muted-foreground">
           Don't have an account?
           <Link.a href="#" variant="outline" color="primary">Sign up</Link.a>
         </p>

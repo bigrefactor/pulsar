@@ -66,10 +66,10 @@ defmodule Pulsar.DevApp.Storybook.Examples.Dashboard do
           color={kpi.color}
           size="md"
         >
-          <p class="text-sm font-medium text-neutral-500 dark:text-neutral-400">
+          <p class="text-sm font-medium text-muted-foreground">
             {kpi.label}
           </p>
-          <p class="mt-1 text-3xl font-bold text-neutral-900 dark:text-neutral-100">
+          <p class="mt-1 text-3xl font-bold text-foreground">
             {kpi.value}
           </p>
         </Card.card>

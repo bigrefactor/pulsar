@@ -79,7 +79,6 @@ defmodule Pulsar.Components.SwitchTest do
 
       # Default variant is solid, color is primary
       assert html =~ "peer-checked:bg-primary/90"
-      assert html =~ "dark:peer-checked:bg-dark-primary/90"
     end
 
     test "applies outline variant classes" do
@@ -88,8 +87,6 @@ defmodule Pulsar.Components.SwitchTest do
 
       assert html =~ "peer-checked:bg-success/10"
       assert html =~ "peer-checked:border-success"
-      assert html =~ "dark:peer-checked:bg-dark-success/10"
-      assert html =~ "dark:peer-checked:border-dark-success"
     end
 
     test "applies ghost variant classes" do
@@ -98,7 +95,6 @@ defmodule Pulsar.Components.SwitchTest do
 
       assert html =~ "peer-checked:bg-danger/15"
       assert html =~ "hover:peer-checked:bg-danger/20"
-      assert html =~ "dark:peer-checked:bg-dark-danger/15"
     end
 
     test "applies all supported colors" do
@@ -108,7 +104,6 @@ defmodule Pulsar.Components.SwitchTest do
         assigns = %{color: color}
         html = rendered_to_string(~H[<Switch.switch name="test" color={@color} />])
         assert html =~ "peer-checked:bg-#{color}/90"
-        assert html =~ "dark:peer-checked:bg-dark-#{color}/90"
       end
     end
   end
@@ -175,7 +170,6 @@ defmodule Pulsar.Components.SwitchTest do
 
       assert html =~ ~s(aria-invalid="true")
       assert html =~ "ring-2 ring-danger"
-      assert html =~ "dark:ring-dark-danger"
       # Color should override to danger
       assert html =~ "peer-checked:bg-danger/90"
     end

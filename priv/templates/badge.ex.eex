@@ -78,8 +78,8 @@ alias Phoenix.LiveView.Rendered
 
 # Base badge styling classes
 @badge_base_classes [
-  "inline-flex items-center font-medium rounded-md",
-  "transition-colors duration-200",
+  "inline-flex items-center font-medium rounded-field",
+  "transition-colors duration-normal",
   "focus-within:outline-none focus-within:ring-2",
   "focus-within:ring-current focus-within:ring-offset-2"
 ]
@@ -87,39 +87,39 @@ alias Phoenix.LiveView.Rendered
 # Color configuration for each variant
 @color_config %{
   "ghost" => %{
-    "danger" => "text-danger dark:text-dark-danger hover:bg-danger/10 dark:hover:bg-dark-danger/10",
-    "info" => "text-info dark:text-dark-info hover:bg-info/10 dark:hover:bg-dark-info/10",
-    "neutral" => "text-neutral dark:text-dark-neutral hover:bg-neutral/10 dark:hover:bg-dark-neutral/10",
-    "primary" => "text-primary dark:text-dark-primary hover:bg-primary/10 dark:hover:bg-dark-primary/10",
-    "secondary" => "text-secondary dark:text-dark-secondary hover:bg-secondary/10 dark:hover:bg-dark-secondary/10",
-    "success" => "text-success dark:text-dark-success hover:bg-success/10 dark:hover:bg-dark-success/10",
-    "warning" => "text-warning dark:text-dark-warning hover:bg-warning/10 dark:hover:bg-dark-warning/10"
+    "danger" => "text-danger hover:bg-danger/10",
+    "info" => "text-info hover:bg-info/10",
+    "neutral" => "text-neutral hover:bg-neutral/10",
+    "primary" => "text-primary hover:bg-primary/10",
+    "secondary" => "text-secondary hover:bg-secondary/10",
+    "success" => "text-success hover:bg-success/10",
+    "warning" => "text-warning hover:bg-warning/10"
   },
   "outline" => %{
     "danger" =>
-      "border border-danger dark:border-dark-danger text-danger dark:text-dark-danger bg-background dark:bg-dark-background",
+      "border border-danger text-danger bg-background",
     "info" =>
-      "border border-info dark:border-dark-info text-info dark:text-dark-info bg-background dark:bg-dark-background",
+      "border border-info text-info bg-background",
     "neutral" =>
-      "border border-border dark:border-dark-border text-neutral dark:text-dark-neutral bg-background dark:bg-dark-background",
+      "border border-border text-neutral bg-background",
     "primary" =>
-      "border border-primary dark:border-dark-primary text-primary dark:text-dark-primary bg-background dark:bg-dark-background",
+      "border border-primary text-primary bg-background",
     "secondary" =>
-      "border border-secondary dark:border-dark-secondary text-secondary dark:text-dark-secondary bg-background dark:bg-dark-background",
+      "border border-secondary text-secondary bg-background",
     "success" =>
-      "border border-success dark:border-dark-success text-success dark:text-dark-success bg-background dark:bg-dark-background",
+      "border border-success text-success bg-background",
     "warning" =>
-      "border border-warning dark:border-dark-warning text-warning dark:text-dark-warning bg-background dark:bg-dark-background"
+      "border border-warning text-warning bg-background"
   },
   "solid" => %{
-    "danger" => "bg-danger text-danger-foreground dark:bg-dark-danger dark:text-dark-danger-foreground",
-    "info" => "bg-info text-info-foreground dark:bg-dark-info dark:text-dark-info-foreground",
-    "neutral" => "bg-neutral text-neutral-foreground dark:bg-dark-neutral dark:text-dark-neutral-foreground",
-    "primary" => "bg-primary text-primary-foreground dark:bg-dark-primary dark:text-dark-primary-foreground",
+    "danger" => "bg-danger text-danger-foreground",
+    "info" => "bg-info text-info-foreground",
+    "neutral" => "bg-neutral text-neutral-foreground",
+    "primary" => "bg-primary text-primary-foreground",
     "secondary" =>
-      "bg-secondary text-secondary-foreground dark:bg-dark-secondary dark:text-dark-secondary-foreground",
-    "success" => "bg-success text-success-foreground dark:bg-dark-success dark:text-dark-success-foreground",
-    "warning" => "bg-warning text-warning-foreground dark:bg-dark-warning dark:text-dark-warning-foreground"
+      "bg-secondary text-secondary-foreground",
+    "success" => "bg-success text-success-foreground",
+    "warning" => "bg-warning text-warning-foreground"
   }
 }
 

@@ -80,7 +80,7 @@ defmodule Pulsar.Components.RadioGroupTest do
 
       # Card should be rendered as a label
       assert html =~ ~s(<label)
-      assert html =~ "rounded-lg border-2"
+      assert html =~ "rounded-box border-2"
       assert html =~ "cursor-pointer"
       # Should have padding classes
       assert html =~ "p-4 gap-3"
@@ -340,7 +340,7 @@ defmodule Pulsar.Components.RadioGroupTest do
         """)
 
       # Label should use neutral text colors by default
-      assert html =~ "text-foreground dark:text-dark-foreground"
+      assert html =~ "text-foreground"
     end
 
     test "inherits radio color when label_color is inherit" do
@@ -354,7 +354,7 @@ defmodule Pulsar.Components.RadioGroupTest do
         """)
 
       # Label should inherit primary color
-      assert html =~ "text-primary dark:text-dark-primary"
+      assert html =~ "text-primary"
     end
 
     test "inherits danger color when invalid and label_color is inherit" do
@@ -368,7 +368,7 @@ defmodule Pulsar.Components.RadioGroupTest do
         """)
 
       # Label should inherit danger color due to invalid state
-      assert html =~ "text-danger dark:text-dark-danger"
+      assert html =~ "text-danger"
     end
 
     test "uses different inherit colors" do
@@ -382,7 +382,7 @@ defmodule Pulsar.Components.RadioGroupTest do
         """)
 
       # Label should inherit success color
-      assert html =~ "text-success dark:text-dark-success"
+      assert html =~ "text-success"
     end
   end
 

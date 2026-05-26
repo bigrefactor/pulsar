@@ -73,7 +73,7 @@ defmodule Pulsar.Components.TableTest do
         </Table.table>
         """)
 
-      assert html =~ ~s(rounded-lg overflow-hidden)
+      assert html =~ ~s(rounded-box overflow-hidden)
       assert html =~ ~s(bg-neutral)
     end
 
@@ -87,7 +87,7 @@ defmodule Pulsar.Components.TableTest do
         </Table.table>
         """)
 
-      assert html =~ ~s(rounded-lg border)
+      assert html =~ ~s(rounded-box border)
       assert html =~ ~s(border-border)
       assert html =~ ~s(border-b-2)
     end
@@ -118,7 +118,6 @@ defmodule Pulsar.Components.TableTest do
         """)
 
       assert html =~ ~s(bg-primary text-primary-foreground)
-      assert html =~ ~s(dark:bg-dark-primary dark:text-dark-primary-foreground)
     end
 
     test "renders danger color" do
@@ -132,7 +131,6 @@ defmodule Pulsar.Components.TableTest do
         """)
 
       assert html =~ ~s(bg-danger text-danger-foreground)
-      assert html =~ ~s(dark:bg-dark-danger dark:text-dark-danger-foreground)
     end
   end
 
@@ -218,7 +216,6 @@ defmodule Pulsar.Components.TableTest do
 
       assert html =~ ~s(cursor-pointer)
       assert html =~ ~s(hover:bg-surface-1-hover)
-      assert html =~ ~s(dark:hover:bg-dark-surface-1-hover)
     end
 
     test "no clickable styling when row_click not provided" do
@@ -248,7 +245,6 @@ defmodule Pulsar.Components.TableTest do
         """)
 
       assert html =~ "[&amp;_tbody_tr:nth-child(even)]:bg-surface-1/50"
-      assert html =~ "dark:[&amp;_tbody_tr:nth-child(even)]:bg-dark-surface-1/50"
     end
 
     test "no striped classes when disabled" do
@@ -278,7 +274,7 @@ defmodule Pulsar.Components.TableTest do
 
       assert html =~ "[&amp;_thead_th]:sticky"
       assert html =~ "[&amp;_thead_th]:top-0"
-      assert html =~ "[&amp;_thead_th]:z-10"
+      assert html =~ "[&amp;_thead_th]:z-docked"
     end
 
     test "no sticky classes when disabled" do
@@ -308,7 +304,7 @@ defmodule Pulsar.Components.TableTest do
         """)
 
       assert html =~ ~s(animate-pulse)
-      assert html =~ ~s(bg-surface-1 dark:bg-dark-surface-1)
+      assert html =~ ~s(bg-surface-1)
       refute html =~ ~s(No data available)
     end
 

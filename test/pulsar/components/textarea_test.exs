@@ -506,7 +506,7 @@ defmodule Pulsar.Components.TextareaTest do
 
       assert html =~ ~s(disabled)
       assert html =~ "cursor-not-allowed"
-      assert html =~ "opacity-50"
+      assert html =~ "opacity-disabled"
       assert html =~ "pointer-events-none"
     end
 
@@ -624,9 +624,7 @@ defmodule Pulsar.Components.TextareaTest do
 
       # Should show danger styling automatically
       assert html =~ "bg-danger/10"
-      assert html =~ "dark:bg-dark-danger/20"
       assert html =~ "text-danger"
-      assert html =~ "dark:text-dark-danger"
 
       # Should have data attributes for invalid state
       assert html =~ ~r/data-invalid(?=[^=])/

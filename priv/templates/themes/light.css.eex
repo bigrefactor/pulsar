@@ -1,0 +1,92 @@
+/*
+  Light theme — the default.
+
+  Two blocks are intentional:
+
+  1. `@theme { ... }` REGISTERS the semantic tokens with Tailwind (so utilities
+     like `.bg-primary` get generated) AND sets the light values at `:root`.
+  2. `[data-theme="light"], .theme-light { ... }` re-asserts the same values
+     under explicit selectors. This matters when a light subtree is nested
+     inside another theme (e.g. a light card inside `[data-theme="dark"]`):
+     without an explicit override block, the dark variables would cascade
+     through and the inner `data-theme="light"` attribute would do nothing.
+
+  To customize the light theme, edit the values in BOTH blocks (they must
+  stay in sync). The class form (`.theme-light`) matches what PhoenixStorybook
+  stamps onto its sandbox container when the user picks "Light" from the
+  chrome theme dropdown.
+*/
+@theme {
+  --color-background: var(--color-white);
+  --color-foreground: var(--color-gray-950);
+  --color-muted: var(--color-gray-100);
+  --color-muted-foreground: var(--color-gray-600);
+
+  --color-surface-0: var(--color-white);     /* Canvas/page background */
+  --color-surface-1: var(--color-gray-50);   /* Card/section background */
+  --color-surface-2: var(--color-gray-100);  /* Elevated content */
+  --color-surface-3: var(--color-gray-200);  /* Modal/popover background */
+  --color-surface-1-hover: var(--color-gray-100);
+  --color-surface-1-active: var(--color-gray-200);
+  --color-surface-2-hover: var(--color-gray-200);
+  --color-surface-2-active: var(--color-gray-300);
+
+  --color-border: var(--color-gray-200);
+  --color-border-subtle: var(--color-gray-200);
+  --color-border-strong: var(--color-gray-300);
+  --color-input: var(--color-gray-200);
+  --color-ring: var(--color-primary-600);
+
+  --color-neutral: var(--color-neutral-600);
+  --color-neutral-foreground: var(--color-white);
+  --color-primary: var(--color-primary-600);
+  --color-primary-foreground: var(--color-white);
+  --color-secondary: var(--color-secondary-600);
+  --color-secondary-foreground: var(--color-white);
+  --color-success: var(--color-success-600);
+  --color-success-foreground: var(--color-white);
+  --color-warning: var(--color-warning-600);
+  --color-warning-foreground: var(--color-gray-950);
+  --color-danger: var(--color-danger-600);
+  --color-danger-foreground: var(--color-white);
+  --color-info: var(--color-info-600);
+  --color-info-foreground: var(--color-white);
+}
+
+[data-theme="light"],
+.theme-light {
+  --color-background: var(--color-white);
+  --color-foreground: var(--color-gray-950);
+  --color-muted: var(--color-gray-100);
+  --color-muted-foreground: var(--color-gray-600);
+
+  --color-surface-0: var(--color-white);
+  --color-surface-1: var(--color-gray-50);
+  --color-surface-2: var(--color-gray-100);
+  --color-surface-3: var(--color-gray-200);
+  --color-surface-1-hover: var(--color-gray-100);
+  --color-surface-1-active: var(--color-gray-200);
+  --color-surface-2-hover: var(--color-gray-200);
+  --color-surface-2-active: var(--color-gray-300);
+
+  --color-border: var(--color-gray-200);
+  --color-border-subtle: var(--color-gray-200);
+  --color-border-strong: var(--color-gray-300);
+  --color-input: var(--color-gray-200);
+  --color-ring: var(--color-primary-600);
+
+  --color-neutral: var(--color-neutral-600);
+  --color-neutral-foreground: var(--color-white);
+  --color-primary: var(--color-primary-600);
+  --color-primary-foreground: var(--color-white);
+  --color-secondary: var(--color-secondary-600);
+  --color-secondary-foreground: var(--color-white);
+  --color-success: var(--color-success-600);
+  --color-success-foreground: var(--color-white);
+  --color-warning: var(--color-warning-600);
+  --color-warning-foreground: var(--color-gray-950);
+  --color-danger: var(--color-danger-600);
+  --color-danger-foreground: var(--color-white);
+  --color-info: var(--color-info-600);
+  --color-info-foreground: var(--color-white);
+}

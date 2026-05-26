@@ -136,15 +136,15 @@ defmodule Pulsar.Components.Textarea do
 
   # Base textarea classes
   @textarea_base_classes [
-    "w-full transition-all duration-200 ease-in-out",
+    "w-full transition-all duration-normal ease-standard",
     "focus:ring-2 focus:ring-offset-2 resize-none"
   ]
 
   # Variant configuration
   @variant_config %{
-    "ghost" => "rounded-lg border-transparent",
-    "outline" => "border-2 rounded-lg",
-    "solid" => "rounded-lg border-transparent"
+    "ghost" => "rounded-box border-transparent",
+    "outline" => "border-2 rounded-box",
+    "solid" => "rounded-box border-transparent"
   }
 
   # Color configuration by variant
@@ -152,176 +152,176 @@ defmodule Pulsar.Components.Textarea do
     "ghost" => %{
       "danger" => [
         "bg-transparent",
-        "text-danger dark:text-dark-danger",
-        "placeholder:text-danger/70 dark:placeholder:text-dark-danger/70",
+        "text-danger",
+        "placeholder:text-danger/70",
         "focus:ring-danger/60",
-        "hover:bg-danger/5 dark:hover:bg-dark-danger/10"
+        "hover:bg-danger/5"
       ],
       "info" => [
         "bg-transparent",
-        "text-info dark:text-dark-info",
-        "placeholder:text-info/70 dark:placeholder:text-dark-info/70",
+        "text-info",
+        "placeholder:text-info/70",
         "focus:ring-info/60",
-        "hover:bg-info/5 dark:hover:bg-dark-info/10"
+        "hover:bg-info/5"
       ],
       "neutral" => [
         "bg-transparent",
-        "text-foreground dark:text-dark-foreground",
-        "focus:ring-ring dark:focus:ring-dark-ring",
-        "hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover"
+        "text-foreground",
+        "focus:ring-ring",
+        "hover:bg-surface-1-hover"
       ],
       "primary" => [
         "bg-transparent",
-        "text-primary dark:text-dark-primary",
-        "placeholder:text-primary/70 dark:placeholder:text-dark-primary/70",
+        "text-primary",
+        "placeholder:text-primary/70",
         "focus:ring-primary/60",
-        "hover:bg-primary/5 dark:hover:bg-dark-primary/10"
+        "hover:bg-primary/5"
       ],
       "secondary" => [
         "bg-transparent",
-        "text-secondary dark:text-dark-secondary",
-        "placeholder:text-secondary/70 dark:placeholder:text-dark-secondary/70",
+        "text-secondary",
+        "placeholder:text-secondary/70",
         "focus:ring-secondary/60",
-        "hover:bg-secondary/5 dark:hover:bg-dark-secondary/10"
+        "hover:bg-secondary/5"
       ],
       "success" => [
         "bg-transparent",
-        "text-success dark:text-dark-success",
-        "placeholder:text-success/70 dark:placeholder:text-dark-success/70",
+        "text-success",
+        "placeholder:text-success/70",
         "focus:ring-success/60",
-        "hover:bg-success/5 dark:hover:bg-dark-success/10"
+        "hover:bg-success/5"
       ],
       "warning" => [
         "bg-transparent",
-        "text-warning dark:text-dark-warning",
-        "placeholder:text-warning/70 dark:placeholder:text-dark-warning/70",
+        "text-warning",
+        "placeholder:text-warning/70",
         "focus:ring-warning/60",
-        "hover:bg-warning/5 dark:hover:bg-dark-warning/10"
+        "hover:bg-warning/5"
       ]
     },
     "outline" => %{
       "danger" => [
-        "border-danger/60 dark:border-dark-danger/60",
-        "bg-background dark:bg-dark-background",
-        "text-danger dark:text-dark-danger",
-        "placeholder:text-danger/70 dark:placeholder:text-dark-danger/70",
+        "border-danger/60",
+        "bg-background",
+        "text-danger",
+        "placeholder:text-danger/70",
         "focus:ring-danger/60",
-        "hover:border-danger dark:hover:border-dark-danger"
+        "hover:border-danger"
       ],
       "info" => [
-        "border-info/60 dark:border-dark-info/60",
-        "bg-background dark:bg-dark-background",
-        "text-info dark:text-dark-info",
-        "placeholder:text-info/70 dark:placeholder:text-dark-info/70",
+        "border-info/60",
+        "bg-background",
+        "text-info",
+        "placeholder:text-info/70",
         "focus:ring-info/60",
-        "hover:border-info dark:hover:border-dark-info"
+        "hover:border-info"
       ],
       "neutral" => [
-        "border-border dark:border-dark-border",
-        "bg-background dark:bg-dark-background",
-        "text-foreground dark:text-dark-foreground",
-        "focus:ring-ring dark:focus:ring-dark-ring",
-        "hover:border-primary/50 dark:hover:border-dark-primary/50"
+        "border-border",
+        "bg-background",
+        "text-foreground",
+        "focus:ring-ring",
+        "hover:border-primary/50"
       ],
       "primary" => [
-        "border-primary/60 dark:border-dark-primary/60",
-        "bg-background dark:bg-dark-background",
-        "text-primary dark:text-dark-primary",
-        "placeholder:text-primary/70 dark:placeholder:text-dark-primary/70",
+        "border-primary/60",
+        "bg-background",
+        "text-primary",
+        "placeholder:text-primary/70",
         "focus:ring-primary/60",
-        "hover:border-primary dark:hover:border-dark-primary"
+        "hover:border-primary"
       ],
       "secondary" => [
-        "border-secondary/60 dark:border-dark-secondary/60",
-        "bg-background dark:bg-dark-background",
-        "text-secondary dark:text-dark-secondary",
-        "placeholder:text-secondary/70 dark:placeholder:text-dark-secondary/70",
+        "border-secondary/60",
+        "bg-background",
+        "text-secondary",
+        "placeholder:text-secondary/70",
         "focus:ring-secondary/60",
-        "hover:border-secondary dark:hover:border-dark-secondary"
+        "hover:border-secondary"
       ],
       "success" => [
-        "border-success/60 dark:border-dark-success/60",
-        "bg-background dark:bg-dark-background",
-        "text-success dark:text-dark-success",
-        "placeholder:text-success/70 dark:placeholder:text-dark-success/70",
+        "border-success/60",
+        "bg-background",
+        "text-success",
+        "placeholder:text-success/70",
         "focus:ring-success/60",
-        "hover:border-success dark:hover:border-dark-success"
+        "hover:border-success"
       ],
       "warning" => [
-        "border-warning/60 dark:border-dark-warning/60",
-        "bg-background dark:bg-dark-background",
-        "text-warning dark:text-dark-warning",
-        "placeholder:text-warning/70 dark:placeholder:text-dark-warning/70",
+        "border-warning/60",
+        "bg-background",
+        "text-warning",
+        "placeholder:text-warning/70",
         "focus:ring-warning/60",
-        "hover:border-warning dark:hover:border-dark-warning"
+        "hover:border-warning"
       ]
     },
     "solid" => %{
       "danger" => [
-        "bg-danger/10 dark:bg-dark-danger/20",
-        "text-danger dark:text-dark-danger",
-        "placeholder:text-danger/70 dark:placeholder:text-dark-danger/70",
+        "bg-danger/10",
+        "text-danger",
+        "placeholder:text-danger/70",
         "focus:ring-danger/60",
-        "hover:bg-danger/20 dark:hover:bg-dark-danger/30"
+        "hover:bg-danger/20"
       ],
       "info" => [
-        "bg-info/10 dark:bg-dark-info/20",
-        "text-info dark:text-dark-info",
-        "placeholder:text-info/70 dark:placeholder:text-dark-info/70",
+        "bg-info/10",
+        "text-info",
+        "placeholder:text-info/70",
         "focus:ring-info/60",
-        "hover:bg-info/20 dark:hover:bg-dark-info/30"
+        "hover:bg-info/20"
       ],
       "neutral" => [
-        "bg-neutral/10 dark:bg-dark-neutral/20",
-        "text-neutral dark:text-dark-neutral",
-        "placeholder:text-neutral/70 dark:placeholder:text-dark-neutral/70",
+        "bg-neutral/10",
+        "text-neutral",
+        "placeholder:text-neutral/70",
         "focus:ring-neutral/60",
-        "hover:bg-neutral/20 dark:hover:bg-dark-neutral/30"
+        "hover:bg-neutral/20"
       ],
       "primary" => [
-        "bg-primary/10 dark:bg-dark-primary/20",
-        "text-primary dark:text-dark-primary",
-        "placeholder:text-primary/70 dark:placeholder:text-dark-primary/70",
+        "bg-primary/10",
+        "text-primary",
+        "placeholder:text-primary/70",
         "focus:ring-primary/60",
-        "hover:bg-primary/20 dark:hover:bg-dark-primary/30"
+        "hover:bg-primary/20"
       ],
       "secondary" => [
-        "bg-secondary/10 dark:bg-dark-secondary/20",
-        "text-secondary dark:text-dark-secondary",
-        "placeholder:text-secondary/70 dark:placeholder:text-dark-secondary/70",
+        "bg-secondary/10",
+        "text-secondary",
+        "placeholder:text-secondary/70",
         "focus:ring-secondary/60",
-        "hover:bg-secondary/20 dark:hover:bg-dark-secondary/30"
+        "hover:bg-secondary/20"
       ],
       "success" => [
-        "bg-success/10 dark:bg-dark-success/20",
-        "text-success dark:text-dark-success",
-        "placeholder:text-success/70 dark:placeholder:text-dark-success/70",
+        "bg-success/10",
+        "text-success",
+        "placeholder:text-success/70",
         "focus:ring-success/60",
-        "hover:bg-success/20 dark:hover:bg-dark-success/30"
+        "hover:bg-success/20"
       ],
       "warning" => [
-        "bg-warning/10 dark:bg-dark-warning/20",
-        "text-warning dark:text-dark-warning",
-        "placeholder:text-warning/70 dark:placeholder:text-dark-warning/70",
+        "bg-warning/10",
+        "text-warning",
+        "placeholder:text-warning/70",
         "focus:ring-warning/60",
-        "hover:bg-warning/20 dark:hover:bg-dark-warning/30"
+        "hover:bg-warning/20"
       ]
     }
   }
 
   # Character count color configuration
   @char_count_colors %{
-    "danger" => "text-danger dark:text-dark-danger font-medium",
+    "danger" => "text-danger font-medium",
     "normal" => %{
-      "danger" => "text-danger dark:text-dark-danger font-medium",
-      "info" => "text-info dark:text-dark-info",
-      "neutral" => "text-muted-foreground dark:text-dark-muted-foreground",
-      "primary" => "text-primary dark:text-dark-primary",
-      "secondary" => "text-secondary dark:text-dark-secondary",
-      "success" => "text-success dark:text-dark-success",
-      "warning" => "text-warning dark:text-dark-warning"
+      "danger" => "text-danger font-medium",
+      "info" => "text-info",
+      "neutral" => "text-muted-foreground",
+      "primary" => "text-primary",
+      "secondary" => "text-secondary",
+      "success" => "text-success",
+      "warning" => "text-warning"
     },
-    "warning" => "text-warning dark:text-dark-warning"
+    "warning" => "text-warning"
   }
 
   # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
@@ -546,7 +546,7 @@ defmodule Pulsar.Components.Textarea do
           @max_length != nil and @chars_remaining != nil and @chars_remaining <= @max_length * 0.1 and
             @chars_remaining > 0
         }
-        class="text-warning dark:text-dark-warning"
+        class="text-warning"
       >
         {@chars_remaining} remaining
       </div>
@@ -614,7 +614,7 @@ defmodule Pulsar.Components.Textarea do
 
   defp get_state_classes(disabled, readonly) do
     [
-      disabled && "cursor-not-allowed opacity-50 pointer-events-none",
+      disabled && "cursor-not-allowed opacity-disabled pointer-events-none",
       readonly && "cursor-default"
     ]
     |> Enum.filter(& &1)

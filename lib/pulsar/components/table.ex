@@ -89,7 +89,7 @@ defmodule Pulsar.Components.Table do
         <:col :let={result} label="Name"><%= result.name %></:col>
         <:col :let={result} label="Score"><%= result.score %></:col>
         <:empty>
-          <div class="text-center py-8 text-muted-foreground dark:text-dark-muted-foreground">
+          <div class="text-center py-8 text-muted-foreground">
             <.icon name="hero-magnifying-glass" class="mx-auto h-12 w-12 mb-4" />
             <p class="font-medium">No results found</p>
             <p class="text-sm">Try adjusting your search terms</p>
@@ -173,53 +173,52 @@ defmodule Pulsar.Components.Table do
   # Container variant classes
   @container_variant_config %{
     "ghost" => "",
-    "outline" => "rounded-lg border border-border dark:border-dark-border",
-    "solid" => "rounded-lg overflow-hidden"
+    "outline" => "rounded-box border border-border",
+    "solid" => "rounded-box overflow-hidden"
   }
 
   # Header variant/color classes
   @header_variant_config %{
     "ghost" => %{
-      "danger" => "border-b border-danger/20 dark:border-dark-danger/20",
-      "info" => "border-b border-info/20 dark:border-dark-info/20",
-      "neutral" => "border-b border-border/30 dark:border-dark-border/30",
-      "primary" => "border-b border-primary/20 dark:border-dark-primary/20",
-      "secondary" => "border-b border-secondary/20 dark:border-dark-secondary/20",
-      "success" => "border-b border-success/20 dark:border-dark-success/20",
-      "warning" => "border-b border-warning/20 dark:border-dark-warning/20"
+      "danger" => "border-b border-danger/20",
+      "info" => "border-b border-info/20",
+      "neutral" => "border-b border-border/30",
+      "primary" => "border-b border-primary/20",
+      "secondary" => "border-b border-secondary/20",
+      "success" => "border-b border-success/20",
+      "warning" => "border-b border-warning/20"
     },
     "outline" => %{
-      "danger" => "border-b-2 border-danger/30 dark:border-dark-danger/30 bg-surface-1 dark:bg-dark-surface-1",
-      "info" => "border-b-2 border-info/30 dark:border-dark-info/30 bg-surface-1 dark:bg-dark-surface-1",
-      "neutral" => "border-b-2 border-border dark:border-dark-border bg-surface-1 dark:bg-dark-surface-1",
-      "primary" => "border-b-2 border-primary/30 dark:border-dark-primary/30 bg-surface-1 dark:bg-dark-surface-1",
-      "secondary" => "border-b-2 border-secondary/30 dark:border-dark-secondary/30 bg-surface-1 dark:bg-dark-surface-1",
-      "success" => "border-b-2 border-success/30 dark:border-dark-success/30 bg-surface-1 dark:bg-dark-surface-1",
-      "warning" => "border-b-2 border-warning/30 dark:border-dark-warning/30 bg-surface-1 dark:bg-dark-surface-1"
+      "danger" => "border-b-2 border-danger/30 bg-surface-1",
+      "info" => "border-b-2 border-info/30 bg-surface-1",
+      "neutral" => "border-b-2 border-border bg-surface-1",
+      "primary" => "border-b-2 border-primary/30 bg-surface-1",
+      "secondary" => "border-b-2 border-secondary/30 bg-surface-1",
+      "success" => "border-b-2 border-success/30 bg-surface-1",
+      "warning" => "border-b-2 border-warning/30 bg-surface-1"
     },
     "solid" => %{
-      "danger" => "bg-danger text-danger-foreground dark:bg-dark-danger dark:text-dark-danger-foreground",
-      "info" => "bg-info text-info-foreground dark:bg-dark-info dark:text-dark-info-foreground",
-      "neutral" => "bg-neutral text-neutral-foreground dark:bg-dark-neutral dark:text-dark-neutral-foreground",
-      "primary" => "bg-primary text-primary-foreground dark:bg-dark-primary dark:text-dark-primary-foreground",
-      "secondary" =>
-        "bg-secondary text-secondary-foreground dark:bg-dark-secondary dark:text-dark-secondary-foreground",
-      "success" => "bg-success text-success-foreground dark:bg-dark-success dark:text-dark-success-foreground",
-      "warning" => "bg-warning text-warning-foreground dark:bg-dark-warning dark:text-dark-warning-foreground"
+      "danger" => "bg-danger text-danger-foreground",
+      "info" => "bg-info text-info-foreground",
+      "neutral" => "bg-neutral text-neutral-foreground",
+      "primary" => "bg-primary text-primary-foreground",
+      "secondary" => "bg-secondary text-secondary-foreground",
+      "success" => "bg-success text-success-foreground",
+      "warning" => "bg-warning text-warning-foreground"
     }
   }
 
   # Striped row classes by variant
   @striped_variant_config %{
-    "ghost" => "[&_tbody_tr:nth-child(even)]:bg-surface-1/20 dark:[&_tbody_tr:nth-child(even)]:bg-dark-surface-1/20",
-    "outline" => "[&_tbody_tr:nth-child(even)]:bg-surface-1/30 dark:[&_tbody_tr:nth-child(even)]:bg-dark-surface-1/30",
-    "solid" => "[&_tbody_tr:nth-child(even)]:bg-surface-1/50 dark:[&_tbody_tr:nth-child(even)]:bg-dark-surface-1/50"
+    "ghost" => "[&_tbody_tr:nth-child(even)]:bg-surface-1/20",
+    "outline" => "[&_tbody_tr:nth-child(even)]:bg-surface-1/30",
+    "solid" => "[&_tbody_tr:nth-child(even)]:bg-surface-1/50"
   }
 
   # Row base classes
   @row_base_classes [
-    "transition-colors duration-150",
-    "border-b border-border/50 dark:border-dark-border/50 last:border-b-0"
+    "transition-colors duration-quick",
+    "border-b border-border/50 last:border-b-0"
   ]
 
   # ============================================================================
@@ -394,7 +393,7 @@ defmodule Pulsar.Components.Table do
               {render_slot(@empty)}
             </td>
             <td :if={@empty == []} colspan={length(@col) + if(@action != [], do: 1, else: 0)} class="text-center py-12">
-              <div class="text-muted-foreground dark:text-dark-muted-foreground">
+              <div class="text-muted-foreground">
                 <svg class="mx-auto h-12 w-12 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path
                     stroke-linecap="round"
@@ -436,10 +435,10 @@ defmodule Pulsar.Components.Table do
         <tbody :if={@loading} class={@tbody_classes}>
           <tr :for={_ <- 1..5} class={@row_classes}>
             <td :for={_col <- @col} class={build_data_cell_classes(@size, "left", "")}>
-              <div class="animate-pulse bg-surface-1 dark:bg-dark-surface-1 h-4 rounded"></div>
+              <div class="animate-pulse bg-surface-1 h-4 rounded"></div>
             </td>
             <td :if={@action != []} class={build_data_cell_classes(@size, "right", "w-0")}>
-              <div class="animate-pulse bg-surface-1 dark:bg-dark-surface-1 h-6 w-16 rounded"></div>
+              <div class="animate-pulse bg-surface-1 h-6 w-16 rounded"></div>
             </td>
           </tr>
         </tbody>
@@ -449,7 +448,7 @@ defmodule Pulsar.Components.Table do
         {render_slot(@empty)}
       </div>
       <div :if={!@loading && !@is_stream && @rows == [] && @empty == []} class="text-center py-12">
-        <div class="text-muted-foreground dark:text-dark-muted-foreground">
+        <div class="text-muted-foreground">
           <svg class="mx-auto h-12 w-12 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path
               stroke-linecap="round"
@@ -528,7 +527,7 @@ defmodule Pulsar.Components.Table do
     [
       @container_base_classes,
       @container_variant_config[assigns.variant],
-      assigns.sticky_header && "[&_thead_th]:sticky [&_thead_th]:top-0 [&_thead_th]:z-10",
+      assigns.sticky_header && "[&_thead_th]:sticky [&_thead_th]:top-0 [&_thead_th]:z-docked",
       assigns.striped && @striped_variant_config[assigns.variant],
       assigns.class
     ]
@@ -551,7 +550,7 @@ defmodule Pulsar.Components.Table do
   # Build tbody classes
   defp build_tbody_classes(_assigns) do
     merge([
-      "bg-background dark:bg-dark-background"
+      "bg-background"
     ])
   end
 
@@ -562,8 +561,8 @@ defmodule Pulsar.Components.Table do
       assigns.row_click &&
         [
           "cursor-pointer",
-          "hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover",
-          "focus:outline-none focus:ring-2 focus:ring-primary/20 dark:focus:ring-dark-primary/20"
+          "hover:bg-surface-1-hover",
+          "focus:outline-none focus:ring-2 focus:ring-primary/20"
         ]
     ]
     |> Enum.filter(& &1)

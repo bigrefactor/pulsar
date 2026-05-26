@@ -34,12 +34,9 @@
 }
 
 /* PSB stamps the selected theme class (e.g. `theme-dark`) onto the same
- * sandbox container that already wears .pulsar-sandbox. When the user
- * picks dark from the chrome theme dropdown, flip the box's surface +
- * text to the dark tokens. Component utilities inside the box still
- * flip via @custom-variant dark, which already matches .theme-dark.
+ * sandbox container that already wears .pulsar-sandbox. The .theme-dark
+ * selector is matched in themes/dark.css, which overrides the semantic
+ * color variables — so the `.pulsar-sandbox` rule above (which reads
+ * those variables via var()) automatically picks up the dark values
+ * when the class is applied. No theme-specific sandbox rule needed.
  */
-.theme-dark.pulsar-sandbox {
-  background-color: var(--color-dark-surface-0);
-  color: var(--color-dark-foreground);
-}

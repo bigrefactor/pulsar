@@ -146,106 +146,87 @@ defmodule Pulsar.Components.Input do
 
   # Base input container classes
   @base_input_classes [
-    "flex group overflow-hidden transition-all duration-200 ease-in-out",
+    "flex group overflow-hidden transition-all duration-normal ease-standard",
     "focus-within:ring-2 focus-within:ring-offset-2"
   ]
 
   # Variant base configuration
   @variant_config %{
-    "ghost" => "rounded-lg",
-    "outline" => "border-2 rounded-lg",
-    "solid" => "rounded-lg"
+    "ghost" => "rounded-box",
+    "outline" => "border-2 rounded-box",
+    "solid" => "rounded-box"
   }
 
   # Color configuration organized by variant and color
   # Structure: variant -> color -> classes
   @color_config %{
     "ghost" => %{
-      "danger" =>
-        "bg-transparent text-danger dark:text-dark-danger placeholder:text-danger/70 dark:placeholder:text-dark-danger/70 focus-within:ring-danger/60 hover:bg-danger/5 dark:hover:bg-dark-danger/10",
-      "info" =>
-        "bg-transparent text-info dark:text-dark-info placeholder:text-info/70 dark:placeholder:text-dark-info/70 focus-within:ring-info/60 hover:bg-info/5 dark:hover:bg-dark-info/10",
-      "neutral" =>
-        "bg-transparent text-foreground dark:text-dark-foreground focus-within:ring-ring dark:focus-within:ring-dark-ring hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover",
+      "danger" => "bg-transparent text-danger placeholder:text-danger/70 focus-within:ring-danger/60 hover:bg-danger/5",
+      "info" => "bg-transparent text-info placeholder:text-info/70 focus-within:ring-info/60 hover:bg-info/5",
+      "neutral" => "bg-transparent text-foreground focus-within:ring-ring hover:bg-surface-1-hover",
       "primary" =>
-        "bg-transparent text-primary dark:text-dark-primary placeholder:text-primary/70 dark:placeholder:text-dark-primary/70 focus-within:ring-primary/60 hover:bg-primary/5 dark:hover:bg-dark-primary/10",
+        "bg-transparent text-primary placeholder:text-primary/70 focus-within:ring-primary/60 hover:bg-primary/5",
       "secondary" =>
-        "bg-transparent text-secondary dark:text-dark-secondary placeholder:text-secondary/70 dark:placeholder:text-dark-secondary/70 focus-within:ring-secondary/60 hover:bg-secondary/5 dark:hover:bg-dark-secondary/10",
+        "bg-transparent text-secondary placeholder:text-secondary/70 focus-within:ring-secondary/60 hover:bg-secondary/5",
       "success" =>
-        "bg-transparent text-success dark:text-dark-success placeholder:text-success/70 dark:placeholder:text-dark-success/70 focus-within:ring-success/60 hover:bg-success/5 dark:hover:bg-dark-success/10",
+        "bg-transparent text-success placeholder:text-success/70 focus-within:ring-success/60 hover:bg-success/5",
       "warning" =>
-        "bg-transparent text-warning dark:text-dark-warning placeholder:text-warning/70 dark:placeholder:text-dark-warning/70 focus-within:ring-warning/60 hover:bg-warning/5 dark:hover:bg-dark-warning/10"
+        "bg-transparent text-warning placeholder:text-warning/70 focus-within:ring-warning/60 hover:bg-warning/5"
     },
     "outline" => %{
       "danger" =>
-        "border-danger/60 dark:border-dark-danger/60 bg-background dark:bg-dark-background text-danger dark:text-dark-danger placeholder:text-danger/70 dark:placeholder:text-dark-danger/70 focus-within:ring-danger/60 hover:border-danger dark:hover:border-dark-danger",
+        "border-danger/60 bg-background text-danger placeholder:text-danger/70 focus-within:ring-danger/60 hover:border-danger",
       "info" =>
-        "border-info/60 dark:border-dark-info/60 bg-background dark:bg-dark-background text-info dark:text-dark-info placeholder:text-info/70 dark:placeholder:text-dark-info/70 focus-within:ring-info/60 hover:border-info dark:hover:border-dark-info",
-      "neutral" =>
-        "border-border dark:border-dark-border bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground focus-within:ring-ring dark:focus-within:ring-dark-ring hover:border-primary/50 dark:hover:border-dark-primary/50",
+        "border-info/60 bg-background text-info placeholder:text-info/70 focus-within:ring-info/60 hover:border-info",
+      "neutral" => "border-border bg-background text-foreground focus-within:ring-ring hover:border-primary/50",
       "primary" =>
-        "border-primary/60 dark:border-dark-primary/60 bg-background dark:bg-dark-background text-primary dark:text-dark-primary placeholder:text-primary/70 dark:placeholder:text-dark-primary/70 focus-within:ring-primary/60 hover:border-primary dark:hover:border-dark-primary",
+        "border-primary/60 bg-background text-primary placeholder:text-primary/70 focus-within:ring-primary/60 hover:border-primary",
       "secondary" =>
-        "border-secondary/60 dark:border-dark-secondary/60 bg-background dark:bg-dark-background text-secondary dark:text-dark-secondary placeholder:text-secondary/70 dark:placeholder:text-dark-secondary/70 focus-within:ring-secondary/60 hover:border-secondary dark:hover:border-dark-secondary",
+        "border-secondary/60 bg-background text-secondary placeholder:text-secondary/70 focus-within:ring-secondary/60 hover:border-secondary",
       "success" =>
-        "border-success/60 dark:border-dark-success/60 bg-background dark:bg-dark-background text-success dark:text-dark-success placeholder:text-success/70 dark:placeholder:text-dark-success/70 focus-within:ring-success/60 hover:border-success dark:hover:border-dark-success",
+        "border-success/60 bg-background text-success placeholder:text-success/70 focus-within:ring-success/60 hover:border-success",
       "warning" =>
-        "border-warning/60 dark:border-dark-warning/60 bg-background dark:bg-dark-background text-warning dark:text-dark-warning placeholder:text-warning/70 dark:placeholder:text-dark-warning/70 focus-within:ring-warning/60 hover:border-warning dark:hover:border-dark-warning"
+        "border-warning/60 bg-background text-warning placeholder:text-warning/70 focus-within:ring-warning/60 hover:border-warning"
     },
     "solid" => %{
-      "danger" =>
-        "bg-danger/10 dark:bg-dark-danger/20 text-danger dark:text-dark-danger placeholder:text-danger/70 dark:placeholder:text-dark-danger/70 focus-within:ring-danger/60 hover:bg-danger/20 dark:hover:bg-dark-danger/30",
-      "info" =>
-        "bg-info/10 dark:bg-dark-info/20 text-info dark:text-dark-info placeholder:text-info/70 dark:placeholder:text-dark-info/70 focus-within:ring-info/60 hover:bg-info/20 dark:hover:bg-dark-info/30",
+      "danger" => "bg-danger/10 text-danger placeholder:text-danger/70 focus-within:ring-danger/60 hover:bg-danger/20",
+      "info" => "bg-info/10 text-info placeholder:text-info/70 focus-within:ring-info/60 hover:bg-info/20",
       "neutral" =>
-        "bg-neutral/10 dark:bg-dark-neutral/20 text-neutral dark:text-dark-neutral placeholder:text-neutral/70 dark:placeholder:text-dark-neutral/70 focus-within:ring-neutral/60 hover:bg-neutral/20 dark:hover:bg-dark-neutral/30",
+        "bg-neutral/10 text-neutral placeholder:text-neutral/70 focus-within:ring-neutral/60 hover:bg-neutral/20",
       "primary" =>
-        "bg-primary/10 dark:bg-dark-primary/20 text-primary dark:text-dark-primary placeholder:text-primary/70 dark:placeholder:text-dark-primary/70 focus-within:ring-primary/60 hover:bg-primary/20 dark:hover:bg-dark-primary/30",
+        "bg-primary/10 text-primary placeholder:text-primary/70 focus-within:ring-primary/60 hover:bg-primary/20",
       "secondary" =>
-        "bg-secondary/10 dark:bg-dark-secondary/20 text-secondary dark:text-dark-secondary placeholder:text-secondary/70 dark:placeholder:text-dark-secondary/70 focus-within:ring-secondary/60 hover:bg-secondary/20 dark:hover:bg-dark-secondary/30",
+        "bg-secondary/10 text-secondary placeholder:text-secondary/70 focus-within:ring-secondary/60 hover:bg-secondary/20",
       "success" =>
-        "bg-success/10 dark:bg-dark-success/20 text-success dark:text-dark-success placeholder:text-success/70 dark:placeholder:text-dark-success/70 focus-within:ring-success/60 hover:bg-success/20 dark:hover:bg-dark-success/30",
+        "bg-success/10 text-success placeholder:text-success/70 focus-within:ring-success/60 hover:bg-success/20",
       "warning" =>
-        "bg-warning/10 dark:bg-dark-warning/20 text-warning dark:text-dark-warning placeholder:text-warning/70 dark:placeholder:text-dark-warning/70 focus-within:ring-warning/60 hover:bg-warning/20 dark:hover:bg-dark-warning/30"
+        "bg-warning/10 text-warning placeholder:text-warning/70 focus-within:ring-warning/60 hover:bg-warning/20"
     }
   }
 
   # Decorator color configuration
   @decorator_config %{
     "outline" => %{
-      "danger" =>
-        "bg-danger/60 dark:bg-dark-danger/60 text-danger-foreground dark:text-dark-danger-foreground border-danger/60 dark:border-dark-danger/60",
-      "info" =>
-        "bg-info/60 dark:bg-dark-info/60 text-info-foreground dark:text-dark-info-foreground border-info/60 dark:border-dark-info/60",
-      "neutral" =>
-        "bg-border dark:bg-dark-border text-neutral-700 dark:text-neutral-300 border-border dark:border-dark-border",
-      "primary" =>
-        "bg-primary/60 dark:bg-dark-primary/60 text-primary-foreground dark:text-dark-primary-foreground border-primary/60 dark:border-dark-primary/60",
-      "secondary" =>
-        "bg-secondary/60 dark:bg-dark-secondary/60 text-secondary-foreground dark:text-dark-secondary-foreground border-secondary/60 dark:border-dark-secondary/60",
-      "success" =>
-        "bg-success/60 dark:bg-dark-success/60 text-success-foreground dark:text-dark-success-foreground border-success/60 dark:border-dark-success/60",
-      "warning" =>
-        "bg-warning/60 dark:bg-dark-warning/60 text-warning-foreground dark:text-dark-warning-foreground border-warning/60 dark:border-dark-warning/60"
+      "danger" => "bg-danger/60 text-danger-foreground border-danger/60",
+      "info" => "bg-info/60 text-info-foreground border-info/60",
+      "neutral" => "bg-border text-neutral-700 border-border",
+      "primary" => "bg-primary/60 text-primary-foreground border-primary/60",
+      "secondary" => "bg-secondary/60 text-secondary-foreground border-secondary/60",
+      "success" => "bg-success/60 text-success-foreground border-success/60",
+      "warning" => "bg-warning/60 text-warning-foreground border-warning/60"
     },
     "solid" => %{
-      "danger" =>
-        "bg-danger/20 dark:bg-dark-danger/30 text-danger dark:text-dark-danger border-danger/30 dark:border-dark-danger/40",
-      "info" => "bg-info/20 dark:bg-dark-info/30 text-info dark:text-dark-info border-info/30 dark:border-dark-info/40",
-      "neutral" =>
-        "bg-neutral/20 dark:bg-dark-neutral/30 text-neutral dark:text-dark-neutral border-neutral/30 dark:border-dark-neutral/40",
-      "primary" =>
-        "bg-primary/20 dark:bg-dark-primary/30 text-primary dark:text-dark-primary border-primary/30 dark:border-dark-primary/40",
-      "secondary" =>
-        "bg-secondary/20 dark:bg-dark-secondary/30 text-secondary dark:text-dark-secondary border-secondary/30 dark:border-dark-secondary/40",
-      "success" =>
-        "bg-success/20 dark:bg-dark-success/30 text-success dark:text-dark-success border-success/30 dark:border-dark-success/40",
-      "warning" =>
-        "bg-warning/20 dark:bg-dark-warning/30 text-warning dark:text-dark-warning border-warning/30 dark:border-dark-warning/40"
+      "danger" => "bg-danger/20 text-danger border-danger/30",
+      "info" => "bg-info/20 text-info border-info/30",
+      "neutral" => "bg-neutral/20 text-neutral border-neutral/30",
+      "primary" => "bg-primary/20 text-primary border-primary/30",
+      "secondary" => "bg-secondary/20 text-secondary border-secondary/30",
+      "success" => "bg-success/20 text-success border-success/30",
+      "warning" => "bg-warning/20 text-warning border-warning/30"
     },
     "ghost" => %{
       # Ghost decorators are minimal and don't vary by color
-      "all" => "text-muted-foreground dark:text-dark-muted-foreground"
+      "all" => "text-muted-foreground"
     }
   }
 
@@ -449,7 +430,7 @@ defmodule Pulsar.Components.Input do
       <input
         class={
           [
-            "w-full outline-0 transition-all duration-200 ease-in-out",
+            "w-full outline-0 transition-all duration-normal ease-standard",
             get_input_padding_classes(@size, @variant, @has_start_decorator, @has_end_decorator),
             (@disabled && "cursor-not-allowed") || (@readonly && "cursor-default") || nil
           ]
@@ -560,7 +541,7 @@ defmodule Pulsar.Components.Input do
 
   defp get_state_classes(disabled, readonly) do
     [
-      disabled && "cursor-not-allowed opacity-50 pointer-events-none",
+      disabled && "cursor-not-allowed opacity-disabled pointer-events-none",
       readonly && "cursor-default"
     ]
     |> Enum.filter(& &1)

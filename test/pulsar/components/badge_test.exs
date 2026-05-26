@@ -30,7 +30,7 @@ defmodule Pulsar.Components.BadgeTest do
       assigns = %{}
       html = rendered_to_string(~H[<Badge.badge variant="solid">Solid</Badge.badge>])
 
-      assert html =~ ~s(rounded-md)
+      assert html =~ ~s(rounded-field)
       assert html =~ ~s(bg-neutral)
     end
 
@@ -47,7 +47,7 @@ defmodule Pulsar.Components.BadgeTest do
       assigns = %{}
       html = rendered_to_string(~H[<Badge.badge variant="ghost">Ghost</Badge.badge>])
 
-      assert html =~ ~s(rounded-md)
+      assert html =~ ~s(rounded-field)
       assert html =~ ~s(hover:bg-neutral/10)
     end
   end
@@ -58,7 +58,6 @@ defmodule Pulsar.Components.BadgeTest do
       html = rendered_to_string(~H[<Badge.badge color="primary">Primary</Badge.badge>])
 
       assert html =~ ~s(bg-primary text-primary-foreground)
-      assert html =~ ~s(dark:bg-dark-primary dark:text-dark-primary-foreground)
     end
 
     test "renders danger color" do
@@ -66,7 +65,6 @@ defmodule Pulsar.Components.BadgeTest do
       html = rendered_to_string(~H[<Badge.badge color="danger">Error</Badge.badge>])
 
       assert html =~ ~s(bg-danger text-danger-foreground)
-      assert html =~ ~s(dark:bg-dark-danger dark:text-dark-danger-foreground)
     end
 
     test "renders success color" do
@@ -74,7 +72,6 @@ defmodule Pulsar.Components.BadgeTest do
       html = rendered_to_string(~H[<Badge.badge color="success">Success</Badge.badge>])
 
       assert html =~ ~s(bg-success text-success-foreground)
-      assert html =~ ~s(dark:bg-dark-success dark:text-dark-success-foreground)
     end
   end
 
@@ -202,17 +199,17 @@ defmodule Pulsar.Components.BadgeTest do
       assigns = %{}
       html = rendered_to_string(~H[<Badge.badge variant="outline" color="primary">Outlined</Badge.badge>])
 
-      assert html =~ ~s(border-primary dark:border-dark-primary)
-      assert html =~ ~s(text-primary dark:text-dark-primary)
-      assert html =~ ~s(bg-background dark:bg-dark-background)
+      assert html =~ ~s(border-primary)
+      assert html =~ ~s(text-primary)
+      assert html =~ ~s(bg-background)
     end
 
     test "ghost variant with danger color" do
       assigns = %{}
       html = rendered_to_string(~H[<Badge.badge variant="ghost" color="danger">Ghost Danger</Badge.badge>])
 
-      assert html =~ ~s(text-danger dark:text-dark-danger)
-      assert html =~ ~s(hover:bg-danger/10 dark:hover:bg-dark-danger/10)
+      assert html =~ ~s(text-danger)
+      assert html =~ ~s(hover:bg-danger/10)
     end
   end
 end

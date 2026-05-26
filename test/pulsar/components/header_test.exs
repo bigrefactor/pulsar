@@ -40,7 +40,7 @@ defmodule Pulsar.Components.HeaderTest do
       assert html =~ "This is a subtitle"
       # Default subtitle size for md header
       assert html =~ "text-sm"
-      assert html =~ "text-neutral-600"
+      assert html =~ "text-muted-foreground"
     end
 
     test "renders with actions slot" do
@@ -105,7 +105,7 @@ defmodule Pulsar.Components.HeaderTest do
       assert html =~ "bg-neutral-100"
       assert html =~ "text-neutral-900"
       assert html =~ "p-6"
-      assert html =~ "rounded-lg"
+      assert html =~ "rounded-box"
     end
   end
 
@@ -353,7 +353,7 @@ defmodule Pulsar.Components.HeaderTest do
 
       assert html =~ "sticky"
       assert html =~ "top-0"
-      assert html =~ "z-10"
+      assert html =~ "z-docked"
       assert html =~ "bg-background"
     end
 
@@ -366,7 +366,7 @@ defmodule Pulsar.Components.HeaderTest do
         """)
 
       assert html =~ ~s(<hr)
-      assert html =~ "border-neutral-200"
+      assert html =~ "border-border"
     end
 
     test "accepts custom classes" do
@@ -418,7 +418,7 @@ defmodule Pulsar.Components.HeaderTest do
       # Should have sticky positioning
       assert html =~ "sticky"
       assert html =~ "top-0"
-      assert html =~ "z-10"
+      assert html =~ "z-docked"
       # Variant background should win over sticky background due to Twm
       assert html =~ "bg-primary-100"
       refute html =~ "bg-background"
@@ -524,36 +524,6 @@ defmodule Pulsar.Components.HeaderTest do
 
       # Chevron icons should be decorative
       assert html =~ ~s(aria-hidden="true")
-    end
-  end
-
-  describe "header/1 dark mode" do
-    test "includes dark mode classes" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <Header.header variant="solid" color="primary">
-          Dark Mode Header
-          <:subtitle>With subtitle</:subtitle>
-        </Header.header>
-        """)
-
-      assert html =~ "dark:bg-dark-primary-800"
-      assert html =~ "dark:text-dark-primary-100"
-      # Subtitle color
-      assert html =~ "dark:text-dark-neutral-400"
-    end
-
-    test "sticky header includes dark background" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <Header.header sticky={true}>Sticky Dark Mode</Header.header>
-        """)
-
-      assert html =~ "dark:bg-dark-background"
     end
   end
 

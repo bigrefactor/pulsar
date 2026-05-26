@@ -16,36 +16,47 @@ defmodule Mix.Tasks.Pulsar.Gen.Theme.Docs do
     """
     #{short_doc()}
 
-    This task sets up Pulsar's comprehensive theme system by generating:
+    This task sets up (or extends) Pulsar's theme system.
 
-    * `assets/css/theme.css` - Complete theme with semantic color tokens, design tokens (radius, spacing, typography), custom animations, and light/dark mode support
-    * `assets/css/app.css` - Phoenix LiveView configuration that imports the theme
-    * `assets/css/app.css.bak` - Backup of existing app.css (if it exists)
+    ## Default — generate the full theme system
 
-    The theme system provides:
+    Run without arguments to scaffold the entry CSS and a light/dark pair:
 
-    * **Semantic Colors**: Primary, secondary, success, warning, danger, info, and neutral colors
-    * **Light/Dark Mode**: Complete token sets for both modes using data-theme attribute strategy
-    * **Design Tokens**: Border radius, spacing, typography, shadows, and z-index layers
-    * **Custom Animations**: Fade-in, slide-in, scale-in, and subtle pulse animations
-    * **Accessibility**: Respects prefers-reduced-motion preferences
+    * `assets/css/theme.css` — entry that imports Tailwind, declares palette
+      tokens, and `@import`s the per-theme files under `themes/`
+    * `assets/css/themes/light.css` — the default theme; `@theme` block with
+      the semantic tokens that Tailwind uses to generate utilities
+    * `assets/css/themes/dark.css` — `[data-theme="dark"]` override block
+    * `assets/css/app.css` — Phoenix LiveView configuration importing the theme
+    * `*.bak.<timestamp>` backups of any files that already existed
+
+    The semantic tokens swap at runtime via `[data-theme="<name>"]` attribute
+    overrides — components reference tokens like `bg-primary` directly, no
+    `dark:` variant required.
+
+    ## Scaffold a new theme
+
+    Pass a theme name to scaffold a new `[data-theme="<name>"]` override file
+    and idempotently register it with the entry:
+
+    ```sh
+    mix pulsar.gen.theme cupcake
+    ```
+
+    This generates `assets/css/themes/cupcake.css` (refusing to overwrite an
+    existing one) and appends `@import "./themes/cupcake.css";` to
+    `assets/css/theme.css` — but only if the line isn't already there, so the
+    task is safe to re-run.
+
+    Activate the new theme by setting `data-theme="cupcake"` on any ancestor
+    element. Edit the generated file to override semantic tokens (start by
+    copying lines from `themes/dark.css`).
 
     ## Example
 
     ```sh
     #{example()}
     ```
-
-    This will generate the theme files in your Phoenix project's assets/css directory.
-
-    ## Theme Customization
-
-    After generation, you can customize the theme by editing `assets/css/theme.css`:
-
-    * Change color mappings (e.g., map --color-primary to indigo instead of blue)
-    * Adjust design tokens (border radius, spacing, typography)
-    * Add custom animations
-    * Modify light/dark mode color values
     """
   end
 end
@@ -59,60 +70,148 @@ if Code.ensure_loaded?(Igniter) do
     alias Igniter.Libs.Phoenix
     alias Igniter.Mix.Task.Info
 
+    @theme_files [
+      {"theme.css.eex", "assets/css/theme.css"},
+      {"themes/light.css.eex", "assets/css/themes/light.css"},
+      {"themes/dark.css.eex", "assets/css/themes/dark.css"}
+    ]
+
     @impl Igniter.Mix.Task
     def info(_argv, _composing_task) do
       %Info{
-        # Groups allow for overlapping arguments for tasks by the same author
-        # See the generators guide for more.
         group: :pulsar,
-        # *other* dependencies to add
-        # i.e `{:foo, "~> 2.0"}`
         adds_deps: [],
-        # *other* dependencies to add and call their associated installers, if they exist
-        # i.e `{:foo, "~> 2.0"}`
         installs: [],
-        # An example invocation
         example: __MODULE__.Docs.example(),
-        # a list of positional arguments, i.e `[:file]`
-        positional: [],
-        # Other tasks your task composes using `Igniter.compose_task`, passing in the CLI argv
-        # This ensures your option schema includes options from nested tasks
+        positional: [{:name, optional: true}],
         composes: [],
-        # `OptionParser` schema
         schema: [],
-        # Default values for the options in the `schema`
         defaults: [],
-        # CLI aliases
         aliases: [],
-        # A list of options in the schema that are required
         required: []
       }
     end
 
     @impl Igniter.Mix.Task
     def igniter(igniter) do
-      theme_css_template =
-        :pulsar
-        |> :code.priv_dir()
-        |> Path.join("templates")
-        |> Path.join("theme.css.eex")
+      case Map.get(igniter.args.positional, :name) do
+        nil -> install_theme_system(igniter)
+        name when is_binary(name) -> scaffold_theme(igniter, name)
+      end
+    end
 
-      app_css_template =
-        :pulsar
-        |> :code.priv_dir()
-        |> Path.join("templates")
-        |> Path.join("app.css.eex")
-
+    defp install_theme_system(igniter) do
       web_dir = Phoenix.web_module(igniter) |> Macro.underscore()
 
       igniter
-      |> backup_existing_file("assets/css/theme.css")
-      |> Igniter.copy_template(theme_css_template, "assets/css/theme.css",
-        web_directory: web_dir,
+      |> install_theme_files(web_dir)
+      |> backup_existing_file("assets/css/app.css")
+      |> Igniter.copy_template(
+        template_path("app.css.eex"),
+        "assets/css/app.css",
+        [web_directory: web_dir],
         on_exists: :overwrite
       )
-      |> backup_existing_file("assets/css/app.css")
-      |> Igniter.copy_template(app_css_template, "assets/css/app.css", [web_directory: web_dir], on_exists: :overwrite)
+    end
+
+    defp install_theme_files(igniter, web_dir) do
+      Enum.reduce(@theme_files, igniter, fn {template_rel, dest}, acc ->
+        acc
+        |> backup_existing_file(dest)
+        |> Igniter.copy_template(
+          template_path(template_rel),
+          dest,
+          [web_directory: web_dir],
+          on_exists: :overwrite
+        )
+      end)
+    end
+
+    defp scaffold_theme(igniter, name) do
+      validate_theme_name!(name)
+
+      dest = "assets/css/themes/#{name}.css"
+      import_line = ~s(@import "./themes/#{name}.css";)
+
+      igniter
+      |> Igniter.copy_template(template_path("themes/scaffold.css.eex"), dest, [theme_name: name], on_exists: :skip)
+      |> add_theme_import("assets/css/theme.css", import_line, dest)
+    end
+
+    defp add_theme_import(igniter, theme_css_path, import_line, dest) do
+      igniter = Igniter.include_existing_file(igniter, theme_css_path)
+
+      case Map.fetch(igniter.rewrite.sources, theme_css_path) do
+        {:ok, source} ->
+          content = Rewrite.Source.get(source, :content)
+
+          if String.contains?(content, import_line) do
+            igniter
+          else
+            new_content = insert_import(content, import_line)
+
+            Igniter.update_file(igniter, theme_css_path, fn source ->
+              Rewrite.Source.update(source, :content, new_content)
+            end)
+          end
+
+        :error ->
+          Igniter.add_warning(
+            igniter,
+            "assets/css/theme.css not found — generated #{dest} but did not register it. Run `mix pulsar.gen.theme` first, then add the import manually."
+          )
+      end
+    end
+
+    # Insert the new import line after the last existing `@import "./themes/..."`
+    # line, falling back to after `@import "tailwindcss";` if no themes are
+    # imported yet, and finally to the top of the file.
+    defp insert_import(content, import_line) do
+      lines = String.split(content, "\n")
+
+      insertion_index =
+        case find_last_index(lines, &String.match?(&1, ~r{^@import "\./themes/.*";})) do
+          nil ->
+            case find_last_index(lines, &String.match?(&1, ~r{^@import "tailwindcss";})) do
+              nil -> 0
+              i -> i + 1
+            end
+
+          i ->
+            i + 1
+        end
+
+      lines
+      |> List.insert_at(insertion_index, import_line)
+      |> Enum.join("\n")
+    end
+
+    defp find_last_index(list, predicate) do
+      list
+      |> Enum.with_index()
+      |> Enum.filter(fn {item, _i} -> predicate.(item) end)
+      |> List.last()
+      |> case do
+        nil -> nil
+        {_item, i} -> i
+      end
+    end
+
+    defp validate_theme_name!(name) do
+      if String.match?(name, ~r/^[a-z][a-z0-9_-]*$/) do
+        :ok
+      else
+        Mix.raise(
+          "Invalid theme name: #{inspect(name)}. Use lowercase letters, digits, hyphens, and underscores; must start with a letter."
+        )
+      end
+    end
+
+    defp template_path(relative) do
+      :pulsar
+      |> :code.priv_dir()
+      |> Path.join("templates")
+      |> Path.join(relative)
     end
 
     defp backup_existing_file(igniter, path) do

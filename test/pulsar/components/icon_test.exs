@@ -33,7 +33,7 @@ defmodule Pulsar.Components.IconTest do
     test "renders different colors" do
       assigns = %{}
       html = rendered_to_string(~H[<Icon.icon name="hero-check" color="primary" />])
-      assert html =~ ~s(text-primary dark:text-dark-primary)
+      assert html =~ ~s(text-primary)
 
       html = rendered_to_string(~H[<Icon.icon name="hero-check" color="current" />])
       assert html =~ ~s(text-current)
@@ -110,25 +110,25 @@ defmodule Pulsar.Components.IconTest do
       assert html =~ ~s(text-current)
 
       html = rendered_to_string(~H[<Icon.icon name="hero-check" color="neutral" />])
-      assert html =~ ~s(text-neutral dark:text-dark-neutral)
+      assert html =~ ~s(text-neutral)
 
       html = rendered_to_string(~H[<Icon.icon name="hero-check" color="primary" />])
-      assert html =~ ~s(text-primary dark:text-dark-primary)
+      assert html =~ ~s(text-primary)
 
       html = rendered_to_string(~H[<Icon.icon name="hero-check" color="secondary" />])
-      assert html =~ ~s(text-secondary dark:text-dark-secondary)
+      assert html =~ ~s(text-secondary)
 
       html = rendered_to_string(~H[<Icon.icon name="hero-check" color="success" />])
-      assert html =~ ~s(text-success dark:text-dark-success)
+      assert html =~ ~s(text-success)
 
       html = rendered_to_string(~H[<Icon.icon name="hero-check" color="danger" />])
-      assert html =~ ~s(text-danger dark:text-dark-danger)
+      assert html =~ ~s(text-danger)
 
       html = rendered_to_string(~H[<Icon.icon name="hero-check" color="warning" />])
-      assert html =~ ~s(text-warning dark:text-dark-warning)
+      assert html =~ ~s(text-warning)
 
       html = rendered_to_string(~H[<Icon.icon name="hero-check" color="info" />])
-      assert html =~ ~s(text-info dark:text-dark-info)
+      assert html =~ ~s(text-info)
     end
   end
 

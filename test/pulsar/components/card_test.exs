@@ -14,8 +14,8 @@ defmodule Pulsar.Components.CardTest do
       assert html =~ ~s(<div)
       assert html =~ "Card content"
       assert html =~ ~s(bg-surface-1)
-      assert html =~ ~s(shadow-md)
-      assert html =~ ~s(rounded-lg)
+      assert html =~ ~s(shadow-dropdown)
+      assert html =~ ~s(rounded-box)
     end
 
     test "renders card content correctly" do
@@ -52,8 +52,8 @@ defmodule Pulsar.Components.CardTest do
       assigns = %{}
       html = rendered_to_string(~H[<Card.card variant="elevated">Elevated</Card.card>])
 
-      assert html =~ ~s(shadow-md)
-      assert html =~ ~s(bg-surface-1 dark:bg-dark-surface-1)
+      assert html =~ ~s(shadow-dropdown)
+      assert html =~ ~s(bg-surface-1)
     end
 
     test "renders outline variant" do
@@ -61,8 +61,8 @@ defmodule Pulsar.Components.CardTest do
       html = rendered_to_string(~H[<Card.card variant="outline">Outline</Card.card>])
 
       assert html =~ ~s(border-2)
-      assert html =~ ~s(border-border dark:border-dark-border)
-      assert html =~ ~s(bg-surface-1 dark:bg-dark-surface-1)
+      assert html =~ ~s(border-border)
+      assert html =~ ~s(bg-surface-1)
     end
 
     test "renders ghost variant" do
@@ -77,7 +77,7 @@ defmodule Pulsar.Components.CardTest do
       assigns = %{}
       html = rendered_to_string(~H[<Card.card variant="solid">Solid</Card.card>])
 
-      assert html =~ ~s(bg-surface-1 dark:bg-dark-surface-1)
+      assert html =~ ~s(bg-surface-1)
       assert html =~ ~s(border-2)
     end
   end
@@ -87,49 +87,49 @@ defmodule Pulsar.Components.CardTest do
       assigns = %{}
       html = rendered_to_string(~H[<Card.card color="neutral">Neutral</Card.card>])
 
-      assert html =~ ~s(bg-surface-1 dark:bg-dark-surface-1)
+      assert html =~ ~s(bg-surface-1)
     end
 
     test "renders primary color" do
       assigns = %{}
       html = rendered_to_string(~H[<Card.card variant="outline" color="primary">Primary</Card.card>])
 
-      assert html =~ ~s(border-primary dark:border-dark-primary)
+      assert html =~ ~s(border-primary)
     end
 
     test "renders danger color" do
       assigns = %{}
       html = rendered_to_string(~H[<Card.card variant="outline" color="danger">Danger</Card.card>])
 
-      assert html =~ ~s(border-danger dark:border-dark-danger)
+      assert html =~ ~s(border-danger)
     end
 
     test "renders success color" do
       assigns = %{}
       html = rendered_to_string(~H[<Card.card variant="solid" color="success">Success</Card.card>])
 
-      assert html =~ ~s(bg-success/10 dark:bg-dark-success/10)
+      assert html =~ ~s(bg-success/10)
     end
 
     test "renders warning color" do
       assigns = %{}
       html = rendered_to_string(~H[<Card.card variant="solid" color="warning">Warning</Card.card>])
 
-      assert html =~ ~s(bg-warning/10 dark:bg-dark-warning/10)
+      assert html =~ ~s(bg-warning/10)
     end
 
     test "renders info color" do
       assigns = %{}
       html = rendered_to_string(~H[<Card.card variant="outline" color="info">Info</Card.card>])
 
-      assert html =~ ~s(border-info dark:border-dark-info)
+      assert html =~ ~s(border-info)
     end
 
     test "renders secondary color" do
       assigns = %{}
       html = rendered_to_string(~H[<Card.card variant="outline" color="secondary">Secondary</Card.card>])
 
-      assert html =~ ~s(border-secondary dark:border-dark-secondary)
+      assert html =~ ~s(border-secondary)
     end
   end
 
@@ -139,7 +139,7 @@ defmodule Pulsar.Components.CardTest do
       html = rendered_to_string(~H[<Card.card size="xs">XS</Card.card>])
 
       assert html =~ ~s(p-3 gap-3)
-      assert html =~ ~s(rounded-md)
+      assert html =~ ~s(rounded-field)
     end
 
     test "renders sm size" do
@@ -147,7 +147,7 @@ defmodule Pulsar.Components.CardTest do
       html = rendered_to_string(~H[<Card.card size="sm">SM</Card.card>])
 
       assert html =~ ~s(p-4 gap-4)
-      assert html =~ ~s(rounded-lg)
+      assert html =~ ~s(rounded-box)
     end
 
     test "renders md size (default)" do
@@ -155,7 +155,7 @@ defmodule Pulsar.Components.CardTest do
       html = rendered_to_string(~H[<Card.card size="md">MD</Card.card>])
 
       assert html =~ ~s(p-5 gap-5)
-      assert html =~ ~s(rounded-lg)
+      assert html =~ ~s(rounded-box)
     end
 
     test "renders lg size" do
@@ -308,17 +308,17 @@ defmodule Pulsar.Components.CardTest do
       html = rendered_to_string(~H[<Card.card variant="outline" color="primary">Primary Outline</Card.card>])
 
       assert html =~ ~s(border-2)
-      assert html =~ ~s(border-primary dark:border-dark-primary)
-      assert html =~ ~s(bg-surface-1 dark:bg-dark-surface-1)
+      assert html =~ ~s(border-primary)
+      assert html =~ ~s(bg-surface-1)
     end
 
     test "solid variant with danger color" do
       assigns = %{}
       html = rendered_to_string(~H[<Card.card variant="solid" color="danger">Danger Solid</Card.card>])
 
-      assert html =~ ~s(bg-danger/10 dark:bg-dark-danger/10)
+      assert html =~ ~s(bg-danger/10)
       assert html =~ ~s(border-2)
-      assert html =~ ~s(border-danger/20 dark:border-dark-danger/20)
+      assert html =~ ~s(border-danger/20)
     end
 
     test "ghost variant with success color" do
@@ -333,8 +333,8 @@ defmodule Pulsar.Components.CardTest do
       assigns = %{}
       html = rendered_to_string(~H[<Card.card variant="elevated" color="primary">Elevated</Card.card>])
 
-      assert html =~ ~s(bg-surface-1 dark:bg-dark-surface-1)
-      assert html =~ ~s(shadow-md)
+      assert html =~ ~s(bg-surface-1)
+      assert html =~ ~s(shadow-dropdown)
     end
   end
 
@@ -499,9 +499,9 @@ defmodule Pulsar.Components.CardTest do
         assert html =~ "Content"
         # Should have appropriate classes based on size
         case size do
-          "xs" -> assert html =~ ~r/p-3|rounded-md/
-          "sm" -> assert html =~ ~r/p-4|rounded-lg/
-          "md" -> assert html =~ ~r/p-5|rounded-lg/
+          "xs" -> assert html =~ ~r/p-3|rounded-field/
+          "sm" -> assert html =~ ~r/p-4|rounded-box/
+          "md" -> assert html =~ ~r/p-5|rounded-box/
           "lg" -> assert html =~ ~r/p-6|rounded-xl/
           "xl" -> assert html =~ ~r/p-8|rounded-2xl/
         end
@@ -669,7 +669,6 @@ defmodule Pulsar.Components.CardTest do
       assert html =~ "focus-visible:outline-none"
       assert html =~ "focus-visible:ring-2"
       assert html =~ "focus-visible:ring-primary"
-      assert html =~ "dark:focus-visible:ring-dark-primary"
       assert html =~ "focus-visible:ring-offset-2"
     end
 
@@ -719,30 +718,6 @@ defmodule Pulsar.Components.CardTest do
       assert html =~ ~s(phx-hook=".PulsarCard")
       assert html =~ ~s(phx-click="select")
       assert html =~ ~s(phx-value-id="123")
-    end
-  end
-
-  describe "dark mode classes" do
-    test "elevated variant includes dark mode classes" do
-      assigns = %{}
-      html = rendered_to_string(~H[<Card.card variant="elevated">Content</Card.card>])
-
-      assert html =~ "dark:bg-dark-surface-1"
-    end
-
-    test "outline variant includes dark mode border classes" do
-      assigns = %{}
-      html = rendered_to_string(~H[<Card.card variant="outline" color="primary">Content</Card.card>])
-
-      assert html =~ "dark:border-dark-primary"
-    end
-
-    test "solid variant includes dark mode background classes" do
-      assigns = %{}
-      html = rendered_to_string(~H[<Card.card variant="solid" color="danger">Content</Card.card>])
-
-      assert html =~ "dark:bg-dark-danger/10"
-      assert html =~ "dark:border-dark-danger/20"
     end
   end
 end

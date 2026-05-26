@@ -159,7 +159,7 @@ defmodule Pulsar.Components.LabelTest do
         <Label.label for="field" required>Required</Label.label>
         """)
 
-      assert html =~ "text-danger dark:text-dark-danger"
+      assert html =~ "text-danger"
       assert html =~ ~s(aria-hidden="true")
     end
 
@@ -216,7 +216,7 @@ defmodule Pulsar.Components.LabelTest do
         """)
 
       assert html =~ "Invalid Field"
-      assert html =~ "text-danger dark:text-dark-danger"
+      assert html =~ "text-danger"
     end
 
     test "error state with required indicator" do
@@ -242,7 +242,7 @@ defmodule Pulsar.Components.LabelTest do
         <Label.label for="field">Normal Field</Label.label>
         """)
 
-      assert html =~ "text-foreground dark:text-dark-foreground"
+      assert html =~ "text-foreground"
       refute html =~ "text-danger"
     end
   end
@@ -290,41 +290,6 @@ defmodule Pulsar.Components.LabelTest do
     end
   end
 
-  describe "label/1 dark mode support" do
-    test "includes dark mode classes" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <Label.label for="field">Dark Mode</Label.label>
-        """)
-
-      assert html =~ "dark:text-dark-foreground"
-    end
-
-    test "error state includes dark mode classes" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <Label.label for="field" error>Dark Error</Label.label>
-        """)
-
-      assert html =~ "dark:text-dark-danger"
-    end
-
-    test "required indicator includes dark mode classes" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <Label.label for="field" required>Dark Required</Label.label>
-        """)
-
-      assert html =~ "dark:text-dark-danger"
-    end
-  end
-
   describe "label/1 accessibility" do
     test "includes accessibility classes and transitions" do
       assigns = %{}
@@ -335,7 +300,7 @@ defmodule Pulsar.Components.LabelTest do
         """)
 
       assert html =~ "transition-colors"
-      assert html =~ "duration-200"
+      assert html =~ "duration-normal"
     end
 
     test "uses Stellar label for accessibility features" do
