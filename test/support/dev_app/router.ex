@@ -38,6 +38,7 @@ defmodule Pulsar.DevApp.Router do
     live "/components/divider", DividerLive, :index
     live "/components/field", FieldLive, :index
     live "/components/flash", FlashLive, :index
+    live "/components/flash/trigger", FlashTriggerLive, :index
     live "/components/flash_group", FlashGroupLive, :index
     live "/components/form", FormLive, :index
     live "/components/header", HeaderLive, :index

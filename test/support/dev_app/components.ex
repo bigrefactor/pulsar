@@ -11,6 +11,7 @@ defmodule Pulsar.DevApp.Components do
     {"Divider", "/components/divider"},
     {"Field", "/components/field"},
     {"Flash", "/components/flash"},
+    {"Flash (trigger)", "/components/flash/trigger"},
     {"FlashGroup", "/components/flash_group"},
     {"Form", "/components/form"},
     {"Header", "/components/header"},
