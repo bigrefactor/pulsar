@@ -504,7 +504,7 @@ defmodule Pulsar.Components.List do
     merge([
       padding,
       text_size,
-      "text-center text-muted-foreground"
+      "flex flex-col items-center justify-center text-center text-muted-foreground"
     ])
   end
 
