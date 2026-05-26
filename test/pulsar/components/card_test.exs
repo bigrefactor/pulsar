@@ -676,8 +676,10 @@ defmodule Pulsar.Components.CardTest do
       assigns = %{}
       html = rendered_to_string(~H[<Card.card phx-click="select">Clickable</Card.card>])
 
-      # Verify phx-hook attribute is present
-      assert html =~ ~s(phx-hook=".PulsarCard")
+      # The hook name is the fully-qualified colocated-hook key
+      # (`<this module>.PulsarCard`), built from `__MODULE__` in card.ex
+      # so generator-copied components resolve to their own registration.
+      assert html =~ ~s(phx-hook="Pulsar.Components.Card.PulsarCard")
     end
 
     test "respects caller-provided phx-hook attribute" do
@@ -692,7 +694,7 @@ defmodule Pulsar.Components.CardTest do
 
       # Caller's hook takes precedence (Map.put_new behavior)
       assert html =~ ~s(phx-hook="CustomHook")
-      refute html =~ ~s(phx-hook=".PulsarCard")
+      refute html =~ ~s(phx-hook="Pulsar.Components.Card.PulsarCard")
     end
 
     test "non-interactive cards do not get keyboard hook attribute" do
@@ -715,7 +717,7 @@ defmodule Pulsar.Components.CardTest do
         """)
 
       # Hook is present and phx-value parameters are preserved
-      assert html =~ ~s(phx-hook=".PulsarCard")
+      assert html =~ ~s(phx-hook="Pulsar.Components.Card.PulsarCard")
       assert html =~ ~s(phx-click="select")
       assert html =~ ~s(phx-value-id="123")
     end
