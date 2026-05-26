@@ -51,5 +51,8 @@ defmodule Pulsar.DevApp.Router do
     live "/components/switch", SwitchLive, :index
     live "/components/table", TableLive, :index
     live "/components/textarea", TextareaLive, :index
+
+    live "/keyboard/button", Keyboard.ButtonLive, :index
+    live "/keyboard/card", Keyboard.CardLive, :index
   end
 end

@@ -28,6 +28,56 @@ defmodule Pulsar.DevApp.A11y do
   end
 
   @doc """
+  Waits for the LiveView root element to reach `phx-connected` state, which
+  signals that the LV channel has joined and any client-side hooks
+  (`Phoenix.LiveView.ColocatedHook`) have mounted.
+
+  `visit/2` only awaits the page's `load` event, not the LV channel join —
+  pressing keys before hooks mount means the keyboard listeners aren't
+  attached yet and the test sees no state change.
+  """
+  def await_live_connected(conn) do
+    PhoenixTest.Playwright.assert_has(conn, "[data-phx-main].phx-connected")
+  end
+
+  @doc """
+  Asserts that the currently focused element has the given `id`. Reads
+  `document.activeElement.id` via the page's JavaScript context.
+  """
+  def assert_focused(conn, id) when is_binary(id) do
+    PhoenixTest.Playwright.evaluate(conn, "document.activeElement && document.activeElement.id || ''", fn actual ->
+      if actual != id do
+        raise ExUnit.AssertionError,
+          message: "expected element ##{id} to be focused, was '#{actual}'"
+      end
+    end)
+  end
+
+  @doc """
+  Asserts that the currently focused element is NOT inside any ancestor
+  matching `selector`. Used to verify focus has moved out of a container
+  (e.g. tabbing out of a radio group).
+  """
+  def refute_focused_within(conn, selector) when is_binary(selector) do
+    expr = "Boolean(document.activeElement && document.activeElement.closest(#{Jason.encode!(selector)}))"
+
+    PhoenixTest.Playwright.evaluate(conn, expr, fn inside? ->
+      if inside? do
+        raise ExUnit.AssertionError, message: "focus is still inside #{selector}"
+      end
+    end)
+  end
+
+  @doc """
+  Focuses an element by id via `Element.focus()`. Useful when `press/4`'s
+  focus-then-key behavior isn't what you want — e.g. to start a test from
+  a known focus position without depending on Tab order from `body`.
+  """
+  def focus(conn, id) when is_binary(id) do
+    PhoenixTest.Playwright.evaluate(conn, "document.getElementById(#{Jason.encode!(id)}).focus()")
+  end
+
+  @doc """
   Injects axe-core into the current page, runs the audit, and asserts
   zero violations via `A11yAudit.Assertions.assert_no_violations/1`.
   """

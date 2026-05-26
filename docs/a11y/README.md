@@ -75,6 +75,27 @@ The test stays red until the violation is fixed. The CI `browser` job is
 **not** a required check while cleanup is in progress; a follow-up ticket
 flips it to required once all fixtures pass.
 
+## Keyboard tests (PUL-12)
+
+`test/integration/a11y/keyboard_test.exs` adds real-browser keyboard
+behavior coverage to the same `:integration` suite. Axe-clean catches
+static a11y problems (missing labels, contrast, ARIA shape) but does not
+exercise behavior — a button could fail to activate on Enter and axe
+would happily report it clean. PUL-12 closes that gap with ~11 tests
+across the six interactive components (Button, Card, RadioGroup, Select,
+Checkbox, Switch).
+
+The acceptance signal is concrete and reproducible: temporarily comment
+out the Space/Enter branches in `lib/pulsar/components/button.ex`'s
+`.PulsarButton` colocated hook (`_onKeydown` / `_onKeyup`), run
+`mix assets.build` to rebuild the dev_app bundle, then run
+`mix test --only integration test/integration/a11y/keyboard_test.exs` —
+the Button activation test fails with the counter stuck at 0. Revert,
+rebuild, re-run; back to green. **The asset rebuild matters:** the
+dev_app serves a pre-built `priv/static/assets/app.js` and `mix test`
+does not trigger `assets.build`, so editing hook JS without rebuilding
+leaves the test running against the old bundle.
+
 ## Status matrix
 
 Components are rows, criteria are columns grouped by principle. Cells:
