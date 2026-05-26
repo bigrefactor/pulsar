@@ -144,63 +144,42 @@ defmodule Pulsar.Components.Button do
   # Color configuration for each variant and color combination
   @color_config %{
     "ghost" => %{
-      "danger" =>
-        "text-danger hover:bg-danger/10 active:bg-danger/20",
-      "info" =>
-        "text-info hover:bg-info/10 active:bg-info/20",
-      "neutral" =>
-        "text-foreground hover:bg-surface-1-hover active:bg-surface-1-active",
-      "primary" =>
-        "text-primary hover:bg-primary/10 active:bg-primary/20",
-      "secondary" =>
-        "text-secondary hover:bg-secondary/10 active:bg-secondary/20",
-      "success" =>
-        "text-success hover:bg-success/10 active:bg-success/20",
-      "warning" =>
-        "text-warning hover:bg-warning/10 active:bg-warning/20"
+      "danger" => "text-danger hover:bg-danger/10 active:bg-danger/20",
+      "info" => "text-info hover:bg-info/10 active:bg-info/20",
+      "neutral" => "text-foreground hover:bg-surface-1-hover active:bg-surface-1-active",
+      "primary" => "text-primary hover:bg-primary/10 active:bg-primary/20",
+      "secondary" => "text-secondary hover:bg-secondary/10 active:bg-secondary/20",
+      "success" => "text-success hover:bg-success/10 active:bg-success/20",
+      "warning" => "text-warning hover:bg-warning/10 active:bg-warning/20"
     },
     "link" => %{
       "danger" => "text-danger hover:text-danger/80",
       "info" => "text-info hover:text-info/80",
-      "neutral" =>
-        "text-muted-foreground hover:text-foreground",
+      "neutral" => "text-muted-foreground hover:text-foreground",
       "primary" => "text-primary hover:text-primary/80",
-      "secondary" =>
-        "text-secondary hover:text-secondary/80",
+      "secondary" => "text-secondary hover:text-secondary/80",
       "success" => "text-success hover:text-success/80",
       "warning" => "text-warning hover:text-warning/80"
     },
     "outline" => %{
-      "danger" =>
-        "border-2 border-danger bg-background text-danger hover:bg-danger/5 active:bg-danger/10",
-      "info" =>
-        "border-2 border-info bg-background text-info hover:bg-info/5 active:bg-info/10",
+      "danger" => "border-2 border-danger bg-background text-danger hover:bg-danger/5 active:bg-danger/10",
+      "info" => "border-2 border-info bg-background text-info hover:bg-info/5 active:bg-info/10",
       "neutral" =>
         "border-2 border-border bg-background text-foreground hover:bg-surface-1-hover active:bg-surface-1-active",
-      "primary" =>
-        "border-2 border-primary bg-background text-primary hover:bg-primary/5 active:bg-primary/10",
+      "primary" => "border-2 border-primary bg-background text-primary hover:bg-primary/5 active:bg-primary/10",
       "secondary" =>
         "border-2 border-secondary bg-background text-secondary hover:bg-secondary/5 active:bg-secondary/10",
-      "success" =>
-        "border-2 border-success bg-background text-success hover:bg-success/5 active:bg-success/10",
-      "warning" =>
-        "border-2 border-warning bg-background text-warning hover:bg-warning/5 active:bg-warning/10"
+      "success" => "border-2 border-success bg-background text-success hover:bg-success/5 active:bg-success/10",
+      "warning" => "border-2 border-warning bg-background text-warning hover:bg-warning/5 active:bg-warning/10"
     },
     "solid" => %{
-      "danger" =>
-        "bg-danger text-danger-foreground hover:bg-danger/90 active:bg-danger/80",
-      "info" =>
-        "bg-info text-info-foreground hover:bg-info/90 active:bg-info/80",
-      "neutral" =>
-        "bg-neutral text-neutral-foreground hover:bg-neutral/90 active:bg-neutral/80",
-      "primary" =>
-        "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80",
-      "secondary" =>
-        "bg-secondary text-secondary-foreground hover:bg-secondary/90 active:bg-secondary/80",
-      "success" =>
-        "bg-success text-success-foreground hover:bg-success/90 active:bg-success/80",
-      "warning" =>
-        "bg-warning text-warning-foreground hover:bg-warning/90 active:bg-warning/80"
+      "danger" => "bg-danger text-danger-foreground hover:bg-danger/90 active:bg-danger/80",
+      "info" => "bg-info text-info-foreground hover:bg-info/90 active:bg-info/80",
+      "neutral" => "bg-neutral text-neutral-foreground hover:bg-neutral/90 active:bg-neutral/80",
+      "primary" => "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80",
+      "secondary" => "bg-secondary text-secondary-foreground hover:bg-secondary/90 active:bg-secondary/80",
+      "success" => "bg-success text-success-foreground hover:bg-success/90 active:bg-success/80",
+      "warning" => "bg-warning text-warning-foreground hover:bg-warning/90 active:bg-warning/80"
     }
   }
 

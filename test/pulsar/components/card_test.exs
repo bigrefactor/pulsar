@@ -720,5 +720,4 @@ defmodule Pulsar.Components.CardTest do
       assert html =~ ~s(phx-value-id="123")
     end
   end
-
 end

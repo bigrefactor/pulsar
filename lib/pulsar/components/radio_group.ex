@@ -723,62 +723,50 @@ defmodule Pulsar.Components.RadioGroup do
         background: "bg-background",
         base: "",
         border: "border-border",
-        checked:
-          "has-[:checked]:border-danger has-[:checked]:bg-danger/10",
+        checked: "has-[:checked]:border-danger has-[:checked]:bg-danger/10",
         hover: "hover:border-danger/50 hover:bg-danger/5"
       },
       "info" => %{
         background: "bg-background",
         base: "",
         border: "border-border",
-        checked:
-          "has-[:checked]:border-info has-[:checked]:bg-info/10",
+        checked: "has-[:checked]:border-info has-[:checked]:bg-info/10",
         hover: "hover:border-info/50 hover:bg-info/5"
       },
       "neutral" => %{
         background: "bg-background",
         base: "",
         border: "border-border",
-        checked:
-          "has-[:checked]:border-neutral has-[:checked]:bg-neutral/10",
-        hover:
-          "hover:border-neutral/50 hover:bg-neutral/5"
+        checked: "has-[:checked]:border-neutral has-[:checked]:bg-neutral/10",
+        hover: "hover:border-neutral/50 hover:bg-neutral/5"
       },
       "primary" => %{
         background: "bg-background",
         base: "",
         border: "border-border",
-        checked:
-          "has-[:checked]:border-primary has-[:checked]:bg-primary/10",
-        hover:
-          "hover:border-primary/50 hover:bg-primary/5"
+        checked: "has-[:checked]:border-primary has-[:checked]:bg-primary/10",
+        hover: "hover:border-primary/50 hover:bg-primary/5"
       },
       "secondary" => %{
         background: "bg-background",
         base: "",
         border: "border-border",
-        checked:
-          "has-[:checked]:border-secondary has-[:checked]:bg-secondary/10",
-        hover:
-          "hover:border-secondary/50 hover:bg-secondary/5"
+        checked: "has-[:checked]:border-secondary has-[:checked]:bg-secondary/10",
+        hover: "hover:border-secondary/50 hover:bg-secondary/5"
       },
       "success" => %{
         background: "bg-background",
         base: "",
         border: "border-border",
-        checked:
-          "has-[:checked]:border-success has-[:checked]:bg-success/10",
-        hover:
-          "hover:border-success/50 hover:bg-success/5"
+        checked: "has-[:checked]:border-success has-[:checked]:bg-success/10",
+        hover: "hover:border-success/50 hover:bg-success/5"
       },
       "warning" => %{
         background: "bg-background",
         base: "",
         border: "border-border",
-        checked:
-          "has-[:checked]:border-warning has-[:checked]:bg-warning/10",
-        hover:
-          "hover:border-warning/50 hover:bg-warning/5"
+        checked: "has-[:checked]:border-warning has-[:checked]:bg-warning/10",
+        hover: "hover:border-warning/50 hover:bg-warning/5"
       }
     },
     "solid" => %{

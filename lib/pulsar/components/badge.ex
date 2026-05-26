@@ -97,28 +97,20 @@ defmodule Pulsar.Components.Badge do
       "warning" => "text-warning hover:bg-warning/10"
     },
     "outline" => %{
-      "danger" =>
-        "border border-danger text-danger bg-background",
-      "info" =>
-        "border border-info text-info bg-background",
-      "neutral" =>
-        "border border-border text-neutral bg-background",
-      "primary" =>
-        "border border-primary text-primary bg-background",
-      "secondary" =>
-        "border border-secondary text-secondary bg-background",
-      "success" =>
-        "border border-success text-success bg-background",
-      "warning" =>
-        "border border-warning text-warning bg-background"
+      "danger" => "border border-danger text-danger bg-background",
+      "info" => "border border-info text-info bg-background",
+      "neutral" => "border border-border text-neutral bg-background",
+      "primary" => "border border-primary text-primary bg-background",
+      "secondary" => "border border-secondary text-secondary bg-background",
+      "success" => "border border-success text-success bg-background",
+      "warning" => "border border-warning text-warning bg-background"
     },
     "solid" => %{
       "danger" => "bg-danger text-danger-foreground",
       "info" => "bg-info text-info-foreground",
       "neutral" => "bg-neutral text-neutral-foreground",
       "primary" => "bg-primary text-primary-foreground",
-      "secondary" =>
-        "bg-secondary text-secondary-foreground",
+      "secondary" => "bg-secondary text-secondary-foreground",
       "success" => "bg-success text-success-foreground",
       "warning" => "bg-warning text-warning-foreground"
     }

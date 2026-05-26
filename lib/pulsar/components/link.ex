@@ -301,8 +301,7 @@ defmodule Pulsar.Components.Link do
     "danger" => "text-danger hover:text-danger/80",
     "info" => "text-info hover:text-info/80",
     "inherit" => "text-inherit",
-    "muted" =>
-      "text-muted-foreground hover:text-muted-foreground/70",
+    "muted" => "text-muted-foreground hover:text-muted-foreground/70",
     "primary" => "text-primary hover:text-primary/80",
     "secondary" => "text-secondary hover:text-secondary/80",
     "success" => "text-success hover:text-success/80",

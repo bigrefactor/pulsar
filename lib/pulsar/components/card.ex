@@ -229,8 +229,7 @@ defmodule Pulsar.Components.Card do
       "info" => "bg-info/10 border-2 border-info/20",
       "neutral" => "bg-surface-1 border-2 border-border",
       "primary" => "bg-primary/10 border-2 border-primary/20",
-      "secondary" =>
-        "bg-secondary/10 border-2 border-secondary/20",
+      "secondary" => "bg-secondary/10 border-2 border-secondary/20",
       "success" => "bg-success/10 border-2 border-success/20",
       "warning" => "bg-warning/10 border-2 border-warning/20"
     }

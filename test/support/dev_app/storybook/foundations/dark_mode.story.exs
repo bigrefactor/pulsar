@@ -196,8 +196,7 @@ defmodule Pulsar.DevApp.Storybook.Foundations.DarkMode do
                 3. How tokens resolve
               </h3>
               <p class="psb:text-sm psb:text-slate-600 psb:mb-3">
-                Each semantic token is declared once with a light default and overridden inside
-                <code class="psb:font-mono psb:text-xs psb:bg-slate-100 psb:px-1 psb:rounded">
+                Each semantic token is declared once with a light default and overridden inside <code class="psb:font-mono psb:text-xs psb:bg-slate-100 psb:px-1 psb:rounded">
                   [data-theme="dark"]
                 </code>. Components reference the token by name — no
                 <code class="psb:font-mono psb:text-xs psb:bg-slate-100 psb:px-1 psb:rounded">

@@ -115,28 +115,20 @@ defmodule Pulsar.Components.Flash do
       "warning" => "text-warning bg-warning/10"
     },
     "outline" => %{
-      "danger" =>
-        "border border-danger bg-background text-danger",
-      "info" =>
-        "border border-info bg-background text-info",
-      "neutral" =>
-        "border border-neutral bg-background text-foreground",
-      "primary" =>
-        "border border-primary bg-background text-primary",
-      "secondary" =>
-        "border border-secondary bg-background text-secondary",
-      "success" =>
-        "border border-success bg-background text-success",
-      "warning" =>
-        "border border-warning bg-background text-warning"
+      "danger" => "border border-danger bg-background text-danger",
+      "info" => "border border-info bg-background text-info",
+      "neutral" => "border border-neutral bg-background text-foreground",
+      "primary" => "border border-primary bg-background text-primary",
+      "secondary" => "border border-secondary bg-background text-secondary",
+      "success" => "border border-success bg-background text-success",
+      "warning" => "border border-warning bg-background text-warning"
     },
     "solid" => %{
       "danger" => "bg-danger text-danger-foreground",
       "info" => "bg-info text-info-foreground",
       "neutral" => "bg-neutral text-neutral-foreground",
       "primary" => "bg-primary text-primary-foreground",
-      "secondary" =>
-        "bg-secondary text-secondary-foreground",
+      "secondary" => "bg-secondary text-secondary-foreground",
       "success" => "bg-success text-success-foreground",
       "warning" => "bg-warning text-warning-foreground"
     }

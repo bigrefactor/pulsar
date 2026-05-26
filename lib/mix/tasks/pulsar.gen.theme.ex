@@ -134,9 +134,7 @@ if Code.ensure_loaded?(Igniter) do
       import_line = ~s(@import "./themes/#{name}.css";)
 
       igniter
-      |> Igniter.copy_template(template_path("themes/scaffold.css.eex"), dest, [theme_name: name],
-        on_exists: :skip
-      )
+      |> Igniter.copy_template(template_path("themes/scaffold.css.eex"), dest, [theme_name: name], on_exists: :skip)
       |> add_theme_import("assets/css/theme.css", import_line)
     end
 
@@ -172,7 +170,7 @@ if Code.ensure_loaded?(Igniter) do
       lines = String.split(content, "\n")
 
       insertion_index =
-        case find_last_index(lines, &String.match?(&1, ~r{^@import "\./themes/.*";}) ) do
+        case find_last_index(lines, &String.match?(&1, ~r{^@import "\./themes/.*";})) do
           nil ->
             case find_last_index(lines, &String.match?(&1, ~r{^@import "tailwindcss";})) do
               nil -> 0

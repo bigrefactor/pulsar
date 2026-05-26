@@ -161,12 +161,9 @@ defmodule Pulsar.Components.Input do
   # Structure: variant -> color -> classes
   @color_config %{
     "ghost" => %{
-      "danger" =>
-        "bg-transparent text-danger placeholder:text-danger/70 focus-within:ring-danger/60 hover:bg-danger/5",
-      "info" =>
-        "bg-transparent text-info placeholder:text-info/70 focus-within:ring-info/60 hover:bg-info/5",
-      "neutral" =>
-        "bg-transparent text-foreground focus-within:ring-ring hover:bg-surface-1-hover",
+      "danger" => "bg-transparent text-danger placeholder:text-danger/70 focus-within:ring-danger/60 hover:bg-danger/5",
+      "info" => "bg-transparent text-info placeholder:text-info/70 focus-within:ring-info/60 hover:bg-info/5",
+      "neutral" => "bg-transparent text-foreground focus-within:ring-ring hover:bg-surface-1-hover",
       "primary" =>
         "bg-transparent text-primary placeholder:text-primary/70 focus-within:ring-primary/60 hover:bg-primary/5",
       "secondary" =>
@@ -181,8 +178,7 @@ defmodule Pulsar.Components.Input do
         "border-danger/60 bg-background text-danger placeholder:text-danger/70 focus-within:ring-danger/60 hover:border-danger",
       "info" =>
         "border-info/60 bg-background text-info placeholder:text-info/70 focus-within:ring-info/60 hover:border-info",
-      "neutral" =>
-        "border-border bg-background text-foreground focus-within:ring-ring hover:border-primary/50",
+      "neutral" => "border-border bg-background text-foreground focus-within:ring-ring hover:border-primary/50",
       "primary" =>
         "border-primary/60 bg-background text-primary placeholder:text-primary/70 focus-within:ring-primary/60 hover:border-primary",
       "secondary" =>
@@ -193,10 +189,8 @@ defmodule Pulsar.Components.Input do
         "border-warning/60 bg-background text-warning placeholder:text-warning/70 focus-within:ring-warning/60 hover:border-warning"
     },
     "solid" => %{
-      "danger" =>
-        "bg-danger/10 text-danger placeholder:text-danger/70 focus-within:ring-danger/60 hover:bg-danger/20",
-      "info" =>
-        "bg-info/10 text-info placeholder:text-info/70 focus-within:ring-info/60 hover:bg-info/20",
+      "danger" => "bg-danger/10 text-danger placeholder:text-danger/70 focus-within:ring-danger/60 hover:bg-danger/20",
+      "info" => "bg-info/10 text-info placeholder:text-info/70 focus-within:ring-info/60 hover:bg-info/20",
       "neutral" =>
         "bg-neutral/10 text-neutral placeholder:text-neutral/70 focus-within:ring-neutral/60 hover:bg-neutral/20",
       "primary" =>
@@ -213,35 +207,22 @@ defmodule Pulsar.Components.Input do
   # Decorator color configuration
   @decorator_config %{
     "outline" => %{
-      "danger" =>
-        "bg-danger/60 text-danger-foreground border-danger/60",
-      "info" =>
-        "bg-info/60 text-info-foreground border-info/60",
-      "neutral" =>
-        "bg-border text-neutral-700 border-border",
-      "primary" =>
-        "bg-primary/60 text-primary-foreground border-primary/60",
-      "secondary" =>
-        "bg-secondary/60 text-secondary-foreground border-secondary/60",
-      "success" =>
-        "bg-success/60 text-success-foreground border-success/60",
-      "warning" =>
-        "bg-warning/60 text-warning-foreground border-warning/60"
+      "danger" => "bg-danger/60 text-danger-foreground border-danger/60",
+      "info" => "bg-info/60 text-info-foreground border-info/60",
+      "neutral" => "bg-border text-neutral-700 border-border",
+      "primary" => "bg-primary/60 text-primary-foreground border-primary/60",
+      "secondary" => "bg-secondary/60 text-secondary-foreground border-secondary/60",
+      "success" => "bg-success/60 text-success-foreground border-success/60",
+      "warning" => "bg-warning/60 text-warning-foreground border-warning/60"
     },
     "solid" => %{
-      "danger" =>
-        "bg-danger/20 text-danger border-danger/30",
+      "danger" => "bg-danger/20 text-danger border-danger/30",
       "info" => "bg-info/20 text-info border-info/30",
-      "neutral" =>
-        "bg-neutral/20 text-neutral border-neutral/30",
-      "primary" =>
-        "bg-primary/20 text-primary border-primary/30",
-      "secondary" =>
-        "bg-secondary/20 text-secondary border-secondary/30",
-      "success" =>
-        "bg-success/20 text-success border-success/30",
-      "warning" =>
-        "bg-warning/20 text-warning border-warning/30"
+      "neutral" => "bg-neutral/20 text-neutral border-neutral/30",
+      "primary" => "bg-primary/20 text-primary border-primary/30",
+      "secondary" => "bg-secondary/20 text-secondary border-secondary/30",
+      "success" => "bg-success/20 text-success border-success/30",
+      "warning" => "bg-warning/20 text-warning border-warning/30"
     },
     "ghost" => %{
       # Ghost decorators are minimal and don't vary by color

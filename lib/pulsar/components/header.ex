@@ -169,8 +169,7 @@ defmodule Pulsar.Components.Header do
       "info" => "border-b border-info-200 pb-4 text-info",
       "neutral" => "border-b border-neutral-200 pb-4",
       "primary" => "border-b border-primary-200 pb-4 text-primary",
-      "secondary" =>
-        "border-b border-secondary-200 pb-4 text-secondary",
+      "secondary" => "border-b border-secondary-200 pb-4 text-secondary",
       "success" => "border-b border-success-200 pb-4 text-success",
       "warning" => "border-b border-warning-200 pb-4 text-warning"
     },
@@ -179,8 +178,7 @@ defmodule Pulsar.Components.Header do
       "info" => "bg-info-100 text-info-900 p-6 rounded-lg",
       "neutral" => "bg-neutral-100 text-neutral-900 p-6 rounded-lg",
       "primary" => "bg-primary-100 text-primary-900 p-6 rounded-lg",
-      "secondary" =>
-        "bg-secondary-100 text-secondary-900 p-6 rounded-lg",
+      "secondary" => "bg-secondary-100 text-secondary-900 p-6 rounded-lg",
       "success" => "bg-success-100 text-success-900 p-6 rounded-lg",
       "warning" => "bg-warning-100 text-warning-900 p-6 rounded-lg"
     }

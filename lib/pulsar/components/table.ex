@@ -202,8 +202,7 @@ defmodule Pulsar.Components.Table do
       "info" => "bg-info text-info-foreground",
       "neutral" => "bg-neutral text-neutral-foreground",
       "primary" => "bg-primary text-primary-foreground",
-      "secondary" =>
-        "bg-secondary text-secondary-foreground",
+      "secondary" => "bg-secondary text-secondary-foreground",
       "success" => "bg-success text-success-foreground",
       "warning" => "bg-warning text-warning-foreground"
     }
