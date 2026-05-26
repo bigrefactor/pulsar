@@ -13,7 +13,7 @@ defmodule Pulsar.Integration.A11y.FormTest do
 
   To prove the test catches a real a11y regression (and isn't passively
   passing), temporarily comment out the `aria-describedby={@aria_describedby}`
-  line on the rendered input in `lib/pulsar/components/input.ex` and re-run
+  line on the rendered input in `lib/pulsar/components/field.ex` and re-run
   this test. The "each invalid field's aria-describedby resolves to its
   error message" test should fail with the field's `aria-describedby` going
   missing.

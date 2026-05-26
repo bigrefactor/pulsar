@@ -108,4 +108,37 @@ defmodule Pulsar.Components.FormTest do
       assert html =~ ~s(id="my-form-id")
     end
   end
+
+  describe "form/1 id derivation" do
+    test "derives a stable id from `as:` when a raw map is passed" do
+      # `<.form for={%{}} as={:signup}>` is valid — Phoenix.Component.form
+      # internally normalises via to_form/2. Confirm we derive the same
+      # stable id Phoenix would produce, not a per-render integer.
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Form.form for={%{}} as={:signup}>
+          <input type="text" />
+        </Form.form>
+        """)
+
+      assert html =~ ~s(id="pulsar-form-signup")
+    end
+
+    test "raises when neither :id, :as, nor a form with an id is provided" do
+      # A raw map without :as produces %Form{id: nil} via to_form/2. Falling
+      # back to System.unique_integer here would silently break the colocated
+      # hook on every patch — surface the misuse loudly instead.
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/requires a stable id/, fn ->
+        rendered_to_string(~H"""
+        <Form.form for={%{}}>
+          <input type="text" />
+        </Form.form>
+        """)
+      end
+    end
+  end
 end

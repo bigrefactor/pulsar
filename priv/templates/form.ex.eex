@@ -63,8 +63,8 @@ def form(assigns) do
   # The form id needs to be STABLE across re-renders or LiveView will treat
   # each render as a new element, destroying and recreating the colocated
   # hook — which loses the submitted-flag state and breaks focus-on-error.
-  # Derive from the form struct's intrinsic id when possible.
-  id = assigns.id || derive_form_id(assigns.for)
+  # Derive from the form struct's intrinsic id; raise if we can't.
+  id = assigns.id || derive_form_id(assigns.for, assigns.as)
 
   form_attrs =
     %{id: id}
@@ -111,6 +111,31 @@ def form(assigns) do
   """
 end
 
-defp derive_form_id(%Form{id: id}) when is_binary(id) and id != "", do: "pulsar-form-" <> id
+defp derive_form_id(%Form{id: id}, _as) when is_binary(id) and id != "" do
+  "pulsar-form-" <> id
+end
 
-defp derive_form_id(_), do: "pulsar-form-" <> Integer.to_string(System.unique_integer([:positive]))
+# For raw changesets/maps, route through Phoenix.Component.to_form/2 (passing
+# `:as` if the caller provided one) so the id we derive matches the id
+# Phoenix would derive internally. If the resulting form still has no id —
+# i.e. the caller passed a bare changeset/map without `:id` or `:as` — raise
+# rather than fall back to a per-render unique integer that would destroy
+# the colocated hook on every patch.
+defp derive_form_id(other, as) do
+  opts = if as, do: [as: as], else: []
+
+  case Phoenix.Component.to_form(other, opts) do
+    %Form{id: id} when is_binary(id) and id != "" ->
+      "pulsar-form-" <> id
+
+    _ ->
+      raise ArgumentError, """
+      Pulsar.Components.Form.form/1 requires a stable id for its colocated \
+      hook to survive re-renders. The given `for=` source does not provide \
+      one. Pass one of:
+        * `id="..."` to <.form>
+        * `as: :something` to <.form>
+        * pre-build with `to_form(source, as: :something)` and pass the result
+      """
+  end
+end
