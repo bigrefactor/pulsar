@@ -435,12 +435,14 @@ defmodule Pulsar.Components.ListTest do
         <List.list></List.list>
         """)
 
-      # Should render dl with default empty message
-      assert html =~ ~s(<dl)
-      assert html =~ ~s(</dl>)
-      assert html =~ "No items to display"
+      # Empty state renders a plain <div> with data-list-empty — no <dl>/<dt>/<dd>
+      # (a <div> with arbitrary text inside <dl> is invalid HTML5, see PUL-17)
+      refute html =~ ~s(<dl)
+      refute html =~ ~s(</dl>)
       refute html =~ ~s(<dt)
       refute html =~ ~s(<dd)
+      assert html =~ ~s(data-list-empty)
+      assert html =~ "No items to display"
     end
 
     test "handles no items with custom empty slot" do
@@ -457,14 +459,30 @@ defmodule Pulsar.Components.ListTest do
         </List.list>
         """)
 
-      # Should render dl with custom empty content
-      assert html =~ ~s(<dl)
-      assert html =~ ~s(</dl>)
+      refute html =~ ~s(<dl)
+      refute html =~ ~s(</dl>)
+      refute html =~ ~s(<dt)
+      refute html =~ ~s(<dd)
+      assert html =~ ~s(data-list-empty)
       assert html =~ "Custom empty message"
       assert html =~ "custom-empty"
       refute html =~ "No items to display"
-      refute html =~ ~s(<dt)
-      refute html =~ ~s(<dd)
+    end
+
+    test "empty state on headerless branch retains container variant classes" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <List.list variant="outline" color="primary"></List.list>
+        """)
+
+      # Empty state must inherit variant/color styling so visual identity matches a
+      # populated list — see PUL-17.
+      assert html =~ ~s(data-list-empty)
+      assert html =~ "border-primary"
+      assert html =~ "No items to display"
+      refute html =~ ~s(<dl)
     end
 
     test "handles single item" do
@@ -616,6 +634,9 @@ defmodule Pulsar.Components.ListTest do
       assert html =~ "Empty List"
       assert html =~ "This list has no items"
       assert html =~ "No items to display"
+      assert html =~ ~s(data-list-empty)
+      # No <dl> when empty — see PUL-17
+      refute html =~ ~s(<dl)
     end
 
     test "custom empty slot works with header" do

@@ -340,10 +340,9 @@ defmodule Pulsar.Components.List do
         </p>
       </div>
       <div class={content_wrapper_classes(@variant)}>
-        <dl class={@container_classes} data-list>
+        <dl :if={@has_items} class={@container_classes} data-list>
           <div
             :for={{item, index} <- Enum.with_index(@items)}
-            :if={@has_items}
             class={
               merge([
                 @item_base,
@@ -361,21 +360,25 @@ defmodule Pulsar.Components.List do
               {render_slot(item)}
             </dd>
           </div>
-          <div :if={!@has_items} class={empty_classes(@size)}>
-            <div :if={@empty != []}>
-              {render_slot(@empty)}
-            </div>
-            <div :if={@empty == []}>
-              No items to display
-            </div>
-          </div>
         </dl>
+        <div :if={!@has_items} class={empty_classes(@size)} data-list-empty>
+          <div :if={@empty != []}>
+            {render_slot(@empty)}
+          </div>
+          <div :if={@empty == []}>
+            No items to display
+          </div>
+        </div>
       </div>
     </div>
-    <dl :if={!@has_header} class={merge([@container_classes, @class])} data-list {@rest}>
+    <dl
+      :if={!@has_header and @has_items}
+      class={merge([@container_classes, @class])}
+      data-list
+      {@rest}
+    >
       <div
         :for={{item, index} <- Enum.with_index(@items)}
-        :if={@has_items}
         class={
           merge([
             @item_base,
@@ -393,15 +396,20 @@ defmodule Pulsar.Components.List do
           {render_slot(item)}
         </dd>
       </div>
-      <div :if={!@has_items} class={empty_classes(@size)}>
-        <div :if={@empty != []}>
-          {render_slot(@empty)}
-        </div>
-        <div :if={@empty == []}>
-          No items to display
-        </div>
-      </div>
     </dl>
+    <div
+      :if={!@has_header and !@has_items}
+      class={merge([@container_classes, @class, empty_classes(@size)])}
+      data-list-empty
+      {@rest}
+    >
+      <div :if={@empty != []}>
+        {render_slot(@empty)}
+      </div>
+      <div :if={@empty == []}>
+        No items to display
+      </div>
+    </div>
     """
   end
 
