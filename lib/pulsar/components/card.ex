@@ -429,7 +429,6 @@ defmodule Pulsar.Components.Card do
         "focus-visible:outline-none",
         "focus-visible:ring-2",
         "focus-visible:ring-primary",
-        "",
         "focus-visible:ring-offset-2"
       ]
     else

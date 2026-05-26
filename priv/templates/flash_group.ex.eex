@@ -540,8 +540,10 @@ defp get_animation_style(_, _), do: nil
 # Get z-index class
 defp get_z_index_class("auto"), do: "z-auto"
 
-defp get_z_index_class(z_index) when z_index in ~w(10 20 30 40 50) do
-  "z-#{z_index}"
-end
+defp get_z_index_class("10"), do: "z-docked"
+defp get_z_index_class("20"), do: "z-sticky"
+defp get_z_index_class("30"), do: "z-dropdown"
+defp get_z_index_class("40"), do: "z-overlay"
+defp get_z_index_class("50"), do: "z-modal"
 
 defp get_z_index_class(_), do: "z-toast"

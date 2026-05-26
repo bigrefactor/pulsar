@@ -563,7 +563,7 @@ defmodule Pulsar.Components.Flash do
   defp close_button_classes(size) do
     merge([
       "flex-shrink-0 rounded-field transition-colors",
-      "hover:bg-black/10",
+      "hover:bg-foreground/10",
       "focus:outline-none focus:ring-2 focus:ring-current focus:ring-offset-2",
       @size_config[size][:close_button]
     ])

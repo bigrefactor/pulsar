@@ -135,10 +135,10 @@ if Code.ensure_loaded?(Igniter) do
 
       igniter
       |> Igniter.copy_template(template_path("themes/scaffold.css.eex"), dest, [theme_name: name], on_exists: :skip)
-      |> add_theme_import("assets/css/theme.css", import_line)
+      |> add_theme_import("assets/css/theme.css", import_line, dest)
     end
 
-    defp add_theme_import(igniter, theme_css_path, import_line) do
+    defp add_theme_import(igniter, theme_css_path, import_line, dest) do
       igniter = Igniter.include_existing_file(igniter, theme_css_path)
 
       case Map.fetch(igniter.rewrite.sources, theme_css_path) do
@@ -158,7 +158,7 @@ if Code.ensure_loaded?(Igniter) do
         :error ->
           Igniter.add_warning(
             igniter,
-            "assets/css/theme.css not found — generated #{import_line |> String.replace(~r/.*"(.+)";.*/, "\\1")} but did not register it. Run `mix pulsar.gen.theme` first, then add the import manually."
+            "assets/css/theme.css not found — generated #{dest} but did not register it. Run `mix pulsar.gen.theme` first, then add the import manually."
           )
       end
     end

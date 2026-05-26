@@ -228,7 +228,7 @@ defmodule Pulsar.Components.Switch do
     "transition-all duration-normal ease-standard",
     "transform-gpu",
     "flex items-center justify-center pointer-events-none",
-    "data-[loading=true]:bg-background data-[loading=true]:",
+    "data-[loading=true]:bg-background",
     "group-hover:scale-105",
     "group-active:scale-95",
     "peer-focus-visible:scale-110"
@@ -559,7 +559,6 @@ defmodule Pulsar.Components.Switch do
     [
       "border-2",
       "bg-background border-border/70",
-      "",
       "hover:border-border",
       "peer-focus-visible:border-border",
       @color_config[color][:outline][:checked]
@@ -571,7 +570,6 @@ defmodule Pulsar.Components.Switch do
     [
       "border-2 border-transparent",
       "bg-muted/30 hover:bg-muted/40",
-      "",
       "peer-focus-visible:bg-muted/50",
       @color_config[color][:ghost][:checked]
     ]

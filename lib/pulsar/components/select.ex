@@ -326,7 +326,7 @@ defmodule Pulsar.Components.Select do
               type="button"
               phx-click={remove_badge_js(@on_remove_badge, @id)}
               phx-value-option={option.value}
-              class="ml-1 hover:bg-black/10 rounded-full p-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current transition-colors"
+              class="ml-1 hover:bg-foreground/10 rounded-full p-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current transition-colors"
               aria-label={"Remove #{option.label}"}
             >
               <.icon name="hero-x-mark" variant="micro" size="xs" color="current" aria-hidden="true" />

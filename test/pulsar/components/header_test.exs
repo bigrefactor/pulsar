@@ -40,7 +40,7 @@ defmodule Pulsar.Components.HeaderTest do
       assert html =~ "This is a subtitle"
       # Default subtitle size for md header
       assert html =~ "text-sm"
-      assert html =~ "text-neutral-600"
+      assert html =~ "text-muted-foreground"
     end
 
     test "renders with actions slot" do
@@ -366,7 +366,7 @@ defmodule Pulsar.Components.HeaderTest do
         """)
 
       assert html =~ ~s(<hr)
-      assert html =~ "border-neutral-200"
+      assert html =~ "border-border"
     end
 
     test "accepts custom classes" do

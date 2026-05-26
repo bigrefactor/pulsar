@@ -127,23 +127,23 @@ defmodule Pulsar.Components.Header do
   # Size configuration for header typography
   @size_config %{
     "lg" => %{
-      subtitle: "text-base text-neutral-600",
+      subtitle: "text-base text-muted-foreground",
       title: "text-3xl font-semibold"
     },
     "md" => %{
-      subtitle: "text-sm text-neutral-600",
+      subtitle: "text-sm text-muted-foreground",
       title: "text-2xl font-semibold"
     },
     "sm" => %{
-      subtitle: "text-sm text-neutral-600",
+      subtitle: "text-sm text-muted-foreground",
       title: "text-xl font-semibold"
     },
     "xl" => %{
-      subtitle: "text-lg text-neutral-600",
+      subtitle: "text-lg text-muted-foreground",
       title: "text-4xl font-semibold"
     },
     "xs" => %{
-      subtitle: "text-xs text-neutral-600",
+      subtitle: "text-xs text-muted-foreground",
       title: "text-lg font-semibold"
     }
   }
@@ -261,7 +261,7 @@ defmodule Pulsar.Components.Header do
     ~H"""
     <header class={@merged_classes} data-component="header" {@rest}>
       <nav :if={length(@breadcrumb) > 0} aria-label="Breadcrumb" data-role="breadcrumb">
-        <ol class="flex items-center flex-wrap gap-1 text-sm text-neutral-500">
+        <ol class="flex items-center flex-wrap gap-1 text-sm text-muted-foreground">
           <li :for={{breadcrumb, index} <- Enum.with_index(@breadcrumb)} class="flex items-center">
             <.icon
               :if={index > 0}
@@ -275,7 +275,7 @@ defmodule Pulsar.Components.Header do
             <span
               :if={index == length(@breadcrumb) - 1}
               aria-current="page"
-              class="font-medium text-neutral-900"
+              class="font-medium text-foreground"
             >
               {render_slot(breadcrumb)}
             </span>
@@ -311,7 +311,7 @@ defmodule Pulsar.Components.Header do
                 index != length(@breadcrumb) - 1 && !Map.get(breadcrumb, :navigate) && !Map.get(breadcrumb, :patch) &&
                   !Map.get(breadcrumb, :href)
               }
-              class="text-neutral-500"
+              class="text-muted-foreground"
             >
               {render_slot(breadcrumb)}
             </span>
@@ -336,7 +336,7 @@ defmodule Pulsar.Components.Header do
         </div>
       </div>
 
-      <hr :if={@divider && @variant != "outline"} class="border-neutral-200" />
+      <hr :if={@divider && @variant != "outline"} class="border-border" />
     </header>
     """
   end

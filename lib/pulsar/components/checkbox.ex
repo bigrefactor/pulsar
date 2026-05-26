@@ -723,8 +723,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_solid_background("neutral") do
     [
       "bg-neutral/10 hover:bg-neutral/20",
-      "has-[:checked]:bg-neutral/25 has-[:checked]:hover:bg-neutral/35",
-      ""
+      "has-[:checked]:bg-neutral/25 has-[:checked]:hover:bg-neutral/35"
     ]
     |> Enum.join(" ")
   end
@@ -732,8 +731,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_solid_background("primary") do
     [
       "bg-primary/10 hover:bg-primary/20",
-      "has-[:checked]:bg-primary/25 has-[:checked]:hover:bg-primary/35",
-      ""
+      "has-[:checked]:bg-primary/25 has-[:checked]:hover:bg-primary/35"
     ]
     |> Enum.join(" ")
   end
@@ -741,8 +739,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_solid_background("secondary") do
     [
       "bg-secondary/10 hover:bg-secondary/20",
-      "has-[:checked]:bg-secondary/25 has-[:checked]:hover:bg-secondary/35",
-      ""
+      "has-[:checked]:bg-secondary/25 has-[:checked]:hover:bg-secondary/35"
     ]
     |> Enum.join(" ")
   end
@@ -750,8 +747,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_solid_background("success") do
     [
       "bg-success/10 hover:bg-success/20",
-      "has-[:checked]:bg-success/25 has-[:checked]:hover:bg-success/35",
-      ""
+      "has-[:checked]:bg-success/25 has-[:checked]:hover:bg-success/35"
     ]
     |> Enum.join(" ")
   end
@@ -759,8 +755,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_solid_background("danger") do
     [
       "bg-danger/10 hover:bg-danger/20",
-      "has-[:checked]:bg-danger/25 has-[:checked]:hover:bg-danger/35",
-      ""
+      "has-[:checked]:bg-danger/25 has-[:checked]:hover:bg-danger/35"
     ]
     |> Enum.join(" ")
   end
@@ -768,8 +763,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_solid_background("warning") do
     [
       "bg-warning/10 hover:bg-warning/20",
-      "has-[:checked]:bg-warning/25 has-[:checked]:hover:bg-warning/35",
-      ""
+      "has-[:checked]:bg-warning/25 has-[:checked]:hover:bg-warning/35"
     ]
     |> Enum.join(" ")
   end
@@ -777,8 +771,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_solid_background("info") do
     [
       "bg-info/10 hover:bg-info/20",
-      "has-[:checked]:bg-info/25 has-[:checked]:hover:bg-info/35",
-      ""
+      "has-[:checked]:bg-info/25 has-[:checked]:hover:bg-info/35"
     ]
     |> Enum.join(" ")
   end
@@ -787,8 +780,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_outline_background("neutral") do
     [
       "bg-background",
-      "has-[:checked]:bg-primary/10 has-[:checked]:hover:bg-primary/15",
-      ""
+      "has-[:checked]:bg-primary/10 has-[:checked]:hover:bg-primary/15"
     ]
     |> Enum.join(" ")
   end
@@ -796,8 +788,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_outline_background("primary") do
     [
       "bg-background hover:bg-primary/5",
-      "has-[:checked]:bg-primary/15 has-[:checked]:hover:bg-primary/20",
-      ""
+      "has-[:checked]:bg-primary/15 has-[:checked]:hover:bg-primary/20"
     ]
     |> Enum.join(" ")
   end
@@ -805,8 +796,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_outline_background("secondary") do
     [
       "bg-background hover:bg-secondary/5",
-      "has-[:checked]:bg-secondary/15 has-[:checked]:hover:bg-secondary/20",
-      ""
+      "has-[:checked]:bg-secondary/15 has-[:checked]:hover:bg-secondary/20"
     ]
     |> Enum.join(" ")
   end
@@ -814,8 +804,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_outline_background("success") do
     [
       "bg-background hover:bg-success/5",
-      "has-[:checked]:bg-success/15 has-[:checked]:hover:bg-success/20",
-      ""
+      "has-[:checked]:bg-success/15 has-[:checked]:hover:bg-success/20"
     ]
     |> Enum.join(" ")
   end
@@ -823,8 +812,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_outline_background("danger") do
     [
       "bg-background hover:bg-danger/5",
-      "has-[:checked]:bg-danger/15 has-[:checked]:hover:bg-danger/20",
-      ""
+      "has-[:checked]:bg-danger/15 has-[:checked]:hover:bg-danger/20"
     ]
     |> Enum.join(" ")
   end
@@ -832,8 +820,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_outline_background("warning") do
     [
       "bg-background hover:bg-warning/5",
-      "has-[:checked]:bg-warning/15 has-[:checked]:hover:bg-warning/20",
-      ""
+      "has-[:checked]:bg-warning/15 has-[:checked]:hover:bg-warning/20"
     ]
     |> Enum.join(" ")
   end
@@ -841,8 +828,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_outline_background("info") do
     [
       "bg-background hover:bg-info/5",
-      "has-[:checked]:bg-info/15 has-[:checked]:hover:bg-info/20",
-      ""
+      "has-[:checked]:bg-info/15 has-[:checked]:hover:bg-info/20"
     ]
     |> Enum.join(" ")
   end
@@ -851,8 +837,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_outline_border("neutral") do
     [
       "border-2 border-border hover:border-primary/50",
-      "has-[:checked]:border-primary has-[:checked]:hover:border-primary",
-      ""
+      "has-[:checked]:border-primary has-[:checked]:hover:border-primary"
     ]
     |> Enum.join(" ")
   end
@@ -860,8 +845,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_outline_border("primary") do
     [
       "border-2 border-primary/30 hover:border-primary",
-      "has-[:checked]:border-primary has-[:checked]:hover:border-primary",
-      ""
+      "has-[:checked]:border-primary has-[:checked]:hover:border-primary"
     ]
     |> Enum.join(" ")
   end
@@ -869,8 +853,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_outline_border("secondary") do
     [
       "border-2 border-secondary/30 hover:border-secondary",
-      "has-[:checked]:border-secondary has-[:checked]:hover:border-secondary",
-      ""
+      "has-[:checked]:border-secondary has-[:checked]:hover:border-secondary"
     ]
     |> Enum.join(" ")
   end
@@ -878,8 +861,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_outline_border("success") do
     [
       "border-2 border-success/30 hover:border-success",
-      "has-[:checked]:border-success has-[:checked]:hover:border-success",
-      ""
+      "has-[:checked]:border-success has-[:checked]:hover:border-success"
     ]
     |> Enum.join(" ")
   end
@@ -887,8 +869,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_outline_border("danger") do
     [
       "border-2 border-danger/30 hover:border-danger",
-      "has-[:checked]:border-danger has-[:checked]:hover:border-danger",
-      ""
+      "has-[:checked]:border-danger has-[:checked]:hover:border-danger"
     ]
     |> Enum.join(" ")
   end
@@ -896,8 +877,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_outline_border("warning") do
     [
       "border-2 border-warning/30 hover:border-warning",
-      "has-[:checked]:border-warning has-[:checked]:hover:border-warning",
-      ""
+      "has-[:checked]:border-warning has-[:checked]:hover:border-warning"
     ]
     |> Enum.join(" ")
   end
@@ -905,8 +885,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_outline_border("info") do
     [
       "border-2 border-info/30 hover:border-info",
-      "has-[:checked]:border-info has-[:checked]:hover:border-info",
-      ""
+      "has-[:checked]:border-info has-[:checked]:hover:border-info"
     ]
     |> Enum.join(" ")
   end
@@ -915,8 +894,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_ghost_background("neutral") do
     [
       "bg-transparent hover:bg-surface-1-hover",
-      "has-[:checked]:bg-primary/10 has-[:checked]:hover:bg-primary/15",
-      ""
+      "has-[:checked]:bg-primary/10 has-[:checked]:hover:bg-primary/15"
     ]
     |> Enum.join(" ")
   end
@@ -924,8 +902,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_ghost_background("primary") do
     [
       "bg-transparent hover:bg-primary/10",
-      "has-[:checked]:bg-primary/15 has-[:checked]:hover:bg-primary/20",
-      ""
+      "has-[:checked]:bg-primary/15 has-[:checked]:hover:bg-primary/20"
     ]
     |> Enum.join(" ")
   end
@@ -933,8 +910,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_ghost_background("secondary") do
     [
       "bg-transparent hover:bg-secondary/10",
-      "has-[:checked]:bg-secondary/15 has-[:checked]:hover:bg-secondary/20",
-      ""
+      "has-[:checked]:bg-secondary/15 has-[:checked]:hover:bg-secondary/20"
     ]
     |> Enum.join(" ")
   end
@@ -942,8 +918,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_ghost_background("success") do
     [
       "bg-transparent hover:bg-success/10",
-      "has-[:checked]:bg-success/15 has-[:checked]:hover:bg-success/20",
-      ""
+      "has-[:checked]:bg-success/15 has-[:checked]:hover:bg-success/20"
     ]
     |> Enum.join(" ")
   end
@@ -951,8 +926,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_ghost_background("danger") do
     [
       "bg-transparent hover:bg-danger/10",
-      "has-[:checked]:bg-danger/15 has-[:checked]:hover:bg-danger/20",
-      ""
+      "has-[:checked]:bg-danger/15 has-[:checked]:hover:bg-danger/20"
     ]
     |> Enum.join(" ")
   end
@@ -960,8 +934,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_ghost_background("warning") do
     [
       "bg-transparent hover:bg-warning/10",
-      "has-[:checked]:bg-warning/15 has-[:checked]:hover:bg-warning/20",
-      ""
+      "has-[:checked]:bg-warning/15 has-[:checked]:hover:bg-warning/20"
     ]
     |> Enum.join(" ")
   end
@@ -969,8 +942,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_ghost_background("info") do
     [
       "bg-transparent hover:bg-info/10",
-      "has-[:checked]:bg-info/15 has-[:checked]:hover:bg-info/20",
-      ""
+      "has-[:checked]:bg-info/15 has-[:checked]:hover:bg-info/20"
     ]
     |> Enum.join(" ")
   end
