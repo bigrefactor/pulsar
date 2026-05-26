@@ -148,6 +148,7 @@ if Code.ensure_loaded?(Igniter) do
           "pulsar.gen.field",
           "pulsar.gen.flash",
           "pulsar.gen.flash_group",
+          "pulsar.gen.form",
           "pulsar.gen.header",
           "pulsar.gen.icon",
           "pulsar.gen.input",
