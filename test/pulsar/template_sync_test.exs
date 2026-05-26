@@ -25,6 +25,7 @@ defmodule Pulsar.TemplateSyncTest do
     {:field, "lib/pulsar/components/field.ex", "Pulsar.Components", "Pulsar.Components.Field"},
     {:flash, "lib/pulsar/components/flash.ex", "Pulsar.Components", "Pulsar.Components.Flash"},
     {:flash_group, "lib/pulsar/components/flash_group.ex", "Pulsar.Components", "Pulsar.Components.FlashGroup"},
+    {:form, "lib/pulsar/components/form.ex", "Pulsar.Components", "Pulsar.Components.Form"},
     {:header, "lib/pulsar/components/header.ex", "Pulsar.Components", "Pulsar.Components.Header"},
     {:icon, "lib/pulsar/components/icon.ex", "Pulsar.Components", "Pulsar.Components.Icon"},
     {:input, "lib/pulsar/components/input.ex", "Pulsar.Components", "Pulsar.Components.Input"},

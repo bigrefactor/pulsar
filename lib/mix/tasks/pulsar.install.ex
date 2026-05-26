@@ -104,6 +104,7 @@ if Code.ensure_loaded?(Igniter) do
       field: [:checkbox, :icon, :input, :label, :radio_group, :select, :switch, :textarea],
       flash: [],
       flash_group: [:flash, :icon],
+      form: [],
       header: [:link, :icon],
       icon: [],
       input: [],
