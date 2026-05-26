@@ -1,0 +1,388 @@
+defmodule Pulsar.DevApp.Storybook.Foundations.Themes do
+  use PhoenixStorybook.Story, :page
+
+  alias Pulsar.Components.Badge
+  alias Pulsar.Components.Button
+  alias Pulsar.Components.Flash
+  alias Pulsar.Components.Input
+
+  def doc, do: "Theming guide — tokens, customization, and adding new themes"
+
+  @gen_theme_command "mix pulsar.gen.theme purple"
+
+  @scaffold_output """
+  /*
+    purple theme — scaffolded by `mix pulsar.gen.theme purple`.
+
+    Activate by setting `data-theme="purple"` on any ancestor element, or
+    `.theme-purple` (the class form PhoenixStorybook applies via its
+    sandbox_class theme strategy). Override only the tokens you want to
+    change — anything you omit falls back to the light defaults declared
+    in `themes/light.css`.
+
+    See `themes/dark.css` for a complete override example.
+  */
+  [data-theme="purple"],
+  .theme-purple {
+    /* TODO: override semantic tokens for this theme. */
+  }\
+  """
+
+  @purple_override_code """
+  [data-theme="purple"],
+  .theme-purple {
+    --color-background: var(--color-purple-50);
+    --color-foreground: var(--color-purple-950);
+    --color-surface-1: var(--color-purple-100);
+    --color-border: var(--color-purple-200);
+    --color-primary: var(--color-purple-600);
+    --color-primary-foreground: var(--color-white);
+    --color-ring: var(--color-purple-600);
+  }\
+  """
+
+  @activate_code """
+  <!-- Whole page -->
+  <html data-theme="purple">
+
+  <!-- Or scope to a subtree -->
+  <section data-theme="purple">
+    <!-- only this section uses purple tokens -->
+  </section>\
+  """
+
+  @customize_built_in_code """
+  /* assets/css/themes/light.css */
+  @theme {
+    /* Make the whole library indigo instead of blue */
+    --color-primary: var(--color-indigo-600);
+    --color-ring: var(--color-indigo-600);
+  }\
+  """
+
+  def render(assigns) do
+    assigns =
+      assigns
+      |> Map.put(:gen_theme_command, @gen_theme_command)
+      |> Map.put(:scaffold_output, @scaffold_output)
+      |> Map.put(:purple_override_code, @purple_override_code)
+      |> Map.put(:activate_code, @activate_code)
+      |> Map.put(:customize_built_in_code, @customize_built_in_code)
+      |> Map.put(:semantic_tokens, semantic_tokens())
+      |> Map.put(:role_aliases, role_aliases())
+
+    ~H"""
+    <div class="psb:max-w-5xl psb:mx-auto psb:py-8 psb:px-4">
+      <h1 class="psb:text-2xl psb:font-bold text-foreground psb:mb-2">Theming</h1>
+
+      <p class="psb:text-base psb:leading-relaxed text-foreground psb:mb-8">
+        Pulsar themes are CSS variable overrides. A two-tier model keeps things simple: a
+        constant <strong>palette</strong>
+        (<code class="psb:font-mono psb:text-sm bg-muted psb:px-1 psb:rounded">--color-primary-600</code>)
+        is declared once; <strong>semantic tokens</strong>
+        (<code class="psb:font-mono psb:text-sm bg-muted psb:px-1 psb:rounded">--color-primary</code>, <code class="psb:font-mono psb:text-sm bg-muted psb:px-1 psb:rounded">--color-background</code>) are theme-scoped and swap when
+        <code class="psb:font-mono psb:text-sm bg-muted psb:px-1 psb:rounded">data-theme</code>
+        changes. Components reference semantic tokens only — see <em>Foundations → Dark mode</em>
+        for the toggle mechanics and <em>Foundations → Colors</em>
+        for the palette.
+      </p>
+
+      <div class="psb:space-y-12">
+        {built_in_gallery(assigns)}
+        {token_reference(assigns)}
+        {role_aliases_section(assigns)}
+        {adding_a_theme(assigns)}
+        {customizing_built_in(assigns)}
+      </div>
+    </div>
+    """
+  end
+
+  # ---------------------------------------------------------------------------
+  # Sections
+  # ---------------------------------------------------------------------------
+
+  defp built_in_gallery(assigns) do
+    ~H"""
+    <section>
+      <h2 class="psb:text-lg psb:font-semibold text-foreground psb:mb-6 psb:border-b border-border psb:pb-2">
+        Built-in themes
+      </h2>
+      <p class="psb:text-sm text-muted-foreground psb:mb-6">
+        Pulsar ships two themes. Each card below renders the same components inside a
+        wrapper with a different <code class="psb:font-mono psb:text-xs bg-muted psb:px-1 psb:rounded">data-theme</code>
+        — the DOM doesn't change, only the variables underneath.
+      </p>
+
+      <div class="psb:grid psb:grid-cols-1 md:grid-cols-2 psb:gap-6">
+        {theme_card("Light", "light", assigns)}
+        {theme_card("Dark", "dark", assigns)}
+      </div>
+    </section>
+    """
+  end
+
+  defp theme_card(label, slug, assigns) do
+    assigns =
+      assigns
+      |> Map.put(:label, label)
+      |> Map.put(:slug, slug)
+      |> Map.put(:swatches, theme_swatches(slug))
+
+    ~H"""
+    <div>
+      <div class="psb:flex psb:items-baseline psb:justify-between psb:mb-3">
+        <p class="psb:text-sm psb:font-semibold text-muted-foreground psb:uppercase psb:tracking-wide">
+          {@label}
+        </p>
+        <code class="psb:font-mono psb:text-xs text-muted-foreground">data-theme="{@slug}"</code>
+      </div>
+
+      <div class="psb:flex psb:gap-1 psb:mb-3">
+        <div
+          :for={s <- @swatches}
+          class="psb:flex-1 psb:rounded psb:overflow-hidden psb:min-w-0 psb:text-center"
+          title={"#{s.token} → #{s.palette}"}
+        >
+          <div class="psb:h-8 psb:border border-border" style={"background-color: #{s.css}"}></div>
+          <p class="psb:text-[0.6rem] psb:leading-tight text-muted-foreground psb:mt-1">
+            {s.label}
+          </p>
+        </div>
+      </div>
+
+      <%!-- NOTE: "pulsar-sandbox" must match the sandbox_class setting in your
+           PhoenixStorybook backend module (e.g. MyAppWeb.Storybook). --%>
+      <div
+        data-theme={@slug}
+        class="pulsar-sandbox bg-surface-1 border border-border rounded-box p-5 space-y-4"
+      >
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-semibold text-foreground">Account settings</h3>
+          <Badge.badge color="success">Saved</Badge.badge>
+        </div>
+        <Input.input
+          id={"#{@slug}_email"}
+          name={"#{@slug}_email"}
+          type="email"
+          value="you@example.com"
+        />
+        <div class="flex gap-2">
+          <Button.button variant="solid" color="primary">Save changes</Button.button>
+          <Button.button variant="outline" color="neutral">Cancel</Button.button>
+        </div>
+        <Flash.flash color="success" role="status">
+          Theme variables resolved through CSS — no JS, no <code class="font-mono">dark:</code> variants.
+        </Flash.flash>
+      </div>
+    </div>
+    """
+  end
+
+  defp token_reference(assigns) do
+    ~H"""
+    <section>
+      <h2 class="psb:text-lg psb:font-semibold text-foreground psb:mb-4 psb:border-b border-border psb:pb-2">
+        Semantic tokens
+      </h2>
+      <p class="psb:text-sm text-muted-foreground psb:mb-4">
+        The tokens most users override. Each maps to a value in the palette; light and dark
+        each set their own. The full list lives in <code class="psb:font-mono psb:text-xs bg-muted psb:px-1 psb:rounded">assets/css/themes/light.css</code>.
+      </p>
+
+      <div class="psb:overflow-x-auto">
+        <table class="psb:w-full psb:text-sm psb:border-collapse">
+          <thead>
+            <tr class="psb:border-b border-border psb:text-left">
+              <th class="psb:py-2 psb:pr-4 psb:font-semibold text-foreground">Token</th>
+              <th class="psb:py-2 psb:pr-4 psb:font-semibold text-foreground">Role</th>
+              <th class="psb:py-2 psb:pr-4 psb:font-semibold text-foreground">Light</th>
+              <th class="psb:py-2 psb:font-semibold text-foreground">Dark</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={t <- @semantic_tokens} class="psb:border-b border-border">
+              <td class="psb:py-2 psb:pr-4 psb:font-mono psb:text-xs text-foreground">
+                {t.token}
+              </td>
+              <td class="psb:py-2 psb:pr-4 text-muted-foreground">{t.role}</td>
+              <td class="psb:py-2 psb:pr-4 psb:font-mono psb:text-xs text-muted-foreground">
+                {t.light}
+              </td>
+              <td class="psb:py-2 psb:font-mono psb:text-xs text-muted-foreground">{t.dark}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    """
+  end
+
+  defp role_aliases_section(assigns) do
+    ~H"""
+    <section>
+      <h2 class="psb:text-lg psb:font-semibold text-foreground psb:mb-4 psb:border-b border-border psb:pb-2">
+        Beyond color
+      </h2>
+      <p class="psb:text-sm text-muted-foreground psb:mb-4">
+        Color isn't the only thing themed. Role aliases let you re-skin shape and motion
+        across components by changing one variable — components reference the role, not the
+        raw value. Examples:
+      </p>
+
+      <div class="psb:grid psb:grid-cols-1 md:grid-cols-2 psb:gap-x-6 psb:gap-y-2 psb:text-sm">
+        <div :for={a <- @role_aliases} class="psb:flex psb:justify-between psb:border-b border-border psb:py-2">
+          <code class="psb:font-mono psb:text-xs text-foreground">{a.token}</code>
+          <span class="text-muted-foreground psb:text-xs">{a.role}</span>
+        </div>
+      </div>
+    </section>
+    """
+  end
+
+  defp adding_a_theme(assigns) do
+    ~H"""
+    <section>
+      <h2 class="psb:text-lg psb:font-semibold text-foreground psb:mb-4 psb:border-b border-border psb:pb-2">
+        Adding a custom theme
+      </h2>
+
+      <div class="psb:space-y-6">
+        <div>
+          <h3 class="psb:text-base psb:font-semibold text-foreground psb:mb-2">
+            1. Scaffold the theme file
+          </h3>
+          <p class="psb:text-sm text-muted-foreground psb:mb-2">
+            The generator creates
+            <code class="psb:font-mono psb:text-xs bg-muted psb:px-1 psb:rounded">
+              assets/css/themes/&lt;name&gt;.css
+            </code>
+            and adds an <code class="psb:font-mono psb:text-xs bg-muted psb:px-1 psb:rounded">@import</code>
+            to <code class="psb:font-mono psb:text-xs bg-muted psb:px-1 psb:rounded">theme.css</code>:
+          </p>
+          <pre class="psb:bg-slate-800 psb:text-slate-100 psb:font-mono psb:text-sm psb:rounded-lg psb:px-5 psb:py-4 psb:mb-3"><code>$ {@gen_theme_command}</code></pre>
+          <p class="psb:text-sm text-muted-foreground psb:mb-2">
+            The scaffolded file is intentionally empty — every token falls back to the light
+            defaults until you override it:
+          </p>
+          <pre class="psb:bg-slate-800 psb:text-slate-100 psb:font-mono psb:text-sm psb:rounded-lg psb:px-5 psb:py-4"><code>{@scaffold_output}</code></pre>
+        </div>
+
+        <div>
+          <h3 class="psb:text-base psb:font-semibold text-foreground psb:mb-2">
+            2. Override the tokens you care about
+          </h3>
+          <p class="psb:text-sm text-muted-foreground psb:mb-2">
+            A minimal "purple" theme — re-skin a few semantic tokens; the rest stay light:
+          </p>
+          <pre class="psb:bg-slate-800 psb:text-slate-100 psb:font-mono psb:text-sm psb:rounded-lg psb:px-5 psb:py-4"><code>{@purple_override_code}</code></pre>
+        </div>
+
+        <div>
+          <h3 class="psb:text-base psb:font-semibold text-foreground psb:mb-2">
+            3. Activate it
+          </h3>
+          <p class="psb:text-sm text-muted-foreground psb:mb-2">
+            Set <code class="psb:font-mono psb:text-xs bg-muted psb:px-1 psb:rounded">data-theme</code>
+            on the root, or scope it to any subtree:
+          </p>
+          <pre class="psb:bg-slate-800 psb:text-slate-100 psb:font-mono psb:text-sm psb:rounded-lg psb:px-5 psb:py-4"><code>{@activate_code}</code></pre>
+        </div>
+
+        <div class="bg-primary/10 psb:border border-primary/30 psb:rounded-lg psb:px-4 psb:py-3 psb:text-sm text-foreground">
+          <strong>PhoenixStorybook integration.</strong>
+          The scaffold also includes a
+          <code class="psb:font-mono psb:text-xs bg-surface-2 psb:px-1 psb:rounded">.theme-&lt;name&gt;</code>
+          selector. PhoenixStorybook applies that class to its sandbox container when the
+          user picks a theme from the chrome dropdown — so registering your new theme in
+          the storybook backend's <code class="psb:font-mono psb:text-xs bg-surface-2 psb:px-1 psb:rounded">themes:</code>
+          option makes it switchable from the toolbar with no extra wiring.
+        </div>
+      </div>
+    </section>
+    """
+  end
+
+  defp customizing_built_in(assigns) do
+    ~H"""
+    <section>
+      <h2 class="psb:text-lg psb:font-semibold text-foreground psb:mb-4 psb:border-b border-border psb:pb-2">
+        Customizing the built-in themes
+      </h2>
+
+      <p class="psb:text-sm text-muted-foreground psb:mb-3">
+        To retheme every component at once, edit
+        <code class="psb:font-mono psb:text-xs bg-muted psb:px-1 psb:rounded">assets/css/themes/light.css</code>
+        (or <code class="psb:font-mono psb:text-xs bg-muted psb:px-1 psb:rounded">themes/dark.css</code>)
+        directly. Override only what you want changed — anything you don't touch keeps the default value:
+      </p>
+
+      <pre class="psb:bg-slate-800 psb:text-slate-100 psb:font-mono psb:text-sm psb:rounded-lg psb:px-5 psb:py-4"><code>{@customize_built_in_code}</code></pre>
+    </section>
+    """
+  end
+
+  # ---------------------------------------------------------------------------
+  # Data
+  # ---------------------------------------------------------------------------
+
+  # Tokens shown as colored chips in the gallery. Values resolved via CSS
+  # variables so they always match the actual themes/<name>.css files.
+  defp theme_swatches("light") do
+    [
+      %{token: "--color-background", palette: "white", label: "bg", css: "var(--color-white)"},
+      %{token: "--color-surface-1", palette: "gray-50", label: "surf", css: "var(--color-gray-50)"},
+      %{token: "--color-border", palette: "gray-200", label: "border", css: "var(--color-gray-200)"},
+      %{token: "--color-primary", palette: "primary-600", label: "primary", css: "var(--color-primary-600)"},
+      %{token: "--color-success", palette: "success-600", label: "success", css: "var(--color-success-600)"},
+      %{token: "--color-danger", palette: "danger-600", label: "danger", css: "var(--color-danger-600)"},
+      %{token: "--color-foreground", palette: "gray-950", label: "fg", css: "var(--color-gray-950)"}
+    ]
+  end
+
+  defp theme_swatches("dark") do
+    [
+      %{token: "--color-background", palette: "gray-950", label: "bg", css: "var(--color-gray-950)"},
+      %{token: "--color-surface-1", palette: "gray-900", label: "surf", css: "var(--color-gray-900)"},
+      %{token: "--color-border", palette: "gray-800", label: "border", css: "var(--color-gray-800)"},
+      %{token: "--color-primary", palette: "primary-400", label: "primary", css: "var(--color-primary-400)"},
+      %{token: "--color-success", palette: "success-400", label: "success", css: "var(--color-success-400)"},
+      %{token: "--color-danger", palette: "danger-400", label: "danger", css: "var(--color-danger-400)"},
+      %{token: "--color-foreground", palette: "gray-50", label: "fg", css: "var(--color-gray-50)"}
+    ]
+  end
+
+  defp semantic_tokens do
+    [
+      %{token: "--color-background", role: "Page background", light: "white", dark: "gray-950"},
+      %{token: "--color-foreground", role: "Body text", light: "gray-950", dark: "gray-50"},
+      %{token: "--color-muted", role: "Muted surface", light: "gray-100", dark: "gray-900"},
+      %{token: "--color-muted-foreground", role: "Muted text", light: "gray-600", dark: "gray-400"},
+      %{token: "--color-surface-1", role: "Card / section background", light: "gray-50", dark: "gray-900"},
+      %{token: "--color-surface-2", role: "Elevated content", light: "gray-100", dark: "gray-800"},
+      %{token: "--color-border", role: "Default border", light: "gray-200", dark: "gray-800"},
+      %{token: "--color-input", role: "Form field border", light: "gray-200", dark: "gray-800"},
+      %{token: "--color-ring", role: "Focus ring", light: "primary-600", dark: "primary-400"},
+      %{token: "--color-primary", role: "Primary action", light: "primary-600", dark: "primary-400"},
+      %{token: "--color-primary-foreground", role: "Text on primary", light: "white", dark: "gray-950"},
+      %{token: "--color-success", role: "Success state", light: "success-600", dark: "success-400"},
+      %{token: "--color-warning", role: "Warning state", light: "warning-600", dark: "warning-400"},
+      %{token: "--color-danger", role: "Danger / destructive", light: "danger-600", dark: "danger-400"}
+    ]
+  end
+
+  defp role_aliases do
+    [
+      %{token: "rounded-field", role: "Inputs, buttons, selects"},
+      %{token: "rounded-box", role: "Cards, modals, popovers"},
+      %{token: "rounded-selector", role: "Checkboxes, switches"},
+      %{token: "rounded-pill", role: "Pill-shaped tags"},
+      %{token: "shadow-card", role: "Resting card elevation"},
+      %{token: "shadow-dropdown", role: "Floating menus"},
+      %{token: "shadow-modal", role: "Dialog elevation"},
+      %{token: "duration-quick / normal / slow", role: "120 / 200 / 320 ms"},
+      %{token: "ease-standard / emphasized", role: "Transition easing"},
+      %{token: "opacity-disabled / muted / overlay", role: "Disabled, muted, scrim"}
+    ]
+  end
+end

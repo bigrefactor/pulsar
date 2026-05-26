@@ -36,7 +36,7 @@ defmodule Pulsar.Generator.Storybook do
     :textarea
   ]
 
-  @foundations [:colors, :dark_mode, :spacing, :typography]
+  @foundations [:colors, :dark_mode, :spacing, :themes, :typography]
   @examples [:dashboard, :login, :settings_panel]
 
   @doc """
@@ -63,7 +63,7 @@ defmodule Pulsar.Generator.Storybook do
   end
 
   @doc """
-  Installs all foundation story files (colors, dark_mode, spacing, typography).
+  Installs all foundation story files (colors, dark_mode, spacing, themes, typography).
   """
   def install_foundations(igniter) do
     assigns = build_assigns(igniter)
