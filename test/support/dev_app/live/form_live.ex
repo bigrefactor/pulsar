@@ -3,21 +3,69 @@ defmodule Pulsar.DevApp.FormLive do
   use Pulsar.DevApp.Web, :live_view
 
   alias Pulsar.Components.Field
+  alias Pulsar.Components.Form, as: PulsarForm
 
   @plans [{"Free", "free"}, {"Pro", "pro"}, {"Enterprise", "enterprise"}]
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, form: build_form(%{}))}
+    {:ok, assign(socket, form: build_form(%{}, errors: []))}
   end
 
   def handle_event("validate", %{"signup" => params}, socket) do
-    {:noreply, assign(socket, form: build_form(params))}
+    errors = validate(params)
+    {:noreply, assign(socket, form: build_form(params, errors: errors))}
   end
 
-  def handle_event("submit", _params, socket), do: {:noreply, socket}
+  def handle_event("submit", %{"signup" => params}, socket) do
+    case validate(params) do
+      [] ->
+        {:noreply, socket}
 
-  defp build_form(params) do
-    to_form(params, as: :signup)
+      errors ->
+        # Phoenix tags inputs the user hasn't interacted with via
+        # `_unused_<field>` keys; `Phoenix.Component.used_input?/1` then returns
+        # false for them and the Field component's `:touched` default suppresses
+        # the error UI. Drop those markers on submit so every field counts as
+        # "used" and errors render across the whole form.
+        params = drop_unused_markers(params)
+
+        {:noreply, assign(socket, form: build_form(params, errors: errors, action: :validate))}
+    end
+  end
+
+  defp drop_unused_markers(params) do
+    Map.reject(params, fn {key, _} -> String.starts_with?(key, "_unused_") end)
+  end
+
+  defp build_form(params, opts) do
+    to_form(params, [as: :signup] ++ opts)
+  end
+
+  defp validate(params) do
+    []
+    |> validate_required(params, "name", "can't be blank")
+    |> validate_required(params, "email", "can't be blank")
+    |> validate_email(params, "email")
+    |> validate_required(params, "terms", "you must accept the terms")
+  end
+
+  defp validate_required(errors, params, field, message) do
+    case Map.get(params, field) do
+      nil -> [{String.to_atom(field), {message, []}} | errors]
+      "" -> [{String.to_atom(field), {message, []}} | errors]
+      "false" -> [{String.to_atom(field), {message, []}} | errors]
+      _ -> errors
+    end
+  end
+
+  defp validate_email(errors, params, field) do
+    value = Map.get(params, field, "")
+
+    cond do
+      value in [nil, ""] -> errors
+      String.contains?(value, "@") -> errors
+      true -> [{String.to_atom(field), {"must include @", []}} | errors]
+    end
   end
 
   def render(assigns) do
@@ -26,10 +74,11 @@ defmodule Pulsar.DevApp.FormLive do
     ~H"""
     <.fixture_page name="form" title="Form (combined for form-a11y test)">
       <.fixture_section name="signup" title="Signup form">
-        <.form
+        <PulsarForm.form
           for={@form}
           phx-change="validate"
           phx-submit="submit"
+          novalidate
           class="grid w-full max-w-2xl grid-cols-1 gap-4"
         >
           <Field.field field={@form[:name]} type="text" required data-fixture-cell="name">
@@ -74,7 +123,7 @@ defmodule Pulsar.DevApp.FormLive do
               Sign up
             </Pulsar.Components.Button.button>
           </div>
-        </.form>
+        </PulsarForm.form>
       </.fixture_section>
     </.fixture_page>
     """

@@ -1,0 +1,143 @@
+defmodule Pulsar.Components.Form do
+  @moduledoc """
+  Form wrapper that adds focus-on-error accessibility behavior to a Phoenix
+  `<.form>`.
+
+  Wraps `Phoenix.Component.form/1` with a colocated `PulsarForm` hook that,
+  after a failed form submission, moves keyboard focus to the first input
+  with `aria-invalid="true"`. This implements the Phoenix form-error UX
+  convention (move focus to the first invalid field on submit) without
+  requiring consumers to wire app-level JavaScript.
+
+  ## Behavior
+
+  The hook listens for the form's native `submit` event and sets an internal
+  flag. On the next LiveView `updated()` lifecycle callback, if the flag is
+  set, the hook focuses the first `[aria-invalid="true"]` descendant of the
+  form and clears the flag. Routine `phx-change` validation does not steal
+  focus, because the flag is only set on `submit`.
+
+  ## Examples
+
+      <Pulsar.Components.Form.form
+        :let={f}
+        for={@form}
+        phx-change="validate"
+        phx-submit="submit"
+      >
+        <Field.field field={f[:name]} type="text">
+          <:label>Name</:label>
+        </Field.field>
+      </Pulsar.Components.Form.form>
+  """
+
+  use Phoenix.Component
+
+  alias Phoenix.HTML.Form
+  alias Phoenix.LiveView.Rendered
+
+  attr :for, :any, required: true, doc: "the form source data"
+  attr :as, :any, default: nil, doc: "the server-side parameter to collect all input fields under"
+  attr :id, :string, default: nil, doc: "the id of the form element (auto-generated if omitted)"
+
+  attr :rest, :global,
+    include: ~w(autocomplete name rel action enctype method novalidate target multipart
+         phx-change phx-submit phx-trigger-action phx-auto-recover),
+    doc: "additional HTML attributes forwarded to the underlying <form> element"
+
+  slot :inner_block, required: true
+
+  @doc """
+  Renders a Phoenix form with the PulsarForm focus-on-error hook attached.
+
+  Accepts the same `for`/`as` props as `Phoenix.Component.form/1` and exposes
+  the form struct via `:let={f}`.
+  """
+  @spec form(map()) :: Rendered.t()
+  def form(assigns) do
+    # Build form attrs conditionally: passing `as={nil}` to Phoenix.Component.form
+    # clobbers the source form's intrinsic name (see Phoenix.Component.to_form/2 for
+    # `Phoenix.HTML.Form` — `Keyword.fetch(opts, :as)` matches on `{:ok, nil}`),
+    # so omit `:as` from the call when the caller didn't pass one. The same logic
+    # applies to `:id`.
+    #
+    # The form id needs to be STABLE across re-renders or LiveView will treat
+    # each render as a new element, destroying and recreating the colocated
+    # hook — which loses the submitted-flag state and breaks focus-on-error.
+    # Derive from the form struct's intrinsic id; raise if we can't.
+    id = assigns.id || derive_form_id(assigns.for, assigns.as)
+
+    form_attrs =
+      %{id: id}
+      |> then(fn attrs ->
+        if assigns.as, do: Map.put(attrs, :as, assigns.as), else: attrs
+      end)
+
+    assigns = assign(assigns, :form_attrs, form_attrs)
+
+    ~H"""
+    <Phoenix.Component.form
+      :let={f}
+      for={@for}
+      {@form_attrs}
+      phx-hook=".PulsarForm"
+      {@rest}
+    >
+      {render_slot(@inner_block, f)}
+    </Phoenix.Component.form>
+    <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarForm">
+      export default {
+        mounted() {
+          this._awaitingResponse = false
+          this._onSubmit = () => { this._awaitingResponse = true }
+          this.el.addEventListener("submit", this._onSubmit)
+        },
+        updated() {
+          if (!this._awaitingResponse) return
+          this._awaitingResponse = false
+          const invalid = this.el.querySelector('[aria-invalid="true"]')
+          if (!invalid || typeof invalid.focus !== "function") return
+          // LiveView restores focus to the previously focused element
+          // synchronously after morphdom finishes patching. Calling .focus()
+          // here gets overwritten by that restoration. Deferring to the next
+          // animation frame puts our focus call AFTER LV's restoration, so
+          // focus lands and sticks on the first invalid input.
+          requestAnimationFrame(() => invalid.focus())
+        },
+        destroyed() {
+          if (this._onSubmit) this.el.removeEventListener("submit", this._onSubmit)
+        }
+      }
+    </script>
+    """
+  end
+
+  defp derive_form_id(%Form{id: id}, _as) when is_binary(id) and id != "" do
+    "pulsar-form-" <> id
+  end
+
+  # For raw changesets/maps, route through Phoenix.Component.to_form/2 (passing
+  # `:as` if the caller provided one) so the id we derive matches the id
+  # Phoenix would derive internally. If the resulting form still has no id —
+  # i.e. the caller passed a bare changeset/map without `:id` or `:as` — raise
+  # rather than fall back to a per-render unique integer that would destroy
+  # the colocated hook on every patch.
+  defp derive_form_id(other, as) do
+    opts = if as, do: [as: as], else: []
+
+    case Phoenix.Component.to_form(other, opts) do
+      %Form{id: id} when is_binary(id) and id != "" ->
+        "pulsar-form-" <> id
+
+      _ ->
+        raise ArgumentError, """
+        Pulsar.Components.Form.form/1 requires a stable id for its colocated \
+        hook to survive re-renders. The given `for=` source does not provide \
+        one. Pass one of:
+          * `id="..."` to <.form>
+          * `as: :something` to <.form>
+          * pre-build with `to_form(source, as: :something)` and pass the result
+        """
+    end
+  end
+end
