@@ -128,65 +128,65 @@ defmodule Pulsar.Components.Select do
     # Outline variant colors
     "outline" => %{
       "danger" =>
-        "border-danger/60 dark:border-dark-danger/60 bg-background dark:bg-dark-background text-danger dark:text-dark-danger focus:ring-danger/60 hover:border-danger dark:hover:border-dark-danger",
+        "border-danger/60 bg-background text-danger focus:ring-danger/60 hover:border-danger",
       "info" =>
-        "border-info/60 dark:border-dark-info/60 bg-background dark:bg-dark-background text-info dark:text-dark-info focus:ring-info/60 hover:border-info dark:hover:border-dark-info",
+        "border-info/60 bg-background text-info focus:ring-info/60 hover:border-info",
       "neutral" =>
-        "border-border dark:border-dark-border bg-background dark:bg-dark-background text-foreground dark:text-dark-foreground focus:ring-ring dark:focus:ring-dark-ring hover:border-border/80 dark:hover:border-dark-border/80",
+        "border-border bg-background text-foreground focus:ring-ring hover:border-border/80",
       "primary" =>
-        "border-primary/60 dark:border-dark-primary/60 bg-background dark:bg-dark-background text-primary dark:text-dark-primary focus:ring-primary/60 hover:border-primary dark:hover:border-dark-primary",
+        "border-primary/60 bg-background text-primary focus:ring-primary/60 hover:border-primary",
       "secondary" =>
-        "border-secondary/60 dark:border-dark-secondary/60 bg-background dark:bg-dark-background text-secondary dark:text-dark-secondary focus:ring-secondary/60 hover:border-secondary dark:hover:border-dark-secondary",
+        "border-secondary/60 bg-background text-secondary focus:ring-secondary/60 hover:border-secondary",
       "success" =>
-        "border-success/60 dark:border-dark-success/60 bg-background dark:bg-dark-background text-success dark:text-dark-success focus:ring-success/60 hover:border-success dark:hover:border-dark-success",
+        "border-success/60 bg-background text-success focus:ring-success/60 hover:border-success",
       "warning" =>
-        "border-warning/60 dark:border-dark-warning/60 bg-background dark:bg-dark-background text-warning dark:text-dark-warning focus:ring-warning/60 hover:border-warning dark:hover:border-dark-warning"
+        "border-warning/60 bg-background text-warning focus:ring-warning/60 hover:border-warning"
     },
     # Ghost variant colors
     "ghost" => %{
       "danger" =>
-        "bg-transparent text-danger dark:text-dark-danger focus:ring-danger/60 hover:bg-danger/5 dark:hover:bg-dark-danger/10",
+        "bg-transparent text-danger focus:ring-danger/60 hover:bg-danger/5",
       "info" =>
-        "bg-transparent text-info dark:text-dark-info focus:ring-info/60 hover:bg-info/5 dark:hover:bg-dark-info/10",
+        "bg-transparent text-info focus:ring-info/60 hover:bg-info/5",
       "neutral" =>
-        "bg-transparent text-foreground dark:text-dark-foreground focus:ring-ring dark:focus:ring-dark-ring hover:bg-surface-1-hover dark:hover:bg-dark-surface-1-hover",
+        "bg-transparent text-foreground focus:ring-ring hover:bg-surface-1-hover",
       "primary" =>
-        "bg-transparent text-primary dark:text-dark-primary focus:ring-primary/60 hover:bg-primary/5 dark:hover:bg-dark-primary/10",
+        "bg-transparent text-primary focus:ring-primary/60 hover:bg-primary/5",
       "secondary" =>
-        "bg-transparent text-secondary dark:text-dark-secondary focus:ring-secondary/60 hover:bg-secondary/5 dark:hover:bg-dark-secondary/10",
+        "bg-transparent text-secondary focus:ring-secondary/60 hover:bg-secondary/5",
       "success" =>
-        "bg-transparent text-success dark:text-dark-success focus:ring-success/60 hover:bg-success/5 dark:hover:bg-dark-success/10",
+        "bg-transparent text-success focus:ring-success/60 hover:bg-success/5",
       "warning" =>
-        "bg-transparent text-warning dark:text-dark-warning focus:ring-warning/60 hover:bg-warning/5 dark:hover:bg-dark-warning/10"
+        "bg-transparent text-warning focus:ring-warning/60 hover:bg-warning/5"
     },
     # Solid variant colors
     "solid" => %{
       "danger" =>
-        "bg-danger/10 dark:bg-dark-danger/20 text-danger dark:text-dark-danger focus:ring-danger/60 hover:bg-danger/20 dark:hover:bg-dark-danger/30",
+        "bg-danger/10 text-danger focus:ring-danger/60 hover:bg-danger/20",
       "info" =>
-        "bg-info/10 dark:bg-dark-info/20 text-info dark:text-dark-info focus:ring-info/60 hover:bg-info/20 dark:hover:bg-dark-info/30",
+        "bg-info/10 text-info focus:ring-info/60 hover:bg-info/20",
       "neutral" =>
-        "bg-neutral/10 dark:bg-dark-neutral/20 text-neutral dark:text-dark-neutral focus:ring-neutral/60 hover:bg-neutral/20 dark:hover:bg-dark-neutral/30",
+        "bg-neutral/10 text-neutral focus:ring-neutral/60 hover:bg-neutral/20",
       "primary" =>
-        "bg-primary/10 dark:bg-dark-primary/20 text-primary dark:text-dark-primary focus:ring-primary/60 hover:bg-primary/20 dark:hover:bg-dark-primary/30",
+        "bg-primary/10 text-primary focus:ring-primary/60 hover:bg-primary/20",
       "secondary" =>
-        "bg-secondary/10 dark:bg-dark-secondary/20 text-secondary dark:text-dark-secondary focus:ring-secondary/60 hover:bg-secondary/20 dark:hover:bg-dark-secondary/30",
+        "bg-secondary/10 text-secondary focus:ring-secondary/60 hover:bg-secondary/20",
       "success" =>
-        "bg-success/10 dark:bg-dark-success/20 text-success dark:text-dark-success focus:ring-success/60 hover:bg-success/20 dark:hover:bg-dark-success/30",
+        "bg-success/10 text-success focus:ring-success/60 hover:bg-success/20",
       "warning" =>
-        "bg-warning/10 dark:bg-dark-warning/20 text-warning dark:text-dark-warning focus:ring-warning/60 hover:bg-warning/20 dark:hover:bg-dark-warning/30"
+        "bg-warning/10 text-warning focus:ring-warning/60 hover:bg-warning/20"
     }
   }
 
   # Arrow color configuration
   @arrow_colors %{
-    "danger" => "text-danger dark:text-dark-danger",
-    "info" => "text-info dark:text-dark-info",
-    "neutral" => "text-neutral dark:text-dark-neutral",
-    "primary" => "text-primary dark:text-dark-primary",
-    "secondary" => "text-secondary dark:text-dark-secondary",
-    "success" => "text-success dark:text-dark-success",
-    "warning" => "text-warning dark:text-dark-warning"
+    "danger" => "text-danger",
+    "info" => "text-info",
+    "neutral" => "text-neutral",
+    "primary" => "text-primary",
+    "secondary" => "text-secondary",
+    "success" => "text-success",
+    "warning" => "text-warning"
   }
 
   # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
@@ -347,7 +347,7 @@ defmodule Pulsar.Components.Select do
               type="button"
               phx-click={remove_badge_js(@on_remove_badge, @id)}
               phx-value-option={option.value}
-              class="ml-1 hover:bg-black/10 dark:hover:bg-white/10 rounded-full p-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current transition-colors"
+              class="ml-1 hover:bg-black/10 rounded-full p-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current transition-colors"
               aria-label={"Remove #{option.label}"}
             >
               <.icon name="hero-x-mark" variant="micro" size="xs" color="current" aria-hidden="true" />

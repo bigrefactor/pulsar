@@ -331,9 +331,7 @@ defmodule Pulsar.Components.InputTest do
 
       # Should show danger styling automatically
       assert html =~ "bg-danger/10"
-      assert html =~ "dark:bg-dark-danger/20"
       assert html =~ "text-danger"
-      assert html =~ "dark:text-dark-danger"
 
       # Should have aria-invalid="true" on input element
       assert html =~ ~s(aria-invalid="true")
@@ -446,9 +444,7 @@ defmodule Pulsar.Components.InputTest do
 
       # Decorators should also show danger styling
       assert html =~ "bg-danger"
-      assert html =~ "dark:bg-dark-danger"
       assert html =~ "text-danger-foreground"
-      assert html =~ "dark:text-dark-danger-foreground"
       assert html =~ "border-danger"
     end
   end

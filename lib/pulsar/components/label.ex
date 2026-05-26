@@ -181,18 +181,18 @@ defmodule Pulsar.Components.Label do
   # Color classes based on error state
   @spec color_classes(boolean()) :: String.t()
   defp color_classes(true) do
-    "text-danger dark:text-dark-danger"
+    "text-danger"
   end
 
   defp color_classes(false) do
-    "text-foreground dark:text-dark-foreground"
+    "text-foreground"
   end
 
   # Required indicator classes with size-appropriate spacing and ARIA hidden
   @spec required_indicator_classes(String.t()) :: String.t()
   defp required_indicator_classes(size) do
     merge([
-      "text-danger dark:text-dark-danger",
+      "text-danger",
       indicator_margin_classes(size),
       size_text_classes(size)
     ])

@@ -106,39 +106,39 @@ defmodule Pulsar.Components.Flash do
   # Color configuration for each variant
   @color_config %{
     "ghost" => %{
-      "danger" => "text-danger bg-danger/10 dark:text-dark-danger dark:bg-dark-danger/10",
-      "info" => "text-info bg-info/10 dark:text-dark-info dark:bg-dark-info/10",
-      "neutral" => "text-foreground bg-surface-1 dark:text-dark-foreground dark:bg-dark-surface-1",
-      "primary" => "text-primary bg-primary/10 dark:text-dark-primary dark:bg-dark-primary/10",
-      "secondary" => "text-secondary bg-secondary/10 dark:text-dark-secondary dark:bg-dark-secondary/10",
-      "success" => "text-success bg-success/10 dark:text-dark-success dark:bg-dark-success/10",
-      "warning" => "text-warning bg-warning/10 dark:text-dark-warning dark:bg-dark-warning/10"
+      "danger" => "text-danger bg-danger/10",
+      "info" => "text-info bg-info/10",
+      "neutral" => "text-foreground bg-surface-1",
+      "primary" => "text-primary bg-primary/10",
+      "secondary" => "text-secondary bg-secondary/10",
+      "success" => "text-success bg-success/10",
+      "warning" => "text-warning bg-warning/10"
     },
     "outline" => %{
       "danger" =>
-        "border border-danger bg-background text-danger dark:border-dark-danger dark:bg-dark-background dark:text-dark-danger",
+        "border border-danger bg-background text-danger",
       "info" =>
-        "border border-info bg-background text-info dark:border-dark-info dark:bg-dark-background dark:text-dark-info",
+        "border border-info bg-background text-info",
       "neutral" =>
-        "border border-neutral bg-background text-foreground dark:border-dark-neutral dark:bg-dark-background dark:text-dark-foreground",
+        "border border-neutral bg-background text-foreground",
       "primary" =>
-        "border border-primary bg-background text-primary dark:border-dark-primary dark:bg-dark-background dark:text-dark-primary",
+        "border border-primary bg-background text-primary",
       "secondary" =>
-        "border border-secondary bg-background text-secondary dark:border-dark-secondary dark:bg-dark-background dark:text-dark-secondary",
+        "border border-secondary bg-background text-secondary",
       "success" =>
-        "border border-success bg-background text-success dark:border-dark-success dark:bg-dark-background dark:text-dark-success",
+        "border border-success bg-background text-success",
       "warning" =>
-        "border border-warning bg-background text-warning dark:border-dark-warning dark:bg-dark-background dark:text-dark-warning"
+        "border border-warning bg-background text-warning"
     },
     "solid" => %{
-      "danger" => "bg-danger text-danger-foreground dark:bg-dark-danger dark:text-dark-danger-foreground",
-      "info" => "bg-info text-info-foreground dark:bg-dark-info dark:text-dark-info-foreground",
-      "neutral" => "bg-neutral text-neutral-foreground dark:bg-dark-neutral dark:text-dark-neutral-foreground",
-      "primary" => "bg-primary text-primary-foreground dark:bg-dark-primary dark:text-dark-primary-foreground",
+      "danger" => "bg-danger text-danger-foreground",
+      "info" => "bg-info text-info-foreground",
+      "neutral" => "bg-neutral text-neutral-foreground",
+      "primary" => "bg-primary text-primary-foreground",
       "secondary" =>
-        "bg-secondary text-secondary-foreground dark:bg-dark-secondary dark:text-dark-secondary-foreground",
-      "success" => "bg-success text-success-foreground dark:bg-dark-success dark:text-dark-success-foreground",
-      "warning" => "bg-warning text-warning-foreground dark:bg-dark-warning dark:text-dark-warning-foreground"
+        "bg-secondary text-secondary-foreground",
+      "success" => "bg-success text-success-foreground",
+      "warning" => "bg-warning text-warning-foreground"
     }
   }
 
@@ -571,7 +571,7 @@ defmodule Pulsar.Components.Flash do
   defp close_button_classes(size) do
     merge([
       "flex-shrink-0 rounded-md transition-colors",
-      "hover:bg-black/10 dark:hover:bg-white/10",
+      "hover:bg-black/10",
       "focus:outline-none focus:ring-2 focus:ring-current focus:ring-offset-2",
       @size_config[size][:close_button]
     ])

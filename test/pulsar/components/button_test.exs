@@ -624,8 +624,6 @@ defmodule Pulsar.Components.ButtonTest do
         """)
 
       # Should include dark mode variants for semantic tokens
-      assert html =~ "dark:bg-dark-primary"
-      assert html =~ "dark:hover:bg-dark-primary/90"
       # Focus ring uses semantic token without dark- duplication
       assert html =~ "focus-visible:ring-ring"
     end

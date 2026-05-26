@@ -14,7 +14,7 @@ defmodule Pulsar.Components.DividerTest do
       assert html =~ ~s(<hr)
       assert html =~ ~s(border-t-2)
       assert html =~ ~s(my-6)
-      assert html =~ ~s(border-border dark:border-dark-border)
+      assert html =~ ~s(border-border)
       assert html =~ ~s(border-solid)
       assert html =~ ~s(w-full)
     end
@@ -32,21 +32,21 @@ defmodule Pulsar.Components.DividerTest do
       assigns = %{}
       html = rendered_to_string(~H[<Divider.divider variant="solid" />])
 
-      assert html =~ ~s(border-neutral dark:border-dark-neutral)
+      assert html =~ ~s(border-neutral)
     end
 
     test "renders outline variant (default)" do
       assigns = %{}
       html = rendered_to_string(~H[<Divider.divider variant="outline" />])
 
-      assert html =~ ~s(border-border dark:border-dark-border)
+      assert html =~ ~s(border-border)
     end
 
     test "renders ghost variant" do
       assigns = %{}
       html = rendered_to_string(~H[<Divider.divider variant="ghost" />])
 
-      assert html =~ ~s(border-border/30 dark:border-dark-border/30)
+      assert html =~ ~s(border-border/30)
     end
   end
 
@@ -55,28 +55,28 @@ defmodule Pulsar.Components.DividerTest do
       assigns = %{}
       html = rendered_to_string(~H[<Divider.divider color="neutral" />])
 
-      assert html =~ ~s(border-border dark:border-dark-border)
+      assert html =~ ~s(border-border)
     end
 
     test "renders primary color" do
       assigns = %{}
       html = rendered_to_string(~H[<Divider.divider color="primary" variant="solid" />])
 
-      assert html =~ ~s(border-primary dark:border-dark-primary)
+      assert html =~ ~s(border-primary)
     end
 
     test "renders danger color" do
       assigns = %{}
       html = rendered_to_string(~H[<Divider.divider color="danger" variant="solid" />])
 
-      assert html =~ ~s(border-danger dark:border-dark-danger)
+      assert html =~ ~s(border-danger)
     end
 
     test "renders success color" do
       assigns = %{}
       html = rendered_to_string(~H[<Divider.divider color="success" variant="solid" />])
 
-      assert html =~ ~s(border-success dark:border-dark-success)
+      assert html =~ ~s(border-success)
     end
   end
 
@@ -218,8 +218,8 @@ defmodule Pulsar.Components.DividerTest do
       assigns = %{}
       html = rendered_to_string(~H[<Divider.divider color="primary" variant="solid">Title</Divider.divider>])
 
-      assert html =~ ~s(text-primary dark:text-dark-primary)
-      assert html =~ ~s(border-primary dark:border-dark-primary)
+      assert html =~ ~s(text-primary)
+      assert html =~ ~s(border-primary)
     end
 
     test "labeled divider with vertical orientation" do
@@ -261,21 +261,21 @@ defmodule Pulsar.Components.DividerTest do
       assigns = %{}
       html = rendered_to_string(~H[<Divider.divider variant="solid" color="primary" />])
 
-      assert html =~ ~s(border-primary dark:border-dark-primary)
+      assert html =~ ~s(border-primary)
     end
 
     test "outline variant with danger color" do
       assigns = %{}
       html = rendered_to_string(~H[<Divider.divider variant="outline" color="danger" />])
 
-      assert html =~ ~s(border-danger/60 dark:border-dark-danger/60)
+      assert html =~ ~s(border-danger/60)
     end
 
     test "ghost variant with success color" do
       assigns = %{}
       html = rendered_to_string(~H[<Divider.divider variant="ghost" color="success" />])
 
-      assert html =~ ~s(border-success/30 dark:border-dark-success/30)
+      assert html =~ ~s(border-success/30)
     end
   end
 
@@ -289,7 +289,7 @@ defmodule Pulsar.Components.DividerTest do
         )
 
       assert html =~ ~s(border-dashed)
-      assert html =~ ~s(border-primary dark:border-dark-primary)
+      assert html =~ ~s(border-primary)
       assert html =~ "Section"
     end
 
@@ -312,7 +312,7 @@ defmodule Pulsar.Components.DividerTest do
 
       assert html =~ ~s(border-dashed)
       assert html =~ ~s(text-lg mx-4)
-      assert html =~ ~s(border-primary dark:border-dark-primary)
+      assert html =~ ~s(border-primary)
       assert html =~ "Custom"
     end
   end

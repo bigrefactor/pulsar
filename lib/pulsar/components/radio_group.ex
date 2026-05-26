@@ -489,64 +489,64 @@ defmodule Pulsar.Components.RadioGroup do
 
   @radio_color_config %{
     "danger" => %{
-      background: "bg-background dark:bg-dark-background checked:bg-danger dark:checked:bg-dark-danger",
-      border: "border-border dark:border-dark-border checked:border-danger dark:checked:border-dark-danger",
-      foreground: "before:bg-danger-foreground dark:before:bg-dark-danger-foreground",
-      hover: "hover:border-danger/70 dark:hover:border-dark-danger/70 hover:shadow-sm",
-      ring: "focus-visible:ring-danger dark:focus-visible:ring-dark-danger"
+      background: "bg-background checked:bg-danger",
+      border: "border-border checked:border-danger",
+      foreground: "before:bg-danger-foreground",
+      hover: "hover:border-danger/70 hover:shadow-sm",
+      ring: "focus-visible:ring-danger"
     },
     "info" => %{
-      background: "bg-background dark:bg-dark-background checked:bg-info dark:checked:bg-dark-info",
-      border: "border-border dark:border-dark-border checked:border-info dark:checked:border-dark-info",
-      foreground: "before:bg-info-foreground dark:before:bg-dark-info-foreground",
-      hover: "hover:border-info/70 dark:hover:border-dark-info/70 hover:shadow-sm",
-      ring: "focus-visible:ring-info dark:focus-visible:ring-dark-info"
+      background: "bg-background checked:bg-info",
+      border: "border-border checked:border-info",
+      foreground: "before:bg-info-foreground",
+      hover: "hover:border-info/70 hover:shadow-sm",
+      ring: "focus-visible:ring-info"
     },
     "neutral" => %{
-      background: "bg-background dark:bg-dark-background checked:bg-neutral dark:checked:bg-dark-neutral",
-      border: "border-border dark:border-dark-border checked:border-neutral dark:checked:border-dark-neutral",
-      foreground: "before:bg-neutral-foreground dark:before:bg-dark-neutral-foreground",
-      hover: "hover:border-neutral/70 dark:hover:border-dark-neutral/70 hover:shadow-sm",
-      ring: "focus-visible:ring-neutral dark:focus-visible:ring-dark-neutral"
+      background: "bg-background checked:bg-neutral",
+      border: "border-border checked:border-neutral",
+      foreground: "before:bg-neutral-foreground",
+      hover: "hover:border-neutral/70 hover:shadow-sm",
+      ring: "focus-visible:ring-neutral"
     },
     "primary" => %{
-      background: "bg-background dark:bg-dark-background checked:bg-primary dark:checked:bg-dark-primary",
-      border: "border-border dark:border-dark-border checked:border-primary dark:checked:border-dark-primary",
-      foreground: "before:bg-primary-foreground dark:before:bg-dark-primary-foreground",
-      hover: "hover:border-primary/70 dark:hover:border-dark-primary/70 hover:shadow-sm",
-      ring: "focus-visible:ring-primary dark:focus-visible:ring-dark-primary"
+      background: "bg-background checked:bg-primary",
+      border: "border-border checked:border-primary",
+      foreground: "before:bg-primary-foreground",
+      hover: "hover:border-primary/70 hover:shadow-sm",
+      ring: "focus-visible:ring-primary"
     },
     "secondary" => %{
-      background: "bg-background dark:bg-dark-background checked:bg-secondary dark:checked:bg-dark-secondary",
-      border: "border-border dark:border-dark-border checked:border-secondary dark:checked:border-dark-secondary",
-      foreground: "before:bg-secondary-foreground dark:before:bg-dark-secondary-foreground",
-      hover: "hover:border-secondary/70 dark:hover:border-dark-secondary/70 hover:shadow-sm",
-      ring: "focus-visible:ring-secondary dark:focus-visible:ring-dark-secondary"
+      background: "bg-background checked:bg-secondary",
+      border: "border-border checked:border-secondary",
+      foreground: "before:bg-secondary-foreground",
+      hover: "hover:border-secondary/70 hover:shadow-sm",
+      ring: "focus-visible:ring-secondary"
     },
     "success" => %{
-      background: "bg-background dark:bg-dark-background checked:bg-success dark:checked:bg-dark-success",
-      border: "border-border dark:border-dark-border checked:border-success dark:checked:border-dark-success",
-      foreground: "before:bg-success-foreground dark:before:bg-dark-success-foreground",
-      hover: "hover:border-success/70 dark:hover:border-dark-success/70 hover:shadow-sm",
-      ring: "focus-visible:ring-success dark:focus-visible:ring-dark-success"
+      background: "bg-background checked:bg-success",
+      border: "border-border checked:border-success",
+      foreground: "before:bg-success-foreground",
+      hover: "hover:border-success/70 hover:shadow-sm",
+      ring: "focus-visible:ring-success"
     },
     "warning" => %{
-      background: "bg-background dark:bg-dark-background checked:bg-warning dark:checked:bg-dark-warning",
-      border: "border-border dark:border-dark-border checked:border-warning dark:checked:border-dark-warning",
-      foreground: "before:bg-warning-foreground dark:before:bg-dark-warning-foreground",
-      hover: "hover:border-warning/70 dark:hover:border-dark-warning/70 hover:shadow-sm",
-      ring: "focus-visible:ring-warning dark:focus-visible:ring-dark-warning"
+      background: "bg-background checked:bg-warning",
+      border: "border-border checked:border-warning",
+      foreground: "before:bg-warning-foreground",
+      hover: "hover:border-warning/70 hover:shadow-sm",
+      ring: "focus-visible:ring-warning"
     }
   }
 
   @radio_label_color_config %{
-    "danger" => "text-danger dark:text-dark-danger",
-    "info" => "text-info dark:text-dark-info",
-    "neutral" => "text-foreground dark:text-dark-foreground",
-    "primary" => "text-primary dark:text-dark-primary",
-    "secondary" => "text-secondary dark:text-dark-secondary",
-    "success" => "text-success dark:text-dark-success",
-    "warning" => "text-warning dark:text-dark-warning"
+    "danger" => "text-danger",
+    "info" => "text-info",
+    "neutral" => "text-foreground",
+    "primary" => "text-primary",
+    "secondary" => "text-secondary",
+    "success" => "text-success",
+    "warning" => "text-warning"
   }
 
   # Radio color classes - uses map lookup instead of pattern matching
@@ -644,25 +644,25 @@ defmodule Pulsar.Components.RadioGroup do
 
   @card_color_config %{
     "danger" => %{
-      focus_ring: "focus-within:ring-danger dark:focus-within:ring-dark-danger"
+      focus_ring: "focus-within:ring-danger"
     },
     "info" => %{
-      focus_ring: "focus-within:ring-info dark:focus-within:ring-dark-info"
+      focus_ring: "focus-within:ring-info"
     },
     "neutral" => %{
-      focus_ring: "focus-within:ring-neutral dark:focus-within:ring-dark-neutral"
+      focus_ring: "focus-within:ring-neutral"
     },
     "primary" => %{
-      focus_ring: "focus-within:ring-primary dark:focus-within:ring-dark-primary"
+      focus_ring: "focus-within:ring-primary"
     },
     "secondary" => %{
-      focus_ring: "focus-within:ring-secondary dark:focus-within:ring-dark-secondary"
+      focus_ring: "focus-within:ring-secondary"
     },
     "success" => %{
-      focus_ring: "focus-within:ring-success dark:focus-within:ring-dark-success"
+      focus_ring: "focus-within:ring-success"
     },
     "warning" => %{
-      focus_ring: "focus-within:ring-warning dark:focus-within:ring-dark-warning"
+      focus_ring: "focus-within:ring-warning"
     }
   }
 
@@ -684,145 +684,145 @@ defmodule Pulsar.Components.RadioGroup do
     "ghost" => %{
       "danger" => %{
         base: "border-transparent bg-transparent",
-        checked: "has-[:checked]:bg-danger/15 dark:has-[:checked]:bg-dark-danger/15",
-        hover: "hover:bg-danger/10 dark:hover:bg-dark-danger/10"
+        checked: "has-[:checked]:bg-danger/15",
+        hover: "hover:bg-danger/10"
       },
       "info" => %{
         base: "border-transparent bg-transparent",
-        checked: "has-[:checked]:bg-info/15 dark:has-[:checked]:bg-dark-info/15",
-        hover: "hover:bg-info/10 dark:hover:bg-dark-info/10"
+        checked: "has-[:checked]:bg-info/15",
+        hover: "hover:bg-info/10"
       },
       "neutral" => %{
         base: "border-transparent bg-transparent",
-        checked: "has-[:checked]:bg-neutral/15 dark:has-[:checked]:bg-dark-neutral/15",
-        hover: "hover:bg-neutral/10 dark:hover:bg-dark-neutral/10"
+        checked: "has-[:checked]:bg-neutral/15",
+        hover: "hover:bg-neutral/10"
       },
       "primary" => %{
         base: "border-transparent bg-transparent",
-        checked: "has-[:checked]:bg-primary/15 dark:has-[:checked]:bg-dark-primary/15",
-        hover: "hover:bg-primary/10 dark:hover:bg-dark-primary/10"
+        checked: "has-[:checked]:bg-primary/15",
+        hover: "hover:bg-primary/10"
       },
       "secondary" => %{
         base: "border-transparent bg-transparent",
-        checked: "has-[:checked]:bg-secondary/15 dark:has-[:checked]:bg-dark-secondary/15",
-        hover: "hover:bg-secondary/10 dark:hover:bg-dark-secondary/10"
+        checked: "has-[:checked]:bg-secondary/15",
+        hover: "hover:bg-secondary/10"
       },
       "success" => %{
         base: "border-transparent bg-transparent",
-        checked: "has-[:checked]:bg-success/15 dark:has-[:checked]:bg-dark-success/15",
-        hover: "hover:bg-success/10 dark:hover:bg-dark-success/10"
+        checked: "has-[:checked]:bg-success/15",
+        hover: "hover:bg-success/10"
       },
       "warning" => %{
         base: "border-transparent bg-transparent",
-        checked: "has-[:checked]:bg-warning/15 dark:has-[:checked]:bg-dark-warning/15",
-        hover: "hover:bg-warning/10 dark:hover:bg-dark-warning/10"
+        checked: "has-[:checked]:bg-warning/15",
+        hover: "hover:bg-warning/10"
       }
     },
     "outline" => %{
       "danger" => %{
-        background: "bg-background dark:bg-dark-background",
+        background: "bg-background",
         base: "",
-        border: "border-border dark:border-dark-border",
+        border: "border-border",
         checked:
-          "has-[:checked]:border-danger dark:has-[:checked]:border-dark-danger has-[:checked]:bg-danger/10 dark:has-[:checked]:bg-dark-danger/10",
-        hover: "hover:border-danger/50 dark:hover:border-dark-danger/50 hover:bg-danger/5 dark:hover:bg-dark-danger/5"
+          "has-[:checked]:border-danger has-[:checked]:bg-danger/10",
+        hover: "hover:border-danger/50 hover:bg-danger/5"
       },
       "info" => %{
-        background: "bg-background dark:bg-dark-background",
+        background: "bg-background",
         base: "",
-        border: "border-border dark:border-dark-border",
+        border: "border-border",
         checked:
-          "has-[:checked]:border-info dark:has-[:checked]:border-dark-info has-[:checked]:bg-info/10 dark:has-[:checked]:bg-dark-info/10",
-        hover: "hover:border-info/50 dark:hover:border-dark-info/50 hover:bg-info/5 dark:hover:bg-dark-info/5"
+          "has-[:checked]:border-info has-[:checked]:bg-info/10",
+        hover: "hover:border-info/50 hover:bg-info/5"
       },
       "neutral" => %{
-        background: "bg-background dark:bg-dark-background",
+        background: "bg-background",
         base: "",
-        border: "border-border dark:border-dark-border",
+        border: "border-border",
         checked:
-          "has-[:checked]:border-neutral dark:has-[:checked]:border-dark-neutral has-[:checked]:bg-neutral/10 dark:has-[:checked]:bg-dark-neutral/10",
+          "has-[:checked]:border-neutral has-[:checked]:bg-neutral/10",
         hover:
-          "hover:border-neutral/50 dark:hover:border-dark-neutral/50 hover:bg-neutral/5 dark:hover:bg-dark-neutral/5"
+          "hover:border-neutral/50 hover:bg-neutral/5"
       },
       "primary" => %{
-        background: "bg-background dark:bg-dark-background",
+        background: "bg-background",
         base: "",
-        border: "border-border dark:border-dark-border",
+        border: "border-border",
         checked:
-          "has-[:checked]:border-primary dark:has-[:checked]:border-dark-primary has-[:checked]:bg-primary/10 dark:has-[:checked]:bg-dark-primary/10",
+          "has-[:checked]:border-primary has-[:checked]:bg-primary/10",
         hover:
-          "hover:border-primary/50 dark:hover:border-dark-primary/50 hover:bg-primary/5 dark:hover:bg-dark-primary/5"
+          "hover:border-primary/50 hover:bg-primary/5"
       },
       "secondary" => %{
-        background: "bg-background dark:bg-dark-background",
+        background: "bg-background",
         base: "",
-        border: "border-border dark:border-dark-border",
+        border: "border-border",
         checked:
-          "has-[:checked]:border-secondary dark:has-[:checked]:border-dark-secondary has-[:checked]:bg-secondary/10 dark:has-[:checked]:bg-dark-secondary/10",
+          "has-[:checked]:border-secondary has-[:checked]:bg-secondary/10",
         hover:
-          "hover:border-secondary/50 dark:hover:border-dark-secondary/50 hover:bg-secondary/5 dark:hover:bg-dark-secondary/5"
+          "hover:border-secondary/50 hover:bg-secondary/5"
       },
       "success" => %{
-        background: "bg-background dark:bg-dark-background",
+        background: "bg-background",
         base: "",
-        border: "border-border dark:border-dark-border",
+        border: "border-border",
         checked:
-          "has-[:checked]:border-success dark:has-[:checked]:border-dark-success has-[:checked]:bg-success/10 dark:has-[:checked]:bg-dark-success/10",
+          "has-[:checked]:border-success has-[:checked]:bg-success/10",
         hover:
-          "hover:border-success/50 dark:hover:border-dark-success/50 hover:bg-success/5 dark:hover:bg-dark-success/5"
+          "hover:border-success/50 hover:bg-success/5"
       },
       "warning" => %{
-        background: "bg-background dark:bg-dark-background",
+        background: "bg-background",
         base: "",
-        border: "border-border dark:border-dark-border",
+        border: "border-border",
         checked:
-          "has-[:checked]:border-warning dark:has-[:checked]:border-dark-warning has-[:checked]:bg-warning/10 dark:has-[:checked]:bg-dark-warning/10",
+          "has-[:checked]:border-warning has-[:checked]:bg-warning/10",
         hover:
-          "hover:border-warning/50 dark:hover:border-dark-warning/50 hover:bg-warning/5 dark:hover:bg-dark-warning/5"
+          "hover:border-warning/50 hover:bg-warning/5"
       }
     },
     "solid" => %{
       "danger" => %{
-        background: "bg-background dark:bg-dark-background",
+        background: "bg-background",
         base: "border-transparent",
-        checked: "has-[:checked]:bg-danger/20 dark:has-[:checked]:bg-dark-danger/20",
-        hover: "hover:bg-danger/10 dark:hover:bg-dark-danger/10"
+        checked: "has-[:checked]:bg-danger/20",
+        hover: "hover:bg-danger/10"
       },
       "info" => %{
-        background: "bg-background dark:bg-dark-background",
+        background: "bg-background",
         base: "border-transparent",
-        checked: "has-[:checked]:bg-info/20 dark:has-[:checked]:bg-dark-info/20",
-        hover: "hover:bg-info/10 dark:hover:bg-dark-info/10"
+        checked: "has-[:checked]:bg-info/20",
+        hover: "hover:bg-info/10"
       },
       "neutral" => %{
-        background: "bg-background dark:bg-dark-background",
+        background: "bg-background",
         base: "border-transparent",
-        checked: "has-[:checked]:bg-neutral/20 dark:has-[:checked]:bg-dark-neutral/20",
-        hover: "hover:bg-neutral/10 dark:hover:bg-dark-neutral/10"
+        checked: "has-[:checked]:bg-neutral/20",
+        hover: "hover:bg-neutral/10"
       },
       "primary" => %{
-        background: "bg-background dark:bg-dark-background",
+        background: "bg-background",
         base: "border-transparent",
-        checked: "has-[:checked]:bg-primary/20 dark:has-[:checked]:bg-dark-primary/20",
-        hover: "hover:bg-primary/10 dark:hover:bg-dark-primary/10"
+        checked: "has-[:checked]:bg-primary/20",
+        hover: "hover:bg-primary/10"
       },
       "secondary" => %{
-        background: "bg-background dark:bg-dark-background",
+        background: "bg-background",
         base: "border-transparent",
-        checked: "has-[:checked]:bg-secondary/20 dark:has-[:checked]:bg-dark-secondary/20",
-        hover: "hover:bg-secondary/10 dark:hover:bg-dark-secondary/10"
+        checked: "has-[:checked]:bg-secondary/20",
+        hover: "hover:bg-secondary/10"
       },
       "success" => %{
-        background: "bg-background dark:bg-dark-background",
+        background: "bg-background",
         base: "border-transparent",
-        checked: "has-[:checked]:bg-success/20 dark:has-[:checked]:bg-dark-success/20",
-        hover: "hover:bg-success/10 dark:hover:bg-dark-success/10"
+        checked: "has-[:checked]:bg-success/20",
+        hover: "hover:bg-success/10"
       },
       "warning" => %{
-        background: "bg-background dark:bg-dark-background",
+        background: "bg-background",
         base: "border-transparent",
-        checked: "has-[:checked]:bg-warning/20 dark:has-[:checked]:bg-dark-warning/20",
-        hover: "hover:bg-warning/10 dark:hover:bg-dark-warning/10"
+        checked: "has-[:checked]:bg-warning/20",
+        hover: "hover:bg-warning/10"
       }
     }
   }

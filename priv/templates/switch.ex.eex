@@ -131,99 +131,99 @@ alias Phoenix.LiveView.Rendered
   "danger" => %{
     ghost: %{
       checked:
-        "peer-checked:bg-danger/15 hover:peer-checked:bg-danger/20 dark:peer-checked:bg-dark-danger/15 dark:hover:peer-checked:bg-dark-danger/20"
+        "peer-checked:bg-danger/15 hover:peer-checked:bg-danger/20"
     },
     outline: %{
       checked:
-        "peer-checked:bg-danger/10 peer-checked:border-danger dark:peer-checked:bg-dark-danger/10 dark:peer-checked:border-dark-danger"
+        "peer-checked:bg-danger/10 peer-checked:border-danger"
     },
     solid: %{
       checked:
-        "peer-checked:bg-danger/90 dark:peer-checked:bg-dark-danger/90 peer-checked:hover:bg-danger dark:peer-checked:hover:bg-dark-danger"
+        "peer-checked:bg-danger/90 peer-checked:hover:bg-danger"
     }
   },
   "info" => %{
     ghost: %{
       checked:
-        "peer-checked:bg-info/15 hover:peer-checked:bg-info/20 dark:peer-checked:bg-dark-info/15 dark:hover:peer-checked:bg-dark-info/20"
+        "peer-checked:bg-info/15 hover:peer-checked:bg-info/20"
     },
     outline: %{
       checked:
-        "peer-checked:bg-info/10 peer-checked:border-info dark:peer-checked:bg-dark-info/10 dark:peer-checked:border-dark-info"
+        "peer-checked:bg-info/10 peer-checked:border-info"
     },
     solid: %{
       checked:
-        "peer-checked:bg-info/90 dark:peer-checked:bg-dark-info/90 peer-checked:hover:bg-info dark:peer-checked:hover:bg-dark-info"
+        "peer-checked:bg-info/90 peer-checked:hover:bg-info"
     }
   },
   "neutral" => %{
     ghost: %{
       checked:
-        "peer-checked:bg-neutral/15 hover:peer-checked:bg-neutral/20 dark:peer-checked:bg-dark-neutral/15 dark:hover:peer-checked:bg-dark-neutral/20"
+        "peer-checked:bg-neutral/15 hover:peer-checked:bg-neutral/20"
     },
     outline: %{
       checked:
-        "peer-checked:bg-neutral/10 peer-checked:border-neutral dark:peer-checked:bg-dark-neutral/10 dark:peer-checked:border-dark-neutral"
+        "peer-checked:bg-neutral/10 peer-checked:border-neutral"
     },
     solid: %{
       checked:
-        "peer-checked:bg-neutral/90 dark:peer-checked:bg-dark-neutral/90 peer-checked:hover:bg-neutral dark:peer-checked:hover:bg-dark-neutral"
+        "peer-checked:bg-neutral/90 peer-checked:hover:bg-neutral"
     }
   },
   "primary" => %{
     ghost: %{
       checked:
-        "peer-checked:bg-primary/15 hover:peer-checked:bg-primary/20 dark:peer-checked:bg-dark-primary/15 dark:hover:peer-checked:bg-dark-primary/20"
+        "peer-checked:bg-primary/15 hover:peer-checked:bg-primary/20"
     },
     outline: %{
       checked:
-        "peer-checked:bg-primary/10 peer-checked:border-primary dark:peer-checked:bg-dark-primary/10 dark:peer-checked:border-dark-primary"
+        "peer-checked:bg-primary/10 peer-checked:border-primary"
     },
     solid: %{
       checked:
-        "peer-checked:bg-primary/90 dark:peer-checked:bg-dark-primary/90 peer-checked:hover:bg-primary dark:peer-checked:hover:bg-dark-primary"
+        "peer-checked:bg-primary/90 peer-checked:hover:bg-primary"
     }
   },
   "secondary" => %{
     ghost: %{
       checked:
-        "peer-checked:bg-secondary/15 hover:peer-checked:bg-secondary/20 dark:peer-checked:bg-dark-secondary/15 dark:hover:peer-checked:bg-dark-secondary/20"
+        "peer-checked:bg-secondary/15 hover:peer-checked:bg-secondary/20"
     },
     outline: %{
       checked:
-        "peer-checked:bg-secondary/10 peer-checked:border-secondary dark:peer-checked:bg-dark-secondary/10 dark:peer-checked:border-dark-secondary"
+        "peer-checked:bg-secondary/10 peer-checked:border-secondary"
     },
     solid: %{
       checked:
-        "peer-checked:bg-secondary/90 dark:peer-checked:bg-dark-secondary/90 peer-checked:hover:bg-secondary dark:peer-checked:hover:bg-dark-secondary"
+        "peer-checked:bg-secondary/90 peer-checked:hover:bg-secondary"
     }
   },
   "success" => %{
     ghost: %{
       checked:
-        "peer-checked:bg-success/15 hover:peer-checked:bg-success/20 dark:peer-checked:bg-dark-success/15 dark:hover:peer-checked:bg-dark-success/20"
+        "peer-checked:bg-success/15 hover:peer-checked:bg-success/20"
     },
     outline: %{
       checked:
-        "peer-checked:bg-success/10 peer-checked:border-success dark:peer-checked:bg-dark-success/10 dark:peer-checked:border-dark-success"
+        "peer-checked:bg-success/10 peer-checked:border-success"
     },
     solid: %{
       checked:
-        "peer-checked:bg-success/90 dark:peer-checked:bg-dark-success/90 peer-checked:hover:bg-success dark:peer-checked:hover:bg-dark-success"
+        "peer-checked:bg-success/90 peer-checked:hover:bg-success"
     }
   },
   "warning" => %{
     ghost: %{
       checked:
-        "peer-checked:bg-warning/15 hover:peer-checked:bg-warning/20 dark:peer-checked:bg-dark-warning/15 dark:hover:peer-checked:bg-dark-warning/20"
+        "peer-checked:bg-warning/15 hover:peer-checked:bg-warning/20"
     },
     outline: %{
       checked:
-        "peer-checked:bg-warning/10 peer-checked:border-warning dark:peer-checked:bg-dark-warning/10 dark:peer-checked:border-dark-warning"
+        "peer-checked:bg-warning/10 peer-checked:border-warning"
     },
     solid: %{
       checked:
-        "peer-checked:bg-warning/90 dark:peer-checked:bg-dark-warning/90 peer-checked:hover:bg-warning dark:peer-checked:hover:bg-dark-warning"
+        "peer-checked:bg-warning/90 peer-checked:hover:bg-warning"
     }
   }
 }
@@ -234,12 +234,12 @@ alias Phoenix.LiveView.Rendered
   "transition-all duration-200 ease-in-out",
   "transform-gpu",
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-  "focus-visible:ring-ring dark:focus-visible:ring-dark-ring",
-  "focus-visible:ring-offset-background dark:focus-visible:ring-offset-dark-background",
+  "focus-visible:ring-ring",
+  "focus-visible:ring-offset-background",
   "data-[disabled=true]:opacity-50 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:pointer-events-none",
   "data-[loading=true]:cursor-wait",
-  "shadow-inner shadow-black/5 dark:shadow-black/10",
-  "hover:shadow-inner hover:shadow-black/10 dark:hover:shadow-black/20"
+  "shadow-inner shadow-black/5",
+  "hover:shadow-inner hover:shadow-black/10"
 ]
 
 # Base thumb classes
@@ -248,7 +248,7 @@ alias Phoenix.LiveView.Rendered
   "transition-all duration-200 ease-in-out",
   "transform-gpu",
   "flex items-center justify-center pointer-events-none",
-  "data-[loading=true]:bg-background data-[loading=true]:dark:bg-dark-background",
+  "data-[loading=true]:bg-background data-[loading=true]:",
   "group-hover:scale-105",
   "group-active:scale-95",
   "peer-focus-visible:scale-110"
@@ -522,7 +522,7 @@ defp render_switch_only(assigns) do
         :if={@loading && @show_loading_spinner && @loading_content == []}
         aria-hidden="true"
         class={[
-          "animate-spin text-muted-foreground dark:text-dark-muted-foreground animate-fade-in",
+          "animate-spin text-muted-foreground animate-fade-in",
           spinner_size_classes(@size)
         ]}
         viewBox="0 0 24 24"
@@ -567,9 +567,9 @@ end
 @spec track_variant_classes(String.t(), String.t()) :: String.t()
 defp track_variant_classes("solid", color) do
   [
-    "bg-muted/80 dark:bg-dark-muted/80",
-    "hover:bg-muted/90 dark:hover:bg-dark-muted/90",
-    "peer-focus-visible:bg-muted dark:peer-focus-visible:bg-dark-muted",
+    "bg-muted/80",
+    "hover:bg-muted/90",
+    "peer-focus-visible:bg-muted",
     @color_config[color][:solid][:checked]
   ]
   |> Enum.join(" ")
@@ -579,9 +579,9 @@ defp track_variant_classes("outline", color) do
   [
     "border-2",
     "bg-background border-border/70",
-    "dark:bg-dark-background dark:border-dark-border/70",
-    "hover:border-border dark:hover:border-dark-border",
-    "peer-focus-visible:border-border dark:peer-focus-visible:border-dark-border",
+    "",
+    "hover:border-border",
+    "peer-focus-visible:border-border",
     @color_config[color][:outline][:checked]
   ]
   |> Enum.join(" ")
@@ -591,8 +591,8 @@ defp track_variant_classes("ghost", color) do
   [
     "border-2 border-transparent",
     "bg-muted/30 hover:bg-muted/40",
-    "dark:bg-dark-muted/30 dark:hover:bg-dark-muted/40",
-    "peer-focus-visible:bg-muted/50 dark:peer-focus-visible:bg-dark-muted/50",
+    "",
+    "peer-focus-visible:bg-muted/50",
     @color_config[color][:ghost][:checked]
   ]
   |> Enum.join(" ")
@@ -617,22 +617,22 @@ end
 # Thumb variant classes (shadow and border)
 @spec thumb_variant_classes(String.t()) :: String.t()
 defp thumb_variant_classes("solid") do
-  "bg-background dark:bg-dark-background shadow-lg shadow-black/10 dark:shadow-black/25"
+  "bg-background shadow-lg shadow-black/10"
 end
 
 defp thumb_variant_classes("outline") do
-  "bg-background dark:bg-dark-background shadow-md shadow-black/8 dark:shadow-black/20 border border-border/30 dark:border-dark-border/30"
+  "bg-background shadow-md shadow-black/8 border border-border/30"
 end
 
 defp thumb_variant_classes("ghost") do
-  "bg-background dark:bg-dark-background shadow-md shadow-black/6 dark:shadow-black/15"
+  "bg-background shadow-md shadow-black/6"
 end
 
 # State classes for invalid states
 @spec state_classes(boolean(), boolean()) :: String.t()
 defp state_classes(_disabled, invalid) do
   if invalid do
-    "ring-2 ring-danger dark:ring-dark-danger"
+    "ring-2 ring-danger"
   else
     ""
   end

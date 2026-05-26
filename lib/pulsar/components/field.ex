@@ -149,24 +149,24 @@ defmodule Pulsar.Components.Field do
 
   # Description color configuration for different states
   @description_colors %{
-    "danger" => "text-danger-600 dark:text-danger-400",
-    "info" => "text-info-600 dark:text-info-400",
-    "neutral" => "text-gray-600 dark:text-gray-400",
-    "primary" => "text-primary-600 dark:text-primary-400",
-    "secondary" => "text-secondary-600 dark:text-secondary-400",
-    "success" => "text-success-600 dark:text-success-400",
-    "warning" => "text-warning-600 dark:text-warning-400"
+    "danger" => "text-danger-600",
+    "info" => "text-info-600",
+    "neutral" => "text-gray-600",
+    "primary" => "text-primary-600",
+    "secondary" => "text-secondary-600",
+    "success" => "text-success-600",
+    "warning" => "text-warning-600"
   }
 
   # Inline label color configuration for checkbox/switch labels
   @inline_label_colors %{
-    "danger" => "text-danger-900 dark:text-danger-100",
-    "info" => "text-info-900 dark:text-info-100",
-    "neutral" => "text-gray-900 dark:text-gray-100",
-    "primary" => "text-primary-900 dark:text-primary-100",
-    "secondary" => "text-secondary-900 dark:text-secondary-100",
-    "success" => "text-success-900 dark:text-success-100",
-    "warning" => "text-warning-900 dark:text-warning-100"
+    "danger" => "text-danger-900",
+    "info" => "text-info-900",
+    "neutral" => "text-gray-900",
+    "primary" => "text-primary-900",
+    "secondary" => "text-secondary-900",
+    "success" => "text-success-900",
+    "warning" => "text-warning-900"
   }
 
   # Inline label size configuration
@@ -179,7 +179,7 @@ defmodule Pulsar.Components.Field do
   }
 
   # Error message styling - always uses danger color
-  @error_message_classes "text-sm text-danger-600 dark:text-danger-400 flex items-center gap-1"
+  @error_message_classes "text-sm text-danger-600 flex items-center gap-1"
 
   # Base field wrapper classes
   @field_wrapper_base_classes "flex flex-col gap-2"

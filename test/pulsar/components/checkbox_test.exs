@@ -512,7 +512,6 @@ defmodule Pulsar.Components.CheckboxTest do
       assert html =~ "has-[:checked]:bg-primary/15"
       assert html =~ "has-[:checked]:hover:bg-primary/20"
       assert html =~ "has-[:checked]:border-primary"
-      assert html =~ "dark:has-[:checked]:bg-dark-primary/20"
     end
 
     test "applies container_class to card container" do

@@ -616,7 +616,7 @@ defmodule Pulsar.Components.FieldTest do
         """)
 
       # Inline label should have error color classes
-      assert html =~ "text-danger-900 dark:text-danger-100"
+      assert html =~ "text-danger-900"
     end
 
     test "inline labels support custom classes from label slot" do

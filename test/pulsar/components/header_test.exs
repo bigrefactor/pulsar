@@ -527,36 +527,6 @@ defmodule Pulsar.Components.HeaderTest do
     end
   end
 
-  describe "header/1 dark mode" do
-    test "includes dark mode classes" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <Header.header variant="solid" color="primary">
-          Dark Mode Header
-          <:subtitle>With subtitle</:subtitle>
-        </Header.header>
-        """)
-
-      assert html =~ "dark:bg-dark-primary-800"
-      assert html =~ "dark:text-dark-primary-100"
-      # Subtitle color
-      assert html =~ "dark:text-dark-neutral-400"
-    end
-
-    test "sticky header includes dark background" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <Header.header sticky={true}>Sticky Dark Mode</Header.header>
-        """)
-
-      assert html =~ "dark:bg-dark-background"
-    end
-  end
-
   describe "divider behavior" do
     test "divider shows with ghost and solid variants" do
       assigns = %{}

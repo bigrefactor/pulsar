@@ -1,9 +1,28 @@
 @import "tailwindcss";
 
-@theme inline {
-  /* Semantic color aliases using Tailwind's colors */
+/*
+  Pulsar theme system
 
-  /* Primary - References Tailwind's blue */
+  Two-tier token model:
+
+  1. **Palette + non-color design tokens** live in `@theme inline` below. Values
+     are constants (e.g. `--color-primary-500: var(--color-blue-500)`) and never
+     need to swap — Tailwind inlines them into generated utilities at build
+     time. This keeps utility output identical to a stock Tailwind v4 project.
+
+  2. **Semantic color tokens** (`--color-background`, `--color-primary`,
+     `--color-foreground`, etc.) live in `@theme` (non-inline). Tailwind
+     generates utilities like `.bg-primary { background-color: var(--color-primary); }`
+     that resolve through `var()` at runtime. The `[data-theme="dark"]` block
+     below overrides those variables so the utility renders dark-mode colors —
+     no `dark:` variant required in component class strings.
+
+  To add a new theme, copy the `[data-theme="dark"]` block, rename the
+  selector, and override the same tokens. See `mix pulsar.gen.theme <name>`.
+*/
+
+@theme inline {
+  /* Palette: Primary - References Tailwind's blue */
   --color-primary-50: var(--color-blue-50);
   --color-primary-100: var(--color-blue-100);
   --color-primary-200: var(--color-blue-200);
@@ -15,9 +34,8 @@
   --color-primary-800: var(--color-blue-800);
   --color-primary-900: var(--color-blue-900);
   --color-primary-950: var(--color-blue-950);
-  --color-primary: var(--color-primary-500);
 
-  /* Neutral - References Tailwind's gray */
+  /* Palette: Neutral - References Tailwind's gray */
   --color-neutral-50: var(--color-gray-50);
   --color-neutral-100: var(--color-gray-100);
   --color-neutral-200: var(--color-gray-200);
@@ -29,9 +47,8 @@
   --color-neutral-800: var(--color-gray-800);
   --color-neutral-900: var(--color-gray-900);
   --color-neutral-950: var(--color-gray-950);
-  --color-neutral: var(--color-neutral-500);
 
-  /* Secondary - References Tailwind's violet */
+  /* Palette: Secondary - References Tailwind's violet */
   --color-secondary-50: var(--color-violet-50);
   --color-secondary-100: var(--color-violet-100);
   --color-secondary-200: var(--color-violet-200);
@@ -43,9 +60,8 @@
   --color-secondary-800: var(--color-violet-800);
   --color-secondary-900: var(--color-violet-900);
   --color-secondary-950: var(--color-violet-950);
-  --color-secondary: var(--color-secondary-500);
 
-  /* Success - References Tailwind's green */
+  /* Palette: Success - References Tailwind's green */
   --color-success-50: var(--color-green-50);
   --color-success-100: var(--color-green-100);
   --color-success-200: var(--color-green-200);
@@ -57,9 +73,8 @@
   --color-success-800: var(--color-green-800);
   --color-success-900: var(--color-green-900);
   --color-success-950: var(--color-green-950);
-  --color-success: var(--color-success-500);
 
-  /* Warning - References Tailwind's amber */
+  /* Palette: Warning - References Tailwind's amber */
   --color-warning-50: var(--color-amber-50);
   --color-warning-100: var(--color-amber-100);
   --color-warning-200: var(--color-amber-200);
@@ -71,9 +86,8 @@
   --color-warning-800: var(--color-amber-800);
   --color-warning-900: var(--color-amber-900);
   --color-warning-950: var(--color-amber-950);
-  --color-warning: var(--color-warning-500);
 
-  /* Danger - References Tailwind's red */
+  /* Palette: Danger - References Tailwind's red */
   --color-danger-50: var(--color-red-50);
   --color-danger-100: var(--color-red-100);
   --color-danger-200: var(--color-red-200);
@@ -85,9 +99,8 @@
   --color-danger-800: var(--color-red-800);
   --color-danger-900: var(--color-red-900);
   --color-danger-950: var(--color-red-950);
-  --color-danger: var(--color-danger-500);
 
-  /* Info - References Tailwind's cyan */
+  /* Palette: Info - References Tailwind's cyan */
   --color-info-50: var(--color-cyan-50);
   --color-info-100: var(--color-cyan-100);
   --color-info-200: var(--color-cyan-200);
@@ -99,89 +112,19 @@
   --color-info-800: var(--color-cyan-800);
   --color-info-900: var(--color-cyan-900);
   --color-info-950: var(--color-cyan-950);
-  --color-info: var(--color-info-500);
 
-  /* Light tokens (explicit) */
-  --color-light-background: var(--color-white);
-  --color-light-foreground: var(--color-gray-950);
-  --color-light-muted: var(--color-gray-100);
-  --color-light-muted-foreground: var(--color-gray-600);
-
-  --color-light-surface-0: var(--color-white);     /* Canvas/page background */
-  --color-light-surface-1: var(--color-gray-50);   /* Card/section background */
-  --color-light-surface-2: var(--color-gray-100);  /* Elevated content */
-  --color-light-surface-3: var(--color-gray-200);  /* Modal/popover background */
-  --color-light-surface-1-hover: var(--color-gray-100);
-  --color-light-surface-1-active: var(--color-gray-200);
-  --color-light-surface-2-hover: var(--color-gray-200);
-  --color-light-surface-2-active: var(--color-gray-300);
-
-  --color-light-border: var(--color-gray-200);
-  --color-light-border-subtle: var(--color-gray-200);
-  --color-light-border-strong: var(--color-gray-300);
-  --color-light-input: var(--color-light-border);
-  --color-light-ring: var(--color-primary-600);
-
-  --color-light-neutral: var(--color-neutral-600);
-  --color-light-neutral-foreground: var(--color-white);
-  --color-light-primary: var(--color-primary-600);
-  --color-light-primary-foreground: var(--color-white);
-  --color-light-secondary: var(--color-secondary-600);
-  --color-light-secondary-foreground: var(--color-white);
-  --color-light-success: var(--color-success-600);
-  --color-light-success-foreground: var(--color-white);
-  --color-light-warning: var(--color-warning-600);
-  --color-light-warning-foreground: var(--color-gray-950);
-  --color-light-danger: var(--color-danger-600);
-  --color-light-danger-foreground: var(--color-white);
-  --color-light-info: var(--color-info-600);
-  --color-light-info-foreground: var(--color-white);
-
-  /* Semantic aliases (map to light by default) */
-  --color-background: var(--color-light-background);
-  --color-foreground: var(--color-light-foreground);
-  --color-muted: var(--color-light-muted);
-  --color-muted-foreground: var(--color-light-muted-foreground);
-  --color-surface-0: var(--color-light-surface-0);
-  --color-surface-1: var(--color-light-surface-1);
-  --color-surface-2: var(--color-light-surface-2);
-  --color-surface-3: var(--color-light-surface-3);
-  --color-surface-1-hover: var(--color-light-surface-1-hover);
-  --color-surface-1-active: var(--color-light-surface-1-active);
-  --color-surface-2-hover: var(--color-light-surface-2-hover);
-  --color-surface-2-active: var(--color-light-surface-2-active);
-  --color-border: var(--color-light-border);
-  --color-border-subtle: var(--color-light-border-subtle);
-  --color-border-strong: var(--color-light-border-strong);
-  --color-input: var(--color-light-input);
-  --color-ring: var(--color-light-ring);
-  --color-neutral: var(--color-light-neutral);
-  --color-neutral-foreground: var(--color-light-neutral-foreground);
-  --color-primary: var(--color-light-primary);
-  --color-primary-foreground: var(--color-light-primary-foreground);
-  --color-secondary: var(--color-light-secondary);
-  --color-secondary-foreground: var(--color-light-secondary-foreground);
-  --color-success: var(--color-light-success);
-  --color-success-foreground: var(--color-light-success-foreground);
-  --color-warning: var(--color-light-warning);
-  --color-warning-foreground: var(--color-light-warning-foreground);
-  --color-danger: var(--color-light-danger);
-  --color-danger-foreground: var(--color-light-danger-foreground);
-  --color-info: var(--color-light-info);
-  --color-info-foreground: var(--color-light-info-foreground);
   /* Radius tokens */
   --radius-xs: 0.125rem;
   --radius-sm: 0.25rem;
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
-  /* Canonical default radius */
   --radius: var(--radius-lg);
   --radius-xl: 0.75rem;
   --radius-2xl: 1rem;
   --radius-3xl: 1.5rem;
   --radius-full: 9999px;
 
-  /* Spacing - Can reference Tailwind's spacing */
+  /* Spacing */
   --spacing-xs: var(--spacing-1);  /* 0.25rem */
   --spacing-sm: var(--spacing-2);  /* 0.5rem */
   --spacing-md: var(--spacing-4);  /* 1rem */
@@ -240,6 +183,89 @@
   --z-modal: 50;
   --z-popover: 60;
   --z-toast: 70;
+}
+
+/*
+  Semantic color tokens — declared in `@theme` (NOT `@theme inline`) so the
+  generated utilities resolve through var() at runtime. This is what lets the
+  `[data-theme="dark"]` block below swap colors without any `dark:` variant in
+  component markup.
+
+  Values here are the light defaults that apply at `:root`.
+*/
+@theme {
+  --color-background: var(--color-white);
+  --color-foreground: var(--color-gray-950);
+  --color-muted: var(--color-gray-100);
+  --color-muted-foreground: var(--color-gray-600);
+
+  --color-surface-0: var(--color-white);     /* Canvas/page background */
+  --color-surface-1: var(--color-gray-50);   /* Card/section background */
+  --color-surface-2: var(--color-gray-100);  /* Elevated content */
+  --color-surface-3: var(--color-gray-200);  /* Modal/popover background */
+  --color-surface-1-hover: var(--color-gray-100);
+  --color-surface-1-active: var(--color-gray-200);
+  --color-surface-2-hover: var(--color-gray-200);
+  --color-surface-2-active: var(--color-gray-300);
+
+  --color-border: var(--color-gray-200);
+  --color-border-subtle: var(--color-gray-200);
+  --color-border-strong: var(--color-gray-300);
+  --color-input: var(--color-gray-200);
+  --color-ring: var(--color-primary-600);
+
+  --color-neutral: var(--color-neutral-600);
+  --color-neutral-foreground: var(--color-white);
+  --color-primary: var(--color-primary-600);
+  --color-primary-foreground: var(--color-white);
+  --color-secondary: var(--color-secondary-600);
+  --color-secondary-foreground: var(--color-white);
+  --color-success: var(--color-success-600);
+  --color-success-foreground: var(--color-white);
+  --color-warning: var(--color-warning-600);
+  --color-warning-foreground: var(--color-gray-950);
+  --color-danger: var(--color-danger-600);
+  --color-danger-foreground: var(--color-white);
+  --color-info: var(--color-info-600);
+  --color-info-foreground: var(--color-white);
+}
+
+/* Dark theme overrides */
+[data-theme="dark"] {
+  --color-background: var(--color-gray-950);
+  --color-foreground: var(--color-gray-50);
+  --color-muted: var(--color-gray-900);
+  --color-muted-foreground: var(--color-gray-400);
+
+  --color-surface-0: var(--color-gray-950);  /* Canvas/page background */
+  --color-surface-1: var(--color-gray-900);  /* Card/section background */
+  --color-surface-2: var(--color-gray-800);  /* Elevated content */
+  --color-surface-3: var(--color-gray-700);  /* Modal/popover background */
+  --color-surface-1-hover: var(--color-gray-800);
+  --color-surface-1-active: var(--color-gray-700);
+  --color-surface-2-hover: var(--color-gray-700);
+  --color-surface-2-active: var(--color-gray-600);
+
+  --color-border: var(--color-gray-800);
+  --color-border-subtle: var(--color-gray-800);
+  --color-border-strong: var(--color-gray-700);
+  --color-input: var(--color-gray-800);
+  --color-ring: var(--color-primary-400);
+
+  --color-neutral: var(--color-neutral-500);
+  --color-neutral-foreground: var(--color-white);
+  --color-primary: var(--color-primary-400);
+  --color-primary-foreground: var(--color-gray-950);
+  --color-secondary: var(--color-secondary-400);
+  --color-secondary-foreground: var(--color-gray-950);
+  --color-success: var(--color-success-400);
+  --color-success-foreground: var(--color-gray-950);
+  --color-warning: var(--color-warning-400);
+  --color-warning-foreground: var(--color-gray-950);
+  --color-danger: var(--color-danger-400);
+  --color-danger-foreground: var(--color-gray-950);
+  --color-info: var(--color-info-400);
+  --color-info-foreground: var(--color-gray-950);
 }
 
 /* Custom animations for Pulsar components */
@@ -309,42 +335,4 @@
     animation: none !important;
     transition-duration: 0s !important;
   }
-}
-
-/* Dark mode tokens (explicit) */
-@theme inline {
-  --color-dark-background: var(--color-gray-950);
-  --color-dark-foreground: var(--color-gray-50);
-  --color-dark-muted: var(--color-gray-900);
-  --color-dark-muted-foreground: var(--color-gray-400);
-
-  --color-dark-surface-0: var(--color-gray-950);  /* Canvas/page background */
-  --color-dark-surface-1: var(--color-gray-900);  /* Card/section background */
-  --color-dark-surface-2: var(--color-gray-800);  /* Elevated content */
-  --color-dark-surface-3: var(--color-gray-700);  /* Modal/popover background */
-  --color-dark-surface-1-hover: var(--color-gray-800);
-  --color-dark-surface-1-active: var(--color-gray-750, var(--color-gray-700));
-  --color-dark-surface-2-hover: var(--color-gray-700);
-  --color-dark-surface-2-active: var(--color-gray-600);
-
-  --color-dark-border: var(--color-gray-800);
-  --color-dark-border-subtle: var(--color-gray-800);
-  --color-dark-border-strong: var(--color-gray-700);
-  --color-dark-input: var(--color-dark-border);
-  --color-dark-ring: var(--color-primary-400);
-
-  --color-dark-neutral: var(--color-neutral-500);
-  --color-dark-neutral-foreground: var(--color-white);
-  --color-dark-primary: var(--color-primary-400);
-  --color-dark-primary-foreground: var(--color-gray-950);
-  --color-dark-secondary: var(--color-secondary-400);
-  --color-dark-secondary-foreground: var(--color-gray-950);
-  --color-dark-success: var(--color-success-400);
-  --color-dark-success-foreground: var(--color-gray-950);
-  --color-dark-warning: var(--color-warning-400);
-  --color-dark-warning-foreground: var(--color-gray-950);
-  --color-dark-danger: var(--color-danger-400);
-  --color-dark-danger-foreground: var(--color-gray-950);
-  --color-dark-info: var(--color-info-400);
-  --color-dark-info-foreground: var(--color-gray-950);
 }

@@ -127,23 +127,23 @@ defmodule Pulsar.Components.Header do
   # Size configuration for header typography
   @size_config %{
     "lg" => %{
-      subtitle: "text-base text-neutral-600 dark:text-dark-neutral-400",
+      subtitle: "text-base text-neutral-600",
       title: "text-3xl font-semibold"
     },
     "md" => %{
-      subtitle: "text-sm text-neutral-600 dark:text-dark-neutral-400",
+      subtitle: "text-sm text-neutral-600",
       title: "text-2xl font-semibold"
     },
     "sm" => %{
-      subtitle: "text-sm text-neutral-600 dark:text-dark-neutral-400",
+      subtitle: "text-sm text-neutral-600",
       title: "text-xl font-semibold"
     },
     "xl" => %{
-      subtitle: "text-lg text-neutral-600 dark:text-dark-neutral-400",
+      subtitle: "text-lg text-neutral-600",
       title: "text-4xl font-semibold"
     },
     "xs" => %{
-      subtitle: "text-xs text-neutral-600 dark:text-dark-neutral-400",
+      subtitle: "text-xs text-neutral-600",
       title: "text-lg font-semibold"
     }
   }
@@ -156,33 +156,33 @@ defmodule Pulsar.Components.Header do
   # Color configuration for each variant
   @color_config %{
     "ghost" => %{
-      "danger" => "text-danger dark:text-dark-danger",
-      "info" => "text-info dark:text-dark-info",
+      "danger" => "text-danger",
+      "info" => "text-info",
       "neutral" => "",
-      "primary" => "text-primary dark:text-dark-primary",
-      "secondary" => "text-secondary dark:text-dark-secondary",
-      "success" => "text-success dark:text-dark-success",
-      "warning" => "text-warning dark:text-dark-warning"
+      "primary" => "text-primary",
+      "secondary" => "text-secondary",
+      "success" => "text-success",
+      "warning" => "text-warning"
     },
     "outline" => %{
-      "danger" => "border-b border-danger-200 dark:border-dark-danger-700 pb-4 text-danger dark:text-dark-danger",
-      "info" => "border-b border-info-200 dark:border-dark-info-700 pb-4 text-info dark:text-dark-info",
-      "neutral" => "border-b border-neutral-200 dark:border-dark-neutral-700 pb-4",
-      "primary" => "border-b border-primary-200 dark:border-dark-primary-700 pb-4 text-primary dark:text-dark-primary",
+      "danger" => "border-b border-danger-200 pb-4 text-danger",
+      "info" => "border-b border-info-200 pb-4 text-info",
+      "neutral" => "border-b border-neutral-200 pb-4",
+      "primary" => "border-b border-primary-200 pb-4 text-primary",
       "secondary" =>
-        "border-b border-secondary-200 dark:border-dark-secondary-700 pb-4 text-secondary dark:text-dark-secondary",
-      "success" => "border-b border-success-200 dark:border-dark-success-700 pb-4 text-success dark:text-dark-success",
-      "warning" => "border-b border-warning-200 dark:border-dark-warning-700 pb-4 text-warning dark:text-dark-warning"
+        "border-b border-secondary-200 pb-4 text-secondary",
+      "success" => "border-b border-success-200 pb-4 text-success",
+      "warning" => "border-b border-warning-200 pb-4 text-warning"
     },
     "solid" => %{
-      "danger" => "bg-danger-100 dark:bg-dark-danger-800 text-danger-900 dark:text-dark-danger-100 p-6 rounded-lg",
-      "info" => "bg-info-100 dark:bg-dark-info-800 text-info-900 dark:text-dark-info-100 p-6 rounded-lg",
-      "neutral" => "bg-neutral-100 dark:bg-dark-neutral-800 text-neutral-900 dark:text-dark-neutral-100 p-6 rounded-lg",
-      "primary" => "bg-primary-100 dark:bg-dark-primary-800 text-primary-900 dark:text-dark-primary-100 p-6 rounded-lg",
+      "danger" => "bg-danger-100 text-danger-900 p-6 rounded-lg",
+      "info" => "bg-info-100 text-info-900 p-6 rounded-lg",
+      "neutral" => "bg-neutral-100 text-neutral-900 p-6 rounded-lg",
+      "primary" => "bg-primary-100 text-primary-900 p-6 rounded-lg",
       "secondary" =>
-        "bg-secondary-100 dark:bg-dark-secondary-800 text-secondary-900 dark:text-dark-secondary-100 p-6 rounded-lg",
-      "success" => "bg-success-100 dark:bg-dark-success-800 text-success-900 dark:text-dark-success-100 p-6 rounded-lg",
-      "warning" => "bg-warning-100 dark:bg-dark-warning-800 text-warning-900 dark:text-dark-warning-100 p-6 rounded-lg"
+        "bg-secondary-100 text-secondary-900 p-6 rounded-lg",
+      "success" => "bg-success-100 text-success-900 p-6 rounded-lg",
+      "warning" => "bg-warning-100 text-warning-900 p-6 rounded-lg"
     }
   }
 
@@ -263,7 +263,7 @@ defmodule Pulsar.Components.Header do
     ~H"""
     <header class={@merged_classes} data-component="header" {@rest}>
       <nav :if={length(@breadcrumb) > 0} aria-label="Breadcrumb" data-role="breadcrumb">
-        <ol class="flex items-center flex-wrap gap-1 text-sm text-neutral-500 dark:text-dark-neutral-400">
+        <ol class="flex items-center flex-wrap gap-1 text-sm text-neutral-500">
           <li :for={{breadcrumb, index} <- Enum.with_index(@breadcrumb)} class="flex items-center">
             <.icon
               :if={index > 0}
@@ -277,7 +277,7 @@ defmodule Pulsar.Components.Header do
             <span
               :if={index == length(@breadcrumb) - 1}
               aria-current="page"
-              class="font-medium text-neutral-900 dark:text-dark-neutral-100"
+              class="font-medium text-neutral-900"
             >
               {render_slot(breadcrumb)}
             </span>
@@ -313,7 +313,7 @@ defmodule Pulsar.Components.Header do
                 index != length(@breadcrumb) - 1 && !Map.get(breadcrumb, :navigate) && !Map.get(breadcrumb, :patch) &&
                   !Map.get(breadcrumb, :href)
               }
-              class="text-neutral-500 dark:text-dark-neutral-400"
+              class="text-neutral-500"
             >
               {render_slot(breadcrumb)}
             </span>
@@ -338,7 +338,7 @@ defmodule Pulsar.Components.Header do
         </div>
       </div>
 
-      <hr :if={@divider && @variant != "outline"} class="border-neutral-200 dark:border-dark-neutral-700" />
+      <hr :if={@divider && @variant != "outline"} class="border-neutral-200" />
     </header>
     """
   end
@@ -363,7 +363,7 @@ defmodule Pulsar.Components.Header do
   end
 
   # Get sticky positioning classes
-  defp sticky_classes(true), do: "sticky top-0 z-10 bg-background dark:bg-dark-background"
+  defp sticky_classes(true), do: "sticky top-0 z-10 bg-background"
   defp sticky_classes(false), do: ""
 
   # Validate breadcrumb slots don't have multiple navigation props

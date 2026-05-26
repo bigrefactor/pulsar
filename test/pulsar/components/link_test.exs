@@ -101,7 +101,6 @@ defmodule Pulsar.Components.LinkTest do
 
       assert html =~ "text-primary"
       assert html =~ "hover:text-primary/80"
-      assert html =~ "dark:text-dark-primary"
     end
 
     test "renders secondary color" do
@@ -114,7 +113,6 @@ defmodule Pulsar.Components.LinkTest do
 
       assert html =~ "text-secondary"
       assert html =~ "hover:text-secondary/80"
-      assert html =~ "dark:text-dark-secondary"
     end
 
     test "renders muted color" do
@@ -127,7 +125,6 @@ defmodule Pulsar.Components.LinkTest do
 
       assert html =~ "text-muted-foreground"
       assert html =~ "hover:text-muted-foreground/70"
-      assert html =~ "dark:text-dark-muted-foreground"
     end
 
     test "renders danger color" do
@@ -140,7 +137,6 @@ defmodule Pulsar.Components.LinkTest do
 
       assert html =~ "text-danger"
       assert html =~ "hover:text-danger/80"
-      assert html =~ "dark:text-dark-danger"
     end
 
     test "renders success color" do
@@ -545,7 +541,6 @@ defmodule Pulsar.Components.LinkTest do
 
       assert html =~ "focus-visible:outline-none"
       assert html =~ "focus-visible:ring-2"
-      assert html =~ "dark:focus-visible:ring-dark-ring/50"
     end
 
     test "supports aria-label attribute" do
