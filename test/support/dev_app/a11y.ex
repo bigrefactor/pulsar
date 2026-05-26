@@ -69,15 +69,6 @@ defmodule Pulsar.DevApp.A11y do
   end
 
   @doc """
-  Focuses an element by id via `Element.focus()`. Useful when `press/4`'s
-  focus-then-key behavior isn't what you want — e.g. to start a test from
-  a known focus position without depending on Tab order from `body`.
-  """
-  def focus(conn, id) when is_binary(id) do
-    PhoenixTest.Playwright.evaluate(conn, "document.getElementById(#{Jason.encode!(id)}).focus()")
-  end
-
-  @doc """
   Injects axe-core into the current page, runs the audit, and asserts
   zero violations via `A11yAudit.Assertions.assert_no_violations/1`.
   """

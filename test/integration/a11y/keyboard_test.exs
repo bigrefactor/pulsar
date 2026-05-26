@@ -25,6 +25,13 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
 
   @moduletag :integration
 
+  # Select tests select by the stable `data-fixture-cell` attribute (set
+  # in select_live.ex) rather than the rendered `id`. Select doesn't
+  # declare `attr :id`, so the rendered id is currently derived from
+  # `name` — that's implementation detail and would silently flip if
+  # `attr :id` is ever added.
+  @select_cell ~s|[data-fixture-cell="outline-neutral-xs-default"]|
+
   describe "Button keyboard activation" do
     test "Space and Enter both activate pseudo-button", %{conn: conn} do
       conn
@@ -87,16 +94,14 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
   end
 
   describe "Select keyboard navigation" do
-    # First select fixture id is sel_outline_neutral_xs_default — note
-    # underscores: Pulsar's select component derives the rendered id
-    # from `name` (snake_case), not the `id` attr (kebab-case) passed
-    # by the fixture LiveView. Options are "1", "2", "3" plus a prompt.
+    # Options are "1", "2", "3" plus a prompt. Selector lives at module
+    # top (@select_cell).
 
     test "Tab moves focus from one select to the next focusable", %{conn: conn} do
       conn
       |> visit("/components/select")
-      |> press("#sel_outline_neutral_xs_default", "Tab")
-      |> A11y.refute_focused_within("#sel_outline_neutral_xs_default")
+      |> press(@select_cell, "Tab")
+      |> A11y.refute_focused_within(@select_cell)
     end
 
     test "ArrowDown does not break focus on the select", %{conn: conn} do
@@ -110,8 +115,8 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
       # steal focus on arrow keys.
       conn
       |> visit("/components/select")
-      |> press("#sel_outline_neutral_xs_default", "ArrowDown")
-      |> A11y.assert_focused("sel_outline_neutral_xs_default")
+      |> press(@select_cell, "ArrowDown")
+      |> assert_has(":focus#{@select_cell}")
     end
 
     test "pressing Space keeps focus on the select", %{conn: conn} do
@@ -121,8 +126,8 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
       # preventDefault on Space, and the element retains focus afterward.
       conn
       |> visit("/components/select")
-      |> press("#sel_outline_neutral_xs_default", " ")
-      |> A11y.assert_focused("sel_outline_neutral_xs_default")
+      |> press(@select_cell, " ")
+      |> assert_has(":focus#{@select_cell}")
     end
   end
 

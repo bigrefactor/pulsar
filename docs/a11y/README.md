@@ -81,9 +81,9 @@ flips it to required once all fixtures pass.
 behavior coverage to the same `:integration` suite. Axe-clean catches
 static a11y problems (missing labels, contrast, ARIA shape) but does not
 exercise behavior — a button could fail to activate on Enter and axe
-would happily report it clean. PUL-12 closes that gap with ~11 tests
-across the six interactive components (Button, Card, RadioGroup, Select,
-Checkbox, Switch).
+would happily report it clean. PUL-12 closes that gap with
+real-keystroke coverage across the six interactive components (Button,
+Card, RadioGroup, Select, Checkbox, Switch).
 
 The acceptance signal is concrete and reproducible: temporarily comment
 out the Space/Enter branches in `lib/pulsar/components/button.ex`'s
