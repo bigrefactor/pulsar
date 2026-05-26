@@ -1,13 +1,16 @@
 /*
   <%= @theme_name %> theme — scaffolded by `mix pulsar.gen.theme <%= @theme_name %>`.
 
-  Activate by setting `data-theme="<%= @theme_name %>"` on any ancestor element.
-  Override only the tokens you want to change — anything you omit falls back to
-  the light defaults declared in `themes/light.css`.
+  Activate by setting `data-theme="<%= @theme_name %>"` on any ancestor
+  element, or `.theme-<%= @theme_name %>` (the class form PhoenixStorybook
+  applies via its sandbox_class theme strategy). Override only the tokens
+  you want to change — anything you omit falls back to the light defaults
+  declared in `themes/light.css`.
 
   See `themes/dark.css` for a complete override example.
 */
-[data-theme="<%= @theme_name %>"] {
+[data-theme="<%= @theme_name %>"],
+.theme-<%= @theme_name %> {
   /* TODO: override semantic tokens for this theme.
      Start by copying lines from themes/dark.css and tweaking values.
 

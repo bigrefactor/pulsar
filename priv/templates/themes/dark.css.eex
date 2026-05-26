@@ -1,12 +1,17 @@
 /*
-  Dark theme — applied when `data-theme="dark"` is set on any ancestor.
+  Dark theme — applied when `data-theme="dark"` is set on any ancestor, or
+  when an ancestor wears the `.theme-dark` class. The class form is what
+  PhoenixStorybook stamps onto its sandbox container when the user picks
+  "Dark" from the chrome theme dropdown, so matching it here lets the PSB
+  switcher work without bridging it to the data-attribute via JS.
 
   This block overrides the semantic tokens declared in `themes/light.css`.
   Tailwind utilities (e.g. `.bg-primary`) resolve through `var()` at runtime,
   so components don't need a `dark:` variant — the variable value swaps
-  beneath them when the attribute flips.
+  beneath them when the attribute or class flips.
 */
-[data-theme="dark"] {
+[data-theme="dark"],
+.theme-dark {
   --color-background: var(--color-gray-950);
   --color-foreground: var(--color-gray-50);
   --color-muted: var(--color-gray-900);
