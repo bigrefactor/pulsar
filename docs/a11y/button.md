@@ -65,16 +65,27 @@ ARIA state (`aria-disabled`, `aria-busy`), not color alone —
 **Notes:** Color variants (primary/success/danger/etc.) convey *which*
 button it is but criticality is communicated via inner text, not color.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious, [PUL-27](https://linear.app/bigrefactor/issue/PUL-27/button-fix-axe-color-contrast-violation))
 
 **Evidence:** Colors come from semantic tokens
 (`text-*-foreground`, `bg-*`, dark-mode pairs) —
-`lib/pulsar/components/button.ex:145–205`. Theme defaults match
-Tailwind palettes that meet 4.5:1 at typical token pairings, but
-ratios for each of the 7 colors × 4 variants × 2 themes (56
-combinations) require DevTools measurement.
+`lib/pulsar/components/button.ex:145–205`. Browser measurements via
+`mix pulsar.a11y.measure` ([light](measurements/button-light.md),
+[dark](measurements/button-dark.md)) over 4 variants × 6 colors × 4
+sizes × 4 states (384 cells per theme):
 
-**Notes:** Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+- **Dark:** all cells pass (min 4.84:1, max 19.27:1).
+- **Light:** 272/384 pass (min 3.06:1, max 20.13:1). The failing
+  variants × colors: `solid-success` (~4.0:1), `outline-success`
+  (~3.08:1), `outline-warning` (~3.06:1), `ghost-success` (~3.08:1),
+  `ghost-warning` (~3.06:1), `link-success` (~3.08:1), `link-warning`
+  (~3.06:1). Pattern: success/warning text on light backgrounds
+  consistently undershoots 4.5:1.
+
+**Notes:** Existing [PUL-27](https://linear.app/bigrefactor/issue/PUL-27)
+scoped to "light: success solid; dark: primary ghost/solid"; expand
+that ticket to cover the warning-color failures and the additional
+light-theme variants surfaced by this measurement pass.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -93,25 +104,41 @@ sizes — `lib/pulsar/components/button.ex:88–110`.
 **Notes:** Button width is content-driven; reflows at 320 CSS px without
 horizontal scroll.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious, PUL-19 follow-up: button-outline-neutral-border)
 
-**Evidence:** Focus ring is `ring-2 ring-ring` (and `ring-dark-ring` in
-dark mode) — `lib/pulsar/components/button.ex:115–116`. Outline variant
-uses `border-2` in the active color — `lib/pulsar/components/button.ex:174–187`.
+**Evidence:** Focus ring is `ring-2 ring-ring` —
+`lib/pulsar/components/button.ex:115–116`. Outline variant uses
+`border-2` in the active color — `lib/pulsar/components/button.ex:174–187`.
+Browser measurements via `mix pulsar.a11y.measure`:
 
-**Notes:** Focus ring and outline borders need 3:1 against adjacent
-background; the semantic-token approach is sound but ratios require
-DevTools. Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+- **Focus ring:** PASS — `--color-ring` (light: oklch ≈ primary-600,
+  dark: oklch ≈ primary-400) measures 5.02:1 (light) / 6.72:1 (dark)
+  against the page background in every focusable state.
+- **Outline-variant border:** the `outline-neutral` variant border
+  (`border-neutral-500` per `button.ex:175`) measures 1.18:1 (light)
+  / 1.21:1 (dark) — substantially below the 3:1 floor. Other
+  outline colors (primary 4.4:1, secondary 4.0:1, success 3.1:1,
+  warning 3.1:1, danger 4.2:1 in light) pass.
 
-### 1.4.12 Text Spacing (AA) — ⚠ GAP (minor) — needs browser verification
+**Notes:** New finding — `button-outline-neutral-border` to be filed
+as a Linear sub-issue parented to PUL-19. The fix is to swap
+`border-neutral-500` (`button.ex:175`) for a higher-contrast token
+(`border-neutral-700` or `border-border-strong`). Focus ring contrast
+is fully verified — both themes pass.
+
+### 1.4.12 Text Spacing (AA) — ✓ PASS
 
 **Evidence:** Fixed button heights (`h-6` through `h-14`) —
-`lib/pulsar/components/button.ex:89–110`.
+`lib/pulsar/components/button.ex:89–110`. Browser test injects WCAG
+1.4.12 overrides (line-height 1.5, letter-spacing 0.12em, word-spacing
+0.16em, paragraph 2× margin) and re-measures: zero `[data-fixture-cell]`
+elements overflow under the override
+([light](measurements/button-light.md#text-spacing-override-wcag-1412),
+[dark](measurements/button-dark.md#text-spacing-override-wcag-1412)).
 
-**Notes:** WCAG 1.4.12 requires content to adapt when line-height is
-overridden to 1.5×. Default line-height on Tailwind text-* classes
-already exceeds 1.5×, so the fixed heights have small headroom. Needs
-runtime check — tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** The default `inline-flex` layout combined with `h-*` rem
+sizes adapts cleanly — content width and height absorb the increased
+line-height/letter-spacing without clipping.
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
@@ -173,7 +200,7 @@ component enforces presence, not quality.
 available as a supplement for icon-only buttons —
 `lib/pulsar/components/button.ex:314–317, 326–329`.
 
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (minor) — needs browser verification
+### 2.4.7 Focus Visible (AA) — ✓ PASS
 
 **Evidence:**
 - Base classes include `focus-visible:outline-none`,
@@ -182,10 +209,15 @@ available as a supplement for icon-only buttons —
 - Link variant overrides ring with `focus-visible:underline` —
   `lib/pulsar/components/button.ex:130`
 - Tests assert focus ring classes — `test/pulsar/components/button_test.exs:350–364`
+- Browser measurement: `--color-ring` resolves to 5.02:1 (light) and
+  6.72:1 (dark) against the page background — passes the 3:1 non-text
+  contrast minimum. Disabled and loading buttons correctly report
+  `not-focusable-in-state` (`tabindex="-1"` per `button.ex:tabindex/1`),
+  so a focus ring isn't needed under those states.
 
-**Notes:** Code is correct. Ring visibility under disabled (`opacity-50`)
-and loading states, plus visibility under each color variant, requires
-DevTools verification. Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** Pressed buttons retain the ring (5.02:1 measured), matching
+the audit expectation that `aria-pressed="true"` still passes focus
+through to the same `focus-visible:ring-*` styling.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
@@ -210,17 +242,23 @@ behavior takes the accessible name from `inner_block` text content.
 **Notes:** Callers can technically set `aria_label` that conflicts with
 visible text; out of library control. Default behavior passes.
 
-### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ⚠ GAP (minor) — needs browser verification
+### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Size `xs` is `h-6` (24px) — `lib/pulsar/components/button.ex:107`,
 exactly at the AA 24×24 floor. Sizes `sm` (h-8), `md` (h-10), `lg` (h-12),
-`xl` (h-14) all exceed. Padding `px-2` on xs gives ≈32px width for
-single-character labels.
+`xl` (h-14) all exceed. Browser measurement of 384 cells:
+every cell meets ≥ 24×24
+([light](measurements/button-light.md), [dark](measurements/button-dark.md)).
+The narrowest `xs` cells (`solid-neutral-xs-default`, etc.) measure
+≈117 × 24 — width comes from a 2-character color/size label combined
+with `px-2`; icon-only single-character `xs` buttons (which the
+audit page called out as the borderline case) still get `px-2` and
+clear the floor.
 
-**Notes:** Height meets 24px minimum exactly; width depends on content
-and padding. Icon-only `xs` buttons with single-character labels are
-right at the floor — needs runtime confirmation. Tracked under browser
-audit.
+**Notes:** Passes for every fixture cell. Real-world usage with a
+single-character label (e.g. `<.button size="xs">+</.button>`) renders
+at the minimum `px-2 + 1ch` width, which exceeds 24 px in the default
+font stack.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 

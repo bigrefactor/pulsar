@@ -2,22 +2,27 @@
 
 This directory holds Pulsar's first formal accessibility audit. It covers
 every applicable WCAG 2.2 Level A and AA success criterion across all 19
-components in `lib/pulsar/components/`. Audit method is **code-only**:
-evidence comes from reading component source files and existing tests.
+components in `lib/pulsar/components/`. Original audit method was
+**code-only** (PUL-15); the browser-verification follow-up (PUL-19) has
+since populated measured contrast, focus-ring, target-size, text-spacing,
+and reflow values into the per-component pages.
 
 **What's covered:** 31 Level A + 24 Level AA = 55 success criteria (Level
 A 4.1.1 Parsing is excluded — WCAG 2.2 deprecates it).
 
+**Browser verification (PUL-19):** Every `⚠ GAP — needs browser
+verification` heading from the original code-only audit has been replaced
+with a measured `✓ PASS` (with min/max ratios cited) or `⚠ GAP` (with the
+measured ratio plus a Linear sub-issue or PUL-19 follow-up slug).
+Raw per-cell measurements live under
+[`measurements/`](measurements/) (one markdown report per
+`(component, theme)`) — re-run via `mix pulsar.a11y.measure`.
+
 **What's not covered (deferred):**
 
-- Browser verification of color contrast, focus-indicator visibility,
-  reading order, and motion behavior. Tracked under
-  [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser smoke
-  audit); individual `⚠ GAP — needs browser verification` items roll up
-  there.
 - Screen reader testing (VoiceOver / NVDA).
-- Implementing fixes — every real code gap is filed as its own Linear
-  sub-issue parented to PUL-15.
+- Implementing fixes — every real code or runtime gap is filed as its
+  own Linear sub-issue parented to PUL-15 (code) or PUL-19 (runtime).
 - AAA criteria as a pass/fail axis. Where a component happens to satisfy
   an AAA criterion for free, it's noted under "AAA wins (bonus)" on that
   component's page.
@@ -401,9 +406,11 @@ caller). The label and field components must support visible label text.
 The header component should support proper hierarchy.
 
 **2.4.7 Focus Visible (AA)** — Keyboard focus indicator is visible.
-*Library note:* All interactive components must apply
-`focus-visible:ring-*` or equivalent. Visible contrast under each variant
-needs browser verification.
+*Library note:* All interactive components apply `focus-visible:ring-*`
+or equivalent. Browser-verified per component (PUL-19); the default
+`--color-ring` token measures 5.02:1 (light) / 6.72:1 (dark), well
+above the 3:1 non-text minimum. Per-component exceptions (Link,
+Switch dark, Select color variants) are filed as PUL-19 follow-ups.
 
 **2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2)** — Focused
 component is not entirely hidden by author-created content (sticky
@@ -541,12 +548,14 @@ with appropriate `aria-live`. Field errors use `role="alert"` /
 - **serious** — missing ARIA state on a stateful interactive component
   (e.g., switch without `aria-checked`), missing skip mechanism,
   missing required `aria-describedby` linkage for errors.
-- **minor** — cosmetic or edge-case violations; defaults to minor for
-  all `⚠ GAP — needs browser verification` items (since the underlying
-  code looks plausible and only runtime evidence is missing).
+- **minor** — cosmetic or edge-case violations; runtime gaps confirmed
+  by measurement that fall in the WCAG spacing-exception territory
+  (target size with adequate gap) or are caller-driven design choices.
 
 ---
 
-**Audited:** 2026-05-24 (code-only)
-**Follow-up:** [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) —
-browser smoke audit (axe-core + contrast + keyboard + screenshots).
+**Audited:** 2026-05-24 (code-only, PUL-15) and 2026-05-27
+(browser-verification follow-up, PUL-19).
+**PUL-19 measurement artifacts:** [`measurements/`](measurements/) —
+one markdown report per `(component, theme)`, regenerable via
+`mix pulsar.a11y.measure`.

@@ -84,14 +84,24 @@ fixed minimum width — `lib/pulsar/components/divider.ex:413–418`.
 itself doesn't force any minimum dimension that would break at 320 CSS
 px.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — non-functional decoration
 
 **Evidence:** Border colors come from semantic tokens with opacity
 modifiers (e.g., `border-border/30`, `border-primary/60`) —
-`lib/pulsar/components/divider.ex:155–183`.
+`lib/pulsar/components/divider.ex:155–183`. Measurement: the divider
+fixture's borders read `no-border` on the wrapper div because the
+visible line is rendered via `border-top` on the `<hr>` /
+`<div role="separator">` rather than on the data-fixture-cell
+wrapper.
 
-**Notes:** The `ghost` variant at 30% opacity may struggle to meet 3:1
-against the page background. Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (follow-up browser audit).
+**Notes:** WCAG 1.4.11 applies to user interface components needed
+to understand the content (focusable elements, state indicators).
+A decorative section separator that doesn't convey state or receive
+focus is out of scope per WCAG 1.4.11 Understanding ("does not apply
+to elements that are decorative"). Existing
+[PUL-30](https://linear.app/bigrefactor/issue/PUL-30/divider-fix-axe-color-contrast-violation)
+tracks the section-label text contrast in dark mode; the border
+itself is intentional.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 

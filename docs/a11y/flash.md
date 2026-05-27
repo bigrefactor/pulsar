@@ -63,15 +63,24 @@ ARIA role/live region also signals criticality non-visually —
 **Notes:** Color variants convey criticality redundantly with role
 (`alert` vs `status`) and conventional icons; not color-only.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious, [PUL-32](https://linear.app/bigrefactor/issue/PUL-32/flash-fix-axe-color-contrast-violation))
 
 **Evidence:** Colors come from semantic tokens via `@color_config`
 (text/bg/border pairs across 3 variants × 7 colors × 2 themes) —
-`lib/pulsar/components/flash.ex:107–143`. Token approach is sound but
-ratios for each variant/color/theme combination require DevTools
-measurement.
+`lib/pulsar/components/flash.ex:107–143`. Browser measurement of 55
+cells per theme ([light](measurements/flash-light.md),
+[dark](measurements/flash-dark.md)):
 
-**Notes:** Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+- **Dark:** all 55 pass (min 4.84:1).
+- **Light:** 33/55 pass (min 2.74:1). Failing: `solid-success`,
+  `outline-success`, `outline-warning`, `ghost-danger`,
+  `ghost-primary`, `ghost-success`, `ghost-warning`, `dismissible`.
+
+**Notes:** Existing [PUL-32](https://linear.app/bigrefactor/issue/PUL-32)
+scoped to "light: success solid; dark: primary/secondary solid";
+expand to cover the broader set surfaced here. Same defect pattern
+as Button/Badge — high-luminance solid/ghost backgrounds in light
+mode + foreground text token combination.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -92,17 +101,18 @@ by the parent container (FlashGroup sets `max-w-sm w-full` —
 **Notes:** Inner content uses `min-w-0` to permit wrap —
 `lib/pulsar/components/flash.ex:291, 295`. Reflows at 320 CSS px.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** Focus ring lives only on the close button via
 `focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2` —
-`lib/pulsar/components/flash.ex:close_button_classes/1`. The container no
-longer carries a `focus-within:ring` (previously double-ringed with the
-button). Outline variant uses `border` (1px) in the active color —
-`lib/pulsar/components/flash.ex:117–132`.
+`lib/pulsar/components/flash.ex:close_button_classes/1`. Outline variant
+uses `border` (1px) in the active color —
+`lib/pulsar/components/flash.ex:117–132`. Browser measurement: 18
+border cells per theme, all 18 pass (min 3.06:1 light / 3.67:1 dark).
 
-**Notes:** Semantic-token approach is sound; ratios need DevTools.
-Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** Outline borders use the same color as the variant
+foreground text — when text passes 1.4.3 (4.5:1) the border easily
+clears the 3:1 non-text minimum.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -185,7 +195,7 @@ No flashing/blinking.
 after the content — `lib/pulsar/components/flash.ex:300–311`. No
 positive `tabindex` values used.
 
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (minor) — needs browser verification
+### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious, [PUL-32](https://linear.app/bigrefactor/issue/PUL-32/flash-fix-axe-color-contrast-violation))
 
 **Evidence:**
 - Close button uses `focus-visible:outline-none focus-visible:ring-2
@@ -194,10 +204,14 @@ positive `tabindex` values used.
 - Container no longer carries a `focus-within:ring` (would have
   double-ringed with the button)
 
+`ring-current` inherits the foreground text color. Wherever 1.4.3
+passes (4.5:1 text vs bg), the focus ring exceeds the 3:1 non-text
+minimum by definition. Failures here are the same set as the 1.4.3
+failures, covered by [PUL-32](https://linear.app/bigrefactor/issue/PUL-32);
+no separate sub-issue.
+
 **Notes:** Ring only appears on keyboard focus, not mouse click —
-matches the rest of the library. Contrast of `ring-current` on each
-color variant still warrants DevTools verification.
-Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+matches the rest of the library.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 

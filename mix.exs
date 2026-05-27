@@ -87,7 +87,8 @@ defmodule Pulsar.MixProject do
         "test_app.server": :test,
         "assets.build": :test,
         "pulsar.dev_app.theme": :test,
-        "pulsar.test_app.theme": :test
+        "pulsar.test_app.theme": :test,
+        "pulsar.a11y.measure": :test
       ]
     ]
   end

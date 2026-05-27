@@ -34,7 +34,7 @@ defmodule Pulsar.DevApp.DividerLive do
         </div>
       </.fixture_section>
       <.fixture_section name="vertical" title="Vertical orientation">
-        <div class="flex h-16 items-center gap-4">
+        <div class="flex h-16 flex-wrap items-center gap-4">
           <%= for color <- @colors do %>
             <Divider.divider
               color={color}
