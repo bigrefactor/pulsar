@@ -484,6 +484,42 @@ defmodule Pulsar.Components.FlashGroupTest do
       assert html =~ ~s(data-auto-dismiss="false")
     end
 
+    test "without explicit auto_dismiss, alert-role flashes do not auto-dismiss (WCAG 2.2.1)" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{error: "Boom"}} />
+        """)
+
+      assert html =~ ~s(role="alert")
+      assert html =~ ~s(data-auto-dismiss="false")
+    end
+
+    test "without explicit auto_dismiss, status-role flashes auto-dismiss by default" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{info: "Hi"}} />
+        """)
+
+      assert html =~ ~s(role="status")
+      assert html =~ ~s(data-auto-dismiss="true")
+    end
+
+    test "explicit auto_dismiss=true overrides role-aware default for alerts" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{error: "Boom"}} auto_dismiss={true} />
+        """)
+
+      assert html =~ ~s(role="alert")
+      assert html =~ ~s(data-auto-dismiss="true")
+    end
+
     test "applies custom dismiss_after to all flashes" do
       assigns = %{}
 

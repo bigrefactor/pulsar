@@ -234,8 +234,7 @@ size — `lib/pulsar/components/flash.ex:@size_config`:
 - `lg`: `h-6 w-6 p-0.5` (24×24 box, 20px inner glyph)
 
 Test pins the floor at every size —
-`test/pulsar/components/flash_test.exs:"close button is at least 24x24
-to meet WCAG 2.5.8 at every size"`.
+`test/pulsar/components/flash_test.exs` → `"close button is at least 24x24 to meet WCAG 2.5.8 at every size"`.
 
 **Notes:** Padding scales the inner SVG so the X glyph grows with the
 flash, while the touch target stays compliant without depending on the

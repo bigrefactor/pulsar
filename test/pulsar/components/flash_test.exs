@@ -146,7 +146,8 @@ defmodule Pulsar.Components.FlashTest do
           <Flash.flash size={@size}>Sized flash</Flash.flash>
           """)
 
-        assert html =~ "h-6 w-6", "close button should be h-6 w-6 at size=#{size}"
+        assert html =~ ~r/<button(?=[^>]*\baria-label="Dismiss")(?=[^>]*\bh-6 w-6\b)[^>]*>/,
+               "close button should carry h-6 w-6 (24x24 WCAG 2.5.8 floor) at size=#{size}"
       end
     end
 

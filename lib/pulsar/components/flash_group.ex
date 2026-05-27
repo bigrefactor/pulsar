@@ -292,8 +292,9 @@ defmodule Pulsar.Components.FlashGroup do
   )
 
   attr(:auto_dismiss, :boolean,
-    default: true,
-    doc: "Enable auto-dismiss for all flashes in group"
+    default: nil,
+    doc:
+      ~s{Auto-dismiss override for all flashes in group. Defaults to nil so each flash uses its role-aware default (true for role="status", false for role="alert" — WCAG 2.2.1). Pass an explicit boolean to override every flash regardless of role.}
   )
 
   attr(:dismiss_after, :integer,
