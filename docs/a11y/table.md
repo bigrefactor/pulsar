@@ -66,12 +66,11 @@ tokens — `lib/pulsar/components/table.ex:200–209`. Empty state uses
 Browser measurement of 56 cells across both themes: all pass, min
 19.27:1 (light) / 16.98:1 (dark) ([light](measurements/table-light.md),
 [dark](measurements/table-dark.md)). Existing axe `color-contrast`
-violations on the header solid variant are tracked under
-[PUL-41](https://linear.app/bigrefactor/issue/PUL-41/table-fix-axe-color-contrast-violation)
+violations on the header solid variant are tracked separately
 — the measurement script doesn't see those because the fixture
 exercises the outline variant header by default.
 
-**Notes:** The PUL-41-tracked axe failures are header `solid` variant
+**Notes:** The tracked axe failures are header `solid` variant
 combos not currently exercised by the table fixture; expand the fixture
 to render those before re-measuring.
 
@@ -93,7 +92,7 @@ table without horizontal page scroll. Per WCAG 1.4.10 understanding doc,
 "data tables" are explicit exempt content where horizontal scrolling
 within the component is acceptable.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious, PUL-19 follow-up: table-focus-ring-opacity)
+### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious, follow-up: table-focus-ring-opacity)
 
 **Evidence:**
 - Row borders use `border-border/50` (50% opacity) —
@@ -110,12 +109,11 @@ over `--color-background` (white in light, near-black in dark) is
 algebraically below 3:1 — code review alone is sufficient to confirm
 the gap.
 
-**Notes:** New finding — `table-focus-ring-opacity` to be filed as a
-Linear sub-issue parented to PUL-19. The fix is to drop the `/20`
-suffix on the focus ring (`focus:ring-2 focus:ring-primary`) or swap
-to a higher-contrast token. Row borders at 50% opacity are not focus
-indicators and don't need to meet 3:1 (per WCAG 1.4.11 understanding,
-decorative borders are exempt).
+**Notes:** New finding — tracked as `table-focus-ring-opacity`. The
+fix is to drop the `/20` suffix on the focus ring (`focus:ring-2
+focus:ring-primary`) or swap to a higher-contrast token. Row borders
+at 50% opacity are not focus indicators and don't need to meet 3:1
+(per WCAG 1.4.11 understanding, decorative borders are exempt).
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -190,9 +188,7 @@ Column-level labels remain in place: each `<:col>` slot requires a
 affordances, the info log nudge, suppression for each affordance, and
 the global-`:rest` passthrough path.
 
-**Fixed in:** [PUL-18](https://linear.app/bigrefactor/issue/PUL-18).
-
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious, PUL-19 follow-up: table-focus-ring-opacity)
+### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious, follow-up: table-focus-ring-opacity)
 
 **Evidence:** Row focus uses `focus:outline-none focus:ring-2 focus:ring-primary/20 dark:focus:ring-dark-primary/20`
 — `lib/pulsar/components/table.ex:566`.
@@ -203,7 +199,7 @@ finding above: the 20% alpha ring fails the 3:1 non-text minimum.
 Both criteria are addressed by the same fix (drop `/20`); tracked as
 one Linear sub-issue (`table-focus-ring-opacity`).
 
-### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ⚠ GAP (serious, PUL-19 follow-up: table-sticky-header-obscures-focus)
+### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ⚠ GAP (serious, follow-up: table-sticky-header-obscures-focus)
 
 **Evidence:** Sticky header (`sticky_header={true}`) applies
 `[&_thead_th]:sticky [&_thead_th]:top-0 [&_thead_th]:z-10` —
@@ -213,9 +209,8 @@ row that's about to scroll under the header leaves the row partially
 or fully covered. The component needs to scroll-margin-top the
 focused row so it lands below the header.
 
-**Notes:** New finding — `table-sticky-header-obscures-focus` to be
-filed as a Linear sub-issue parented to PUL-19. Fix is to add
-`scroll-margin-top: <header-height>` to focusable rows when
+**Notes:** New finding — tracked as `table-sticky-header-obscures-focus`.
+Fix is to add `scroll-margin-top: <header-height>` to focusable rows when
 `sticky_header={true}`. Page-level usages can also work around it by
 giving rows `scroll-padding-top`, but a component-level fix is the
 right place.
@@ -322,10 +317,10 @@ noting.
   meaningful structural win over many comparable libraries that ship
   `<div role="table">` shells.
 
-## Browser a11y findings (PUL-11)
+## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+Violations surfaced by the axe-core browser gate.
 
-| Rule | Affected variant(s) | Themes | Ticket |
-|------|---------------------|--------|--------|
-| `color-contrast` | light: success header; dark: dark text on dark bg | both | [PUL-41](https://linear.app/bigrefactor/issue/PUL-41/table-fix-axe-color-contrast-violation) |
+| Rule | Affected variant(s) | Themes |
+|------|---------------------|--------|
+| `color-contrast` | light: success header; dark: dark text on dark bg | both |

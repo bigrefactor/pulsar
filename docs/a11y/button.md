@@ -65,7 +65,7 @@ ARIA state (`aria-disabled`, `aria-busy`), not color alone —
 **Notes:** Color variants (primary/success/danger/etc.) convey *which*
 button it is but criticality is communicated via inner text, not color.
 
-### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS (closed by [PUL-27](https://linear.app/bigrefactor/issue/PUL-27))
+### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Colors come from semantic tokens
 (`text-*-foreground`, `bg-*`, dark-mode pairs) —
@@ -97,7 +97,7 @@ sizes — `lib/pulsar/components/button.ex:88–110`.
 **Notes:** Button width is content-driven; reflows at 320 CSS px without
 horizontal scroll.
 
-### 1.4.11 Non-text Contrast (AA) — ✓ PASS (closed by [PUL-46](https://linear.app/bigrefactor/issue/PUL-46))
+### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** Focus ring is `ring-2 ring-ring` —
 `lib/pulsar/components/button.ex:115–116`. Outline variant uses
@@ -321,10 +321,10 @@ the in-progress status without polling the visible spinner.
   `ring-2` (2px), the minimum thickness for AAA. Contrast still needs
   browser verification.
 
-## Browser a11y findings (PUL-11)
+## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+Violations surfaced by the axe-core browser gate.
 
-| Rule | Affected variant(s) | Themes | Ticket |
-|------|---------------------|--------|--------|
-| `color-contrast` | light: success solid; dark: primary ghost/solid | both | [PUL-27](https://linear.app/bigrefactor/issue/PUL-27/button-fix-axe-color-contrast-violation) |
+| Rule | Affected variant(s) | Themes |
+|------|---------------------|--------|
+| `color-contrast` | light: success solid; dark: primary ghost/solid | both |

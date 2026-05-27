@@ -334,7 +334,7 @@ defmodule Pulsar.DevApp.Storybook.Foundations.Themes do
       %{token: "--color-surface-1", palette: "gray-50", label: "surf", css: "var(--color-gray-50)"},
       %{token: "--color-border", palette: "gray-200", label: "border", css: "var(--color-gray-200)"},
       %{token: "--color-primary", palette: "primary-600", label: "primary", css: "var(--color-primary-600)"},
-      %{token: "--color-success", palette: "success-600", label: "success", css: "var(--color-success-600)"},
+      %{token: "--color-success", palette: "success-800", label: "success", css: "var(--color-success-800)"},
       %{token: "--color-danger", palette: "danger-600", label: "danger", css: "var(--color-danger-600)"},
       %{token: "--color-foreground", palette: "gray-950", label: "fg", css: "var(--color-gray-950)"}
     ]
@@ -347,7 +347,7 @@ defmodule Pulsar.DevApp.Storybook.Foundations.Themes do
       %{token: "--color-border", palette: "gray-800", label: "border", css: "var(--color-gray-800)"},
       %{token: "--color-primary", palette: "primary-400", label: "primary", css: "var(--color-primary-400)"},
       %{token: "--color-success", palette: "success-400", label: "success", css: "var(--color-success-400)"},
-      %{token: "--color-danger", palette: "danger-400", label: "danger", css: "var(--color-danger-400)"},
+      %{token: "--color-danger", palette: "danger-300", label: "danger", css: "var(--color-danger-300)"},
       %{token: "--color-foreground", palette: "gray-50", label: "fg", css: "var(--color-gray-50)"}
     ]
   end
@@ -365,9 +365,9 @@ defmodule Pulsar.DevApp.Storybook.Foundations.Themes do
       %{token: "--color-ring", role: "Focus ring", light: "primary-600", dark: "primary-400"},
       %{token: "--color-primary", role: "Primary action", light: "primary-600", dark: "primary-400"},
       %{token: "--color-primary-foreground", role: "Text on primary", light: "white", dark: "gray-950"},
-      %{token: "--color-success", role: "Success state", light: "success-600", dark: "success-400"},
-      %{token: "--color-warning", role: "Warning state", light: "warning-600", dark: "warning-400"},
-      %{token: "--color-danger", role: "Danger / destructive", light: "danger-600", dark: "danger-400"}
+      %{token: "--color-success", role: "Success state", light: "success-800", dark: "success-400"},
+      %{token: "--color-warning", role: "Warning state", light: "warning-800", dark: "warning-400"},
+      %{token: "--color-danger", role: "Danger / destructive", light: "danger-600", dark: "danger-300"}
     ]
   end
 

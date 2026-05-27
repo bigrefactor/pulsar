@@ -3,17 +3,17 @@
 This directory holds Pulsar's first formal accessibility audit. It covers
 every applicable WCAG 2.2 Level A and AA success criterion across all 19
 components in `lib/pulsar/components/`. Original audit method was
-**code-only** (PUL-15); the browser-verification follow-up (PUL-19) has
+**code-only**; the browser-verification follow-up has
 since populated measured contrast, focus-ring, target-size, text-spacing,
 and reflow values into the per-component pages.
 
 **What's covered:** 31 Level A + 24 Level AA = 55 success criteria (Level
 A 4.1.1 Parsing is excluded — WCAG 2.2 deprecates it).
 
-**Browser verification (PUL-19):** Every `⚠ GAP — needs browser
+**Browser verification:** Every `⚠ GAP — needs browser
 verification` heading from the original code-only audit has been replaced
 with a measured `✓ PASS` (with min/max ratios cited) or `⚠ GAP` (with the
-measured ratio plus a Linear sub-issue or PUL-19 follow-up slug).
+measured ratio plus a follow-up slug).
 Raw per-cell measurements live under
 [`measurements/`](measurements/) (one markdown report per
 `(component, theme)`) — re-run via `mix pulsar.a11y.measure`.
@@ -21,8 +21,8 @@ Raw per-cell measurements live under
 **What's not covered (deferred):**
 
 - Screen reader testing (VoiceOver / NVDA).
-- Implementing fixes — every real code or runtime gap is filed as its
-  own Linear sub-issue parented to PUL-15 (code) or PUL-19 (runtime).
+- Implementing fixes — every real code or runtime gap is tracked as its
+  own follow-up.
 - AAA criteria as a pass/fail axis. Where a component happens to satisfy
   an AAA criterion for free, it's noted under "AAA wins (bonus)" on that
   component's page.
@@ -31,13 +31,11 @@ Raw per-cell measurements live under
 with explicit status (`✓ PASS`, `⚠ GAP`, or `N/A`), evidence as file +
 line refs to source or test assertions, and notes explaining the call.
 GAP entries carry a severity tag (`blocker` / `serious` / `minor`) and
-either a Linear sub-issue ID or a reference to
-[PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+a reference to the browser-audit follow-up that tracks the fix.
 
 **Companion audit:** [`apg-audit.md`](apg-audit.md) — code-only
 cross-check of Pulsar's 7 interactive components against the WAI-ARIA
-Authoring Practices Guide (APG) patterns. Tracked under
-[PUL-20](https://linear.app/bigrefactor/issue/PUL-20).
+Authoring Practices Guide (APG) patterns.
 
 **References:**
 
@@ -47,13 +45,12 @@ Authoring Practices Guide (APG) patterns. Tracked under
 
 ---
 
-## Browser test gate (PUL-11)
+## Browser test gate
 
 A `phoenix_test_playwright` + `a11y_audit` suite runs axe-core against every
 fixture LiveView in `test/support/test_app/`. Each fixture is exercised twice
 (light + dark theme), producing one named ExUnit test per (fixture, theme)
-combination. This is the automated half of the
-[PUL-19](https://linear.app/bigrefactor/issue/PUL-19) browser-audit work for
+combination. This is the automated half of the browser-audit work for
 axe-detectable issues; contrast measurements, focus indicators, and screen
 reader testing remain manual.
 
@@ -73,20 +70,20 @@ Chromium installed are unaffected.
 Violations are **not** allowlisted. Each (component, rule) failure is tracked
 two ways:
 
-1. A Linear ticket filed under the Pulsar team, parented to PUL-15.
+1. A Linear ticket filed under the Pulsar team.
 2. An entry in this directory's `<component>.md` referencing that ticket.
 
 The test stays red until the violation is fixed. The CI `browser` job is
 **not** a required check while cleanup is in progress; a follow-up ticket
 flips it to required once all fixtures pass.
 
-## Keyboard tests (PUL-12)
+## Keyboard tests
 
 `test/integration/a11y/keyboard_test.exs` adds real-browser keyboard
 behavior coverage to the same `:integration` suite. Axe-clean catches
 static a11y problems (missing labels, contrast, ARIA shape) but does not
 exercise behavior — a button could fail to activate on Enter and axe
-would happily report it clean. PUL-12 closes that gap with
+would happily report it clean. This suite closes that gap with
 real-keystroke coverage across the six interactive components (Button,
 Card, RadioGroup, Select, Checkbox, Switch).
 
@@ -407,10 +404,10 @@ The header component should support proper hierarchy.
 
 **2.4.7 Focus Visible (AA)** — Keyboard focus indicator is visible.
 *Library note:* All interactive components apply `focus-visible:ring-*`
-or equivalent. Browser-verified per component (PUL-19); the default
+or equivalent. Browser-verified per component; the default
 `--color-ring` token measures 5.02:1 (light) / 6.72:1 (dark), well
 above the 3:1 non-text minimum. Per-component exceptions (Link,
-Switch dark, Select color variants) are filed as PUL-19 follow-ups.
+Switch dark, Select color variants) are tracked as browser-audit follow-ups.
 
 **2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2)** — Focused
 component is not entirely hidden by author-created content (sticky
@@ -554,8 +551,8 @@ with appropriate `aria-live`. Field errors use `role="alert"` /
 
 ---
 
-**Audited:** 2026-05-24 (code-only, PUL-15) and 2026-05-27
-(browser-verification follow-up, PUL-19).
-**PUL-19 measurement artifacts:** [`measurements/`](measurements/) —
+**Audited:** 2026-05-24 (code-only) and 2026-05-27
+(browser-verification follow-up).
+**Measurement artifacts:** [`measurements/`](measurements/) —
 one markdown report per `(component, theme)`, regenerable via
 `mix pulsar.a11y.measure`.

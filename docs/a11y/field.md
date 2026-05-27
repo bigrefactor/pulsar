@@ -64,7 +64,7 @@ to the underlying input.
 `lib/pulsar/components/field.ex:312–321`. Required indicator (delegated
 to Label) uses asterisk + sr-only text.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (minor, partially covered by [PUL-31](https://linear.app/bigrefactor/issue/PUL-31), [PUL-33](https://linear.app/bigrefactor/issue/PUL-33))
+### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (minor)
 
 **Evidence:** Description colors use semantic tokens
 (`text-gray-600 dark:text-gray-400`, danger variant, etc.) —
@@ -75,14 +75,10 @@ all field-fixture cells pass, min 19.27:1 (light) / 16.98:1 (dark)
 ([light](measurements/field-light.md),
 [dark](measurements/field-dark.md)).
 
-**Notes:** Existing
-[PUL-31](https://linear.app/bigrefactor/issue/PUL-31/field-fix-axe-color-contrast-violation)
-and
-[PUL-33](https://linear.app/bigrefactor/issue/PUL-33/form-fix-axe-color-contrast-violation)
-track help-text contrast surfaced via the Form fixture in dark mode
-— the field-only fixture doesn't render help text against the
-tinted form background where the issue appears, so direct
-measurement here passes. The known gaps remain valid.
+**Notes:** Existing follow-ups track help-text contrast surfaced via
+the Form fixture in dark mode — the field-only fixture doesn't render
+help text against the tinted form background where the issue appears,
+so direct measurement here passes. The known gaps remain valid.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -260,11 +256,11 @@ than `assertive` / `role="alert"`); the tradeoff is acknowledged.
 
 - None directly applicable to a static wrapper.
 
-## Browser a11y findings (PUL-11)
+## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+Violations surfaced by the axe-core browser gate.
 
-| Rule | Affected variant(s) | Themes | Ticket |
-|------|---------------------|--------|--------|
-| `color-contrast` | help text gray-400 on light background | dark | [PUL-31](https://linear.app/bigrefactor/issue/PUL-31/field-fix-axe-color-contrast-violation) |
-| `color-contrast` | help text + dark-mode label (surfaced via Form fixture) | dark | [PUL-33](https://linear.app/bigrefactor/issue/PUL-33/form-fix-axe-color-contrast-violation) |
+| Rule | Affected variant(s) | Themes |
+|------|---------------------|--------|
+| `color-contrast` | help text gray-400 on light background | dark |
+| `color-contrast` | help text + dark-mode label (surfaced via Form fixture) | dark |

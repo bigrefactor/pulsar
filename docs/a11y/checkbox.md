@@ -270,11 +270,11 @@ ARIA attr.)
   AAA minimum thickness. Browser measurement: 5.02:1 / 6.72:1 meets
   the AAA 4.5:1 focus contrast requirement.
 
-## Browser a11y findings (PUL-11)
+## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+Violations surfaced by the axe-core browser gate.
 
-| Rule | Affected variant(s) | Themes | Ticket |
-|------|---------------------|--------|--------|
-| `label` | unlabelled checkboxes in fixture | both | [PUL-28](https://linear.app/bigrefactor/issue/PUL-28/checkbox-fix-axe-label-violation) |
-| `aria-conditional-attr` | aria-checked on indeterminate state | both | [PUL-29](https://linear.app/bigrefactor/issue/PUL-29/checkbox-fix-axe-aria-conditional-attr-violation) |
+| Rule | Affected variant(s) | Themes |
+|------|---------------------|--------|
+| `label` | unlabelled checkboxes in fixture | both |
+| `aria-conditional-attr` | aria-checked on indeterminate state | both |

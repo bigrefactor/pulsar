@@ -98,10 +98,9 @@ wrapper.
 to understand the content (focusable elements, state indicators).
 A decorative section separator that doesn't convey state or receive
 focus is out of scope per WCAG 1.4.11 Understanding ("does not apply
-to elements that are decorative"). Existing
-[PUL-30](https://linear.app/bigrefactor/issue/PUL-30/divider-fix-axe-color-contrast-violation)
-tracks the section-label text contrast in dark mode; the border
-itself is intentional.
+to elements that are decorative"). A separate follow-up tracks the
+section-label text contrast in dark mode; the border itself is
+intentional.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -181,10 +180,10 @@ slot content where present.
   role and decorative-line `aria-hidden` together cover the AA bar
   without overreach.
 
-## Browser a11y findings (PUL-11)
+## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+Violations surfaced by the axe-core browser gate.
 
-| Rule | Affected variant(s) | Themes | Ticket |
-|------|---------------------|--------|--------|
-| `color-contrast` | section label | dark | [PUL-30](https://linear.app/bigrefactor/issue/PUL-30/divider-fix-axe-color-contrast-violation) |
+| Rule | Affected variant(s) | Themes |
+|------|---------------------|--------|
+| `color-contrast` | section label | dark |

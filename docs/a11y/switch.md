@@ -76,7 +76,7 @@ These don't affect text resizing but won't scale to ems.
 **Evidence:** `inline-flex` wrapper — `lib/pulsar/components/switch.ex:479`.
 No fixed widths.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious, PUL-19 follow-up: switch-dark-focus-indicator)
+### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious, follow-up: switch-dark-focus-indicator)
 
 **Evidence:**
 - Track has `shadow-inner` + variant-specific bg —
@@ -92,12 +92,11 @@ itself). Light theme: 96/96 pass focus ring contrast (5.73:1). Dark
 theme: 0/96 pass — the peer-focus border resolves to 2.97:1 across
 all 24 color×size cells, just below the 3:1 floor.
 
-**Notes:** New finding — `switch-dark-focus-indicator` to be filed
-as a Linear sub-issue parented to PUL-19. The dark-mode focus
-indicator border color is one step too light against the dark
-track background. Fix is to bump the `peer-focus-visible:border-*`
-token to a brighter shade in dark mode (e.g. `border-dark-primary`
-→ `border-dark-primary-300`).
+**Notes:** New finding — tracked as `switch-dark-focus-indicator`.
+The dark-mode focus indicator border color is one step too light
+against the dark track background. Fix is to bump the
+`peer-focus-visible:border-*` token to a brighter shade in dark mode
+(e.g. `border-dark-primary` → `border-dark-primary-300`).
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -146,7 +145,7 @@ attributes — `lib/pulsar/components/switch.ex:376–384, 498–499`. The
 `field` wrapper provides the visible label and passes it via inline
 `<label for=>` for the switch type.
 
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious, PUL-19 follow-up: switch-dark-focus-indicator)
+### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious, follow-up: switch-dark-focus-indicator)
 
 **Evidence:** Real input is `sr-only`, so its native focus ring is
 invisible. Visual feedback uses `peer-focus-visible:bg-*` and
@@ -284,10 +283,10 @@ correct signal for assistive tech.
   the AAA 4.5:1 floor — and AA 3:1) — see `switch-dark-focus-indicator`
   follow-up under 1.4.11 / 2.4.7.
 
-## Browser a11y findings (PUL-11)
+## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+Violations surfaced by the axe-core browser gate.
 
-| Rule | Affected variant(s) | Themes | Ticket |
-|------|---------------------|--------|--------|
-| `button-name` | toggle button lacks accessible name | both | [PUL-40](https://linear.app/bigrefactor/issue/PUL-40/switch-fix-axe-button-name-violation) |
+| Rule | Affected variant(s) | Themes |
+|------|---------------------|--------|
+| `button-name` | toggle button lacks accessible name | both |

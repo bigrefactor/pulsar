@@ -5,7 +5,8 @@ defmodule Pulsar.DevApp.Keyboard.ButtonLive do
   Renders pseudo-buttons (`as: :div` → `<div role="button">`) so the test
   exercises the `.PulsarButton` colocated hook's Space/Enter handlers. A
   native `<button>` would activate even without the hook (browser default),
-  which would defeat the verification step described in PUL-12.
+  which would defeat the verification step described in the keyboard-test
+  suite.
   """
   use Pulsar.DevApp.Web, :live_view
 

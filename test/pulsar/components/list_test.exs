@@ -436,7 +436,7 @@ defmodule Pulsar.Components.ListTest do
         """)
 
       # Empty state renders a plain <div> with data-list-empty — no <dl>/<dt>/<dd>
-      # (a <div> with arbitrary text inside <dl> is invalid HTML5, see PUL-17)
+      # (a <div> with arbitrary text inside <dl> is invalid HTML5)
       refute html =~ ~s(<dl)
       refute html =~ ~s(</dl>)
       refute html =~ ~s(<dt)
@@ -478,7 +478,7 @@ defmodule Pulsar.Components.ListTest do
         """)
 
       # Empty state must inherit variant/color styling so visual identity matches a
-      # populated list — see PUL-17.
+      # populated list.
       assert html =~ ~s(data-list-empty)
       assert html =~ "border-primary"
       assert html =~ "No items to display"
@@ -635,7 +635,7 @@ defmodule Pulsar.Components.ListTest do
       assert html =~ "This list has no items"
       assert html =~ "No items to display"
       assert html =~ ~s(data-list-empty)
-      # No <dl> when empty — see PUL-17
+      # No <dl> when empty
       refute html =~ ~s(<dl)
     end
 

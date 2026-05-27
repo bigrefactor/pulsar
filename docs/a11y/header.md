@@ -190,7 +190,7 @@ across multiple headers is a page-level concern.
 besides breadcrumb links, which inherit the Link component's focus
 styling.
 
-### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ⚠ GAP (serious, PUL-19 follow-up: header-sticky-obscures-focus)
+### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ⚠ GAP (serious, follow-up: header-sticky-obscures-focus)
 
 **Evidence:** Sticky header uses `sticky top-0 z-10 bg-background dark:bg-dark-background`
 — `lib/pulsar/components/header.ex:366`. Manual browser verification
@@ -202,10 +202,9 @@ this without knowing the header's rendered height at runtime, but it
 can apply `[&_~_*]:scroll-margin-top` (or equivalent) so focusable
 siblings reserve scroll space for the header.
 
-**Notes:** New finding — `header-sticky-obscures-focus` to be filed
-as a Linear sub-issue parented to PUL-19. Same defect class as the
-table sticky-header issue
-([`table.md` 2.4.11](table.md#2411-focus-not-obscured-minimum-aa-new-in-22--gap-serious-pul-19-follow-up-table-sticky-header-obscures-focus));
+**Notes:** New finding — tracked as `header-sticky-obscures-focus`.
+Same defect class as the table sticky-header issue
+([`table.md` 2.4.11](table.md#2411-focus-not-obscured-minimum-aa-new-in-22--gap-serious-follow-up-table-sticky-header-obscures-focus));
 fix is to set `scroll-margin-top` on whatever follows the header in
 the layout, or expose a CSS variable consumers can hook a global
 `scroll-margin-top` to.

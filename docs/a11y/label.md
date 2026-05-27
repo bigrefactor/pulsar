@@ -53,10 +53,9 @@ required-error × sizes xs-xl): min 4.56:1 (light, danger color) /
 6.14:1 (dark) ([light](measurements/label-light.md),
 [dark](measurements/label-dark.md)). All pass 4.5:1.
 
-**Notes:** [PUL-35](https://linear.app/bigrefactor/issue/PUL-35/label-fix-axe-color-contrast-violation)
-tracks an axe-detected `color-contrast` issue on the danger label
-variant when surfaced inside a form on a tinted background; the
-component-on-page-bg measurement here passes.
+**Notes:** A separate follow-up tracks an axe-detected `color-contrast`
+issue on the danger label variant when surfaced inside a form on a
+tinted background; the component-on-page-bg measurement here passes.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -168,10 +167,10 @@ needed.
 
 - None directly applicable to a static label primitive.
 
-## Browser a11y findings (PUL-11)
+## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+Violations surfaced by the axe-core browser gate.
 
-| Rule | Affected variant(s) | Themes | Ticket |
-|------|---------------------|--------|--------|
-| `color-contrast` | danger label | dark | [PUL-35](https://linear.app/bigrefactor/issue/PUL-35/label-fix-axe-color-contrast-violation) |
+| Rule | Affected variant(s) | Themes |
+|------|---------------------|--------|
+| `color-contrast` | danger label | dark |

@@ -103,13 +103,10 @@ token contrasts used by text (4.5:1 for primary, secondary, danger,
 neutral, info; success ~3.08:1 light, warning ~3.06:1 light).
 
 **Notes:** The text-meaning success/warning glyphs share the same
-token shortfall as button/badge/link text (covered by
-[PUL-26](https://linear.app/bigrefactor/issue/PUL-26),
-[PUL-27](https://linear.app/bigrefactor/issue/PUL-27),
-[PUL-36](https://linear.app/bigrefactor/issue/PUL-36)). Decorative
-icons (`aria-hidden="true"`) are exempt from 1.4.11. No new sub-issue
-needed — the upstream color token fix resolves icon contrast in
-parallel with text contrast.
+token shortfall as button/badge/link text and are tracked by the same
+upstream color-token follow-ups. Decorative icons (`aria-hidden="true"`)
+are exempt from 1.4.11. No new sub-issue needed — the upstream color
+token fix resolves icon contrast in parallel with text contrast.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
