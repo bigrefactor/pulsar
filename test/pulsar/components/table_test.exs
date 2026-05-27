@@ -278,6 +278,41 @@ defmodule Pulsar.Components.TableTest do
       assert html =~ "[&amp;_thead_th]:z-docked"
     end
 
+    test "applies size-appropriate scroll-margin on rows so focus is not obscured" do
+      for {size, expected} <- [
+            {"xs", "[&amp;_tbody_tr]:scroll-mt-6"},
+            {"sm", "[&amp;_tbody_tr]:scroll-mt-8"},
+            {"md", "[&amp;_tbody_tr]:scroll-mt-10"},
+            {"lg", "[&amp;_tbody_tr]:scroll-mt-14"},
+            {"xl", "[&amp;_tbody_tr]:scroll-mt-16"}
+          ] do
+        assigns = %{users: [%{name: "Alice"}], size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <Table.table id="users" rows={@users} size={@size} sticky_header={true}>
+            <:col :let={user} label="Name">{user.name}</:col>
+          </Table.table>
+          """)
+
+        assert html =~ expected,
+               "expected size=#{size} sticky table to include #{expected}"
+      end
+    end
+
+    test "no scroll-margin when sticky_header is disabled" do
+      assigns = %{users: [%{name: "Alice"}]}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="users" rows={@users} size="md" sticky_header={false}>
+          <:col :let={user} label="Name">{user.name}</:col>
+        </Table.table>
+        """)
+
+      refute html =~ "scroll-mt"
+    end
+
     test "no sticky classes when disabled" do
       assigns = %{users: [%{name: "Alice"}]}
 
@@ -408,7 +443,7 @@ defmodule Pulsar.Components.TableTest do
       assert html =~ ~s(tabindex="0")
       assert html =~ ~s(role="button")
       assert html =~ ~s(phx-hook=".PulsarTableRow")
-      assert html =~ ~s(focus:outline-none focus:ring-2)
+      assert html =~ ~s(focus-visible:outline-none focus-visible:ring-2)
     end
 
     test "decorative SVG has aria-hidden" do

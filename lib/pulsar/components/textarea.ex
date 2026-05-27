@@ -154,14 +154,14 @@ defmodule Pulsar.Components.Textarea do
         "bg-transparent",
         "text-danger",
         "placeholder:text-danger/70",
-        "focus:ring-danger/60",
+        "focus:ring-ring",
         "hover:bg-danger/5"
       ],
       "info" => [
         "bg-transparent",
         "text-info",
         "placeholder:text-info/70",
-        "focus:ring-info/60",
+        "focus:ring-ring",
         "hover:bg-info/5"
       ],
       "neutral" => [
@@ -174,46 +174,46 @@ defmodule Pulsar.Components.Textarea do
         "bg-transparent",
         "text-primary",
         "placeholder:text-primary/70",
-        "focus:ring-primary/60",
+        "focus:ring-ring",
         "hover:bg-primary/5"
       ],
       "secondary" => [
         "bg-transparent",
         "text-secondary",
         "placeholder:text-secondary/70",
-        "focus:ring-secondary/60",
+        "focus:ring-ring",
         "hover:bg-secondary/5"
       ],
       "success" => [
         "bg-transparent",
         "text-success",
         "placeholder:text-success/70",
-        "focus:ring-success/60",
+        "focus:ring-ring",
         "hover:bg-success/5"
       ],
       "warning" => [
         "bg-transparent",
         "text-warning",
         "placeholder:text-warning/70",
-        "focus:ring-warning/60",
+        "focus:ring-ring",
         "hover:bg-warning/5"
       ]
     },
     "outline" => %{
       "danger" => [
-        "border-danger/60",
+        "border-danger",
         "bg-background",
         "text-danger",
         "placeholder:text-danger/70",
-        "focus:ring-danger/60",
+        "focus:ring-ring",
         "hover:border-danger"
       ],
       "info" => [
-        "border-info/60",
+        "border-info",
         "bg-background",
         "text-info",
         "placeholder:text-info/70",
-        "focus:ring-info/60",
+        "focus:ring-ring",
         "hover:border-info"
       ],
       "neutral" => [
@@ -224,35 +224,35 @@ defmodule Pulsar.Components.Textarea do
         "hover:border-primary/50"
       ],
       "primary" => [
-        "border-primary/60",
+        "border-primary",
         "bg-background",
         "text-primary",
         "placeholder:text-primary/70",
-        "focus:ring-primary/60",
+        "focus:ring-ring",
         "hover:border-primary"
       ],
       "secondary" => [
-        "border-secondary/60",
+        "border-secondary",
         "bg-background",
         "text-secondary",
         "placeholder:text-secondary/70",
-        "focus:ring-secondary/60",
+        "focus:ring-ring",
         "hover:border-secondary"
       ],
       "success" => [
-        "border-success/60",
+        "border-success",
         "bg-background",
         "text-success",
         "placeholder:text-success/70",
-        "focus:ring-success/60",
+        "focus:ring-ring",
         "hover:border-success"
       ],
       "warning" => [
-        "border-warning/60",
+        "border-warning",
         "bg-background",
         "text-warning",
         "placeholder:text-warning/70",
-        "focus:ring-warning/60",
+        "focus:ring-ring",
         "hover:border-warning"
       ]
     },
@@ -261,49 +261,49 @@ defmodule Pulsar.Components.Textarea do
         "bg-danger/10",
         "text-danger",
         "placeholder:text-danger/70",
-        "focus:ring-danger/60",
+        "focus:ring-ring",
         "hover:bg-danger/20"
       ],
       "info" => [
         "bg-info/10",
         "text-info",
         "placeholder:text-info/70",
-        "focus:ring-info/60",
+        "focus:ring-ring",
         "hover:bg-info/20"
       ],
       "neutral" => [
         "bg-neutral/10",
         "text-neutral",
         "placeholder:text-neutral/70",
-        "focus:ring-neutral/60",
+        "focus:ring-ring",
         "hover:bg-neutral/20"
       ],
       "primary" => [
         "bg-primary/10",
         "text-primary",
         "placeholder:text-primary/70",
-        "focus:ring-primary/60",
+        "focus:ring-ring",
         "hover:bg-primary/20"
       ],
       "secondary" => [
         "bg-secondary/10",
         "text-secondary",
         "placeholder:text-secondary/70",
-        "focus:ring-secondary/60",
+        "focus:ring-ring",
         "hover:bg-secondary/20"
       ],
       "success" => [
         "bg-success/10",
         "text-success",
         "placeholder:text-success/70",
-        "focus:ring-success/60",
+        "focus:ring-ring",
         "hover:bg-success/20"
       ],
       "warning" => [
         "bg-warning/10",
         "text-warning",
         "placeholder:text-warning/70",
-        "focus:ring-warning/60",
+        "focus:ring-ring",
         "hover:bg-warning/20"
       ]
     }

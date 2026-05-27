@@ -127,53 +127,53 @@ alias <%= @component_namespace %>.Badge
   # Outline variant colors
   "outline" => %{
     "danger" =>
-      "border-danger/60 bg-background text-danger focus:ring-danger/60 hover:border-danger",
+      "border-danger bg-background text-danger focus:ring-ring hover:border-danger",
     "info" =>
-      "border-info/60 bg-background text-info focus:ring-info/60 hover:border-info",
+      "border-info bg-background text-info focus:ring-ring hover:border-info",
     "neutral" =>
       "border-border-strong bg-background text-foreground focus:ring-ring hover:border-border-strong/80",
     "primary" =>
-      "border-primary/60 bg-background text-primary focus:ring-primary/60 hover:border-primary",
+      "border-primary bg-background text-primary focus:ring-ring hover:border-primary",
     "secondary" =>
-      "border-secondary/60 bg-background text-secondary focus:ring-secondary/60 hover:border-secondary",
+      "border-secondary bg-background text-secondary focus:ring-ring hover:border-secondary",
     "success" =>
-      "border-success/60 bg-background text-success focus:ring-success/60 hover:border-success",
+      "border-success bg-background text-success focus:ring-ring hover:border-success",
     "warning" =>
-      "border-warning/60 bg-background text-warning focus:ring-warning/60 hover:border-warning"
+      "border-warning bg-background text-warning focus:ring-ring hover:border-warning"
   },
   # Ghost variant colors
   "ghost" => %{
     "danger" =>
-      "bg-transparent text-danger focus:ring-danger/60 hover:bg-danger/5",
+      "bg-transparent text-danger focus:ring-ring hover:bg-danger/5",
     "info" =>
-      "bg-transparent text-info focus:ring-info/60 hover:bg-info/5",
+      "bg-transparent text-info focus:ring-ring hover:bg-info/5",
     "neutral" =>
       "bg-transparent text-foreground focus:ring-ring hover:bg-surface-1-hover",
     "primary" =>
-      "bg-transparent text-primary focus:ring-primary/60 hover:bg-primary/5",
+      "bg-transparent text-primary focus:ring-ring hover:bg-primary/5",
     "secondary" =>
-      "bg-transparent text-secondary focus:ring-secondary/60 hover:bg-secondary/5",
+      "bg-transparent text-secondary focus:ring-ring hover:bg-secondary/5",
     "success" =>
-      "bg-transparent text-success focus:ring-success/60 hover:bg-success/5",
+      "bg-transparent text-success focus:ring-ring hover:bg-success/5",
     "warning" =>
-      "bg-transparent text-warning focus:ring-warning/60 hover:bg-warning/5"
+      "bg-transparent text-warning focus:ring-ring hover:bg-warning/5"
   },
   # Solid variant colors
   "solid" => %{
     "danger" =>
-      "bg-danger/10 text-danger focus:ring-danger/60 hover:bg-danger/20",
+      "bg-danger/10 text-danger focus:ring-ring hover:bg-danger/20",
     "info" =>
-      "bg-info/10 text-info focus:ring-info/60 hover:bg-info/20",
+      "bg-info/10 text-info focus:ring-ring hover:bg-info/20",
     "neutral" =>
-      "bg-neutral/10 text-neutral focus:ring-neutral/60 hover:bg-neutral/20",
+      "bg-neutral/10 text-neutral focus:ring-ring hover:bg-neutral/20",
     "primary" =>
-      "bg-primary/10 text-primary focus:ring-primary/60 hover:bg-primary/20",
+      "bg-primary/10 text-primary focus:ring-ring hover:bg-primary/20",
     "secondary" =>
-      "bg-secondary/10 text-secondary focus:ring-secondary/60 hover:bg-secondary/20",
+      "bg-secondary/10 text-secondary focus:ring-ring hover:bg-secondary/20",
     "success" =>
-      "bg-success/10 text-success focus:ring-success/60 hover:bg-success/20",
+      "bg-success/10 text-success focus:ring-ring hover:bg-success/20",
     "warning" =>
-      "bg-warning/10 text-warning focus:ring-warning/60 hover:bg-warning/20"
+      "bg-warning/10 text-warning focus:ring-ring hover:bg-warning/20"
   }
 }
 

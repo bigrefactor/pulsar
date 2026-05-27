@@ -110,21 +110,17 @@ size.
 **Notes:** Link width is content-driven; reflows at 320 CSS px without
 horizontal scroll.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious, follow-up: link-focus-ring-opacity)
+### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
-**Evidence:** Focus ring is `ring-2 ring-ring/50` (and
-`dark:ring-dark-ring/50` in dark mode) with `ring-offset-1` —
+**Evidence:** Focus ring is `ring-2 ring-ring` with `ring-offset-2` —
 `lib/pulsar/components/link.ex:288–292`. Ghost/outline variants use
 `border-b-2 border-current` — `lib/pulsar/components/link.ex:295–296`.
-Browser measurement: focus ring measures 2.16:1 in light and 2.63:1
-in dark across every color variant — substantially below the 3:1
-minimum. Cause is the `/50` (50% alpha) modifier on the ring color
-token.
+Browser measurement: focus ring measures 5.02:1 (light) / 6.72:1
+(dark) across every color variant — matches Button at full opacity.
 
-**Notes:** New finding — tracked as `link-focus-ring-opacity`. Fix
-is to drop `/50` (use full-opacity `ring-ring` / `dark:ring-dark-ring`),
-matching Button which measures 5.02:1 / 6.72:1 with the same
-underlying token at full opacity.
+**Notes:** Previously failed at 2.16:1 / 2.63:1 because of a `/50`
+(50% alpha) modifier on the ring color. Resolved by dropping the
+opacity modifier.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -180,22 +176,18 @@ responsible for descriptive content (avoid "click here" patterns).
 **Evidence:** `inner_block` required (visible label); `aria_label`
 available as supplemental — `lib/pulsar/components/link.ex:70, 77`.
 
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious, follow-up: link-focus-ring-opacity)
+### 2.4.7 Focus Visible (AA) — ✓ PASS
 
 **Evidence:**
 - Base classes include `focus-visible:outline-none`,
-  `focus-visible:ring-2`, `focus-visible:ring-ring/50`,
-  `dark:focus-visible:ring-dark-ring/50`, `focus-visible:ring-offset-1` —
+  `focus-visible:ring-2`, `focus-visible:ring-ring`,
+  `focus-visible:ring-offset-2` —
   `lib/pulsar/components/link.ex:288–292`
 - Tests assert focus ring classes —
   `test/pulsar/components/link_test.exs:538–549`
 
-The ring IS visible (rendered), but its contrast against the
-adjacent background is 2.16:1 (light) / 2.63:1 (dark) — fails the
-3:1 non-text minimum. Same defect as 1.4.11 above.
-
-**Notes:** Both 1.4.11 and 2.4.7 are resolved by the same fix
-(`link-focus-ring-opacity`): drop the `/50` modifier.
+Ring measures 5.02:1 (light) / 6.72:1 (dark) against the adjacent
+background — passes the 3:1 non-text minimum.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
@@ -308,10 +300,9 @@ only status-like attribute and is correctly pass-through —
   quality depends on the caller's text, but the API design supports it
   by not allowing icon-only links without explicit `aria_label`.
 - **2.4.13 Focus Appearance (AAA, new in 2.2)** — focus ring uses
-  `ring-2` (2px) with `ring-offset-1`, meeting the AAA minimum
-  thickness. Browser-measured contrast (2.16:1 light / 2.63:1 dark)
-  doesn't meet the AAA 4.5:1 requirement — link is **not** an AAA win
-  under 2.4.13 until `link-focus-ring-opacity` is resolved.
+  `ring-2` (2px) with `ring-offset-2`, meeting the AAA minimum
+  thickness. Browser-measured contrast (5.02:1 light / 6.72:1 dark)
+  exceeds the AAA 4.5:1 requirement.
 
 ## Browser a11y findings
 

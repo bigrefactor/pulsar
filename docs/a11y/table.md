@@ -92,28 +92,25 @@ table without horizontal page scroll. Per WCAG 1.4.10 understanding doc,
 "data tables" are explicit exempt content where horizontal scrolling
 within the component is acceptable.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious, follow-up: table-focus-ring-opacity)
+### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:**
 - Row borders use `border-border/50` (50% opacity) —
-  `lib/pulsar/components/table.ex:222`
+  `lib/pulsar/components/table.ex:222` — decorative, exempt under
+  WCAG 1.4.11.
 - Outline variant header uses `border-b-2 border-border` —
-  `lib/pulsar/components/table.ex:194`
-- Row focus ring is `focus:ring-2 focus:ring-primary/20` (20% opacity) —
-  `lib/pulsar/components/table.ex:566`
+  `lib/pulsar/components/table.ex:194`.
+- Row focus ring uses `focus-visible:ring-ring focus-visible:ring-offset-2`
+  resolving to the standard `--color-ring` token —
+  `lib/pulsar/components/table.ex:653`.
 
-Browser measurement: the table fixture doesn't currently render
-`row_click` rows, so per-cell focus rings aren't measured. However the
-20% alpha on `--color-primary` (oklch lightness ≈ 0.55) composited
-over `--color-background` (white in light, near-black in dark) is
-algebraically below 3:1 — code review alone is sufficient to confirm
-the gap.
+Row focus ring matches Button at full opacity (5.02:1 / 6.72:1) —
+above the 3:1 minimum in both themes.
 
-**Notes:** New finding — tracked as `table-focus-ring-opacity`. The
-fix is to drop the `/20` suffix on the focus ring (`focus:ring-2
-focus:ring-primary`) or swap to a higher-contrast token. Row borders
-at 50% opacity are not focus indicators and don't need to meet 3:1
-(per WCAG 1.4.11 understanding, decorative borders are exempt).
+**Notes:** Previously failed because the row focus ring used
+`focus:ring-primary/20` (20% opacity). Resolved by switching to the
+neutral `--color-ring` token at full opacity and using `focus-visible:`
+(keyboard-only) for consistency with Button/Input.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -188,32 +185,29 @@ Column-level labels remain in place: each `<:col>` slot requires a
 affordances, the info log nudge, suppression for each affordance, and
 the global-`:rest` passthrough path.
 
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious, follow-up: table-focus-ring-opacity)
+### 2.4.7 Focus Visible (AA) — ✓ PASS
 
-**Evidence:** Row focus uses `focus:outline-none focus:ring-2 focus:ring-primary/20 dark:focus:ring-dark-primary/20`
-— `lib/pulsar/components/table.ex:566`.
+**Evidence:** Row focus uses
+`focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background`
+— `lib/pulsar/components/table.ex:653`. Ring resolves to the standard
+`--color-ring` token at 5.02:1 (light) / 6.72:1 (dark).
 
-**Notes:** Uses `focus:` not `focus-visible:` — the ring shows on
-mouse click as well as keyboard. Same underlying defect as the 1.4.11
-finding above: the 20% alpha ring fails the 3:1 non-text minimum.
-Both criteria are addressed by the same fix (drop `/20`); tracked as
-one Linear sub-issue (`table-focus-ring-opacity`).
+**Notes:** Uses `focus-visible:` (keyboard-only) consistent with
+Button/Input. Mouse activation no longer paints a focus ring on the
+row.
 
-### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ⚠ GAP (serious, follow-up: table-sticky-header-obscures-focus)
+### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Sticky header (`sticky_header={true}`) applies
-`[&_thead_th]:sticky [&_thead_th]:top-0 [&_thead_th]:z-10` —
-`lib/pulsar/components/table.ex:531`. Manual browser verification
-confirms: with `sticky_header={true}` and `row_click`, Tab-ing to a
-row that's about to scroll under the header leaves the row partially
-or fully covered. The component needs to scroll-margin-top the
-focused row so it lands below the header.
+`[&_thead_th]:sticky [&_thead_th]:top-0 [&_thead_th]:z-docked`
+**and** a size-appropriate `[&_tbody_tr]:scroll-mt-{N}` so focused
+rows scroll clear of the sticky thead —
+`lib/pulsar/components/table.ex:614–620`. Per-size scroll-margin
+values mirror the thead row height —
+`lib/pulsar/components/table.ex:149–157`.
 
-**Notes:** New finding — tracked as `table-sticky-header-obscures-focus`.
-Fix is to add `scroll-margin-top: <header-height>` to focusable rows when
-`sticky_header={true}`. Page-level usages can also work around it by
-giving rows `scroll-padding-top`, but a component-level fix is the
-right place.
+Test: `applies size-appropriate scroll-margin on rows so focus is not
+obscured` — `test/pulsar/components/table_test.exs`.
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 

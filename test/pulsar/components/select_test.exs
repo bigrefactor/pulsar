@@ -657,7 +657,7 @@ defmodule Pulsar.Components.SelectTest do
         """)
 
       assert html =~ "focus:ring-2"
-      assert html =~ "focus:ring-neutral/60"
+      assert html =~ "focus:ring-ring"
     end
 
     test "does not render a dangling aria-describedby when field has errors but no caller-provided describedby" do

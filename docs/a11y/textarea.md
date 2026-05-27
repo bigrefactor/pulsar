@@ -83,24 +83,20 @@ the theme level addresses all three.
 `lib/pulsar/components/textarea.ex:139`. Container is `space-y-2` —
 `lib/pulsar/components/textarea.ex:473`.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious) — light colored outline borders
+### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** Outline variant uses `border-2` —
 `lib/pulsar/components/textarea.ex:146`. Outline-neutral routes through
-`border-border-strong` — `lib/pulsar/components/textarea.ex:146`. Focus
-ring `focus:ring-2 focus:ring-offset-2` —
-`lib/pulsar/components/textarea.ex:140`. Browser measurement: border
-contrast measured on the textarea cell itself (which carries the
-border directly). 90 outline cells per theme, 42 pass light /
-90 pass dark. Failing outline colors (light only):
-`outline-primary` (~2.4:1), `outline-secondary` (~2.4:1),
-`outline-success` (~2.6:1), `outline-warning` (~2.7:1) — all use the
-colored border at `/60` alpha and fall below the 3:1 floor against
-white. Focus ring passes in both themes.
+`border-border-strong`; colored outline variants use full-saturation
+`border-{color}` — `lib/pulsar/components/textarea.ex:202–257`. Focus
+ring `focus:ring-2 focus:ring-offset-2` resolves to `--color-ring`
+across all variants — `lib/pulsar/components/textarea.ex:140`. Browser
+measurement: outline borders ≥ 3:1 across both themes for every
+variant.
 
-**Notes:** The remaining light-theme failure is the `/60`-alpha
-colored borders on outline variants. Same defect as the Select
-outline borders ([`select.md` 1.4.11](select.md#1411-non-text-contrast-aa-)).
+**Notes:** Previously failed on colored outline variants in light
+theme because of `/60` opacity modifiers on the border. Resolved by
+dropping the opacity modifier; paired with the matching Select fix.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -143,17 +139,17 @@ order — `lib/pulsar/components/textarea.ex:474–504`.
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
-**Evidence:** `focus:ring-2 focus:ring-offset-2` —
-`lib/pulsar/components/textarea.ex:140`. Browser measurement of 217
-focus-ring cells: min 3.06:1 (light) / 3.67:1 (dark)
+**Evidence:** `focus:ring-2 focus:ring-offset-2` resolves to
+`--color-ring` for every variant —
+`lib/pulsar/components/textarea.ex:140, 151–308`. Browser measurement:
+focus ring 5.02:1 (light) / 6.72:1 (dark) across every variant
 ([light](measurements/textarea-light.md),
-[dark](measurements/textarea-dark.md)). All cells exceed 3:1.
+[dark](measurements/textarea-dark.md)).
 
 **Notes:** Uses `focus:` not `focus-visible:`, so the ring shows on
-mouse click as well as keyboard focus. The 3.06:1 minimum in light
-theme corresponds to lower-contrast color rings (success/warning);
-the default neutral ring resolves to the same `--color-ring` token
-as Button (5.02:1 / 6.72:1).
+mouse click as well as keyboard focus. All colored variants now share
+the neutral `--color-ring` token (matching Button), eliminating the
+previous per-color shade variations.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 

@@ -350,7 +350,7 @@ end
 defp build_header_classes(assigns) do
   merge([
     @header_base_classes,
-    sticky_classes(assigns.sticky),
+    sticky_classes(assigns.sticky, assigns.size),
     variant_classes(assigns.variant, assigns.color),
     assigns.class
   ])
@@ -361,9 +361,26 @@ defp variant_classes(variant, color) do
   @color_config[variant][color]
 end
 
-# Get sticky positioning classes
-defp sticky_classes(true), do: "sticky top-0 z-docked bg-background"
-defp sticky_classes(false), do: ""
+# Get sticky positioning classes.
+#
+# When the header is sticky, focusable controls below it would be obscured
+# by the opaque header when scrolled into view via keyboard (WCAG 2.4.11).
+# The sibling/descendant scroll-margin pushes those controls clear of the
+# sticky band. Values approximate the per-size header height — consumers
+# who render dense breadcrumb + subtitle + actions stacks may want to also
+# set `scroll-padding-top` on `html` for an exact match.
+defp sticky_classes(true, size), do: "sticky top-0 z-docked bg-background #{sticky_scroll_margin(size)}"
+defp sticky_classes(false, _size), do: ""
+
+@sticky_scroll_margin %{
+  "xs" => "[&~*]:scroll-mt-12 [&~*_*]:scroll-mt-12",
+  "sm" => "[&~*]:scroll-mt-14 [&~*_*]:scroll-mt-14",
+  "md" => "[&~*]:scroll-mt-16 [&~*_*]:scroll-mt-16",
+  "lg" => "[&~*]:scroll-mt-20 [&~*_*]:scroll-mt-20",
+  "xl" => "[&~*]:scroll-mt-24 [&~*_*]:scroll-mt-24"
+}
+
+defp sticky_scroll_margin(size), do: @sticky_scroll_margin[size] || @sticky_scroll_margin["md"]
 
 # Validate breadcrumb slots don't have multiple navigation props
 defp validate_breadcrumbs!(breadcrumbs) do

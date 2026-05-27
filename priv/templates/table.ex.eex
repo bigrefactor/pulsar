@@ -145,6 +145,18 @@ end
   }
 }
 
+# When sticky_header is enabled, focusable rows need scroll-margin-top to
+# avoid being obscured by the sticky thead during keyboard navigation
+# (WCAG 2.4.11 Focus Not Obscured). Values mirror the per-size thead
+# row height (vertical padding × 2 + text line-height).
+@sticky_row_scroll_margin %{
+  "xs" => "[&_tbody_tr]:scroll-mt-6",
+  "sm" => "[&_tbody_tr]:scroll-mt-8",
+  "md" => "[&_tbody_tr]:scroll-mt-10",
+  "lg" => "[&_tbody_tr]:scroll-mt-14",
+  "xl" => "[&_tbody_tr]:scroll-mt-16"
+}
+
 # Base classes for table structure
 @table_base_classes [
   "w-full border-collapse"
@@ -615,7 +627,8 @@ defp build_container_classes(assigns) do
   [
     @container_base_classes,
     @container_variant_config[assigns.variant],
-    assigns.sticky_header && "[&_thead_th]:sticky [&_thead_th]:top-0 [&_thead_th]:z-docked",
+    assigns.sticky_header &&
+      "[&_thead_th]:sticky [&_thead_th]:top-0 [&_thead_th]:z-docked #{@sticky_row_scroll_margin[assigns.size]}",
     assigns.striped && @striped_variant_config[assigns.variant],
     assigns.class
   ]
@@ -650,7 +663,7 @@ defp build_row_classes(assigns) do
       [
         "cursor-pointer",
         "hover:bg-surface-1-hover",
-        "focus:outline-none focus:ring-2 focus:ring-primary/20"
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       ]
   ]
   |> Enum.filter(& &1)

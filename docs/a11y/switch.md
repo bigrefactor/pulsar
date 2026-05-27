@@ -76,27 +76,26 @@ These don't affect text resizing but won't scale to ems.
 **Evidence:** `inline-flex` wrapper — `lib/pulsar/components/switch.ex:479`.
 No fixed widths.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious, follow-up: switch-dark-focus-indicator)
+### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:**
 - Track has `shadow-inner` + variant-specific bg —
   `lib/pulsar/components/switch.ex:242–243`
-- Focus ring `focus-visible:ring-2 focus-visible:ring-offset-2` on the
-  input — `lib/pulsar/components/switch.ex:237`
+- Focus ring on the **visible track** (not the `sr-only` input) uses
+  `peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background`
+  — `lib/pulsar/components/switch.ex:216–218`
 - Thumb has shadow rings —
   `lib/pulsar/components/switch.ex:621, 625, 629`
 
-Browser measurement: focus indicator detection finds the
-`peer-focus-visible:` border on the track (not the `sr-only` input
-itself). Light theme: 96/96 pass focus ring contrast (5.73:1). Dark
-theme: 0/96 pass — the peer-focus border resolves to 2.97:1 across
-all 24 color×size cells, just below the 3:1 floor.
+The ring on the visible track resolves to the standard `--color-ring`
+token at full opacity, matching Button (5.02:1 / 6.72:1).
 
-**Notes:** New finding — tracked as `switch-dark-focus-indicator`.
-The dark-mode focus indicator border color is one step too light
-against the dark track background. Fix is to bump the
-`peer-focus-visible:border-*` token to a brighter shade in dark mode
-(e.g. `border-dark-primary` → `border-dark-primary-300`).
+**Notes:** Previously the focus indicator measurement landed on the
+1×1 `sr-only` input element rather than the visible track. The track
+had `tabindex="-1"` so its `focus-visible:ring-*` classes never
+activated. Resolved by switching those classes to
+`peer-focus-visible:` so the visible track shows a real ring when the
+underlying input is keyboard-focused.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -145,19 +144,20 @@ attributes — `lib/pulsar/components/switch.ex:376–384, 498–499`. The
 `field` wrapper provides the visible label and passes it via inline
 `<label for=>` for the switch type.
 
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious, follow-up: switch-dark-focus-indicator)
+### 2.4.7 Focus Visible (AA) — ✓ PASS
 
-**Evidence:** Real input is `sr-only`, so its native focus ring is
-invisible. Visual feedback uses `peer-focus-visible:bg-*` and
-`peer-focus-visible:border-*` on the track —
-`lib/pulsar/components/switch.ex:573, 585, 596`, plus
-`peer-focus-visible:scale-110` on the thumb —
-`lib/pulsar/components/switch.ex:255`.
+**Evidence:** Real input is `sr-only`. The visible track shows a real
+keyboard-focus ring via
+`peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2`
+— `lib/pulsar/components/switch.ex:216–218`. Additional peer-focus
+cues remain on the track (`peer-focus-visible:bg-*`,
+`peer-focus-visible:border-*` —
+`lib/pulsar/components/switch.ex:573, 585, 596`) and thumb
+(`peer-focus-visible:scale-110` —
+`lib/pulsar/components/switch.ex:255`).
 
-Light theme passes (5.73:1). Dark theme fails (2.97:1) — same
-defect documented under 1.4.11 above.
-
-**Notes:** Both criteria resolved by `switch-dark-focus-indicator`.
+Ring resolves to `--color-ring` (5.02:1 light / 6.72:1 dark) — passes
+the 3:1 minimum.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
@@ -277,11 +277,10 @@ correct signal for assistive tech.
   24×56px) and `xl` (28×64px) exceed the AAA 44×44 floor in their
   larger dimension; both still under in the smaller (track height)
   dimension. Marginal pass.
-- **2.4.13 Focus Appearance (AAA, new in 2.2)** — track focus background
-  swap + thumb scale-110 provides a clear, thick indicator. Light
-  theme passes AAA (5.73:1); dark theme falls short (2.97:1, under
-  the AAA 4.5:1 floor — and AA 3:1) — see `switch-dark-focus-indicator`
-  follow-up under 1.4.11 / 2.4.7.
+- **2.4.13 Focus Appearance (AAA, new in 2.2)** — visible track now
+  shows a real `peer-focus-visible` ring (5.02:1 light / 6.72:1 dark)
+  plus the existing background swap and thumb scale-110. Passes AA
+  3:1; light theme also passes AAA 4.5:1, dark theme passes AAA.
 
 ## Browser a11y findings
 
