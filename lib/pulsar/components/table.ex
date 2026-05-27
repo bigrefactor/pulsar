@@ -281,6 +281,15 @@ defmodule Pulsar.Components.Table do
     default: "",
     doc: "Additional CSS classes"
 
+  # Accessible-name affordances (WCAG 2.4.6 — see docs/a11y/table.md)
+  attr :aria_label, :string,
+    default: nil,
+    doc: "Accessible name for the table, applied as aria-label. Use when no visible caption is appropriate."
+
+  attr :aria_labelledby, :string,
+    default: nil,
+    doc: "ID of an existing element (e.g. a heading above the table) that names this table."
+
   attr :rest, :global
 
   # Slot definitions
@@ -295,6 +304,9 @@ defmodule Pulsar.Components.Table do
 
   slot :empty,
     doc: "Content to show when there are no rows"
+
+  slot :caption,
+    doc: "Optional <caption> rendered as the first child of <table>. Provides a visible table title."
 
   # ============================================================================
   # MAIN COMPONENT FUNCTION
@@ -314,17 +326,42 @@ defmodule Pulsar.Components.Table do
   Automatically detects Phoenix.LiveView.LiveStream and applies appropriate
   attributes for real-time updates.
 
+  ## Accessible name (WCAG 2.4.6)
+
+  Every table should expose a programmatic name. Provide one of:
+
+  * a `:caption` slot — rendered as `<caption>` inside `<table>`,
+  * an `aria_label` attr — rendered as `aria-label`, or
+  * an `aria_labelledby` attr — referencing an existing heading's id.
+
+  Passing `aria-label` / `aria-labelledby` via global attributes also works. If
+  none of these is provided, a `Logger.info` message is emitted to nudge the
+  caller; rendering is not blocked.
+
   ## Examples
 
       # Minimal table
-      <.table id="users" rows={@users}>
+      <.table id="users" rows={@users} aria_label="Users">
         <:col :let={user} label="Name"><%= user.name %></:col>
+      </.table>
+
+      # Visible caption
+      <.table id="users" rows={@users}>
+        <:caption>Active users this week</:caption>
+        <:col :let={user} label="Name"><%= user.name %></:col>
+      </.table>
+
+      # Named by an existing heading
+      <h2 id="orders-heading">Recent orders</h2>
+      <.table id="orders" rows={@orders} aria_labelledby="orders-heading">
+        <:col :let={order} label="ID"><%= order.id %></:col>
       </.table>
 
       # Full featured table
       <.table
         id="orders"
         rows={@orders}
+        aria_label="Orders"
         variant="solid"
         color="primary"
         size="lg"
@@ -342,6 +379,8 @@ defmodule Pulsar.Components.Table do
   """
   @spec table(map()) :: Rendered.t()
   def table(assigns) do
+    warn_if_missing_accessible_name(assigns)
+
     # Ensure ID exists
     assigns = assign(assigns, :id, assigns[:id] || generate_id())
 
@@ -362,7 +401,16 @@ defmodule Pulsar.Components.Table do
       >
         Loading rows
       </div>
-      <table {@rest} aria-busy={to_string(@loading)} class={@table_classes}>
+      <table
+        {@rest}
+        aria-busy={to_string(@loading)}
+        aria-label={@aria_label}
+        aria-labelledby={@aria_labelledby}
+        class={@table_classes}
+      >
+        <caption :if={@caption != []} class="text-sm text-muted-foreground text-left py-2 caption-top">
+          {render_slot(@caption)}
+        </caption>
         <thead class={@header_classes}>
           <tr>
             <th
@@ -492,6 +540,37 @@ defmodule Pulsar.Components.Table do
   # ============================================================================
   # HELPER FUNCTIONS
   # ============================================================================
+
+  # Emit a dev-time nudge when no accessible name is provided.
+  #
+  # Why info (not warning): library log discipline — the caller's app controls
+  # log level. Info is filtered in typical prod configs and surfaces in dev.
+  defp warn_if_missing_accessible_name(assigns) do
+    if assigns[:caption] in [nil, []] and
+         is_nil(assigns[:aria_label]) and
+         is_nil(assigns[:aria_labelledby]) and
+         not rest_has_aria_name?(assigns[:rest]) do
+      require Logger
+
+      Logger.info("""
+      <.table> rendered without an accessible name. Provide one of:
+        * :caption slot
+        * aria_label attr
+        * aria_labelledby attr
+      """)
+    end
+
+    :ok
+  end
+
+  defp rest_has_aria_name?(nil), do: false
+
+  defp rest_has_aria_name?(rest) do
+    Enum.any?(rest, fn {k, _} ->
+      k_str = to_string(k)
+      k_str == "aria-label" or k_str == "aria-labelledby"
+    end)
+  end
 
   # Set up LiveStream detection and row handling
   defp setup_stream_handling(assigns) do
