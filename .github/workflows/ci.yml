@@ -198,7 +198,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('test/support/test_app/assets/package-lock.json') }}
+          key: ${{ runner.os }}-playwright-${{ hashFiles('test/support/dev_app/assets/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-playwright-
 
@@ -215,11 +215,23 @@ jobs:
       - name: Install Elixir deps
         run: mix deps.get
 
+      - name: Install Tailwind + esbuild binaries
+        env:
+          MIX_ENV: test
+        run: |
+          mix tailwind.install --if-missing
+          mix esbuild.install --if-missing
+
+      - name: Build dev_app assets
+        env:
+          MIX_ENV: test
+        run: mix assets.build
+
       - name: Install Playwright npm package
-        run: npm --prefix test/support/test_app/assets ci
+        run: npm --prefix test/support/dev_app/assets ci
 
       - name: Install Playwright browsers
-        run: npx --prefix test/support/test_app/assets playwright install --with-deps chromium
+        run: npx --prefix test/support/dev_app/assets playwright install --with-deps chromium
 
       - name: Run browser a11y tests (with 1 retry)
         run: |

@@ -1,6 +1,7 @@
 defmodule Pulsar.Components.TableTest do
   use ExUnit.Case, async: true
 
+  import ExUnit.CaptureLog
   import Phoenix.Component
   import Phoenix.LiveViewTest
 
@@ -516,6 +517,179 @@ defmodule Pulsar.Components.TableTest do
         """)
 
       assert html =~ ~s(phx-update="stream")
+    end
+  end
+
+  describe "table/1 accessible name (WCAG 2.4.6)" do
+    test ":caption slot renders <caption> as the first child of <table>" do
+      assigns = %{users: [%{name: "Alice"}]}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="users" rows={@users}>
+          <:caption>Active users this week</:caption>
+          <:col :let={user} label="Name">{user.name}</:col>
+        </Table.table>
+        """)
+
+      assert html =~ ~s(<caption)
+      assert html =~ "Active users this week"
+      assert html =~ ~r/<table[^>]*>\s*<caption/
+    end
+
+    test "aria_label attr renders aria-label on <table>" do
+      assigns = %{users: [%{name: "Alice"}]}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="users" rows={@users} aria_label="Active users this week">
+          <:col :let={user} label="Name">{user.name}</:col>
+        </Table.table>
+        """)
+
+      assert html =~ ~r/<table[^>]*aria-label="Active users this week"/
+      refute html =~ ~s(<caption)
+    end
+
+    test "aria_labelledby attr renders aria-labelledby on <table>" do
+      assigns = %{users: [%{name: "Alice"}]}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="users" rows={@users} aria_labelledby="users-heading">
+          <:col :let={user} label="Name">{user.name}</:col>
+        </Table.table>
+        """)
+
+      assert html =~ ~r/<table[^>]*aria-labelledby="users-heading"/
+    end
+
+    test "emits Logger.warning when no accessible name is provided" do
+      assigns = %{users: []}
+
+      log =
+        capture_log(fn ->
+          rendered_to_string(~H"""
+          <Table.table id="users" rows={@users}>
+            <:col label="Name" />
+          </Table.table>
+          """)
+        end)
+
+      assert log =~ "rendered without an accessible name"
+    end
+
+    test "Logger.warning is suppressed when :caption slot is provided" do
+      assigns = %{users: []}
+
+      log =
+        capture_log(fn ->
+          rendered_to_string(~H"""
+          <Table.table id="users" rows={@users}>
+            <:caption>Users</:caption>
+            <:col label="Name" />
+          </Table.table>
+          """)
+        end)
+
+      refute log =~ "rendered without an accessible name"
+    end
+
+    test "Logger.warning is suppressed when aria_label attr is provided" do
+      assigns = %{users: []}
+
+      log =
+        capture_log(fn ->
+          rendered_to_string(~H"""
+          <Table.table id="users" rows={@users} aria_label="Users">
+            <:col label="Name" />
+          </Table.table>
+          """)
+        end)
+
+      refute log =~ "rendered without an accessible name"
+    end
+
+    test "Logger.warning is suppressed when aria_labelledby attr is provided" do
+      assigns = %{users: []}
+
+      log =
+        capture_log(fn ->
+          rendered_to_string(~H"""
+          <Table.table id="users" rows={@users} aria_labelledby="users-heading">
+            <:col label="Name" />
+          </Table.table>
+          """)
+        end)
+
+      refute log =~ "rendered without an accessible name"
+    end
+
+    test "Logger.warning is suppressed when aria-label passes through global @rest" do
+      assigns = %{users: []}
+
+      log =
+        capture_log(fn ->
+          rendered_to_string(~H"""
+          <Table.table id="users" rows={@users} aria-label="Users">
+            <:col label="Name" />
+          </Table.table>
+          """)
+        end)
+
+      refute log =~ "rendered without an accessible name"
+    end
+
+    test "Logger.warning is NOT suppressed when aria_label is blank" do
+      assigns = %{users: []}
+
+      log =
+        capture_log(fn ->
+          rendered_to_string(~H"""
+          <Table.table id="users" rows={@users} aria_label="   ">
+            <:col label="Name" />
+          </Table.table>
+          """)
+        end)
+
+      assert log =~ "rendered without an accessible name"
+    end
+
+    test "Logger.warning is NOT suppressed when aria-label via @rest is blank" do
+      assigns = %{users: []}
+
+      log =
+        capture_log(fn ->
+          rendered_to_string(~H"""
+          <Table.table id="users" rows={@users} aria-label="">
+            <:col label="Name" />
+          </Table.table>
+          """)
+        end)
+
+      assert log =~ "rendered without an accessible name"
+    end
+
+    test "all three affordances can coexist without crashing" do
+      assigns = %{users: [%{name: "Alice"}]}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table
+          id="users"
+          rows={@users}
+          aria_label="Hidden name"
+          aria_labelledby="users-heading"
+        >
+          <:caption>Visible caption</:caption>
+          <:col :let={user} label="Name">{user.name}</:col>
+        </Table.table>
+        """)
+
+      assert html =~ ~s(<caption)
+      assert html =~ "Visible caption"
+      assert html =~ ~s(aria-label="Hidden name")
+      assert html =~ ~s(aria-labelledby="users-heading")
     end
   end
 end

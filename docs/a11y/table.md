@@ -37,8 +37,8 @@ programmatic name even though it has no visible header text.
 
 **Notes:** No row headers — the component treats all data cells as
 `<td>`, which is correct for a generic data table where rows aren't
-labeled. The component does not support a `<caption>` element; see
-2.4.6.
+labeled. A `<caption>` element can be supplied via the `:caption` slot —
+see 2.4.6 for full accessible-name affordances.
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
@@ -143,27 +143,37 @@ essential-to-function (loading indicator, exempt under 2.2.2) —
 `lib/pulsar/components/table.ex:417`. Reading order is row-then-cell
 following DOM. No positive `tabindex`.
 
-### 2.4.6 Headings and Labels (AA) — ⚠ GAP (serious)
+### 2.4.6 Headings and Labels (AA) — ✓ PASS
 
-**Evidence:** Each `<col>` slot requires a `label` —
-`lib/pulsar/components/table.ex:288–292`. Column headers render with
-those labels — `lib/pulsar/components/table.ex:369–375`. Action column
-has an `sr-only` "Actions" label —
-`lib/pulsar/components/table.ex:376–378`.
+**Evidence:** Three first-class accessible-name affordances are exposed on
+`table/1`:
 
-**Notes:** What's missing is a table-level accessible name. There is no
-`<caption>` slot and no enforced `aria-label`/`aria-labelledby` on the
-`<table>` element. Callers can pass `aria-label` via the global `rest`
-(test confirms: `test/pulsar/components/table_test.exs:461–478`) but the
-component neither documents nor enforces this. A table without an
-accessible name relies on surrounding context for purpose, which is
-brittle for screen-reader users.
+* `aria_label` attr — `lib/pulsar/components/table.ex:285–287`,
+  rendered as `aria-label` on `<table>` —
+  `lib/pulsar/components/table.ex:407`.
+* `aria_labelledby` attr — `lib/pulsar/components/table.ex:289–291`,
+  rendered as `aria-labelledby` —
+  `lib/pulsar/components/table.ex:408`.
+* `:caption` slot — `lib/pulsar/components/table.ex:308–309`, rendered
+  as the first child of `<table>` —
+  `lib/pulsar/components/table.ex:411–413`.
 
-**Severity reasoning:** **serious** — the criterion can be met by the
-caller, but the component-level affordance (a `<caption>` slot or a
-required `label`/`aria_label` attr on the table) is missing.
+If none of these is provided (and no `aria-label` / `aria-labelledby`
+passes through the global `:rest`), the component emits
+`Logger.info` to nudge the caller —
+`lib/pulsar/components/table.ex:548–574`. Rendering is not blocked. The
+docstring documents all three patterns —
+`lib/pulsar/components/table.ex:319–367`.
 
-**Linear:** [PUL-18](https://linear.app/bigrefactor/issue/PUL-18).
+Column-level labels remain in place: each `<:col>` slot requires a
+`label`, and the action column carries an `sr-only` "Actions" header.
+
+**Tests:** `test/pulsar/components/table_test.exs` — the
+`"table/1 accessible name (WCAG 2.4.6)"` describe block covers all three
+affordances, the info log nudge, suppression for each affordance, and
+the global-`:rest` passthrough path.
+
+**Fixed in:** [PUL-18](https://linear.app/bigrefactor/issue/PUL-18).
 
 ### 2.4.7 Focus Visible (AA) — ⚠ GAP (minor) — needs browser verification
 

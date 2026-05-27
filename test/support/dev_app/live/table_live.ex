@@ -32,6 +32,7 @@ defmodule Pulsar.DevApp.TableLive do
               color={color}
               size={size}
               rows={@rows}
+              aria_label={"Team roster — #{variant} #{color} #{size}"}
               data-fixture-cell={"#{variant}-#{color}-#{size}"}
             >
               <:col :let={row} label="Name">{row.name}</:col>
@@ -49,6 +50,7 @@ defmodule Pulsar.DevApp.TableLive do
           rows={@rows}
           data-fixture-cell="striped-sticky"
         >
+          <:caption>Team roster — striped with sticky header</:caption>
           <:col :let={row} label="Name">{row.name}</:col>
           <:col :let={row} label="Role">{row.role}</:col>
           <:col :let={row} label="Status">{row.status}</:col>
@@ -56,7 +58,7 @@ defmodule Pulsar.DevApp.TableLive do
         </Table.table>
       </.fixture_section>
       <.fixture_section name="empty" title="Empty state">
-        <Table.table id="tbl-empty" rows={[]} data-fixture-cell="empty">
+        <Table.table id="tbl-empty" rows={[]} aria_label="Team roster — empty state" data-fixture-cell="empty">
           <:col :let={row} label="Name">{row.name}</:col>
           <:empty>No rows yet</:empty>
         </Table.table>
