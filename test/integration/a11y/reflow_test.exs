@@ -1,47 +1,37 @@
 defmodule Pulsar.Integration.A11y.ReflowTest do
   @moduledoc """
-  WCAG 1.4.10 Reflow regression gate (component-scoped). Per fixture
-  × theme, constrains `html, body` to 320 CSS pixels and asserts no
-  `[data-fixture-cell]` renders wider than that constraint —
-  `getBoundingClientRect().width <= 320 + tolerance` for every fixture
-  cell.
+  WCAG 1.4.10 Reflow regression gate. Per fixture × theme, runs with
+  Playwright's viewport set to 320 × 640 CSS pixels and asserts the
+  page does not require horizontal scrolling —
+  `document.documentElement.scrollWidth <= 320 + tolerance`.
 
-  ## Scope: why this is component-scoped, not page-scoped
+  The 320 px viewport is set via `@moduletag browser_context_opts:
+  [viewport: %{width: 320, height: 640}]`, which
+  `phoenix_test_playwright` forwards to Chromium's per-browser-context
+  viewport. Async-safe; viewport is module-scoped and doesn't bleed
+  into other a11y tests.
 
-  WCAG 1.4.10's normative measurement is the page (`document.documentElement.scrollWidth`
-  at a 320 CSS px viewport). This test can't make that measurement
-  directly: Playwright sets the browser's layout viewport (typically
-  1280 px), and injecting `html { width: 320px !important }` doesn't
-  change the layout viewport — `documentElement.scrollWidth` continues
-  to reflect viewport width regardless of the CSS constraint. Genuine
-  page-level reflow gating would require setting the Playwright
-  viewport itself, which is a larger architectural change.
-
-  The CSS-injection approach DOES change individual element layout
-  (an element with `width: 100%` shrinks; an element with explicit
-  width over 320 stays wide). So the meaningful, accurate assertion
-  this test can make is: "no `[data-fixture-cell]` exceeds 320 CSS
-  px when the body box is narrowed to 320 px." That's what's gated
-  here.
+  Dev_app fixture chrome (the `<aside>` navigation sidebar and `<main>`
+  padding) is hidden during the gate via injected CSS — it's not part
+  of Pulsar's shipping surface, and at 320 px it would dominate the
+  viewport. With chrome hidden, the gate measures whether Pulsar
+  components reflow at 320 px, not whether the dev_app's test
+  scaffolding does.
 
   Containers tagged `data-reflow-allowed` (e.g. table's intentional
   `overflow-x-auto` wrapper, per WCAG 1.4.10 — data tables are
-  explicit exempt content) and their descendants are excluded:
-  they're allowed to scroll horizontally inside themselves without
-  counting as a reflow violation. Fixed / sticky elements are
-  excluded because they render against the viewport, not the
-  constrained html/body.
+  explicit exempt content) are naturally exempt: `overflow-x-auto`
+  contains horizontal overflow internally, so
+  `documentElement.scrollWidth` is unaffected.
 
-  Per-element internal overflow (e.g. a placeholder string wider
-  than its narrowed input) is **not** a reflow violation — the input
+  Per-element internal overflow (e.g. a placeholder string wider than
+  its narrowed input) is **not** a reflow violation — the input
   scrolls its own contents.
 
-  Note: this is a CSS-only viewport constraint. Media queries based
-  on viewport width don't trigger — interpret a failure as
-  worst-case, not as media-query-aware behavior. Pulsar components
-  are content-driven (no fixed widths or min-widths called out in
-  the 1.4.10 audit evidence), so the worst case is the real case
-  here.
+  Note: this is a real viewport constraint, not a CSS workaround.
+  Media queries keyed on viewport width (e.g. `@media (max-width:
+  320px)`) DO trigger here, unlike the previous CSS-injection
+  approach.
 
   Tagged `:integration`; run with `mix test --only integration`. Tag
   rationale matches AxeCleanTest.
@@ -49,7 +39,8 @@ defmodule Pulsar.Integration.A11y.ReflowTest do
   ## Verification
 
   Add `min-width: 480px` to a Button base class, rebuild assets,
-  re-run — Button fixtures fail with a fixture cell wider than 320.
+  re-run — Button fixtures fail with documentElement.scrollWidth
+  ≫ 320.
   """
 
   use PhoenixTest.Playwright.Case, async: true
@@ -58,6 +49,7 @@ defmodule Pulsar.Integration.A11y.ReflowTest do
   alias Pulsar.DevApp.Components
 
   @moduletag :integration
+  @moduletag browser_context_opts: [viewport: %{width: 320, height: 640}]
 
   @reflow_width 320
   # Sub-pixel rounding tolerance. Chromium sometimes reports
@@ -85,11 +77,30 @@ defmodule Pulsar.Integration.A11y.ReflowTest do
           const style = document.createElement('style');
           style.id = id;
           style.textContent = `
-            html, body {
-              width: #{@reflow_width}px !important;
-              max-width: #{@reflow_width}px !important;
+            /* Dev_app fixture chrome — not part of Pulsar's shipping
+               surface. Hidden during the reflow gate so the assertion
+               measures whether Pulsar components reflow at 320 CSS px,
+               not whether the dev_app navigation sidebar / scroll
+               wrapper do.
+
+               The flex-1 content wrapper has overflow-x-auto for
+               developer ergonomics — without overriding it, any
+               component that exceeds 320 px would scroll inside that
+               wrapper, hiding the reflow failure from
+               documentElement.scrollWidth. */
+            aside { display: none !important; }
+            /* The dev_app flex-1 wrapper inherits min-width: auto (the
+               flex default), which prevents it from shrinking below
+               its content's intrinsic min-width. That's dev_app
+               scaffolding behavior; real consumers control their own
+               layout. We force min-width: 0 so the wrapper genuinely
+               sits at the viewport's 320 px, and the test measures
+               whether Pulsar components reflow at that width. */
+            .overflow-x-auto.flex-1 {
               overflow-x: visible !important;
+              min-width: 0 !important;
             }
+            main[data-fixture] { padding: 0 !important; }
           `;
           document.head.appendChild(style);
           void document.documentElement.offsetWidth;
@@ -138,16 +149,21 @@ defmodule Pulsar.Integration.A11y.ReflowTest do
       page_scroll = result["pageScroll"] || 0
       offenders = result["offenders"] || []
 
-      if offenders != [] do
+      if page_scroll > @reflow_width + @tolerance do
         details =
-          Enum.map_join(offenders, "\n", fn o ->
-            "  - `#{o["id"]}` rendered #{o["width"]} px wide (constraint: #{@reflow_width} px)"
-          end)
+          case offenders do
+            [] ->
+              "  - documentElement.scrollWidth = #{page_scroll} px exceeds #{@reflow_width} px, but no `[data-fixture-cell]` is the offender — check for non-cell wrappers or chrome that escaped the test's hide-CSS."
+
+            _ ->
+              Enum.map_join(offenders, "\n", fn o ->
+                "  - `#{o["id"]}` rendered #{o["width"]} px wide (constraint: #{@reflow_width} px)"
+              end)
+          end
 
         raise ExUnit.AssertionError,
           message:
-            "WCAG 1.4.10 Reflow — fixture cell wider than #{@reflow_width} CSS px on #{@route} [#{@theme}] " <>
-              "(observed documentElement.scrollWidth: #{page_scroll} px — see moduledoc on why this isn't asserted directly):\n#{details}\n\n" <>
+            "WCAG 1.4.10 Reflow — page horizontally scrolls (documentElement.scrollWidth #{page_scroll}) at #{@reflow_width} CSS px viewport on #{@route} [#{@theme}]:\n#{details}\n\n" <>
               "If the wide element is an intentional scroll container (e.g. wide data table), tag it with `data-reflow-allowed`."
       end
     end
