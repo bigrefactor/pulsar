@@ -72,32 +72,35 @@ defp generate_id(prefix \\ "flash") do
   "#{prefix}-#{System.unique_integer([:positive])}"
 end
 
-# Size configuration for flash components
+# Size configuration for flash components.
+# close_button keeps a uniform 24x24 (h-6 w-6) hit target across sizes to satisfy
+# WCAG 2.5.8; padding scales the inner SVG so the X glyph grows with the flash.
 @size_config %{
   "lg" => %{
-    close_button: "h-6 w-6 p-1",
+    close_button: "h-6 w-6 p-0.5",
     container: "p-4 text-base gap-3 rounded-box",
-    icon: "h-6 w-6"
+    icon: "h-6 w-6",
+    inner_gap: "gap-3"
   },
   "md" => %{
-    close_button: "h-5 w-5 p-0.5",
-    container: "p-3 text-sm gap-2 rounded-field",
-    icon: "h-5 w-5"
+    close_button: "h-6 w-6 p-1",
+    container: "p-3 text-base gap-2 rounded-field",
+    icon: "h-5 w-5",
+    inner_gap: "gap-2"
   },
   "sm" => %{
-    close_button: "h-4 w-4 p-0.5",
+    close_button: "h-6 w-6 p-1.5",
     container: "p-2 text-sm gap-2 rounded-field",
-    icon: "h-4 w-4"
+    icon: "h-4 w-4",
+    inner_gap: "gap-2"
   }
 }
 
 # Base flash styling classes
 @flash_base_classes [
-  "flex items-start justify-between",
+  "flex items-center justify-between",
   "font-medium shadow-dropdown",
   "transition-all duration-normal ease-standard",
-  "focus-within:outline-none focus-within:ring-2",
-  "focus-within:ring-current focus-within:ring-offset-2",
   # Restore pointer events for individual flashes
   "pointer-events-auto"
 ]
@@ -167,8 +170,9 @@ attr(:dismissible, :boolean,
 )
 
 attr(:auto_dismiss, :boolean,
-  default: true,
-  doc: "Automatically dismiss after timeout"
+  default: nil,
+  doc:
+    ~s{Automatically dismiss after timeout. Defaults to true for role="status" and false for role="alert" so urgent messages don't disappear before users can read them (WCAG 2.2.1).}
 )
 
 attr(:dismiss_after, :integer,
@@ -202,8 +206,7 @@ attr(:live, :string,
 
 # Core attributes
 attr(:id, :string,
-  default: nil,
-  doc: "Flash ID"
+  doc: "Flash ID (auto-generated if omitted)"
 )
 
 attr(:class, :string,
@@ -257,8 +260,8 @@ When `auto_dismiss` is true:
 """
 @spec flash(map()) :: Rendered.t()
 def flash(assigns) do
-  # Ensure ID exists for hook functionality
-  assigns = assign(assigns, :id, assigns[:id] || generate_id())
+  assigns = assign_new(assigns, :id, fn -> generate_id() end)
+  assigns = assign(assigns, :auto_dismiss, resolve_auto_dismiss(assigns.auto_dismiss, assigns.role))
 
   # Build complete class string using Twm
   assigns =
@@ -287,8 +290,8 @@ def flash(assigns) do
     data-on-dismiss={@on_dismiss}
     {@rest}
   >
-    <div class="flex items-start gap-2 flex-1 min-w-0">
-      <div :if={@start_icon != []} class={icon_size_classes(@size)}>
+    <div class={["flex items-center flex-1 min-w-0", inner_gap_classes(@size)]}>
+      <div :if={@start_icon != []} class={["shrink-0", icon_size_classes(@size)]}>
         {render_slot(@start_icon)}
       </div>
       <div class="flex-1 min-w-0">
@@ -304,13 +307,15 @@ def flash(assigns) do
       aria-controls={@id}
       phx-click={JS.dispatch("pulsar:flash-dismiss", to: "##{@id}")}
     >
-      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <svg class="h-full w-full" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
         <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
       </svg>
     </button>
   </div>
 
   <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarFlash">
+    const EXIT_MS = 200
+
     export default {
       mounted() {
         this.initializeState()
@@ -331,11 +336,11 @@ def flash(assigns) do
         this.onDismissEvent = this.el.dataset.onDismiss
         this.flashKey = this.el.dataset.flashKey
         this.remainingTime = this.dismissAfter
-          this.timer = null
-          this.isVisible = false
-          this.isPaused = false
-          this.startTime = null
-          this._dismissed = false
+        this.timer = null
+        this.isVisible = false
+        this.isPaused = false
+        this.startTime = null
+        this._dismissed = false
       },
 
       // Set up IntersectionObserver for visibility detection
@@ -444,7 +449,7 @@ def flash(assigns) do
 
       // Apply exit animation
       animateExit() {
-        this.el.style.transition = "opacity 200ms ease-in, transform 200ms ease-in"
+        this.el.style.transition = `opacity ${EXIT_MS}ms ease-in, transform ${EXIT_MS}ms ease-in`
         this.el.style.opacity = "0"
         this.el.style.transform = "translateY(-8px)"
       },
@@ -460,7 +465,7 @@ def flash(assigns) do
             // No dismiss handler, remove from DOM
             this.el.remove()
           }
-        }, 200)
+        }, EXIT_MS)
       },
 
       // Handle data attribute updates
@@ -470,6 +475,8 @@ def flash(assigns) do
 
         this.updateDismissAfter(newDismissAfter)
         this.updateAutoDismiss(newAutoDismiss)
+        this.onDismissEvent = this.el.dataset.onDismiss
+        this.flashKey = this.el.dataset.flashKey
       },
 
       // Update dismiss timeout if changed
@@ -569,12 +576,22 @@ end
 # Close button size classes based on flash size
 defp close_button_classes(size) do
   merge([
-    "flex-shrink-0 rounded-field transition-colors",
+    "flex-shrink-0 inline-flex items-center justify-center rounded-field transition-colors",
     "hover:bg-foreground/10",
-    "focus:outline-none focus:ring-2 focus:ring-current focus:ring-offset-2",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2",
     @size_config[size][:close_button]
   ])
 end
+
+# Inner content wrapper gap based on flash size (matches container gap)
+defp inner_gap_classes(size) do
+  @size_config[size][:inner_gap]
+end
+
+# Resolve auto_dismiss: nil means "use the role-aware default"
+defp resolve_auto_dismiss(nil, "alert"), do: false
+defp resolve_auto_dismiss(nil, _role), do: true
+defp resolve_auto_dismiss(value, _role) when is_boolean(value), do: value
 
 # Get appropriate aria-live value based on role
 defp get_aria_live(live, _role) when live in ["polite", "assertive", "off"], do: live

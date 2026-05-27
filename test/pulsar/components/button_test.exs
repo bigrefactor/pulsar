@@ -591,7 +591,7 @@ defmodule Pulsar.Components.ButtonTest do
       assert html =~ "items-center"
       assert html =~ "justify-center"
       assert html =~ "font-medium"
-      assert html =~ "transition-transform"
+      assert html =~ "transition-[transform,box-shadow,background-color,border-color,color,opacity]"
       assert html =~ "cursor-pointer"
     end
 

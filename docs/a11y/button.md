@@ -146,12 +146,16 @@ scales. No flashing — `lib/pulsar/components/button.ex:114, 127, 135, 140, 583
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
-**Evidence:** Default `tabindex="0"`; resolves to `"-1"` when disabled
-or loading — `lib/pulsar/components/button.ex:713–715`. Pseudo-button
-hook maintains tabindex sync via MutationObserver —
-`lib/pulsar/components/button.ex:611–631`.
+**Evidence:** Server-side `tabindex/1` is authoritative: emits `"0"` when
+focusable, `"-1"` when disabled or loading —
+`lib/pulsar/components/button.ex:tabindex/1`. The pseudo-button hook
+only handles Space/Enter activation and blocks clicks while
+disabled/busy — it no longer caches or rewrites tabindex.
 
-**Notes:** No positive `tabindex` values used.
+**Notes:** Earlier versions cached the initial `tabindex` on mount,
+which could lock pseudo-buttons that mounted disabled at `tabindex="-1"`
+even after `disabled={false}` was patched in. Server-authoritative
+tabindex avoids that class of bug entirely.
 
 ### 2.4.4 Link Purpose (In Context) (A) — ✓ PASS
 
