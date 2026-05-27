@@ -656,8 +656,8 @@ defmodule Pulsar.Components.SelectTest do
         <Select.select name="test" options={["A", "B", "C"]} />
         """)
 
-      assert html =~ "focus:ring-2"
-      assert html =~ "focus:ring-ring"
+      assert html =~ "focus-visible:ring-2"
+      assert html =~ "focus-visible:ring-ring"
     end
 
     test "does not render a dangling aria-describedby when field has errors but no caller-provided describedby" do

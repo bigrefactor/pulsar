@@ -406,11 +406,13 @@ The header component should support proper hierarchy.
 *Library note:* All interactive components apply `focus-visible:ring-*`
 or equivalent. Browser-verified per component; the default
 `--color-ring` token measures 5.02:1 (light) / 6.72:1 (dark), well
-above the 3:1 non-text minimum. Every component now routes through
-this token (the previous Link / Switch / Select / Textarea / Table
-exceptions were resolved by switching colored focus rings to
-`focus-visible:ring-ring` and adding a real `peer-focus-visible` ring
-on Switch's visible track).
+above the 3:1 non-text minimum. Link, Switch, Select, Textarea, and
+Table route through this token (the previous failures were resolved
+by switching colored focus rings to `focus-visible:ring-ring` and
+adding a real `peer-focus-visible` ring on Switch's visible track).
+Input and RadioGroup retain per-color focus rings
+(`focus-within:ring-{color}/60` and `focus-visible:ring-{color}`
+respectively); both measured ≥3:1 in the browser audit.
 
 **2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2)** — Focused
 component is not entirely hidden by author-created content (sticky

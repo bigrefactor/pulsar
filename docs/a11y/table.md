@@ -102,7 +102,7 @@ within the component is acceptable.
   `lib/pulsar/components/table.ex:194`.
 - Row focus ring uses `focus-visible:ring-ring focus-visible:ring-offset-2`
   resolving to the standard `--color-ring` token —
-  `lib/pulsar/components/table.ex:653`.
+  `lib/pulsar/components/table.ex:666`.
 
 Row focus ring matches Button at full opacity (5.02:1 / 6.72:1) —
 above the 3:1 minimum in both themes.
@@ -172,8 +172,8 @@ following DOM. No positive `tabindex`.
 
 If none of these is provided (and no `aria-label` / `aria-labelledby`
 passes through the global `:rest`), the component emits
-`Logger.info` to nudge the caller —
-`lib/pulsar/components/table.ex:548–574`. Rendering is not blocked. The
+`Logger.warning` to nudge the caller —
+`lib/pulsar/components/table.ex:566–582`. Rendering is not blocked. The
 docstring documents all three patterns —
 `lib/pulsar/components/table.ex:319–367`.
 
@@ -189,7 +189,7 @@ the global-`:rest` passthrough path.
 
 **Evidence:** Row focus uses
 `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background`
-— `lib/pulsar/components/table.ex:653`. Ring resolves to the standard
+— `lib/pulsar/components/table.ex:666`. Ring resolves to the standard
 `--color-ring` token at 5.02:1 (light) / 6.72:1 (dark).
 
 **Notes:** Uses `focus-visible:` (keyboard-only) consistent with
@@ -202,7 +202,7 @@ row.
 `[&_thead_th]:sticky [&_thead_th]:top-0 [&_thead_th]:z-docked`
 **and** a size-appropriate `[&_tbody_tr]:scroll-mt-{N}` so focused
 rows scroll clear of the sticky thead —
-`lib/pulsar/components/table.ex:614–620`. Per-size scroll-margin
+`lib/pulsar/components/table.ex:626–637`. Per-size scroll-margin
 values mirror the thead row height —
 `lib/pulsar/components/table.ex:149–157`.
 

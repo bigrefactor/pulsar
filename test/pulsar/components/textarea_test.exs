@@ -542,8 +542,8 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" />
         """)
 
-      assert html =~ "focus:ring-2"
-      assert html =~ "focus:ring-ring"
+      assert html =~ "focus-visible:ring-2"
+      assert html =~ "focus-visible:ring-ring"
     end
 
     test "sets aria-invalid attribute when invalid is true" do

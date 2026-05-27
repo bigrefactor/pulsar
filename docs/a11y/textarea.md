@@ -89,8 +89,9 @@ the theme level addresses all three.
 `lib/pulsar/components/textarea.ex:146`. Outline-neutral routes through
 `border-border-strong`; colored outline variants use full-saturation
 `border-{color}` — `lib/pulsar/components/textarea.ex:202–257`. Focus
-ring `focus:ring-2 focus:ring-offset-2` resolves to `--color-ring`
-across all variants — `lib/pulsar/components/textarea.ex:140`. Browser
+ring `focus-visible:ring-2 focus-visible:ring-offset-2` resolves to
+`--color-ring` across all variants —
+`lib/pulsar/components/textarea.ex:140`. Browser
 measurement: outline borders ≥ 3:1 across both themes for every
 variant.
 
@@ -139,17 +140,18 @@ order — `lib/pulsar/components/textarea.ex:474–504`.
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
-**Evidence:** `focus:ring-2 focus:ring-offset-2` resolves to
-`--color-ring` for every variant —
+**Evidence:**
+`focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2`
+resolves to `--color-ring` for every variant —
 `lib/pulsar/components/textarea.ex:140, 151–308`. Browser measurement:
 focus ring 5.02:1 (light) / 6.72:1 (dark) across every variant
 ([light](measurements/textarea-light.md),
 [dark](measurements/textarea-dark.md)).
 
-**Notes:** Uses `focus:` not `focus-visible:`, so the ring shows on
-mouse click as well as keyboard focus. All colored variants now share
-the neutral `--color-ring` token (matching Button), eliminating the
-previous per-color shade variations.
+**Notes:** Uses `focus-visible:` (keyboard-only) consistent with
+Button/Input. All colored variants share the neutral `--color-ring`
+token (matching Button), eliminating the previous per-color shade
+variations.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 

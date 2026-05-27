@@ -357,6 +357,40 @@ defmodule Pulsar.Components.HeaderTest do
       assert html =~ "bg-background"
     end
 
+    test "applies size-appropriate scroll-margin on siblings so focus is not obscured" do
+      for {size, n} <- [
+            {"xs", 12},
+            {"sm", 14},
+            {"md", 16},
+            {"lg", 20},
+            {"xl", 24}
+          ] do
+        assigns = %{size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <Header.header sticky={true} size={@size}>Sticky Header</Header.header>
+          """)
+
+        assert html =~ "[&amp;~*]:scroll-mt-#{n}",
+               "expected size=#{size} sticky header to include [&~*]:scroll-mt-#{n}"
+
+        assert html =~ "[&amp;~*_*]:scroll-mt-#{n}",
+               "expected size=#{size} sticky header to include [&~*_*]:scroll-mt-#{n}"
+      end
+    end
+
+    test "no scroll-margin when sticky is disabled" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Header.header sticky={false} size="md">Non-sticky</Header.header>
+        """)
+
+      refute html =~ "scroll-mt"
+    end
+
     test "renders with divider" do
       assigns = %{}
 

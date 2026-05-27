@@ -95,8 +95,8 @@ upstream token fix.
 `lib/pulsar/components/select.ex:122`. Outline-neutral routes through
 `border-border-strong`; colored outline variants use full-saturation
 `border-{color}` — `lib/pulsar/components/select.ex:130–142`. Focus
-ring `focus:ring-2 focus:ring-offset-2` resolves to the standard
-`--color-ring` token across all variants —
+ring `focus-visible:ring-2 focus-visible:ring-offset-2` resolves to
+the standard `--color-ring` token across all variants —
 `lib/pulsar/components/select.ex:117`. Browser measurement: outline
 borders and focus rings ≥ 3:1 across both themes for every variant.
 
@@ -149,7 +149,8 @@ Per-badge remove buttons have `aria-label="Remove …"` —
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
-**Evidence:** Select has `focus:ring-2 focus:ring-offset-2` —
+**Evidence:** Select has
+`focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2` —
 `lib/pulsar/components/select.ex:117`. All color variants resolve
 the ring to `--color-ring` —
 `lib/pulsar/components/select.ex:130–176`. Remove button has
@@ -157,6 +158,9 @@ the ring to `--color-ring` —
 `lib/pulsar/components/select.ex:350`. Browser measurement: focus
 ring 5.02:1 (light) / 6.72:1 (dark) across every variant — passes
 the 3:1 minimum.
+
+**Notes:** Uses `focus-visible:` (keyboard-only) consistent with
+Button/Input. Mouse activation no longer paints a focus ring.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 

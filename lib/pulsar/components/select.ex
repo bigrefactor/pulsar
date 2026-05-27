@@ -114,7 +114,7 @@ defmodule Pulsar.Components.Select do
   }
 
   # Base select styling classes
-  @base_select_classes "block w-full appearance-none transition-all duration-normal ease-standard focus:ring-2 focus:ring-offset-2 focus:outline-none"
+  @base_select_classes "block w-full appearance-none transition-all duration-normal ease-standard focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
 
   # Variant-specific layout classes
   @variant_config %{
@@ -127,33 +127,34 @@ defmodule Pulsar.Components.Select do
   @color_config %{
     # Outline variant colors
     "outline" => %{
-      "danger" => "border-danger bg-background text-danger focus:ring-ring hover:border-danger",
-      "info" => "border-info bg-background text-info focus:ring-ring hover:border-info",
-      "neutral" => "border-border-strong bg-background text-foreground focus:ring-ring hover:border-border-strong/80",
-      "primary" => "border-primary bg-background text-primary focus:ring-ring hover:border-primary",
-      "secondary" => "border-secondary bg-background text-secondary focus:ring-ring hover:border-secondary",
-      "success" => "border-success bg-background text-success focus:ring-ring hover:border-success",
-      "warning" => "border-warning bg-background text-warning focus:ring-ring hover:border-warning"
+      "danger" => "border-danger bg-background text-danger focus-visible:ring-ring hover:border-danger",
+      "info" => "border-info bg-background text-info focus-visible:ring-ring hover:border-info",
+      "neutral" =>
+        "border-border-strong bg-background text-foreground focus-visible:ring-ring hover:border-border-strong/80",
+      "primary" => "border-primary bg-background text-primary focus-visible:ring-ring hover:border-primary",
+      "secondary" => "border-secondary bg-background text-secondary focus-visible:ring-ring hover:border-secondary",
+      "success" => "border-success bg-background text-success focus-visible:ring-ring hover:border-success",
+      "warning" => "border-warning bg-background text-warning focus-visible:ring-ring hover:border-warning"
     },
     # Ghost variant colors
     "ghost" => %{
-      "danger" => "bg-transparent text-danger focus:ring-ring hover:bg-danger/5",
-      "info" => "bg-transparent text-info focus:ring-ring hover:bg-info/5",
-      "neutral" => "bg-transparent text-foreground focus:ring-ring hover:bg-surface-1-hover",
-      "primary" => "bg-transparent text-primary focus:ring-ring hover:bg-primary/5",
-      "secondary" => "bg-transparent text-secondary focus:ring-ring hover:bg-secondary/5",
-      "success" => "bg-transparent text-success focus:ring-ring hover:bg-success/5",
-      "warning" => "bg-transparent text-warning focus:ring-ring hover:bg-warning/5"
+      "danger" => "bg-transparent text-danger focus-visible:ring-ring hover:bg-danger/5",
+      "info" => "bg-transparent text-info focus-visible:ring-ring hover:bg-info/5",
+      "neutral" => "bg-transparent text-foreground focus-visible:ring-ring hover:bg-surface-1-hover",
+      "primary" => "bg-transparent text-primary focus-visible:ring-ring hover:bg-primary/5",
+      "secondary" => "bg-transparent text-secondary focus-visible:ring-ring hover:bg-secondary/5",
+      "success" => "bg-transparent text-success focus-visible:ring-ring hover:bg-success/5",
+      "warning" => "bg-transparent text-warning focus-visible:ring-ring hover:bg-warning/5"
     },
     # Solid variant colors
     "solid" => %{
-      "danger" => "bg-danger/10 text-danger focus:ring-ring hover:bg-danger/20",
-      "info" => "bg-info/10 text-info focus:ring-ring hover:bg-info/20",
-      "neutral" => "bg-neutral/10 text-neutral focus:ring-ring hover:bg-neutral/20",
-      "primary" => "bg-primary/10 text-primary focus:ring-ring hover:bg-primary/20",
-      "secondary" => "bg-secondary/10 text-secondary focus:ring-ring hover:bg-secondary/20",
-      "success" => "bg-success/10 text-success focus:ring-ring hover:bg-success/20",
-      "warning" => "bg-warning/10 text-warning focus:ring-ring hover:bg-warning/20"
+      "danger" => "bg-danger/10 text-danger focus-visible:ring-ring hover:bg-danger/20",
+      "info" => "bg-info/10 text-info focus-visible:ring-ring hover:bg-info/20",
+      "neutral" => "bg-neutral/10 text-neutral focus-visible:ring-ring hover:bg-neutral/20",
+      "primary" => "bg-primary/10 text-primary focus-visible:ring-ring hover:bg-primary/20",
+      "secondary" => "bg-secondary/10 text-secondary focus-visible:ring-ring hover:bg-secondary/20",
+      "success" => "bg-success/10 text-success focus-visible:ring-ring hover:bg-success/20",
+      "warning" => "bg-warning/10 text-warning focus-visible:ring-ring hover:bg-warning/20"
     }
   }
 
