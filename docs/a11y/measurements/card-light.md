@@ -63,21 +63,21 @@ Columns:
 | `outline-danger-lg` | `div` | 256 | 188 | ✓ | 19.27:1 ✓ | 4.56:1 ✓ | — (not-focusable-in-state) |
 | `outline-danger-md` | `div` | 256 | 172 | ✓ | 19.27:1 ✓ | 4.56:1 ✓ | — (not-focusable-in-state) |
 | `outline-danger-sm` | `div` | 256 | 136 | ✓ | 19.27:1 ✓ | 4.56:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-lg` | `div` | 256 | 188 | ✓ | 19.27:1 ✓ | 1.18:1 ✗ | — (not-focusable-in-state) |
-| `outline-neutral-md` | `div` | 256 | 172 | ✓ | 19.27:1 ✓ | 1.18:1 ✗ | — (not-focusable-in-state) |
-| `outline-neutral-sm` | `div` | 256 | 136 | ✓ | 19.27:1 ✓ | 1.18:1 ✗ | — (not-focusable-in-state) |
+| `outline-neutral-lg` | `div` | 256 | 188 | ✓ | 19.27:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
+| `outline-neutral-md` | `div` | 256 | 172 | ✓ | 19.27:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
+| `outline-neutral-sm` | `div` | 256 | 136 | ✓ | 19.27:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
 | `outline-primary-lg` | `div` | 256 | 188 | ✓ | 19.27:1 ✓ | 5.02:1 ✓ | — (not-focusable-in-state) |
 | `outline-primary-md` | `div` | 256 | 172 | ✓ | 19.27:1 ✓ | 5.02:1 ✓ | — (not-focusable-in-state) |
 | `outline-primary-sm` | `div` | 256 | 136 | ✓ | 19.27:1 ✓ | 5.02:1 ✓ | — (not-focusable-in-state) |
 | `outline-secondary-lg` | `div` | 256 | 188 | ✓ | 19.27:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
 | `outline-secondary-md` | `div` | 256 | 172 | ✓ | 19.27:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
 | `outline-secondary-sm` | `div` | 256 | 136 | ✓ | 19.27:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-lg` | `div` | 256 | 188 | ✓ | 19.27:1 ✓ | 3.08:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-md` | `div` | 256 | 172 | ✓ | 19.27:1 ✓ | 3.08:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-sm` | `div` | 256 | 136 | ✓ | 19.27:1 ✓ | 3.08:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-lg` | `div` | 256 | 188 | ✓ | 19.27:1 ✓ | 3.06:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-md` | `div` | 256 | 172 | ✓ | 19.27:1 ✓ | 3.06:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-sm` | `div` | 256 | 136 | ✓ | 19.27:1 ✓ | 3.06:1 ✓ | — (not-focusable-in-state) |
+| `outline-success-lg` | `div` | 256 | 188 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
+| `outline-success-md` | `div` | 256 | 172 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
+| `outline-success-sm` | `div` | 256 | 136 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
+| `outline-warning-lg` | `div` | 256 | 188 | ✓ | 19.27:1 ✓ | 6.78:1 ✓ | — (not-focusable-in-state) |
+| `outline-warning-md` | `div` | 256 | 172 | ✓ | 19.27:1 ✓ | 6.78:1 ✓ | — (not-focusable-in-state) |
+| `outline-warning-sm` | `div` | 256 | 136 | ✓ | 19.27:1 ✓ | 6.78:1 ✓ | — (not-focusable-in-state) |
 | `solid-danger-lg` | `div` | 256 | 168 | ✓ | 16.07:1 ✓ | 1.43:1 ✗ | — (not-focusable-in-state) |
 | `solid-danger-md` | `div` | 256 | 152 | ✓ | 16.07:1 ✓ | 1.43:1 ✗ | — (not-focusable-in-state) |
 | `solid-danger-sm` | `div` | 256 | 136 | ✓ | 16.07:1 ✓ | 1.43:1 ✗ | — (not-focusable-in-state) |
@@ -90,12 +90,12 @@ Columns:
 | `solid-secondary-lg` | `div` | 256 | 168 | ✓ | 16.32:1 ✓ | 1.39:1 ✗ | — (not-focusable-in-state) |
 | `solid-secondary-md` | `div` | 256 | 152 | ✓ | 16.32:1 ✓ | 1.39:1 ✗ | — (not-focusable-in-state) |
 | `solid-secondary-sm` | `div` | 256 | 136 | ✓ | 16.32:1 ✓ | 1.39:1 ✗ | — (not-focusable-in-state) |
-| `solid-success-lg` | `div` | 256 | 168 | ✓ | 17.22:1 ✓ | 1.25:1 ✗ | — (not-focusable-in-state) |
-| `solid-success-md` | `div` | 256 | 152 | ✓ | 17.22:1 ✓ | 1.25:1 ✗ | — (not-focusable-in-state) |
-| `solid-success-sm` | `div` | 256 | 136 | ✓ | 17.22:1 ✓ | 1.25:1 ✗ | — (not-focusable-in-state) |
-| `solid-warning-lg` | `div` | 256 | 168 | ✓ | 17.24:1 ✓ | 1.24:1 ✗ | — (not-focusable-in-state) |
-| `solid-warning-md` | `div` | 256 | 152 | ✓ | 17.24:1 ✓ | 1.24:1 ✗ | — (not-focusable-in-state) |
-| `solid-warning-sm` | `div` | 256 | 136 | ✓ | 17.24:1 ✓ | 1.24:1 ✗ | — (not-focusable-in-state) |
+| `solid-success-lg` | `div` | 256 | 168 | ✓ | 16.42:1 ✓ | 1.38:1 ✗ | — (not-focusable-in-state) |
+| `solid-success-md` | `div` | 256 | 152 | ✓ | 16.42:1 ✓ | 1.38:1 ✗ | — (not-focusable-in-state) |
+| `solid-success-sm` | `div` | 256 | 136 | ✓ | 16.42:1 ✓ | 1.38:1 ✗ | — (not-focusable-in-state) |
+| `solid-warning-lg` | `div` | 256 | 168 | ✓ | 16.42:1 ✓ | 1.38:1 ✗ | — (not-focusable-in-state) |
+| `solid-warning-md` | `div` | 256 | 152 | ✓ | 16.42:1 ✓ | 1.38:1 ✗ | — (not-focusable-in-state) |
+| `solid-warning-sm` | `div` | 256 | 136 | ✓ | 16.42:1 ✓ | 1.38:1 ✗ | — (not-focusable-in-state) |
 
 ## Text-spacing override (WCAG 1.4.12)
 

@@ -88,23 +88,30 @@ scroll, which is consistent with 1.4.10.
 **Evidence:**
 - Outline variant border is `border-2` in the active color —
   `lib/pulsar/components/card.ex:218–226`
+- Outline-neutral routes through `border-border-strong` —
+  `lib/pulsar/components/card.ex:219`
 - Solid variant border is at 20% opacity —
   `lib/pulsar/components/card.ex:227–236`
 - Interactive focus ring is `ring-2 ring-primary` —
   `lib/pulsar/components/card.ex:431–434`
 
-Browser measurement of 36 border cells per theme: 15/36 pass in both
-themes. Failing variants: `outline-neutral` (1.18:1 / 1.21:1) and
-every `solid-*` variant (all colors at 20% alpha resolve below 3:1).
+Browser measurement of 36 border cells per theme: outline variants
+all pass (`outline-neutral` now 4.63:1 in both themes via
+`--color-border-strong`). Failing cells: every `solid-*` variant
+(all colors at 20% alpha resolve below 3:1), plus `solid-neutral`
+separately at 1.18:1 / 1.21:1
+([light](measurements/card-light.md),
+[dark](measurements/card-dark.md)).
 
 **Notes:** Per WCAG 1.4.11 understanding, decorative section
 separators / container outlines that don't communicate state are
 out of scope. The card border is purely visual emphasis — state
 (interactive vs static) is communicated by `role="button"`,
 `tabindex`, hover/focus changes, and `cursor-pointer`. The
-outline-neutral border edge case shares the `button-outline-neutral-border`
-follow-up. The solid-variant 20% alpha border is decorative and
-intentional.
+solid-variant 20% alpha border is decorative and intentional.
+`solid-neutral` at 1.18:1 / 1.21:1 is a separate follow-up
+because it isn't an alpha-tinted decorative border like the other
+solid variants — it lands on the page background directly.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 

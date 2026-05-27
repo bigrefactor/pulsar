@@ -129,7 +129,7 @@ defmodule Pulsar.Components.Select do
     "outline" => %{
       "danger" => "border-danger/60 bg-background text-danger focus:ring-danger/60 hover:border-danger",
       "info" => "border-info/60 bg-background text-info focus:ring-info/60 hover:border-info",
-      "neutral" => "border-border bg-background text-foreground focus:ring-ring hover:border-border/80",
+      "neutral" => "border-border-strong bg-background text-foreground focus:ring-ring hover:border-border-strong/80",
       "primary" => "border-primary/60 bg-background text-primary focus:ring-primary/60 hover:border-primary",
       "secondary" => "border-secondary/60 bg-background text-secondary focus:ring-secondary/60 hover:border-secondary",
       "success" => "border-success/60 bg-background text-success focus:ring-success/60 hover:border-success",

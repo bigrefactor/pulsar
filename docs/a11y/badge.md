@@ -59,7 +59,7 @@ on top of the text label.
 **Notes:** Code makes it impossible to ship a badge whose meaning is
 conveyed by color alone.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious, [PUL-26](https://linear.app/bigrefactor/issue/PUL-26/badge-fix-axe-color-contrast-violation))
+### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious)
 
 **Evidence:** Foreground/background colors come from semantic tokens
 (`bg-*`/`text-*-foreground`, `text-*` for outline/ghost) —
@@ -73,12 +73,11 @@ per theme ([light](measurements/badge-light.md),
   `ghost-warning`, `outline-success`, `outline-warning`,
   `solid-success`.
 
-**Notes:** Existing [PUL-26](https://linear.app/bigrefactor/issue/PUL-26)
-scoped to "success solid"; expand to cover the warning variants and
-the ghost-success/outline-success patterns. Same root cause as
-Button/Flash/Link — success/warning color tokens at the foreground
-shade undershoot 4.5:1 in light, and the neutral text shade
-undershoots in dark.
+**Notes:** Originally scoped to "success solid"; the failure set
+extends to the warning variants and the ghost-success/outline-success
+patterns. Same root cause as Button/Flash/Link — success/warning
+color tokens at the foreground shade undershoot 4.5:1 in light, and
+the neutral text shade undershoots in dark.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -97,20 +96,21 @@ resizes without clipping.
 
 **Notes:** Badge sizes to its content and reflows at 320 CSS px.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor, rolls up to button-outline-neutral-border)
+### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** Outline variant uses `border border-*` against
-`bg-background` — `lib/pulsar/components/badge.ex:99–114`. Focus-within
-ring is `focus-within:ring-2 focus-within:ring-current
-focus-within:ring-offset-2` — `lib/pulsar/components/badge.ex:84–85`.
-Browser measurement: 30 cells with measurable borders, 25 pass in both
-themes. Failures: `outline-neutral` (1.18:1 light / 1.21:1 dark).
-Same defect as Button outline-neutral.
+`bg-background` — `lib/pulsar/components/badge.ex:99–114`. The
+`outline-neutral` variant routes through `border-border-strong` —
+`lib/pulsar/components/badge.ex:113`. Focus-within ring is
+`focus-within:ring-2 focus-within:ring-current focus-within:ring-offset-2`
+— `lib/pulsar/components/badge.ex:84–85`. Browser measurement: 30 cells
+with measurable borders, all pass in both themes (min 4.56:1 light,
+4.56:1 dark) ([light](measurements/badge-light.md),
+[dark](measurements/badge-dark.md)).
 
-**Notes:** Folds into the
-[`button-outline-neutral-border`](button.md#1411-non-text-contrast-aa--gap-serious-pul-19-follow-up-button-outline-neutral-border)
-follow-up — a single theme-level fix to the neutral-border token
-resolves Badge, Button, Card, and List in parallel.
+**Notes:** `--color-border-strong` resolves to `gray-500` (light) /
+`gray-400` (dark), giving the outline-neutral edge ≥4.5:1 against the
+page background.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -235,10 +235,10 @@ no state attributes are needed.
   contrast also passes; failing 1.4.3 variants are
   the same ones that fail AAA focus appearance contrast.
 
-## Browser a11y findings (PUL-11)
+## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+Violations surfaced by the axe-core browser gate.
 
-| Rule | Affected variant(s) | Themes | Ticket |
-|------|---------------------|--------|--------|
-| `color-contrast` | success solid | both | [PUL-26](https://linear.app/bigrefactor/issue/PUL-26/badge-fix-axe-color-contrast-violation) |
+| Rule | Affected variant(s) | Themes |
+|------|---------------------|--------|
+| `color-contrast` | success solid | both |

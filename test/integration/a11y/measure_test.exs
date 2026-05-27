@@ -1,6 +1,6 @@
 defmodule Pulsar.Integration.A11y.MeasureTest do
   @moduledoc """
-  Browser measurement runner for PUL-19. For each component fixture × theme,
+  Browser measurement runner. For each component fixture × theme,
   injects `priv/a11y/measure.js`, captures per-cell measurements (text contrast,
   border/focus-ring contrast, target size), then runs text-spacing and reflow
   overflow checks. Writes one markdown report per `(component, theme)` to

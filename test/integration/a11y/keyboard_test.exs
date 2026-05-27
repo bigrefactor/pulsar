@@ -1,7 +1,7 @@
 defmodule Pulsar.Integration.A11y.KeyboardTest do
   @moduledoc """
   Real-browser keyboard tests for interactive components. Axe-clean
-  (PUL-11) catches static a11y problems but not behavior — a button
+  catches static a11y problems but not behavior — a button
   could fail to activate on Enter and axe would happily report it
   clean. These tests close that gap.
 

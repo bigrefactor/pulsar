@@ -52,7 +52,7 @@ field) text error — `lib/pulsar/components/textarea.ex:489`. Character
 counter color changes are paired with explicit numeric text and
 "remaining"/"over" labels — `lib/pulsar/components/textarea.ex:539–542`.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious, [PUL-43](https://linear.app/bigrefactor/issue/PUL-43/textarea-fix-axe-color-contrast-violation))
+### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious)
 
 **Evidence:** Color/variant matrix uses semantic tokens —
 `lib/pulsar/components/textarea.ex:151–310`. Character counter has
@@ -67,11 +67,10 @@ Browser measurement of 271 cells per theme
   outline-success/warning and all `solid-*` variants — same pattern
   as Input.
 
-**Notes:** [PUL-43](https://linear.app/bigrefactor/issue/PUL-43)
-scoped to "success outline variant"; expand to cover warning and the
-solid family in light mode. Pattern mirrors Input and Select; a
-single fix to the color tokens at the theme level addresses all
-three.
+**Notes:** Originally scoped to "success outline variant"; the failure
+set extends to the warning variant and the solid family in light mode.
+Pattern mirrors Input and Select; a single fix to the color tokens at
+the theme level addresses all three.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -84,25 +83,24 @@ three.
 `lib/pulsar/components/textarea.ex:139`. Container is `space-y-2` —
 `lib/pulsar/components/textarea.ex:473`.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious, PUL-19 follow-up: textarea-outline-border-contrast)
+### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious) — light colored outline borders
 
 **Evidence:** Outline variant uses `border-2` —
-`lib/pulsar/components/textarea.ex:146`; focus ring `focus:ring-2
-focus:ring-offset-2` — `lib/pulsar/components/textarea.ex:140`.
-Browser measurement: border contrast measured on the textarea cell
-itself (which carries the border directly). 90 outline cells per
-theme, 30 pass light / 48 pass dark. Failing outline colors in light
-mode: `outline-neutral` (1.18:1), `outline-primary` (~2.4:1),
-`outline-secondary` (~2.4:1), `outline-success` (~2.6:1),
-`outline-warning` (~2.7:1) — all below the 3:1 floor. Focus ring
-measured 3.06:1 (light min) / 3.67:1 (dark min) — passes.
+`lib/pulsar/components/textarea.ex:146`. Outline-neutral routes through
+`border-border-strong` — `lib/pulsar/components/textarea.ex:146`. Focus
+ring `focus:ring-2 focus:ring-offset-2` —
+`lib/pulsar/components/textarea.ex:140`. Browser measurement: border
+contrast measured on the textarea cell itself (which carries the
+border directly). 90 outline cells per theme, 42 pass light /
+90 pass dark. Failing outline colors (light only):
+`outline-primary` (~2.4:1), `outline-secondary` (~2.4:1),
+`outline-success` (~2.6:1), `outline-warning` (~2.7:1) — all use the
+colored border at `/60` alpha and fall below the 3:1 floor against
+white. Focus ring passes in both themes.
 
-**Notes:** New finding — `textarea-outline-border-contrast` to be
-filed as a Linear sub-issue parented to PUL-19. The textarea outline
-variant border (`border-*-300`) sits between primary/secondary/etc
-tokens at light shades that don't reliably meet 3:1 against the
-default white background. Same defect as the Select outline borders
-([`select.md` 1.4.11](select.md#1411-non-text-contrast-aa)).
+**Notes:** The remaining light-theme failure is the `/60`-alpha
+colored borders on outline variants. Same defect as the Select
+outline borders ([`select.md` 1.4.11](select.md#1411-non-text-contrast-aa-)).
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -272,11 +270,11 @@ should add their own `aria-live` region — out of scope here.
   AAA 4.5:1 for low-contrast color variants. Not a confirmed AAA win
   for every color.
 
-## Browser a11y findings (PUL-11)
+## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+Violations surfaced by the axe-core browser gate.
 
-| Rule | Affected variant(s) | Themes | Ticket |
-|------|---------------------|--------|--------|
-| `label` | unlabelled textarea-cc | both | [PUL-42](https://linear.app/bigrefactor/issue/PUL-42/textarea-fix-axe-label-violation) |
-| `color-contrast` | success outline variant | both | [PUL-43](https://linear.app/bigrefactor/issue/PUL-43/textarea-fix-axe-color-contrast-violation) |
+| Rule | Affected variant(s) | Themes |
+|------|---------------------|--------|
+| `label` | unlabelled textarea-cc | both |
+| `color-contrast` | success outline variant | both |

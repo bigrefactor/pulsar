@@ -256,8 +256,8 @@ grouping.
 | Space | Check focused radio if not already checked | ✓ | Native checkbox/radio browser-default. |
 | Right Arrow / Down Arrow | Move to next, uncheck previous, check new; wrap to first | ✓ | Native HTML radio behavior on grouped radios sharing the same `name` (`radio_group.ex:400, 455`). Browsers also wrap. |
 | Left Arrow / Up Arrow | Move to previous, uncheck previous, check new; wrap to last | ✓ | Same as above. |
-| **Home** | Move focus to first radio | ⚠ GAP (serious) | Native HTML radios do not handle Home/End. No JS hook on `radio_group.ex` to add it. Filed as [PUL-21](https://linear.app/bigrefactor/issue/PUL-21). |
-| **End** | Move focus to last radio | ⚠ GAP (serious) | Same. Filed as [PUL-22](https://linear.app/bigrefactor/issue/PUL-22). |
+| **Home** | Move focus to first radio | ⚠ GAP (serious) | Native HTML radios do not handle Home/End. No JS hook on `radio_group.ex` to add it. |
+| **End** | Move focus to last radio | ⚠ GAP (serious) | Same. |
 
 ### WAI-ARIA roles, states, properties
 
@@ -280,18 +280,18 @@ grouping.
   instead, it appears on each option's `<label>` (`radio_group.ex:450`).
   `aria-labelledby` is duplicated onto every option label (wrong place
   for a *group* label) and the radiogroup container has no accessible
-  name. ⚠ GAP (serious). Filed as [PUL-23](https://linear.app/bigrefactor/issue/PUL-23).
+  name. ⚠ GAP (serious).
 
 ### Divergences
 
 - **Missing `Home` key** (serious) — APG-required for non-toolbar radio
-  groups. Filed as [PUL-21](https://linear.app/bigrefactor/issue/PUL-21).
+  groups.
 - **Missing `End` key** (serious) — APG-required for non-toolbar radio
-  groups. Filed as [PUL-22](https://linear.app/bigrefactor/issue/PUL-22).
+  groups.
 - **Card variant: `aria-labelledby` placement** (serious) — `{@rest}`
   is splatted on each option's label instead of the radiogroup
   container, so the group's accessible name is lost and individual
-  options get a wrong label association. Filed as [PUL-23](https://linear.app/bigrefactor/issue/PUL-23).
+  options get a wrong label association.
 
 ---
 
@@ -346,7 +346,7 @@ widely used by Phoenix and React table libraries for this purpose.
 | APG key | Action | Status | Evidence |
 |---------|--------|:------:|----------|
 | Enter | Activate | ✓ | Hook calls `el.click()` on keydown (`table.ex:474–476`). |
-| Space | Activate | ⚠ GAP (minor) | Hook calls `el.click()` on **keydown**, not keyup (`table.ex:474–476`). Diverges from `button.ex`'s pseudo-button hook, which fires Space on keyup (`button.ex:641`) — the established convention that allows a user to cancel a Space press by moving off the target before release. Filed as [PUL-24](https://linear.app/bigrefactor/issue/PUL-24). |
+| Space | Activate | ⚠ GAP (minor) | Hook calls `el.click()` on **keydown**, not keyup (`table.ex:474–476`). Diverges from `button.ex`'s pseudo-button hook, which fires Space on keyup (`button.ex:641`) — the established convention that allows a user to cancel a Space press by moving off the target before release. |
 
 ### WAI-ARIA roles, states, properties
 
@@ -362,7 +362,6 @@ widely used by Phoenix and React table libraries for this purpose.
   divergence from `button.ex`'s pseudo-button hook and from the
   widely-followed convention. Functional impact is small: users
   cannot cancel a Space press by moving off the row before release.
-  Filed as [PUL-24](https://linear.app/bigrefactor/issue/PUL-24).
 
 ---
 
@@ -375,8 +374,8 @@ APG-pattern-matched:
   elements. APG doesn't prescribe patterns for native form controls;
   HTML semantics + AT-default behavior is the expected approach.
 - **Form wrappers** (`field`, `label`) — label/error association is a
-  WCAG concern (1.3.1, 3.3.1) handled in PUL-15; no APG widget pattern
-  applies.
+  WCAG concern (1.3.1, 3.3.1) handled in the WCAG audit; no APG widget
+  pattern applies.
 - **Structural** (`card`, `divider`, `header`, `list`, `flash_group`,
   `table` itself without row_click) — non-interactive; APG only
   covers interactive widget patterns.
@@ -392,4 +391,3 @@ Listbox, etc.).
 
 **Audited:** 2026-05-24 (code-only)
 **Companion audit:** [WCAG 2.2 AA](README.md)
-**Parent tracking issue:** [PUL-20](https://linear.app/bigrefactor/issue/PUL-20)

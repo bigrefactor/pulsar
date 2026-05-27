@@ -59,7 +59,7 @@ cursor + native `disabled` — `lib/pulsar/components/select.ex:469–475`.
 `cursor-not-allowed` + native `disabled` —
 `lib/pulsar/components/select.ex:469–475`.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious, [PUL-39](https://linear.app/bigrefactor/issue/PUL-39/select-fix-axe-color-contrast-violation))
+### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious)
 
 **Evidence:** Color/variant matrix with semantic tokens —
 `lib/pulsar/components/select.ex:127–179`. Arrow color tracks the field
@@ -73,10 +73,10 @@ of 289 cells per theme:
 
 [Light](measurements/select-light.md), [dark](measurements/select-dark.md).
 
-**Notes:** Existing [PUL-39](https://linear.app/bigrefactor/issue/PUL-39)
-scoped to "success outline variant"; expand to cover the warning
-variant and the solid family in light theme — same defect pattern
-as Input and Textarea, addressed by the same upstream token fix.
+**Notes:** Originally scoped to "success outline variant"; the failure
+set extends to the warning variant and the solid family in light theme
+— same defect pattern as Input and Textarea, addressed by the same
+upstream token fix.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -89,28 +89,29 @@ as Input and Textarea, addressed by the same upstream token fix.
 `lib/pulsar/components/select.ex:117`. Badge container wraps with
 `flex-wrap` — `lib/pulsar/components/select.ex:337`.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious, PUL-19 follow-up: select-outline-border-contrast)
+### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious) — light outline borders / focus rings
 
 **Evidence:** Outline variant uses `border-2` —
-`lib/pulsar/components/select.ex:122`. Focus ring `focus:ring-2
-focus:ring-offset-2` — `lib/pulsar/components/select.ex:117`. Badge
-remove button has `focus-visible:ring-1` —
-`lib/pulsar/components/select.ex:350`. Browser measurement of 96
-outline cells: light 36/96 pass (min 1.18:1), dark 48/96 pass
-(min 1.21:1). Failing outline colors in light:
-`outline-neutral`, `outline-primary`, `outline-secondary`,
-`outline-success`, `outline-warning` — virtually every color
-variant's outline border is below 3:1. Focus ring: 217 cells, light
-112/217 pass (min 1.95:1), dark 112/217 pass (min 2.11:1). Many
-focus rings undershoot.
+`lib/pulsar/components/select.ex:122`. Outline-neutral routes through
+`border-border-strong` — `lib/pulsar/components/select.ex:122`. Focus
+ring `focus:ring-2 focus:ring-offset-2` —
+`lib/pulsar/components/select.ex:117`. Badge remove button has
+`focus-visible:ring-1` — `lib/pulsar/components/select.ex:350`.
+Browser measurement of 96 outline cells: light 48/96 pass, dark
+96/96 pass. Failing outline colors (light only):
+`outline-primary`, `outline-secondary`, `outline-success`,
+`outline-warning` — all use the colored border at `/60` alpha,
+which lands below 3:1 against white. Focus ring: 217 focusable
+cells, light 112/217 pass, dark 217/217 pass.
 
-**Notes:** New finding — `select-outline-border-contrast` to be
-filed as a Linear sub-issue parented to PUL-19. The `border-*-300`
-shades used by the select outline variant don't meet 3:1. Focus
-ring failures are an additional concern: light variants use
-`--color-{color}-300` for the focus ring which is the same low-
-contrast token as the border. Both stem from one root cause — the
-`*-300` shade in the light palette is too light for non-text use.
+**Notes:** The remaining light-theme failure is the `/60`-alpha
+colored borders on outline variants. The same root cause drives
+the light focus ring failures: colored variants use
+`--color-{color}/60` (or the `*-300` light-palette shade) for both
+the border and the focus ring, which doesn't meet 3:1 against the
+default white background. Fix would be to drop the alpha and use
+the full-saturation token, or route colored borders/rings through
+darker palette shades.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -153,7 +154,7 @@ visual order — `lib/pulsar/components/select.ex:337–356`.
 Per-badge remove buttons have `aria-label="Remove …"` —
 `lib/pulsar/components/select.ex:351`.
 
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious, PUL-19 follow-up: select-outline-border-contrast)
+### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious) — light colored focus rings
 
 **Evidence:** Select has `focus:ring-2 focus:ring-offset-2` —
 `lib/pulsar/components/select.ex:117`. Remove button has
@@ -291,11 +292,11 @@ the `field` wrapper level.
   and `xl` (`min-h-14`=56px) exceed the AAA 44×44 floor. Smaller sizes
   do not.
 
-## Browser a11y findings (PUL-11)
+## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+Violations surfaced by the axe-core browser gate.
 
-| Rule | Affected variant(s) | Themes | Ticket |
-|------|---------------------|--------|--------|
-| `select-name` | unlabelled selects in fixture | both | [PUL-38](https://linear.app/bigrefactor/issue/PUL-38/select-fix-axe-select-name-violation) |
-| `color-contrast` | success outline variant | both | [PUL-39](https://linear.app/bigrefactor/issue/PUL-39/select-fix-axe-color-contrast-violation) |
+| Rule | Affected variant(s) | Themes |
+|------|---------------------|--------|
+| `select-name` | unlabelled selects in fixture | both |
+| `color-contrast` | success outline variant | both |

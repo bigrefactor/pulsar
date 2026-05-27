@@ -3,8 +3,8 @@ defmodule Pulsar.DevApp.FixturesTest do
   Smoke test for the in-repo fixture app: every fixture LiveView must mount
   cleanly with no logger output above :warning level.
 
-  This is the explicit PUL-10 acceptance criterion ("each fixture LiveView
-  renders without warnings") and the safety net for PUL-11+ Tier E work.
+  This is the acceptance criterion that each fixture LiveView renders
+  without warnings, and the safety net for the browser-audit Tier E work.
   """
 
   # async: false so capture_log doesn't pick up warnings from concurrent

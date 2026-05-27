@@ -63,7 +63,7 @@ ARIA role/live region also signals criticality non-visually —
 **Notes:** Color variants convey criticality redundantly with role
 (`alert` vs `status`) and conventional icons; not color-only.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious, [PUL-32](https://linear.app/bigrefactor/issue/PUL-32/flash-fix-axe-color-contrast-violation))
+### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious)
 
 **Evidence:** Colors come from semantic tokens via `@color_config`
 (text/bg/border pairs across 3 variants × 7 colors × 2 themes) —
@@ -76,11 +76,11 @@ cells per theme ([light](measurements/flash-light.md),
   `outline-success`, `outline-warning`, `ghost-danger`,
   `ghost-primary`, `ghost-success`, `ghost-warning`, `dismissible`.
 
-**Notes:** Existing [PUL-32](https://linear.app/bigrefactor/issue/PUL-32)
-scoped to "light: success solid; dark: primary/secondary solid";
-expand to cover the broader set surfaced here. Same defect pattern
-as Button/Badge — high-luminance solid/ghost backgrounds in light
-mode + foreground text token combination.
+**Notes:** Originally scoped to "light: success solid; dark:
+primary/secondary solid"; the failure set extends to the broader
+matrix surfaced here. Same defect pattern as Button/Badge —
+high-luminance solid/ghost backgrounds in light mode + foreground
+text token combination.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -195,7 +195,7 @@ No flashing/blinking.
 after the content — `lib/pulsar/components/flash.ex:300–311`. No
 positive `tabindex` values used.
 
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious, [PUL-32](https://linear.app/bigrefactor/issue/PUL-32/flash-fix-axe-color-contrast-violation))
+### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious)
 
 **Evidence:**
 - Close button uses `focus-visible:outline-none focus-visible:ring-2
@@ -207,8 +207,7 @@ positive `tabindex` values used.
 `ring-current` inherits the foreground text color. Wherever 1.4.3
 passes (4.5:1 text vs bg), the focus ring exceeds the 3:1 non-text
 minimum by definition. Failures here are the same set as the 1.4.3
-failures, covered by [PUL-32](https://linear.app/bigrefactor/issue/PUL-32);
-no separate sub-issue.
+failures and are tracked together; no separate sub-issue.
 
 **Notes:** Ring only appears on keyboard focus, not mouse click —
 matches the rest of the library.
@@ -338,10 +337,10 @@ auto-announced; the role↔live-region mapping (`alert→assertive`,
 - **2.5.5 Target Size (Enhanced) (AAA)** — not met by any size;
   largest close button is exactly 24×24 (lg). Below the AAA 44×44 target.
 
-## Browser a11y findings (PUL-11)
+## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+Violations surfaced by the axe-core browser gate.
 
-| Rule | Affected variant(s) | Themes | Ticket |
-|------|---------------------|--------|--------|
-| `color-contrast` | light: success solid; dark: primary/secondary solid | both | [PUL-32](https://linear.app/bigrefactor/issue/PUL-32/flash-fix-axe-color-contrast-violation) |
+| Rule | Affected variant(s) | Themes |
+|------|---------------------|--------|
+| `color-contrast` | light: success solid; dark: primary/secondary solid | both |

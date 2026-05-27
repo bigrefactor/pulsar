@@ -57,7 +57,7 @@ and (when used via field) a text error message —
 `lib/pulsar/components/input.ex:417, 466`. Disabled state combines
 opacity + cursor + native `disabled` attr.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious, [PUL-34](https://linear.app/bigrefactor/issue/PUL-34/input-fix-axe-color-contrast-violation))
+### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious)
 
 **Evidence:** Color/variant matrix uses semantic tokens —
 `lib/pulsar/components/input.ex:162–211, 213–250`. Browser measurement
@@ -73,11 +73,10 @@ of 361 cells per theme ([light](measurements/input-light.md),
   in light mode pair high-luminance bg with text foreground in a
   way that undershoots 4.5:1.
 
-**Notes:** Existing [PUL-34](https://linear.app/bigrefactor/issue/PUL-34)
-scoped to "success outline variant"; expand to cover the warning
-variant and all `solid-*` variants in light mode. Pattern is the same
-as Button — success/warning color tokens need higher contrast in
-light theme.
+**Notes:** Originally scoped to "success outline variant"; the failure
+set extends to the warning variant and all `solid-*` variants in light
+mode. Pattern is the same as Button — success/warning color tokens
+need higher contrast in light theme.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -94,11 +93,13 @@ larger user text settings.
 padding only) — `lib/pulsar/components/input.ex:452`. No fixed widths or
 min-widths.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — borders measured on wrapper
+### 1.4.11 Non-text Contrast (AA) — ✓ PASS — borders measured on wrapper
 
 **Evidence:**
 - Outline variant uses `border-2` with semantic border colors —
   `lib/pulsar/components/input.ex:156, 179–194`
+- Outline-neutral routes through `border-border-strong` —
+  `lib/pulsar/components/input.ex:181`
 - Focus ring is `focus-within:ring-2 focus-within:ring-offset-2` —
   `lib/pulsar/components/input.ex:150`
 - Test `includes focus ring classes` —
@@ -107,14 +108,15 @@ min-widths.
 Browser measurement reads `no-border` and `no-focus-ring` for every
 input cell because the `data-fixture-cell` is on the `<input>`
 element while the visible border and focus-within ring live on the
-wrapping container. The shared `--color-border` and `--color-ring`
-tokens are the same ones measured on Button (`--color-ring` 5.02:1 /
-6.72:1) and Card (`outline-neutral` border 1.18:1 / 1.21:1 fails).
+wrapping container. The shared `--color-border-strong` and
+`--color-ring` tokens are the same ones measured on Button
+(`--color-ring` 5.02:1 / 6.72:1, `outline-neutral` border 4.63:1 in
+both themes).
 
-**Notes:** Outline-neutral border fails by symmetry with Button /
-Card / List measurements — covered by the single follow-up
-`button-outline-neutral-border` rather than a separate input-specific
-ticket. Other outline colors pass (primary 4.4:1, danger 4.2:1).
+**Notes:** `--color-border-strong` resolves to `gray-500` (light) /
+`gray-400` (dark), giving the outline-neutral wrapper edge ≥4.5:1
+against the page background. Other outline colors continue to pass
+(primary 4.4:1, danger 4.2:1).
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -285,10 +287,10 @@ where needed.
   (2px), meeting AAA minimum thickness. Contrast still needs browser
   verification.
 
-## Browser a11y findings (PUL-11)
+## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+Violations surfaced by the axe-core browser gate.
 
-| Rule | Affected variant(s) | Themes | Ticket |
-|------|---------------------|--------|--------|
-| `color-contrast` | success outline variant | both | [PUL-34](https://linear.app/bigrefactor/issue/PUL-34/input-fix-axe-color-contrast-violation) |
+| Rule | Affected variant(s) | Themes |
+|------|---------------------|--------|
+| `color-contrast` | success outline variant | both |

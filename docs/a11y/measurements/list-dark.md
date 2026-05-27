@@ -24,7 +24,7 @@ Columns:
 
 | Cell ID | Tag | Width | Height | ≥24×24 | Text | Border | Focus |
 |---------|-----|-------|--------|--------|------|--------|-------|
-| `empty-headerless` | `div` | 471 | 179 | ✓ | 7.74:1 ✓ | 1.21:1 ✗ | — (not-focusable-in-state) |
+| `empty-headerless` | `div` | 471 | 179 | ✓ | 7.74:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
 | `empty-with-header` | `div` | 471 | 179 | ✓ | 19.27:1 ✓ | 6.72:1 ✓ | — (not-focusable-in-state) |
 | `ghost-danger-lg` | `dl` | 308.66 | 278 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `ghost-danger-md` | `dl` | 308.67 | 278 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
@@ -44,12 +44,12 @@ Columns:
 | `ghost-warning-lg` | `dl` | 308.66 | 278 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `ghost-warning-md` | `dl` | 308.67 | 278 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `ghost-warning-sm` | `dl` | 308.66 | 278 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `outline-danger-lg` | `dl` | 308.66 | 280 | ✓ | 19.27:1 ✓ | 6.14:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-md` | `dl` | 308.67 | 280 | ✓ | 19.27:1 ✓ | 6.14:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-sm` | `dl` | 308.66 | 280 | ✓ | 19.27:1 ✓ | 6.14:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-lg` | `dl` | 308.66 | 280 | ✓ | 19.27:1 ✓ | 1.21:1 ✗ | — (not-focusable-in-state) |
-| `outline-neutral-md` | `dl` | 308.67 | 280 | ✓ | 19.27:1 ✓ | 1.21:1 ✗ | — (not-focusable-in-state) |
-| `outline-neutral-sm` | `dl` | 308.66 | 280 | ✓ | 19.27:1 ✓ | 1.21:1 ✗ | — (not-focusable-in-state) |
+| `outline-danger-lg` | `dl` | 308.66 | 280 | ✓ | 19.27:1 ✓ | 9.25:1 ✓ | — (not-focusable-in-state) |
+| `outline-danger-md` | `dl` | 308.67 | 280 | ✓ | 19.27:1 ✓ | 9.25:1 ✓ | — (not-focusable-in-state) |
+| `outline-danger-sm` | `dl` | 308.66 | 280 | ✓ | 19.27:1 ✓ | 9.25:1 ✓ | — (not-focusable-in-state) |
+| `outline-neutral-lg` | `dl` | 308.66 | 280 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
+| `outline-neutral-md` | `dl` | 308.67 | 280 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
+| `outline-neutral-sm` | `dl` | 308.66 | 280 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
 | `outline-primary-lg` | `dl` | 308.66 | 280 | ✓ | 19.27:1 ✓ | 6.72:1 ✓ | — (not-focusable-in-state) |
 | `outline-primary-md` | `dl` | 308.67 | 280 | ✓ | 19.27:1 ✓ | 6.72:1 ✓ | — (not-focusable-in-state) |
 | `outline-primary-sm` | `dl` | 308.66 | 280 | ✓ | 19.27:1 ✓ | 6.72:1 ✓ | — (not-focusable-in-state) |
@@ -62,9 +62,9 @@ Columns:
 | `outline-warning-lg` | `dl` | 308.66 | 280 | ✓ | 19.27:1 ✓ | 10.3:1 ✓ | — (not-focusable-in-state) |
 | `outline-warning-md` | `dl` | 308.67 | 280 | ✓ | 19.27:1 ✓ | 10.3:1 ✓ | — (not-focusable-in-state) |
 | `outline-warning-sm` | `dl` | 308.66 | 280 | ✓ | 19.27:1 ✓ | 10.3:1 ✓ | — (not-focusable-in-state) |
-| `solid-danger-lg` | `dl` | 308.66 | 280 | ✓ | 16.09:1 ✓ | 1.32:1 ✗ | — (not-focusable-in-state) |
-| `solid-danger-md` | `dl` | 308.67 | 280 | ✓ | 16.09:1 ✓ | 1.32:1 ✗ | — (not-focusable-in-state) |
-| `solid-danger-sm` | `dl` | 308.66 | 280 | ✓ | 16.09:1 ✓ | 1.32:1 ✗ | — (not-focusable-in-state) |
+| `solid-danger-lg` | `dl` | 308.66 | 280 | ✓ | 15.66:1 ✓ | 1.49:1 ✗ | — (not-focusable-in-state) |
+| `solid-danger-md` | `dl` | 308.67 | 280 | ✓ | 15.66:1 ✓ | 1.49:1 ✗ | — (not-focusable-in-state) |
+| `solid-danger-sm` | `dl` | 308.66 | 280 | ✓ | 15.66:1 ✓ | 1.49:1 ✗ | — (not-focusable-in-state) |
 | `solid-neutral-lg` | `dl` | 308.66 | 280 | ✓ | 16.98:1 ✓ | 1.21:1 ✗ | — (not-focusable-in-state) |
 | `solid-neutral-md` | `dl` | 308.67 | 280 | ✓ | 16.98:1 ✓ | 1.21:1 ✗ | — (not-focusable-in-state) |
 | `solid-neutral-sm` | `dl` | 308.66 | 280 | ✓ | 16.98:1 ✓ | 1.21:1 ✗ | — (not-focusable-in-state) |

@@ -24,9 +24,9 @@ Columns:
 
 | Cell ID | Tag | Width | Height | ≥24×24 | Text | Border | Focus |
 |---------|-----|-------|--------|--------|------|--------|-------|
-| `error` | `label` | 115.5 | 18 | ✗ | 6.14:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `error` | `label` | 115.5 | 18 | ✗ | 9.25:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `required` | `label` | 122.13 | 18 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `required-error` | `label` | 136.28 | 18 | ✗ | 6.14:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `required-error` | `label` | 136.28 | 18 | ✗ | 9.25:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `size-lg` | `label` | 89.06 | 21 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `size-md` | `label` | 90.55 | 18 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `size-sm` | `label` | 79.34 | 17 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |

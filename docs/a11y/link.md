@@ -74,7 +74,7 @@ variant works for high-contrast colors; callers should choose
 for body-copy links. Document in usage notes; not filed as a
 sub-issue.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious, [PUL-36](https://linear.app/bigrefactor/issue/PUL-36/link-fix-axe-color-contrast-violation))
+### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious)
 
 **Evidence:** Colors come from semantic tokens
 (`text-primary`, `text-danger`, dark-mode pairs, etc.) —
@@ -88,11 +88,10 @@ opacity on the same token. Browser measurement of 97 cells per theme
   ghost/link/outline/solid in `success`, `warning` colors; plus
   `solid-success` and `solid-warning`.
 
-**Notes:** Existing [PUL-36](https://linear.app/bigrefactor/issue/PUL-36)
-scoped to "light: success/warning/error solid; dark: primary/success
-solid"; partially overlaps. Re-scope to include all ghost/outline/
-link variants in success/warning colors — same upstream token fix
-applies to text everywhere.
+**Notes:** Originally scoped to "light: success/warning/error solid;
+dark: primary/success solid"; the failure set extends to all
+ghost/outline/link variants in success/warning colors — same
+upstream token fix applies to text everywhere.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -111,7 +110,7 @@ size.
 **Notes:** Link width is content-driven; reflows at 320 CSS px without
 horizontal scroll.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious, PUL-19 follow-up: link-focus-ring-opacity)
+### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious, follow-up: link-focus-ring-opacity)
 
 **Evidence:** Focus ring is `ring-2 ring-ring/50` (and
 `dark:ring-dark-ring/50` in dark mode) with `ring-offset-1` —
@@ -122,11 +121,10 @@ in dark across every color variant — substantially below the 3:1
 minimum. Cause is the `/50` (50% alpha) modifier on the ring color
 token.
 
-**Notes:** New finding — `link-focus-ring-opacity` to be filed as a
-Linear sub-issue parented to PUL-19. Fix is to drop `/50` (use full-
-opacity `ring-ring` / `dark:ring-dark-ring`), matching Button which
-measures 5.02:1 / 6.72:1 with the same underlying token at full
-opacity.
+**Notes:** New finding — tracked as `link-focus-ring-opacity`. Fix
+is to drop `/50` (use full-opacity `ring-ring` / `dark:ring-dark-ring`),
+matching Button which measures 5.02:1 / 6.72:1 with the same
+underlying token at full opacity.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -182,7 +180,7 @@ responsible for descriptive content (avoid "click here" patterns).
 **Evidence:** `inner_block` required (visible label); `aria_label`
 available as supplemental — `lib/pulsar/components/link.ex:70, 77`.
 
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious, PUL-19 follow-up: link-focus-ring-opacity)
+### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious, follow-up: link-focus-ring-opacity)
 
 **Evidence:**
 - Base classes include `focus-visible:outline-none`,
@@ -315,10 +313,10 @@ only status-like attribute and is correctly pass-through —
   doesn't meet the AAA 4.5:1 requirement — link is **not** an AAA win
   under 2.4.13 until `link-focus-ring-opacity` is resolved.
 
-## Browser a11y findings (PUL-11)
+## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+Violations surfaced by the axe-core browser gate.
 
-| Rule | Affected variant(s) | Themes | Ticket |
-|------|---------------------|--------|--------|
-| `color-contrast` | light: success/warning/error solid; dark: primary/success solid | both | [PUL-36](https://linear.app/bigrefactor/issue/PUL-36/link-fix-axe-color-contrast-violation) |
+| Rule | Affected variant(s) | Themes |
+|------|---------------------|--------|
+| `color-contrast` | light: success/warning/error solid; dark: primary/success solid | both |

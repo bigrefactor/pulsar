@@ -178,7 +178,7 @@ defmodule Pulsar.Components.Input do
         "border-danger/60 bg-background text-danger placeholder:text-danger/70 focus-within:ring-danger/60 hover:border-danger",
       "info" =>
         "border-info/60 bg-background text-info placeholder:text-info/70 focus-within:ring-info/60 hover:border-info",
-      "neutral" => "border-border bg-background text-foreground focus-within:ring-ring hover:border-primary/50",
+      "neutral" => "border-border-strong bg-background text-foreground focus-within:ring-ring hover:border-primary/50",
       "primary" =>
         "border-primary/60 bg-background text-primary placeholder:text-primary/70 focus-within:ring-primary/60 hover:border-primary",
       "secondary" =>

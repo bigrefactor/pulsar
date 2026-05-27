@@ -99,7 +99,7 @@ defmodule Pulsar.Components.Badge do
     "outline" => %{
       "danger" => "border border-danger text-danger bg-background",
       "info" => "border border-info text-info bg-background",
-      "neutral" => "border border-border text-neutral bg-background",
+      "neutral" => "border border-border-strong text-neutral bg-background",
       "primary" => "border border-primary text-primary bg-background",
       "secondary" => "border border-secondary text-secondary bg-background",
       "success" => "border border-success text-success bg-background",

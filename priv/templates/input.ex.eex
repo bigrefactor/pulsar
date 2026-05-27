@@ -181,7 +181,7 @@ alias Phoenix.LiveView.Rendered
     "info" =>
       "border-info/60 bg-background text-info placeholder:text-info/70 focus-within:ring-info/60 hover:border-info",
     "neutral" =>
-      "border-border bg-background text-foreground focus-within:ring-ring hover:border-primary/50",
+      "border-border-strong bg-background text-foreground focus-within:ring-ring hover:border-primary/50",
     "primary" =>
       "border-primary/60 bg-background text-primary placeholder:text-primary/70 focus-within:ring-primary/60 hover:border-primary",
     "secondary" =>

@@ -6,7 +6,7 @@ defmodule Mix.Tasks.Pulsar.A11y.Measure do
   a markdown report per `(component, theme)` to
   `docs/a11y/measurements/<component>-<theme>.md`.
 
-  This is the automation harness behind the PUL-19 browser audit. It does
+  This is the automation harness behind the browser-verification a11y audit. It does
   not pass/fail — it produces measurement artifacts that humans (or the
   later doc-update phase) interpret. The tests themselves live at
   `test/integration/a11y/measure_test.exs` under the `:measure` tag, which

@@ -217,7 +217,7 @@ defmodule Pulsar.Components.Textarea do
         "hover:border-info"
       ],
       "neutral" => [
-        "border-border",
+        "border-border-strong",
         "bg-background",
         "text-foreground",
         "focus:ring-ring",

@@ -165,7 +165,7 @@ defmodule Pulsar.Components.Button do
       "danger" => "border-2 border-danger bg-background text-danger hover:bg-danger/5 active:bg-danger/10",
       "info" => "border-2 border-info bg-background text-info hover:bg-info/5 active:bg-info/10",
       "neutral" =>
-        "border-2 border-border bg-background text-foreground hover:bg-surface-1-hover active:bg-surface-1-active",
+        "border-2 border-border-strong bg-background text-foreground hover:bg-surface-1-hover active:bg-surface-1-active",
       "primary" => "border-2 border-primary bg-background text-primary hover:bg-primary/5 active:bg-primary/10",
       "secondary" =>
         "border-2 border-secondary bg-background text-secondary hover:bg-secondary/5 active:bg-secondary/10",

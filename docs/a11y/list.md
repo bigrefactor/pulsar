@@ -34,9 +34,7 @@ Strict HTML5 allows `<dl>` to contain `<div>` wrappers only when the
 wrapping is around one or more `<dt>` + `<dd>` groups, which is what the
 component does. The empty-state path previously rendered a plain `<div>`
 ("No items to display") as a direct child of `<dl>`, which is invalid
-HTML5; PUL-17 resolved this by dropping `<dl>` entirely when empty.
-
-**Resolved:** [PUL-17](https://linear.app/bigrefactor/issue/PUL-17).
+HTML5; this is resolved by dropping `<dl>` entirely when empty.
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
@@ -59,7 +57,7 @@ dividers are decorative emphasis only —
 `<dt>` / `<dd>` semantics —
 `lib/pulsar/components/list.ex:152–250`.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious, [PUL-37](https://linear.app/bigrefactor/issue/PUL-37/list-fix-axe-color-contrast-violation))
+### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious)
 
 **Evidence:** Text uses semantic tokens like `text-foreground`,
 `text-primary`, `text-muted-foreground` —
@@ -70,11 +68,11 @@ per theme: all pass at the fixture level (min 7.56:1 light / 7.74:1
 dark) ([light](measurements/list-light.md),
 [dark](measurements/list-dark.md)).
 
-**Notes:** [PUL-37](https://linear.app/bigrefactor/issue/PUL-37)
-tracks axe-detected color-contrast on the `success dt on tinted bg`
-combo (light) and `dark text on dark bg` (dark) — neither variant
-is exercised by the fixture, so direct measurement doesn't surface
-them. The known gaps remain valid.
+**Notes:** A separate follow-up tracks axe-detected color-contrast
+on the `success dt on tinted bg` combo (light) and `dark text on
+dark bg` (dark) — neither variant is exercised by the fixture, so
+direct measurement doesn't surface them. The known gaps remain
+valid.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -92,16 +90,18 @@ breakpoint (`flex` falls through with no grid) and uses
 
 **Evidence:** Item dividers use `border-t border-border` —
 `lib/pulsar/components/list.ex:352, 383`. Outline variant border-1 on
-the wrapper — `lib/pulsar/components/list.ex:144, 513`. Solid variant
-uses 20% opacity borders — `lib/pulsar/components/list.ex:222–248`.
-Browser measurement: 38 border cells per theme, 16 pass. Failing:
-`outline-neutral` (1.18:1 / 1.21:1), `empty-headerless` (no
-meaningful border), and all `solid-*` 20%-alpha borders (≈1.5:1).
+the wrapper — `lib/pulsar/components/list.ex:144, 513`. Outline-neutral
+routes through `border-border-strong` —
+`lib/pulsar/components/list.ex:144`. Solid variant uses 20% opacity
+borders — `lib/pulsar/components/list.ex:222–248`. Browser measurement:
+38 border cells per theme. Outline variants pass (`outline-neutral`
+now 4.63:1 in both themes via `--color-border-strong`). Failing:
+`empty-headerless` (no meaningful border) and all `solid-*` 20%-alpha
+borders (≈1.5:1).
 
 **Notes:** Same disposition as Card — decorative item separators
 and container outlines that don't communicate state are out of
-scope per WCAG 1.4.11. The `outline-neutral` case folds into the
-shared `button-outline-neutral-border` follow-up.
+scope per WCAG 1.4.11.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -171,10 +171,10 @@ roles. Header `<h3>` renders only when a `:title` slot is supplied —
   exceed what most data-list components ship — many comparable libraries
   use plain `<div>` rows.
 
-## Browser a11y findings (PUL-11)
+## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate added in `pul-11-axe-playwright`.
+Violations surfaced by the axe-core browser gate.
 
-| Rule | Affected variant(s) | Themes | Ticket |
-|------|---------------------|--------|--------|
-| `color-contrast` | light: success dt on tinted bg; dark: dark text on dark bg (~1:1) | both | [PUL-37](https://linear.app/bigrefactor/issue/PUL-37/list-fix-axe-color-contrast-violation) |
+| Rule | Affected variant(s) | Themes |
+|------|---------------------|--------|
+| `color-contrast` | light: success dt on tinted bg; dark: dark text on dark bg (~1:1) | both |
