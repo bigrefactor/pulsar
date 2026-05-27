@@ -195,7 +195,7 @@ No flashing/blinking.
 after the content — `lib/pulsar/components/flash.ex:300–311`. No
 positive `tabindex` values used.
 
-### 2.4.7 Focus Visible (AA) — ✓ PASS
+### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious, [PUL-32](https://linear.app/bigrefactor/issue/PUL-32/flash-fix-axe-color-contrast-violation))
 
 **Evidence:**
 - Close button uses `focus-visible:outline-none focus-visible:ring-2

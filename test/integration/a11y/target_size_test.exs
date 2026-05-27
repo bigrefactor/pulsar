@@ -1,16 +1,25 @@
 defmodule Pulsar.Integration.A11y.TargetSizeTest do
   @moduledoc """
   WCAG 2.5.8 Target Size (Minimum) regression gate. Per fixture × theme,
-  asserts every interactive `[data-fixture-cell]` whose underlying tag is
-  one of `button`, `a`, `input`, `select`, `textarea` meets ≥ 24×24 CSS
+  asserts every interactive `[data-fixture-cell]` meets ≥ 24×24 CSS
   pixels via `getBoundingClientRect()`.
 
+  Interactive cells are those whose tag is `button`, `select`, or
+  `textarea`, or whose tag is `input` and `type` is in the text-input
+  allowlist (`text`, `email`, `password`, `number`, `search`, `tel`,
+  `url`, `date`, `datetime-local`, `month`, `time`, `week`). Checkbox /
+  radio / switch inputs are excluded — the effective target is the
+  wrapping label and the WCAG 2.5.8 spacing exception covers small
+  visual sizes (see `checkbox.md`, `switch.md`, `radio_group.md` 2.5.8
+  entries). `<a>` is excluded because the WCAG inline-link exception
+  is context-dependent (the same link size can be a 2.5.8 violation
+  standalone and a pass inline in body text); inline links are
+  explicitly supported by the Link component, so gating them here
+  would force a one-size-fits-all constraint that doesn't match the
+  component's design.
+
   Cells carrying `data-target-size-exception` are allowlisted (e.g.
-  flash dismiss button — per WCAG 2.5.8 spacing exception). Checkbox /
-  switch inputs at small sizes intentionally fall below 24×24 because
-  the effective target is the surrounding label; those are excluded
-  here by the `input[type="checkbox"]` and `input[type="radio"]`
-  filter (radio_group's underlying inputs likewise).
+  flash dismiss button — per WCAG 2.5.8 spacing exception).
 
   Tagged `:integration`; excluded from `mix test` by default. Run with
   `mix test --only integration`. Tag rationale matches AxeCleanTest.
@@ -29,15 +38,6 @@ defmodule Pulsar.Integration.A11y.TargetSizeTest do
 
   @moduletag :integration
 
-  # Interactive tags worth gating. Checkbox / radio / switch inputs are
-  # excluded — their effective target is the wrapping label and the WCAG
-  # spacing exception covers small visual sizes (see `checkbox.md`,
-  # `switch.md`, `radio_group.md` 2.5.8 entries). `<a>` is excluded
-  # because the WCAG inline-link exception depends on context (the same
-  # link size can be a 2.5.8 violation standalone and a pass inline in
-  # body text); inline links are explicitly supported by the Link
-  # component, so gating them here would force a one-size-fits-all
-  # constraint that doesn't match the component's design.
   @interactive_tags ~w(button select textarea)
   @text_input_types ~w(text email password number search tel url date datetime-local month time week)
 

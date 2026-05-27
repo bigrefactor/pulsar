@@ -1,26 +1,47 @@
 defmodule Pulsar.Integration.A11y.ReflowTest do
   @moduledoc """
-  WCAG 1.4.10 Reflow regression gate. Per fixture × theme, constrains
-  `html, body` to 320 CSS pixels and asserts the page does not require
-  horizontal scrolling — `document.documentElement.scrollWidth <=
-  320 + tolerance`.
+  WCAG 1.4.10 Reflow regression gate (component-scoped). Per fixture
+  × theme, constrains `html, body` to 320 CSS pixels and asserts no
+  `[data-fixture-cell]` renders wider than that constraint —
+  `getBoundingClientRect().width <= 320 + tolerance` for every fixture
+  cell.
+
+  ## Scope: why this is component-scoped, not page-scoped
+
+  WCAG 1.4.10's normative measurement is the page (`document.documentElement.scrollWidth`
+  at a 320 CSS px viewport). This test can't make that measurement
+  directly: Playwright sets the browser's layout viewport (typically
+  1280 px), and injecting `html { width: 320px !important }` doesn't
+  change the layout viewport — `documentElement.scrollWidth` continues
+  to reflect viewport width regardless of the CSS constraint. Genuine
+  page-level reflow gating would require setting the Playwright
+  viewport itself, which is a larger architectural change.
+
+  The CSS-injection approach DOES change individual element layout
+  (an element with `width: 100%` shrinks; an element with explicit
+  width over 320 stays wide). So the meaningful, accurate assertion
+  this test can make is: "no `[data-fixture-cell]` exceeds 320 CSS
+  px when the body box is narrowed to 320 px." That's what's gated
+  here.
 
   Containers tagged `data-reflow-allowed` (e.g. table's intentional
-  `overflow-x-auto` wrapper, per WCAG 1.4.10 — data tables are explicit
-  exempt content) are subtracted from the page's effective scroll
-  width: they're allowed to scroll horizontally inside themselves
-  without that counting as a page-level reflow failure.
+  `overflow-x-auto` wrapper, per WCAG 1.4.10 — data tables are
+  explicit exempt content) and their descendants are excluded:
+  they're allowed to scroll horizontally inside themselves without
+  counting as a reflow violation. Fixed / sticky elements are
+  excluded because they render against the viewport, not the
+  constrained html/body.
 
-  Per-element internal overflow (e.g. a placeholder string wider than
-  its narrowed input) is **not** a reflow violation — the input scrolls
-  its own contents and the page does not. Only page-level overflow is
-  asserted here.
+  Per-element internal overflow (e.g. a placeholder string wider
+  than its narrowed input) is **not** a reflow violation — the input
+  scrolls its own contents.
 
-  Note: this is a CSS-only viewport constraint. Media queries based on
-  viewport width don't trigger — interpret a failure as worst-case,
-  not as media-query-aware behavior. Pulsar components are
-  content-driven (no fixed widths or min-widths called out in the
-  1.4.10 audit evidence), so the worst case is the real case here.
+  Note: this is a CSS-only viewport constraint. Media queries based
+  on viewport width don't trigger — interpret a failure as
+  worst-case, not as media-query-aware behavior. Pulsar components
+  are content-driven (no fixed widths or min-widths called out in
+  the 1.4.10 audit evidence), so the worst case is the real case
+  here.
 
   Tagged `:integration`; run with `mix test --only integration`. Tag
   rationale matches AxeCleanTest.
@@ -28,7 +49,7 @@ defmodule Pulsar.Integration.A11y.ReflowTest do
   ## Verification
 
   Add `min-width: 480px` to a Button base class, rebuild assets,
-  re-run — Button fixtures fail with page scrollWidth ≫ 320.
+  re-run — Button fixtures fail with a fixture cell wider than 320.
   """
 
   use PhoenixTest.Playwright.Case, async: true
@@ -117,7 +138,7 @@ defmodule Pulsar.Integration.A11y.ReflowTest do
       page_scroll = result["pageScroll"] || 0
       offenders = result["offenders"] || []
 
-      if page_scroll > @reflow_width + @tolerance and offenders != [] do
+      if offenders != [] do
         details =
           Enum.map_join(offenders, "\n", fn o ->
             "  - `#{o["id"]}` rendered #{o["width"]} px wide (constraint: #{@reflow_width} px)"
@@ -125,7 +146,8 @@ defmodule Pulsar.Integration.A11y.ReflowTest do
 
         raise ExUnit.AssertionError,
           message:
-            "WCAG 1.4.10 Reflow — page horizontally scrolls (scrollWidth #{page_scroll}) at #{@reflow_width} CSS px on #{@route} [#{@theme}]:\n#{details}\n\n" <>
+            "WCAG 1.4.10 Reflow — fixture cell wider than #{@reflow_width} CSS px on #{@route} [#{@theme}] " <>
+              "(observed documentElement.scrollWidth: #{page_scroll} px — see moduledoc on why this isn't asserted directly):\n#{details}\n\n" <>
               "If the wide element is an intentional scroll container (e.g. wide data table), tag it with `data-reflow-allowed`."
       end
     end
