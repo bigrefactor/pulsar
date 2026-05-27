@@ -335,7 +335,7 @@ defmodule Pulsar.Components.Table do
   * an `aria_labelledby` attr — referencing an existing heading's id.
 
   Passing `aria-label` / `aria-labelledby` via global attributes also works. If
-  none of these is provided, a `Logger.info` message is emitted to nudge the
+  none of these is provided, a `Logger.warning` message is emitted to nudge the
   caller; rendering is not blocked.
 
   ## Examples
@@ -543,16 +543,18 @@ defmodule Pulsar.Components.Table do
 
   # Emit a dev-time nudge when no accessible name is provided.
   #
-  # Why info (not warning): library log discipline — the caller's app controls
-  # log level. Info is filtered in typical prod configs and surfaces in dev.
+  # Phoenix convention: caller-facing "you may be holding it wrong" nudges use
+  # Logger.warning (see Phoenix.Controller.warn_if_ajax/1). Logger.info is for
+  # operational lifecycle events (endpoint start). The caller's app log level
+  # filter controls visibility either way.
   defp warn_if_missing_accessible_name(assigns) do
     if assigns[:caption] in [nil, []] and
-         is_nil(assigns[:aria_label]) and
-         is_nil(assigns[:aria_labelledby]) and
+         not present_string?(assigns[:aria_label]) and
+         not present_string?(assigns[:aria_labelledby]) and
          not rest_has_aria_name?(assigns[:rest]) do
       require Logger
 
-      Logger.info("""
+      Logger.warning("""
       <.table> rendered without an accessible name. Provide one of:
         * :caption slot
         * aria_label attr
@@ -566,11 +568,14 @@ defmodule Pulsar.Components.Table do
   defp rest_has_aria_name?(nil), do: false
 
   defp rest_has_aria_name?(rest) do
-    Enum.any?(rest, fn {k, _} ->
+    Enum.any?(rest, fn {k, v} ->
       k_str = to_string(k)
-      k_str == "aria-label" or k_str == "aria-labelledby"
+      (k_str == "aria-label" or k_str == "aria-labelledby") and present_string?(v)
     end)
   end
+
+  defp present_string?(value) when is_binary(value), do: String.trim(value) != ""
+  defp present_string?(_), do: false
 
   # Set up LiveStream detection and row handling
   defp setup_stream_handling(assigns) do

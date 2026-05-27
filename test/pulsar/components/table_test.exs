@@ -8,8 +8,6 @@ defmodule Pulsar.Components.TableTest do
   alias Phoenix.LiveView.LiveStream
   alias Pulsar.Components.Table
 
-  require Logger
-
   describe "table/1 basic functionality" do
     test "renders basic table with defaults" do
       assigns = %{
@@ -566,17 +564,11 @@ defmodule Pulsar.Components.TableTest do
       assert html =~ ~r/<table[^>]*aria-labelledby="users-heading"/
     end
 
-    test "emits Logger.info when no accessible name is provided" do
-      # The project's test config filters logs below :warning. Lower the level
-      # for this test so the info message reaches capture_log's handler.
-      original_level = Logger.level()
-      Logger.configure(level: :info)
-      on_exit(fn -> Logger.configure(level: original_level) end)
-
+    test "emits Logger.warning when no accessible name is provided" do
       assigns = %{users: []}
 
       log =
-        capture_log([level: :info], fn ->
+        capture_log(fn ->
           rendered_to_string(~H"""
           <Table.table id="users" rows={@users}>
             <:col label="Name" />
@@ -587,11 +579,11 @@ defmodule Pulsar.Components.TableTest do
       assert log =~ "rendered without an accessible name"
     end
 
-    test "Logger.info is suppressed when :caption slot is provided" do
+    test "Logger.warning is suppressed when :caption slot is provided" do
       assigns = %{users: []}
 
       log =
-        capture_log([level: :info], fn ->
+        capture_log(fn ->
           rendered_to_string(~H"""
           <Table.table id="users" rows={@users}>
             <:caption>Users</:caption>
@@ -603,11 +595,11 @@ defmodule Pulsar.Components.TableTest do
       refute log =~ "rendered without an accessible name"
     end
 
-    test "Logger.info is suppressed when aria_label attr is provided" do
+    test "Logger.warning is suppressed when aria_label attr is provided" do
       assigns = %{users: []}
 
       log =
-        capture_log([level: :info], fn ->
+        capture_log(fn ->
           rendered_to_string(~H"""
           <Table.table id="users" rows={@users} aria_label="Users">
             <:col label="Name" />
@@ -618,11 +610,11 @@ defmodule Pulsar.Components.TableTest do
       refute log =~ "rendered without an accessible name"
     end
 
-    test "Logger.info is suppressed when aria_labelledby attr is provided" do
+    test "Logger.warning is suppressed when aria_labelledby attr is provided" do
       assigns = %{users: []}
 
       log =
-        capture_log([level: :info], fn ->
+        capture_log(fn ->
           rendered_to_string(~H"""
           <Table.table id="users" rows={@users} aria_labelledby="users-heading">
             <:col label="Name" />
@@ -633,11 +625,11 @@ defmodule Pulsar.Components.TableTest do
       refute log =~ "rendered without an accessible name"
     end
 
-    test "Logger.info is suppressed when aria-label passes through global @rest" do
+    test "Logger.warning is suppressed when aria-label passes through global @rest" do
       assigns = %{users: []}
 
       log =
-        capture_log([level: :info], fn ->
+        capture_log(fn ->
           rendered_to_string(~H"""
           <Table.table id="users" rows={@users} aria-label="Users">
             <:col label="Name" />
@@ -646,6 +638,36 @@ defmodule Pulsar.Components.TableTest do
         end)
 
       refute log =~ "rendered without an accessible name"
+    end
+
+    test "Logger.warning is NOT suppressed when aria_label is blank" do
+      assigns = %{users: []}
+
+      log =
+        capture_log(fn ->
+          rendered_to_string(~H"""
+          <Table.table id="users" rows={@users} aria_label="   ">
+            <:col label="Name" />
+          </Table.table>
+          """)
+        end)
+
+      assert log =~ "rendered without an accessible name"
+    end
+
+    test "Logger.warning is NOT suppressed when aria-label via @rest is blank" do
+      assigns = %{users: []}
+
+      log =
+        capture_log(fn ->
+          rendered_to_string(~H"""
+          <Table.table id="users" rows={@users} aria-label="">
+            <:col label="Name" />
+          </Table.table>
+          """)
+        end)
+
+      assert log =~ "rendered without an accessible name"
     end
 
     test "all three affordances can coexist without crashing" do

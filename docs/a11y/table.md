@@ -37,8 +37,8 @@ programmatic name even though it has no visible header text.
 
 **Notes:** No row headers — the component treats all data cells as
 `<td>`, which is correct for a generic data table where rows aren't
-labeled. The component does not support a `<caption>` element; see
-2.4.6.
+labeled. A `<caption>` element can be supplied via the `:caption` slot —
+see 2.4.6 for full accessible-name affordances.
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
