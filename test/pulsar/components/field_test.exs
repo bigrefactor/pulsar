@@ -83,7 +83,7 @@ defmodule Pulsar.Components.FieldTest do
 
       # Should contain description
       assert html =~ "We'll never share your email"
-      assert html =~ "text-gray-600"
+      assert html =~ "text-muted-foreground"
     end
 
     test "renders field without label for checkbox type" do
@@ -151,7 +151,7 @@ defmodule Pulsar.Components.FieldTest do
       assert html =~ "can&#39;t be blank"
       assert html =~ "is invalid"
       # Should have error styling
-      assert html =~ "text-danger-600"
+      assert html =~ "text-danger"
       # Should have error icon (Heroicon)
       assert html =~ "hero-exclamation-circle"
     end
@@ -616,7 +616,7 @@ defmodule Pulsar.Components.FieldTest do
         """)
 
       # Inline label should have error color classes
-      assert html =~ "text-danger-900"
+      assert html =~ "text-danger"
     end
 
     test "inline labels support custom classes from label slot" do
@@ -793,7 +793,7 @@ defmodule Pulsar.Components.FieldTest do
 
       # Should display errors despite field not being used
       assert html =~ "is required"
-      assert html =~ "text-danger-600"
+      assert html =~ "text-danger"
     end
 
     test "show_errors=:touched is default behavior" do

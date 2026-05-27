@@ -38,7 +38,7 @@ Columns:
 | `type-switch` | `input` | 1 | 1 | ✗ | 19.27:1 ✓ | — (no-border) | 5.73:1 ✓ |
 | `type-tel` | `input` | 467 | 36 | ✓ | 20.13:1 ✓ | — (no-border) | — (no-focus-ring) |
 | `type-text` | `input` | 467 | 36 | ✓ | 20.13:1 ✓ | — (no-border) | — (no-focus-ring) |
-| `type-textarea` | `textarea` | 471 | 112 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 19.27:1 ✓ |
+| `type-textarea` | `textarea` | 471 | 112 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
 | `type-url` | `input` | 467 | 36 | ✓ | 20.13:1 ✓ | — (no-border) | — (no-focus-ring) |
 
 ## Text-spacing override (WCAG 1.4.12)

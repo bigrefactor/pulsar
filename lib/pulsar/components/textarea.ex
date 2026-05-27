@@ -273,8 +273,8 @@ defmodule Pulsar.Components.Textarea do
       ],
       "neutral" => [
         "bg-neutral/10",
-        "text-neutral",
-        "placeholder:text-neutral/70",
+        "text-foreground",
+        "placeholder:text-muted-foreground",
         "focus-visible:ring-ring",
         "hover:bg-neutral/20"
       ],

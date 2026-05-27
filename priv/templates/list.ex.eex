@@ -226,7 +226,7 @@ alias Phoenix.LiveView.Socket
       title: "text-info"
     },
     "neutral" => %{
-      container: "bg-muted border border-border",
+      container: "bg-muted border border-border-strong",
       title: "text-foreground"
     },
     "primary" => %{

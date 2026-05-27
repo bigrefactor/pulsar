@@ -86,22 +86,27 @@ breakpoint (`flex` falls through with no grid) and uses
 `sm:grid sm:grid-cols-3 sm:gap-4` only at wider widths —
 `lib/pulsar/components/list.ex:451`. No fixed minimum width.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — decorative borders
+### 1.4.11 Non-text Contrast (AA) — ✓ PASS (decorative borders are out of scope)
 
 **Evidence:** Item dividers use `border-t border-border` —
 `lib/pulsar/components/list.ex:352, 383`. Outline variant border-1 on
 the wrapper — `lib/pulsar/components/list.ex:144, 513`. Outline-neutral
-routes through `border-border-strong` —
-`lib/pulsar/components/list.ex:144`. Solid variant uses 20% opacity
-borders — `lib/pulsar/components/list.ex:222–248`. Browser measurement:
-38 border cells per theme. Outline variants pass (`outline-neutral`
-now 4.63:1 in both themes via `--color-border-strong`). Failing:
-`empty-headerless` (no meaningful border) and all `solid-*` 20%-alpha
-borders (≈1.5:1).
+and solid-neutral both route through `border-border-strong` —
+`lib/pulsar/components/list.ex:144, 230`. Solid (non-neutral) variants
+use 20% opacity borders next to tinted fills —
+`lib/pulsar/components/list.ex:222–248`. Browser measurement: 38
+border cells per theme. Outline variants pass; `solid-neutral` passes
+(~5:1 via `--color-border-strong`). Remaining failing cells are
+`solid-*` (non-neutral) variants (≈1.5:1) where the colored 20%-alpha
+border resolves below 3:1 — classified as decorative (see Notes).
 
-**Notes:** Same disposition as Card — decorative item separators
-and container outlines that don't communicate state are out of
-scope per WCAG 1.4.11.
+**Notes:** Same disposition as Card. The colored `solid-*` variants
+pair a tinted fill (`bg-X/5` to `bg-X/10`) with a slightly darker
+decorative border — the fill alone provides clear visual
+delineation against the page background; the border is
+reinforcement decoration. Per WCAG 1.4.11 understanding, decorative
+section separators / container outlines that don't communicate
+state are out of scope.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 

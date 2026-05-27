@@ -24,9 +24,9 @@ Columns:
 
 | Cell ID | Tag | Width | Height | ≥24×24 | Text | Border | Focus |
 |---------|-----|-------|--------|--------|------|--------|-------|
-| `card-checked` | `label` | 229.97 | 60 | ✓ | 13.3:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `card-default` | `label` | 191.33 | 60 | ✓ | 16.62:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `card-hidden-checkbox` | `label` | 233.16 | 60 | ✓ | 16.62:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `card-checked` | `label` | 229.97 | 60 | ✓ | 12.77:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `card-default` | `label` | 191.33 | 60 | ✓ | 16.37:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `card-hidden-checkbox` | `label` | 233.16 | 60 | ✓ | 16.37:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `danger-lg-checked` | `input` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `danger-lg-disabled` | `input` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `danger-lg-indeterminate` | `input` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | 5.02:1 ✓ |

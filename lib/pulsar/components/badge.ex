@@ -90,7 +90,7 @@ defmodule Pulsar.Components.Badge do
     "ghost" => %{
       "danger" => "text-danger hover:bg-danger/10",
       "info" => "text-info hover:bg-info/10",
-      "neutral" => "text-neutral hover:bg-neutral/10",
+      "neutral" => "text-foreground hover:bg-neutral/10",
       "primary" => "text-primary hover:bg-primary/10",
       "secondary" => "text-secondary hover:bg-secondary/10",
       "success" => "text-success hover:bg-success/10",
@@ -99,7 +99,7 @@ defmodule Pulsar.Components.Badge do
     "outline" => %{
       "danger" => "border border-danger text-danger bg-background",
       "info" => "border border-info text-info bg-background",
-      "neutral" => "border border-border-strong text-neutral bg-background",
+      "neutral" => "border border-border-strong text-foreground bg-background",
       "primary" => "border border-primary text-primary bg-background",
       "secondary" => "border border-secondary text-secondary bg-background",
       "success" => "border border-success text-success bg-background",

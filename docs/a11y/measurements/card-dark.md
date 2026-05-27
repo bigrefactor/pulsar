@@ -81,9 +81,9 @@ Columns:
 | `solid-danger-lg` | `div` | 256 | 168 | ✓ | 14.22:1 ✓ | 1.49:1 ✗ | — (not-focusable-in-state) |
 | `solid-danger-md` | `div` | 256 | 152 | ✓ | 14.22:1 ✓ | 1.49:1 ✗ | — (not-focusable-in-state) |
 | `solid-danger-sm` | `div` | 256 | 136 | ✓ | 14.22:1 ✓ | 1.49:1 ✗ | — (not-focusable-in-state) |
-| `solid-neutral-lg` | `div` | 256 | 168 | ✓ | 16.98:1 ✓ | 1.21:1 ✗ | — (not-focusable-in-state) |
-| `solid-neutral-md` | `div` | 256 | 152 | ✓ | 16.98:1 ✓ | 1.21:1 ✗ | — (not-focusable-in-state) |
-| `solid-neutral-sm` | `div` | 256 | 136 | ✓ | 16.98:1 ✓ | 1.21:1 ✗ | — (not-focusable-in-state) |
+| `solid-neutral-lg` | `div` | 256 | 168 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
+| `solid-neutral-md` | `div` | 256 | 152 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
+| `solid-neutral-sm` | `div` | 256 | 136 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
 | `solid-primary-lg` | `div` | 256 | 168 | ✓ | 14.61:1 ✓ | 1.4:1 ✗ | — (not-focusable-in-state) |
 | `solid-primary-md` | `div` | 256 | 152 | ✓ | 14.61:1 ✓ | 1.4:1 ✗ | — (not-focusable-in-state) |
 | `solid-primary-sm` | `div` | 256 | 136 | ✓ | 14.61:1 ✓ | 1.4:1 ✗ | — (not-focusable-in-state) |

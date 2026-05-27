@@ -357,7 +357,7 @@ defmodule Pulsar.Components.InputTest do
 
       # Should use neutral color
       assert html =~ "bg-neutral/10"
-      assert html =~ "text-neutral"
+      assert html =~ "text-foreground"
 
       # Should have aria-invalid="false" on input element
       assert html =~ ~s(aria-invalid="false")

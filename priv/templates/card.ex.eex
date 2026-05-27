@@ -226,7 +226,7 @@ alias Phoenix.LiveView.Rendered
   "solid" => %{
     "danger" => "bg-danger/10 border-2 border-danger/20",
     "info" => "bg-info/10 border-2 border-info/20",
-    "neutral" => "bg-surface-1 border-2 border-border",
+    "neutral" => "bg-surface-1 border-2 border-border-strong",
     "primary" => "bg-primary/10 border-2 border-primary/20",
     "secondary" =>
       "bg-secondary/10 border-2 border-secondary/20",

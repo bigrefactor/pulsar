@@ -40,7 +40,7 @@ defmodule Pulsar.DevApp.Components do
         <li :for={{label, path} <- @fixtures}>
           <.link
             navigate={path}
-            class="block rounded px-3 py-1 text-sm hover:bg-neutral-100 aria-[current=page]:bg-primary-100 aria-[current=page]:font-semibold"
+            class="block rounded px-3 py-1 text-sm hover:bg-surface-1-hover aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground aria-[current=page]:font-semibold"
             aria-current={if @current_path == path, do: "page"}
           >
             {label}

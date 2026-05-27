@@ -165,7 +165,7 @@ alias <%= @component_namespace %>.Badge
     "info" =>
       "bg-info/10 text-info focus-visible:ring-ring hover:bg-info/20",
     "neutral" =>
-      "bg-neutral/10 text-neutral focus-visible:ring-ring hover:bg-neutral/20",
+      "bg-neutral/10 text-foreground focus-visible:ring-ring hover:bg-neutral/20",
     "primary" =>
       "bg-primary/10 text-primary focus-visible:ring-ring hover:bg-primary/20",
     "secondary" =>

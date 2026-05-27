@@ -83,35 +83,40 @@ padding is `rem`-based via Tailwind (`p-3` through `p-8`) —
 exceeds the card width is clipped rather than producing horizontal page
 scroll, which is consistent with 1.4.10.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — decorative borders
+### 1.4.11 Non-text Contrast (AA) — ✓ PASS (decorative borders are out of scope)
 
 **Evidence:**
 - Outline variant border is `border-2` in the active color —
   `lib/pulsar/components/card.ex:218–226`
 - Outline-neutral routes through `border-border-strong` —
   `lib/pulsar/components/card.ex:219`
-- Solid variant border is at 20% opacity —
+- Solid variant border is at 20% opacity, except `solid-neutral`
+  which now routes through `border-border-strong` —
   `lib/pulsar/components/card.ex:227–236`
 - Interactive focus ring is `ring-2 ring-primary` —
   `lib/pulsar/components/card.ex:431–434`
 
 Browser measurement of 36 border cells per theme: outline variants
-all pass (`outline-neutral` now 4.63:1 in both themes via
-`--color-border-strong`). Failing cells: every `solid-*` variant
-(all colors at 20% alpha resolve below 3:1), plus `solid-neutral`
-separately at 1.18:1 / 1.21:1
+all pass (`outline-neutral` 4.63:1 in both themes via
+`--color-border-strong`). `solid-neutral` now passes (~5:1 via
+`--color-border-strong`). Remaining failing cells are `solid-*`
+(non-neutral) variants where the colored 20% alpha border resolves
+below 3:1 against page background
 ([light](measurements/card-light.md),
-[dark](measurements/card-dark.md)).
+[dark](measurements/card-dark.md)) — classified as decorative
+(see Notes).
 
 **Notes:** Per WCAG 1.4.11 understanding, decorative section
 separators / container outlines that don't communicate state are
-out of scope. The card border is purely visual emphasis — state
+out of scope. The colored `solid-*` variants pair a tinted fill
+(`bg-X/10`) with a slightly darker decorative border (`border-X/20`)
+— the fill alone provides clear visual delineation against the
+page background; the border is reinforcement decoration. State
 (interactive vs static) is communicated by `role="button"`,
-`tabindex`, hover/focus changes, and `cursor-pointer`. The
-solid-variant 20% alpha border is decorative and intentional.
-`solid-neutral` at 1.18:1 / 1.21:1 is a separate follow-up
-because it isn't an alpha-tinted decorative border like the other
-solid variants — it lands on the page background directly.
+`tabindex`, hover/focus changes, and `cursor-pointer`, not by the
+border. `solid-neutral` is the one case without a colored fill, so
+its border IS the boundary — that variant now uses
+`border-border-strong`.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 

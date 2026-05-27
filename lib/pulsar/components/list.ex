@@ -227,7 +227,7 @@ defmodule Pulsar.Components.List do
         title: "text-info"
       },
       "neutral" => %{
-        container: "bg-muted border border-border",
+        container: "bg-muted border border-border-strong",
         title: "text-foreground"
       },
       "primary" => %{
