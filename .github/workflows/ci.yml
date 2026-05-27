@@ -215,6 +215,18 @@ jobs:
       - name: Install Elixir deps
         run: mix deps.get
 
+      - name: Install Tailwind + esbuild binaries
+        env:
+          MIX_ENV: test
+        run: |
+          mix tailwind.install --if-missing
+          mix esbuild.install --if-missing
+
+      - name: Build dev_app assets
+        env:
+          MIX_ENV: test
+        run: mix assets.build
+
       - name: Install Playwright npm package
         run: npm --prefix test/support/dev_app/assets ci
 
