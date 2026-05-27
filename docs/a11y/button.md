@@ -65,7 +65,7 @@ ARIA state (`aria-disabled`, `aria-busy`), not color alone —
 **Notes:** Color variants (primary/success/danger/etc.) convey *which*
 button it is but criticality is communicated via inner text, not color.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious, [PUL-27](https://linear.app/bigrefactor/issue/PUL-27/button-fix-axe-color-contrast-violation))
+### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS (closed by [PUL-27](https://linear.app/bigrefactor/issue/PUL-27))
 
 **Evidence:** Colors come from semantic tokens
 (`text-*-foreground`, `bg-*`, dark-mode pairs) —
@@ -74,18 +74,11 @@ button it is but criticality is communicated via inner text, not color.
 [dark](measurements/button-dark.md)) over 4 variants × 6 colors × 4
 sizes × 4 states (384 cells per theme):
 
-- **Dark:** all cells pass (min 4.84:1, max 19.27:1).
-- **Light:** 272/384 pass (min 3.06:1, max 20.13:1). The failing
-  variants × colors: `solid-success` (~4.0:1), `outline-success`
-  (~3.08:1), `outline-warning` (~3.06:1), `ghost-success` (~3.08:1),
-  `ghost-warning` (~3.06:1), `link-success` (~3.08:1), `link-warning`
-  (~3.06:1). Pattern: success/warning text on light backgrounds
-  consistently undershoots 4.5:1.
-
-**Notes:** Existing [PUL-27](https://linear.app/bigrefactor/issue/PUL-27)
-scoped to "light: success solid; dark: primary ghost/solid"; expand
-that ticket to cover the warning-color failures and the additional
-light-theme variants surfaced by this measurement pass.
+- **Dark:** all cells pass (min 4.84:1).
+- **Light:** all cells pass (min 4.56:1). Closed by Bundle A theme-token
+  bumps: `--color-success` 600→800 (now 4.73:1+ across ghost/outline/
+  link/solid), `--color-warning` 600→800 + foreground gray-950→white
+  (now 4.81:1+ across all variants).
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -104,27 +97,21 @@ sizes — `lib/pulsar/components/button.ex:88–110`.
 **Notes:** Button width is content-driven; reflows at 320 CSS px without
 horizontal scroll.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious, PUL-19 follow-up: button-outline-neutral-border)
+### 1.4.11 Non-text Contrast (AA) — ✓ PASS (closed by [PUL-46](https://linear.app/bigrefactor/issue/PUL-46))
 
 **Evidence:** Focus ring is `ring-2 ring-ring` —
 `lib/pulsar/components/button.ex:115–116`. Outline variant uses
-`border-2` in the active color — `lib/pulsar/components/button.ex:174–187`.
+`border-2` in the active color — `lib/pulsar/components/button.ex:165–173`.
 Browser measurements via `mix pulsar.a11y.measure`:
 
 - **Focus ring:** PASS — `--color-ring` (light: oklch ≈ primary-600,
   dark: oklch ≈ primary-400) measures 5.02:1 (light) / 6.72:1 (dark)
   against the page background in every focusable state.
-- **Outline-variant border:** the `outline-neutral` variant border
-  (`border-neutral-500` per `button.ex:175`) measures 1.18:1 (light)
-  / 1.21:1 (dark) — substantially below the 3:1 floor. Other
-  outline colors (primary 4.4:1, secondary 4.0:1, success 3.1:1,
-  warning 3.1:1, danger 4.2:1 in light) pass.
-
-**Notes:** New finding — `button-outline-neutral-border` to be filed
-as a Linear sub-issue parented to PUL-19. The fix is to swap
-`border-neutral-500` (`button.ex:175`) for a higher-contrast token
-(`border-neutral-700` or `border-border-strong`). Focus ring contrast
-is fully verified — both themes pass.
+- **Outline-variant border:** PASS. Closed by Bundle A: outline-neutral
+  swapped from `border-border` to `border-border-strong`, and
+  `--color-border-strong` bumped (light: gray-300→gray-500, dark:
+  gray-700→gray-400). Now measures 4.63:1 (light) / ≥3:1 (dark).
+  Other outline colors continue to pass.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 

@@ -25,9 +25,9 @@ Columns:
 | Cell ID | Tag | Width | Height | ≥24×24 | Text | Border | Focus |
 |---------|-----|-------|--------|--------|------|--------|-------|
 | `dismissible` | `div` | 245.97 | 48 | ✓ | 11.32:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-danger-lg` | `div` | 473 | 56 | ✓ | 5.46:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-danger-md` | `div` | 473 | 48 | ✓ | 5.46:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-danger-sm` | `div` | 473 | 48 | ✓ | 5.46:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `ghost-danger-lg` | `div` | 473 | 56 | ✓ | 7.74:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `ghost-danger-md` | `div` | 473 | 48 | ✓ | 7.74:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `ghost-danger-sm` | `div` | 473 | 48 | ✓ | 7.74:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `ghost-neutral-lg` | `div` | 473 | 56 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `ghost-neutral-md` | `div` | 473 | 48 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `ghost-neutral-sm` | `div` | 473 | 48 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
@@ -43,9 +43,9 @@ Columns:
 | `ghost-warning-lg` | `div` | 473 | 56 | ✓ | 8.54:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `ghost-warning-md` | `div` | 473 | 56 | ✓ | 8.54:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `ghost-warning-sm` | `div` | 473 | 56 | ✓ | 8.54:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `outline-danger-lg` | `div` | 473 | 58 | ✓ | 6.97:1 ✓ | 6.14:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-md` | `div` | 473 | 50 | ✓ | 6.97:1 ✓ | 6.14:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-sm` | `div` | 473 | 50 | ✓ | 6.97:1 ✓ | 6.14:1 ✓ | — (not-focusable-in-state) |
+| `outline-danger-lg` | `div` | 473 | 58 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | — (not-focusable-in-state) |
+| `outline-danger-md` | `div` | 473 | 50 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | — (not-focusable-in-state) |
+| `outline-danger-sm` | `div` | 473 | 50 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | — (not-focusable-in-state) |
 | `outline-neutral-lg` | `div` | 473 | 58 | ✓ | 19.27:1 ✓ | 3.67:1 ✓ | — (not-focusable-in-state) |
 | `outline-neutral-md` | `div` | 473 | 50 | ✓ | 19.27:1 ✓ | 3.67:1 ✓ | — (not-focusable-in-state) |
 | `outline-neutral-sm` | `div` | 473 | 50 | ✓ | 19.27:1 ✓ | 3.67:1 ✓ | — (not-focusable-in-state) |
@@ -61,9 +61,9 @@ Columns:
 | `outline-warning-lg` | `div` | 473 | 58 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ | — (not-focusable-in-state) |
 | `outline-warning-md` | `div` | 473 | 58 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ | — (not-focusable-in-state) |
 | `outline-warning-sm` | `div` | 473 | 58 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ | — (not-focusable-in-state) |
-| `solid-danger-lg` | `div` | 473 | 56 | ✓ | 6.97:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-danger-md` | `div` | 473 | 48 | ✓ | 6.97:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-danger-sm` | `div` | 473 | 48 | ✓ | 6.97:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-danger-lg` | `div` | 473 | 56 | ✓ | 10.49:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-danger-md` | `div` | 473 | 48 | ✓ | 10.49:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-danger-sm` | `div` | 473 | 48 | ✓ | 10.49:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `solid-neutral-lg` | `div` | 473 | 56 | ✓ | 4.84:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `solid-neutral-md` | `div` | 473 | 48 | ✓ | 4.84:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `solid-neutral-sm` | `div` | 473 | 48 | ✓ | 4.84:1 ✓ | — (no-border) | — (not-focusable-in-state) |
@@ -97,57 +97,57 @@ overflows as worst-case, not as media-query-aware behavior.
 
 **Cells overflowing (54):**
 
-- `solid-neutral-sm` (x) — content 55×96 vs box 16×96
+- `solid-neutral-sm` (x) — content 54×96 vs box 16×96
 - `solid-neutral-md` (x) — content 64×96 vs box 24×96
 - `solid-neutral-lg` (x) — content 68×104 vs box 32×104
 - `solid-primary-sm` (x) — content 59×104 vs box 16×104
-- `solid-primary-md` (x) — content 70×104 vs box 24×104
-- `solid-primary-lg` (x) — content 74×104 vs box 32×104
-- `solid-secondary-sm` (x) — content 78×96 vs box 16×96
+- `solid-primary-md` (x) — content 69×104 vs box 24×104
+- `solid-primary-lg` (x) — content 73×104 vs box 32×104
+- `solid-secondary-sm` (x) — content 77×96 vs box 16×96
 - `solid-secondary-md` (x) — content 90×96 vs box 24×96
 - `solid-secondary-lg` (x) — content 94×104 vs box 32×104
 - `solid-success-sm` (x) — content 62×104 vs box 16×104
 - `solid-success-md` (x) — content 73×104 vs box 24×104
 - `solid-success-lg` (x) — content 77×104 vs box 32×104
 - `solid-danger-sm` (x) — content 55×96 vs box 16×96
-- `solid-danger-md` (x) — content 65×96 vs box 24×96
-- `solid-danger-lg` (x) — content 69×104 vs box 32×104
+- `solid-danger-md` (x) — content 64×96 vs box 24×96
+- `solid-danger-lg` (x) — content 68×104 vs box 32×104
 - `solid-warning-sm` (x) — content 61×104 vs box 16×104
-- `solid-warning-md` (x) — content 72×104 vs box 24×104
-- `solid-warning-lg` (x) — content 76×104 vs box 32×104
-- `outline-neutral-sm` (x) — content 55×96 vs box 16×96
+- `solid-warning-md` (x) — content 71×104 vs box 24×104
+- `solid-warning-lg` (x) — content 75×104 vs box 32×104
+- `outline-neutral-sm` (x) — content 54×96 vs box 16×96
 - `outline-neutral-md` (x) — content 64×96 vs box 24×96
 - `outline-neutral-lg` (x) — content 68×104 vs box 32×104
 - `outline-primary-sm` (x) — content 59×104 vs box 16×104
-- `outline-primary-md` (x) — content 70×104 vs box 24×104
-- `outline-primary-lg` (x) — content 74×104 vs box 32×104
-- `outline-secondary-sm` (x) — content 78×96 vs box 16×96
+- `outline-primary-md` (x) — content 69×104 vs box 24×104
+- `outline-primary-lg` (x) — content 73×104 vs box 32×104
+- `outline-secondary-sm` (x) — content 77×96 vs box 16×96
 - `outline-secondary-md` (x) — content 90×96 vs box 24×96
 - `outline-secondary-lg` (x) — content 94×104 vs box 32×104
 - `outline-success-sm` (x) — content 62×104 vs box 16×104
 - `outline-success-md` (x) — content 73×104 vs box 24×104
 - `outline-success-lg` (x) — content 77×104 vs box 32×104
 - `outline-danger-sm` (x) — content 55×96 vs box 16×96
-- `outline-danger-md` (x) — content 65×96 vs box 24×96
-- `outline-danger-lg` (x) — content 69×104 vs box 32×104
+- `outline-danger-md` (x) — content 64×96 vs box 24×96
+- `outline-danger-lg` (x) — content 68×104 vs box 32×104
 - `outline-warning-sm` (x) — content 61×104 vs box 16×104
-- `outline-warning-md` (x) — content 72×104 vs box 24×104
-- `outline-warning-lg` (x) — content 76×104 vs box 32×104
-- `ghost-neutral-sm` (x) — content 55×96 vs box 16×96
+- `outline-warning-md` (x) — content 71×104 vs box 24×104
+- `outline-warning-lg` (x) — content 75×104 vs box 32×104
+- `ghost-neutral-sm` (x) — content 54×96 vs box 16×96
 - `ghost-neutral-md` (x) — content 64×96 vs box 24×96
 - `ghost-neutral-lg` (x) — content 68×104 vs box 32×104
 - `ghost-primary-sm` (x) — content 59×104 vs box 16×104
-- `ghost-primary-md` (x) — content 70×104 vs box 24×104
-- `ghost-primary-lg` (x) — content 74×104 vs box 32×104
-- `ghost-secondary-sm` (x) — content 78×96 vs box 16×96
+- `ghost-primary-md` (x) — content 69×104 vs box 24×104
+- `ghost-primary-lg` (x) — content 73×104 vs box 32×104
+- `ghost-secondary-sm` (x) — content 77×96 vs box 16×96
 - `ghost-secondary-md` (x) — content 90×96 vs box 24×96
 - `ghost-secondary-lg` (x) — content 94×104 vs box 32×104
 - `ghost-success-sm` (x) — content 62×104 vs box 16×104
 - `ghost-success-md` (x) — content 73×104 vs box 24×104
 - `ghost-success-lg` (x) — content 77×104 vs box 32×104
 - `ghost-danger-sm` (x) — content 55×96 vs box 16×96
-- `ghost-danger-md` (x) — content 65×96 vs box 24×96
-- `ghost-danger-lg` (x) — content 69×104 vs box 32×104
+- `ghost-danger-md` (x) — content 64×96 vs box 24×96
+- `ghost-danger-lg` (x) — content 68×104 vs box 32×104
 - `ghost-warning-sm` (x) — content 61×104 vs box 16×104
-- `ghost-warning-md` (x) — content 72×104 vs box 24×104
-- `ghost-warning-lg` (x) — content 76×104 vs box 32×104
+- `ghost-warning-md` (x) — content 71×104 vs box 24×104
+- `ghost-warning-lg` (x) — content 75×104 vs box 32×104

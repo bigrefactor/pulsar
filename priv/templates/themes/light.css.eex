@@ -33,7 +33,7 @@
 
   --color-border: var(--color-gray-200);
   --color-border-subtle: var(--color-gray-200);
-  --color-border-strong: var(--color-gray-300);
+  --color-border-strong: var(--color-gray-500);
   --color-input: var(--color-gray-200);
   --color-ring: var(--color-primary-600);
 
@@ -43,10 +43,10 @@
   --color-primary-foreground: var(--color-white);
   --color-secondary: var(--color-secondary-600);
   --color-secondary-foreground: var(--color-white);
-  --color-success: var(--color-success-600);
+  --color-success: var(--color-success-800);
   --color-success-foreground: var(--color-white);
-  --color-warning: var(--color-warning-600);
-  --color-warning-foreground: var(--color-gray-950);
+  --color-warning: var(--color-warning-800);
+  --color-warning-foreground: var(--color-white);
   --color-danger: var(--color-danger-600);
   --color-danger-foreground: var(--color-white);
   --color-info: var(--color-info-600);
@@ -71,7 +71,7 @@
 
   --color-border: var(--color-gray-200);
   --color-border-subtle: var(--color-gray-200);
-  --color-border-strong: var(--color-gray-300);
+  --color-border-strong: var(--color-gray-500);
   --color-input: var(--color-gray-200);
   --color-ring: var(--color-primary-600);
 
@@ -81,10 +81,10 @@
   --color-primary-foreground: var(--color-white);
   --color-secondary: var(--color-secondary-600);
   --color-secondary-foreground: var(--color-white);
-  --color-success: var(--color-success-600);
+  --color-success: var(--color-success-800);
   --color-success-foreground: var(--color-white);
-  --color-warning: var(--color-warning-600);
-  --color-warning-foreground: var(--color-gray-950);
+  --color-warning: var(--color-warning-800);
+  --color-warning-foreground: var(--color-white);
   --color-danger: var(--color-danger-600);
   --color-danger-foreground: var(--color-white);
   --color-info: var(--color-info-600);

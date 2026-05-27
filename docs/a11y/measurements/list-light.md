@@ -24,7 +24,7 @@ Columns:
 
 | Cell ID | Tag | Width | Height | ≥24×24 | Text | Border | Focus |
 |---------|-----|-------|--------|--------|------|--------|-------|
-| `empty-headerless` | `div` | 471 | 179 | ✓ | 7.56:1 ✓ | 1.18:1 ✗ | — (not-focusable-in-state) |
+| `empty-headerless` | `div` | 471 | 179 | ✓ | 7.56:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
 | `empty-with-header` | `div` | 471 | 179 | ✓ | 20.13:1 ✓ | 5.02:1 ✓ | — (not-focusable-in-state) |
 | `ghost-danger-lg` | `dl` | 308.66 | 278 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `ghost-danger-md` | `dl` | 308.67 | 278 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
@@ -47,21 +47,21 @@ Columns:
 | `outline-danger-lg` | `dl` | 308.66 | 280 | ✓ | 20.13:1 ✓ | 4.56:1 ✓ | — (not-focusable-in-state) |
 | `outline-danger-md` | `dl` | 308.67 | 280 | ✓ | 20.13:1 ✓ | 4.56:1 ✓ | — (not-focusable-in-state) |
 | `outline-danger-sm` | `dl` | 308.66 | 280 | ✓ | 20.13:1 ✓ | 4.56:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-lg` | `dl` | 308.66 | 280 | ✓ | 20.13:1 ✓ | 1.18:1 ✗ | — (not-focusable-in-state) |
-| `outline-neutral-md` | `dl` | 308.67 | 280 | ✓ | 20.13:1 ✓ | 1.18:1 ✗ | — (not-focusable-in-state) |
-| `outline-neutral-sm` | `dl` | 308.66 | 280 | ✓ | 20.13:1 ✓ | 1.18:1 ✗ | — (not-focusable-in-state) |
+| `outline-neutral-lg` | `dl` | 308.66 | 280 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
+| `outline-neutral-md` | `dl` | 308.67 | 280 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
+| `outline-neutral-sm` | `dl` | 308.66 | 280 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
 | `outline-primary-lg` | `dl` | 308.66 | 280 | ✓ | 20.13:1 ✓ | 5.02:1 ✓ | — (not-focusable-in-state) |
 | `outline-primary-md` | `dl` | 308.67 | 280 | ✓ | 20.13:1 ✓ | 5.02:1 ✓ | — (not-focusable-in-state) |
 | `outline-primary-sm` | `dl` | 308.66 | 280 | ✓ | 20.13:1 ✓ | 5.02:1 ✓ | — (not-focusable-in-state) |
 | `outline-secondary-lg` | `dl` | 308.66 | 280 | ✓ | 20.13:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
 | `outline-secondary-md` | `dl` | 308.67 | 280 | ✓ | 20.13:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
 | `outline-secondary-sm` | `dl` | 308.66 | 280 | ✓ | 20.13:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-lg` | `dl` | 308.66 | 280 | ✓ | 20.13:1 ✓ | 3.08:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-md` | `dl` | 308.67 | 280 | ✓ | 20.13:1 ✓ | 3.08:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-sm` | `dl` | 308.66 | 280 | ✓ | 20.13:1 ✓ | 3.08:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-lg` | `dl` | 308.66 | 280 | ✓ | 20.13:1 ✓ | 3.06:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-md` | `dl` | 308.67 | 280 | ✓ | 20.13:1 ✓ | 3.06:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-sm` | `dl` | 308.66 | 280 | ✓ | 20.13:1 ✓ | 3.06:1 ✓ | — (not-focusable-in-state) |
+| `outline-success-lg` | `dl` | 308.66 | 280 | ✓ | 20.13:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
+| `outline-success-md` | `dl` | 308.67 | 280 | ✓ | 20.13:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
+| `outline-success-sm` | `dl` | 308.66 | 280 | ✓ | 20.13:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
+| `outline-warning-lg` | `dl` | 308.66 | 280 | ✓ | 20.13:1 ✓ | 6.78:1 ✓ | — (not-focusable-in-state) |
+| `outline-warning-md` | `dl` | 308.67 | 280 | ✓ | 20.13:1 ✓ | 6.78:1 ✓ | — (not-focusable-in-state) |
+| `outline-warning-sm` | `dl` | 308.66 | 280 | ✓ | 20.13:1 ✓ | 6.78:1 ✓ | — (not-focusable-in-state) |
 | `solid-danger-lg` | `dl` | 308.66 | 280 | ✓ | 17.64:1 ✓ | 1.43:1 ✗ | — (not-focusable-in-state) |
 | `solid-danger-md` | `dl` | 308.67 | 280 | ✓ | 17.64:1 ✓ | 1.43:1 ✗ | — (not-focusable-in-state) |
 | `solid-danger-sm` | `dl` | 308.66 | 280 | ✓ | 17.64:1 ✓ | 1.43:1 ✗ | — (not-focusable-in-state) |
@@ -74,12 +74,12 @@ Columns:
 | `solid-secondary-lg` | `dl` | 308.66 | 280 | ✓ | 17.79:1 ✓ | 1.39:1 ✗ | — (not-focusable-in-state) |
 | `solid-secondary-md` | `dl` | 308.67 | 280 | ✓ | 17.79:1 ✓ | 1.39:1 ✗ | — (not-focusable-in-state) |
 | `solid-secondary-sm` | `dl` | 308.66 | 280 | ✓ | 17.79:1 ✓ | 1.39:1 ✗ | — (not-focusable-in-state) |
-| `solid-success-lg` | `dl` | 308.66 | 280 | ✓ | 18.16:1 ✓ | 1.25:1 ✗ | — (not-focusable-in-state) |
-| `solid-success-md` | `dl` | 308.67 | 280 | ✓ | 18.16:1 ✓ | 1.25:1 ✗ | — (not-focusable-in-state) |
-| `solid-success-sm` | `dl` | 308.66 | 280 | ✓ | 18.16:1 ✓ | 1.25:1 ✗ | — (not-focusable-in-state) |
-| `solid-warning-lg` | `dl` | 308.66 | 280 | ✓ | 18.27:1 ✓ | 1.24:1 ✗ | — (not-focusable-in-state) |
-| `solid-warning-md` | `dl` | 308.67 | 280 | ✓ | 18.27:1 ✓ | 1.24:1 ✗ | — (not-focusable-in-state) |
-| `solid-warning-sm` | `dl` | 308.66 | 280 | ✓ | 18.27:1 ✓ | 1.24:1 ✗ | — (not-focusable-in-state) |
+| `solid-success-lg` | `dl` | 308.66 | 280 | ✓ | 17.8:1 ✓ | 1.38:1 ✗ | — (not-focusable-in-state) |
+| `solid-success-md` | `dl` | 308.67 | 280 | ✓ | 17.8:1 ✓ | 1.38:1 ✗ | — (not-focusable-in-state) |
+| `solid-success-sm` | `dl` | 308.66 | 280 | ✓ | 17.8:1 ✓ | 1.38:1 ✗ | — (not-focusable-in-state) |
+| `solid-warning-lg` | `dl` | 308.66 | 280 | ✓ | 17.82:1 ✓ | 1.38:1 ✗ | — (not-focusable-in-state) |
+| `solid-warning-md` | `dl` | 308.67 | 280 | ✓ | 17.82:1 ✓ | 1.38:1 ✗ | — (not-focusable-in-state) |
+| `solid-warning-sm` | `dl` | 308.66 | 280 | ✓ | 17.82:1 ✓ | 1.38:1 ✗ | — (not-focusable-in-state) |
 | `striped-dividers` | `dl` | 207.67 | 218 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 
 ## Text-spacing override (WCAG 1.4.12)

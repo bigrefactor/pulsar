@@ -101,7 +101,7 @@ alias Phoenix.LiveView.Rendered
     "info" =>
       "border border-info text-info bg-background",
     "neutral" =>
-      "border border-border text-neutral bg-background",
+      "border border-border-strong text-neutral bg-background",
     "primary" =>
       "border border-primary text-primary bg-background",
     "secondary" =>

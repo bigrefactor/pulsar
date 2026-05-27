@@ -34,11 +34,11 @@ Columns:
 | `type-password` | `input` | 467 | 36 | ✓ | 20.13:1 ✓ | — (no-border) | — (no-focus-ring) |
 | `type-radio` | `div` | 471 | 60 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `type-search` | `input` | 467 | 36 | ✓ | 20.13:1 ✓ | — (no-border) | — (no-focus-ring) |
-| `type-select` | `select` | 471 | 40 | ✓ | 20.13:1 ✓ | 1.18:1 ✗ | 5.02:1 ✓ |
+| `type-select` | `select` | 471 | 40 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
 | `type-switch` | `input` | 1 | 1 | ✗ | 19.27:1 ✓ | — (no-border) | 5.73:1 ✓ |
 | `type-tel` | `input` | 467 | 36 | ✓ | 20.13:1 ✓ | — (no-border) | — (no-focus-ring) |
 | `type-text` | `input` | 467 | 36 | ✓ | 20.13:1 ✓ | — (no-border) | — (no-focus-ring) |
-| `type-textarea` | `textarea` | 471 | 112 | ✓ | 20.13:1 ✓ | 1.18:1 ✗ | 19.27:1 ✓ |
+| `type-textarea` | `textarea` | 471 | 112 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 19.27:1 ✓ |
 | `type-url` | `input` | 467 | 36 | ✓ | 20.13:1 ✓ | — (no-border) | — (no-focus-ring) |
 
 ## Text-spacing override (WCAG 1.4.12)

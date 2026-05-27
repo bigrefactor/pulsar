@@ -25,10 +25,10 @@ Columns:
 | Cell ID | Tag | Width | Height | ≥24×24 | Text | Border | Focus |
 |---------|-----|-------|--------|--------|------|--------|-------|
 | `external` | `a` | 87.69 | 24 | ✓ | 6.72:1 ✓ | — (no-border) | 2.63:1 ✗ |
-| `ghost-danger-lg` | `a` | 75.63 | 32 | ✓ | 6.14:1 ✓ | — (no-border) | 2.63:1 ✗ |
-| `ghost-danger-md` | `a` | 78.25 | 28 | ✓ | 6.14:1 ✓ | — (no-border) | 2.63:1 ✗ |
-| `ghost-danger-sm` | `a` | 68.31 | 24 | ✓ | 6.14:1 ✓ | — (no-border) | 2.63:1 ✗ |
-| `ghost-danger-xs` | `a` | 55.44 | 20 | ✗ | 6.14:1 ✓ | — (no-border) | 2.63:1 ✗ |
+| `ghost-danger-lg` | `a` | 75.63 | 32 | ✓ | 9.25:1 ✓ | — (no-border) | 2.63:1 ✗ |
+| `ghost-danger-md` | `a` | 78.25 | 28 | ✓ | 9.25:1 ✓ | — (no-border) | 2.63:1 ✗ |
+| `ghost-danger-sm` | `a` | 68.31 | 24 | ✓ | 9.25:1 ✓ | — (no-border) | 2.63:1 ✗ |
+| `ghost-danger-xs` | `a` | 55.44 | 20 | ✗ | 9.25:1 ✓ | — (no-border) | 2.63:1 ✗ |
 | `ghost-neutral-lg` | `a` | 75.33 | 32 | ✓ | 16.98:1 ✓ | — (no-border) | 2.63:1 ✗ |
 | `ghost-neutral-md` | `a` | 78.09 | 28 | ✓ | 16.98:1 ✓ | — (no-border) | 2.63:1 ✗ |
 | `ghost-neutral-sm` | `a` | 68.3 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 2.63:1 ✗ |
@@ -49,10 +49,10 @@ Columns:
 | `ghost-warning-md` | `a` | 85.11 | 28 | ✓ | 10.3:1 ✓ | — (no-border) | 2.63:1 ✗ |
 | `ghost-warning-sm` | `a` | 74.44 | 24 | ✓ | 10.3:1 ✓ | — (no-border) | 2.63:1 ✗ |
 | `ghost-warning-xs` | `a` | 60.83 | 20 | ✗ | 10.3:1 ✓ | — (no-border) | 2.63:1 ✗ |
-| `link-danger-lg` | `a` | 75.63 | 28 | ✓ | 6.14:1 ✓ | — (no-border) | 2.63:1 ✗ |
-| `link-danger-md` | `a` | 78.25 | 24 | ✓ | 6.14:1 ✓ | — (no-border) | 2.63:1 ✗ |
-| `link-danger-sm` | `a` | 68.31 | 20 | ✗ | 6.14:1 ✓ | — (no-border) | 2.63:1 ✗ |
-| `link-danger-xs` | `a` | 55.44 | 16 | ✗ | 6.14:1 ✓ | — (no-border) | 2.63:1 ✗ |
+| `link-danger-lg` | `a` | 75.63 | 28 | ✓ | 9.25:1 ✓ | — (no-border) | 2.63:1 ✗ |
+| `link-danger-md` | `a` | 78.25 | 24 | ✓ | 9.25:1 ✓ | — (no-border) | 2.63:1 ✗ |
+| `link-danger-sm` | `a` | 68.31 | 20 | ✗ | 9.25:1 ✓ | — (no-border) | 2.63:1 ✗ |
+| `link-danger-xs` | `a` | 55.44 | 16 | ✗ | 9.25:1 ✓ | — (no-border) | 2.63:1 ✗ |
 | `link-neutral-lg` | `a` | 75.33 | 28 | ✓ | 16.98:1 ✓ | — (no-border) | 2.63:1 ✗ |
 | `link-neutral-md` | `a` | 78.09 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 2.63:1 ✗ |
 | `link-neutral-sm` | `a` | 68.3 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 2.63:1 ✗ |
@@ -73,10 +73,10 @@ Columns:
 | `link-warning-md` | `a` | 85.11 | 24 | ✓ | 10.3:1 ✓ | — (no-border) | 2.63:1 ✗ |
 | `link-warning-sm` | `a` | 74.44 | 20 | ✗ | 10.3:1 ✓ | — (no-border) | 2.63:1 ✗ |
 | `link-warning-xs` | `a` | 60.83 | 16 | ✗ | 10.3:1 ✓ | — (no-border) | 2.63:1 ✗ |
-| `outline-danger-lg` | `a` | 75.63 | 32 | ✓ | 6.14:1 ✓ | — (no-border) | 2.63:1 ✗ |
-| `outline-danger-md` | `a` | 78.25 | 28 | ✓ | 6.14:1 ✓ | — (no-border) | 2.63:1 ✗ |
-| `outline-danger-sm` | `a` | 68.31 | 24 | ✓ | 6.14:1 ✓ | — (no-border) | 2.63:1 ✗ |
-| `outline-danger-xs` | `a` | 55.44 | 20 | ✗ | 6.14:1 ✓ | — (no-border) | 2.63:1 ✗ |
+| `outline-danger-lg` | `a` | 75.63 | 32 | ✓ | 9.25:1 ✓ | — (no-border) | 2.63:1 ✗ |
+| `outline-danger-md` | `a` | 78.25 | 28 | ✓ | 9.25:1 ✓ | — (no-border) | 2.63:1 ✗ |
+| `outline-danger-sm` | `a` | 68.31 | 24 | ✓ | 9.25:1 ✓ | — (no-border) | 2.63:1 ✗ |
+| `outline-danger-xs` | `a` | 55.44 | 20 | ✗ | 9.25:1 ✓ | — (no-border) | 2.63:1 ✗ |
 | `outline-neutral-lg` | `a` | 75.33 | 32 | ✓ | 16.98:1 ✓ | — (no-border) | 2.63:1 ✗ |
 | `outline-neutral-md` | `a` | 78.09 | 28 | ✓ | 16.98:1 ✓ | — (no-border) | 2.63:1 ✗ |
 | `outline-neutral-sm` | `a` | 68.3 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 2.63:1 ✗ |
@@ -97,10 +97,10 @@ Columns:
 | `outline-warning-md` | `a` | 85.11 | 28 | ✓ | 10.3:1 ✓ | — (no-border) | 2.63:1 ✗ |
 | `outline-warning-sm` | `a` | 74.44 | 24 | ✓ | 10.3:1 ✓ | — (no-border) | 2.63:1 ✗ |
 | `outline-warning-xs` | `a` | 60.83 | 20 | ✗ | 10.3:1 ✓ | — (no-border) | 2.63:1 ✗ |
-| `solid-danger-lg` | `a` | 75.63 | 28 | ✓ | 6.14:1 ✓ | — (no-border) | 2.63:1 ✗ |
-| `solid-danger-md` | `a` | 78.25 | 24 | ✓ | 6.14:1 ✓ | — (no-border) | 2.63:1 ✗ |
-| `solid-danger-sm` | `a` | 68.31 | 20 | ✗ | 6.14:1 ✓ | — (no-border) | 2.63:1 ✗ |
-| `solid-danger-xs` | `a` | 55.44 | 16 | ✗ | 6.14:1 ✓ | — (no-border) | 2.63:1 ✗ |
+| `solid-danger-lg` | `a` | 75.63 | 28 | ✓ | 9.25:1 ✓ | — (no-border) | 2.63:1 ✗ |
+| `solid-danger-md` | `a` | 78.25 | 24 | ✓ | 9.25:1 ✓ | — (no-border) | 2.63:1 ✗ |
+| `solid-danger-sm` | `a` | 68.31 | 20 | ✗ | 9.25:1 ✓ | — (no-border) | 2.63:1 ✗ |
+| `solid-danger-xs` | `a` | 55.44 | 16 | ✗ | 9.25:1 ✓ | — (no-border) | 2.63:1 ✗ |
 | `solid-neutral-lg` | `a` | 75.33 | 28 | ✓ | 16.98:1 ✓ | — (no-border) | 2.63:1 ✗ |
 | `solid-neutral-md` | `a` | 78.09 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 2.63:1 ✗ |
 | `solid-neutral-sm` | `a` | 68.3 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 2.63:1 ✗ |

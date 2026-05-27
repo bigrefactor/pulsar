@@ -131,7 +131,7 @@ alias <%= @component_namespace %>.Badge
     "info" =>
       "border-info/60 bg-background text-info focus:ring-info/60 hover:border-info",
     "neutral" =>
-      "border-border bg-background text-foreground focus:ring-ring hover:border-border/80",
+      "border-border-strong bg-background text-foreground focus:ring-ring hover:border-border-strong/80",
     "primary" =>
       "border-primary/60 bg-background text-primary focus:ring-primary/60 hover:border-primary",
     "secondary" =>

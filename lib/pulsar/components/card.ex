@@ -218,7 +218,7 @@ defmodule Pulsar.Components.Card do
     "outline" => %{
       "danger" => "bg-surface-1 border-2 border-danger",
       "info" => "bg-surface-1 border-2 border-info",
-      "neutral" => "bg-surface-1 border-2 border-border",
+      "neutral" => "bg-surface-1 border-2 border-border-strong",
       "primary" => "bg-surface-1 border-2 border-primary",
       "secondary" => "bg-surface-1 border-2 border-secondary",
       "success" => "bg-surface-1 border-2 border-success",
