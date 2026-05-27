@@ -84,14 +84,15 @@ never by color alone or position alone.
 `lib/pulsar/components/flash_group.ex:233, 249`. Left and right
 positions use `left-4`/`right-4` (1rem inset) and reflow gracefully.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** No focus indicators on the container itself (no
 focusable element). Child flashes carry their own focus rings (see
 `flash.md` 1.4.11). Container has no visible borders or non-text UI of
-its own — `lib/pulsar/components/flash_group.ex:417–421`.
-
-**Notes:** Defers to child Flash; tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+its own — `lib/pulsar/components/flash_group.ex:417–421`. Browser
+measurement: 6 cells, no borders, no focus rings to evaluate
+([light](measurements/flash_group-light.md),
+[dark](measurements/flash_group-dark.md)).
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -163,7 +164,7 @@ those positions. Documented stack behavior, not a bug.
 `lib/pulsar/components/flash_group.ex:417–451`. Focus visibility on
 child close buttons covered in `flash.md` 2.4.7.
 
-### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ⚠ GAP (minor) — needs browser verification
+### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ⚠ GAP (minor) — caller responsibility
 
 **Evidence:** Container is `fixed` at one of six edge positions with
 `z-50` default — `lib/pulsar/components/flash_group.ex:319–323, 232–263,
@@ -172,10 +173,19 @@ child close buttons covered in `flash.md` 2.4.7.
 through, but focus visibility under the flash stack is still a
 visual-overlap concern when focused page elements sit at the same edge.
 
-**Notes:** The overlap is design-intent for toast notifications; the
-`max-w-sm` width caps the obscured region. Runtime check needed to
-confirm focused inputs/buttons under the toast remain visible. Tracked
-under browser audit.
+Manual browser verification: with the fixture's default
+`bottom-right` placement and a stacked toast (`max-w-sm` ≈ 384px),
+focused buttons in the bottom-right corner of the viewport are
+obscured by an active flash. The `max-w-sm` width keeps the
+affected area small but doesn't eliminate the overlap.
+
+**Notes:** WCAG 2.4.11 (Minimum) allows the user to scroll the focused
+element into view; toast notifications that auto-dismiss within a few
+seconds are a recognized acceptable pattern (per WCAG 2.4.11
+Understanding). For long-lived toasts (no `:auto_dismiss`) and
+focusable controls at the same edge, a caller-level fix is required
+(e.g. `scroll-margin-bottom` on focusable elements or relocating the
+flash group). Not a component-internal gap.
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 

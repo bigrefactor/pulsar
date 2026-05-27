@@ -88,15 +88,28 @@ here for traceability — see 1.4.11.
 
 **Notes:** Inline icon does not force horizontal scrolling at 320 CSS px.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — color-dependent
 
 **Evidence:** Icon glyph color is driven by semantic color tokens
 (`text-danger`/`text-success`/etc., with dark-mode pairs) —
 `lib/pulsar/components/icon.ex:82–91`. When `aria_label` is set the
-icon is meaningful and needs 3:1 against its background.
+icon is meaningful and needs 3:1 against its background. Browser
+measurement of 108 cells: many cells report `unparseable-color` or
+`1.0:1` for the icon fill because the SVG renders text inside a
+parent-foreground-colored `<svg>` and the script's text-contrast
+walk evaluates the SVG content rather than the glyph stroke. Per-
+color glyph contrast against page background derives from the same
+token contrasts used by text (4.5:1 for primary, secondary, danger,
+neutral, info; success ~3.08:1 light, warning ~3.06:1 light).
 
-**Notes:** Eight color tokens × two themes against arbitrary background
-surfaces require DevTools measurement. Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** The text-meaning success/warning glyphs share the same
+token shortfall as button/badge/link text (covered by
+[PUL-26](https://linear.app/bigrefactor/issue/PUL-26),
+[PUL-27](https://linear.app/bigrefactor/issue/PUL-27),
+[PUL-36](https://linear.app/bigrefactor/issue/PUL-36)). Decorative
+icons (`aria-hidden="true"`) are exempt from 1.4.11. No new sub-issue
+needed — the upstream color token fix resolves icon contrast in
+parallel with text contrast.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 

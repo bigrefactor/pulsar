@@ -390,8 +390,12 @@ def table(assigns) do
   # Build complete class strings using Twm
   assigns = build_table_classes(assigns)
 
+  # `data-reflow-allowed`: WCAG 1.4.10 marks data tables as exempt
+  # content. The overflow-x-auto container is the recommended pattern;
+  # the data attribute lets test/integration/a11y/reflow_test.exs skip
+  # the 320 px reflow check inside this scroll container.
   ~H"""
-  <div class={@container_classes}>
+  <div class={@container_classes} data-reflow-allowed>
     <!-- Loading status announcement for screen readers -->
     <div
       :if={@loading}

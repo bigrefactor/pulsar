@@ -59,14 +59,26 @@ on top of the text label.
 **Notes:** Code makes it impossible to ship a badge whose meaning is
 conveyed by color alone.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious, [PUL-26](https://linear.app/bigrefactor/issue/PUL-26/badge-fix-axe-color-contrast-violation))
 
 **Evidence:** Foreground/background colors come from semantic tokens
 (`bg-*`/`text-*-foreground`, `text-*` for outline/ghost) —
-`lib/pulsar/components/badge.ex:89–125`. Three variants × seven colors
-× two themes = 42 text-on-background combinations.
+`lib/pulsar/components/badge.ex:89–125`. Browser measurement of 91 cells
+per theme ([light](measurements/badge-light.md),
+[dark](measurements/badge-dark.md)):
 
-**Notes:** Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (follow-up browser audit).
+- **Dark:** 81/91 pass (min 3.67:1). Failing: `ghost-neutral`,
+  `outline-neutral`.
+- **Light:** 66/91 pass (min 3.06:1). Failing: `ghost-success`,
+  `ghost-warning`, `outline-success`, `outline-warning`,
+  `solid-success`.
+
+**Notes:** Existing [PUL-26](https://linear.app/bigrefactor/issue/PUL-26)
+scoped to "success solid"; expand to cover the warning variants and
+the ghost-success/outline-success patterns. Same root cause as
+Button/Flash/Link — success/warning color tokens at the foreground
+shade undershoot 4.5:1 in light, and the neutral text shade
+undershoots in dark.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -85,16 +97,20 @@ resizes without clipping.
 
 **Notes:** Badge sizes to its content and reflows at 320 CSS px.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor, rolls up to button-outline-neutral-border)
 
 **Evidence:** Outline variant uses `border border-*` against
 `bg-background` — `lib/pulsar/components/badge.ex:99–114`. Focus-within
 ring is `focus-within:ring-2 focus-within:ring-current
 focus-within:ring-offset-2` — `lib/pulsar/components/badge.ex:84–85`.
+Browser measurement: 30 cells with measurable borders, 25 pass in both
+themes. Failures: `outline-neutral` (1.18:1 light / 1.21:1 dark).
+Same defect as Button outline-neutral.
 
-**Notes:** Outline borders and focus ring need 3:1 against the adjacent
-background; ratios per color/theme require DevTools. Tracked under
-browser audit.
+**Notes:** Folds into the
+[`button-outline-neutral-border`](button.md#1411-non-text-contrast-aa--gap-serious-pul-19-follow-up-button-outline-neutral-border)
+follow-up — a single theme-level fix to the neutral-border token
+resolves Badge, Button, Card, and List in parallel.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -105,18 +121,21 @@ browser audit.
 **Notes:** Badge adapts to user-overridden line-height/letter-spacing
 because vertical size is driven by padding, not a fixed height.
 
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (minor) — needs browser verification
+### 2.4.7 Focus Visible (AA) — ✓ PASS (caller-driven)
 
 **Evidence:** `focus-within:outline-none focus-within:ring-2
 focus-within:ring-current focus-within:ring-offset-2` —
 `lib/pulsar/components/badge.ex:84–85`. The badge itself is not
 focusable; the ring appears when a focusable addon child (e.g., a
-remove button) is focused.
+remove button) is focused. Measurement reads `not-focusable-in-state`
+for every cell because the wrapping `<span>` doesn't receive focus.
 
-**Notes:** `ring-current` adopts the inherited text color, so on a
-solid-colored badge the ring uses the foreground text color against
-the colored background — ratio needs DevTools confirmation per
-variant/color. Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** `ring-current` adopts the inherited text color. On solid
+badges the ring color equals the foreground text color which already
+meets 4.5:1 against the badge background (1.4.3 measurement above) —
+that satisfies the 3:1 non-text minimum by a wide margin in every
+passing 1.4.3 cell. Variants where 1.4.3 fails (success/warning)
+also have a low-contrast ring; resolved by the same upstream fix.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
@@ -135,19 +154,24 @@ inherit their own activation semantics (native buttons, etc.).
 **Notes:** Sample usage in module docs (`lib/pulsar/components/badge.ex:32–53`)
 uses `<button phx-click="...">` which fires on mouseup.
 
-### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ⚠ GAP (minor) — needs browser verification
+### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ⚠ GAP (minor) — xs size below floor
 
 **Evidence:** Badge body is non-interactive (N/A for the wrapper).
 Interactive addon controls are caller-supplied via the
 `start_addon`/`end_addon` slots — `lib/pulsar/components/badge.ex:153–154`.
 The xs/sm sizes use small padding (`py-0.5`,
-`lib/pulsar/components/badge.ex:74–77`) which constrains addon click
-target height.
+`lib/pulsar/components/badge.ex:74–77`). Browser measurement: 73/91
+cells pass ≥ 24×24; 18 fail. All failures are `xs` size cells —
+they render at 20px height. `sm`, `md`, `lg`, `xl` all pass.
 
-**Notes:** When addon contains a remove button, its hit area depends on
-the badge's padding and the addon element's own dimensions. Tracked
-under browser audit; treated as minor because target size is
-ultimately the caller's responsibility for the inner control.
+**Notes:** Badge is non-interactive on its own, so 2.5.8 doesn't
+strictly apply to the wrapper. However, if a caller adds a
+`<button>` to `end_addon` to make a dismissible badge, the addon
+inherits the badge's height — at `xs` (20 px) the addon falls below
+the 24×24 floor. WCAG 2.5.8 spacing exception applies for inline
+controls, but Badge `xs` is intentionally a "label, never
+interactive" size. Document this in the Badge usage docs;
+component-level fix not required.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
@@ -207,7 +231,9 @@ no state attributes are needed.
 
 - **2.4.13 Focus Appearance (AAA, new in 2.2)** — focus-within ring uses
   `ring-2` (2px) with `ring-offset-2`, meeting AAA minimum thickness.
-  Contrast still needs browser verification.
+  Ring uses `ring-current` — when 1.4.3 text contrast passes, AAA
+  contrast also passes; failing 1.4.3 variants are
+  the same ones that fail AAA focus appearance contrast.
 
 ## Browser a11y findings (PUL-11)
 

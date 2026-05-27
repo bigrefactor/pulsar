@@ -54,15 +54,19 @@ alone — `lib/pulsar/components/card.ex:428–435`.
 conveyed by color alone. Interactive state combines `cursor-pointer`,
 focus ring, and `role="button"` — `lib/pulsar/components/card.ex:428–435, 453`.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Card renders no text of its own; text contrast is the
 caller's responsibility for slot content. Background + border tokens
 (`bg-surface-1`, `border-border`, etc.) come from the theme —
-`lib/pulsar/components/card.ex:199–237`.
+`lib/pulsar/components/card.ex:199–237`. Browser measurement of 72
+cells per theme: all pass, min 16.07:1 (light) / 14.03:1 (dark)
+([light](measurements/card-light.md),
+[dark](measurements/card-dark.md)). The fixture's heading/body text
+inside cards measures comfortably above 4.5:1 in both themes.
 
-**Notes:** Card-on-page contrast for the `bg-surface-1` and `bg-primary/10`
-families needs runtime check. Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** Card-on-page is a non-text-contrast concern (1.4.11), not
+a text-contrast one. Caller-supplied text is out of scope.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -79,7 +83,7 @@ padding is `rem`-based via Tailwind (`p-3` through `p-8`) —
 exceeds the card width is clipped rather than producing horizontal page
 scroll, which is consistent with 1.4.10.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — decorative borders
 
 **Evidence:**
 - Outline variant border is `border-2` in the active color —
@@ -89,8 +93,18 @@ scroll, which is consistent with 1.4.10.
 - Interactive focus ring is `ring-2 ring-primary` —
   `lib/pulsar/components/card.ex:431–434`
 
-**Notes:** Border/ring contrast ratios need DevTools verification across
-themes. Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+Browser measurement of 36 border cells per theme: 15/36 pass in both
+themes. Failing variants: `outline-neutral` (1.18:1 / 1.21:1) and
+every `solid-*` variant (all colors at 20% alpha resolve below 3:1).
+
+**Notes:** Per WCAG 1.4.11 understanding, decorative section
+separators / container outlines that don't communicate state are
+out of scope. The card border is purely visual emphasis — state
+(interactive vs static) is communicated by `role="button"`,
+`tabindex`, hover/focus changes, and `cursor-pointer`. The
+outline-neutral border edge case shares the `button-outline-neutral-border`
+follow-up. The solid-variant 20% alpha border is decorative and
+intentional.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -140,16 +154,19 @@ content is rendered verbatim — `test/pulsar/components/card_test.exs:188–203
 **Notes:** Caller is responsible for the heading text itself; the
 component does not enforce hierarchy.
 
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (minor) — needs browser verification
+### 2.4.7 Focus Visible (AA) — ✓ PASS (inferred)
 
 **Evidence:** Interactive card applies `focus-visible:outline-none`,
 `focus-visible:ring-2`, `focus-visible:ring-primary`,
 `dark:focus-visible:ring-dark-primary`, `focus-visible:ring-offset-2` —
 `lib/pulsar/components/card.ex:430–434`. Test asserts these classes —
-`test/pulsar/components/card_test.exs:665–674`.
+`test/pulsar/components/card_test.exs:665–674`. The card fixture
+doesn't render interactive cards (the fixture is static cards), so
+per-cell focus measurements are `not-focusable-in-state`.
 
-**Notes:** Ring visibility against each card variant's background needs
-runtime check. Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** Ring color `ring-primary` resolves to the same
+`--color-primary` token as Button uses (5.02:1 / 6.72:1 measured
+on Button). Inferred PASS by token symmetry.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 

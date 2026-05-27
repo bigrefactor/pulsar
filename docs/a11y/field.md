@@ -64,15 +64,25 @@ to the underlying input.
 `lib/pulsar/components/field.ex:312–321`. Required indicator (delegated
 to Label) uses asterisk + sr-only text.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (minor, partially covered by [PUL-31](https://linear.app/bigrefactor/issue/PUL-31), [PUL-33](https://linear.app/bigrefactor/issue/PUL-33))
 
 **Evidence:** Description colors use semantic tokens
 (`text-gray-600 dark:text-gray-400`, danger variant, etc.) —
 `lib/pulsar/components/field.ex:151–159`. Error message color is
 `text-danger-600 dark:text-danger-400` —
-`lib/pulsar/components/field.ex:182`.
+`lib/pulsar/components/field.ex:182`. Browser measurement of 16 cells:
+all field-fixture cells pass, min 19.27:1 (light) / 16.98:1 (dark)
+([light](measurements/field-light.md),
+[dark](measurements/field-dark.md)).
 
-**Notes:** Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** Existing
+[PUL-31](https://linear.app/bigrefactor/issue/PUL-31/field-fix-axe-color-contrast-violation)
+and
+[PUL-33](https://linear.app/bigrefactor/issue/PUL-33/form-fix-axe-color-contrast-violation)
+track help-text contrast surfaced via the Form fixture in dark mode
+— the field-only fixture doesn't render help text against the
+tinted form background where the issue appears, so direct
+measurement here passes. The known gaps remain valid.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -85,21 +95,30 @@ No fixed pixel heights at the wrapper level.
 **Evidence:** Wrapper uses `flex flex-col gap-2` — content-driven width,
 no `min-width` — `lib/pulsar/components/field.ex:185`.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.11 Non-text Contrast (AA) — ✓ PASS (delegated)
 
 **Evidence:** Field itself adds no borders/focus rings — those live on
-the leaf components. Tracked there and under browser audit.
+the leaf components. Per-leaf measurements above:
+- [input](input.md#1411-non-text-contrast-aa)
+- [textarea](textarea.md#1411-non-text-contrast-aa)
+- [select](select.md#1411-non-text-contrast-aa)
+- [checkbox](checkbox.md#1411-non-text-contrast-aa)
+- [radio_group](radio_group.md#1411-non-text-contrast-aa)
+- [switch](switch.md#1411-non-text-contrast-aa)
 
-**Notes:** N/A-leaning, but kept because field renders the error
-container styling.
+**Notes:** Field is a layout/labeling wrapper; non-text contrast is
+the leaf input's responsibility.
 
-### 1.4.12 Text Spacing (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.12 Text Spacing (AA) — ✓ PASS
 
 **Evidence:** Inline label classes include `leading-none` —
-`lib/pulsar/components/field.ex:637`. Needs runtime check that 1.5×
-line-height override doesn't clip.
-
-**Notes:** Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+`lib/pulsar/components/field.ex:637`. Browser test injects the WCAG
+overrides: 0 cells overflow
+([light](measurements/field-light.md#text-spacing-override-wcag-1412),
+[dark](measurements/field-dark.md#text-spacing-override-wcag-1412)).
+The inline-label `leading-none` is on a single-line label and
+expands cleanly under 1.5× line-height because the parent layout
+doesn't fix the wrapper height.
 
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
 
@@ -114,11 +133,11 @@ without an inline label, where the label inversion is opt-in by passing
 no slot — and the auto-generated label still renders inline). Quality
 of caller-provided labels is the caller's responsibility.
 
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (minor) — needs browser verification
+### 2.4.7 Focus Visible (AA) — ✓ PASS (delegated)
 
 **Evidence:** Focus rings live on the leaf input components — field
-itself renders no focusable surface. Tracked under each leaf component
-and the browser audit.
+itself renders no focusable surface. Per-leaf measurements link from
+the 1.4.11 entry above.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 

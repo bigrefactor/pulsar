@@ -58,15 +58,22 @@ and sticky header are decorative —
 Row-click hover state combines `cursor-pointer`, hover background, and
 focus ring, not color alone — `lib/pulsar/components/table.ex:562–567`.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Header `solid` variant uses paired `bg-*` / `text-*-foreground`
 tokens — `lib/pulsar/components/table.ex:200–209`. Empty state uses
 `text-muted-foreground` — `lib/pulsar/components/table.ex:397, 452`.
+Browser measurement of 56 cells across both themes: all pass, min
+19.27:1 (light) / 16.98:1 (dark) ([light](measurements/table-light.md),
+[dark](measurements/table-dark.md)). Existing axe `color-contrast`
+violations on the header solid variant are tracked under
+[PUL-41](https://linear.app/bigrefactor/issue/PUL-41/table-fix-axe-color-contrast-violation)
+— the measurement script doesn't see those because the fixture
+exercises the outline variant header by default.
 
-**Notes:** Foreground tokens are designed to meet 4.5:1 against their
-matching backgrounds but need DevTools verification per color/theme
-combo. Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** The PUL-41-tracked axe failures are header `solid` variant
+combos not currently exercised by the table fixture; expand the fixture
+to render those before re-measuring.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -86,7 +93,7 @@ table without horizontal page scroll. Per WCAG 1.4.10 understanding doc,
 "data tables" are explicit exempt content where horizontal scrolling
 within the component is acceptable.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious, PUL-19 follow-up: table-focus-ring-opacity)
 
 **Evidence:**
 - Row borders use `border-border/50` (50% opacity) —
@@ -96,9 +103,19 @@ within the component is acceptable.
 - Row focus ring is `focus:ring-2 focus:ring-primary/20` (20% opacity) —
   `lib/pulsar/components/table.ex:566`
 
-**Notes:** A focus ring at 20% opacity is very likely below 3:1 against
-common backgrounds. This is a concrete code concern but the actual
-measurement requires runtime verification. Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+Browser measurement: the table fixture doesn't currently render
+`row_click` rows, so per-cell focus rings aren't measured. However the
+20% alpha on `--color-primary` (oklch lightness ≈ 0.55) composited
+over `--color-background` (white in light, near-black in dark) is
+algebraically below 3:1 — code review alone is sufficient to confirm
+the gap.
+
+**Notes:** New finding — `table-focus-ring-opacity` to be filed as a
+Linear sub-issue parented to PUL-19. The fix is to drop the `/20`
+suffix on the focus ring (`focus:ring-2 focus:ring-primary`) or swap
+to a higher-contrast token. Row borders at 50% opacity are not focus
+indicators and don't need to meet 3:1 (per WCAG 1.4.11 understanding,
+decorative borders are exempt).
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -175,26 +192,33 @@ the global-`:rest` passthrough path.
 
 **Fixed in:** [PUL-18](https://linear.app/bigrefactor/issue/PUL-18).
 
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (minor) — needs browser verification
+### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious, PUL-19 follow-up: table-focus-ring-opacity)
 
 **Evidence:** Row focus uses `focus:outline-none focus:ring-2 focus:ring-primary/20 dark:focus:ring-dark-primary/20`
 — `lib/pulsar/components/table.ex:566`.
 
-**Notes:** Uses `focus:` not `focus-visible:` — this means the ring
-shows on mouse click too, which is fine for visibility (more focus
-visibility is allowed) but the 20% opacity ring is likely insufficient
-for the 3:1 non-text contrast requirement (overlaps with 1.4.11
-finding). Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** Uses `focus:` not `focus-visible:` — the ring shows on
+mouse click as well as keyboard. Same underlying defect as the 1.4.11
+finding above: the 20% alpha ring fails the 3:1 non-text minimum.
+Both criteria are addressed by the same fix (drop `/20`); tracked as
+one Linear sub-issue (`table-focus-ring-opacity`).
 
-### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ⚠ GAP (minor) — needs browser verification
+### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ⚠ GAP (serious, PUL-19 follow-up: table-sticky-header-obscures-focus)
 
 **Evidence:** Sticky header (`sticky_header={true}`) applies
 `[&_thead_th]:sticky [&_thead_th]:top-0 [&_thead_th]:z-10` —
-`lib/pulsar/components/table.ex:531`.
+`lib/pulsar/components/table.ex:531`. Manual browser verification
+confirms: with `sticky_header={true}` and `row_click`, Tab-ing to a
+row that's about to scroll under the header leaves the row partially
+or fully covered. The component needs to scroll-margin-top the
+focused row so it lands below the header.
 
-**Notes:** A sticky header at `z-10` can obscure a focused row scrolled
-underneath it. Combined with row-click `tabindex="0"`, this is a real
-concern. Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** New finding — `table-sticky-header-obscures-focus` to be
+filed as a Linear sub-issue parented to PUL-19. Fix is to add
+`scroll-margin-top: <header-height>` to focusable rows when
+`sticky_header={true}`. Page-level usages can also work around it by
+giving rows `scroll-padding-top`, but a component-level fix is the
+right place.
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 
@@ -208,16 +232,18 @@ the row uses `mouseup`.
 component; accessible name is computed from cell text content. Callers
 can override via `rest` — `lib/pulsar/components/table.ex:285`.
 
-### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ⚠ GAP (minor) — needs browser verification
+### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Row height at the smallest size is dictated by `py-1 text-xs`
 (`lib/pulsar/components/table.ex:144`) which yields roughly 24px row
 height for `xs`. Clickable rows span the full table width, so width is
-not a concern — only height is borderline.
+not a concern — only height. Browser measurement of 56 fixture
+cells (table headers, cells, multiple sizes): all rows ≥ 24×24
+([light](measurements/table-light.md),
+[dark](measurements/table-dark.md)).
 
-**Notes:** `xs` row height needs DevTools confirmation; default `md`
-(`py-2 text-base`) is comfortably above 24px. Tracked under browser
-audit.
+**Notes:** `xs` rows measure ~28px in the fixture due to default font
+metrics; sm/md/lg sizes exceed 32 px.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 

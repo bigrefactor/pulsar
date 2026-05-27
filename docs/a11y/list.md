@@ -59,16 +59,22 @@ dividers are decorative emphasis only —
 `<dt>` / `<dd>` semantics —
 `lib/pulsar/components/list.ex:152–250`.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious, [PUL-37](https://linear.app/bigrefactor/issue/PUL-37/list-fix-axe-color-contrast-violation))
 
 **Evidence:** Text uses semantic tokens like `text-foreground`,
 `text-primary`, `text-muted-foreground` —
 `lib/pulsar/components/list.ex:152–250, 484–501`. Description text in
 header uses `text-muted-foreground dark:text-dark-muted-foreground` —
-`lib/pulsar/components/list.ex:574`.
+`lib/pulsar/components/list.ex:574`. Browser measurement of 57 cells
+per theme: all pass at the fixture level (min 7.56:1 light / 7.74:1
+dark) ([light](measurements/list-light.md),
+[dark](measurements/list-dark.md)).
 
-**Notes:** Token pairings are plausible but ratios across variants and
-colors need DevTools. Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** [PUL-37](https://linear.app/bigrefactor/issue/PUL-37)
+tracks axe-detected color-contrast on the `success dt on tinted bg`
+combo (light) and `dark text on dark bg` (dark) — neither variant
+is exercised by the fixture, so direct measurement doesn't surface
+them. The known gaps remain valid.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -82,15 +88,20 @@ breakpoint (`flex` falls through with no grid) and uses
 `sm:grid sm:grid-cols-3 sm:gap-4` only at wider widths —
 `lib/pulsar/components/list.ex:451`. No fixed minimum width.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — decorative borders
 
 **Evidence:** Item dividers use `border-t border-border` —
 `lib/pulsar/components/list.ex:352, 383`. Outline variant border-1 on
 the wrapper — `lib/pulsar/components/list.ex:144, 513`. Solid variant
 uses 20% opacity borders — `lib/pulsar/components/list.ex:222–248`.
+Browser measurement: 38 border cells per theme, 16 pass. Failing:
+`outline-neutral` (1.18:1 / 1.21:1), `empty-headerless` (no
+meaningful border), and all `solid-*` 20%-alpha borders (≈1.5:1).
 
-**Notes:** 1px dividers and low-opacity borders need DevTools to verify
-3:1. Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** Same disposition as Card — decorative item separators
+and container outlines that don't communicate state are out of
+scope per WCAG 1.4.11. The `outline-neutral` case folds into the
+shared `button-outline-neutral-border` follow-up.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 

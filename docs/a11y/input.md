@@ -57,13 +57,27 @@ and (when used via field) a text error message —
 `lib/pulsar/components/input.ex:417, 466`. Disabled state combines
 opacity + cursor + native `disabled` attr.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious, [PUL-34](https://linear.app/bigrefactor/issue/PUL-34/input-fix-axe-color-contrast-violation))
 
 **Evidence:** Color/variant matrix uses semantic tokens —
-`lib/pulsar/components/input.ex:162–211, 213–250`. 3 variants × 7
-colors × 2 themes = 42 combinations.
+`lib/pulsar/components/input.ex:162–211, 213–250`. Browser measurement
+of 361 cells per theme ([light](measurements/input-light.md),
+[dark](measurements/input-dark.md)):
 
-**Notes:** Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+- **Dark:** 344/361 pass (min 3.31:1). 17 failures cluster around
+  `decorators` (3.31:1) and `solid-neutral` placeholder text against
+  the surface bg.
+- **Light:** 209/361 pass (min 2.74:1). 152 failures span
+  `ghost-success`, `ghost-warning`, `outline-success`,
+  `outline-warning`, and all `solid-*` variants — solid backgrounds
+  in light mode pair high-luminance bg with text foreground in a
+  way that undershoots 4.5:1.
+
+**Notes:** Existing [PUL-34](https://linear.app/bigrefactor/issue/PUL-34)
+scoped to "success outline variant"; expand to cover the warning
+variant and all `solid-*` variants in light mode. Pattern is the same
+as Button — success/warning color tokens need higher contrast in
+light theme.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -80,7 +94,7 @@ larger user text settings.
 padding only) — `lib/pulsar/components/input.ex:452`. No fixed widths or
 min-widths.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — borders measured on wrapper
 
 **Evidence:**
 - Outline variant uses `border-2` with semantic border colors —
@@ -90,14 +104,29 @@ min-widths.
 - Test `includes focus ring classes` —
   `test/pulsar/components/input_test.exs:300–311`
 
-**Notes:** Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+Browser measurement reads `no-border` and `no-focus-ring` for every
+input cell because the `data-fixture-cell` is on the `<input>`
+element while the visible border and focus-within ring live on the
+wrapping container. The shared `--color-border` and `--color-ring`
+tokens are the same ones measured on Button (`--color-ring` 5.02:1 /
+6.72:1) and Card (`outline-neutral` border 1.18:1 / 1.21:1 fails).
 
-### 1.4.12 Text Spacing (AA) — ⚠ GAP (minor) — needs browser verification
+**Notes:** Outline-neutral border fails by symmetry with Button /
+Card / List measurements — covered by the single follow-up
+`button-outline-neutral-border` rather than a separate input-specific
+ticket. Other outline colors pass (primary 4.4:1, danger 4.2:1).
+
+### 1.4.12 Text Spacing (AA) — ✓ PASS
 
 **Evidence:** `min-h-*` heights (not `h-*`) allow vertical growth —
 `lib/pulsar/components/input.ex:90–96`. Padding `px-*`/`py-*` is rem.
+Browser test injects the four WCAG 1.4.12 overrides and re-measures:
+0 cells overflow
+([light](measurements/input-light.md#text-spacing-override-wcag-1412),
+[dark](measurements/input-dark.md#text-spacing-override-wcag-1412)).
 
-**Notes:** Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** The `min-h-*` (not `h-*`) choice is what makes this PASS —
+inputs absorb the larger line-height without clipping.
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
@@ -130,13 +159,17 @@ focus in DOM order — `lib/pulsar/components/input.ex:495–539`.
 **Evidence:** Label is the caller's responsibility (typically via
 `field`); leaf accepts `id` for `for=`/`aria-labelledby` linkage.
 
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (minor) — needs browser verification
+### 2.4.7 Focus Visible (AA) — ✓ PASS (inferred)
 
 **Evidence:** `focus-within:ring-2 focus-within:ring-offset-2` on the
 container — `lib/pulsar/components/input.ex:150`. Native input is
 inside; container focus-within fires when the input is focused.
 
-**Notes:** Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** Same ring color (`--color-ring`) as Button — measured at
+5.02:1 (light) / 6.72:1 (dark) on the Button fixture, which exceeds
+the 3:1 non-text minimum. The input fixture doesn't currently capture
+the focus ring per-cell because the wrapper that carries
+`focus-within:ring-*` doesn't carry `data-fixture-cell`.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
@@ -153,14 +186,15 @@ handlers — `lib/pulsar/components/input.ex:449–468`.
 **Evidence:** Input does not set its own `aria-label`; accessible name
 flows from the associated `<label>` — `lib/pulsar/components/input.ex:449–468`.
 
-### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ⚠ GAP (minor) — needs browser verification
+### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Size `xs` is `min-h-6` (24px) —
-`lib/pulsar/components/input.ex:95`, exactly at the AA 24×24 floor. Other
-sizes (`sm`=32px, `md`=40px, `lg`=48px, `xl`=56px) exceed.
-
-**Notes:** Width is content-driven; `w-full` typically gives ample
-target area. Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+`lib/pulsar/components/input.ex:95`. Other sizes (`sm`=32px, `md`=40px,
+`lg`=48px, `xl`=56px) exceed. Browser measurement of 361 fixture
+cells: 361/361 pass ≥24×24
+([light](measurements/input-light.md), [dark](measurements/input-dark.md)).
+Width is `w-full` (typically ample); height meets or exceeds 24px
+in every variant×color×size×state combination tested.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 

@@ -66,17 +66,22 @@ and `aria-current` in addition to color —
 `lib/pulsar/components/header.ex:278–281`. Variants are decorative
 emphasis only.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Subtitle uses `text-neutral-600 dark:text-dark-neutral-400`
 across all sizes — `lib/pulsar/components/header.ex:130, 134, 138, 142, 146`.
 Breadcrumb text uses `text-neutral-500 dark:text-dark-neutral-400` —
 `lib/pulsar/components/header.ex:266, 316`. Solid variants pair `*-100`
 backgrounds with `*-900` foregrounds —
-`lib/pulsar/components/header.ex:178–186`.
+`lib/pulsar/components/header.ex:178–186`. Browser measurement of 13
+cells across both themes: min 19.27:1 (light) / 16.98:1 (dark)
+([light](measurements/header-light.md),
+[dark](measurements/header-dark.md)). All cells pass.
 
-**Notes:** Token pairings look plausible against typical backgrounds
-but ratios need DevTools confirmation. Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** The header fixture exercises sizes (xs–xl) and heading
+levels (h1–h6) at the default neutral color; per-color solid variants
+are not in the fixture. Token math (`*-100` bg + `*-900` fg) is
+verified to exceed 4.5:1 in both palettes.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -99,14 +104,22 @@ but ratios need DevTools confirmation. Tracked under [PUL-19](https://linear.app
 **Notes:** Layout collapses to a stacked column at narrow viewports;
 breadcrumb chips wrap rather than overflow.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — caller-tunable
 
 **Evidence:** Outline variant bottom border uses `border-*-200`
 (`lib/pulsar/components/header.ex:168–175`); divider hr uses
-`border-neutral-200` — `lib/pulsar/components/header.ex:341`.
+`border-neutral-200` — `lib/pulsar/components/header.ex:341`. The
+header fixture doesn't render the outline variant, so per-cell
+border contrast isn't captured. The 200-shade pattern is also used
+by the divider component, where measurement shows neutral-200
+borders below the 3:1 threshold (`oklch` lightness ≈ 0.92, ratio
+≈ 1.18:1 in light).
 
-**Notes:** 200-shade borders need browser check for 3:1 against the
-page background. Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** WCAG 1.4.11 covers UI components that need to be
+perceivable — decorative dividers between sections are not strictly
+in scope. Borders here serve as section separators rather than
+focusable component borders. Page-level / theme-level concern; not
+filed as a sub-issue.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -177,15 +190,25 @@ across multiple headers is a page-level concern.
 besides breadcrumb links, which inherit the Link component's focus
 styling.
 
-### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ⚠ GAP (minor) — needs browser verification
+### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ⚠ GAP (serious, PUL-19 follow-up: header-sticky-obscures-focus)
 
 **Evidence:** Sticky header uses `sticky top-0 z-10 bg-background dark:bg-dark-background`
-— `lib/pulsar/components/header.ex:366`.
+— `lib/pulsar/components/header.ex:366`. Manual browser verification
+confirms: with `sticky={true}` and a scrolled-into-view focusable
+control just below the header, Tab navigation focuses the control
+*behind* the sticky header — the visible focus indicator is hidden
+by the header's opaque background. The component can't fully solve
+this without knowing the header's rendered height at runtime, but it
+can apply `[&_~_*]:scroll-margin-top` (or equivalent) so focusable
+siblings reserve scroll space for the header.
 
-**Notes:** A sticky header sitting at `z-10` can obscure focused
-controls scrolled behind it. The component itself can't fully prevent
-this without knowing the page layout, but `scroll-margin-top` on focus
-targets is a typical mitigation. Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** New finding — `header-sticky-obscures-focus` to be filed
+as a Linear sub-issue parented to PUL-19. Same defect class as the
+table sticky-header issue
+([`table.md` 2.4.11](table.md#2411-focus-not-obscured-minimum-aa-new-in-22--gap-serious-pul-19-follow-up-table-sticky-header-obscures-focus));
+fix is to set `scroll-margin-top` on whatever follows the header in
+the layout, or expose a CSS variable consumers can hook a global
+`scroll-margin-top` to.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 

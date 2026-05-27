@@ -43,13 +43,20 @@ sr-only "(required)" announcement.
 **Notes:** Error styling (color change) is meant to coordinate with the
 field's error message; the label itself doesn't carry the only signal.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Default color `text-foreground dark:text-dark-foreground`;
 error color `text-danger dark:text-dark-danger` —
 `lib/pulsar/components/label.ex:184, 188`. Semantic-token sourcing is sound.
+Browser measurement of 8 fixture cells (default, required, error,
+required-error × sizes xs-xl): min 4.56:1 (light, danger color) /
+6.14:1 (dark) ([light](measurements/label-light.md),
+[dark](measurements/label-dark.md)). All pass 4.5:1.
 
-**Notes:** Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** [PUL-35](https://linear.app/bigrefactor/issue/PUL-35/label-fix-axe-color-contrast-violation)
+tracks an axe-detected `color-contrast` issue on the danger label
+variant when surfaced inside a form on a tinted background; the
+component-on-page-bg measurement here passes.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -65,13 +72,14 @@ scalability.
 `lib/pulsar/components/label.ex:114, 142–162`. Label is inline-level by
 default.
 
-### 1.4.12 Text Spacing (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.12 Text Spacing (AA) — ✓ PASS
 
 **Evidence:** No fixed heights on the label. Default Tailwind text
 classes inherit line-height which exceeds 1.5× on typical settings —
-`lib/pulsar/components/label.ex:114`.
-
-**Notes:** Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+`lib/pulsar/components/label.ex:114`. Browser test injects the WCAG
+overrides and re-measures: 0 cells overflow
+([light](measurements/label-light.md#text-spacing-override-wcag-1412),
+[dark](measurements/label-dark.md#text-spacing-override-wcag-1412)).
 
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
 

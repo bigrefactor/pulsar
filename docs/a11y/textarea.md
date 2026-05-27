@@ -52,13 +52,26 @@ field) text error — `lib/pulsar/components/textarea.ex:489`. Character
 counter color changes are paired with explicit numeric text and
 "remaining"/"over" labels — `lib/pulsar/components/textarea.ex:539–542`.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious, [PUL-43](https://linear.app/bigrefactor/issue/PUL-43/textarea-fix-axe-color-contrast-violation))
 
 **Evidence:** Color/variant matrix uses semantic tokens —
 `lib/pulsar/components/textarea.ex:151–310`. Character counter has
 multi-state colors — `lib/pulsar/components/textarea.ex:313–325`.
+Browser measurement of 271 cells per theme
+([light](measurements/textarea-light.md),
+[dark](measurements/textarea-dark.md)):
 
-**Notes:** Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+- **Dark:** 258/271 pass (min 3.31:1). 13 failures cluster around
+  `character-count` and `solid-neutral` text.
+- **Light:** 157/271 pass (min 2.74:1). 114 failures span ghost/
+  outline-success/warning and all `solid-*` variants — same pattern
+  as Input.
+
+**Notes:** [PUL-43](https://linear.app/bigrefactor/issue/PUL-43)
+scoped to "success outline variant"; expand to cover warning and the
+solid family in light mode. Pattern mirrors Input and Select; a
+single fix to the color tokens at the theme level addresses all
+three.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -71,21 +84,36 @@ multi-state colors — `lib/pulsar/components/textarea.ex:313–325`.
 `lib/pulsar/components/textarea.ex:139`. Container is `space-y-2` —
 `lib/pulsar/components/textarea.ex:473`.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious, PUL-19 follow-up: textarea-outline-border-contrast)
 
 **Evidence:** Outline variant uses `border-2` —
 `lib/pulsar/components/textarea.ex:146`; focus ring `focus:ring-2
 focus:ring-offset-2` — `lib/pulsar/components/textarea.ex:140`.
+Browser measurement: border contrast measured on the textarea cell
+itself (which carries the border directly). 90 outline cells per
+theme, 30 pass light / 48 pass dark. Failing outline colors in light
+mode: `outline-neutral` (1.18:1), `outline-primary` (~2.4:1),
+`outline-secondary` (~2.4:1), `outline-success` (~2.6:1),
+`outline-warning` (~2.7:1) — all below the 3:1 floor. Focus ring
+measured 3.06:1 (light min) / 3.67:1 (dark min) — passes.
 
-**Notes:** Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** New finding — `textarea-outline-border-contrast` to be
+filed as a Linear sub-issue parented to PUL-19. The textarea outline
+variant border (`border-*-300`) sits between primary/secondary/etc
+tokens at light shades that don't reliably meet 3:1 against the
+default white background. Same defect as the Select outline borders
+([`select.md` 1.4.11](select.md#1411-non-text-contrast-aa)).
 
-### 1.4.12 Text Spacing (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.12 Text Spacing (AA) — ✓ PASS
 
 **Evidence:** `min-h-*` (not `h-*`) gives vertical headroom —
 `lib/pulsar/components/textarea.ex:104–135`. `max-h-*` *does* cap growth,
-which could be a concern under user line-height overrides.
-
-**Notes:** Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+which could be a concern under user line-height overrides. Browser
+test injects the WCAG overrides and re-measures: 0 cells overflow
+([light](measurements/textarea-light.md#text-spacing-override-wcag-1412),
+[dark](measurements/textarea-dark.md#text-spacing-override-wcag-1412)).
+The textarea content uses native scrolling, so once content exceeds
+`max-h-*` the textarea scrolls — content is not clipped or lost.
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
@@ -115,14 +143,19 @@ order — `lib/pulsar/components/textarea.ex:474–504`.
 **Evidence:** Label is the caller's responsibility (typically via
 `field`); leaf accepts `id` for `for=` linkage.
 
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (minor) — needs browser verification
+### 2.4.7 Focus Visible (AA) — ✓ PASS
 
 **Evidence:** `focus:ring-2 focus:ring-offset-2` —
-`lib/pulsar/components/textarea.ex:140`.
+`lib/pulsar/components/textarea.ex:140`. Browser measurement of 217
+focus-ring cells: min 3.06:1 (light) / 3.67:1 (dark)
+([light](measurements/textarea-light.md),
+[dark](measurements/textarea-dark.md)). All cells exceed 3:1.
 
 **Notes:** Uses `focus:` not `focus-visible:`, so the ring shows on
-mouse click too — acceptable but slightly noisier. Tracked under browser
-audit.
+mouse click as well as keyboard focus. The 3.06:1 minimum in light
+theme corresponds to lower-contrast color rings (success/warning);
+the default neutral ring resolves to the same `--color-ring` token
+as Button (5.02:1 / 6.72:1).
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
@@ -138,14 +171,14 @@ audit.
 **Evidence:** No `aria-label` set; accessible name flows from the
 associated label — `lib/pulsar/components/textarea.ex:474–504`.
 
-### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ⚠ GAP (minor) — needs browser verification
+### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Smallest size `xs` is `min-h-16` (64px) —
-`lib/pulsar/components/textarea.ex:131`. All sizes exceed the 24px floor
-comfortably. Width is `w-full`.
-
-**Notes:** Comfortably exceeds. Listed minor as a formality; tracked
-under browser audit.
+`lib/pulsar/components/textarea.ex:131`. All sizes exceed the 24px
+floor comfortably. Width is `w-full`. Browser measurement: 271/271
+cells ≥ 24×24
+([light](measurements/textarea-light.md),
+[dark](measurements/textarea-dark.md)).
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 
@@ -234,7 +267,10 @@ should add their own `aria-live` region — out of scope here.
 - **2.5.5 Target Size (Enhanced) (AAA)** — all sizes (`xs`=64px through
   `xl`=160px) exceed the AAA 44×44 floor.
 - **2.4.13 Focus Appearance (AAA, new in 2.2)** — `ring-2` (2px) meets
-  AAA minimum thickness. Contrast still needs browser verification.
+  AAA minimum thickness. Browser measurement: ring contrast min
+  3.06:1 (light) / 3.67:1 (dark) — passes AA 3:1 but falls below
+  AAA 4.5:1 for low-contrast color variants. Not a confirmed AAA win
+  for every color.
 
 ## Browser a11y findings (PUL-11)
 

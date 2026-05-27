@@ -55,32 +55,44 @@ visual order matches DOM order.
 data attribute provide non-visual signals alongside any color
 distinction.
 
-### 1.4.1 Use of Color (A) — ⚠ GAP (minor) — needs browser verification
+### 1.4.1 Use of Color (A) — ⚠ GAP (minor) — caller-driven choice
 
 **Evidence:** Solid variant (default) renders `no-underline` with only
 color distinguishing links from surrounding text —
 `lib/pulsar/components/link.ex:297`. Ghost and outline variants pair
 color with a `border-b-2` underline-equivalent —
-`lib/pulsar/components/link.ex:294–298`.
+`lib/pulsar/components/link.ex:294–298`. Browser measurement: the
+link fixture exercises link text against the page background, not
+inline against body copy. Per-color light measurements: link text
+ranges 3.06:1 to 19.27:1 vs the page bg. For the inline-body
+3:1-against-text technique, primary/danger/info colors pass against
+default foreground; success/warning are borderline.
 
-**Notes:** WCAG 1.4.1 requires a non-color signal for inline links in
-body copy unless the link is "obvious from its context". The default
-solid variant relies on color alone when used inline; ghost or outline
-should be preferred for body-copy links. Whether the visible color
-contrast against surrounding text meets 3:1 (the WCAG
-techniques-recommended ratio for color-only link distinction) needs
-DevTools measurement. Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+**Notes:** Component-level fix not appropriate — the default `solid`
+variant works for high-contrast colors; callers should choose
+`ghost` or `outline` (which carry a visible underline-equivalent)
+for body-copy links. Document in usage notes; not filed as a
+sub-issue.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious, [PUL-36](https://linear.app/bigrefactor/issue/PUL-36/link-fix-axe-color-contrast-violation))
 
 **Evidence:** Colors come from semantic tokens
 (`text-primary`, `text-danger`, dark-mode pairs, etc.) —
-`lib/pulsar/components/link.ex:300–310`. Hover state uses `/80` opacity
-on the same token — `lib/pulsar/components/link.ex:301–309`.
+`lib/pulsar/components/link.ex:300–310`. Hover state uses `/80`
+opacity on the same token. Browser measurement of 97 cells per theme
+([light](measurements/link-light.md),
+[dark](measurements/link-dark.md)):
 
-**Notes:** 8 color schemes × 2 themes × default/hover state need
-DevTools measurement against typical surfaces. Tracked under browser
-audit.
+- **Dark:** all 97 pass (min 6.14:1).
+- **Light:** 65/97 pass (min 3.06:1). Failing variants × colors:
+  ghost/link/outline/solid in `success`, `warning` colors; plus
+  `solid-success` and `solid-warning`.
+
+**Notes:** Existing [PUL-36](https://linear.app/bigrefactor/issue/PUL-36)
+scoped to "light: success/warning/error solid; dark: primary/success
+solid"; partially overlaps. Re-scope to include all ghost/outline/
+link variants in success/warning colors — same upstream token fix
+applies to text everywhere.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -99,17 +111,22 @@ size.
 **Notes:** Link width is content-driven; reflows at 320 CSS px without
 horizontal scroll.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — needs browser verification
+### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious, PUL-19 follow-up: link-focus-ring-opacity)
 
 **Evidence:** Focus ring is `ring-2 ring-ring/50` (and
 `dark:ring-dark-ring/50` in dark mode) with `ring-offset-1` —
 `lib/pulsar/components/link.ex:288–292`. Ghost/outline variants use
 `border-b-2 border-current` — `lib/pulsar/components/link.ex:295–296`.
+Browser measurement: focus ring measures 2.16:1 in light and 2.63:1
+in dark across every color variant — substantially below the 3:1
+minimum. Cause is the `/50` (50% alpha) modifier on the ring color
+token.
 
-**Notes:** Focus ring uses `/50` opacity which may reduce contrast
-below 3:1 against light backgrounds. Border-current inherits the link
-text color (which is checked separately under 1.4.3). Tracked under
-browser audit.
+**Notes:** New finding — `link-focus-ring-opacity` to be filed as a
+Linear sub-issue parented to PUL-19. Fix is to drop `/50` (use full-
+opacity `ring-ring` / `dark:ring-dark-ring`), matching Button which
+measures 5.02:1 / 6.72:1 with the same underlying token at full
+opacity.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -165,7 +182,7 @@ responsible for descriptive content (avoid "click here" patterns).
 **Evidence:** `inner_block` required (visible label); `aria_label`
 available as supplemental — `lib/pulsar/components/link.ex:70, 77`.
 
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (minor) — needs browser verification
+### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious, PUL-19 follow-up: link-focus-ring-opacity)
 
 **Evidence:**
 - Base classes include `focus-visible:outline-none`,
@@ -175,9 +192,12 @@ available as supplemental — `lib/pulsar/components/link.ex:70, 77`.
 - Tests assert focus ring classes —
   `test/pulsar/components/link_test.exs:538–549`
 
-**Notes:** Removes the default browser outline and replaces with a ring
-at 50% opacity. Visibility against each color/surface combination needs
-DevTools verification. Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
+The ring IS visible (rendered), but its contrast against the
+adjacent background is 2.16:1 (light) / 2.63:1 (dark) — fails the
+3:1 non-text minimum. Same defect as 1.4.11 above.
+
+**Notes:** Both 1.4.11 and 2.4.7 are resolved by the same fix
+(`link-focus-ring-opacity`): drop the `/50` modifier.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
@@ -291,7 +311,9 @@ only status-like attribute and is correctly pass-through —
   by not allowing icon-only links without explicit `aria_label`.
 - **2.4.13 Focus Appearance (AAA, new in 2.2)** — focus ring uses
   `ring-2` (2px) with `ring-offset-1`, meeting the AAA minimum
-  thickness. Contrast still needs browser verification.
+  thickness. Browser-measured contrast (2.16:1 light / 2.63:1 dark)
+  doesn't meet the AAA 4.5:1 requirement — link is **not** an AAA win
+  under 2.4.13 until `link-focus-ring-opacity` is resolved.
 
 ## Browser a11y findings (PUL-11)
 
