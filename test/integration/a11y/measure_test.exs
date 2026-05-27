@@ -75,9 +75,7 @@ defmodule Pulsar.Integration.A11y.MeasureTest do
     |> PhoenixTest.Playwright.evaluate("window.PulsarA11yMeasure.applyTextSpacingOverride()")
     |> capture(parent, :text_spacing, "window.PulsarA11yMeasure.detectOverflows()")
     |> PhoenixTest.Playwright.evaluate("window.PulsarA11yMeasure.removeTextSpacingOverride()")
-    |> PhoenixTest.Playwright.evaluate(
-      "window.PulsarA11yMeasure.applyReflowConstraint(#{@reflow_width})"
-    )
+    |> PhoenixTest.Playwright.evaluate("window.PulsarA11yMeasure.applyReflowConstraint(#{@reflow_width})")
     |> capture(parent, :reflow_cells, "window.PulsarA11yMeasure.detectOverflows()")
     |> capture(
       parent,
