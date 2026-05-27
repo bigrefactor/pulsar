@@ -25,4 +25,4 @@ end
 
 Application.put_env(:phoenix_test, :base_url, Pulsar.DevApp.Endpoint.url())
 
-ExUnit.start(exclude: [:integration])
+ExUnit.start(exclude: [:integration, :measure])
