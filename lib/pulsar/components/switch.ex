@@ -547,9 +547,9 @@ defmodule Pulsar.Components.Switch do
   @spec track_variant_classes(String.t(), String.t()) :: String.t()
   defp track_variant_classes("solid", color) do
     [
-      "bg-muted/80",
-      "hover:bg-muted/90",
-      "peer-focus-visible:bg-muted",
+      "bg-border-strong",
+      "hover:bg-muted-foreground",
+      "peer-focus-visible:bg-muted-foreground",
       @color_config[color][:solid][:checked]
     ]
     |> Enum.join(" ")
@@ -558,9 +558,9 @@ defmodule Pulsar.Components.Switch do
   defp track_variant_classes("outline", color) do
     [
       "border-2",
-      "bg-background border-border/70",
-      "hover:border-border",
-      "peer-focus-visible:border-border",
+      "bg-background border-border-strong",
+      "hover:border-foreground",
+      "peer-focus-visible:border-foreground",
       @color_config[color][:outline][:checked]
     ]
     |> Enum.join(" ")
@@ -568,7 +568,7 @@ defmodule Pulsar.Components.Switch do
 
   defp track_variant_classes("ghost", color) do
     [
-      "border-2 border-transparent",
+      "border-2 border-border-strong peer-checked:border-transparent",
       "bg-muted/30 hover:bg-muted/40",
       "peer-focus-visible:bg-muted/50",
       @color_config[color][:ghost][:checked]
@@ -599,11 +599,11 @@ defmodule Pulsar.Components.Switch do
   end
 
   defp thumb_variant_classes("outline") do
-    "bg-background shadow-dropdown shadow-black/8 border border-border/30"
+    "bg-background shadow-dropdown shadow-black/8 border border-border-strong"
   end
 
   defp thumb_variant_classes("ghost") do
-    "bg-background shadow-dropdown shadow-black/6"
+    "bg-background shadow-dropdown shadow-black/6 border border-border-strong"
   end
 
   # State classes for invalid states

@@ -2,7 +2,7 @@
 
 **Source:** [`lib/pulsar/components/switch.ex`](../../lib/pulsar/components/switch.ex)
 **Tests:** [`test/pulsar/components/switch_test.exs`](../../test/pulsar/components/switch_test.exs)
-**Audited:** 2026-05-24 (code-only)
+**Audited:** 2026-05-27 (code-only)
 
 iOS-style toggle implemented as a visually-hidden native
 `<input type="checkbox" role="switch">` (the real keyboard target) paired
@@ -79,23 +79,33 @@ No fixed widths.
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:**
-- Track has `shadow-inner` + variant-specific bg —
-  `lib/pulsar/components/switch.ex:242–243`
+- Off-state track uses `bg-border-strong` (solid),
+  `border-border-strong` (outline + ghost) — both resolve to
+  `--color-border-strong` = `gray-500` (light) / `gray-400` (dark),
+  which clear 3:1 against `--color-background` (≈4.83:1 light,
+  ≈7.5:1 dark) —
+  `lib/pulsar/components/switch.ex:548–577`
+- Checked-state track uses semantic color tokens at high opacity
+  (`bg-{color}/90` solid, `bg-{color}/10 border-{color}` outline,
+  `bg-{color}/15` ghost) — `lib/pulsar/components/switch.ex:131–209`
 - Focus ring on the **visible track** (not the `sr-only` input) uses
   `peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background`
   — `lib/pulsar/components/switch.ex:216–218`
 - Thumb has shadow rings —
-  `lib/pulsar/components/switch.ex:621, 625, 629`
+  `lib/pulsar/components/switch.ex:597–607`
 
 The ring on the visible track resolves to the standard `--color-ring`
-token at full opacity, matching Button (5.02:1 / 6.72:1).
+token at full opacity, matching Button (5.02:1 light / 6.72:1 dark).
 
-**Notes:** Previously the focus indicator measurement landed on the
-1×1 `sr-only` input element rather than the visible track. The track
-had `tabindex="-1"` so its `focus-visible:ring-*` classes never
-activated. Resolved by switching those classes to
-`peer-focus-visible:` so the visible track shows a real ring when the
-underlying input is keyboard-focused.
+**Notes:** Previous revisions sized the off-state track with `bg-muted/80`
+(solid), `bg-muted/30` (ghost), and `border-border/70` (outline). All
+three rendered as near-invisible pills against `bg-background` (≤1.7:1)
+because `--color-muted` is intentionally a near-background token. The
+current revision lifts the off-state boundary to `--color-border-strong`,
+which is the canonical 3:1 boundary token (same one Bundle A
+strengthened to gray-500 light / gray-400 dark for this purpose). The
+measurement tooling reports off-track contrast against the page
+background on the visible track div, not the `sr-only` input.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
