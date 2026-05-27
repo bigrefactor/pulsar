@@ -94,11 +94,12 @@ by the parent container (FlashGroup sets `max-w-sm w-full` —
 
 ### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — needs browser verification
 
-**Evidence:** Focus ring on the container uses `focus-within:ring-2
-ring-current ring-offset-2` — `lib/pulsar/components/flash.ex:100–101`.
-Close button uses `focus:ring-2 focus:ring-current focus:ring-offset-2` —
-`lib/pulsar/components/flash.ex:575`. Outline variant uses `border` (1px)
-in the active color — `lib/pulsar/components/flash.ex:117–132`.
+**Evidence:** Focus ring lives only on the close button via
+`focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2` —
+`lib/pulsar/components/flash.ex:close_button_classes/1`. The container no
+longer carries a `focus-within:ring` (previously double-ringed with the
+button). Outline variant uses `border` (1px) in the active color —
+`lib/pulsar/components/flash.ex:117–132`.
 
 **Notes:** Semantic-token approach is sound; ratios need DevTools.
 Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
@@ -142,20 +143,23 @@ intercept Tab.
 ### 2.2.1 Timing Adjustable (A) — ✓ PASS
 
 **Evidence:**
-- `auto_dismiss` boolean attr; callers can disable —
-  `lib/pulsar/components/flash.ex:170–173`
+- `auto_dismiss` is role-aware: defaults to `false` for `role="alert"`
+  (urgent messages aren't auto-dismissed) and `true` for `role="status"`.
+  Callers can override in either direction —
+  `lib/pulsar/components/flash.ex:resolve_auto_dismiss/2`
 - `dismiss_after` integer attr; callers can extend (clamped 100ms–60s) —
   `lib/pulsar/components/flash.ex:175–178, 326–329`
 - Manual dismiss always available via close button —
   `lib/pulsar/components/flash.ex:300–311`
 - Hover/focus pauses timer; mouseleave/focusout resumes —
   `lib/pulsar/components/flash.ex:390–401, 412–427`
-- Test asserts `auto_dismiss={false}` disables the timer —
-  `test/pulsar/components/flash_test.exs:154–163`
+- Tests assert role-aware defaults and explicit override —
+  `test/pulsar/components/flash_test.exs:"auto_dismiss defaults to false for role=alert"`,
+  `"explicit auto_dismiss=true on role=alert is respected"`
 
-**Notes:** Auto-dismiss is adjustable (turnable off and configurable
-duration) and pausable via hover/focus, meeting 2.2.1 user-control
-requirements.
+**Notes:** Alert-role flashes no longer disappear before users can read
+them (the prior `auto_dismiss: true` default was a 2.2.1 risk for screen-
+reader and low-vision users on urgent messages).
 
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
@@ -184,14 +188,15 @@ positive `tabindex` values used.
 ### 2.4.7 Focus Visible (AA) — ⚠ GAP (minor) — needs browser verification
 
 **Evidence:**
-- Container uses `focus-within:ring-2 focus-within:ring-current
-  focus-within:ring-offset-2` — `lib/pulsar/components/flash.ex:100–101`
-- Close button uses `focus:outline-none focus:ring-2 focus:ring-current
-  focus:ring-offset-2` — `lib/pulsar/components/flash.ex:575`
+- Close button uses `focus-visible:outline-none focus-visible:ring-2
+  focus-visible:ring-current focus-visible:ring-offset-2` —
+  `lib/pulsar/components/flash.ex:close_button_classes/1`
+- Container no longer carries a `focus-within:ring` (would have
+  double-ringed with the button)
 
-**Notes:** Close button uses `focus:` not `focus-visible:`, which means
-the ring also appears on mouse focus — visually fine but worth a runtime
-contrast check, especially `ring-current` on each color variant.
+**Notes:** Ring only appears on keyboard focus, not mouse click —
+matches the rest of the library. Contrast of `ring-current` on each
+color variant still warrants DevTools verification.
 Tracked under [PUL-19](https://linear.app/bigrefactor/issue/PUL-19) (browser audit).
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
@@ -220,21 +225,20 @@ uses `click`-driven `phx-click`, not `mousedown` —
 
 **Notes:** Icon-only button pattern; no visible text to mismatch.
 
-### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ⚠ GAP (minor) — needs browser verification
+### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
-**Evidence:** Close-button sizes:
-- `sm`: `h-4 w-4 p-0.5` = 16×16 CSS px —
-  `lib/pulsar/components/flash.ex:89`
-- `md`: `h-5 w-5 p-0.5` = 20×20 CSS px —
-  `lib/pulsar/components/flash.ex:85`
-- `lg`: `h-6 w-6 p-1` = 24×24 CSS px (at floor) —
-  `lib/pulsar/components/flash.ex:80`
+**Evidence:** Close-button hit area is a uniform 24×24 CSS px at every
+size — `lib/pulsar/components/flash.ex:@size_config`:
+- `sm`: `h-6 w-6 p-1.5` (24×24 box, 12px inner glyph)
+- `md`: `h-6 w-6 p-1`   (24×24 box, 16px inner glyph)
+- `lg`: `h-6 w-6 p-0.5` (24×24 box, 20px inner glyph)
 
-**Notes:** `sm` and `md` close buttons fall below the AA 24×24 floor by
-the literal box; however, WCAG 2.5.8 allows the "spacing" exception
-when surrounding inactive area provides a 24px-diameter clearance.
-Tracked under browser audit to confirm whether the surrounding
-flash padding (`p-2`/`p-3`) supplies sufficient inactive spacing.
+Test pins the floor at every size —
+`test/pulsar/components/flash_test.exs` → `"close button is at least 24x24 to meet WCAG 2.5.8 at every size"`.
+
+**Notes:** Padding scales the inner SVG so the X glyph grows with the
+flash, while the touch target stays compliant without depending on the
+"spacing" exception.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 

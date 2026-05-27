@@ -136,6 +136,43 @@ defmodule Pulsar.Components.FlashTest do
       # Dismiss event name appears via data-on-dismiss; the hook performs pushEvent
       assert html =~ "remove_flash"
     end
+
+    test "close button is at least 24x24 to meet WCAG 2.5.8 at every size" do
+      for size <- ~w(sm md lg) do
+        assigns = %{size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <Flash.flash size={@size}>Sized flash</Flash.flash>
+          """)
+
+        assert html =~ ~r/<button(?=[^>]*\baria-label="Dismiss")(?=[^>]*\bh-6 w-6\b)[^>]*>/,
+               "close button should carry h-6 w-6 (24x24 WCAG 2.5.8 floor) at size=#{size}"
+      end
+    end
+
+    test "close button uses focus-visible (not focus) so mouse clicks don't leave a ring" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash>Focus test</Flash.flash>
+        """)
+
+      assert html =~ "focus-visible:ring-2"
+      refute html =~ ~r/\bfocus:ring-2\b/
+    end
+
+    test "close button SVG has explicit h-full w-full sizing" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash>Sizing test</Flash.flash>
+        """)
+
+      assert html =~ ~s(<svg class="h-full w-full")
+    end
   end
 
   describe "flash/1 auto-dismiss functionality" do
@@ -172,6 +209,39 @@ defmodule Pulsar.Components.FlashTest do
 
       assert html =~ ~s(data-flash-key="error")
     end
+
+    test "auto_dismiss defaults to true for role=status" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash role="status">Status flash</Flash.flash>
+        """)
+
+      assert html =~ ~s(data-auto-dismiss="true")
+    end
+
+    test "auto_dismiss defaults to false for role=alert (WCAG 2.2.1)" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash role="alert">Urgent message</Flash.flash>
+        """)
+
+      assert html =~ ~s(data-auto-dismiss="false")
+    end
+
+    test "explicit auto_dismiss=true on role=alert is respected" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash role="alert" auto_dismiss={true}>Urgent but timed</Flash.flash>
+        """)
+
+      assert html =~ ~s(data-auto-dismiss="true")
+    end
   end
 
   describe "flash/1 accessibility" do
@@ -186,6 +256,19 @@ defmodule Pulsar.Components.FlashTest do
       assert html =~ ~s(role="status")
       # Default live="auto" with role="status" should result in "polite"
       assert html =~ ~s(aria-live="polite")
+    end
+
+    test "does not double-ring on close button focus" do
+      # Container must not carry a focus-within ring — only the close button
+      # gets a focus-visible ring. Otherwise both render concentrically.
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash>Single ring</Flash.flash>
+        """)
+
+      refute html =~ "focus-within:ring"
     end
 
     test "uses alert role for urgent messages" do

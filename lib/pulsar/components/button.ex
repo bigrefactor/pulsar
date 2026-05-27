@@ -111,7 +111,7 @@ defmodule Pulsar.Components.Button do
 
   # Base button styling classes
   @button_base_classes [
-    "font-medium cursor-pointer transition-shadow transition-transform duration-normal ease-standard",
+    "font-medium cursor-pointer transition-[transform,box-shadow,background-color,border-color,color,opacity] duration-normal ease-standard",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
     "focus-visible:ring-ring",
     "disabled:pointer-events-none disabled:opacity-disabled disabled:cursor-not-allowed",
@@ -216,9 +216,9 @@ defmodule Pulsar.Components.Button do
   )
 
   # Navigation (mutually exclusive)
-  attr(:href, :string,
+  attr(:href, :any,
     default: nil,
-    doc: "External URL to navigate to"
+    doc: "External URL to navigate to (string, URI, or VerifiedRoute)"
   )
 
   attr(:navigate, :any,
@@ -275,10 +275,7 @@ defmodule Pulsar.Components.Button do
   )
 
   # Core
-  attr(:id, :string,
-    default: nil,
-    doc: "Button ID"
-  )
+  attr(:id, :string, doc: "Button ID (auto-generated if omitted)")
 
   attr(:tabindex, :string,
     default: "0",
@@ -344,8 +341,7 @@ defmodule Pulsar.Components.Button do
     assigns = assign_new(assigns, :id, fn -> generate_id() end)
 
     # Resolve element type and build styling
-    as = resolve_as_from_props(assigns)
-    assigns = %{assigns | as: as}
+    assigns = assign(assigns, :as, resolve_as_from_props(assigns))
 
     # Build complete class string using Twm
     assigns =
@@ -577,37 +573,9 @@ defmodule Pulsar.Components.Button do
           const el = this.el
           if (el.getAttribute("role") !== "button") return
 
-          // Cache author-provided tabindex (if any)
-          if (!el.dataset.prevTabindex) {
-            const t = el.getAttribute("tabindex")
-            if (t != null) el.dataset.prevTabindex = t
-          }
-
           const isDisabledOrBusy = () =>
             el.getAttribute("aria-disabled") === "true" ||
             el.getAttribute("aria-busy") === "true"
-
-          const applyTabindex = () => {
-            if (isDisabledOrBusy()) {
-              // Keep focus if already focused; just remove from tab order
-              el.setAttribute("tabindex", "-1")
-            } else {
-              const prev = el.dataset.prevTabindex
-              if (prev === undefined || prev === "") el.setAttribute("tabindex", "0")
-              else el.setAttribute("tabindex", prev)
-            }
-          }
-
-          // Initial sync
-          applyTabindex()
-
-          // React to attribute changes (LV patches)
-          this._observer = new MutationObserver((muts) => {
-            if (muts.some(m => m.attributeName === "aria-disabled" || m.attributeName === "aria-busy")) {
-              applyTabindex()
-            }
-          })
-          this._observer.observe(el, { attributes: true, attributeFilter: ["aria-disabled", "aria-busy"] })
 
           this._onKeydown = (e) => {
             if (isDisabledOrBusy()) { e.preventDefault(); return }
@@ -629,12 +597,7 @@ defmodule Pulsar.Components.Button do
           el.addEventListener("click", this._onClick)
         },
 
-        updated() {
-          // MutationObserver already handles attribute changes from LV patches
-        },
-
         destroyed() {
-          if (this._observer) this._observer.disconnect()
           if (this._onKeydown) this.el.removeEventListener("keydown", this._onKeydown)
           if (this._onKeyup) this.el.removeEventListener("keyup", this._onKeyup)
           if (this._onClick) this.el.removeEventListener("click", this._onClick)
