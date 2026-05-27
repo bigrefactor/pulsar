@@ -190,24 +190,20 @@ across multiple headers is a page-level concern.
 besides breadcrumb links, which inherit the Link component's focus
 styling.
 
-### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ⚠ GAP (serious, follow-up: header-sticky-obscures-focus)
+### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
-**Evidence:** Sticky header uses `sticky top-0 z-10 bg-background dark:bg-dark-background`
-— `lib/pulsar/components/header.ex:366`. Manual browser verification
-confirms: with `sticky={true}` and a scrolled-into-view focusable
-control just below the header, Tab navigation focuses the control
-*behind* the sticky header — the visible focus indicator is hidden
-by the header's opaque background. The component can't fully solve
-this without knowing the header's rendered height at runtime, but it
-can apply `[&_~_*]:scroll-margin-top` (or equivalent) so focusable
-siblings reserve scroll space for the header.
+**Evidence:** Sticky header uses `sticky top-0 z-docked bg-background`
+plus a size-appropriate sibling/descendant `scroll-mt-{N}` so
+focusable content below the header scrolls clear of the sticky band
+— `lib/pulsar/components/header.ex:363–382`. Per-size scroll-margin
+values approximate the header's rendered height.
 
-**Notes:** New finding — tracked as `header-sticky-obscures-focus`.
-Same defect class as the table sticky-header issue
-([`table.md` 2.4.11](table.md#2411-focus-not-obscured-minimum-aa-new-in-22--gap-serious-follow-up-table-sticky-header-obscures-focus));
-fix is to set `scroll-margin-top` on whatever follows the header in
-the layout, or expose a CSS variable consumers can hook a global
-`scroll-margin-top` to.
+**Notes:** The component applies `scroll-margin-top` to siblings and
+their descendants via Tailwind arbitrary-selector variants
+(`[&~*]:scroll-mt-{N} [&~*_*]:scroll-mt-{N}`). Pages with dense
+breadcrumb + subtitle + actions stacks that exceed the default
+height can additionally set `scroll-padding-top` on `html` for an
+exact match.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 

@@ -24,295 +24,295 @@ Columns:
 
 | Cell ID | Tag | Width | Height | ≥24×24 | Text | Border | Focus |
 |---------|-----|-------|--------|--------|------|--------|-------|
-| `ghost-danger-lg-default` | `select` | 311.33 | 48 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
+| `ghost-danger-lg-default` | `select` | 311.33 | 48 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-danger-lg-disabled` | `select` | 311.33 | 48 | ✓ | 4.56:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-danger-lg-invalid` | `select` | 311.33 | 48 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-danger-lg-required` | `select` | 311.34 | 48 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-danger-md-default` | `select` | 311.33 | 40 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
+| `ghost-danger-lg-invalid` | `select` | 311.33 | 48 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-danger-lg-required` | `select` | 311.34 | 48 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-danger-md-default` | `select` | 311.33 | 40 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-danger-md-disabled` | `select` | 311.34 | 40 | ✓ | 4.56:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-danger-md-invalid` | `select` | 311.33 | 40 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-danger-md-required` | `select` | 311.33 | 40 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-danger-sm-default` | `select` | 311.34 | 32 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
+| `ghost-danger-md-invalid` | `select` | 311.33 | 40 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-danger-md-required` | `select` | 311.33 | 40 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-danger-sm-default` | `select` | 311.34 | 32 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-danger-sm-disabled` | `select` | 311.33 | 32 | ✓ | 4.56:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-danger-sm-invalid` | `select` | 311.34 | 32 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-danger-sm-required` | `select` | 311.33 | 32 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-danger-xs-default` | `select` | 311.33 | 24 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
+| `ghost-danger-sm-invalid` | `select` | 311.34 | 32 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-danger-sm-required` | `select` | 311.33 | 32 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-danger-xs-default` | `select` | 311.33 | 24 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-danger-xs-disabled` | `select` | 311.33 | 24 | ✓ | 4.56:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-danger-xs-invalid` | `select` | 311.33 | 24 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-danger-xs-required` | `select` | 311.34 | 24 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
+| `ghost-danger-xs-invalid` | `select` | 311.33 | 24 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-danger-xs-required` | `select` | 311.34 | 24 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-neutral-lg-default` | `select` | 311.33 | 48 | ✓ | 19.27:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-neutral-lg-disabled` | `select` | 311.34 | 48 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-neutral-lg-invalid` | `select` | 311.33 | 48 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
+| `ghost-neutral-lg-invalid` | `select` | 311.33 | 48 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-neutral-lg-required` | `select` | 311.33 | 48 | ✓ | 19.27:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-neutral-md-default` | `select` | 311.34 | 40 | ✓ | 19.27:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-neutral-md-disabled` | `select` | 311.33 | 40 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-neutral-md-invalid` | `select` | 311.34 | 40 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
+| `ghost-neutral-md-invalid` | `select` | 311.34 | 40 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-neutral-md-required` | `select` | 311.33 | 40 | ✓ | 19.27:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-neutral-sm-default` | `select` | 311.33 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-neutral-sm-disabled` | `select` | 311.33 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-neutral-sm-invalid` | `select` | 311.33 | 32 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
+| `ghost-neutral-sm-invalid` | `select` | 311.33 | 32 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-neutral-sm-required` | `select` | 311.34 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-neutral-xs-default` | `select` | 311.33 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-neutral-xs-disabled` | `select` | 311.34 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-neutral-xs-invalid` | `select` | 311.33 | 24 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
+| `ghost-neutral-xs-invalid` | `select` | 311.33 | 24 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-neutral-xs-required` | `select` | 311.33 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `ghost-primary-lg-default` | `select` | 311.33 | 48 | ✓ | 5.02:1 ✓ | — (no-border) | 2.56:1 ✗ |
+| `ghost-primary-lg-default` | `select` | 311.33 | 48 | ✓ | 5.02:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-primary-lg-disabled` | `select` | 311.33 | 48 | ✓ | 5.02:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-primary-lg-invalid` | `select` | 311.33 | 48 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-primary-lg-required` | `select` | 311.34 | 48 | ✓ | 5.02:1 ✓ | — (no-border) | 2.56:1 ✗ |
-| `ghost-primary-md-default` | `select` | 311.33 | 40 | ✓ | 5.02:1 ✓ | — (no-border) | 2.56:1 ✗ |
+| `ghost-primary-lg-invalid` | `select` | 311.33 | 48 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-primary-lg-required` | `select` | 311.34 | 48 | ✓ | 5.02:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-primary-md-default` | `select` | 311.33 | 40 | ✓ | 5.02:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-primary-md-disabled` | `select` | 311.34 | 40 | ✓ | 5.02:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-primary-md-invalid` | `select` | 311.33 | 40 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-primary-md-required` | `select` | 311.33 | 40 | ✓ | 5.02:1 ✓ | — (no-border) | 2.56:1 ✗ |
-| `ghost-primary-sm-default` | `select` | 311.34 | 32 | ✓ | 5.02:1 ✓ | — (no-border) | 2.56:1 ✗ |
+| `ghost-primary-md-invalid` | `select` | 311.33 | 40 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-primary-md-required` | `select` | 311.33 | 40 | ✓ | 5.02:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-primary-sm-default` | `select` | 311.34 | 32 | ✓ | 5.02:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-primary-sm-disabled` | `select` | 311.33 | 32 | ✓ | 5.02:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-primary-sm-invalid` | `select` | 311.34 | 32 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-primary-sm-required` | `select` | 311.33 | 32 | ✓ | 5.02:1 ✓ | — (no-border) | 2.56:1 ✗ |
-| `ghost-primary-xs-default` | `select` | 311.33 | 24 | ✓ | 5.02:1 ✓ | — (no-border) | 2.56:1 ✗ |
+| `ghost-primary-sm-invalid` | `select` | 311.34 | 32 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-primary-sm-required` | `select` | 311.33 | 32 | ✓ | 5.02:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-primary-xs-default` | `select` | 311.33 | 24 | ✓ | 5.02:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-primary-xs-disabled` | `select` | 311.33 | 24 | ✓ | 5.02:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-primary-xs-invalid` | `select` | 311.33 | 24 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-primary-xs-required` | `select` | 311.34 | 24 | ✓ | 5.02:1 ✓ | — (no-border) | 2.56:1 ✗ |
-| `ghost-secondary-lg-default` | `select` | 311.34 | 48 | ✓ | 5.64:1 ✓ | — (no-border) | 2.9:1 ✗ |
+| `ghost-primary-xs-invalid` | `select` | 311.33 | 24 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-primary-xs-required` | `select` | 311.34 | 24 | ✓ | 5.02:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-secondary-lg-default` | `select` | 311.34 | 48 | ✓ | 5.64:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-secondary-lg-disabled` | `select` | 311.33 | 48 | ✓ | 5.64:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-secondary-lg-invalid` | `select` | 311.34 | 48 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-secondary-lg-required` | `select` | 311.33 | 48 | ✓ | 5.64:1 ✓ | — (no-border) | 2.9:1 ✗ |
-| `ghost-secondary-md-default` | `select` | 311.33 | 40 | ✓ | 5.64:1 ✓ | — (no-border) | 2.9:1 ✗ |
+| `ghost-secondary-lg-invalid` | `select` | 311.34 | 48 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-secondary-lg-required` | `select` | 311.33 | 48 | ✓ | 5.64:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-secondary-md-default` | `select` | 311.33 | 40 | ✓ | 5.64:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-secondary-md-disabled` | `select` | 311.33 | 40 | ✓ | 5.64:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-secondary-md-invalid` | `select` | 311.33 | 40 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-secondary-md-required` | `select` | 311.34 | 40 | ✓ | 5.64:1 ✓ | — (no-border) | 2.9:1 ✗ |
-| `ghost-secondary-sm-default` | `select` | 311.33 | 32 | ✓ | 5.64:1 ✓ | — (no-border) | 2.9:1 ✗ |
+| `ghost-secondary-md-invalid` | `select` | 311.33 | 40 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-secondary-md-required` | `select` | 311.34 | 40 | ✓ | 5.64:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-secondary-sm-default` | `select` | 311.33 | 32 | ✓ | 5.64:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-secondary-sm-disabled` | `select` | 311.34 | 32 | ✓ | 5.64:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-secondary-sm-invalid` | `select` | 311.33 | 32 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-secondary-sm-required` | `select` | 311.33 | 32 | ✓ | 5.64:1 ✓ | — (no-border) | 2.9:1 ✗ |
-| `ghost-secondary-xs-default` | `select` | 311.34 | 24 | ✓ | 5.64:1 ✓ | — (no-border) | 2.9:1 ✗ |
+| `ghost-secondary-sm-invalid` | `select` | 311.33 | 32 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-secondary-sm-required` | `select` | 311.33 | 32 | ✓ | 5.64:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-secondary-xs-default` | `select` | 311.34 | 24 | ✓ | 5.64:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-secondary-xs-disabled` | `select` | 311.33 | 24 | ✓ | 5.64:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-secondary-xs-invalid` | `select` | 311.34 | 24 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-secondary-xs-required` | `select` | 311.33 | 24 | ✓ | 5.64:1 ✓ | — (no-border) | 2.9:1 ✗ |
-| `ghost-success-lg-default` | `select` | 311.33 | 48 | ✓ | 6.82:1 ✓ | — (no-border) | 2.88:1 ✗ |
-| `ghost-success-lg-disabled` | `select` | 311.34 | 48 | ✓ | 6.82:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-success-lg-invalid` | `select` | 311.33 | 48 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-success-lg-required` | `select` | 311.33 | 48 | ✓ | 6.82:1 ✓ | — (no-border) | 2.88:1 ✗ |
-| `ghost-success-md-default` | `select` | 311.34 | 40 | ✓ | 6.82:1 ✓ | — (no-border) | 2.88:1 ✗ |
-| `ghost-success-md-disabled` | `select` | 311.33 | 40 | ✓ | 6.82:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-success-md-invalid` | `select` | 311.34 | 40 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-success-md-required` | `select` | 311.33 | 40 | ✓ | 6.82:1 ✓ | — (no-border) | 2.88:1 ✗ |
-| `ghost-success-sm-default` | `select` | 311.33 | 32 | ✓ | 6.82:1 ✓ | — (no-border) | 2.88:1 ✗ |
-| `ghost-success-sm-disabled` | `select` | 311.33 | 32 | ✓ | 6.82:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-success-sm-invalid` | `select` | 311.33 | 32 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-success-sm-required` | `select` | 311.34 | 32 | ✓ | 6.82:1 ✓ | — (no-border) | 2.88:1 ✗ |
-| `ghost-success-xs-default` | `select` | 311.33 | 24 | ✓ | 6.82:1 ✓ | — (no-border) | 2.88:1 ✗ |
-| `ghost-success-xs-disabled` | `select` | 311.34 | 24 | ✓ | 6.82:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-success-xs-invalid` | `select` | 311.33 | 24 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-success-xs-required` | `select` | 311.33 | 24 | ✓ | 6.82:1 ✓ | — (no-border) | 2.88:1 ✗ |
-| `ghost-warning-lg-default` | `select` | 311.34 | 48 | ✓ | 6.78:1 ✓ | — (no-border) | 2.92:1 ✗ |
-| `ghost-warning-lg-disabled` | `select` | 311.33 | 48 | ✓ | 6.78:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-warning-lg-invalid` | `select` | 311.34 | 48 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-warning-lg-required` | `select` | 311.33 | 48 | ✓ | 6.78:1 ✓ | — (no-border) | 2.92:1 ✗ |
-| `ghost-warning-md-default` | `select` | 311.33 | 40 | ✓ | 6.78:1 ✓ | — (no-border) | 2.92:1 ✗ |
-| `ghost-warning-md-disabled` | `select` | 311.33 | 40 | ✓ | 6.78:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-warning-md-invalid` | `select` | 311.33 | 40 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-warning-md-required` | `select` | 311.34 | 40 | ✓ | 6.78:1 ✓ | — (no-border) | 2.92:1 ✗ |
-| `ghost-warning-sm-default` | `select` | 311.33 | 32 | ✓ | 6.78:1 ✓ | — (no-border) | 2.92:1 ✗ |
-| `ghost-warning-sm-disabled` | `select` | 311.34 | 32 | ✓ | 6.78:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-warning-sm-invalid` | `select` | 311.33 | 32 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-warning-sm-required` | `select` | 311.33 | 32 | ✓ | 6.78:1 ✓ | — (no-border) | 2.92:1 ✗ |
-| `ghost-warning-xs-default` | `select` | 311.34 | 24 | ✓ | 6.78:1 ✓ | — (no-border) | 2.92:1 ✗ |
-| `ghost-warning-xs-disabled` | `select` | 311.33 | 24 | ✓ | 6.78:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `ghost-warning-xs-invalid` | `select` | 311.34 | 24 | ✓ | 4.56:1 ✓ | — (no-border) | 3:1 ✓ |
-| `ghost-warning-xs-required` | `select` | 311.33 | 24 | ✓ | 6.78:1 ✓ | — (no-border) | 2.92:1 ✗ |
-| `multi` | `select` | 94.14 | 88.75 | ✓ | 6.24:1 ✓ | — (no-border) | 2.82:1 ✗ |
-| `outline-danger-lg-default` | `select` | 311.33 | 48 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-danger-lg-disabled` | `select` | 311.33 | 48 | ✓ | 4.77:1 ✓ | 3:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-lg-invalid` | `select` | 311.33 | 48 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-danger-lg-required` | `select` | 311.34 | 48 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-danger-md-default` | `select` | 311.33 | 40 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-danger-md-disabled` | `select` | 311.34 | 40 | ✓ | 4.77:1 ✓ | 3:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-md-invalid` | `select` | 311.33 | 40 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-danger-md-required` | `select` | 311.33 | 40 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-danger-sm-default` | `select` | 311.34 | 32 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-danger-sm-disabled` | `select` | 311.33 | 32 | ✓ | 4.77:1 ✓ | 3:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-sm-invalid` | `select` | 311.34 | 32 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-danger-sm-required` | `select` | 311.33 | 32 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-danger-xs-default` | `select` | 311.33 | 28 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-danger-xs-disabled` | `select` | 311.33 | 28 | ✓ | 4.77:1 ✓ | 3:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-xs-invalid` | `select` | 311.33 | 28 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-danger-xs-required` | `select` | 311.34 | 28 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-neutral-lg-default` | `select` | 311.33 | 48 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-lg-disabled` | `select` | 311.34 | 48 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-lg-invalid` | `select` | 311.33 | 48 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-neutral-lg-required` | `select` | 311.33 | 48 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-md-default` | `select` | 311.34 | 40 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-md-disabled` | `select` | 311.33 | 40 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-md-invalid` | `select` | 311.34 | 40 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-neutral-md-required` | `select` | 311.33 | 40 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-sm-default` | `select` | 311.33 | 32 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-sm-disabled` | `select` | 311.33 | 32 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-sm-invalid` | `select` | 311.33 | 32 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-neutral-sm-required` | `select` | 311.34 | 32 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-xs-default` | `select` | 311.33 | 28 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-xs-disabled` | `select` | 311.34 | 28 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-xs-invalid` | `select` | 311.33 | 28 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-neutral-xs-required` | `select` | 311.33 | 28 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-lg-default` | `select` | 311.33 | 48 | ✓ | 5.25:1 ✓ | 2.56:1 ✗ | 2.56:1 ✗ |
-| `outline-primary-lg-disabled` | `select` | 311.33 | 48 | ✓ | 5.25:1 ✓ | 2.56:1 ✗ | — (not-focusable-in-state) |
-| `outline-primary-lg-invalid` | `select` | 311.33 | 48 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-primary-lg-required` | `select` | 311.34 | 48 | ✓ | 5.25:1 ✓ | 2.56:1 ✗ | 2.56:1 ✗ |
-| `outline-primary-md-default` | `select` | 311.33 | 40 | ✓ | 5.25:1 ✓ | 2.56:1 ✗ | 2.56:1 ✗ |
-| `outline-primary-md-disabled` | `select` | 311.34 | 40 | ✓ | 5.25:1 ✓ | 2.56:1 ✗ | — (not-focusable-in-state) |
-| `outline-primary-md-invalid` | `select` | 311.33 | 40 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-primary-md-required` | `select` | 311.33 | 40 | ✓ | 5.25:1 ✓ | 2.56:1 ✗ | 2.56:1 ✗ |
-| `outline-primary-sm-default` | `select` | 311.34 | 32 | ✓ | 5.25:1 ✓ | 2.56:1 ✗ | 2.56:1 ✗ |
-| `outline-primary-sm-disabled` | `select` | 311.33 | 32 | ✓ | 5.25:1 ✓ | 2.56:1 ✗ | — (not-focusable-in-state) |
-| `outline-primary-sm-invalid` | `select` | 311.34 | 32 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-primary-sm-required` | `select` | 311.33 | 32 | ✓ | 5.25:1 ✓ | 2.56:1 ✗ | 2.56:1 ✗ |
-| `outline-primary-xs-default` | `select` | 311.33 | 28 | ✓ | 5.25:1 ✓ | 2.56:1 ✗ | 2.56:1 ✗ |
-| `outline-primary-xs-disabled` | `select` | 311.33 | 28 | ✓ | 5.25:1 ✓ | 2.56:1 ✗ | — (not-focusable-in-state) |
-| `outline-primary-xs-invalid` | `select` | 311.33 | 28 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-primary-xs-required` | `select` | 311.34 | 28 | ✓ | 5.25:1 ✓ | 2.56:1 ✗ | 2.56:1 ✗ |
-| `outline-secondary-lg-default` | `select` | 311.34 | 48 | ✓ | 5.89:1 ✓ | 2.9:1 ✗ | 2.9:1 ✗ |
-| `outline-secondary-lg-disabled` | `select` | 311.33 | 48 | ✓ | 5.89:1 ✓ | 2.9:1 ✗ | — (not-focusable-in-state) |
-| `outline-secondary-lg-invalid` | `select` | 311.34 | 48 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-secondary-lg-required` | `select` | 311.33 | 48 | ✓ | 5.89:1 ✓ | 2.9:1 ✗ | 2.9:1 ✗ |
-| `outline-secondary-md-default` | `select` | 311.33 | 40 | ✓ | 5.89:1 ✓ | 2.9:1 ✗ | 2.9:1 ✗ |
-| `outline-secondary-md-disabled` | `select` | 311.33 | 40 | ✓ | 5.89:1 ✓ | 2.9:1 ✗ | — (not-focusable-in-state) |
-| `outline-secondary-md-invalid` | `select` | 311.33 | 40 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-secondary-md-required` | `select` | 311.34 | 40 | ✓ | 5.89:1 ✓ | 2.9:1 ✗ | 2.9:1 ✗ |
-| `outline-secondary-sm-default` | `select` | 311.33 | 32 | ✓ | 5.89:1 ✓ | 2.9:1 ✗ | 2.9:1 ✗ |
-| `outline-secondary-sm-disabled` | `select` | 311.34 | 32 | ✓ | 5.89:1 ✓ | 2.9:1 ✗ | — (not-focusable-in-state) |
-| `outline-secondary-sm-invalid` | `select` | 311.33 | 32 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-secondary-sm-required` | `select` | 311.33 | 32 | ✓ | 5.89:1 ✓ | 2.9:1 ✗ | 2.9:1 ✗ |
-| `outline-secondary-xs-default` | `select` | 311.34 | 28 | ✓ | 5.89:1 ✓ | 2.9:1 ✗ | 2.9:1 ✗ |
-| `outline-secondary-xs-disabled` | `select` | 311.33 | 28 | ✓ | 5.89:1 ✓ | 2.9:1 ✗ | — (not-focusable-in-state) |
-| `outline-secondary-xs-invalid` | `select` | 311.34 | 28 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-secondary-xs-required` | `select` | 311.33 | 28 | ✓ | 5.89:1 ✓ | 2.9:1 ✗ | 2.9:1 ✗ |
-| `outline-success-lg-default` | `select` | 311.33 | 48 | ✓ | 7.13:1 ✓ | 2.88:1 ✗ | 2.88:1 ✗ |
-| `outline-success-lg-disabled` | `select` | 311.34 | 48 | ✓ | 7.13:1 ✓ | 2.88:1 ✗ | — (not-focusable-in-state) |
-| `outline-success-lg-invalid` | `select` | 311.33 | 48 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-success-lg-required` | `select` | 311.33 | 48 | ✓ | 7.13:1 ✓ | 2.88:1 ✗ | 2.88:1 ✗ |
-| `outline-success-md-default` | `select` | 311.34 | 40 | ✓ | 7.13:1 ✓ | 2.88:1 ✗ | 2.88:1 ✗ |
-| `outline-success-md-disabled` | `select` | 311.33 | 40 | ✓ | 7.13:1 ✓ | 2.88:1 ✗ | — (not-focusable-in-state) |
-| `outline-success-md-invalid` | `select` | 311.34 | 40 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-success-md-required` | `select` | 311.33 | 40 | ✓ | 7.13:1 ✓ | 2.88:1 ✗ | 2.88:1 ✗ |
-| `outline-success-sm-default` | `select` | 311.33 | 32 | ✓ | 7.13:1 ✓ | 2.88:1 ✗ | 2.88:1 ✗ |
-| `outline-success-sm-disabled` | `select` | 311.33 | 32 | ✓ | 7.13:1 ✓ | 2.88:1 ✗ | — (not-focusable-in-state) |
-| `outline-success-sm-invalid` | `select` | 311.33 | 32 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-success-sm-required` | `select` | 311.34 | 32 | ✓ | 7.13:1 ✓ | 2.88:1 ✗ | 2.88:1 ✗ |
-| `outline-success-xs-default` | `select` | 311.33 | 28 | ✓ | 7.13:1 ✓ | 2.88:1 ✗ | 2.88:1 ✗ |
-| `outline-success-xs-disabled` | `select` | 311.34 | 28 | ✓ | 7.13:1 ✓ | 2.88:1 ✗ | — (not-focusable-in-state) |
-| `outline-success-xs-invalid` | `select` | 311.33 | 28 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-success-xs-required` | `select` | 311.33 | 28 | ✓ | 7.13:1 ✓ | 2.88:1 ✗ | 2.88:1 ✗ |
-| `outline-warning-lg-default` | `select` | 311.34 | 48 | ✓ | 7.09:1 ✓ | 2.92:1 ✗ | 2.92:1 ✗ |
-| `outline-warning-lg-disabled` | `select` | 311.33 | 48 | ✓ | 7.09:1 ✓ | 2.92:1 ✗ | — (not-focusable-in-state) |
-| `outline-warning-lg-invalid` | `select` | 311.34 | 48 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-warning-lg-required` | `select` | 311.33 | 48 | ✓ | 7.09:1 ✓ | 2.92:1 ✗ | 2.92:1 ✗ |
-| `outline-warning-md-default` | `select` | 311.33 | 40 | ✓ | 7.09:1 ✓ | 2.92:1 ✗ | 2.92:1 ✗ |
-| `outline-warning-md-disabled` | `select` | 311.33 | 40 | ✓ | 7.09:1 ✓ | 2.92:1 ✗ | — (not-focusable-in-state) |
-| `outline-warning-md-invalid` | `select` | 311.33 | 40 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-warning-md-required` | `select` | 311.34 | 40 | ✓ | 7.09:1 ✓ | 2.92:1 ✗ | 2.92:1 ✗ |
-| `outline-warning-sm-default` | `select` | 311.33 | 32 | ✓ | 7.09:1 ✓ | 2.92:1 ✗ | 2.92:1 ✗ |
-| `outline-warning-sm-disabled` | `select` | 311.34 | 32 | ✓ | 7.09:1 ✓ | 2.92:1 ✗ | — (not-focusable-in-state) |
-| `outline-warning-sm-invalid` | `select` | 311.33 | 32 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-warning-sm-required` | `select` | 311.33 | 32 | ✓ | 7.09:1 ✓ | 2.92:1 ✗ | 2.92:1 ✗ |
-| `outline-warning-xs-default` | `select` | 311.34 | 28 | ✓ | 7.09:1 ✓ | 2.92:1 ✗ | 2.92:1 ✗ |
-| `outline-warning-xs-disabled` | `select` | 311.33 | 28 | ✓ | 7.09:1 ✓ | 2.92:1 ✗ | — (not-focusable-in-state) |
-| `outline-warning-xs-invalid` | `select` | 311.34 | 28 | ✓ | 4.77:1 ✓ | 3:1 ✓ | 3:1 ✓ |
-| `outline-warning-xs-required` | `select` | 311.33 | 28 | ✓ | 7.09:1 ✓ | 2.92:1 ✗ | 2.92:1 ✗ |
-| `solid-danger-lg-default` | `select` | 311.33 | 48 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
+| `ghost-secondary-xs-invalid` | `select` | 311.34 | 24 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-secondary-xs-required` | `select` | 311.33 | 24 | ✓ | 5.64:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-success-lg-default` | `select` | 311.33 | 48 | ✓ | 3.08:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `ghost-success-lg-disabled` | `select` | 311.34 | 48 | ✓ | 3.08:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `ghost-success-lg-invalid` | `select` | 311.33 | 48 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-success-lg-required` | `select` | 311.33 | 48 | ✓ | 3.08:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `ghost-success-md-default` | `select` | 311.34 | 40 | ✓ | 3.08:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `ghost-success-md-disabled` | `select` | 311.33 | 40 | ✓ | 3.08:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `ghost-success-md-invalid` | `select` | 311.34 | 40 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-success-md-required` | `select` | 311.33 | 40 | ✓ | 3.08:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `ghost-success-sm-default` | `select` | 311.33 | 32 | ✓ | 3.08:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `ghost-success-sm-disabled` | `select` | 311.33 | 32 | ✓ | 3.08:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `ghost-success-sm-invalid` | `select` | 311.33 | 32 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-success-sm-required` | `select` | 311.34 | 32 | ✓ | 3.08:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `ghost-success-xs-default` | `select` | 311.33 | 24 | ✓ | 3.08:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `ghost-success-xs-disabled` | `select` | 311.34 | 24 | ✓ | 3.08:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `ghost-success-xs-invalid` | `select` | 311.33 | 24 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-success-xs-required` | `select` | 311.33 | 24 | ✓ | 3.08:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `ghost-warning-lg-default` | `select` | 311.34 | 48 | ✓ | 3.06:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `ghost-warning-lg-disabled` | `select` | 311.33 | 48 | ✓ | 3.06:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `ghost-warning-lg-invalid` | `select` | 311.34 | 48 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-warning-lg-required` | `select` | 311.33 | 48 | ✓ | 3.06:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `ghost-warning-md-default` | `select` | 311.33 | 40 | ✓ | 3.06:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `ghost-warning-md-disabled` | `select` | 311.33 | 40 | ✓ | 3.06:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `ghost-warning-md-invalid` | `select` | 311.33 | 40 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-warning-md-required` | `select` | 311.34 | 40 | ✓ | 3.06:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `ghost-warning-sm-default` | `select` | 311.33 | 32 | ✓ | 3.06:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `ghost-warning-sm-disabled` | `select` | 311.34 | 32 | ✓ | 3.06:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `ghost-warning-sm-invalid` | `select` | 311.33 | 32 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-warning-sm-required` | `select` | 311.33 | 32 | ✓ | 3.06:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `ghost-warning-xs-default` | `select` | 311.34 | 24 | ✓ | 3.06:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `ghost-warning-xs-disabled` | `select` | 311.33 | 24 | ✓ | 3.06:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `ghost-warning-xs-invalid` | `select` | 311.34 | 24 | ✓ | 4.56:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `ghost-warning-xs-required` | `select` | 311.33 | 24 | ✓ | 3.06:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `multi` | `select` | 94.14 | 88.75 | ✓ | 6.24:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `outline-danger-lg-default` | `select` | 311.33 | 48 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-danger-lg-disabled` | `select` | 311.33 | 48 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | — (not-focusable-in-state) |
+| `outline-danger-lg-invalid` | `select` | 311.33 | 48 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-danger-lg-required` | `select` | 311.34 | 48 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-danger-md-default` | `select` | 311.33 | 40 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-danger-md-disabled` | `select` | 311.34 | 40 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | — (not-focusable-in-state) |
+| `outline-danger-md-invalid` | `select` | 311.33 | 40 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-danger-md-required` | `select` | 311.33 | 40 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-danger-sm-default` | `select` | 311.34 | 32 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-danger-sm-disabled` | `select` | 311.33 | 32 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | — (not-focusable-in-state) |
+| `outline-danger-sm-invalid` | `select` | 311.34 | 32 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-danger-sm-required` | `select` | 311.33 | 32 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-danger-xs-default` | `select` | 311.33 | 28 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-danger-xs-disabled` | `select` | 311.33 | 28 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | — (not-focusable-in-state) |
+| `outline-danger-xs-invalid` | `select` | 311.33 | 28 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-danger-xs-required` | `select` | 311.34 | 28 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-neutral-lg-default` | `select` | 311.33 | 48 | ✓ | 20.13:1 ✓ | 1.41:1 ✗ | 5.02:1 ✓ |
+| `outline-neutral-lg-disabled` | `select` | 311.34 | 48 | ✓ | 20.13:1 ✓ | 1.41:1 ✗ | — (not-focusable-in-state) |
+| `outline-neutral-lg-invalid` | `select` | 311.33 | 48 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-neutral-lg-required` | `select` | 311.33 | 48 | ✓ | 20.13:1 ✓ | 1.41:1 ✗ | 5.02:1 ✓ |
+| `outline-neutral-md-default` | `select` | 311.34 | 40 | ✓ | 20.13:1 ✓ | 1.41:1 ✗ | 5.02:1 ✓ |
+| `outline-neutral-md-disabled` | `select` | 311.33 | 40 | ✓ | 20.13:1 ✓ | 1.41:1 ✗ | — (not-focusable-in-state) |
+| `outline-neutral-md-invalid` | `select` | 311.34 | 40 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-neutral-md-required` | `select` | 311.33 | 40 | ✓ | 20.13:1 ✓ | 1.41:1 ✗ | 5.02:1 ✓ |
+| `outline-neutral-sm-default` | `select` | 311.33 | 32 | ✓ | 20.13:1 ✓ | 1.41:1 ✗ | 5.02:1 ✓ |
+| `outline-neutral-sm-disabled` | `select` | 311.33 | 32 | ✓ | 20.13:1 ✓ | 1.41:1 ✗ | — (not-focusable-in-state) |
+| `outline-neutral-sm-invalid` | `select` | 311.33 | 32 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-neutral-sm-required` | `select` | 311.34 | 32 | ✓ | 20.13:1 ✓ | 1.41:1 ✗ | 5.02:1 ✓ |
+| `outline-neutral-xs-default` | `select` | 311.33 | 28 | ✓ | 20.13:1 ✓ | 1.41:1 ✗ | 5.02:1 ✓ |
+| `outline-neutral-xs-disabled` | `select` | 311.34 | 28 | ✓ | 20.13:1 ✓ | 1.41:1 ✗ | — (not-focusable-in-state) |
+| `outline-neutral-xs-invalid` | `select` | 311.33 | 28 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-neutral-xs-required` | `select` | 311.33 | 28 | ✓ | 20.13:1 ✓ | 1.41:1 ✗ | 5.02:1 ✓ |
+| `outline-primary-lg-default` | `select` | 311.33 | 48 | ✓ | 5.25:1 ✓ | 5.02:1 ✓ | 5.02:1 ✓ |
+| `outline-primary-lg-disabled` | `select` | 311.33 | 48 | ✓ | 5.25:1 ✓ | 5.02:1 ✓ | — (not-focusable-in-state) |
+| `outline-primary-lg-invalid` | `select` | 311.33 | 48 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-primary-lg-required` | `select` | 311.34 | 48 | ✓ | 5.25:1 ✓ | 5.02:1 ✓ | 5.02:1 ✓ |
+| `outline-primary-md-default` | `select` | 311.33 | 40 | ✓ | 5.25:1 ✓ | 5.02:1 ✓ | 5.02:1 ✓ |
+| `outline-primary-md-disabled` | `select` | 311.34 | 40 | ✓ | 5.25:1 ✓ | 5.02:1 ✓ | — (not-focusable-in-state) |
+| `outline-primary-md-invalid` | `select` | 311.33 | 40 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-primary-md-required` | `select` | 311.33 | 40 | ✓ | 5.25:1 ✓ | 5.02:1 ✓ | 5.02:1 ✓ |
+| `outline-primary-sm-default` | `select` | 311.34 | 32 | ✓ | 5.25:1 ✓ | 5.02:1 ✓ | 5.02:1 ✓ |
+| `outline-primary-sm-disabled` | `select` | 311.33 | 32 | ✓ | 5.25:1 ✓ | 5.02:1 ✓ | — (not-focusable-in-state) |
+| `outline-primary-sm-invalid` | `select` | 311.34 | 32 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-primary-sm-required` | `select` | 311.33 | 32 | ✓ | 5.25:1 ✓ | 5.02:1 ✓ | 5.02:1 ✓ |
+| `outline-primary-xs-default` | `select` | 311.33 | 28 | ✓ | 5.25:1 ✓ | 5.02:1 ✓ | 5.02:1 ✓ |
+| `outline-primary-xs-disabled` | `select` | 311.33 | 28 | ✓ | 5.25:1 ✓ | 5.02:1 ✓ | — (not-focusable-in-state) |
+| `outline-primary-xs-invalid` | `select` | 311.33 | 28 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-primary-xs-required` | `select` | 311.34 | 28 | ✓ | 5.25:1 ✓ | 5.02:1 ✓ | 5.02:1 ✓ |
+| `outline-secondary-lg-default` | `select` | 311.34 | 48 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
+| `outline-secondary-lg-disabled` | `select` | 311.33 | 48 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
+| `outline-secondary-lg-invalid` | `select` | 311.34 | 48 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-secondary-lg-required` | `select` | 311.33 | 48 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
+| `outline-secondary-md-default` | `select` | 311.33 | 40 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
+| `outline-secondary-md-disabled` | `select` | 311.33 | 40 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
+| `outline-secondary-md-invalid` | `select` | 311.33 | 40 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-secondary-md-required` | `select` | 311.34 | 40 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
+| `outline-secondary-sm-default` | `select` | 311.33 | 32 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
+| `outline-secondary-sm-disabled` | `select` | 311.34 | 32 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
+| `outline-secondary-sm-invalid` | `select` | 311.33 | 32 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-secondary-sm-required` | `select` | 311.33 | 32 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
+| `outline-secondary-xs-default` | `select` | 311.34 | 28 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
+| `outline-secondary-xs-disabled` | `select` | 311.33 | 28 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
+| `outline-secondary-xs-invalid` | `select` | 311.34 | 28 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-secondary-xs-required` | `select` | 311.33 | 28 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
+| `outline-success-lg-default` | `select` | 311.33 | 48 | ✓ | 3.22:1 ✗ | 3.08:1 ✓ | 5.02:1 ✓ |
+| `outline-success-lg-disabled` | `select` | 311.34 | 48 | ✓ | 3.22:1 ✗ | 3.08:1 ✓ | — (not-focusable-in-state) |
+| `outline-success-lg-invalid` | `select` | 311.33 | 48 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-success-lg-required` | `select` | 311.33 | 48 | ✓ | 3.22:1 ✗ | 3.08:1 ✓ | 5.02:1 ✓ |
+| `outline-success-md-default` | `select` | 311.34 | 40 | ✓ | 3.22:1 ✗ | 3.08:1 ✓ | 5.02:1 ✓ |
+| `outline-success-md-disabled` | `select` | 311.33 | 40 | ✓ | 3.22:1 ✗ | 3.08:1 ✓ | — (not-focusable-in-state) |
+| `outline-success-md-invalid` | `select` | 311.34 | 40 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-success-md-required` | `select` | 311.33 | 40 | ✓ | 3.22:1 ✗ | 3.08:1 ✓ | 5.02:1 ✓ |
+| `outline-success-sm-default` | `select` | 311.33 | 32 | ✓ | 3.22:1 ✗ | 3.08:1 ✓ | 5.02:1 ✓ |
+| `outline-success-sm-disabled` | `select` | 311.33 | 32 | ✓ | 3.22:1 ✗ | 3.08:1 ✓ | — (not-focusable-in-state) |
+| `outline-success-sm-invalid` | `select` | 311.33 | 32 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-success-sm-required` | `select` | 311.34 | 32 | ✓ | 3.22:1 ✗ | 3.08:1 ✓ | 5.02:1 ✓ |
+| `outline-success-xs-default` | `select` | 311.33 | 28 | ✓ | 3.22:1 ✗ | 3.08:1 ✓ | 5.02:1 ✓ |
+| `outline-success-xs-disabled` | `select` | 311.34 | 28 | ✓ | 3.22:1 ✗ | 3.08:1 ✓ | — (not-focusable-in-state) |
+| `outline-success-xs-invalid` | `select` | 311.33 | 28 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-success-xs-required` | `select` | 311.33 | 28 | ✓ | 3.22:1 ✗ | 3.08:1 ✓ | 5.02:1 ✓ |
+| `outline-warning-lg-default` | `select` | 311.34 | 48 | ✓ | 3.2:1 ✗ | 3.06:1 ✓ | 5.02:1 ✓ |
+| `outline-warning-lg-disabled` | `select` | 311.33 | 48 | ✓ | 3.2:1 ✗ | 3.06:1 ✓ | — (not-focusable-in-state) |
+| `outline-warning-lg-invalid` | `select` | 311.34 | 48 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-warning-lg-required` | `select` | 311.33 | 48 | ✓ | 3.2:1 ✗ | 3.06:1 ✓ | 5.02:1 ✓ |
+| `outline-warning-md-default` | `select` | 311.33 | 40 | ✓ | 3.2:1 ✗ | 3.06:1 ✓ | 5.02:1 ✓ |
+| `outline-warning-md-disabled` | `select` | 311.33 | 40 | ✓ | 3.2:1 ✗ | 3.06:1 ✓ | — (not-focusable-in-state) |
+| `outline-warning-md-invalid` | `select` | 311.33 | 40 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-warning-md-required` | `select` | 311.34 | 40 | ✓ | 3.2:1 ✗ | 3.06:1 ✓ | 5.02:1 ✓ |
+| `outline-warning-sm-default` | `select` | 311.33 | 32 | ✓ | 3.2:1 ✗ | 3.06:1 ✓ | 5.02:1 ✓ |
+| `outline-warning-sm-disabled` | `select` | 311.34 | 32 | ✓ | 3.2:1 ✗ | 3.06:1 ✓ | — (not-focusable-in-state) |
+| `outline-warning-sm-invalid` | `select` | 311.33 | 32 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-warning-sm-required` | `select` | 311.33 | 32 | ✓ | 3.2:1 ✗ | 3.06:1 ✓ | 5.02:1 ✓ |
+| `outline-warning-xs-default` | `select` | 311.34 | 28 | ✓ | 3.2:1 ✗ | 3.06:1 ✓ | 5.02:1 ✓ |
+| `outline-warning-xs-disabled` | `select` | 311.33 | 28 | ✓ | 3.2:1 ✗ | 3.06:1 ✓ | — (not-focusable-in-state) |
+| `outline-warning-xs-invalid` | `select` | 311.34 | 28 | ✓ | 4.77:1 ✓ | 4.56:1 ✓ | 5.02:1 ✓ |
+| `outline-warning-xs-required` | `select` | 311.33 | 28 | ✓ | 3.2:1 ✗ | 3.06:1 ✓ | 5.02:1 ✓ |
+| `solid-danger-lg-default` | `select` | 311.33 | 48 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
 | `solid-danger-lg-disabled` | `select` | 311.33 | 48 | ✓ | 3.81:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `solid-danger-lg-invalid` | `select` | 311.33 | 48 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-danger-lg-required` | `select` | 311.34 | 48 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-danger-md-default` | `select` | 311.33 | 40 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
+| `solid-danger-lg-invalid` | `select` | 311.33 | 48 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-danger-lg-required` | `select` | 311.34 | 48 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-danger-md-default` | `select` | 311.33 | 40 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
 | `solid-danger-md-disabled` | `select` | 311.34 | 40 | ✓ | 3.81:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `solid-danger-md-invalid` | `select` | 311.33 | 40 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-danger-md-required` | `select` | 311.33 | 40 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-danger-sm-default` | `select` | 311.34 | 32 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
+| `solid-danger-md-invalid` | `select` | 311.33 | 40 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-danger-md-required` | `select` | 311.33 | 40 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-danger-sm-default` | `select` | 311.34 | 32 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
 | `solid-danger-sm-disabled` | `select` | 311.33 | 32 | ✓ | 3.81:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `solid-danger-sm-invalid` | `select` | 311.34 | 32 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-danger-sm-required` | `select` | 311.33 | 32 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-danger-xs-default` | `select` | 311.33 | 24 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
+| `solid-danger-sm-invalid` | `select` | 311.34 | 32 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-danger-sm-required` | `select` | 311.33 | 32 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-danger-xs-default` | `select` | 311.33 | 24 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
 | `solid-danger-xs-disabled` | `select` | 311.33 | 24 | ✓ | 3.81:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `solid-danger-xs-invalid` | `select` | 311.33 | 24 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-danger-xs-required` | `select` | 311.34 | 24 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-neutral-lg-default` | `select` | 311.33 | 48 | ✓ | 6.24:1 ✓ | — (no-border) | 2.82:1 ✗ |
+| `solid-danger-xs-invalid` | `select` | 311.33 | 24 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-danger-xs-required` | `select` | 311.34 | 24 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-neutral-lg-default` | `select` | 311.33 | 48 | ✓ | 6.24:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `solid-neutral-lg-disabled` | `select` | 311.34 | 48 | ✓ | 6.24:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-neutral-lg-invalid` | `select` | 311.33 | 48 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-neutral-lg-required` | `select` | 311.33 | 48 | ✓ | 6.24:1 ✓ | — (no-border) | 2.82:1 ✗ |
-| `solid-neutral-md-default` | `select` | 311.34 | 40 | ✓ | 6.24:1 ✓ | — (no-border) | 2.82:1 ✗ |
+| `solid-neutral-lg-invalid` | `select` | 311.33 | 48 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-neutral-lg-required` | `select` | 311.33 | 48 | ✓ | 6.24:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `solid-neutral-md-default` | `select` | 311.34 | 40 | ✓ | 6.24:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `solid-neutral-md-disabled` | `select` | 311.33 | 40 | ✓ | 6.24:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-neutral-md-invalid` | `select` | 311.34 | 40 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-neutral-md-required` | `select` | 311.33 | 40 | ✓ | 6.24:1 ✓ | — (no-border) | 2.82:1 ✗ |
-| `solid-neutral-sm-default` | `select` | 311.33 | 32 | ✓ | 6.24:1 ✓ | — (no-border) | 2.82:1 ✗ |
+| `solid-neutral-md-invalid` | `select` | 311.34 | 40 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-neutral-md-required` | `select` | 311.33 | 40 | ✓ | 6.24:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `solid-neutral-sm-default` | `select` | 311.33 | 32 | ✓ | 6.24:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `solid-neutral-sm-disabled` | `select` | 311.33 | 32 | ✓ | 6.24:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-neutral-sm-invalid` | `select` | 311.33 | 32 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-neutral-sm-required` | `select` | 311.34 | 32 | ✓ | 6.24:1 ✓ | — (no-border) | 2.82:1 ✗ |
-| `solid-neutral-xs-default` | `select` | 311.33 | 24 | ✓ | 6.24:1 ✓ | — (no-border) | 2.82:1 ✗ |
+| `solid-neutral-sm-invalid` | `select` | 311.33 | 32 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-neutral-sm-required` | `select` | 311.34 | 32 | ✓ | 6.24:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `solid-neutral-xs-default` | `select` | 311.33 | 24 | ✓ | 6.24:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `solid-neutral-xs-disabled` | `select` | 311.34 | 24 | ✓ | 6.24:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-neutral-xs-invalid` | `select` | 311.33 | 24 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-neutral-xs-required` | `select` | 311.33 | 24 | ✓ | 6.24:1 ✓ | — (no-border) | 2.82:1 ✗ |
-| `solid-primary-lg-default` | `select` | 311.33 | 48 | ✓ | 4.33:1 ✗ | — (no-border) | 2.56:1 ✗ |
+| `solid-neutral-xs-invalid` | `select` | 311.33 | 24 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-neutral-xs-required` | `select` | 311.33 | 24 | ✓ | 6.24:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `solid-primary-lg-default` | `select` | 311.33 | 48 | ✓ | 4.33:1 ✗ | — (no-border) | 5.02:1 ✓ |
 | `solid-primary-lg-disabled` | `select` | 311.33 | 48 | ✓ | 4.33:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `solid-primary-lg-invalid` | `select` | 311.33 | 48 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-primary-lg-required` | `select` | 311.34 | 48 | ✓ | 4.33:1 ✗ | — (no-border) | 2.56:1 ✗ |
-| `solid-primary-md-default` | `select` | 311.33 | 40 | ✓ | 4.33:1 ✗ | — (no-border) | 2.56:1 ✗ |
+| `solid-primary-lg-invalid` | `select` | 311.33 | 48 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-primary-lg-required` | `select` | 311.34 | 48 | ✓ | 4.33:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-primary-md-default` | `select` | 311.33 | 40 | ✓ | 4.33:1 ✗ | — (no-border) | 5.02:1 ✓ |
 | `solid-primary-md-disabled` | `select` | 311.34 | 40 | ✓ | 4.33:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `solid-primary-md-invalid` | `select` | 311.33 | 40 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-primary-md-required` | `select` | 311.33 | 40 | ✓ | 4.33:1 ✗ | — (no-border) | 2.56:1 ✗ |
-| `solid-primary-sm-default` | `select` | 311.34 | 32 | ✓ | 4.33:1 ✗ | — (no-border) | 2.56:1 ✗ |
+| `solid-primary-md-invalid` | `select` | 311.33 | 40 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-primary-md-required` | `select` | 311.33 | 40 | ✓ | 4.33:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-primary-sm-default` | `select` | 311.34 | 32 | ✓ | 4.33:1 ✗ | — (no-border) | 5.02:1 ✓ |
 | `solid-primary-sm-disabled` | `select` | 311.33 | 32 | ✓ | 4.33:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `solid-primary-sm-invalid` | `select` | 311.34 | 32 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-primary-sm-required` | `select` | 311.33 | 32 | ✓ | 4.33:1 ✗ | — (no-border) | 2.56:1 ✗ |
-| `solid-primary-xs-default` | `select` | 311.33 | 24 | ✓ | 4.33:1 ✗ | — (no-border) | 2.56:1 ✗ |
+| `solid-primary-sm-invalid` | `select` | 311.34 | 32 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-primary-sm-required` | `select` | 311.33 | 32 | ✓ | 4.33:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-primary-xs-default` | `select` | 311.33 | 24 | ✓ | 4.33:1 ✗ | — (no-border) | 5.02:1 ✓ |
 | `solid-primary-xs-disabled` | `select` | 311.33 | 24 | ✓ | 4.33:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `solid-primary-xs-invalid` | `select` | 311.33 | 24 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-primary-xs-required` | `select` | 311.34 | 24 | ✓ | 4.33:1 ✗ | — (no-border) | 2.56:1 ✗ |
-| `solid-secondary-lg-default` | `select` | 311.34 | 48 | ✓ | 4.78:1 ✓ | — (no-border) | 2.9:1 ✗ |
+| `solid-primary-xs-invalid` | `select` | 311.33 | 24 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-primary-xs-required` | `select` | 311.34 | 24 | ✓ | 4.33:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-secondary-lg-default` | `select` | 311.34 | 48 | ✓ | 4.78:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `solid-secondary-lg-disabled` | `select` | 311.33 | 48 | ✓ | 4.78:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-secondary-lg-invalid` | `select` | 311.34 | 48 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-secondary-lg-required` | `select` | 311.33 | 48 | ✓ | 4.78:1 ✓ | — (no-border) | 2.9:1 ✗ |
-| `solid-secondary-md-default` | `select` | 311.33 | 40 | ✓ | 4.78:1 ✓ | — (no-border) | 2.9:1 ✗ |
+| `solid-secondary-lg-invalid` | `select` | 311.34 | 48 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-secondary-lg-required` | `select` | 311.33 | 48 | ✓ | 4.78:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `solid-secondary-md-default` | `select` | 311.33 | 40 | ✓ | 4.78:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `solid-secondary-md-disabled` | `select` | 311.33 | 40 | ✓ | 4.78:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-secondary-md-invalid` | `select` | 311.33 | 40 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-secondary-md-required` | `select` | 311.34 | 40 | ✓ | 4.78:1 ✓ | — (no-border) | 2.9:1 ✗ |
-| `solid-secondary-sm-default` | `select` | 311.33 | 32 | ✓ | 4.78:1 ✓ | — (no-border) | 2.9:1 ✗ |
+| `solid-secondary-md-invalid` | `select` | 311.33 | 40 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-secondary-md-required` | `select` | 311.34 | 40 | ✓ | 4.78:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `solid-secondary-sm-default` | `select` | 311.33 | 32 | ✓ | 4.78:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `solid-secondary-sm-disabled` | `select` | 311.34 | 32 | ✓ | 4.78:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-secondary-sm-invalid` | `select` | 311.33 | 32 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-secondary-sm-required` | `select` | 311.33 | 32 | ✓ | 4.78:1 ✓ | — (no-border) | 2.9:1 ✗ |
-| `solid-secondary-xs-default` | `select` | 311.34 | 24 | ✓ | 4.78:1 ✓ | — (no-border) | 2.9:1 ✗ |
+| `solid-secondary-sm-invalid` | `select` | 311.33 | 32 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-secondary-sm-required` | `select` | 311.33 | 32 | ✓ | 4.78:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `solid-secondary-xs-default` | `select` | 311.34 | 24 | ✓ | 4.78:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `solid-secondary-xs-disabled` | `select` | 311.33 | 24 | ✓ | 4.78:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-secondary-xs-invalid` | `select` | 311.34 | 24 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-secondary-xs-required` | `select` | 311.33 | 24 | ✓ | 4.78:1 ✓ | — (no-border) | 2.9:1 ✗ |
-| `solid-success-lg-default` | `select` | 311.33 | 48 | ✓ | 5.82:1 ✓ | — (no-border) | 2.88:1 ✗ |
-| `solid-success-lg-disabled` | `select` | 311.34 | 48 | ✓ | 5.82:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-success-lg-invalid` | `select` | 311.33 | 48 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-success-lg-required` | `select` | 311.33 | 48 | ✓ | 5.82:1 ✓ | — (no-border) | 2.88:1 ✗ |
-| `solid-success-md-default` | `select` | 311.34 | 40 | ✓ | 5.82:1 ✓ | — (no-border) | 2.88:1 ✗ |
-| `solid-success-md-disabled` | `select` | 311.33 | 40 | ✓ | 5.82:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-success-md-invalid` | `select` | 311.34 | 40 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-success-md-required` | `select` | 311.33 | 40 | ✓ | 5.82:1 ✓ | — (no-border) | 2.88:1 ✗ |
-| `solid-success-sm-default` | `select` | 311.33 | 32 | ✓ | 5.82:1 ✓ | — (no-border) | 2.88:1 ✗ |
-| `solid-success-sm-disabled` | `select` | 311.33 | 32 | ✓ | 5.82:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-success-sm-invalid` | `select` | 311.33 | 32 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-success-sm-required` | `select` | 311.34 | 32 | ✓ | 5.82:1 ✓ | — (no-border) | 2.88:1 ✗ |
-| `solid-success-xs-default` | `select` | 311.33 | 24 | ✓ | 5.82:1 ✓ | — (no-border) | 2.88:1 ✗ |
-| `solid-success-xs-disabled` | `select` | 311.34 | 24 | ✓ | 5.82:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-success-xs-invalid` | `select` | 311.33 | 24 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-success-xs-required` | `select` | 311.33 | 24 | ✓ | 5.82:1 ✓ | — (no-border) | 2.88:1 ✗ |
-| `solid-warning-lg-default` | `select` | 311.34 | 48 | ✓ | 5.78:1 ✓ | — (no-border) | 2.92:1 ✗ |
-| `solid-warning-lg-disabled` | `select` | 311.33 | 48 | ✓ | 5.78:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-warning-lg-invalid` | `select` | 311.34 | 48 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-warning-lg-required` | `select` | 311.33 | 48 | ✓ | 5.78:1 ✓ | — (no-border) | 2.92:1 ✗ |
-| `solid-warning-md-default` | `select` | 311.33 | 40 | ✓ | 5.78:1 ✓ | — (no-border) | 2.92:1 ✗ |
-| `solid-warning-md-disabled` | `select` | 311.33 | 40 | ✓ | 5.78:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-warning-md-invalid` | `select` | 311.33 | 40 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-warning-md-required` | `select` | 311.34 | 40 | ✓ | 5.78:1 ✓ | — (no-border) | 2.92:1 ✗ |
-| `solid-warning-sm-default` | `select` | 311.33 | 32 | ✓ | 5.78:1 ✓ | — (no-border) | 2.92:1 ✗ |
-| `solid-warning-sm-disabled` | `select` | 311.34 | 32 | ✓ | 5.78:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-warning-sm-invalid` | `select` | 311.33 | 32 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-warning-sm-required` | `select` | 311.33 | 32 | ✓ | 5.78:1 ✓ | — (no-border) | 2.92:1 ✗ |
-| `solid-warning-xs-default` | `select` | 311.34 | 24 | ✓ | 5.78:1 ✓ | — (no-border) | 2.92:1 ✗ |
-| `solid-warning-xs-disabled` | `select` | 311.33 | 24 | ✓ | 5.78:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-warning-xs-invalid` | `select` | 311.34 | 24 | ✓ | 3.81:1 ✗ | — (no-border) | 3:1 ✓ |
-| `solid-warning-xs-required` | `select` | 311.33 | 24 | ✓ | 5.78:1 ✓ | — (no-border) | 2.92:1 ✗ |
+| `solid-secondary-xs-invalid` | `select` | 311.34 | 24 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-secondary-xs-required` | `select` | 311.33 | 24 | ✓ | 4.78:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `solid-success-lg-default` | `select` | 311.33 | 48 | ✓ | 2.75:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-success-lg-disabled` | `select` | 311.34 | 48 | ✓ | 2.75:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `solid-success-lg-invalid` | `select` | 311.33 | 48 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-success-lg-required` | `select` | 311.33 | 48 | ✓ | 2.75:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-success-md-default` | `select` | 311.34 | 40 | ✓ | 2.75:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-success-md-disabled` | `select` | 311.33 | 40 | ✓ | 2.75:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `solid-success-md-invalid` | `select` | 311.34 | 40 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-success-md-required` | `select` | 311.33 | 40 | ✓ | 2.75:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-success-sm-default` | `select` | 311.33 | 32 | ✓ | 2.75:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-success-sm-disabled` | `select` | 311.33 | 32 | ✓ | 2.75:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `solid-success-sm-invalid` | `select` | 311.33 | 32 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-success-sm-required` | `select` | 311.34 | 32 | ✓ | 2.75:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-success-xs-default` | `select` | 311.33 | 24 | ✓ | 2.75:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-success-xs-disabled` | `select` | 311.34 | 24 | ✓ | 2.75:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `solid-success-xs-invalid` | `select` | 311.33 | 24 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-success-xs-required` | `select` | 311.33 | 24 | ✓ | 2.75:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-warning-lg-default` | `select` | 311.34 | 48 | ✓ | 2.74:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-warning-lg-disabled` | `select` | 311.33 | 48 | ✓ | 2.74:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `solid-warning-lg-invalid` | `select` | 311.34 | 48 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-warning-lg-required` | `select` | 311.33 | 48 | ✓ | 2.74:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-warning-md-default` | `select` | 311.33 | 40 | ✓ | 2.74:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-warning-md-disabled` | `select` | 311.33 | 40 | ✓ | 2.74:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `solid-warning-md-invalid` | `select` | 311.33 | 40 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-warning-md-required` | `select` | 311.34 | 40 | ✓ | 2.74:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-warning-sm-default` | `select` | 311.33 | 32 | ✓ | 2.74:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-warning-sm-disabled` | `select` | 311.34 | 32 | ✓ | 2.74:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `solid-warning-sm-invalid` | `select` | 311.33 | 32 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-warning-sm-required` | `select` | 311.33 | 32 | ✓ | 2.74:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-warning-xs-default` | `select` | 311.34 | 24 | ✓ | 2.74:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-warning-xs-disabled` | `select` | 311.33 | 24 | ✓ | 2.74:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `solid-warning-xs-invalid` | `select` | 311.34 | 24 | ✓ | 3.81:1 ✗ | — (no-border) | 5.02:1 ✓ |
+| `solid-warning-xs-required` | `select` | 311.33 | 24 | ✓ | 2.74:1 ✗ | — (no-border) | 5.02:1 ✓ |
 
 ## Text-spacing override (WCAG 1.4.12)
 
@@ -335,288 +335,288 @@ overflows as worst-case, not as media-query-aware behavior.
 - `outline-neutral-xs-required` (x) — content 61×24 vs box 48×24
 - `outline-neutral-xs-disabled` (x) — content 61×24 vs box 48×24
 - `outline-neutral-xs-invalid` (x) — content 61×24 vs box 48×24
-- `outline-neutral-sm-default` (x) — content 68×28 vs box 48×28
-- `outline-neutral-sm-required` (x) — content 68×28 vs box 48×28
-- `outline-neutral-sm-disabled` (x) — content 68×28 vs box 48×28
-- `outline-neutral-sm-invalid` (x) — content 68×28 vs box 48×28
-- `outline-neutral-md-default` (x) — content 80×36 vs box 52×36
-- `outline-neutral-md-required` (x) — content 80×36 vs box 52×36
-- `outline-neutral-md-disabled` (x) — content 80×36 vs box 52×36
-- `outline-neutral-md-invalid` (x) — content 80×36 vs box 52×36
-- `outline-neutral-lg-default` (x) — content 91×44 vs box 56×44
-- `outline-neutral-lg-required` (x) — content 91×44 vs box 56×44
-- `outline-neutral-lg-disabled` (x) — content 91×44 vs box 56×44
-- `outline-neutral-lg-invalid` (x) — content 91×44 vs box 56×44
+- `outline-neutral-sm-default` (x) — content 69×28 vs box 48×28
+- `outline-neutral-sm-required` (x) — content 69×28 vs box 48×28
+- `outline-neutral-sm-disabled` (x) — content 69×28 vs box 48×28
+- `outline-neutral-sm-invalid` (x) — content 69×28 vs box 48×28
+- `outline-neutral-md-default` (x) — content 81×36 vs box 52×36
+- `outline-neutral-md-required` (x) — content 81×36 vs box 52×36
+- `outline-neutral-md-disabled` (x) — content 81×36 vs box 52×36
+- `outline-neutral-md-invalid` (x) — content 81×36 vs box 52×36
+- `outline-neutral-lg-default` (x) — content 92×44 vs box 56×44
+- `outline-neutral-lg-required` (x) — content 92×44 vs box 56×44
+- `outline-neutral-lg-disabled` (x) — content 92×44 vs box 56×44
+- `outline-neutral-lg-invalid` (x) — content 92×44 vs box 56×44
 - `outline-primary-xs-default` (x) — content 61×24 vs box 48×24
 - `outline-primary-xs-required` (x) — content 61×24 vs box 48×24
 - `outline-primary-xs-disabled` (x) — content 61×24 vs box 48×24
 - `outline-primary-xs-invalid` (x) — content 61×24 vs box 48×24
-- `outline-primary-sm-default` (x) — content 68×28 vs box 48×28
-- `outline-primary-sm-required` (x) — content 68×28 vs box 48×28
-- `outline-primary-sm-disabled` (x) — content 68×28 vs box 48×28
-- `outline-primary-sm-invalid` (x) — content 68×28 vs box 48×28
-- `outline-primary-md-default` (x) — content 80×36 vs box 52×36
-- `outline-primary-md-required` (x) — content 80×36 vs box 52×36
-- `outline-primary-md-disabled` (x) — content 80×36 vs box 52×36
-- `outline-primary-md-invalid` (x) — content 80×36 vs box 52×36
-- `outline-primary-lg-default` (x) — content 91×44 vs box 56×44
-- `outline-primary-lg-required` (x) — content 91×44 vs box 56×44
-- `outline-primary-lg-disabled` (x) — content 91×44 vs box 56×44
-- `outline-primary-lg-invalid` (x) — content 91×44 vs box 56×44
+- `outline-primary-sm-default` (x) — content 69×28 vs box 48×28
+- `outline-primary-sm-required` (x) — content 69×28 vs box 48×28
+- `outline-primary-sm-disabled` (x) — content 69×28 vs box 48×28
+- `outline-primary-sm-invalid` (x) — content 69×28 vs box 48×28
+- `outline-primary-md-default` (x) — content 81×36 vs box 52×36
+- `outline-primary-md-required` (x) — content 81×36 vs box 52×36
+- `outline-primary-md-disabled` (x) — content 81×36 vs box 52×36
+- `outline-primary-md-invalid` (x) — content 81×36 vs box 52×36
+- `outline-primary-lg-default` (x) — content 92×44 vs box 56×44
+- `outline-primary-lg-required` (x) — content 92×44 vs box 56×44
+- `outline-primary-lg-disabled` (x) — content 92×44 vs box 56×44
+- `outline-primary-lg-invalid` (x) — content 92×44 vs box 56×44
 - `outline-secondary-xs-default` (x) — content 61×24 vs box 48×24
 - `outline-secondary-xs-required` (x) — content 61×24 vs box 48×24
 - `outline-secondary-xs-disabled` (x) — content 61×24 vs box 48×24
 - `outline-secondary-xs-invalid` (x) — content 61×24 vs box 48×24
-- `outline-secondary-sm-default` (x) — content 68×28 vs box 48×28
-- `outline-secondary-sm-required` (x) — content 68×28 vs box 48×28
-- `outline-secondary-sm-disabled` (x) — content 68×28 vs box 48×28
-- `outline-secondary-sm-invalid` (x) — content 68×28 vs box 48×28
-- `outline-secondary-md-default` (x) — content 80×36 vs box 52×36
-- `outline-secondary-md-required` (x) — content 80×36 vs box 52×36
-- `outline-secondary-md-disabled` (x) — content 80×36 vs box 52×36
-- `outline-secondary-md-invalid` (x) — content 80×36 vs box 52×36
-- `outline-secondary-lg-default` (x) — content 91×44 vs box 56×44
-- `outline-secondary-lg-required` (x) — content 91×44 vs box 56×44
-- `outline-secondary-lg-disabled` (x) — content 91×44 vs box 56×44
-- `outline-secondary-lg-invalid` (x) — content 91×44 vs box 56×44
+- `outline-secondary-sm-default` (x) — content 69×28 vs box 48×28
+- `outline-secondary-sm-required` (x) — content 69×28 vs box 48×28
+- `outline-secondary-sm-disabled` (x) — content 69×28 vs box 48×28
+- `outline-secondary-sm-invalid` (x) — content 69×28 vs box 48×28
+- `outline-secondary-md-default` (x) — content 81×36 vs box 52×36
+- `outline-secondary-md-required` (x) — content 81×36 vs box 52×36
+- `outline-secondary-md-disabled` (x) — content 81×36 vs box 52×36
+- `outline-secondary-md-invalid` (x) — content 81×36 vs box 52×36
+- `outline-secondary-lg-default` (x) — content 92×44 vs box 56×44
+- `outline-secondary-lg-required` (x) — content 92×44 vs box 56×44
+- `outline-secondary-lg-disabled` (x) — content 92×44 vs box 56×44
+- `outline-secondary-lg-invalid` (x) — content 92×44 vs box 56×44
 - `outline-success-xs-default` (x) — content 61×24 vs box 48×24
 - `outline-success-xs-required` (x) — content 61×24 vs box 48×24
 - `outline-success-xs-disabled` (x) — content 61×24 vs box 48×24
 - `outline-success-xs-invalid` (x) — content 61×24 vs box 48×24
-- `outline-success-sm-default` (x) — content 68×28 vs box 48×28
-- `outline-success-sm-required` (x) — content 68×28 vs box 48×28
-- `outline-success-sm-disabled` (x) — content 68×28 vs box 48×28
-- `outline-success-sm-invalid` (x) — content 68×28 vs box 48×28
-- `outline-success-md-default` (x) — content 80×36 vs box 52×36
-- `outline-success-md-required` (x) — content 80×36 vs box 52×36
-- `outline-success-md-disabled` (x) — content 80×36 vs box 52×36
-- `outline-success-md-invalid` (x) — content 80×36 vs box 52×36
-- `outline-success-lg-default` (x) — content 91×44 vs box 56×44
-- `outline-success-lg-required` (x) — content 91×44 vs box 56×44
-- `outline-success-lg-disabled` (x) — content 91×44 vs box 56×44
-- `outline-success-lg-invalid` (x) — content 91×44 vs box 56×44
+- `outline-success-sm-default` (x) — content 69×28 vs box 48×28
+- `outline-success-sm-required` (x) — content 69×28 vs box 48×28
+- `outline-success-sm-disabled` (x) — content 69×28 vs box 48×28
+- `outline-success-sm-invalid` (x) — content 69×28 vs box 48×28
+- `outline-success-md-default` (x) — content 81×36 vs box 52×36
+- `outline-success-md-required` (x) — content 81×36 vs box 52×36
+- `outline-success-md-disabled` (x) — content 81×36 vs box 52×36
+- `outline-success-md-invalid` (x) — content 81×36 vs box 52×36
+- `outline-success-lg-default` (x) — content 92×44 vs box 56×44
+- `outline-success-lg-required` (x) — content 92×44 vs box 56×44
+- `outline-success-lg-disabled` (x) — content 92×44 vs box 56×44
+- `outline-success-lg-invalid` (x) — content 92×44 vs box 56×44
 - `outline-danger-xs-default` (x) — content 61×24 vs box 48×24
 - `outline-danger-xs-required` (x) — content 61×24 vs box 48×24
 - `outline-danger-xs-disabled` (x) — content 61×24 vs box 48×24
 - `outline-danger-xs-invalid` (x) — content 61×24 vs box 48×24
-- `outline-danger-sm-default` (x) — content 68×28 vs box 48×28
-- `outline-danger-sm-required` (x) — content 68×28 vs box 48×28
-- `outline-danger-sm-disabled` (x) — content 68×28 vs box 48×28
-- `outline-danger-sm-invalid` (x) — content 68×28 vs box 48×28
-- `outline-danger-md-default` (x) — content 80×36 vs box 52×36
-- `outline-danger-md-required` (x) — content 80×36 vs box 52×36
-- `outline-danger-md-disabled` (x) — content 80×36 vs box 52×36
-- `outline-danger-md-invalid` (x) — content 80×36 vs box 52×36
-- `outline-danger-lg-default` (x) — content 91×44 vs box 56×44
-- `outline-danger-lg-required` (x) — content 91×44 vs box 56×44
-- `outline-danger-lg-disabled` (x) — content 91×44 vs box 56×44
-- `outline-danger-lg-invalid` (x) — content 91×44 vs box 56×44
+- `outline-danger-sm-default` (x) — content 69×28 vs box 48×28
+- `outline-danger-sm-required` (x) — content 69×28 vs box 48×28
+- `outline-danger-sm-disabled` (x) — content 69×28 vs box 48×28
+- `outline-danger-sm-invalid` (x) — content 69×28 vs box 48×28
+- `outline-danger-md-default` (x) — content 81×36 vs box 52×36
+- `outline-danger-md-required` (x) — content 81×36 vs box 52×36
+- `outline-danger-md-disabled` (x) — content 81×36 vs box 52×36
+- `outline-danger-md-invalid` (x) — content 81×36 vs box 52×36
+- `outline-danger-lg-default` (x) — content 92×44 vs box 56×44
+- `outline-danger-lg-required` (x) — content 92×44 vs box 56×44
+- `outline-danger-lg-disabled` (x) — content 92×44 vs box 56×44
+- `outline-danger-lg-invalid` (x) — content 92×44 vs box 56×44
 - `outline-warning-xs-default` (x) — content 61×24 vs box 48×24
 - `outline-warning-xs-required` (x) — content 61×24 vs box 48×24
 - `outline-warning-xs-disabled` (x) — content 61×24 vs box 48×24
 - `outline-warning-xs-invalid` (x) — content 61×24 vs box 48×24
-- `outline-warning-sm-default` (x) — content 68×28 vs box 48×28
-- `outline-warning-sm-required` (x) — content 68×28 vs box 48×28
-- `outline-warning-sm-disabled` (x) — content 68×28 vs box 48×28
-- `outline-warning-sm-invalid` (x) — content 68×28 vs box 48×28
-- `outline-warning-md-default` (x) — content 80×36 vs box 52×36
-- `outline-warning-md-required` (x) — content 80×36 vs box 52×36
-- `outline-warning-md-disabled` (x) — content 80×36 vs box 52×36
-- `outline-warning-md-invalid` (x) — content 80×36 vs box 52×36
-- `outline-warning-lg-default` (x) — content 91×44 vs box 56×44
-- `outline-warning-lg-required` (x) — content 91×44 vs box 56×44
-- `outline-warning-lg-disabled` (x) — content 91×44 vs box 56×44
-- `outline-warning-lg-invalid` (x) — content 91×44 vs box 56×44
+- `outline-warning-sm-default` (x) — content 69×28 vs box 48×28
+- `outline-warning-sm-required` (x) — content 69×28 vs box 48×28
+- `outline-warning-sm-disabled` (x) — content 69×28 vs box 48×28
+- `outline-warning-sm-invalid` (x) — content 69×28 vs box 48×28
+- `outline-warning-md-default` (x) — content 81×36 vs box 52×36
+- `outline-warning-md-required` (x) — content 81×36 vs box 52×36
+- `outline-warning-md-disabled` (x) — content 81×36 vs box 52×36
+- `outline-warning-md-invalid` (x) — content 81×36 vs box 52×36
+- `outline-warning-lg-default` (x) — content 92×44 vs box 56×44
+- `outline-warning-lg-required` (x) — content 92×44 vs box 56×44
+- `outline-warning-lg-disabled` (x) — content 92×44 vs box 56×44
+- `outline-warning-lg-invalid` (x) — content 92×44 vs box 56×44
 - `ghost-neutral-xs-default` (x) — content 61×24 vs box 48×24
 - `ghost-neutral-xs-required` (x) — content 61×24 vs box 48×24
 - `ghost-neutral-xs-disabled` (x) — content 61×24 vs box 48×24
 - `ghost-neutral-xs-invalid` (x) — content 61×24 vs box 48×24
-- `ghost-neutral-sm-default` (x) — content 68×32 vs box 48×32
-- `ghost-neutral-sm-required` (x) — content 68×32 vs box 48×32
-- `ghost-neutral-sm-disabled` (x) — content 68×32 vs box 48×32
-- `ghost-neutral-sm-invalid` (x) — content 68×32 vs box 48×32
-- `ghost-neutral-md-default` (x) — content 80×40 vs box 52×40
-- `ghost-neutral-md-required` (x) — content 80×40 vs box 52×40
-- `ghost-neutral-md-disabled` (x) — content 80×40 vs box 52×40
-- `ghost-neutral-md-invalid` (x) — content 80×40 vs box 52×40
-- `ghost-neutral-lg-default` (x) — content 91×48 vs box 56×48
-- `ghost-neutral-lg-required` (x) — content 91×48 vs box 56×48
-- `ghost-neutral-lg-disabled` (x) — content 91×48 vs box 56×48
-- `ghost-neutral-lg-invalid` (x) — content 91×48 vs box 56×48
+- `ghost-neutral-sm-default` (x) — content 69×32 vs box 48×32
+- `ghost-neutral-sm-required` (x) — content 69×32 vs box 48×32
+- `ghost-neutral-sm-disabled` (x) — content 69×32 vs box 48×32
+- `ghost-neutral-sm-invalid` (x) — content 69×32 vs box 48×32
+- `ghost-neutral-md-default` (x) — content 81×40 vs box 52×40
+- `ghost-neutral-md-required` (x) — content 81×40 vs box 52×40
+- `ghost-neutral-md-disabled` (x) — content 81×40 vs box 52×40
+- `ghost-neutral-md-invalid` (x) — content 81×40 vs box 52×40
+- `ghost-neutral-lg-default` (x) — content 92×48 vs box 56×48
+- `ghost-neutral-lg-required` (x) — content 92×48 vs box 56×48
+- `ghost-neutral-lg-disabled` (x) — content 92×48 vs box 56×48
+- `ghost-neutral-lg-invalid` (x) — content 92×48 vs box 56×48
 - `ghost-primary-xs-default` (x) — content 61×24 vs box 48×24
 - `ghost-primary-xs-required` (x) — content 61×24 vs box 48×24
 - `ghost-primary-xs-disabled` (x) — content 61×24 vs box 48×24
 - `ghost-primary-xs-invalid` (x) — content 61×24 vs box 48×24
-- `ghost-primary-sm-default` (x) — content 68×32 vs box 48×32
-- `ghost-primary-sm-required` (x) — content 68×32 vs box 48×32
-- `ghost-primary-sm-disabled` (x) — content 68×32 vs box 48×32
-- `ghost-primary-sm-invalid` (x) — content 68×32 vs box 48×32
-- `ghost-primary-md-default` (x) — content 80×40 vs box 52×40
-- `ghost-primary-md-required` (x) — content 80×40 vs box 52×40
-- `ghost-primary-md-disabled` (x) — content 80×40 vs box 52×40
-- `ghost-primary-md-invalid` (x) — content 80×40 vs box 52×40
-- `ghost-primary-lg-default` (x) — content 91×48 vs box 56×48
-- `ghost-primary-lg-required` (x) — content 91×48 vs box 56×48
-- `ghost-primary-lg-disabled` (x) — content 91×48 vs box 56×48
-- `ghost-primary-lg-invalid` (x) — content 91×48 vs box 56×48
+- `ghost-primary-sm-default` (x) — content 69×32 vs box 48×32
+- `ghost-primary-sm-required` (x) — content 69×32 vs box 48×32
+- `ghost-primary-sm-disabled` (x) — content 69×32 vs box 48×32
+- `ghost-primary-sm-invalid` (x) — content 69×32 vs box 48×32
+- `ghost-primary-md-default` (x) — content 81×40 vs box 52×40
+- `ghost-primary-md-required` (x) — content 81×40 vs box 52×40
+- `ghost-primary-md-disabled` (x) — content 81×40 vs box 52×40
+- `ghost-primary-md-invalid` (x) — content 81×40 vs box 52×40
+- `ghost-primary-lg-default` (x) — content 92×48 vs box 56×48
+- `ghost-primary-lg-required` (x) — content 92×48 vs box 56×48
+- `ghost-primary-lg-disabled` (x) — content 92×48 vs box 56×48
+- `ghost-primary-lg-invalid` (x) — content 92×48 vs box 56×48
 - `ghost-secondary-xs-default` (x) — content 61×24 vs box 48×24
 - `ghost-secondary-xs-required` (x) — content 61×24 vs box 48×24
 - `ghost-secondary-xs-disabled` (x) — content 61×24 vs box 48×24
 - `ghost-secondary-xs-invalid` (x) — content 61×24 vs box 48×24
-- `ghost-secondary-sm-default` (x) — content 68×32 vs box 48×32
-- `ghost-secondary-sm-required` (x) — content 68×32 vs box 48×32
-- `ghost-secondary-sm-disabled` (x) — content 68×32 vs box 48×32
-- `ghost-secondary-sm-invalid` (x) — content 68×32 vs box 48×32
-- `ghost-secondary-md-default` (x) — content 80×40 vs box 52×40
-- `ghost-secondary-md-required` (x) — content 80×40 vs box 52×40
-- `ghost-secondary-md-disabled` (x) — content 80×40 vs box 52×40
-- `ghost-secondary-md-invalid` (x) — content 80×40 vs box 52×40
-- `ghost-secondary-lg-default` (x) — content 91×48 vs box 56×48
-- `ghost-secondary-lg-required` (x) — content 91×48 vs box 56×48
-- `ghost-secondary-lg-disabled` (x) — content 91×48 vs box 56×48
-- `ghost-secondary-lg-invalid` (x) — content 91×48 vs box 56×48
+- `ghost-secondary-sm-default` (x) — content 69×32 vs box 48×32
+- `ghost-secondary-sm-required` (x) — content 69×32 vs box 48×32
+- `ghost-secondary-sm-disabled` (x) — content 69×32 vs box 48×32
+- `ghost-secondary-sm-invalid` (x) — content 69×32 vs box 48×32
+- `ghost-secondary-md-default` (x) — content 81×40 vs box 52×40
+- `ghost-secondary-md-required` (x) — content 81×40 vs box 52×40
+- `ghost-secondary-md-disabled` (x) — content 81×40 vs box 52×40
+- `ghost-secondary-md-invalid` (x) — content 81×40 vs box 52×40
+- `ghost-secondary-lg-default` (x) — content 92×48 vs box 56×48
+- `ghost-secondary-lg-required` (x) — content 92×48 vs box 56×48
+- `ghost-secondary-lg-disabled` (x) — content 92×48 vs box 56×48
+- `ghost-secondary-lg-invalid` (x) — content 92×48 vs box 56×48
 - `ghost-success-xs-default` (x) — content 61×24 vs box 48×24
 - `ghost-success-xs-required` (x) — content 61×24 vs box 48×24
 - `ghost-success-xs-disabled` (x) — content 61×24 vs box 48×24
 - `ghost-success-xs-invalid` (x) — content 61×24 vs box 48×24
-- `ghost-success-sm-default` (x) — content 68×32 vs box 48×32
-- `ghost-success-sm-required` (x) — content 68×32 vs box 48×32
-- `ghost-success-sm-disabled` (x) — content 68×32 vs box 48×32
-- `ghost-success-sm-invalid` (x) — content 68×32 vs box 48×32
-- `ghost-success-md-default` (x) — content 80×40 vs box 52×40
-- `ghost-success-md-required` (x) — content 80×40 vs box 52×40
-- `ghost-success-md-disabled` (x) — content 80×40 vs box 52×40
-- `ghost-success-md-invalid` (x) — content 80×40 vs box 52×40
-- `ghost-success-lg-default` (x) — content 91×48 vs box 56×48
-- `ghost-success-lg-required` (x) — content 91×48 vs box 56×48
-- `ghost-success-lg-disabled` (x) — content 91×48 vs box 56×48
-- `ghost-success-lg-invalid` (x) — content 91×48 vs box 56×48
+- `ghost-success-sm-default` (x) — content 69×32 vs box 48×32
+- `ghost-success-sm-required` (x) — content 69×32 vs box 48×32
+- `ghost-success-sm-disabled` (x) — content 69×32 vs box 48×32
+- `ghost-success-sm-invalid` (x) — content 69×32 vs box 48×32
+- `ghost-success-md-default` (x) — content 81×40 vs box 52×40
+- `ghost-success-md-required` (x) — content 81×40 vs box 52×40
+- `ghost-success-md-disabled` (x) — content 81×40 vs box 52×40
+- `ghost-success-md-invalid` (x) — content 81×40 vs box 52×40
+- `ghost-success-lg-default` (x) — content 92×48 vs box 56×48
+- `ghost-success-lg-required` (x) — content 92×48 vs box 56×48
+- `ghost-success-lg-disabled` (x) — content 92×48 vs box 56×48
+- `ghost-success-lg-invalid` (x) — content 92×48 vs box 56×48
 - `ghost-danger-xs-default` (x) — content 61×24 vs box 48×24
 - `ghost-danger-xs-required` (x) — content 61×24 vs box 48×24
 - `ghost-danger-xs-disabled` (x) — content 61×24 vs box 48×24
 - `ghost-danger-xs-invalid` (x) — content 61×24 vs box 48×24
-- `ghost-danger-sm-default` (x) — content 68×32 vs box 48×32
-- `ghost-danger-sm-required` (x) — content 68×32 vs box 48×32
-- `ghost-danger-sm-disabled` (x) — content 68×32 vs box 48×32
-- `ghost-danger-sm-invalid` (x) — content 68×32 vs box 48×32
-- `ghost-danger-md-default` (x) — content 80×40 vs box 52×40
-- `ghost-danger-md-required` (x) — content 80×40 vs box 52×40
-- `ghost-danger-md-disabled` (x) — content 80×40 vs box 52×40
-- `ghost-danger-md-invalid` (x) — content 80×40 vs box 52×40
-- `ghost-danger-lg-default` (x) — content 91×48 vs box 56×48
-- `ghost-danger-lg-required` (x) — content 91×48 vs box 56×48
-- `ghost-danger-lg-disabled` (x) — content 91×48 vs box 56×48
-- `ghost-danger-lg-invalid` (x) — content 91×48 vs box 56×48
+- `ghost-danger-sm-default` (x) — content 69×32 vs box 48×32
+- `ghost-danger-sm-required` (x) — content 69×32 vs box 48×32
+- `ghost-danger-sm-disabled` (x) — content 69×32 vs box 48×32
+- `ghost-danger-sm-invalid` (x) — content 69×32 vs box 48×32
+- `ghost-danger-md-default` (x) — content 81×40 vs box 52×40
+- `ghost-danger-md-required` (x) — content 81×40 vs box 52×40
+- `ghost-danger-md-disabled` (x) — content 81×40 vs box 52×40
+- `ghost-danger-md-invalid` (x) — content 81×40 vs box 52×40
+- `ghost-danger-lg-default` (x) — content 92×48 vs box 56×48
+- `ghost-danger-lg-required` (x) — content 92×48 vs box 56×48
+- `ghost-danger-lg-disabled` (x) — content 92×48 vs box 56×48
+- `ghost-danger-lg-invalid` (x) — content 92×48 vs box 56×48
 - `ghost-warning-xs-default` (x) — content 61×24 vs box 48×24
 - `ghost-warning-xs-required` (x) — content 61×24 vs box 48×24
 - `ghost-warning-xs-disabled` (x) — content 61×24 vs box 48×24
 - `ghost-warning-xs-invalid` (x) — content 61×24 vs box 48×24
-- `ghost-warning-sm-default` (x) — content 68×32 vs box 48×32
-- `ghost-warning-sm-required` (x) — content 68×32 vs box 48×32
-- `ghost-warning-sm-disabled` (x) — content 68×32 vs box 48×32
-- `ghost-warning-sm-invalid` (x) — content 68×32 vs box 48×32
-- `ghost-warning-md-default` (x) — content 80×40 vs box 52×40
-- `ghost-warning-md-required` (x) — content 80×40 vs box 52×40
-- `ghost-warning-md-disabled` (x) — content 80×40 vs box 52×40
-- `ghost-warning-md-invalid` (x) — content 80×40 vs box 52×40
-- `ghost-warning-lg-default` (x) — content 91×48 vs box 56×48
-- `ghost-warning-lg-required` (x) — content 91×48 vs box 56×48
-- `ghost-warning-lg-disabled` (x) — content 91×48 vs box 56×48
-- `ghost-warning-lg-invalid` (x) — content 91×48 vs box 56×48
+- `ghost-warning-sm-default` (x) — content 69×32 vs box 48×32
+- `ghost-warning-sm-required` (x) — content 69×32 vs box 48×32
+- `ghost-warning-sm-disabled` (x) — content 69×32 vs box 48×32
+- `ghost-warning-sm-invalid` (x) — content 69×32 vs box 48×32
+- `ghost-warning-md-default` (x) — content 81×40 vs box 52×40
+- `ghost-warning-md-required` (x) — content 81×40 vs box 52×40
+- `ghost-warning-md-disabled` (x) — content 81×40 vs box 52×40
+- `ghost-warning-md-invalid` (x) — content 81×40 vs box 52×40
+- `ghost-warning-lg-default` (x) — content 92×48 vs box 56×48
+- `ghost-warning-lg-required` (x) — content 92×48 vs box 56×48
+- `ghost-warning-lg-disabled` (x) — content 92×48 vs box 56×48
+- `ghost-warning-lg-invalid` (x) — content 92×48 vs box 56×48
 - `solid-neutral-xs-default` (x) — content 61×24 vs box 48×24
 - `solid-neutral-xs-required` (x) — content 61×24 vs box 48×24
 - `solid-neutral-xs-disabled` (x) — content 61×24 vs box 48×24
 - `solid-neutral-xs-invalid` (x) — content 61×24 vs box 48×24
-- `solid-neutral-sm-default` (x) — content 68×32 vs box 48×32
-- `solid-neutral-sm-required` (x) — content 68×32 vs box 48×32
-- `solid-neutral-sm-disabled` (x) — content 68×32 vs box 48×32
-- `solid-neutral-sm-invalid` (x) — content 68×32 vs box 48×32
-- `solid-neutral-md-default` (x) — content 80×40 vs box 52×40
-- `solid-neutral-md-required` (x) — content 80×40 vs box 52×40
-- `solid-neutral-md-disabled` (x) — content 80×40 vs box 52×40
-- `solid-neutral-md-invalid` (x) — content 80×40 vs box 52×40
-- `solid-neutral-lg-default` (x) — content 91×48 vs box 56×48
-- `solid-neutral-lg-required` (x) — content 91×48 vs box 56×48
-- `solid-neutral-lg-disabled` (x) — content 91×48 vs box 56×48
-- `solid-neutral-lg-invalid` (x) — content 91×48 vs box 56×48
+- `solid-neutral-sm-default` (x) — content 69×32 vs box 48×32
+- `solid-neutral-sm-required` (x) — content 69×32 vs box 48×32
+- `solid-neutral-sm-disabled` (x) — content 69×32 vs box 48×32
+- `solid-neutral-sm-invalid` (x) — content 69×32 vs box 48×32
+- `solid-neutral-md-default` (x) — content 81×40 vs box 52×40
+- `solid-neutral-md-required` (x) — content 81×40 vs box 52×40
+- `solid-neutral-md-disabled` (x) — content 81×40 vs box 52×40
+- `solid-neutral-md-invalid` (x) — content 81×40 vs box 52×40
+- `solid-neutral-lg-default` (x) — content 92×48 vs box 56×48
+- `solid-neutral-lg-required` (x) — content 92×48 vs box 56×48
+- `solid-neutral-lg-disabled` (x) — content 92×48 vs box 56×48
+- `solid-neutral-lg-invalid` (x) — content 92×48 vs box 56×48
 - `solid-primary-xs-default` (x) — content 61×24 vs box 48×24
 - `solid-primary-xs-required` (x) — content 61×24 vs box 48×24
 - `solid-primary-xs-disabled` (x) — content 61×24 vs box 48×24
 - `solid-primary-xs-invalid` (x) — content 61×24 vs box 48×24
-- `solid-primary-sm-default` (x) — content 68×32 vs box 48×32
-- `solid-primary-sm-required` (x) — content 68×32 vs box 48×32
-- `solid-primary-sm-disabled` (x) — content 68×32 vs box 48×32
-- `solid-primary-sm-invalid` (x) — content 68×32 vs box 48×32
-- `solid-primary-md-default` (x) — content 80×40 vs box 52×40
-- `solid-primary-md-required` (x) — content 80×40 vs box 52×40
-- `solid-primary-md-disabled` (x) — content 80×40 vs box 52×40
-- `solid-primary-md-invalid` (x) — content 80×40 vs box 52×40
-- `solid-primary-lg-default` (x) — content 91×48 vs box 56×48
-- `solid-primary-lg-required` (x) — content 91×48 vs box 56×48
-- `solid-primary-lg-disabled` (x) — content 91×48 vs box 56×48
-- `solid-primary-lg-invalid` (x) — content 91×48 vs box 56×48
+- `solid-primary-sm-default` (x) — content 69×32 vs box 48×32
+- `solid-primary-sm-required` (x) — content 69×32 vs box 48×32
+- `solid-primary-sm-disabled` (x) — content 69×32 vs box 48×32
+- `solid-primary-sm-invalid` (x) — content 69×32 vs box 48×32
+- `solid-primary-md-default` (x) — content 81×40 vs box 52×40
+- `solid-primary-md-required` (x) — content 81×40 vs box 52×40
+- `solid-primary-md-disabled` (x) — content 81×40 vs box 52×40
+- `solid-primary-md-invalid` (x) — content 81×40 vs box 52×40
+- `solid-primary-lg-default` (x) — content 92×48 vs box 56×48
+- `solid-primary-lg-required` (x) — content 92×48 vs box 56×48
+- `solid-primary-lg-disabled` (x) — content 92×48 vs box 56×48
+- `solid-primary-lg-invalid` (x) — content 92×48 vs box 56×48
 - `solid-secondary-xs-default` (x) — content 61×24 vs box 48×24
 - `solid-secondary-xs-required` (x) — content 61×24 vs box 48×24
 - `solid-secondary-xs-disabled` (x) — content 61×24 vs box 48×24
 - `solid-secondary-xs-invalid` (x) — content 61×24 vs box 48×24
-- `solid-secondary-sm-default` (x) — content 68×32 vs box 48×32
-- `solid-secondary-sm-required` (x) — content 68×32 vs box 48×32
-- `solid-secondary-sm-disabled` (x) — content 68×32 vs box 48×32
-- `solid-secondary-sm-invalid` (x) — content 68×32 vs box 48×32
-- `solid-secondary-md-default` (x) — content 80×40 vs box 52×40
-- `solid-secondary-md-required` (x) — content 80×40 vs box 52×40
-- `solid-secondary-md-disabled` (x) — content 80×40 vs box 52×40
-- `solid-secondary-md-invalid` (x) — content 80×40 vs box 52×40
-- `solid-secondary-lg-default` (x) — content 91×48 vs box 56×48
-- `solid-secondary-lg-required` (x) — content 91×48 vs box 56×48
-- `solid-secondary-lg-disabled` (x) — content 91×48 vs box 56×48
-- `solid-secondary-lg-invalid` (x) — content 91×48 vs box 56×48
+- `solid-secondary-sm-default` (x) — content 69×32 vs box 48×32
+- `solid-secondary-sm-required` (x) — content 69×32 vs box 48×32
+- `solid-secondary-sm-disabled` (x) — content 69×32 vs box 48×32
+- `solid-secondary-sm-invalid` (x) — content 69×32 vs box 48×32
+- `solid-secondary-md-default` (x) — content 81×40 vs box 52×40
+- `solid-secondary-md-required` (x) — content 81×40 vs box 52×40
+- `solid-secondary-md-disabled` (x) — content 81×40 vs box 52×40
+- `solid-secondary-md-invalid` (x) — content 81×40 vs box 52×40
+- `solid-secondary-lg-default` (x) — content 92×48 vs box 56×48
+- `solid-secondary-lg-required` (x) — content 92×48 vs box 56×48
+- `solid-secondary-lg-disabled` (x) — content 92×48 vs box 56×48
+- `solid-secondary-lg-invalid` (x) — content 92×48 vs box 56×48
 - `solid-success-xs-default` (x) — content 61×24 vs box 48×24
 - `solid-success-xs-required` (x) — content 61×24 vs box 48×24
 - `solid-success-xs-disabled` (x) — content 61×24 vs box 48×24
 - `solid-success-xs-invalid` (x) — content 61×24 vs box 48×24
-- `solid-success-sm-default` (x) — content 68×32 vs box 48×32
-- `solid-success-sm-required` (x) — content 68×32 vs box 48×32
-- `solid-success-sm-disabled` (x) — content 68×32 vs box 48×32
-- `solid-success-sm-invalid` (x) — content 68×32 vs box 48×32
-- `solid-success-md-default` (x) — content 80×40 vs box 52×40
-- `solid-success-md-required` (x) — content 80×40 vs box 52×40
-- `solid-success-md-disabled` (x) — content 80×40 vs box 52×40
-- `solid-success-md-invalid` (x) — content 80×40 vs box 52×40
-- `solid-success-lg-default` (x) — content 91×48 vs box 56×48
-- `solid-success-lg-required` (x) — content 91×48 vs box 56×48
-- `solid-success-lg-disabled` (x) — content 91×48 vs box 56×48
-- `solid-success-lg-invalid` (x) — content 91×48 vs box 56×48
+- `solid-success-sm-default` (x) — content 69×32 vs box 48×32
+- `solid-success-sm-required` (x) — content 69×32 vs box 48×32
+- `solid-success-sm-disabled` (x) — content 69×32 vs box 48×32
+- `solid-success-sm-invalid` (x) — content 69×32 vs box 48×32
+- `solid-success-md-default` (x) — content 81×40 vs box 52×40
+- `solid-success-md-required` (x) — content 81×40 vs box 52×40
+- `solid-success-md-disabled` (x) — content 81×40 vs box 52×40
+- `solid-success-md-invalid` (x) — content 81×40 vs box 52×40
+- `solid-success-lg-default` (x) — content 92×48 vs box 56×48
+- `solid-success-lg-required` (x) — content 92×48 vs box 56×48
+- `solid-success-lg-disabled` (x) — content 92×48 vs box 56×48
+- `solid-success-lg-invalid` (x) — content 92×48 vs box 56×48
 - `solid-danger-xs-default` (x) — content 61×24 vs box 48×24
 - `solid-danger-xs-required` (x) — content 61×24 vs box 48×24
 - `solid-danger-xs-disabled` (x) — content 61×24 vs box 48×24
 - `solid-danger-xs-invalid` (x) — content 61×24 vs box 48×24
-- `solid-danger-sm-default` (x) — content 68×32 vs box 48×32
-- `solid-danger-sm-required` (x) — content 68×32 vs box 48×32
-- `solid-danger-sm-disabled` (x) — content 68×32 vs box 48×32
-- `solid-danger-sm-invalid` (x) — content 68×32 vs box 48×32
-- `solid-danger-md-default` (x) — content 80×40 vs box 52×40
-- `solid-danger-md-required` (x) — content 80×40 vs box 52×40
-- `solid-danger-md-disabled` (x) — content 80×40 vs box 52×40
-- `solid-danger-md-invalid` (x) — content 80×40 vs box 52×40
-- `solid-danger-lg-default` (x) — content 91×48 vs box 56×48
-- `solid-danger-lg-required` (x) — content 91×48 vs box 56×48
-- `solid-danger-lg-disabled` (x) — content 91×48 vs box 56×48
-- `solid-danger-lg-invalid` (x) — content 91×48 vs box 56×48
+- `solid-danger-sm-default` (x) — content 69×32 vs box 48×32
+- `solid-danger-sm-required` (x) — content 69×32 vs box 48×32
+- `solid-danger-sm-disabled` (x) — content 69×32 vs box 48×32
+- `solid-danger-sm-invalid` (x) — content 69×32 vs box 48×32
+- `solid-danger-md-default` (x) — content 81×40 vs box 52×40
+- `solid-danger-md-required` (x) — content 81×40 vs box 52×40
+- `solid-danger-md-disabled` (x) — content 81×40 vs box 52×40
+- `solid-danger-md-invalid` (x) — content 81×40 vs box 52×40
+- `solid-danger-lg-default` (x) — content 92×48 vs box 56×48
+- `solid-danger-lg-required` (x) — content 92×48 vs box 56×48
+- `solid-danger-lg-disabled` (x) — content 92×48 vs box 56×48
+- `solid-danger-lg-invalid` (x) — content 92×48 vs box 56×48
 - `solid-warning-xs-default` (x) — content 61×24 vs box 48×24
 - `solid-warning-xs-required` (x) — content 61×24 vs box 48×24
 - `solid-warning-xs-disabled` (x) — content 61×24 vs box 48×24
 - `solid-warning-xs-invalid` (x) — content 61×24 vs box 48×24
-- `solid-warning-sm-default` (x) — content 68×32 vs box 48×32
-- `solid-warning-sm-required` (x) — content 68×32 vs box 48×32
-- `solid-warning-sm-disabled` (x) — content 68×32 vs box 48×32
-- `solid-warning-sm-invalid` (x) — content 68×32 vs box 48×32
-- `solid-warning-md-default` (x) — content 80×40 vs box 52×40
-- `solid-warning-md-required` (x) — content 80×40 vs box 52×40
-- `solid-warning-md-disabled` (x) — content 80×40 vs box 52×40
-- `solid-warning-md-invalid` (x) — content 80×40 vs box 52×40
-- `solid-warning-lg-default` (x) — content 91×48 vs box 56×48
-- `solid-warning-lg-required` (x) — content 91×48 vs box 56×48
-- `solid-warning-lg-disabled` (x) — content 91×48 vs box 56×48
-- `solid-warning-lg-invalid` (x) — content 91×48 vs box 56×48
-- `multi` (x) — content 54×89 vs box 52×89
+- `solid-warning-sm-default` (x) — content 69×32 vs box 48×32
+- `solid-warning-sm-required` (x) — content 69×32 vs box 48×32
+- `solid-warning-sm-disabled` (x) — content 69×32 vs box 48×32
+- `solid-warning-sm-invalid` (x) — content 69×32 vs box 48×32
+- `solid-warning-md-default` (x) — content 81×40 vs box 52×40
+- `solid-warning-md-required` (x) — content 81×40 vs box 52×40
+- `solid-warning-md-disabled` (x) — content 81×40 vs box 52×40
+- `solid-warning-md-invalid` (x) — content 81×40 vs box 52×40
+- `solid-warning-lg-default` (x) — content 92×48 vs box 56×48
+- `solid-warning-lg-required` (x) — content 92×48 vs box 56×48
+- `solid-warning-lg-disabled` (x) — content 92×48 vs box 56×48
+- `solid-warning-lg-invalid` (x) — content 92×48 vs box 56×48
+- `multi` (x) — content 55×89 vs box 52×89

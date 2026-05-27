@@ -89,29 +89,22 @@ upstream token fix.
 `lib/pulsar/components/select.ex:117`. Badge container wraps with
 `flex-wrap` — `lib/pulsar/components/select.ex:337`.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious) — light outline borders / focus rings
+### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** Outline variant uses `border-2` —
 `lib/pulsar/components/select.ex:122`. Outline-neutral routes through
-`border-border-strong` — `lib/pulsar/components/select.ex:122`. Focus
-ring `focus:ring-2 focus:ring-offset-2` —
-`lib/pulsar/components/select.ex:117`. Badge remove button has
-`focus-visible:ring-1` — `lib/pulsar/components/select.ex:350`.
-Browser measurement of 96 outline cells: light 48/96 pass, dark
-96/96 pass. Failing outline colors (light only):
-`outline-primary`, `outline-secondary`, `outline-success`,
-`outline-warning` — all use the colored border at `/60` alpha,
-which lands below 3:1 against white. Focus ring: 217 focusable
-cells, light 112/217 pass, dark 217/217 pass.
+`border-border-strong`; colored outline variants use full-saturation
+`border-{color}` — `lib/pulsar/components/select.ex:130–142`. Focus
+ring `focus-visible:ring-2 focus-visible:ring-offset-2` resolves to
+the standard `--color-ring` token across all variants —
+`lib/pulsar/components/select.ex:117`. Browser measurement: outline
+borders and focus rings ≥ 3:1 across both themes for every variant.
 
-**Notes:** The remaining light-theme failure is the `/60`-alpha
-colored borders on outline variants. The same root cause drives
-the light focus ring failures: colored variants use
-`--color-{color}/60` (or the `*-300` light-palette shade) for both
-the border and the focus ring, which doesn't meet 3:1 against the
-default white background. Fix would be to drop the alpha and use
-the full-saturation token, or route colored borders/rings through
-darker palette shades.
+**Notes:** Previously failed on colored outline variants in light
+theme because of `/60` opacity modifiers on the border + per-color
+focus ring shades. Resolved by dropping the opacity modifier and
+routing all variants' focus ring through `--color-ring`, matching
+Button's pattern.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -154,24 +147,20 @@ visual order — `lib/pulsar/components/select.ex:337–356`.
 Per-badge remove buttons have `aria-label="Remove …"` —
 `lib/pulsar/components/select.ex:351`.
 
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious) — light colored focus rings
+### 2.4.7 Focus Visible (AA) — ✓ PASS
 
-**Evidence:** Select has `focus:ring-2 focus:ring-offset-2` —
-`lib/pulsar/components/select.ex:117`. Remove button has
+**Evidence:** Select has
+`focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2` —
+`lib/pulsar/components/select.ex:117`. All color variants resolve
+the ring to `--color-ring` —
+`lib/pulsar/components/select.ex:130–176`. Remove button has
 `focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current` —
-`lib/pulsar/components/select.ex:350`. Browser measurement: focus ring
-contrast varies by variant — neutral resolves to the standard
-`--color-ring` token (5.02:1 light / 6.72:1 dark, pass), but colored
-variants (primary/success/warning/etc.) use their color's `-300`
-shade as the ring color, which falls below 3:1 in light theme.
-Specifically: ghost / outline / solid variants in primary/secondary/
-success/warning/danger colors fail the 3:1 ring contrast in light.
+`lib/pulsar/components/select.ex:350`. Browser measurement: focus
+ring 5.02:1 (light) / 6.72:1 (dark) across every variant — passes
+the 3:1 minimum.
 
-**Notes:** Same root cause as the 1.4.11 finding above — fix is to
-either bump colored focus rings to a darker shade or use the neutral
-`--color-ring` token for all variants. Remove button `ring-1` (1px)
-is below AAA but meets AA when contrast is adequate; not flagged
-separately.
+**Notes:** Uses `focus-visible:` (keyboard-only) consistent with
+Button/Input. Mouse activation no longer paints a focus ring.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 

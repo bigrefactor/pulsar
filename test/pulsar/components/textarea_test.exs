@@ -169,27 +169,27 @@ defmodule Pulsar.Components.TextareaTest do
             assert html =~ "text-foreground"
 
           "primary" ->
-            assert html =~ "border-primary/60"
+            assert html =~ "border-primary"
             assert html =~ "text-primary"
 
           "secondary" ->
-            assert html =~ "border-secondary/60"
+            assert html =~ "border-secondary"
             assert html =~ "text-secondary"
 
           "success" ->
-            assert html =~ "border-success/60"
+            assert html =~ "border-success"
             assert html =~ "text-success"
 
           "danger" ->
-            assert html =~ "border-danger/60"
+            assert html =~ "border-danger"
             assert html =~ "text-danger"
 
           "warning" ->
-            assert html =~ "border-warning/60"
+            assert html =~ "border-warning"
             assert html =~ "text-warning"
 
           "info" ->
-            assert html =~ "border-info/60"
+            assert html =~ "border-info"
             assert html =~ "text-info"
         end
       end
@@ -542,8 +542,8 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea name="test" />
         """)
 
-      assert html =~ "focus:ring-2"
-      assert html =~ "focus:ring-neutral/60"
+      assert html =~ "focus-visible:ring-2"
+      assert html =~ "focus-visible:ring-ring"
     end
 
     test "sets aria-invalid attribute when invalid is true" do
