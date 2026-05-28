@@ -146,7 +146,7 @@ defmodule Pulsar.Components.TextareaTest do
 
       assert html =~ "bg-neutral/10"
       assert html =~ "border-transparent"
-      assert html =~ "text-neutral"
+      assert html =~ "text-foreground"
     end
   end
 
@@ -209,7 +209,7 @@ defmodule Pulsar.Components.TextareaTest do
         case color do
           "neutral" ->
             assert html =~ "bg-neutral/10"
-            assert html =~ "text-neutral"
+            assert html =~ "text-foreground"
 
           "primary" ->
             assert html =~ "bg-primary/10"
@@ -814,7 +814,7 @@ defmodule Pulsar.Components.TextareaTest do
 
       # Should not show character count display
       refute html =~ "5<span>/100</span>"
-      refute html =~ "text-muted-foreground"
+      refute html =~ ~s(<div class="flex justify-between items-center text-sm" aria-hidden="true">)
     end
 
     test "wrap attribute passes through correctly" do

@@ -192,7 +192,7 @@ defmodule Pulsar.Components.Input do
       "danger" => "bg-danger/10 text-danger placeholder:text-danger/70 focus-within:ring-danger/60 hover:bg-danger/20",
       "info" => "bg-info/10 text-info placeholder:text-info/70 focus-within:ring-info/60 hover:bg-info/20",
       "neutral" =>
-        "bg-neutral/10 text-neutral placeholder:text-neutral/70 focus-within:ring-neutral/60 hover:bg-neutral/20",
+        "bg-neutral/10 text-foreground placeholder:text-muted-foreground focus-within:ring-neutral/60 hover:bg-neutral/20",
       "primary" =>
         "bg-primary/10 text-primary placeholder:text-primary/70 focus-within:ring-primary/60 hover:bg-primary/20",
       "secondary" =>
@@ -209,7 +209,7 @@ defmodule Pulsar.Components.Input do
     "outline" => %{
       "danger" => "bg-danger/60 text-danger-foreground border-danger/60",
       "info" => "bg-info/60 text-info-foreground border-info/60",
-      "neutral" => "bg-border text-neutral-700 border-border",
+      "neutral" => "bg-border text-foreground border-border",
       "primary" => "bg-primary/60 text-primary-foreground border-primary/60",
       "secondary" => "bg-secondary/60 text-secondary-foreground border-secondary/60",
       "success" => "bg-success/60 text-success-foreground border-success/60",
@@ -218,7 +218,7 @@ defmodule Pulsar.Components.Input do
     "solid" => %{
       "danger" => "bg-danger/20 text-danger border-danger/30",
       "info" => "bg-info/20 text-info border-info/30",
-      "neutral" => "bg-neutral/20 text-neutral border-neutral/30",
+      "neutral" => "bg-neutral/20 text-foreground border-neutral/30",
       "primary" => "bg-primary/20 text-primary border-primary/30",
       "secondary" => "bg-secondary/20 text-secondary border-secondary/30",
       "success" => "bg-success/20 text-success border-success/30",

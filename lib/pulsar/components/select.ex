@@ -150,7 +150,7 @@ defmodule Pulsar.Components.Select do
     "solid" => %{
       "danger" => "bg-danger/10 text-danger focus-visible:ring-ring hover:bg-danger/20",
       "info" => "bg-info/10 text-info focus-visible:ring-ring hover:bg-info/20",
-      "neutral" => "bg-neutral/10 text-neutral focus-visible:ring-ring hover:bg-neutral/20",
+      "neutral" => "bg-neutral/10 text-foreground focus-visible:ring-ring hover:bg-neutral/20",
       "primary" => "bg-primary/10 text-primary focus-visible:ring-ring hover:bg-primary/20",
       "secondary" => "bg-secondary/10 text-secondary focus-visible:ring-ring hover:bg-secondary/20",
       "success" => "bg-success/10 text-success focus-visible:ring-ring hover:bg-success/20",

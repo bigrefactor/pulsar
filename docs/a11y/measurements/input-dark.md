@@ -24,7 +24,7 @@ Columns:
 
 | Cell ID | Tag | Width | Height | ≥24×24 | Text | Border | Focus |
 |---------|-----|-------|--------|--------|------|--------|-------|
-| `decorators` | `input` | 199 | 40 | ✓ | 3.31:1 ✗ | — (no-border) | — (no-focus-ring) |
+| `decorators` | `input` | 199 | 40 | ✓ | 15.33:1 ✓ | — (no-border) | — (no-focus-ring) |
 | `ghost-danger-lg-default` | `input` | 311.34 | 48 | ✓ | 9.25:1 ✓ | — (no-border) | — (no-focus-ring) |
 | `ghost-danger-lg-disabled` | `input` | 311.34 | 48 | ✓ | 9.25:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `ghost-danger-lg-invalid` | `input` | 311.33 | 48 | ✓ | 9.25:1 ✓ | — (no-border) | — (no-focus-ring) |
@@ -285,26 +285,26 @@ Columns:
 | `solid-danger-xs-invalid` | `input` | 311.33 | 32 | ✓ | 7.74:1 ✓ | — (no-border) | — (no-focus-ring) |
 | `solid-danger-xs-readonly` | `input` | 311.33 | 24 | ✓ | 7.74:1 ✓ | — (no-border) | — (no-focus-ring) |
 | `solid-danger-xs-required` | `input` | 311.33 | 24 | ✓ | 7.74:1 ✓ | — (no-border) | — (no-focus-ring) |
-| `solid-neutral-lg-default` | `input` | 311.33 | 48 | ✓ | 3.31:1 ✗ | — (no-border) | — (no-focus-ring) |
-| `solid-neutral-lg-disabled` | `input` | 311.33 | 48 | ✓ | 3.31:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `solid-neutral-lg-default` | `input` | 311.33 | 48 | ✓ | 15.33:1 ✓ | — (no-border) | — (no-focus-ring) |
+| `solid-neutral-lg-disabled` | `input` | 311.33 | 48 | ✓ | 15.33:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `solid-neutral-lg-invalid` | `input` | 311.33 | 48 | ✓ | 7.74:1 ✓ | — (no-border) | — (no-focus-ring) |
-| `solid-neutral-lg-readonly` | `input` | 311.34 | 48 | ✓ | 3.31:1 ✗ | — (no-border) | — (no-focus-ring) |
-| `solid-neutral-lg-required` | `input` | 311.33 | 48 | ✓ | 3.31:1 ✗ | — (no-border) | — (no-focus-ring) |
-| `solid-neutral-md-default` | `input` | 311.33 | 40 | ✓ | 3.31:1 ✗ | — (no-border) | — (no-focus-ring) |
-| `solid-neutral-md-disabled` | `input` | 311.33 | 40 | ✓ | 3.31:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `solid-neutral-lg-readonly` | `input` | 311.34 | 48 | ✓ | 15.33:1 ✓ | — (no-border) | — (no-focus-ring) |
+| `solid-neutral-lg-required` | `input` | 311.33 | 48 | ✓ | 15.33:1 ✓ | — (no-border) | — (no-focus-ring) |
+| `solid-neutral-md-default` | `input` | 311.33 | 40 | ✓ | 15.33:1 ✓ | — (no-border) | — (no-focus-ring) |
+| `solid-neutral-md-disabled` | `input` | 311.33 | 40 | ✓ | 15.33:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `solid-neutral-md-invalid` | `input` | 311.34 | 40 | ✓ | 7.74:1 ✓ | — (no-border) | — (no-focus-ring) |
-| `solid-neutral-md-readonly` | `input` | 311.33 | 40 | ✓ | 3.31:1 ✗ | — (no-border) | — (no-focus-ring) |
-| `solid-neutral-md-required` | `input` | 311.34 | 40 | ✓ | 3.31:1 ✗ | — (no-border) | — (no-focus-ring) |
-| `solid-neutral-sm-default` | `input` | 311.34 | 32 | ✓ | 3.31:1 ✗ | — (no-border) | — (no-focus-ring) |
-| `solid-neutral-sm-disabled` | `input` | 311.34 | 32 | ✓ | 3.31:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `solid-neutral-md-readonly` | `input` | 311.33 | 40 | ✓ | 15.33:1 ✓ | — (no-border) | — (no-focus-ring) |
+| `solid-neutral-md-required` | `input` | 311.34 | 40 | ✓ | 15.33:1 ✓ | — (no-border) | — (no-focus-ring) |
+| `solid-neutral-sm-default` | `input` | 311.34 | 32 | ✓ | 15.33:1 ✓ | — (no-border) | — (no-focus-ring) |
+| `solid-neutral-sm-disabled` | `input` | 311.34 | 32 | ✓ | 15.33:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `solid-neutral-sm-invalid` | `input` | 311.33 | 40 | ✓ | 7.74:1 ✓ | — (no-border) | — (no-focus-ring) |
-| `solid-neutral-sm-readonly` | `input` | 311.33 | 32 | ✓ | 3.31:1 ✗ | — (no-border) | — (no-focus-ring) |
-| `solid-neutral-sm-required` | `input` | 311.33 | 32 | ✓ | 3.31:1 ✗ | — (no-border) | — (no-focus-ring) |
-| `solid-neutral-xs-default` | `input` | 311.33 | 24 | ✓ | 3.31:1 ✗ | — (no-border) | — (no-focus-ring) |
-| `solid-neutral-xs-disabled` | `input` | 311.33 | 32 | ✓ | 3.31:1 ✗ | — (no-border) | — (not-focusable-in-state) |
+| `solid-neutral-sm-readonly` | `input` | 311.33 | 32 | ✓ | 15.33:1 ✓ | — (no-border) | — (no-focus-ring) |
+| `solid-neutral-sm-required` | `input` | 311.33 | 32 | ✓ | 15.33:1 ✓ | — (no-border) | — (no-focus-ring) |
+| `solid-neutral-xs-default` | `input` | 311.33 | 24 | ✓ | 15.33:1 ✓ | — (no-border) | — (no-focus-ring) |
+| `solid-neutral-xs-disabled` | `input` | 311.33 | 32 | ✓ | 15.33:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `solid-neutral-xs-invalid` | `input` | 311.33 | 32 | ✓ | 7.74:1 ✓ | — (no-border) | — (no-focus-ring) |
-| `solid-neutral-xs-readonly` | `input` | 311.34 | 24 | ✓ | 3.31:1 ✗ | — (no-border) | — (no-focus-ring) |
-| `solid-neutral-xs-required` | `input` | 311.33 | 24 | ✓ | 3.31:1 ✗ | — (no-border) | — (no-focus-ring) |
+| `solid-neutral-xs-readonly` | `input` | 311.34 | 24 | ✓ | 15.33:1 ✓ | — (no-border) | — (no-focus-ring) |
+| `solid-neutral-xs-required` | `input` | 311.33 | 24 | ✓ | 15.33:1 ✓ | — (no-border) | — (no-focus-ring) |
 | `solid-primary-lg-default` | `input` | 311.34 | 48 | ✓ | 5.78:1 ✓ | — (no-border) | — (no-focus-ring) |
 | `solid-primary-lg-disabled` | `input` | 311.34 | 48 | ✓ | 5.78:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `solid-primary-lg-invalid` | `input` | 311.33 | 48 | ✓ | 7.74:1 ✓ | — (no-border) | — (no-focus-ring) |

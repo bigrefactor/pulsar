@@ -108,6 +108,52 @@ defmodule Pulsar.Components.SwitchTest do
     end
   end
 
+  describe "switch/1 off-state contrast (WCAG 1.4.11)" do
+    test "solid track has border-strong fill with foreground hover/focus" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Switch.switch name="test" variant="solid" />])
+
+      assert html =~ "bg-border-strong"
+      assert html =~ "hover:bg-foreground/30"
+      assert html =~ "peer-focus-visible:bg-foreground/30"
+    end
+
+    test "outline track has border-strong border with foreground hover/focus" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Switch.switch name="test" variant="outline" />])
+
+      assert html =~ "border-border-strong"
+      assert html =~ "hover:border-foreground"
+      assert html =~ "peer-focus-visible:border-foreground"
+      assert html =~ "bg-background"
+    end
+
+    test "ghost track has border-strong border that drops on checked" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Switch.switch name="test" variant="ghost" />])
+
+      assert html =~ "border-border-strong"
+      assert html =~ "peer-checked:border-transparent"
+      assert html =~ "bg-muted/30"
+      assert html =~ "hover:bg-muted/40"
+      assert html =~ "peer-focus-visible:bg-muted/50"
+    end
+
+    test "outline thumb has border-strong border" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Switch.switch name="test" variant="outline" />])
+
+      assert html =~ "border border-border-strong"
+    end
+
+    test "ghost thumb has border-strong border" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Switch.switch name="test" variant="ghost" />])
+
+      assert html =~ "border border-border-strong"
+    end
+  end
+
   describe "switch/1 sizes" do
     test "applies xs size classes" do
       assigns = %{}
