@@ -55,12 +55,12 @@ properties against the Pulsar source.
 | checkbox (two-state) | Checkbox · two-state | ✓ | ✓ | ✓ Compliant |
 | checkbox (tri-state) | Checkbox · tri-state | ✓ | ✓ | ✓ Compliant |
 | switch | Switch | ✓ | ✓ | ✓ Compliant |
-| radio_group (default) | Radio Group | ⚠ 2 gaps | ✓ | ⚠ Diverges |
-| radio_group (card) | Radio Group | ⚠ 2 gaps | ⚠ 1 gap | ⚠ Diverges |
+| radio_group (default) | Radio Group | ✓ | ✓ | ✓ Compliant |
+| radio_group (card) | Radio Group | ✓ | ✓ | ✓ Compliant |
 | flash (alert / status) | Alert | N/A | ✓ | ✓ Compliant |
-| table row-click | Button (applied to `<tr>`) | ⚠ 1 gap | ✓ | ⚠ Diverges |
+| table row-click | Button (applied to `<tr>`) | ✓ | ✓ | ✓ Compliant |
 
-**Divergences filed as sub-issues** (see each section for IDs).
+**All audited components: ✓ Compliant.**
 
 ---
 
@@ -72,24 +72,24 @@ properties against the Pulsar source.
 Native `<button>` is keyboard-operable by default. The pseudo-button
 branches (`as: :a`, `as: :div` with `role="button"`) supply the same
 behavior through the colocated `.PulsarButton` hook
-(`lib/pulsar/components/button.ex:595–666`).
+(`lib/pulsar/components/button.ex:568–608`).
 
 ### Keyboard interactions
 
 | APG key | Action | Status | Evidence |
 |---------|--------|:------:|----------|
-| Space | Activate | ✓ | Native `<button>`: browser default. Pseudo-button: `e.preventDefault()` on keydown to prevent page scroll (`button.ex:635`), then `el.click()` on keyup (`button.ex:641`). |
-| Enter | Activate | ✓ | Native `<button>`: browser default. Pseudo-button: `e.preventDefault(); el.click()` on keydown (`button.ex:636`). |
+| Space | Activate | ✓ | Native `<button>`: browser default. Pseudo-button: `e.preventDefault()` on keydown to prevent page scroll (`button.ex:582`), then `el.click()` on keyup (`button.ex:588`). |
+| Enter | Activate | ✓ | Native `<button>`: browser default. Pseudo-button: `e.preventDefault(); el.click()` on keydown (`button.ex:583`). |
 
 ### WAI-ARIA roles, states, properties
 
 | APG requirement | Status | Evidence |
 |-----------------|:------:|----------|
-| Role: `button` | ✓ | Native `<button>` element (`button.ex:392–415`). Pseudo-button explicitly sets `role="button"` (`button.ex:436, 463`). |
-| Accessible name | ✓ | `inner_block` is `required: true` (`button.ex:326–329`); optional `aria_label` for icon-only buttons (`button.ex:314–317, 405`). |
+| Role: `button` | ✓ | Native `<button>` element (`button.ex:367–391`). Pseudo-button explicitly sets `role="button"` (`button.ex:411, 438`). |
+| Accessible name | ✓ | `inner_block` is `required: true` (`button.ex:302–305`); optional `aria_label` for icon-only buttons (`button.ex:290–293, 411`). |
 | Description (`aria-describedby`) | ✓ | Available via `{@rest}` pass-through; not enforced. |
-| `aria-disabled` when disabled | ✓ | `button.ex:400, 442, 469` — emitted whenever `disabled` or `loading` is true. |
-| `aria-pressed` for toggle buttons | ✓ | `button.ex:401, 443, 470` — emitted when `pressed` is a boolean. |
+| `aria-disabled` when disabled | ✓ | `button.ex:375, 417, 444` — emitted whenever `disabled` or `loading` is true. |
+| `aria-pressed` for toggle buttons | ✓ | `button.ex:376, 418, 445` — emitted when `pressed` is a boolean. |
 
 ### Divergences
 
@@ -106,16 +106,16 @@ None. ✓ Compliant.
 
 | APG key | Action | Status | Evidence |
 |---------|--------|:------:|----------|
-| Space | Toggle visibility | ✓ | Same as button activation (`button.ex:635, 641`). |
-| Enter | Toggle visibility | ✓ | Same as button activation (`button.ex:636`). |
+| Space | Toggle visibility | ✓ | Same as button activation (`button.ex:582, 588`). |
+| Enter | Toggle visibility | ✓ | Same as button activation (`button.ex:583`). |
 
 ### WAI-ARIA roles, states, properties
 
 | APG requirement | Status | Evidence |
 |-----------------|:------:|----------|
 | Role: `button` | ✓ | Inherits from button pattern. |
-| `aria-expanded` (true/false) | ✓ | `button.ex:402, 444, 471` — emitted as `"true"` / `"false"` when `:expanded` is boolean. |
-| `aria-controls` references the controlled element | ✓ | `button.ex:403, 445, 472` — emitted from `:controls` attr. Linkage **enforced**: `ensure_disclosure_linkage!` raises if `:expanded` is set without `:controls` (`button.ex:702–709`). |
+| `aria-expanded` (true/false) | ✓ | `button.ex:377, 419, 446` — emitted as `"true"` / `"false"` when `:expanded` is boolean. |
+| `aria-controls` references the controlled element | ✓ | `button.ex:378, 420, 447` — emitted from `:controls` attr. Linkage **enforced**: `ensure_disclosure_linkage!` raises if `:expanded` is set without `:controls` (`button.ex:650–659`). |
 
 ### Divergences
 
@@ -219,17 +219,17 @@ button that dispatches click to the input.
 
 | APG requirement | Status | Evidence |
 |-----------------|:------:|----------|
-| Role: `switch` | ✓ | `role="switch"` on the hidden checkbox (`switch.ex:496`). |
-| Accessible name | ✓ | `aria-label` (`switch.ex:498`) and `aria-labelledby` (`switch.ex:499`) attrs supported; field wrapper provides the labelledby ID. |
-| `aria-checked` as boolean | ✓ | `switch.ex:497` — always emitted as `"true"` or `"false"`. |
-| `aria-invalid` | ✓ | `switch.ex:500` — emitted when `@invalid` is true. |
+| Role: `switch` | ✓ | `role="switch"` on the hidden checkbox (`switch.ex:475`). |
+| Accessible name | ✓ | `aria-label` (`switch.ex:477`) and `aria-labelledby` (`switch.ex:478`) attrs supported; field wrapper provides the labelledby ID. |
+| `aria-checked` as boolean | ✓ | `switch.ex:476` — always emitted as `"true"` or `"false"`. |
+| `aria-invalid` | ✓ | `switch.ex:479` — emitted when `@invalid` is true. |
 
 ### Visual track button
 
-The visual track is a `<button type="button">` (`switch.ex:505`) with
-`tabindex="-1"` (`switch.ex:507`) — **not focusable**, so it doesn't
+The visual track is a `<button type="button">` (`switch.ex:484`) with
+`tabindex="-1"` (`switch.ex:486`) — **not focusable**, so it doesn't
 create a dual-focus problem. Click dispatches to the hidden input via
-`JS.dispatch("click", to: "##{@id}")` (`switch.ex:508`). ✓ Correct
+`JS.dispatch("click", to: "##{@id}")` (`switch.ex:487`). ✓ Correct
 pattern.
 
 ### Divergences
@@ -254,44 +254,35 @@ grouping.
 |---------|--------|:------:|----------|
 | Tab / Shift+Tab | Move focus into / out of group (lands on checked, or first) | ✓ | Native HTML radio behavior — only the checked radio is in the tab sequence; if none checked, the first is. |
 | Space | Check focused radio if not already checked | ✓ | Native checkbox/radio browser-default. |
-| Right Arrow / Down Arrow | Move to next, uncheck previous, check new; wrap to first | ✓ | Native HTML radio behavior on grouped radios sharing the same `name` (`radio_group.ex:400, 455`). Browsers also wrap. |
+| Right Arrow / Down Arrow | Move to next, uncheck previous, check new; wrap to first | ✓ | Native HTML radio behavior on grouped radios sharing the same `name` (`radio_group.ex:441, 496`). Browsers also wrap. |
 | Left Arrow / Up Arrow | Move to previous, uncheck previous, check new; wrap to last | ✓ | Same as above. |
-| **Home** | Move focus to first radio | ⚠ GAP (serious) | Native HTML radios do not handle Home/End. No JS hook on `radio_group.ex` to add it. |
-| **End** | Move focus to last radio | ⚠ GAP (serious) | Same. |
+| Home | Move focus to first radio | ✓ | `.PulsarRadioGroup` hook intercepts Home, focuses and clicks the first non-disabled radio (`radio_group.ex` colocated hook). |
+| End | Move focus to last radio | ✓ | Same hook, last non-disabled radio. |
 
 ### WAI-ARIA roles, states, properties
 
 | APG requirement | Status | Evidence |
 |-----------------|:------:|----------|
-| Role: `radiogroup` on container | ✓ | `radio_group.ex:327`. |
-| Role: `radio` on each option | ✓ | Implicit on `<input type="radio">` (`radio_group.ex:398, 453`). |
-| `aria-checked` on each radio | ✓ | Implicit from native `checked` attr (`radio_group.ex:402, 457`). |
-| `aria-labelledby` on radiogroup container | ⚠ See variant breakdown below | Field wrapper passes `aria-labelledby` through `{@rest}` (`field.ex:448`). |
-| `aria-required` on container | ✓ | `radio_group.ex:331`. |
-| `aria-invalid` on container | ✓ | `radio_group.ex:330` (container) and on each radio (`radio_group.ex:405, 460`). |
-| `aria-describedby` for descriptive text | ✓ | Card variant adds `aria-describedby="{id}-content"` on each radio input (`radio_group.ex:462`). |
+| Role: `radiogroup` on container | ✓ | `radio_group.ex:338`. |
+| Role: `radio` on each option | ✓ | Implicit on `<input type="radio">` (`radio_group.ex:441, 496`). |
+| `aria-checked` on each radio | ✓ | Implicit from native `checked` attr (`radio_group.ex:445, 500`). |
+| `aria-labelledby` on radiogroup container | ✓ | Explicit `aria_labelledby` attr on `radio_group/1` applies to the container in both variants. Field wrapper binds it to the field's label ID (`field.ex:448`). |
+| `aria-required` on container | ✓ | `radio_group.ex:343`. |
+| `aria-invalid` on container | ✓ | `radio_group.ex:342` (container) and on each radio (`radio_group.ex:448, 503`). |
+| `aria-describedby` for descriptive text | ✓ | Card variant adds `aria-describedby="{id}-content"` on each radio input (`radio_group.ex:505`). |
 
-#### `aria-labelledby` pass-through — by variant
+#### `aria-label` / `aria-labelledby` on the container
 
-- **Default variant**: `{@rest}` is splatted on the radiogroup container
-  itself (`radio_group.ex:337`). ✓ `aria-labelledby` from `field.ex:448`
-  lands on the container.
-- **Card variant**: `{@rest}` is **not** splatted on the container —
-  instead, it appears on each option's `<label>` (`radio_group.ex:450`).
-  `aria-labelledby` is duplicated onto every option label (wrong place
-  for a *group* label) and the radiogroup container has no accessible
-  name. ⚠ GAP (serious).
+Both attrs are exposed as explicit attrs on `radio_group/1`
+(mirroring `switch.ex`). They apply to the single
+`<div role="radiogroup">` container that wraps both default and
+card variants, so the group's accessible name is always
+attached to the radiogroup itself — never duplicated onto
+individual option labels.
 
 ### Divergences
 
-- **Missing `Home` key** (serious) — APG-required for non-toolbar radio
-  groups.
-- **Missing `End` key** (serious) — APG-required for non-toolbar radio
-  groups.
-- **Card variant: `aria-labelledby` placement** (serious) — `{@rest}`
-  is splatted on each option's label instead of the radiogroup
-  container, so the group's accessible name is lost and individual
-  options get a wrong label association.
+None. ✓ Compliant.
 
 ---
 
@@ -307,24 +298,24 @@ grouping.
 | *None required* | — | N/A | APG explicitly notes "the alert pattern does not require keyboard interaction." |
 
 The dismiss button (when `dismissible=true`) is a regular native
-`<button>` (`flash.ex:300–311`), keyboard-operable by default.
+`<button>` (`flash.ex:295–306`), keyboard-operable by default.
 
 ### WAI-ARIA roles, states, properties
 
 | APG requirement | Status | Evidence |
 |-----------------|:------:|----------|
-| Role: `alert` (or `status`) | ✓ | `role={@role}` (`flash.ex:281`) — defaults to `"status"`, set to `"alert"` for urgent messages. |
-| Announcement behavior | ✓ | `aria-live` auto-determined from role (`flash.ex:282`): `"assertive"` for alert, `"polite"` for status. Although `role="alert"` implies `aria-live="assertive"`, emitting both is APG-allowed (safer for legacy AT). |
-| `aria-atomic` for whole-message announcement | ✓ | `aria-atomic="true"` (`flash.ex:283`). |
-| Dismiss button accessible name | ✓ | `aria-label="Dismiss"` (`flash.ex:304`). |
-| Dismiss button → content linkage | ✓ | `aria-controls={@id}` (`flash.ex:305`). |
+| Role: `alert` (or `status`) | ✓ | `role={@role}` (`flash.ex:276`) — defaults to `"status"`, set to `"alert"` for urgent messages. |
+| Announcement behavior | ✓ | `aria-live` auto-determined from role (`flash.ex:277`): `"assertive"` for alert, `"polite"` for status. Although `role="alert"` implies `aria-live="assertive"`, emitting both is APG-allowed (safer for legacy AT). |
+| `aria-atomic` for whole-message announcement | ✓ | `aria-atomic="true"` (`flash.ex:278`). |
+| Dismiss button accessible name | ✓ | `aria-label="Dismiss"` (`flash.ex:299`). |
+| Dismiss button → content linkage | ✓ | `aria-controls={@id}` (`flash.ex:300`). |
 
 ### Divergences
 
 None. ✓ Compliant.
 
 **Bonus:** Pulsar's flash hook pauses the auto-dismiss timer on
-hover (`flash.ex:390–391`) **and** on focus (`flash.ex:392–393`),
+hover (`flash.ex:387–388`) **and** on focus (`flash.ex:389–390`),
 giving keyboard users and slow readers time to consume the message.
 This isn't in APG but is widely recommended.
 
@@ -345,23 +336,21 @@ widely used by Phoenix and React table libraries for this purpose.
 
 | APG key | Action | Status | Evidence |
 |---------|--------|:------:|----------|
-| Enter | Activate | ✓ | Hook calls `el.click()` on keydown (`table.ex:474–476`). |
-| Space | Activate | ⚠ GAP (minor) | Hook calls `el.click()` on **keydown**, not keyup (`table.ex:474–476`). Diverges from `button.ex`'s pseudo-button hook, which fires Space on keyup (`button.ex:641`) — the established convention that allows a user to cancel a Space press by moving off the target before release. |
+| Enter | Activate | ✓ | Hook calls `el.click()` on keydown (`table.ex:543`). |
+| Space | Activate | ✓ | Hook calls `el.click()` on **keyup**, matching `button.ex`'s pseudo-button hook. Keydown is reserved for `preventDefault()` (prevent scroll) and the disabled/busy short-circuit. |
 
 ### WAI-ARIA roles, states, properties
 
 | APG requirement | Status | Evidence |
 |-----------------|:------:|----------|
-| Role: `button` | ✓ | `role="button"` on clickable `<tr>` (`table.ex:418`). |
-| Accessible name | ✓ | Computed from cell text content; callers can override via `{@rest}` (`table.ex:285`). |
-| Focusable | ✓ | `tabindex="0"` (`table.ex:417`). |
+| Role: `button` | ✓ | `role="button"` on clickable `<tr>` (`table.ex:481`). |
+| Accessible name | ✓ | Computed from cell text content; callers can override via `{@rest}` (`table.ex:305`). |
+| Focusable | ✓ | `tabindex="0"` (`table.ex:480`). |
+| `aria-disabled` / `aria-busy` honored | ✓ | Hook's `isDisabledOrBusy()` short-circuits keydown, keyup, and click when the `<tr>` carries either attr. Callers can set these via `{@rest}` on the row. |
 
 ### Divergences
 
-- **Space activates on keydown instead of keyup** (minor) — minor
-  divergence from `button.ex`'s pseudo-button hook and from the
-  widely-followed convention. Functional impact is small: users
-  cannot cancel a Space press by moving off the row before release.
+None. ✓ Compliant.
 
 ---
 

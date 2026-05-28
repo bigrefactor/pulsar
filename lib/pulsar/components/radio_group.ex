@@ -230,6 +230,17 @@ defmodule Pulsar.Components.RadioGroup do
   attr(:invalid, :boolean, default: nil, doc: "Marks the radio group as having validation errors")
   attr(:required, :boolean, default: false, doc: "Marks the radio group as required")
 
+  # Accessibility attributes
+  attr(:aria_label, :string,
+    default: nil,
+    doc: "Accessible label for the radio group"
+  )
+
+  attr(:aria_labelledby, :string,
+    default: nil,
+    doc: "ID of element that labels the radio group"
+  )
+
   # Styling
   attr(:class, :string, default: "", doc: "Additional CSS classes")
 
@@ -240,7 +251,7 @@ defmodule Pulsar.Components.RadioGroup do
   )
 
   # Global attributes (allows all Phoenix and HTML attributes)
-  attr(:rest, :global, doc: "Additional HTML attributes like aria-label, aria-labelledby")
+  attr(:rest, :global, doc: "Additional HTML attributes")
 
   # Slots for radio options
   slot :option, required: true, doc: "Radio option" do
@@ -326,9 +337,12 @@ defmodule Pulsar.Components.RadioGroup do
     <div
       role="radiogroup"
       id={@id}
+      phx-hook=".PulsarRadioGroup"
       class={@container_class}
       aria-invalid={@invalid && "true"}
       aria-required={@required && "true"}
+      aria-label={@aria_label}
+      aria-labelledby={@aria_labelledby}
       data-name={@name}
       data-invalid={if @invalid, do: "true", else: "false"}
       data-orientation={@orientation}
@@ -340,6 +354,35 @@ defmodule Pulsar.Components.RadioGroup do
         {render_radio_option(assigns, option, @group, index)}
       <% end %>
     </div>
+    <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarRadioGroup">
+      export default {
+        mounted() {
+          const el = this.el
+          if (el.getAttribute("role") !== "radiogroup") return
+
+          this._onKeydown = (e) => {
+            if (el.getAttribute("data-disabled") === "true") return
+            if (e.code !== "Home" && e.key !== "Home" && e.code !== "End" && e.key !== "End") return
+
+            const radios = Array.from(el.querySelectorAll('input[type="radio"]:not(:disabled)'))
+            if (radios.length === 0) return
+
+            e.preventDefault()
+            const target = (e.code === "Home" || e.key === "Home") ? radios[0] : radios[radios.length - 1]
+            target.focus()
+            target.click()
+          }
+
+          el.addEventListener("keydown", this._onKeydown)
+        },
+
+        destroyed() {
+          if (this._onKeydown) {
+            this.el.removeEventListener("keydown", this._onKeydown)
+          }
+        }
+      }
+    </script>
     """
   end
 

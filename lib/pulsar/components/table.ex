@@ -533,20 +533,40 @@ defmodule Pulsar.Components.Table do
           const el = this.el
           if (el.getAttribute("role") !== "button") return
 
+          const isDisabledOrBusy = () =>
+            el.getAttribute("aria-disabled") === "true" ||
+            el.getAttribute("aria-busy") === "true"
+
           this._onKeydown = (e) => {
-            if (e.code === "Enter" || e.key === "Enter" || e.code === "Space" || e.key === " ") {
+            if (isDisabledOrBusy()) { e.preventDefault(); return }
+            if (e.code === "Space" || e.key === " ") { e.preventDefault() } // prevent scroll
+            if (e.code === "Enter") { e.preventDefault(); el.click() }
+          }
+
+          this._onKeyup = (e) => {
+            if (isDisabledOrBusy()) return
+            if (e.code === "Space" || e.key === " ") { e.preventDefault(); el.click() }
+          }
+
+          this._onClick = (e) => {
+            // stopImmediatePropagation is required: LiveView binds phx-click
+            // via a bubble-phase window listener that does not check
+            // defaultPrevented, so preventDefault alone would not block it.
+            if (isDisabledOrBusy()) {
               e.preventDefault()
-              el.click()
+              e.stopImmediatePropagation()
             }
           }
 
           el.addEventListener("keydown", this._onKeydown)
+          el.addEventListener("keyup", this._onKeyup)
+          el.addEventListener("click", this._onClick)
         },
 
         destroyed() {
-          if (this._onKeydown) {
-            this.el.removeEventListener("keydown", this._onKeydown)
-          }
+          if (this._onKeydown) this.el.removeEventListener("keydown", this._onKeydown)
+          if (this._onKeyup) this.el.removeEventListener("keyup", this._onKeyup)
+          if (this._onClick) this.el.removeEventListener("click", this._onClick)
         }
       }
     </script>
