@@ -331,9 +331,9 @@ defmodule <%= @web_module %>.Storybook.Foundations.Themes do
       %{token: "--color-background", palette: "white", label: "bg", css: "var(--color-white)"},
       %{token: "--color-surface-1", palette: "gray-50", label: "surf", css: "var(--color-gray-50)"},
       %{token: "--color-border", palette: "gray-200", label: "border", css: "var(--color-gray-200)"},
-      %{token: "--color-primary", palette: "primary-600", label: "primary", css: "var(--color-primary-600)"},
-      %{token: "--color-success", palette: "success-800", label: "success", css: "var(--color-success-800)"},
-      %{token: "--color-danger", palette: "danger-600", label: "danger", css: "var(--color-danger-600)"},
+      %{token: "--color-primary", palette: "primary-700", label: "primary", css: "var(--color-primary-700)"},
+      %{token: "--color-success", palette: "success-900", label: "success", css: "var(--color-success-900)"},
+      %{token: "--color-danger", palette: "danger-700", label: "danger", css: "var(--color-danger-700)"},
       %{token: "--color-foreground", palette: "gray-950", label: "fg", css: "var(--color-gray-950)"}
     ]
   end
@@ -355,17 +355,17 @@ defmodule <%= @web_module %>.Storybook.Foundations.Themes do
       %{token: "--color-background", role: "Page background", light: "white", dark: "gray-950"},
       %{token: "--color-foreground", role: "Body text", light: "gray-950", dark: "gray-50"},
       %{token: "--color-muted", role: "Muted surface", light: "gray-100", dark: "gray-900"},
-      %{token: "--color-muted-foreground", role: "Muted text", light: "gray-600", dark: "gray-400"},
+      %{token: "--color-muted-foreground", role: "Muted text", light: "gray-600", dark: "gray-300"},
       %{token: "--color-surface-1", role: "Card / section background", light: "gray-50", dark: "gray-900"},
       %{token: "--color-surface-2", role: "Elevated content", light: "gray-100", dark: "gray-800"},
       %{token: "--color-border", role: "Default border", light: "gray-200", dark: "gray-800"},
-      %{token: "--color-input", role: "Form field border", light: "gray-200", dark: "gray-800"},
+      %{token: "--color-input", role: "Form field border", light: "gray-500", dark: "gray-500"},
       %{token: "--color-ring", role: "Focus ring", light: "primary-600", dark: "primary-400"},
-      %{token: "--color-primary", role: "Primary action", light: "primary-600", dark: "primary-400"},
+      %{token: "--color-primary", role: "Primary action", light: "primary-700", dark: "primary-400"},
       %{token: "--color-primary-foreground", role: "Text on primary", light: "white", dark: "gray-950"},
-      %{token: "--color-success", role: "Success state", light: "success-800", dark: "success-400"},
-      %{token: "--color-warning", role: "Warning state", light: "warning-800", dark: "warning-400"},
-      %{token: "--color-danger", role: "Danger / destructive", light: "danger-600", dark: "danger-300"}
+      %{token: "--color-success", role: "Success state", light: "success-900", dark: "success-400"},
+      %{token: "--color-warning", role: "Warning state", light: "warning-900", dark: "warning-400"},
+      %{token: "--color-danger", role: "Danger / destructive", light: "danger-700", dark: "danger-300"}
     ]
   end
 

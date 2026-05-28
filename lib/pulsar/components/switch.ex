@@ -548,8 +548,8 @@ defmodule Pulsar.Components.Switch do
   defp track_variant_classes("solid", color) do
     [
       "bg-border-strong",
-      "hover:bg-muted-foreground",
-      "peer-focus-visible:bg-muted-foreground",
+      "hover:bg-foreground/30",
+      "peer-focus-visible:bg-foreground/30",
       @color_config[color][:solid][:checked]
     ]
     |> Enum.join(" ")
