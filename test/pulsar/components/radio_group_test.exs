@@ -581,5 +581,18 @@ defmodule Pulsar.Components.RadioGroupTest do
       # belongs on the container, not on individual option labels.
       refute html =~ ~r/<label[^>]*aria-labelledby="plan-label"/
     end
+
+    test "attaches the .PulsarRadioGroup hook to the radiogroup container" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic">
+          <:option value="basic">Basic</:option>
+        </.radio_group>
+        """)
+
+      assert html =~ ~r/<div[^>]*role="radiogroup"[^>]*phx-hook="Pulsar\.Components\.RadioGroup\.PulsarRadioGroup"/
+    end
   end
 end
