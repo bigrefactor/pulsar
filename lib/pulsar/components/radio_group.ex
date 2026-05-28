@@ -251,7 +251,7 @@ defmodule Pulsar.Components.RadioGroup do
   )
 
   # Global attributes (allows all Phoenix and HTML attributes)
-  attr(:rest, :global, doc: "Additional HTML attributes like aria-label, aria-labelledby")
+  attr(:rest, :global, doc: "Additional HTML attributes")
 
   # Slots for radio options
   slot :option, required: true, doc: "Radio option" do
