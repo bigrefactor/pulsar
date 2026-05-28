@@ -445,7 +445,7 @@ defmodule Pulsar.Components.Field do
       required={@required}
       disabled={@disabled}
       invalid={@has_errors}
-      aria-labelledby={has_label?(@label, @type) && @label_id}
+      aria_labelledby={has_label?(@label, @type) && @label_id}
       aria-describedby={@aria_describedby}
       {@rest}
     >
