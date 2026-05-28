@@ -536,5 +536,50 @@ defmodule Pulsar.Components.RadioGroupTest do
       assert html =~ ~r/value="pro"[^>]*\schecked\s/
       refute html =~ ~r/value="basic"[^>]*\schecked\s/
     end
+
+    test "applies aria_label attr to the radiogroup container (default variant)" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic" aria_label="Choose a plan">
+          <:option value="basic">Basic</:option>
+        </.radio_group>
+        """)
+
+      assert html =~ ~r/<div[^>]*role="radiogroup"[^>]*aria-label="Choose a plan"/
+    end
+
+    test "applies aria_labelledby attr to the radiogroup container (default variant)" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic" aria_labelledby="plan-label">
+          <:option value="basic">Basic</:option>
+        </.radio_group>
+        """)
+
+      assert html =~ ~r/<div[^>]*role="radiogroup"[^>]*aria-labelledby="plan-label"/
+    end
+
+    test "applies aria_labelledby attr to the radiogroup container (card variant) and not to option labels" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic" card aria_labelledby="plan-label">
+          <:option value="basic">Basic Plan</:option>
+          <:option value="pro">Pro Plan</:option>
+        </.radio_group>
+        """)
+
+      # The radiogroup container must carry the group's label.
+      assert html =~ ~r/<div[^>]*role="radiogroup"[^>]*aria-labelledby="plan-label"/
+
+      # No <label> element should carry aria-labelledby — the group label
+      # belongs on the container, not on individual option labels.
+      refute html =~ ~r/<label[^>]*aria-labelledby="plan-label"/
+    end
   end
 end

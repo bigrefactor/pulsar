@@ -230,6 +230,17 @@ defmodule Pulsar.Components.RadioGroup do
   attr(:invalid, :boolean, default: nil, doc: "Marks the radio group as having validation errors")
   attr(:required, :boolean, default: false, doc: "Marks the radio group as required")
 
+  # Accessibility attributes
+  attr(:aria_label, :string,
+    default: nil,
+    doc: "Accessible label for the radio group"
+  )
+
+  attr(:aria_labelledby, :string,
+    default: nil,
+    doc: "ID of element that labels the radio group"
+  )
+
   # Styling
   attr(:class, :string, default: "", doc: "Additional CSS classes")
 
@@ -329,6 +340,8 @@ defmodule Pulsar.Components.RadioGroup do
       class={@container_class}
       aria-invalid={@invalid && "true"}
       aria-required={@required && "true"}
+      aria-label={@aria_label}
+      aria-labelledby={@aria_labelledby}
       data-name={@name}
       data-invalid={if @invalid, do: "true", else: "false"}
       data-orientation={@orientation}
