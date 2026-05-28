@@ -55,12 +55,12 @@ properties against the Pulsar source.
 | checkbox (two-state) | Checkbox · two-state | ✓ | ✓ | ✓ Compliant |
 | checkbox (tri-state) | Checkbox · tri-state | ✓ | ✓ | ✓ Compliant |
 | switch | Switch | ✓ | ✓ | ✓ Compliant |
-| radio_group (default) | Radio Group | ⚠ 2 gaps | ✓ | ⚠ Diverges |
-| radio_group (card) | Radio Group | ⚠ 2 gaps | ⚠ 1 gap | ⚠ Diverges |
+| radio_group (default) | Radio Group | ✓ | ✓ | ✓ Compliant |
+| radio_group (card) | Radio Group | ✓ | ✓ | ✓ Compliant |
 | flash (alert / status) | Alert | N/A | ✓ | ✓ Compliant |
-| table row-click | Button (applied to `<tr>`) | ⚠ 1 gap | ✓ | ⚠ Diverges |
+| table row-click | Button (applied to `<tr>`) | ✓ | ✓ | ✓ Compliant |
 
-**Divergences filed as sub-issues** (see each section for IDs).
+**All audited components: ✓ Compliant.**
 
 ---
 
@@ -256,8 +256,8 @@ grouping.
 | Space | Check focused radio if not already checked | ✓ | Native checkbox/radio browser-default. |
 | Right Arrow / Down Arrow | Move to next, uncheck previous, check new; wrap to first | ✓ | Native HTML radio behavior on grouped radios sharing the same `name` (`radio_group.ex:400, 455`). Browsers also wrap. |
 | Left Arrow / Up Arrow | Move to previous, uncheck previous, check new; wrap to last | ✓ | Same as above. |
-| **Home** | Move focus to first radio | ⚠ GAP (serious) | Native HTML radios do not handle Home/End. No JS hook on `radio_group.ex` to add it. |
-| **End** | Move focus to last radio | ⚠ GAP (serious) | Same. |
+| Home | Move focus to first radio | ✓ | `.PulsarRadioGroup` hook intercepts Home, focuses and clicks the first non-disabled radio (`radio_group.ex` colocated hook). |
+| End | Move focus to last radio | ✓ | Same hook, last non-disabled radio. |
 
 ### WAI-ARIA roles, states, properties
 
@@ -266,32 +266,23 @@ grouping.
 | Role: `radiogroup` on container | ✓ | `radio_group.ex:327`. |
 | Role: `radio` on each option | ✓ | Implicit on `<input type="radio">` (`radio_group.ex:398, 453`). |
 | `aria-checked` on each radio | ✓ | Implicit from native `checked` attr (`radio_group.ex:402, 457`). |
-| `aria-labelledby` on radiogroup container | ⚠ See variant breakdown below | Field wrapper passes `aria-labelledby` through `{@rest}` (`field.ex:448`). |
+| `aria-labelledby` on radiogroup container | ✓ | Explicit `aria_labelledby` attr on `radio_group/1` applies to the container in both variants. Field wrapper binds it to the field's label ID (`field.ex:448`). |
 | `aria-required` on container | ✓ | `radio_group.ex:331`. |
 | `aria-invalid` on container | ✓ | `radio_group.ex:330` (container) and on each radio (`radio_group.ex:405, 460`). |
 | `aria-describedby` for descriptive text | ✓ | Card variant adds `aria-describedby="{id}-content"` on each radio input (`radio_group.ex:462`). |
 
-#### `aria-labelledby` pass-through — by variant
+#### `aria-label` / `aria-labelledby` on the container
 
-- **Default variant**: `{@rest}` is splatted on the radiogroup container
-  itself (`radio_group.ex:337`). ✓ `aria-labelledby` from `field.ex:448`
-  lands on the container.
-- **Card variant**: `{@rest}` is **not** splatted on the container —
-  instead, it appears on each option's `<label>` (`radio_group.ex:450`).
-  `aria-labelledby` is duplicated onto every option label (wrong place
-  for a *group* label) and the radiogroup container has no accessible
-  name. ⚠ GAP (serious).
+Both attrs are exposed as explicit attrs on `radio_group/1`
+(mirroring `switch.ex`). They apply to the single
+`<div role="radiogroup">` container that wraps both default and
+card variants, so the group's accessible name is always
+attached to the radiogroup itself — never duplicated onto
+individual option labels.
 
 ### Divergences
 
-- **Missing `Home` key** (serious) — APG-required for non-toolbar radio
-  groups.
-- **Missing `End` key** (serious) — APG-required for non-toolbar radio
-  groups.
-- **Card variant: `aria-labelledby` placement** (serious) — `{@rest}`
-  is splatted on each option's label instead of the radiogroup
-  container, so the group's accessible name is lost and individual
-  options get a wrong label association.
+None. ✓ Compliant.
 
 ---
 
@@ -346,7 +337,7 @@ widely used by Phoenix and React table libraries for this purpose.
 | APG key | Action | Status | Evidence |
 |---------|--------|:------:|----------|
 | Enter | Activate | ✓ | Hook calls `el.click()` on keydown (`table.ex:474–476`). |
-| Space | Activate | ⚠ GAP (minor) | Hook calls `el.click()` on **keydown**, not keyup (`table.ex:474–476`). Diverges from `button.ex`'s pseudo-button hook, which fires Space on keyup (`button.ex:641`) — the established convention that allows a user to cancel a Space press by moving off the target before release. |
+| Space | Activate | ✓ | Hook calls `el.click()` on **keyup**, matching `button.ex`'s pseudo-button hook. Keydown is reserved for `preventDefault()` (prevent scroll) and the disabled/busy short-circuit. |
 
 ### WAI-ARIA roles, states, properties
 
@@ -355,13 +346,11 @@ widely used by Phoenix and React table libraries for this purpose.
 | Role: `button` | ✓ | `role="button"` on clickable `<tr>` (`table.ex:418`). |
 | Accessible name | ✓ | Computed from cell text content; callers can override via `{@rest}` (`table.ex:285`). |
 | Focusable | ✓ | `tabindex="0"` (`table.ex:417`). |
+| `aria-disabled` / `aria-busy` honored | ✓ | Hook's `isDisabledOrBusy()` short-circuits keydown, keyup, and click when the `<tr>` carries either attr. Callers can set these via `{@rest}` on the row. |
 
 ### Divergences
 
-- **Space activates on keydown instead of keyup** (minor) — minor
-  divergence from `button.ex`'s pseudo-button hook and from the
-  widely-followed convention. Functional impact is small: users
-  cannot cancel a Space press by moving off the row before release.
+None. ✓ Compliant.
 
 ---
 
