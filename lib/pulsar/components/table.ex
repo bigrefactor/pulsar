@@ -549,7 +549,13 @@ defmodule Pulsar.Components.Table do
           }
 
           this._onClick = (e) => {
-            if (isDisabledOrBusy()) e.preventDefault()
+            // stopImmediatePropagation is required: LiveView binds phx-click
+            // via a bubble-phase window listener that does not check
+            // defaultPrevented, so preventDefault alone would not block it.
+            if (isDisabledOrBusy()) {
+              e.preventDefault()
+              e.stopImmediatePropagation()
+            }
           }
 
           el.addEventListener("keydown", this._onKeydown)
