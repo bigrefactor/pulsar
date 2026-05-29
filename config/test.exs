@@ -9,22 +9,11 @@ config :logger, level: :warning
 
 # Playwright (and the playwright npm package) lives under the dev_app's assets
 # directory, not the project's default `./assets`.
-#
-# `timeout`: navigation/action budget per call. 30 s tolerates CI cold-start
-# pressure (LiveView mount + Tailwind paint on 2-core runners) without being
-# noticeable locally.
-#
-# `browser_pools.size`: number of headless Chromium instances the pool may
-# launch. Defaults to `ceil(System.schedulers_online() / 2)`, which is 1 on
-# GitHub Actions' 2-core ubuntu-22.04 runner — and that's smaller than ExUnit's
-# default `max_cases = schedulers * 2 = 4`, so 3 of every 4 async test modules
-# starve waiting on `BrowserPool.checkout` and their `setup_all` times out at
-# 60 s. Pin `size: 4` to match max_cases; each headless Chromium is ~200 MB so
-# the cap matters on the 7 GB CI runner.
+# Raise the default navigation timeout to 10 s — the fixture pages include
+# Tailwind / LiveView assets that need a moment to load.
 config :phoenix_test, :playwright,
   assets_dir: "test/support/dev_app/assets",
-  timeout: 30_000,
-  browser_pools: [[id: :default_pool, size: 4]]
+  timeout: 10_000
 
 # PhoenixTest.Playwright resolves the OTP app to find the endpoint module.
 config :phoenix_test, otp_app: :pulsar
