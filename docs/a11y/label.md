@@ -49,13 +49,14 @@ field's error message; the label itself doesn't carry the only signal.
 error color `text-danger dark:text-dark-danger` —
 `lib/pulsar/components/label.ex:184, 188`. Semantic-token sourcing is sound.
 Browser measurement of 8 fixture cells (default, required, error,
-required-error × sizes xs-xl): min 4.56:1 (light, danger color) /
-6.14:1 (dark) ([light](measurements/label-light.md),
+required-error × sizes xs-xl): min 6.14:1 (light, error/danger color) /
+9.25:1 (dark) ([light](measurements/label-light.md),
 [dark](measurements/label-dark.md)). All pass 4.5:1.
 
-**Notes:** A separate follow-up tracks an axe-detected `color-contrast`
-issue on the danger label variant when surfaced inside a form on a
-tinted background; the component-on-page-bg measurement here passes.
+**Notes:** The danger label variant on a tinted form background — the
+combination previously flagged by the axe gate — now clears the
+minimum; the axe-core browser gate reports no `color-contrast`
+violation for the Label fixture in either theme.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -169,8 +170,5 @@ needed.
 
 ## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate.
-
-| Rule | Affected variant(s) | Themes |
-|------|---------------------|--------|
-| `color-contrast` | danger label | dark |
+The axe-core browser gate reports no violations for the Label fixture
+in either theme.

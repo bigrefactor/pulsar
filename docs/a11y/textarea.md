@@ -52,25 +52,20 @@ field) text error — `lib/pulsar/components/textarea.ex:489`. Character
 counter color changes are paired with explicit numeric text and
 "remaining"/"over" labels — `lib/pulsar/components/textarea.ex:539–542`.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious)
+### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Color/variant matrix uses semantic tokens —
 `lib/pulsar/components/textarea.ex:151–310`. Character counter has
 multi-state colors — `lib/pulsar/components/textarea.ex:313–325`.
-Browser measurement of 271 cells per theme
+Browser measurement of 271 cells per theme: all 271 pass at min
+4.78:1 (light) / 5.40:1 (dark)
 ([light](measurements/textarea-light.md),
-[dark](measurements/textarea-dark.md)):
+[dark](measurements/textarea-dark.md)).
 
-- **Dark:** 258/271 pass (min 3.31:1). 13 failures cluster around
-  `character-count` and `solid-neutral` text.
-- **Light:** 157/271 pass (min 2.74:1). 114 failures span ghost/
-  outline-success/warning and all `solid-*` variants — same pattern
-  as Input.
-
-**Notes:** Originally scoped to "success outline variant"; the failure
-set extends to the warning variant and the solid family in light mode.
-Pattern mirrors Input and Select; a single fix to the color tokens at
-the theme level addresses all three.
+**Notes:** The earlier success/warning and solid-family light-theme
+shortfalls — together with the `character-count` and `solid-neutral`
+dark-theme cases — were resolved by the theme-token contrast work. The
+fixture is now axe-clean for color-contrast in both themes.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -270,9 +265,5 @@ should add their own `aria-live` region — out of scope here.
 
 ## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate.
-
-| Rule | Affected variant(s) | Themes |
-|------|---------------------|--------|
-| `label` | unlabelled textarea-cc | both |
-| `color-contrast` | success outline variant | both |
+The axe-core browser gate reports no violations for the Textarea
+fixture in either theme.

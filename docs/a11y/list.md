@@ -57,22 +57,26 @@ dividers are decorative emphasis only —
 `<dt>` / `<dd>` semantics —
 `lib/pulsar/components/list.ex:152–250`.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious)
+### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Text uses semantic tokens like `text-foreground`,
 `text-primary`, `text-muted-foreground` —
 `lib/pulsar/components/list.ex:152–250, 484–501`. Description text in
 header uses `text-muted-foreground dark:text-dark-muted-foreground` —
-`lib/pulsar/components/list.ex:574`. Browser measurement of 57 cells
-per theme: all pass at the fixture level (min 7.56:1 light / 7.74:1
-dark) ([light](measurements/list-light.md),
+`lib/pulsar/components/list.ex:574`. Per-cell browser measurement of
+the 57 tagged `<dl>` cells per theme: all pass (min 7.56:1 light /
+13.67:1 dark) ([light](measurements/list-light.md),
 [dark](measurements/list-dark.md)).
 
-**Notes:** A separate follow-up tracks axe-detected color-contrast
-on the `success dt on tinted bg` combo (light) and `dark text on
-dark bg` (dark) — neither variant is exercised by the fixture, so
-direct measurement doesn't surface them. The known gaps remain
-valid.
+**Notes:** The per-cell measure suite covers the tagged `<dl>` cells
+(all pass). The inner `<dt>` term colors and the dark-background text
+are rendered internally by the component and are not tagged with
+`data-fixture-cell`, so the per-cell suite does not measure them
+directly; they are verified separately by the axe-core browser gate,
+which scans every rendered text node. That gate now reports no
+color-contrast violations for the List fixture in either theme,
+including the `success dt on tinted bg` combo (light) and the dark
+text on dark background (dark) that were previously flagged.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -178,8 +182,7 @@ roles. Header `<h3>` renders only when a `:title` slot is supplied —
 
 ## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate.
-
-| Rule | Affected variant(s) | Themes |
-|------|---------------------|--------|
-| `color-contrast` | light: success dt on tinted bg; dark: dark text on dark bg (~1:1) | both |
+The axe-core browser gate reports no violations for the List fixture
+in either theme. The previously-flagged `color-contrast` finding
+(light: success dt on tinted bg; dark: dark text on dark bg) no longer
+reproduces.

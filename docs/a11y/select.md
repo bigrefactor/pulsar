@@ -59,24 +59,19 @@ cursor + native `disabled` — `lib/pulsar/components/select.ex:469–475`.
 `cursor-not-allowed` + native `disabled` —
 `lib/pulsar/components/select.ex:469–475`.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious)
+### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Color/variant matrix with semantic tokens —
 `lib/pulsar/components/select.ex:127–179`. Arrow color tracks the field
 color — `lib/pulsar/components/select.ex:182–190`. Browser measurement
-of 289 cells per theme:
-
-- **Dark:** 276/289 pass (min 3.31:1). 13 failures cluster around
-  `multi` and `solid-neutral`.
-- **Light:** 169/289 pass (min 2.74:1). 120 failures span ghost/
-  outline-success/warning and the entire `solid-*` family.
+of 289 cells per theme: all 289 cells pass at min 4.78:1 (light) /
+5.40:1 (dark).
 
 [Light](measurements/select-light.md), [dark](measurements/select-dark.md).
 
-**Notes:** Originally scoped to "success outline variant"; the failure
-set extends to the warning variant and the solid family in light theme
-— same defect pattern as Input and Textarea, addressed by the same
-upstream token fix.
+**Notes:** Earlier light-theme shortfalls across the `solid-*` family
+(plus the `multi`/`solid-neutral` dark cases) were resolved by the
+theme-token contrast work. The fixture is now axe-clean.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -283,9 +278,5 @@ the `field` wrapper level.
 
 ## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate.
-
-| Rule | Affected variant(s) | Themes |
-|------|---------------------|--------|
-| `select-name` | unlabelled selects in fixture | both |
-| `color-contrast` | success outline variant | both |
+The axe-core browser gate reports no violations for the Select fixture
+(outline/ghost/solid/multi) in either theme.

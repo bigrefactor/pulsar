@@ -98,9 +98,10 @@ wrapper.
 to understand the content (focusable elements, state indicators).
 A decorative section separator that doesn't convey state or receive
 focus is out of scope per WCAG 1.4.11 Understanding ("does not apply
-to elements that are decorative"). A separate follow-up tracks the
-section-label text contrast in dark mode; the border itself is
-intentional.
+to elements that are decorative"). The section-label text contrast in
+dark mode — previously flagged by the axe gate — now passes; the axe
+gate reports no `color-contrast` violation for the Divider fixture in
+either theme. The border itself is intentional and decorative.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
