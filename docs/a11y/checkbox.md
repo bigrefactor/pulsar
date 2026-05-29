@@ -16,43 +16,48 @@ an optional "card" variant that wraps the input in a clickable `<label>`.
 **Evidence:** Checkmark glyph (`✓`) and indeterminate dash (`−`) are
 CSS `content` pseudo-elements with no DOM presence —
 `lib/pulsar/components/checkbox.ex:122, 126`. They reinforce the state
-visually; AT relies on the native `checked` / `aria-checked` semantics.
+visually; AT relies on the native `checked` attribute and the
+`indeterminate` IDL property (set by the colocated `PulsarCheckbox`
+hook from `data-indeterminate`).
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:**
 - Native `<input type="checkbox">` —
-  `lib/pulsar/components/checkbox.ex:384`
+  `lib/pulsar/components/checkbox.ex:386`
 - Card variant uses `<label for={@id}>` wrapping the input —
-  `lib/pulsar/components/checkbox.ex:425, 431`
+  `lib/pulsar/components/checkbox.ex:427, 433`
 - Card content gets an `id="#{@id}-content"` referenced by the input's
-  `aria-describedby` — `lib/pulsar/components/checkbox.ex:456, 459`
+  `aria-describedby` — `lib/pulsar/components/checkbox.ex:457, 461`
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** DOM order: hidden companion (if any) → checkbox →
-optional content slot — `lib/pulsar/components/checkbox.ex:374–463`.
+optional content slot — `lib/pulsar/components/checkbox.ex:376–466`.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** Checked state combines color fill + checkmark glyph +
-native `checked` attr + `aria-checked` for indeterminate —
-`lib/pulsar/components/checkbox.ex:122–126, 388, 397`. Disabled state
-combines opacity + `disabled:cursor-not-allowed` + native `disabled`.
+native `checked` attr; indeterminate is signaled by the dash glyph plus
+the native `indeterminate` IDL property (synced from
+`data-indeterminate` by the `PulsarCheckbox` hook) —
+`lib/pulsar/components/checkbox.ex:122–126, 390, 392, 399, 472–486`.
+Disabled state combines opacity + `disabled:cursor-not-allowed` + native
+`disabled`.
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** Checked state is signaled by checkmark glyph (not just
 fill color) — `lib/pulsar/components/checkbox.ex:122, 125`. Error
 state combines danger border + `aria-invalid="true"` —
-`lib/pulsar/components/checkbox.ex:396, 669`.
+`lib/pulsar/components/checkbox.ex:398, 559`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Color matrix with semantic foreground/background tokens
 for each of 7 colors —
-`lib/pulsar/components/checkbox.ex:508–657`. Card variant adds another
-matrix — `lib/pulsar/components/checkbox.ex:697–976`. Browser
+`lib/pulsar/components/checkbox.ex:528–684`. Card variant adds another
+matrix — `lib/pulsar/components/checkbox.ex:706–980`. Browser
 measurement of 123 cells per theme: all pass, min 13.3:1 (light) /
 10.88:1 (dark) ([light](measurements/checkbox-light.md),
 [dark](measurements/checkbox-dark.md)).
@@ -106,7 +111,7 @@ the surrounding flex layout.
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
 **Evidence:** Native `<input type="checkbox">` is keyboard-operable
-(Space) — `lib/pulsar/components/checkbox.ex:384`. Card variant uses
+(Space) — `lib/pulsar/components/checkbox.ex:386`. Card variant uses
 native `<label for=>` so clicks/Enter activate the input via browser
 defaults.
 
@@ -117,7 +122,7 @@ defaults.
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
 **Evidence:** Only smooth scale/opacity transitions on the checkmark —
-`lib/pulsar/components/checkbox.ex:120, 123`. No essential motion.
+`lib/pulsar/components/checkbox.ex:121, 123`. No essential motion.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
@@ -194,9 +199,9 @@ itself triggers no navigation/submit —
 ### 3.3.1 Error Identification (A) — ✓ PASS
 
 **Evidence:** `aria-invalid={@invalid && "true"}` —
-`lib/pulsar/components/checkbox.ex:396, 454`. Test
+`lib/pulsar/components/checkbox.ex:398, 456`. Test
 `sets aria-invalid when invalid` —
-`test/pulsar/components/checkbox_test.exs:618–627`.
+`test/pulsar/components/checkbox_test.exs:617–626`.
 
 ### 3.3.2 Labels or Instructions (A) — ✓ PASS
 
@@ -211,26 +216,33 @@ checkbox doesn't suppress.
 
 **Evidence:**
 - Role: native `<input type="checkbox">` —
-  `lib/pulsar/components/checkbox.ex:384`
-- Name: from `name=` attr —
   `lib/pulsar/components/checkbox.ex:386`
+- Name: from `name=` attr —
+  `lib/pulsar/components/checkbox.ex:388`
 - Value: from `value=` (checked-value) and the hidden companion's
-  unchecked value — `lib/pulsar/components/checkbox.ex:377–399`
+  unchecked value — `lib/pulsar/components/checkbox.ex:378–399`
 - State: native `checked`, `disabled`, `required`; `aria-invalid`;
-  `aria-checked="mixed"` for indeterminate —
-  `lib/pulsar/components/checkbox.ex:388–397`
-- Tests assert `aria-checked="mixed"` for indeterminate —
-  `test/pulsar/components/checkbox_test.exs:629–638`
+  indeterminate exposed via the JS-only `indeterminate` IDL property,
+  set by the colocated `PulsarCheckbox` hook from `data-indeterminate`
+  on mount and update — `lib/pulsar/components/checkbox.ex:399,
+  472–486`
+- Tests assert the hook is wired and that `aria-checked` is never set
+  on the native input —
+  `test/pulsar/components/checkbox_test.exs:628–660`
 
-**Notes:** Indeterminate state is exposed via `aria-checked="mixed"` —
-correct WAI-ARIA pattern for tri-state checkboxes. (Native `<input>`
-indeterminate is a JS-only property; this component supplements with the
-ARIA attr.)
+**Notes:** `aria-checked` is invalid on a native `<input
+type="checkbox">` (axe rule `aria-conditional-attr`); the ARIA spec
+reserves it for elements with `role="checkbox"`. Native checkboxes
+expose tri-state via the `indeterminate` IDL property, which screen
+readers (NVDA / VoiceOver / JAWS) announce as "mixed" or "partially
+checked". The `PulsarCheckbox` colocated hook syncs the IDL property
+from `data-indeterminate` so the visual dash glyph (CSS-driven) and
+the assistive-tech state stay aligned across LiveView patches.
 
 ### 4.1.3 Status Messages (AA) — ✓ PASS
 
 **Evidence:** `aria-invalid` reflects validation state —
-`lib/pulsar/components/checkbox.ex:396`. Field-level error region carries
+`lib/pulsar/components/checkbox.ex:398`. Field-level error region carries
 `aria-live="polite"`.
 
 ## Not applicable
@@ -277,4 +289,3 @@ Violations surfaced by the axe-core browser gate.
 | Rule | Affected variant(s) | Themes |
 |------|---------------------|--------|
 | `label` | unlabelled checkboxes in fixture | both |
-| `aria-conditional-attr` | aria-checked on indeterminate state | both |

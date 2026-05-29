@@ -625,7 +625,11 @@ defmodule Pulsar.Components.CheckboxTest do
       assert html =~ ~s(aria-invalid="true")
     end
 
-    test "sets aria-checked=mixed for indeterminate state" do
+    test "wires PulsarCheckbox hook to sync indeterminate IDL property" do
+      # axe's aria-conditional-attr rule forbids aria-checked on a native
+      # <input type="checkbox">; tri-state must be exposed via the JS-only
+      # `indeterminate` IDL property, which the PulsarCheckbox hook sets
+      # from data-indeterminate on mount and update.
       assigns = %{}
 
       html =
@@ -633,18 +637,26 @@ defmodule Pulsar.Components.CheckboxTest do
         <.checkbox name="terms" indeterminate={true} />
         """)
 
-      assert html =~ ~s(aria-checked="mixed")
+      assert html =~ ~s(phx-hook="Pulsar.Components.Checkbox.PulsarCheckbox")
+      assert html =~ ~s(data-indeterminate="true")
+      assert html =~ ~r/<input[^>]*type="checkbox"[^>]*id="/
+      refute html =~ ~s(aria-checked)
     end
 
-    test "does not set aria-checked when not indeterminate" do
-      assigns = %{}
+    test "never sets aria-checked on the native checkbox input" do
+      # Regression guard: aria-checked is invalid on native <input
+      # type="checkbox"> (axe rule aria-conditional-attr). Hold the line
+      # across checked, unchecked, and indeterminate states.
+      for opts <- [[checked: true], [checked: false], [indeterminate: true]] do
+        assigns = %{opts: opts}
 
-      html =
-        rendered_to_string(~H"""
-        <.checkbox name="terms" checked={true} />
-        """)
+        html =
+          rendered_to_string(~H"""
+          <.checkbox name="terms" {@opts} />
+          """)
 
-      refute html =~ ~s(aria-checked="mixed")
+        refute html =~ ~s(aria-checked)
+      end
     end
 
     test "includes focus ring classes" do
