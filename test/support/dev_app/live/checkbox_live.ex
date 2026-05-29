@@ -27,6 +27,7 @@ defmodule Pulsar.DevApp.CheckboxLive do
             color={color}
             size={size}
             value="1"
+            aria-label={"#{color} #{size} #{state_label}"}
             data-fixture-cell={"#{color}-#{size}-#{state_label}"}
             {state_attrs}
           />

@@ -36,6 +36,7 @@ defmodule Pulsar.DevApp.TextareaLive do
               size={size}
               placeholder={"#{color}/#{size}/#{state_label}"}
               rows={3}
+              aria-label={"#{variant} #{color} #{size} #{state_label}"}
               data-fixture-cell={"#{variant}-#{color}-#{size}-#{state_label}"}
               {state_attrs}
             />
@@ -49,6 +50,7 @@ defmodule Pulsar.DevApp.TextareaLive do
           rows={3}
           show_character_count
           max_length={120}
+          aria-label="character count"
           data-fixture-cell="character-count"
         />
       </.fixture_section>

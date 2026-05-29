@@ -484,6 +484,7 @@ defmodule Pulsar.Components.Switch do
       <button
         type="button"
         tabindex="-1"
+        aria-hidden="true"
         phx-click={JS.dispatch("click", to: "##{@id}")}
         class={@switch_class}
         data-loading={@loading && "true"}
