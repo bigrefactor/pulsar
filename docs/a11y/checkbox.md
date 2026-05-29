@@ -211,21 +211,28 @@ checkbox doesn't suppress.
 
 **Evidence:**
 - Role: native `<input type="checkbox">` —
-  `lib/pulsar/components/checkbox.ex:384`
-- Name: from `name=` attr —
   `lib/pulsar/components/checkbox.ex:386`
+- Name: from `name=` attr —
+  `lib/pulsar/components/checkbox.ex:388`
 - Value: from `value=` (checked-value) and the hidden companion's
-  unchecked value — `lib/pulsar/components/checkbox.ex:377–399`
+  unchecked value — `lib/pulsar/components/checkbox.ex:378–399`
 - State: native `checked`, `disabled`, `required`; `aria-invalid`;
-  `aria-checked="mixed"` for indeterminate —
-  `lib/pulsar/components/checkbox.ex:388–397`
-- Tests assert `aria-checked="mixed"` for indeterminate —
-  `test/pulsar/components/checkbox_test.exs:629–638`
+  indeterminate exposed via the JS-only `indeterminate` IDL property,
+  set by the colocated `PulsarCheckbox` hook from `data-indeterminate`
+  on mount and update — `lib/pulsar/components/checkbox.ex:399,
+  472–486`
+- Tests assert the hook is wired and that `aria-checked` is never set
+  on the native input —
+  `test/pulsar/components/checkbox_test.exs:628–660`
 
-**Notes:** Indeterminate state is exposed via `aria-checked="mixed"` —
-correct WAI-ARIA pattern for tri-state checkboxes. (Native `<input>`
-indeterminate is a JS-only property; this component supplements with the
-ARIA attr.)
+**Notes:** `aria-checked` is invalid on a native `<input
+type="checkbox">` (axe rule `aria-conditional-attr`); the ARIA spec
+reserves it for elements with `role="checkbox"`. Native checkboxes
+expose tri-state via the `indeterminate` IDL property, which screen
+readers (NVDA / VoiceOver / JAWS) announce as "mixed" or "partially
+checked". The `PulsarCheckbox` colocated hook syncs the IDL property
+from `data-indeterminate` so the visual dash glyph (CSS-driven) and
+the assistive-tech state stay aligned across LiveView patches.
 
 ### 4.1.3 Status Messages (AA) — ✓ PASS
 
@@ -277,4 +284,3 @@ Violations surfaced by the axe-core browser gate.
 | Rule | Affected variant(s) | Themes |
 |------|---------------------|--------|
 | `label` | unlabelled checkboxes in fixture | both |
-| `aria-conditional-attr` | aria-checked on indeterminate state | both |

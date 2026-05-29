@@ -362,12 +362,14 @@ def checkbox(assigns) do
     |> assign(:effective_color, effective_color)
     |> assign(:invalid, invalid)
 
-  if assigns.card do
-    render_card_checkbox(assigns)
-  else
-    render_default_checkbox(assigns)
-  end
+  ~H"""
+  {render_checkbox(assigns)}
+  <.checkbox_hook />
+  """
 end
+
+defp render_checkbox(%{card: true} = assigns), do: render_card_checkbox(assigns)
+defp render_checkbox(assigns), do: render_default_checkbox(assigns)
 
 # Default checkbox variant
 defp render_default_checkbox(assigns) do
@@ -393,7 +395,7 @@ defp render_default_checkbox(assigns) do
     required={@required}
     disabled={@disabled}
     aria-invalid={@invalid && "true"}
-    aria-checked={@indeterminate && "mixed"}
+    phx-hook=".PulsarCheckbox"
     {@rest}
   />
   """
@@ -451,14 +453,33 @@ defp render_card_checkbox(assigns) do
       required={@required}
       disabled={@disabled}
       aria-invalid={@invalid && "true"}
-      aria-checked={@indeterminate && "mixed"}
       aria-describedby={"#{@id}-content"}
+      phx-hook=".PulsarCheckbox"
     />
 
     <div class="flex-1 min-w-0" id={"#{@id}-content"}>
       {render_slot(@inner_block)}
     </div>
   </label>
+  """
+end
+
+# Colocated hook: syncs the native `indeterminate` IDL property from
+# `data-indeterminate`. Required because `indeterminate` is a JS-only
+# property (no HTML attribute) and `aria-checked` is invalid on a native
+# <input type="checkbox"> per the WAI-ARIA spec.
+defp checkbox_hook(assigns) do
+  ~H"""
+  <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarCheckbox">
+    export default {
+      mounted() {
+        this.el.indeterminate = this.el.dataset.indeterminate === "true"
+      },
+      updated() {
+        this.el.indeterminate = this.el.dataset.indeterminate === "true"
+      }
+    }
+  </script>
   """
 end
 
