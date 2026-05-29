@@ -33,7 +33,9 @@ pulsar-*.tar
 /tmp/
 
 # Claude Code configuration and cache
-/.claude/
+/.claude/*
+# but do track shared project skills
+!/.claude/skills/
 .claude/settings.local.json
 
 # Playwright browser automation cache
