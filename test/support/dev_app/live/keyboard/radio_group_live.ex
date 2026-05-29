@@ -4,7 +4,7 @@ defmodule Pulsar.DevApp.Keyboard.RadioGroupLive do
 
   Provides what `radio_group_live.ex` (`/components/radio_group`) lacks:
 
-    * an `<button>` anchor *before* the first group so a test can Tab
+    * a `<button>` anchor *before* the first group so a test can Tab
       INTO the group from a known starting element; and
     * a group with a pre-checked option (`value="2"`) so backward/forward
       tab into the group lands on the checked radio rather than the first
