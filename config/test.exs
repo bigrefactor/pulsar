@@ -9,11 +9,13 @@ config :logger, level: :warning
 
 # Playwright (and the playwright npm package) lives under the dev_app's assets
 # directory, not the project's default `./assets`.
-# Raise the default navigation timeout to 10 s — the fixture pages include
-# Tailwind / LiveView assets that need a moment to load.
+# Raise the default navigation timeout to 30 s — the heavier fixture pages
+# (e.g. Select renders 288 styled widgets across the variant × color × size ×
+# state matrix) need headroom under CI cold-start pressure. Local runs finish
+# well under 10 s so the bump is a ceiling, not a floor.
 config :phoenix_test, :playwright,
   assets_dir: "test/support/dev_app/assets",
-  timeout: 10_000
+  timeout: 30_000
 
 # PhoenixTest.Playwright resolves the OTP app to find the endpoint module.
 config :phoenix_test, otp_app: :pulsar
