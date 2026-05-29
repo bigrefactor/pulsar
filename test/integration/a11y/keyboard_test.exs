@@ -223,10 +223,9 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
         "})()"
 
     PhoenixTest.Playwright.evaluate(conn, expr, fn present? ->
-      unless present? do
+      if !present? do
         raise ExUnit.AssertionError,
-          message:
-            "##{id} was removed after Escape — a non-dismissible flash must ignore Escape"
+          message: "##{id} was removed after Escape — a non-dismissible flash must ignore Escape"
       end
     end)
   end

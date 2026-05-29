@@ -12,8 +12,7 @@ defmodule Pulsar.DevApp.FlashTriggerLive do
 
   def handle_event("show_alert", _, socket), do: {:noreply, assign(socket, show_alert: true)}
 
-  def handle_event("show_persistent", _, socket),
-    do: {:noreply, assign(socket, show_persistent: true)}
+  def handle_event("show_persistent", _, socket), do: {:noreply, assign(socket, show_persistent: true)}
 
   def render(assigns) do
     ~H"""
@@ -61,8 +60,7 @@ defmodule Pulsar.DevApp.FlashTriggerLive do
           auto_dismiss={false}
           data-fixture-cell="persistent"
         >
-          Persistent flash content
-          <button type="button" id="fl-persistent-action">Retry</button>
+          Persistent flash content <button type="button" id="fl-persistent-action">Retry</button>
         </Flash.flash>
       </.fixture_section>
     </.fixture_page>
