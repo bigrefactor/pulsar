@@ -123,6 +123,22 @@ defmodule Pulsar.Components.Field do
         <:label>Dark mode</:label>
       </.field>
 
+  ## Forms without Ecto
+
+  Fields don't require an Ecto schema. Build a form from a plain map with
+  `Phoenix.Component.to_form/2`, passing errors through its `:errors` option,
+  then render the field as usual. Use `show_errors={:always}` to display them
+  immediately:
+
+      # In your LiveView
+      form = to_form(%{"email" => ""}, as: :signup, errors: [email: {"is required", []}])
+
+      # In your template
+      <.field field={@form[:email]} type="email" show_errors={:always} />
+
+  Error tuples (`{message, opts}`) are localized through Gettext just like
+  changeset errors.
+
   """
 
   use Phoenix.Component

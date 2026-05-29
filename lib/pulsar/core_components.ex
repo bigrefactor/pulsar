@@ -282,7 +282,6 @@ defmodule Pulsar.CoreComponents do
   ## Phoenix Compatibility Examples
 
       <.input field={@form[:email]} type=\"email\" />
-      <.input name=\"my-input\" errors={[\"oh no!\"]} />
 
   ## Pulsar Enhanced Examples
 
@@ -305,13 +304,11 @@ defmodule Pulsar.CoreComponents do
 
   attr :field, FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
-  attr :errors, :list, default: []
   attr :checked, :boolean, doc: "the checked flag for checkbox inputs"
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
   attr :class, :string, default: nil, doc: "the input class to use over defaults"
-  attr :error_class, :string, default: nil, doc: "the input error class to use over defaults"
 
   attr :rest, :global, include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
                 multiple pattern placeholder readonly required rows size step)
@@ -755,7 +752,11 @@ defmodule Pulsar.CoreComponents do
   defp get_flash_icon(_), do: "hero-bell"
 
   @doc """
-  Translates an error message using gettext.
+  Translates a changeset error tuple through your app's Gettext backend.
+
+  Pulsar's form inputs translate their own errors, so reach for this only when
+  you render error messages yourself. Provided for parity with Phoenix's
+  generated helpers.
   """
   def translate_error({msg, opts}) do
     if count = opts[:count] do
@@ -766,7 +767,10 @@ defmodule Pulsar.CoreComponents do
   end
 
   @doc """
-  Translates the errors for a field from a keyword list of errors.
+  Translates the errors for one field from a form's full errors keyword list.
+
+  Use when rendering a field's errors outside Pulsar's inputs. Mirrors Phoenix's
+  generated helper.
   """
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
