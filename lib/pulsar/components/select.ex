@@ -309,7 +309,7 @@ defmodule Pulsar.Components.Select do
     <div
       id={"#{@id}-wrapper"}
       class="space-y-2"
-      phx-hook={@multiple && ".PulsarSelect"}
+      phx-hook=".PulsarSelect"
       data-variant={@variant}
       data-color={@effective_color}
       data-size={@size}
@@ -330,7 +330,7 @@ defmodule Pulsar.Components.Select do
           <:end_addon>
             <button
               type="button"
-              phx-click={remove_badge_js(@on_remove_badge, @id)}
+              phx-click={remove_badge_js(@on_remove_badge, @id, option.value)}
               phx-value-option={option.value}
               class="ml-1 hover:bg-foreground/10 rounded-full p-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current transition-colors"
               aria-label={"#{@remove_label} #{option.label}"}
@@ -583,16 +583,18 @@ defmodule Pulsar.Components.Select do
   end
 
   # Badge removal JS command
-  defp remove_badge_js(handler, wrapper_id) do
+  defp remove_badge_js(handler, wrapper_id, option_value) do
+    opts = [to: "##{wrapper_id}-wrapper", detail: %{option: option_value}]
+
     case handler do
       %JS{} = custom_js ->
-        custom_js |> JS.dispatch("pulsar:remove-selection", to: "##{wrapper_id}-wrapper")
+        custom_js |> JS.dispatch("pulsar:remove-selection", opts)
 
       event when is_binary(event) ->
-        JS.dispatch("pulsar:remove-selection", to: "##{wrapper_id}-wrapper") |> JS.push(event)
+        JS.dispatch("pulsar:remove-selection", opts) |> JS.push(event)
 
       _ ->
-        JS.dispatch("pulsar:remove-selection", to: "##{wrapper_id}-wrapper")
+        JS.dispatch("pulsar:remove-selection", opts)
     end
   end
 end

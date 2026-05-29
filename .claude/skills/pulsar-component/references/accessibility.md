@@ -75,8 +75,8 @@ A new component must not bake untranslatable English into the DOM:
 - **Generator wiring for the backend:** the app's Gettext backend reaches templates
   as the `@gettext_module` assign (only needed if the component itself translates —
   i.e. error translation; leaf string attrs don't need it). The library reference
-  files render it as `Pulsar.Gettext`, and `template_sync_test.exs` passes
-  `gettext_module: "Pulsar.Gettext"`. Cover any new string attr / formatter in the
+  files render it as `Pulsar.Gettext`, and `Pulsar.TemplateSync` passes
+  `gettext_module: "Pulsar.Gettext"` when generating the lib files. Cover any new string attr / formatter in the
   unit tests (assert the English default, then an override).
 
 ## The axe browser gate
