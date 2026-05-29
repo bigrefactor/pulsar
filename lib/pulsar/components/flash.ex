@@ -278,6 +278,7 @@ defmodule Pulsar.Components.Flash do
       aria-atomic="true"
       class={@merged_classes}
       data-auto-dismiss={data_tf(@auto_dismiss)}
+      data-dismissible={data_tf(@dismissible)}
       data-dismiss-after={@dismiss_after}
       data-flash-key={@flash_key}
       data-on-dismiss={@on_dismiss}
@@ -389,9 +390,14 @@ defmodule Pulsar.Components.Flash do
           this._onFocusIn = () => this.pause()
           this._onFocusOut = () => this.resume()
           this._onManualDismiss = () => this.dismiss()
+          // Escape dismisses, but only when the flash is dismissible (i.e.
+          // it renders a close button). A non-dismissible flash exposes no
+          // close affordance, so Escape must not provide a hidden one. No
+          // preventDefault: the flash root has no native Escape behavior,
+          // and suppressing it would block native Escape on nested controls
+          // (e.g. closing an open <select>).
           this._onKeydown = (event) => {
-            if (event.key === 'Escape') {
-              event.preventDefault()
+            if (event.key === 'Escape' && this.el.dataset.dismissible === 'true') {
               this.dismiss()
             }
           }

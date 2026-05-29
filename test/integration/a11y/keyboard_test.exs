@@ -185,6 +185,50 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
       |> press(~s|#fl-trigger-status button[aria-label="Dismiss"]|, "Escape")
       |> refute_has("#fl-trigger-status")
     end
+
+    # A flash rendered with `dismissible={false}` exposes no close button, so
+    # Escape must not provide a hidden dismissal path. The hook gates its
+    # Escape branch on `data-dismissible === "true"`. Escape is pressed on the
+    # flash's own action button so the keydown bubbles to the flash root — the
+    # same mechanism the dismiss-button test above exercises.
+    #
+    # A dismiss removes the node `EXIT_MS` (200ms) *after* it fires, so a plain
+    # `assert_has` would still find the node mid-animation even if Escape did
+    # dismiss it. `assert_flash_present_after_dismiss_window/2` waits past that
+    # window before asserting, so the test fails iff a dismiss actually fired.
+    #
+    # Verification: drop the `&& this.el.dataset.dismissible === "true"` guard
+    # from the keydown handler in `lib/pulsar/components/flash.ex` (and the
+    # mirrored block in `priv/templates/flash.ex.eex`), rebuild assets, re-run —
+    # the flash is removed within the window and the assertion fails.
+    test "Escape does not dismiss a non-dismissible flash", %{conn: conn} do
+      conn
+      |> visit("/components/flash/trigger")
+      |> A11y.await_live_connected()
+      |> click_button("Show persistent flash")
+      |> assert_has("#fl-trigger-persistent")
+      |> press("#fl-persistent-action", "Escape")
+      |> assert_flash_present_after_dismiss_window("fl-trigger-persistent")
+    end
+  end
+
+  # Waits past the flash exit-animation window (EXIT_MS = 200ms) and asserts the
+  # element with `id` is still in the DOM. Distinguishes "Escape was ignored"
+  # from "Escape fired a dismiss" — the latter removes the node after the window.
+  defp assert_flash_present_after_dismiss_window(conn, id) do
+    expr =
+      "(async () => {" <>
+        "await new Promise((resolve) => setTimeout(resolve, 400));" <>
+        "return document.getElementById(#{Jason.encode!(id)}) !== null;" <>
+        "})()"
+
+    PhoenixTest.Playwright.evaluate(conn, expr, fn present? ->
+      unless present? do
+        raise ExUnit.AssertionError,
+          message:
+            "##{id} was removed after Escape — a non-dismissible flash must ignore Escape"
+      end
+    end)
   end
 
   describe "Form keyboard traversal" do

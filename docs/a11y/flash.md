@@ -145,10 +145,12 @@ spirit of 1.4.13 (content remains visible until dismissed).
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
-**Evidence:** No focus trap; only event listeners are `mouseenter`,
-`mouseleave`, `focusin`, `focusout`, and the custom dismiss event —
-`lib/pulsar/components/flash.ex:396–400`. No `keydown` handlers that
-intercept Tab.
+**Evidence:** No focus trap. Event listeners are `mouseenter`,
+`mouseleave`, `focusin`, `focusout`, the custom dismiss event, and a
+`keydown` handler — `lib/pulsar/components/flash.ex:setupInteractionHandlers`.
+The `keydown` handler acts only on `Escape` (and only when the flash is
+dismissible), does not call `preventDefault`, and never intercepts Tab,
+so it cannot trap focus.
 
 ### 2.2.1 Timing Adjustable (A) — ✓ PASS
 

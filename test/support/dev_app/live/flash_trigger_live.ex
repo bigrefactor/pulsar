@@ -5,12 +5,15 @@ defmodule Pulsar.DevApp.FlashTriggerLive do
   alias Pulsar.Components.Flash
 
   def mount(_p, _s, socket) do
-    {:ok, assign(socket, show_status: false, show_alert: false)}
+    {:ok, assign(socket, show_status: false, show_alert: false, show_persistent: false)}
   end
 
   def handle_event("show_status", _, socket), do: {:noreply, assign(socket, show_status: true)}
 
   def handle_event("show_alert", _, socket), do: {:noreply, assign(socket, show_alert: true)}
+
+  def handle_event("show_persistent", _, socket),
+    do: {:noreply, assign(socket, show_persistent: true)}
 
   def render(assigns) do
     ~H"""
@@ -43,6 +46,23 @@ defmodule Pulsar.DevApp.FlashTriggerLive do
           data-fixture-cell="alert"
         >
           Alert flash content
+        </Flash.flash>
+      </.fixture_section>
+
+      <.fixture_section name="persistent" title="Non-dismissible flash">
+        <button id="trigger-persistent" type="button" phx-click="show_persistent">
+          Show persistent flash
+        </button>
+        <Flash.flash
+          :if={@show_persistent}
+          id="fl-trigger-persistent"
+          color="info"
+          dismissible={false}
+          auto_dismiss={false}
+          data-fixture-cell="persistent"
+        >
+          Persistent flash content
+          <button type="button" id="fl-persistent-action">Retry</button>
         </Flash.flash>
       </.fixture_section>
     </.fixture_page>
