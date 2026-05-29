@@ -39,9 +39,8 @@ defmodule Mix.Tasks.Pulsar.Sync do
 
   defp write do
     written =
-      for pair <- TemplateSync.pairs(), TemplateSync.current(pair) != {:ok, TemplateSync.expected(pair)} do
-        {_component, lib_path, _ns, _module} = pair
-        File.write!(lib_path, TemplateSync.expected(pair) <> "\n")
+      for {{_component, lib_path, _ns, _module}, expected} <- TemplateSync.diff() do
+        File.write!(lib_path, expected <> "\n")
         lib_path
       end
 

@@ -114,17 +114,13 @@ defmodule Pulsar.TemplateSync do
   """
   @spec diff() :: [{pair(), String.t()}]
   def diff do
-    for pair <- @pairs, drifted?(pair) do
-      {pair, expected(pair)}
-    end
-  end
-
-  defp drifted?(pair) do
-    case current(pair) do
-      # `expected/1` and `current/1` both return formatter-normalized content.
-      {:ok, actual} -> expected(pair) != actual
-      {:error, _} -> true
-    end
+    # `expected/1` renders EEx and runs the formatter, so compute it once per
+    # pair and reuse it for both drift detection and the returned content.
+    # `expected/1` and `current/1` both return formatter-normalized content, so a
+    # missing file (`{:error, _}`) never equals `{:ok, expected}` and counts as drift.
+    @pairs
+    |> Enum.map(fn pair -> {pair, expected(pair)} end)
+    |> Enum.filter(fn {pair, expected} -> current(pair) != {:ok, expected} end)
   end
 
   defp template_path(component_name) do
