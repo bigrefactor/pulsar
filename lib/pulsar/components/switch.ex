@@ -481,15 +481,12 @@ defmodule Pulsar.Components.Switch do
       />
       
     <!-- Visual switch track (clickable) -->
-      <button
-        type="button"
-        tabindex="-1"
-        aria-hidden="true"
+      <div
+        role="presentation"
         phx-click={JS.dispatch("click", to: "##{@id}")}
         class={@switch_class}
         data-loading={@loading && "true"}
         data-disabled={@disabled && "true"}
-        disabled={@disabled}
       />
       
     <!-- Custom thumb with loading state -->

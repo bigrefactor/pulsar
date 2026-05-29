@@ -35,7 +35,7 @@ defmodule Pulsar.Components.SwitchTest do
       assert html =~ ~s(name="test_switch")
       assert html =~ ~s(value="true")
       assert html =~ ~s(class="sr-only peer")
-      assert html =~ ~s(<button type="button")
+      assert html =~ ~s(role="presentation")
       assert html =~ ~s(phx-click=)
     end
 
