@@ -2,7 +2,14 @@
 
 Beautiful, accessible Phoenix LiveView components.
 
-Pulsar provides production-ready, styled components with gorgeous Tailwind CSS styling. This self-contained library includes all accessibility and behavior built-in while providing complete control and customization.
+> ⚠️ **Early stage — work in progress. Not ready for use.**
+>
+> Pulsar is being developed in the open. APIs are unstable and will change
+> without notice, components are incomplete, and there is no support or
+> stability guarantee. **Do not use it in production.** Watch or star the repo
+> to follow along.
+
+Pulsar provides styled components with Tailwind CSS, aiming to bake in accessibility and behavior while giving you complete control and customization. This self-contained library is a single dependency by design.
 
 ## Features
 
@@ -11,7 +18,7 @@ Pulsar provides production-ready, styled components with gorgeous Tailwind CSS s
 - 🎨 **Tailwind-first** - Styled with Tailwind CSS utilities and semantic color tokens
 - 🌙 **Dark mode ready** - Automatic light/dark mode support via CSS custom properties  
 - 📚 **Well documented** - TypeScript-like documentation with `:values` validation
-- 🔧 **Production ready** - High-quality components for Phoenix applications
+- 🚧 **Early stage** - Actively developed; expect breaking changes
 - ⚡ **Zero JavaScript** - Pure Phoenix LiveView with colocated hooks when needed
 - 🎯 **Semantic colors** - Use `primary`, `success`, `error` instead of `blue-500`, `green-600`
 - 🛡️ **Security first** - XSS protection and proper input validation built-in
@@ -177,52 +184,65 @@ import Pulsar.Components.{Button, Label, Link, Input, Textarea, Select, Checkbox
 **All components support:**
 - Phoenix form integration with `field` attribute
 - Full accessibility (ARIA, keyboard navigation)
-- Dark mode via Tailwind's `dark:` classes
+- Theming via semantic color tokens (light, dark, and custom themes)
 - Security features (XSS protection, input validation)
 - Custom styling via `class` attribute with intelligent merging
 
 ## Theming
 
-Pulsar uses CSS custom properties that reference Tailwind's color palette:
+Pulsar uses a semantic-token color system built on CSS custom properties.
+Components reference semantic names (`bg-primary`, `text-foreground`,
+`border-border`) — never raw palette colors like `blue-500`. A theme is one
+block of token values, so switching or adding a theme never touches component
+code.
 
-```css
-@theme inline {
-  /* Primary uses Tailwind's blue */
-  --color-primary-500: var(--color-blue-500);
-  
-  /* Success uses Tailwind's green */  
-  --color-success-500: var(--color-green-500);
-  
-  /* Semantic surface colors */
-  --color-background: var(--color-white);
-  --color-dark-background: var(--color-gray-950);
-}
+The installer generates a three-file layout under `assets/css/`:
+
+```
+assets/css/
+├── theme.css              # entry: imports Tailwind + the theme files
+└── themes/
+    ├── light.css          # default semantic tokens
+    └── dark.css           # overrides under [data-theme="dark"]
 ```
 
 ### Custom Colors
 
-Change the theme by updating color references:
+Override an existing theme by editing the token values in
+`assets/css/themes/light.css` (or `dark.css`):
 
 ```css
-@theme inline {
-  /* Change primary from blue to purple */
-  --color-primary-500: var(--color-purple-500);
-  --color-primary-600: var(--color-purple-600);
-  
-  /* Or use custom OKLCH colors */
-  --color-primary-500: oklch(61% 0.24 290);
+@theme {
+  /* Switch primary from blue to indigo */
+  --color-primary: var(--color-indigo-500);
+
+  /* Or use a custom OKLCH color */
+  --color-primary: oklch(61% 0.24 290);
 }
 ```
 
-### Dark Mode
+Scaffold a brand-new theme with the generator:
 
-Dark mode works automatically with Tailwind's `dark:` variant:
+```bash
+mix pulsar.gen.theme high_contrast
+```
 
-```html
-<html class="dark">
-  <!-- Components automatically adapt -->
-  <.button variant="primary">Dark mode button</.button>
-</html>
+This creates `assets/css/themes/high_contrast.css` and wires its import into
+`theme.css`. Fill in the token values for your theme.
+
+### Switching themes
+
+Activate a theme by setting `data-theme` (or the matching `theme-*` class) on any
+ancestor element — no rebuild needed:
+
+```javascript
+// Attribute-based (recommended)
+document.documentElement.dataset.theme = "dark";
+document.documentElement.dataset.theme = "light";
+document.documentElement.dataset.theme = "high_contrast";
+
+// Class-based (compatible with PhoenixStorybook's sandbox_class switcher)
+document.documentElement.classList.toggle("theme-dark");
 ```
 
 ## Development
@@ -275,6 +295,10 @@ If you were using an older version of Pulsar:
 3. **Clean compilation** - Run `mix deps.get && mix compile --force`
 
 ## Roadmap
+
+Pulsar is pre-1.0 and under active development. The checklist below reflects
+in-progress work — unchecked items are not built yet, and checked items may
+still change as the library stabilizes.
 
 - [x] **Core Form Components** - Button, Input, Textarea, Select, Checkbox, Switch, RadioGroup
 - [x] **UI Components** - Label, Link
