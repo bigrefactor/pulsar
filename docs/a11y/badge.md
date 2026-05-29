@@ -59,25 +59,20 @@ on top of the text label.
 **Notes:** Code makes it impossible to ship a badge whose meaning is
 conveyed by color alone.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious)
+### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Foreground/background colors come from semantic tokens
 (`bg-*`/`text-*-foreground`, `text-*` for outline/ghost) —
 `lib/pulsar/components/badge.ex:89–125`. Browser measurement of 91 cells
-per theme ([light](measurements/badge-light.md),
-[dark](measurements/badge-dark.md)):
+per theme — all pass, min 5.64:1 (light) / 4.84:1 (dark)
+([light](measurements/badge-light.md),
+[dark](measurements/badge-dark.md)).
 
-- **Dark:** 81/91 pass (min 3.67:1). Failing: `ghost-neutral`,
-  `outline-neutral`.
-- **Light:** 66/91 pass (min 3.06:1). Failing: `ghost-success`,
-  `ghost-warning`, `outline-success`, `outline-warning`,
-  `solid-success`.
-
-**Notes:** Originally scoped to "success solid"; the failure set
-extends to the warning variants and the ghost-success/outline-success
-patterns. Same root cause as Button/Flash/Link — success/warning
-color tokens at the foreground shade undershoot 4.5:1 in light, and
-the neutral text shade undershoots in dark.
+**Notes:** The earlier success/warning and ghost/outline-neutral
+shortfalls were resolved by the theme-token contrast work; every
+variant × color now clears the 4.5:1 minimum (3:1 for large text).
+The axe-core browser gate reports no `color-contrast` violation for
+the Badge fixture in either theme.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -104,8 +99,8 @@ resizes without clipping.
 `lib/pulsar/components/badge.ex:113`. Focus-within ring is
 `focus-within:ring-2 focus-within:ring-current focus-within:ring-offset-2`
 — `lib/pulsar/components/badge.ex:84–85`. Browser measurement: 30 cells
-with measurable borders, all pass in both themes (min 4.56:1 light,
-4.56:1 dark) ([light](measurements/badge-light.md),
+with measurable borders, all pass in both themes (min 4.63:1 light /
+6.22:1 dark) ([light](measurements/badge-light.md),
 [dark](measurements/badge-dark.md)).
 
 **Notes:** `--color-border-strong` resolves to `gray-500` (light) /
@@ -131,11 +126,9 @@ remove button) is focused. Measurement reads `not-focusable-in-state`
 for every cell because the wrapping `<span>` doesn't receive focus.
 
 **Notes:** `ring-current` adopts the inherited text color. On solid
-badges the ring color equals the foreground text color which already
-meets 4.5:1 against the badge background (1.4.3 measurement above) —
-that satisfies the 3:1 non-text minimum by a wide margin in every
-passing 1.4.3 cell. Variants where 1.4.3 fails (success/warning)
-also have a low-contrast ring; resolved by the same upstream fix.
+badges the ring color equals the foreground text color, which meets
+4.5:1 against the badge background (1.4.3 measurement above) — that
+satisfies the 3:1 non-text minimum by a wide margin in every cell.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
@@ -231,14 +224,10 @@ no state attributes are needed.
 
 - **2.4.13 Focus Appearance (AAA, new in 2.2)** — focus-within ring uses
   `ring-2` (2px) with `ring-offset-2`, meeting AAA minimum thickness.
-  Ring uses `ring-current` — when 1.4.3 text contrast passes, AAA
-  contrast also passes; failing 1.4.3 variants are
-  the same ones that fail AAA focus appearance contrast.
+  Ring uses `ring-current`; since 1.4.3 text contrast passes across
+  every variant, the AAA focus-appearance contrast passes too.
 
 ## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate.
-
-| Rule | Affected variant(s) | Themes |
-|------|---------------------|--------|
-| `color-contrast` | success solid | both |
+The axe-core browser gate reports no violations for the Badge fixture
+in either theme.

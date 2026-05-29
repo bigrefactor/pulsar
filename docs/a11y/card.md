@@ -60,7 +60,7 @@ focus ring, and `role="button"` — `lib/pulsar/components/card.ex:428–435, 45
 caller's responsibility for slot content. Background + border tokens
 (`bg-surface-1`, `border-border`, etc.) come from the theme —
 `lib/pulsar/components/card.ex:199–237`. Browser measurement of 72
-cells per theme: all pass, min 16.07:1 (light) / 14.03:1 (dark)
+cells per theme: all pass, min 15.93:1 (light) / 14.03:1 (dark)
 ([light](measurements/card-light.md),
 [dark](measurements/card-dark.md)). The fixture's heading/body text
 inside cards measures comfortably above 4.5:1 in both themes.

@@ -63,24 +63,18 @@ ARIA role/live region also signals criticality non-visually —
 **Notes:** Color variants convey criticality redundantly with role
 (`alert` vs `status`) and conventional icons; not color-only.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious)
+### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Colors come from semantic tokens via `@color_config`
 (text/bg/border pairs across 3 variants × 7 colors × 2 themes) —
 `lib/pulsar/components/flash.ex:107–143`. Browser measurement of 55
 cells per theme ([light](measurements/flash-light.md),
-[dark](measurements/flash-dark.md)):
+[dark](measurements/flash-dark.md)): all 55 cells pass in both themes,
+min 4.78:1 (light) / 4.84:1 (dark).
 
-- **Dark:** all 55 pass (min 4.84:1).
-- **Light:** 33/55 pass (min 2.74:1). Failing: `solid-success`,
-  `outline-success`, `outline-warning`, `ghost-danger`,
-  `ghost-primary`, `ghost-success`, `ghost-warning`, `dismissible`.
-
-**Notes:** Originally scoped to "light: success solid; dark:
-primary/secondary solid"; the failure set extends to the broader
-matrix surfaced here. Same defect pattern as Button/Badge —
-high-luminance solid/ghost backgrounds in light mode + foreground
-text token combination.
+**Notes:** The earlier light-theme solid/ghost shortfalls were
+resolved by the theme-token contrast work; the fixture is now
+axe-clean (zero `color-contrast` violations in either theme).
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -108,7 +102,7 @@ by the parent container (FlashGroup sets `max-w-sm w-full` —
 `lib/pulsar/components/flash.ex:close_button_classes/1`. Outline variant
 uses `border` (1px) in the active color —
 `lib/pulsar/components/flash.ex:117–132`. Browser measurement: 18
-border cells per theme, all 18 pass (min 3.06:1 light / 3.67:1 dark).
+border cells per theme, all 18 pass (min 5.64:1 light / 3.67:1 dark).
 
 **Notes:** Outline borders use the same color as the variant
 foreground text — when text passes 1.4.3 (4.5:1) the border easily
@@ -197,7 +191,7 @@ No flashing/blinking.
 after the content — `lib/pulsar/components/flash.ex:300–311`. No
 positive `tabindex` values used.
 
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious)
+### 2.4.7 Focus Visible (AA) — ✓ PASS
 
 **Evidence:**
 - Close button uses `focus-visible:outline-none focus-visible:ring-2
@@ -206,10 +200,9 @@ positive `tabindex` values used.
 - Container no longer carries a `focus-within:ring` (would have
   double-ringed with the button)
 
-`ring-current` inherits the foreground text color. Wherever 1.4.3
-passes (4.5:1 text vs bg), the focus ring exceeds the 3:1 non-text
-minimum by definition. Failures here are the same set as the 1.4.3
-failures and are tracked together; no separate sub-issue.
+`ring-current` inherits the foreground text color. Now that 1.4.3
+passes in every cell, the focus ring clears the 3:1 non-text minimum
+throughout — browser measurement reports 0 focus-contrast failures.
 
 **Notes:** Ring only appears on keyboard focus, not mouse click —
 matches the rest of the library.
@@ -341,8 +334,5 @@ auto-announced; the role↔live-region mapping (`alert→assertive`,
 
 ## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate.
-
-| Rule | Affected variant(s) | Themes |
-|------|---------------------|--------|
-| `color-contrast` | light: success solid; dark: primary/secondary solid | both |
+The axe-core browser gate reports no violations for the Flash fixture
+in either theme.

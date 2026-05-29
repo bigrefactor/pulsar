@@ -64,7 +64,7 @@ to the underlying input.
 `lib/pulsar/components/field.ex:312–321`. Required indicator (delegated
 to Label) uses asterisk + sr-only text.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (minor)
+### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Description colors use semantic tokens
 (`text-gray-600 dark:text-gray-400`, danger variant, etc.) —
@@ -75,10 +75,13 @@ all field-fixture cells pass, min 19.27:1 (light) / 16.98:1 (dark)
 ([light](measurements/field-light.md),
 [dark](measurements/field-dark.md)).
 
-**Notes:** Existing follow-ups track help-text contrast surfaced via
-the Form fixture in dark mode — the field-only fixture doesn't render
-help text against the tinted form background where the issue appears,
-so direct measurement here passes. The known gaps remain valid.
+**Notes:** The per-cell measure suite covers the field-fixture cells
+(all 16 pass). The help-text-on-tinted-form-background case is not a
+tagged cell — the help text is rendered internally by the Field
+component and only surfaces against the tinted background via the Form
+fixture — so it is verified by the axe-core browser gate instead, which
+now reports no color-contrast violations for either the Field or the
+Form fixture in both themes.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -258,9 +261,5 @@ than `assertive` / `role="alert"`); the tradeoff is acknowledged.
 
 ## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate.
-
-| Rule | Affected variant(s) | Themes |
-|------|---------------------|--------|
-| `color-contrast` | help text gray-400 on light background | dark |
-| `color-contrast` | help text + dark-mode label (surfaced via Form fixture) | dark |
+The axe-core browser gate reports no violations for the Field (or Form)
+fixture in either theme.

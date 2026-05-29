@@ -57,26 +57,17 @@ and (when used via field) a text error message —
 `lib/pulsar/components/input.ex:417, 466`. Disabled state combines
 opacity + cursor + native `disabled` attr.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious)
+### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Color/variant matrix uses semantic tokens —
 `lib/pulsar/components/input.ex:162–211, 213–250`. Browser measurement
 of 361 cells per theme ([light](measurements/input-light.md),
-[dark](measurements/input-dark.md)):
+[dark](measurements/input-dark.md)): all 361 cells pass at min 4.78:1
+(light) / 5.40:1 (dark).
 
-- **Dark:** 344/361 pass (min 3.31:1). 17 failures cluster around
-  `decorators` (3.31:1) and `solid-neutral` placeholder text against
-  the surface bg.
-- **Light:** 209/361 pass (min 2.74:1). 152 failures span
-  `ghost-success`, `ghost-warning`, `outline-success`,
-  `outline-warning`, and all `solid-*` variants — solid backgrounds
-  in light mode pair high-luminance bg with text foreground in a
-  way that undershoots 4.5:1.
-
-**Notes:** Originally scoped to "success outline variant"; the failure
-set extends to the warning variant and all `solid-*` variants in light
-mode. Pattern is the same as Button — success/warning color tokens
-need higher contrast in light theme.
+**Notes:** The earlier success/warning shortfalls and the solid-variant
+light-theme failures were resolved by the theme-token contrast work;
+the fixture is now axe-clean in both themes.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -284,13 +275,10 @@ where needed.
   and `xl` (`min-h-14`=56px) exceed the AAA 44×44 floor. Default `md`
   (40px) does not.
 - **2.4.13 Focus Appearance (AAA, new in 2.2)** — focus ring is `ring-2`
-  (2px), meeting AAA minimum thickness. Contrast still needs browser
-  verification.
+  (2px), meeting AAA minimum thickness. Ring contrast measures 5.02:1
+  (light) / 6.72:1 (dark) on the shared `--color-ring` token.
 
 ## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate.
-
-| Rule | Affected variant(s) | Themes |
-|------|---------------------|--------|
-| `color-contrast` | success outline variant | both |
+The axe-core browser gate reports no violations for the Input fixture in
+either theme.

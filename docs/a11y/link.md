@@ -74,24 +74,19 @@ variant works for high-contrast colors; callers should choose
 for body-copy links. Document in usage notes; not filed as a
 sub-issue.
 
-### 1.4.3 Contrast (Minimum) (AA) — ⚠ GAP (serious)
+### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Colors come from semantic tokens
 (`text-primary`, `text-danger`, dark-mode pairs, etc.) —
 `lib/pulsar/components/link.ex:300–310`. Hover state uses `/80`
 opacity on the same token. Browser measurement of 97 cells per theme
 ([light](measurements/link-light.md),
-[dark](measurements/link-dark.md)):
+[dark](measurements/link-dark.md)): all 97 cells pass in both themes,
+min 5.64:1 (light) / 6.22:1 (dark).
 
-- **Dark:** all 97 pass (min 6.14:1).
-- **Light:** 65/97 pass (min 3.06:1). Failing variants × colors:
-  ghost/link/outline/solid in `success`, `warning` colors; plus
-  `solid-success` and `solid-warning`.
-
-**Notes:** Originally scoped to "light: success/warning/error solid;
-dark: primary/success solid"; the failure set extends to all
-ghost/outline/link variants in success/warning colors — same
-upstream token fix applies to text everywhere.
+**Notes:** The earlier success/warning variant shortfalls in the light
+theme were resolved by the theme-token contrast work; the fixture is
+now axe-clean.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -306,8 +301,5 @@ only status-like attribute and is correctly pass-through —
 
 ## Browser a11y findings
 
-Violations surfaced by the axe-core browser gate.
-
-| Rule | Affected variant(s) | Themes |
-|------|---------------------|--------|
-| `color-contrast` | light: success/warning/error solid; dark: primary/success solid | both |
+The axe-core browser gate reports no violations for the Link fixture in
+either theme.
