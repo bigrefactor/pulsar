@@ -18,7 +18,10 @@ defmodule Pulsar.Components.LinkTest do
       assert html =~ ~s(href="/test")
       assert html =~ "Test Link"
       assert html =~ "text-primary"
-      assert html =~ "border-b-2"
+      # outline (not ghost): contiguous "border-b-2 border-current".
+      # ghost renders "border-b-2 border-transparent ... hover:border-current",
+      # so a bare "border-current" check would also pass for ghost.
+      assert html =~ "border-b-2 border-current"
       refute html =~ ~s(target="_blank")
     end
 
@@ -55,8 +58,9 @@ defmodule Pulsar.Components.LinkTest do
         <Link.a href="/test">Link</Link.a>
         """)
 
-      assert html =~ "border-b-2"
-      assert html =~ "border-current"
+      # Contiguous "border-b-2 border-current" pins outline over ghost, whose
+      # border-current only appears as "hover:border-current".
+      assert html =~ "border-b-2 border-current"
     end
 
     test "renders solid variant (no underline, no border)" do
@@ -96,8 +100,7 @@ defmodule Pulsar.Components.LinkTest do
         <Link.a href="/test" variant="outline">Link</Link.a>
         """)
 
-      assert html =~ "border-b-2"
-      assert html =~ "border-current"
+      assert html =~ "border-b-2 border-current"
       # Still has no-underline, plus border
       assert html =~ "no-underline"
     end
