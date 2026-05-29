@@ -26,7 +26,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Link do
     - Automatic external link security (rel="noopener noreferrer" for target="_blank")
     - Phoenix navigation support (navigate, patch, href)
     - Start/end icon slots
-    - WCAG 2.1 AA accessibility compliance
+    - WCAG 2.2 AA accessibility compliance
     - Automatic dark mode support
 
     ## Dependencies

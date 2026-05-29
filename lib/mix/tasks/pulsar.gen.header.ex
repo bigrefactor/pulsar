@@ -26,7 +26,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Header do
     - Semantic heading levels (h1-h6) for proper document structure
     - Breadcrumb navigation with auto chevrons and ARIA support
     - Responsive layout (actions stack on mobile, inline on desktop)
-    - WCAG 2.1 AA accessibility compliance
+    - WCAG 2.2 AA accessibility compliance
     - Automatic dark mode support
 
     ## Dependencies

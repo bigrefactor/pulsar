@@ -28,7 +28,7 @@ defmodule Mix.Tasks.Pulsar.Gen.RadioGroup do
     - Proper radiogroup semantics with keyboard support
     - Roving tabindex for optimal navigation
     - Phoenix form integration with automatic error styling
-    - WCAG 2.1 AA accessibility compliance
+    - WCAG 2.2 AA accessibility compliance
     - Automatic dark mode support
 
     ## Usage Examples

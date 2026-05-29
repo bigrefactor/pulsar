@@ -27,7 +27,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Button do
     - Loading states with spinner
     - Phoenix navigation support (navigate, patch, href)
     - XSS protection for href attributes
-    - WCAG 2.1 AA accessibility compliance
+    - WCAG 2.2 AA accessibility compliance
     - Keyboard navigation for pseudo-buttons
 
     ## Usage Examples

@@ -9,7 +9,7 @@ defmodule Pulsar.Components.Button do
   ## Features
 
   - **Polymorphic Rendering**: Renders as `<button>`, `<a>`, or `<div>` elements
-  - **Accessibility-First**: WCAG 2.1 AA compliance with proper ARIA attributes
+  - **Accessibility-First**: WCAG 2.2 AA compliance with proper ARIA attributes
   - **Variants**: solid, outline, ghost, link with semantic styling
   - **Colors**: neutral, primary, secondary, success, danger, warning for theming
   - **Multiple Sizes**: xs, sm, md, lg, xl for complete range
