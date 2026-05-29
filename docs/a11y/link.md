@@ -55,24 +55,22 @@ visual order matches DOM order.
 data attribute provide non-visual signals alongside any color
 distinction.
 
-### 1.4.1 Use of Color (A) — ⚠ GAP (minor) — caller-driven choice
+### 1.4.1 Use of Color (A) — ✓ PASS
 
-**Evidence:** Solid variant (default) renders `no-underline` with only
-color distinguishing links from surrounding text —
-`lib/pulsar/components/link.ex:297`. Ghost and outline variants pair
-color with a `border-b-2` underline-equivalent —
-`lib/pulsar/components/link.ex:294–298`. Browser measurement: the
-link fixture exercises link text against the page background, not
-inline against body copy. Per-color light measurements: link text
-ranges 3.06:1 to 19.27:1 vs the page bg. For the inline-body
-3:1-against-text technique, primary/danger/info colors pass against
-default foreground; success/warning are borderline.
+**Evidence:** The default variant is `outline` —
+`lib/pulsar/components/link.ex:38` — which pairs color with a
+persistent `border-b-2 border-current` underline-equivalent —
+`lib/pulsar/components/link.ex:297`. So a link inline in body copy is
+distinguished from surrounding text by an underline shape, not color
+alone. The `solid` (color-only) and `ghost` (hover-only) variants
+remain available as explicit opt-outs for standalone / navigation
+links — `lib/pulsar/components/link.ex:296, 298` — where the
+inline 3:1-against-adjacent-text technique does not apply.
 
-**Notes:** Component-level fix not appropriate — the default `solid`
-variant works for high-contrast colors; callers should choose
-`ghost` or `outline` (which carry a visible underline-equivalent)
-for body-copy links. Document in usage notes; not filed as a
-sub-issue.
+**Notes:** Previously the default `solid` variant was distinguished by
+color alone, a minor gap for the borderline success/warning colors in
+inline body copy. Resolved by making `outline` the default so the
+out-of-the-box behavior carries a non-color visual cue.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
