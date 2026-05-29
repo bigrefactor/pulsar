@@ -164,4 +164,207 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
       |> assert_has("#sw-neutral-xs-unchecked:checked")
     end
   end
+
+  describe "Flash keyboard dismissal" do
+    # The Flash component's `.PulsarFlash` colocated hook listens for a
+    # `keydown` Escape on the flash root and triggers the same `dismiss()`
+    # path used by the close button. Escape should work whether focus is
+    # on the dismiss button, the message body, or any nested focusable.
+    #
+    # Verification: remove the `if (event.key === "Escape")` branch from
+    # the keydown handler in `lib/pulsar/components/flash.ex` (and the
+    # mirrored block in `priv/templates/flash.ex.eex`) and re-run — the
+    # `refute_has` assertion should fail because the flash stays mounted.
+
+    test "Escape on the dismiss button dismisses the flash", %{conn: conn} do
+      conn
+      |> visit("/components/flash/trigger")
+      |> A11y.await_live_connected()
+      |> click_button("Show status flash")
+      |> assert_has("#fl-trigger-status")
+      |> press(~s|#fl-trigger-status button[aria-label="Dismiss"]|, "Escape")
+      |> refute_has("#fl-trigger-status")
+    end
+
+    # A flash rendered with `dismissible={false}` exposes no close button, so
+    # Escape must not provide a hidden dismissal path. The hook gates its
+    # Escape branch on `data-dismissible === "true"`. Escape is pressed on the
+    # flash's own action button so the keydown bubbles to the flash root — the
+    # same mechanism the dismiss-button test above exercises.
+    #
+    # A dismiss removes the node `EXIT_MS` (200ms) *after* it fires, so a plain
+    # `assert_has` would still find the node mid-animation even if Escape did
+    # dismiss it. `assert_flash_present_after_dismiss_window/2` waits past that
+    # window before asserting, so the test fails iff a dismiss actually fired.
+    #
+    # Verification: drop the `&& this.el.dataset.dismissible === "true"` guard
+    # from the keydown handler in `lib/pulsar/components/flash.ex` (and the
+    # mirrored block in `priv/templates/flash.ex.eex`), rebuild assets, re-run —
+    # the flash is removed within the window and the assertion fails.
+    test "Escape does not dismiss a non-dismissible flash", %{conn: conn} do
+      conn
+      |> visit("/components/flash/trigger")
+      |> A11y.await_live_connected()
+      |> click_button("Show persistent flash")
+      |> assert_has("#fl-trigger-persistent")
+      |> press("#fl-persistent-action", "Escape")
+      |> assert_flash_present_after_dismiss_window("fl-trigger-persistent")
+    end
+  end
+
+  # Waits past the flash exit-animation window (EXIT_MS = 200ms) and asserts the
+  # element with `id` is still in the DOM. Distinguishes "Escape was ignored"
+  # from "Escape fired a dismiss" — the latter removes the node after the window.
+  defp assert_flash_present_after_dismiss_window(conn, id) do
+    expr =
+      "(async () => {" <>
+        "await new Promise((resolve) => setTimeout(resolve, 400));" <>
+        "return document.getElementById(#{Jason.encode!(id)}) !== null;" <>
+        "})()"
+
+    PhoenixTest.Playwright.evaluate(conn, expr, fn present? ->
+      if !present? do
+        raise ExUnit.AssertionError,
+          message: "##{id} was removed after Escape — a non-dismissible flash must ignore Escape"
+      end
+    end)
+  end
+
+  describe "Form keyboard traversal" do
+    # Backward complement to `FormTest`'s forward Tab walk: starting from
+    # the last field, Shift+Tab should walk back through every form field
+    # in reverse DOM order. Catches focus traps that would only show up
+    # when navigating backwards (e.g. a custom widget that swallows
+    # `keydown` for Shift+Tab but not Tab).
+    #
+    # Verification: temporarily add `tabindex="-1"` to the `<select>`
+    # rendered by `lib/pulsar/components/select.ex` and rebuild assets.
+    # Backward traversal skips `signup_plan`, so the `assert_focused`
+    # after stepping past it lands on `signup_email` instead of
+    # `signup_plan` and the test fails.
+
+    test "Shift+Tab walks back through every signup form field",
+         %{conn: conn} do
+      # Forward tab order (covered by `FormTest`):
+      #   name → email → plan → role-0 → notifications → terms → notes
+      # Chromium treats an unchecked radio group as one stop in either
+      # direction, but it picks DIFFERENT representative radios per
+      # direction: forward enters at the first radio (`role-0`), backward
+      # enters at the last (`role-1`). Either way, only one of the two
+      # role radios participates in tab traversal at a time. The walk
+      # below documents that observed behavior.
+      conn
+      |> visit("/components/form")
+      |> A11y.await_live_connected()
+      |> press("#signup_notes", "Shift+Tab")
+      |> A11y.assert_focused("signup_terms")
+      |> press("#signup_terms", "Shift+Tab")
+      |> A11y.assert_focused("signup_notifications")
+      |> press("#signup_notifications", "Shift+Tab")
+      |> A11y.assert_focused("signup_role-1")
+      |> press("#signup_role-1", "Shift+Tab")
+      |> A11y.assert_focused("signup_plan")
+      |> press("#signup_plan", "Shift+Tab")
+      |> A11y.assert_focused("signup_email")
+      |> press("#signup_email", "Shift+Tab")
+      |> A11y.assert_focused("signup_name")
+    end
+  end
+
+  describe "RadioGroup keyboard navigation (extended)" do
+    # The fixture at `/keyboard/radio_group` provides an anchor `<button>`
+    # before two radio groups: one with `value="2"` (option index 1
+    # pre-checked) and one with `orientation="horizontal"`. Both groups
+    # rely on browser-native radio-group semantics — Pulsar's
+    # `.PulsarRadioGroup` hook only intercepts Home/End, so the
+    # behaviors under test here come from the platform.
+    #
+    # Verification recipes:
+    #   * Tab-to-checked: render unique `name` attributes per radio in
+    #     `lib/pulsar/components/radio_group.ex` (e.g.
+    #     `name={"#{@group.name}-#{@radio_id}"}`) and rebuild assets —
+    #     the browser stops grouping the radios, every radio joins the
+    #     tab sequence, and Tab from the anchor lands on
+    #     `kbd-rg-checked-0` instead of `kbd-rg-checked-1`.
+    #   * Horizontal arrow: temporarily add `disabled` to the rendered
+    #     radio input — focus still moves but `:checked` never flips, so
+    #     the assertion fails.
+
+    test "Tab from outside the group lands on the pre-checked radio",
+         %{conn: conn} do
+      conn
+      |> visit("/keyboard/radio_group")
+      |> A11y.await_live_connected()
+      |> press("#kbd-rg-before", "Tab")
+      |> A11y.assert_focused("kbd-rg-checked-1")
+    end
+
+    test "ArrowRight on a horizontal group selects the next option",
+         %{conn: conn} do
+      # Asserts the positive direction only: a horizontal group accepts
+      # Left/Right. We do NOT assert exclusivity — `<input type="radio">`
+      # also accepts Up/Down by browser default, and Pulsar doesn't
+      # currently constrain that. Tightening orientation handling would
+      # require new hook logic.
+      conn
+      |> visit("/keyboard/radio_group")
+      |> A11y.await_live_connected()
+      |> press("#kbd-rg-horiz-0", "ArrowRight")
+      |> assert_has("#kbd-rg-horiz-1:checked")
+    end
+  end
+
+  describe "tabindex=-1 sweep on fixture cells" do
+    # A fast, broad sweep that catches accidental `tabindex="-1"` on any
+    # element marked as a fixture interactive cell. Uses one
+    # `querySelectorAll` per fixture instead of walking Tab through
+    # hundreds of cells, which keeps mount budget within the
+    # browser-CI levers.
+    #
+    # Verification: temporarily add `tabindex="-1"` to the Button host
+    # element in `lib/pulsar/components/button.ex`, rebuild assets, and
+    # re-run — the `/components/button` test reports a non-empty result
+    # and the assertion fails with the offending elements listed.
+
+    @traversal_fixtures [
+      "/components/button",
+      "/components/input/outline",
+      "/components/checkbox",
+      "/components/switch",
+      "/components/link"
+    ]
+
+    for path <- @traversal_fixtures do
+      test "no [data-fixture-cell] interactive element has tabindex=-1 at #{path}",
+           %{conn: conn} do
+        conn
+        |> visit(unquote(path))
+        |> A11y.await_live_connected()
+        |> assert_no_negative_tabindex_on_fixture_cells()
+      end
+    end
+  end
+
+  # Reads `[data-fixture-cell][tabindex="-1"]` from the current page and
+  # asserts the result is empty. Surfaces offending ids/tags so a failure
+  # points at the specific regressed element.
+  defp assert_no_negative_tabindex_on_fixture_cells(conn) do
+    expr = """
+    (() => {
+      const els = document.querySelectorAll('[data-fixture-cell][tabindex="-1"]');
+      return Array.from(els).map(el => ({
+        id: el.id,
+        tag: el.tagName.toLowerCase(),
+        cell: el.getAttribute('data-fixture-cell')
+      }));
+    })()
+    """
+
+    PhoenixTest.Playwright.evaluate(conn, expr, fn results ->
+      if results != [] do
+        raise ExUnit.AssertionError,
+          message: "found [data-fixture-cell] elements with tabindex=-1: #{inspect(results)}"
+      end
+    end)
+  end
 end
