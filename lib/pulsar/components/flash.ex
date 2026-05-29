@@ -389,12 +389,19 @@ defmodule Pulsar.Components.Flash do
           this._onFocusIn = () => this.pause()
           this._onFocusOut = () => this.resume()
           this._onManualDismiss = () => this.dismiss()
+          this._onKeydown = (event) => {
+            if (event.key === 'Escape') {
+              event.preventDefault()
+              this.dismiss()
+            }
+          }
 
           this.el.addEventListener('mouseenter', this._onMouseEnter)
           this.el.addEventListener('mouseleave', this._onMouseLeave)
           this.el.addEventListener('focusin', this._onFocusIn)
           this.el.addEventListener('focusout', this._onFocusOut)
           this.el.addEventListener('pulsar:flash-dismiss', this._onManualDismiss)
+          this.el.addEventListener('keydown', this._onKeydown)
         },
 
           // Start the auto-dismiss timer
@@ -537,6 +544,10 @@ defmodule Pulsar.Components.Flash do
           if (this._onManualDismiss) {
             this.el.removeEventListener('pulsar:flash-dismiss', this._onManualDismiss)
             this._onManualDismiss = null
+          }
+          if (this._onKeydown) {
+            this.el.removeEventListener('keydown', this._onKeydown)
+            this._onKeydown = null
           }
         }
       }

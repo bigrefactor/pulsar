@@ -62,5 +62,6 @@ defmodule Pulsar.DevApp.Router do
 
     live "/keyboard/button", Keyboard.ButtonLive, :index
     live "/keyboard/card", Keyboard.CardLive, :index
+    live "/keyboard/radio_group", Keyboard.RadioGroupLive, :index
   end
 end
