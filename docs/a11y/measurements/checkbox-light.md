@@ -176,7 +176,7 @@ overflows as worst-case, not as media-query-aware behavior.
 - `neutral-sm-disabled` (x) — content 4×16 vs box 0×16
 - `neutral-sm-invalid` (x) — content 4×16 vs box 0×16
 - `neutral-md-unchecked` (x) — content 4×20 vs box 0×20
-- `neutral-md-checked` (x) — content 5×20 vs box 0×20
+- `neutral-md-checked` (x) — content 6×20 vs box 0×20
 - `neutral-md-indeterminate` (x) — content 4×20 vs box 0×20
 - `neutral-md-disabled` (x) — content 4×20 vs box 0×20
 - `neutral-md-invalid` (x) — content 4×20 vs box 0×20
@@ -196,7 +196,7 @@ overflows as worst-case, not as media-query-aware behavior.
 - `primary-sm-disabled` (x) — content 4×16 vs box 0×16
 - `primary-sm-invalid` (x) — content 4×16 vs box 0×16
 - `primary-md-unchecked` (x) — content 4×20 vs box 0×20
-- `primary-md-checked` (x) — content 5×20 vs box 0×20
+- `primary-md-checked` (x) — content 6×20 vs box 0×20
 - `primary-md-indeterminate` (x) — content 4×20 vs box 0×20
 - `primary-md-disabled` (x) — content 4×20 vs box 0×20
 - `primary-md-invalid` (x) — content 4×20 vs box 0×20
@@ -216,7 +216,7 @@ overflows as worst-case, not as media-query-aware behavior.
 - `secondary-sm-disabled` (x) — content 4×16 vs box 0×16
 - `secondary-sm-invalid` (x) — content 4×16 vs box 0×16
 - `secondary-md-unchecked` (x) — content 4×20 vs box 0×20
-- `secondary-md-checked` (x) — content 5×20 vs box 0×20
+- `secondary-md-checked` (x) — content 6×20 vs box 0×20
 - `secondary-md-indeterminate` (x) — content 4×20 vs box 0×20
 - `secondary-md-disabled` (x) — content 4×20 vs box 0×20
 - `secondary-md-invalid` (x) — content 4×20 vs box 0×20
@@ -236,7 +236,7 @@ overflows as worst-case, not as media-query-aware behavior.
 - `success-sm-disabled` (x) — content 4×16 vs box 0×16
 - `success-sm-invalid` (x) — content 4×16 vs box 0×16
 - `success-md-unchecked` (x) — content 4×20 vs box 0×20
-- `success-md-checked` (x) — content 5×20 vs box 0×20
+- `success-md-checked` (x) — content 6×20 vs box 0×20
 - `success-md-indeterminate` (x) — content 4×20 vs box 0×20
 - `success-md-disabled` (x) — content 4×20 vs box 0×20
 - `success-md-invalid` (x) — content 4×20 vs box 0×20
@@ -256,7 +256,7 @@ overflows as worst-case, not as media-query-aware behavior.
 - `danger-sm-disabled` (x) — content 4×16 vs box 0×16
 - `danger-sm-invalid` (x) — content 4×16 vs box 0×16
 - `danger-md-unchecked` (x) — content 4×20 vs box 0×20
-- `danger-md-checked` (x) — content 5×20 vs box 0×20
+- `danger-md-checked` (x) — content 6×20 vs box 0×20
 - `danger-md-indeterminate` (x) — content 4×20 vs box 0×20
 - `danger-md-disabled` (x) — content 4×20 vs box 0×20
 - `danger-md-invalid` (x) — content 4×20 vs box 0×20
@@ -276,7 +276,7 @@ overflows as worst-case, not as media-query-aware behavior.
 - `warning-sm-disabled` (x) — content 4×16 vs box 0×16
 - `warning-sm-invalid` (x) — content 4×16 vs box 0×16
 - `warning-md-unchecked` (x) — content 4×20 vs box 0×20
-- `warning-md-checked` (x) — content 5×20 vs box 0×20
+- `warning-md-checked` (x) — content 6×20 vs box 0×20
 - `warning-md-indeterminate` (x) — content 4×20 vs box 0×20
 - `warning-md-disabled` (x) — content 4×20 vs box 0×20
 - `warning-md-invalid` (x) — content 4×20 vs box 0×20
