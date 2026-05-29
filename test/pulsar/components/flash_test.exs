@@ -124,6 +124,18 @@ defmodule Pulsar.Components.FlashTest do
       refute html =~ ~s(aria-label="Dismiss")
     end
 
+    test "uses a custom dismiss_label for the close button" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash dismiss_label="Cerrar">Localized flash</Flash.flash>
+        """)
+
+      assert html =~ ~s(aria-label="Cerrar")
+      refute html =~ ~s(aria-label="Dismiss")
+    end
+
     test "includes dismiss event in phx-click" do
       assigns = %{}
 

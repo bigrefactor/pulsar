@@ -61,6 +61,12 @@ Invoke `superpowers:brainstorming`. Pin down, with the user:
 - **Form integration** — is it a form input? If so it routes through `Field`
   (the canonical label/error/aria wrapper) — read `lib/pulsar/components/field.ex`
   before designing aria; don't reinvent describedby/labelledby on the leaf.
+- **Localization** — any user-facing or screen-reader-facing string the component
+  renders itself (labels, aria-labels, status text) must be an overridable attr
+  with an English default, so apps can pass `gettext(...)`. Any number the
+  component displays must run through a `format_count`-style function attr
+  (default `&Integer.to_string/1`) so apps can plug in a CLDR formatter. Don't add
+  `ex_cldr` as a dependency. See `references/accessibility.md`.
 
 Write the decisions down. Read 2–3 of the closest existing components in
 `lib/pulsar/components/` to match idiom (badge = simplest display; checkbox/input

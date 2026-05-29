@@ -471,6 +471,74 @@ defmodule Pulsar.Components.TextareaTest do
     end
   end
 
+  describe "character counter localization" do
+    test "uses English counter words by default" do
+      assigns = %{near_limit: String.duplicate("x", 95)}
+
+      html =
+        rendered_to_string(~H"""
+        <Textarea.textarea name="test" show_character_count max_length={100} value={@near_limit} />
+        """)
+
+      assert html =~ "5 remaining"
+    end
+
+    test "translates remaining_label and over_label" do
+      assigns = %{near_limit: String.duplicate("x", 95)}
+
+      html =
+        rendered_to_string(~H"""
+        <Textarea.textarea
+          name="test"
+          show_character_count
+          max_length={100}
+          value={@near_limit}
+          remaining_label="restantes"
+        />
+        """)
+
+      assert html =~ "5 restantes"
+      refute html =~ "5 remaining"
+    end
+
+    test "over_label replaces the over-limit word" do
+      assigns = %{over_limit: String.duplicate("x", 105)}
+
+      html =
+        rendered_to_string(~H"""
+        <Textarea.textarea
+          name="test"
+          show_character_count
+          max_length={100}
+          value={@over_limit}
+          over_label="de más"
+        />
+        """)
+
+      assert html =~ "de más"
+      refute html =~ "over)"
+    end
+
+    test "format_count runs every counter integer through the supplied formatter" do
+      assigns = %{value: String.duplicate("x", 1234), formatter: &"[#{&1}]"}
+
+      html =
+        rendered_to_string(~H"""
+        <Textarea.textarea
+          name="test"
+          show_character_count
+          max_length={2000}
+          value={@value}
+          format_count={@formatter}
+        />
+        """)
+
+      # Count and max are both routed through the formatter.
+      assert html =~ "[1234]"
+      assert html =~ "[2000]"
+    end
+  end
+
   describe "auto-resize feature" do
     test "enables auto-resize when specified" do
       assigns = %{}

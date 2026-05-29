@@ -156,6 +156,32 @@ defmodule Pulsar.Components.FieldTest do
       assert html =~ "hero-exclamation-circle"
     end
 
+    test "translates errors through Gettext, interpolating non-count bindings" do
+      field = create_field(:name, "", [{"must be %{type}", [type: "valid"]}])
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="text" />
+        """)
+
+      # Routed through Gettext.dgettext/4, which interpolates %{type}.
+      assert html =~ "must be valid"
+    end
+
+    test "translates errors through Gettext with count-based plural interpolation" do
+      field = create_field(:password, "", [{"should be at least %{count} character(s)", [count: 8]}])
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="password" />
+        """)
+
+      # Routed through Gettext.dngettext/6 (the :count branch), interpolating %{count}.
+      assert html =~ "should be at least 8 character(s)"
+    end
+
     test "error container has aria-live attribute for screen readers" do
       field = create_field(:email, "", [{"is required", []}])
       assigns = %{field: field}

@@ -331,6 +331,35 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ ~s(id="skills-wrapper")
     end
 
+    test "remove button uses 'Remove' label by default" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select name="skills" options={["Elixir"]} value={["Elixir"]} multiple={true} />
+        """)
+
+      assert html =~ ~s(aria-label="Remove Elixir")
+    end
+
+    test "remove_label localizes the badge remove button" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select
+          name="skills"
+          options={["Elixir"]}
+          value={["Elixir"]}
+          multiple={true}
+          remove_label="Quitar"
+        />
+        """)
+
+      assert html =~ ~s(aria-label="Quitar Elixir")
+      refute html =~ ~s(aria-label="Remove Elixir")
+    end
+
     test "colocated hook script is present for multi-select" do
       assigns = %{}
 

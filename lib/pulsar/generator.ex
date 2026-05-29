@@ -154,6 +154,7 @@ defmodule Pulsar.Generator do
       assigns
       |> Keyword.put_new(:component_namespace, namespace_inspected)
       |> Keyword.put_new(:components_namespace, get_components_namespace(igniter, namespace_inspected))
+      |> Keyword.put_new(:gettext_module, inspect(Phoenix.web_module_name(igniter, "Gettext")))
 
     contents = contents(component_name, assigns)
     {exists, igniter} = Igniter.Project.Module.module_exists(igniter, component)

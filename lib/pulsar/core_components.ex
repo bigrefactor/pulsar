@@ -754,6 +754,24 @@ defmodule Pulsar.CoreComponents do
   defp get_flash_icon(:error), do: "hero-exclamation-circle"
   defp get_flash_icon(_), do: "hero-bell"
 
+  @doc """
+  Translates an error message using gettext.
+  """
+  def translate_error({msg, opts}) do
+    if count = opts[:count] do
+      Gettext.dngettext(Pulsar.Gettext, "errors", msg, msg, count, opts)
+    else
+      Gettext.dgettext(Pulsar.Gettext, "errors", msg, opts)
+    end
+  end
+
+  @doc """
+  Translates the errors for a field from a keyword list of errors.
+  """
+  def translate_errors(errors, field) when is_list(errors) do
+    for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
+  end
+
   ## JS Commands
 
   @doc """

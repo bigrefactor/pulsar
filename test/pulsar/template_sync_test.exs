@@ -53,7 +53,8 @@ defmodule Pulsar.TemplateSyncTest do
         |> EEx.eval_file(
           assigns: [
             component_namespace: unquote(component_namespace),
-            components_namespace: @components_root
+            components_namespace: @components_root,
+            gettext_module: "Pulsar.Gettext"
           ],
           engine: EEx.SmartEngine
         )
