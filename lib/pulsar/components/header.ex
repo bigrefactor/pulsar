@@ -14,7 +14,7 @@ defmodule Pulsar.Components.Header do
     - **Semantic Headings**: Configurable heading level (h1-h6) for proper document structure
     - **Breadcrumb Navigation**: Automatic chevron separators with ARIA support
     - **Responsive Layout**: Actions stack on mobile, inline on desktop
-    - **Accessibility-First**: WCAG 2.1 AA compliance with proper ARIA attributes
+    - **Accessibility-First**: WCAG 2.2 AA compliance with proper ARIA attributes
 
   ## Examples
 

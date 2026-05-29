@@ -12,7 +12,7 @@ defmodule Pulsar.Components.Flash do
   - **Full Color Palette**: All semantic colors with automatic dark mode support
   - **Auto-dismiss**: Configurable timeout with pause-on-hover functionality
   - **Manual Dismiss**: Optional close button for user control
-  - **Accessibility**: WCAG 2.1 AA compliance with proper ARIA attributes
+  - **Accessibility**: WCAG 2.2 AA compliance with proper ARIA attributes
   - **Smooth Animations**: Entry and exit transitions using Phoenix.LiveView.JS
   - **Icon Support**: Start icon slot for status indicators and custom icons
 

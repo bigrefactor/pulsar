@@ -99,7 +99,7 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
 
     test "Tab moves focus from one select to the next focusable", %{conn: conn} do
       conn
-      |> visit("/components/select")
+      |> visit("/components/select/outline")
       |> press(@select_cell, "Tab")
       |> A11y.refute_focused_within(@select_cell)
     end
@@ -114,7 +114,7 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
       # slice we can actually verify: Pulsar's markup doesn't trap or
       # steal focus on arrow keys.
       conn
-      |> visit("/components/select")
+      |> visit("/components/select/outline")
       |> press(@select_cell, "ArrowDown")
       |> assert_has(":focus#{@select_cell}")
     end
@@ -125,7 +125,7 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
       # observe "open." This test verifies the slice we can: Pulsar doesn't
       # preventDefault on Space, and the element retains focus afterward.
       conn
-      |> visit("/components/select")
+      |> visit("/components/select/outline")
       |> press(@select_cell, " ")
       |> assert_has(":focus#{@select_cell}")
     end

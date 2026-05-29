@@ -42,7 +42,7 @@ defmodule Pulsar.Components.Label do
   - **Proper Association**: Uses `for` attribute to associate with form inputs
   - **Required Field Support**: Screen reader-only text for required fields
   - **Data Attributes**: Exposes state via `data-required` and `data-error` for CSS targeting
-  - **ARIA Compliance**: Follows WCAG 2.1 AA accessibility guidelines
+  - **ARIA Compliance**: Follows WCAG 2.2 AA accessibility guidelines
 
   ## Required Indicator
 

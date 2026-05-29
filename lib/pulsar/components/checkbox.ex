@@ -8,7 +8,7 @@ defmodule Pulsar.Components.Checkbox do
 
   ## Features
 
-  - **Accessible by Default**: WCAG 2.1 AA compliance with proper ARIA attributes
+  - **Accessible by Default**: WCAG 2.2 AA compliance with proper ARIA attributes
   - **Size Variants**: xs, sm, md, lg, xl for complete range
   - **Color Variants**: neutral, primary, secondary, success, danger, warning for consistent theming
   - **Indeterminate State**: Full tri-state support with visual animation and proper ARIA

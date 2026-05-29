@@ -7,7 +7,7 @@ Pulsar provides production-ready, styled components with gorgeous Tailwind CSS s
 ## Features
 
 - 🚀 **Single Dependency** - Only requires [Twm](https://hex.pm/packages/twm) for intelligent Tailwind class merging (Tailwind v4 ready)
-- ♿ **Full Accessibility** - WCAG 2.1 AA compliant with proper ARIA attributes and keyboard navigation
+- ♿ **Full Accessibility** - WCAG 2.2 AA compliant with proper ARIA attributes and keyboard navigation ([per-component audit](docs/a11y/README.md))
 - 🎨 **Tailwind-first** - Styled with Tailwind CSS utilities and semantic color tokens
 - 🌙 **Dark mode ready** - Automatic light/dark mode support via CSS custom properties  
 - 📚 **Well documented** - TypeScript-like documentation with `:values` validation

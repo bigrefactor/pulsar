@@ -154,7 +154,6 @@ jobs:
   browser:
     name: Browser a11y
     runs-on: ubuntu-22.04
-    continue-on-error: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -235,11 +234,15 @@ jobs:
 
       - name: Run browser a11y tests (with 1 retry)
         run: |
-          if mix test --only integration; then
+          # --max-cases 1 serializes modules on the 2-core shared runner so the
+          # single-browser pool doesn't starve setup_all callbacks. See
+          # config/test.exs and the phoenix_test_playwright README's
+          # "Test failure in CI (timeout)" section.
+          if mix test --only integration --max-cases 1; then
             exit 0
           fi
           echo "::warning::Browser a11y tests failed on first run; retrying once. Check for flakes."
-          mix test --only integration --failed
+          mix test --only integration --failed --max-cases 1
 
   # package:
   #   name: Package Validation

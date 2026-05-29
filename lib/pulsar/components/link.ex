@@ -8,7 +8,7 @@ defmodule Pulsar.Components.Link do
   - Color schemes: primary, secondary, danger, etc.
   - Automatic external detection with security attributes
   - Phoenix navigation support (navigate, patch, href)
-  - WCAG 2.1 AA compliance
+  - WCAG 2.2 AA compliance
 
   ## Examples
 

@@ -27,7 +27,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Checkbox do
     - Hidden checkbox option for card-only selection
     - Animated checkmark transitions
     - Phoenix form integration with automatic error styling
-    - WCAG 2.1 AA accessibility compliance
+    - WCAG 2.2 AA accessibility compliance
     - Automatic dark mode support
 
     ## Usage Examples

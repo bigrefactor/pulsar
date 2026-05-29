@@ -796,7 +796,7 @@ config :pulsar,
 - Custom classes merge with defaults
 
 ### Accessibility
-- All components meet WCAG 2.1 AA standards
+- All components meet WCAG 2.2 AA standards
 - Keyboard navigation supported
 - Screen reader optimized
 - Focus indicators included

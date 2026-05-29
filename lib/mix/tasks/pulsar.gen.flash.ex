@@ -27,7 +27,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Flash do
     - Manual dismiss with close button
     - Smooth entry/exit animations using Phoenix.LiveView.JS
     - Icon support for status indicators
-    - WCAG 2.1 AA accessibility compliance
+    - WCAG 2.2 AA accessibility compliance
     - Automatic dark mode support
 
     ## Usage Examples

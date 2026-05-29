@@ -222,16 +222,3 @@ print setup instructions for wiring `phoenix_storybook` into the router
 (since consumers must add the dependency and route themselves).
 
 See `Mix.Tasks.Pulsar.Gen.Storybook` for the full list of options.
-
-## Accessibility testing
-
-The storybook itself is axe-tested in CI. The integration test at
-`test/integration/a11y/storybook_axe_test.exs` visits `/storybook` in both
-light and dark themes and asserts zero axe-core violations.
-
-Run it locally with:
-
-    mix test test/integration/a11y/storybook_axe_test.exs --include integration
-
-(Requires Playwright npm packages installed in
-`test/support/dev_app/assets/node_modules`.)

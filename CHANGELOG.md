@@ -36,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security & Accessibility
 
-- **WCAG 2.1 AA Compliance**: All components include proper ARIA attributes
+- **WCAG 2.2 AA Compliance**: All components include proper ARIA attributes (see [`docs/a11y/`](docs/a11y/README.md) for per-component audit evidence)
 - **XSS Protection**: Built-in input sanitization and output escaping
 - **Keyboard Navigation**: Full keyboard accessibility support
 - **Screen Reader Support**: Proper semantic markup and state announcements
