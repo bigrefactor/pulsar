@@ -29,21 +29,29 @@ the `mix pulsar.install` / `mix pulsar.gen.*` tasks rather than imported as a
 shared runtime. There is no shared helper layer — each component is
 self-contained so the generated code stands on its own in the user's app.
 
-### The template-sync contract (important)
+### Templates are the source of truth
 
-Every component exists in two places that must stay identical:
+Every component exists in two places, but only one is edited by hand:
 
-- the source module under `lib/pulsar/components/*.ex`, and
-- its EEx template under `priv/templates/*.ex.eex` (what gets generated into
-  user apps).
+- its EEx template under `priv/templates/*.ex.eex` — **the source of truth**
+  (what gets generated into user apps), and
+- the source module under `lib/pulsar/components/*.ex` (or
+  `lib/pulsar/core_components.ex`) — **generated** from that template and
+  committed so the library compiles and is directly importable.
 
-If you edit one, you **must** mirror the change in the other. `Pulsar.TemplateSyncTest`
-fails the build on drift, so this isn't optional — the suite will catch it.
+Edit the template, then run `mix pulsar.sync` to regenerate the lib file — never
+hand-edit the generated `lib/pulsar/components/*.ex`. `mix pulsar.sync --check`
+(wired into the `check`/`check.ci` aliases and CI) fails the build if a committed
+lib file has drifted from its template, so a forgotten regen is caught.
+
+The component → lib-file mapping lives in `Pulsar.TemplateSync.pairs/0`; register
+a new component there.
 
 ## Adding a new component
 
-A new component is never just one file. It needs a source module, a synced EEx
-template, a generator task, install/sync registrations, unit tests, a storybook
+A new component is never just one file. It needs an EEx template (the source of
+truth), a `Pulsar.TemplateSync.pairs/0` entry (then `mix pulsar.sync` to emit the
+lib module), a generator task, install/sync registrations, unit tests, a storybook
 story (+ template), an accessibility fixture LiveView, and a WCAG 2.2 AA audit
 doc. See `CLAUDE.md` for the full architecture before starting.
 

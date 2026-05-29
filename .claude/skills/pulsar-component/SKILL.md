@@ -8,12 +8,13 @@ description: >-
   component", "create a breadcrumb component" — even if they don't say the word
   "Pulsar" but are clearly working in this component library. Pulsar components
   are GENERATED into user apps (no shared runtime code), so a new component is
-  never just one file: it requires a source module, a synced EEx template, a
-  generator task, install/sync registrations, unit tests, a storybook story
-  (+ template), an a11y fixture LiveView, and a WCAG 2.2 AA audit doc. This skill
-  enforces that full surface so the build, sync tests, storybook smoke test, and
-  axe a11y gate all stay green. Do NOT use for editing an existing component's
-  behavior, theme/CSS work, or generator infrastructure changes.
+  never just one file: it requires an EEx template (the source of truth, which
+  generates the bundled lib module via mix pulsar.sync), a generator task,
+  install/sync registrations, unit tests, a storybook story (+ template), an a11y
+  fixture LiveView, and a WCAG 2.2 AA audit doc. This skill enforces that full
+  surface so the build, sync check, storybook smoke test, and axe a11y gate all
+  stay green. Do NOT use for editing an existing component's behavior, theme/CSS
+  work, or generator infrastructure changes.
 ---
 
 # Creating a Pulsar component
@@ -23,14 +24,16 @@ the user's app by `mix pulsar.install`. There is **no shared runtime module** to
 extend — each component is self-contained (only `Twm` for class merging). That
 single fact drives everything here:
 
-- A component's source lives in `lib/pulsar/components/<name>.ex` **and** a
-  byte-identical EEx template in `priv/templates/<name>.ex.eex`. A test
-  (`Pulsar.TemplateSyncTest`) fails the build if they drift.
-- "Done" is not one file. A component is wired into ~12–15 files across source,
-  generator, install, sync test, unit tests, storybook (3 places), a11y fixtures
-  (3 places), and docs. **The test suite is the safety net that catches every
-  missed registration** — so the completion gate is "the specific test files
-  below pass," not "I wrote the component."
+- The EEx template in `priv/templates/<name>.ex.eex` is the **source of truth**.
+  The bundled module `lib/pulsar/components/<name>.ex` is **generated** from it by
+  `mix pulsar.sync` and committed; never hand-edit it. `mix pulsar.sync --check`
+  (in the `check`/`check.ci` aliases and CI) fails the build if it drifts.
+- "Done" is not one file. A component is wired into ~12–15 files across template,
+  generated lib module, generator, install, `Pulsar.TemplateSync.pairs/0`, unit
+  tests, storybook (3 places), a11y fixtures (3 places), and docs. **The test
+  suite is the safety net that catches every missed registration** — so the
+  completion gate is "the specific test files below pass," not "I wrote the
+  component."
 - Don't propose extracting shared helpers across components. Duplication between
   components is intentional (each is generated standalone). A component MAY depend
   on *another whole component* (e.g. button uses link) — that's declared, not
@@ -92,9 +95,11 @@ Twm class-merge override, a11y attributes, and (if a form input) field
 integration. See `references/testing.md` for the exact structure and assertion
 style. Run it; watch it fail for the right reason (component doesn't exist yet).
 
-### 3. Implement the component + its template
+### 3. Implement the component (template is the source of truth)
 
-Write `lib/pulsar/components/<name>.ex` to pass the tests, following the anatomy
+Author the component as the EEx template `priv/templates/<name>.ex.eex` — the
+**module body only** (no `defmodule … do/end` wrapper), with sibling-component
+aliases written as `alias <%= @component_namespace %>.Icon`. Follow the anatomy
 in `references/anatomy.md` (module-attribute config maps, `import Twm, only:
 [merge: 1]`, semantic color tokens — **no `dark:` variants**, private
 `*_classes` helpers, `@spec`, `@moduledoc` with examples). For the variant→class
@@ -102,18 +107,18 @@ lookup-map structure and which semantic/design tokens to use for each part, foll
 `references/theming-and-variants.md` — build only from existing tokens; a token
 that doesn't exist is a theme change, not a hard-coded value.
 
-Then create `priv/templates/<name>.ex.eex` — the **module body only** (no
-`defmodule … do/end` wrapper), with sibling-component aliases written as
-`alias <%= @component_namespace %>.Icon`. The sync test reconstructs the module
-from the template; see `references/registries.md` for the exact transform rule.
-Run `mix test test/pulsar/template_sync_test.exs` after adding the `@pairs` entry
-(step 4) — it must pass.
+Add the `Pulsar.TemplateSync.pairs/0` entry (step 4), then run `mix pulsar.sync` to
+generate `lib/pulsar/components/<name>.ex` from the template — never hand-write that
+file. Iterate by editing the template and re-running `mix pulsar.sync` until the
+unit tests (which target the generated `Pulsar.Components.<Name>` module) pass.
+`mix pulsar.sync --check` must report in-sync; see `references/registries.md` for
+the exact transform rule.
 
 ### 4. Wire every registry
 
 This is where components silently break. Work through the **complete manifest in
 `references/registries.md`** — it lists every file to create or edit (generator
-task, install `@components` map + `composes:` list, sync-test `@pairs`, storybook
+task, install `@components` map + `composes:` list, `TemplateSync.pairs/0`, storybook
 template + generator list + dev_app story + smoke-test counts, fixture LiveView +
 router + `@fixtures`, a11y docs). Don't skip any; each has a test that enforces it.
 
@@ -142,10 +147,11 @@ requirement for interactive components, and the rules below.
 Invoke `superpowers:verification-before-completion`. Run and show output for:
 
 ```sh
+mix pulsar.sync                                     # regenerate the lib module from the template
 mix format
 mix compile --warnings-as-errors
 mix test test/pulsar/components/<name>_test.exs
-mix test test/pulsar/template_sync_test.exs        # source⇄template sync gate
+mix pulsar.sync --check                             # template⇄generated-lib sync gate
 mix test test/pulsar/dev_app/storybook_test.exs    # storybook leaf-count gate
 mix credo --strict
 mix test --only integration                         # axe a11y gate (browser)
@@ -162,8 +168,8 @@ like Input/Select/Table.
 Read these as you reach the relevant phase:
 
 - `references/registries.md` — **the complete file-by-file manifest** of what to
-  create/edit, the template sync transform, and the storybook/a11y registries.
-  This is the load-bearing checklist; consult it in step 4.
+  create/edit, the template→lib `mix pulsar.sync` transform, and the storybook/a11y
+  registries. This is the load-bearing checklist; consult it in step 4.
 - `references/anatomy.md` — component module structure, Twm merge pattern,
   semantic tokens, attrs/slots, colocated JS, component dependencies.
 - `references/theming-and-variants.md` — the semantic theme model, the full

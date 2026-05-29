@@ -54,7 +54,9 @@ Pulsar components are self-contained modules with all functionality inlined:
 
 **Key Files:**
 - `lib/mix/tasks/pulsar/gen/*.ex` - Generator task implementations
-- `lib/pulsar/components/*.ex` - Source components that get copied
+- `priv/templates/*.ex.eex` - Component templates; **the source of truth** for both the generated-into-user-apps code and the bundled lib modules
+- `lib/pulsar/components/*.ex` - Bundled library modules, **generated** from the templates via `mix pulsar.sync` (do not hand-edit; edit the template and re-run sync)
+- `lib/pulsar/template_sync.ex` - `Pulsar.TemplateSync`: the template → lib-file mapping (`pairs/0`) and transform driving `mix pulsar.sync`
 - Uses Igniter for all file system operations
 
 ### Generator Implementation
@@ -269,6 +271,8 @@ document.documentElement.classList.toggle('theme-dark');
 ```bash
 mix deps.get             # Install dependencies (only Twm)
 mix compile              # Compile the library
+mix pulsar.sync          # Regenerate lib/pulsar/components/*.ex from priv/templates (after editing a template)
+mix pulsar.sync --check  # Verify generated lib files match their templates (run by check/CI)
 mix test                 # Run all tests  
 mix dialyzer             # Type checking
 mix credo --strict       # Code quality analysis
@@ -466,15 +470,16 @@ JS.add_class("border-red-500", to: "#field-#{field}")
 ## Contributing Guidelines
 
 When adding new components:
-1. Create generator in `lib/pulsar/generators/`
-2. Add template in `priv/templates/`
-3. Write comprehensive tests
-4. Document usage patterns
-5. Ensure accessibility compliance
-6. Test with various Tailwind themes
+1. Add the template in `priv/templates/` (the source of truth)
+2. Register it in `Pulsar.TemplateSync.pairs/0`, then run `mix pulsar.sync` to emit the lib module
+3. Create the generator task in `lib/mix/tasks/pulsar/gen/`
+4. Write comprehensive tests
+5. Document usage patterns
+6. Ensure accessibility compliance
+7. Test with various Tailwind themes
 
 When modifying existing components:
-1. Update both generator and template
+1. Edit the template in `priv/templates/`, then run `mix pulsar.sync` (never hand-edit the generated `lib/pulsar/components/*.ex`)
 2. Maintain backwards compatibility where possible
 3. Update documentation and examples
 4. Test generation in sample Phoenix app

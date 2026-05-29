@@ -7,23 +7,24 @@ reading the file before editing; don't trust line numbers cited here (they drift
 
 > Replace `widget` / `Widget` with your component's snake_case / CamelCase name.
 
-## A. Source + generator + sync
+## A. Template + generated lib + generator + sync
 
 | # | File | Action | Enforced by |
 |---|------|--------|-------------|
-| 1 | `lib/pulsar/components/widget.ex` | **Create** the component module | unit tests, compile |
-| 2 | `priv/templates/widget.ex.eex` | **Create** template (module body only) | `Pulsar.TemplateSyncTest` |
-| 3 | `lib/mix/tasks/pulsar.gen.widget.ex` | **Create** generator task | generator test (if present) |
-| 4 | `lib/mix/tasks/pulsar.install.ex` | **Edit**: add to `@components` + `composes:` | install tests |
-| 5 | `test/pulsar/template_sync_test.exs` | **Edit**: add tuple to `@pairs` | runs the sync assertion |
+| 1 | `priv/templates/widget.ex.eex` | **Create** template (module body only) — the source of truth | `mix pulsar.sync --check` |
+| 2 | `lib/pulsar/components/widget.ex` | **Generated** by `mix pulsar.sync` (do not hand-write) | unit tests, compile |
+| 3 | `lib/pulsar/template_sync.ex` | **Edit**: add tuple to `Pulsar.TemplateSync.pairs/0` | `mix pulsar.sync --check` |
+| 4 | `lib/mix/tasks/pulsar.gen.widget.ex` | **Create** generator task | generator test (if present) |
+| 5 | `lib/mix/tasks/pulsar.install.ex` | **Edit**: add to `@components` + `composes:` | install tests |
 
-### 1 ⇄ 2 — the template sync transform (critical)
+### 1 → 2 — the `mix pulsar.sync` transform (critical)
 
-`Pulsar.TemplateSyncTest` reconstructs the lib module from the template and asserts
-they're identical after formatting. The rule:
+The template is the **single source of truth**. `mix pulsar.sync` renders it into
+the committed lib module; `mix pulsar.sync --check` (in the `check`/`check.ci`
+aliases and CI) fails the build if the committed lib file has drifted. Never
+hand-edit `lib/pulsar/components/widget.ex` — edit the template and re-run sync.
+The rule:
 
-- **Lib file** (`lib/pulsar/components/widget.ex`): the full module —
-  `defmodule Pulsar.Components.Widget do … end`.
 - **Template** (`priv/templates/widget.ex.eex`): the **module body only** (no
   `defmodule`/`end` wrapper), with any sibling-component alias written as an EEx
   interpolation so it resolves to the user's namespace at generation time:
@@ -33,14 +34,16 @@ they're identical after formatting. The rule:
   alias <%= @component_namespace %>.Icon
   ```
 
-  In the lib file the same line is the concrete `alias Pulsar.Components.Icon`.
+- **Generated lib file** (`lib/pulsar/components/widget.ex`): the full module —
+  `defmodule Pulsar.Components.Widget do … end` — with that line as the concrete
+  `alias Pulsar.Components.Icon`.
 
-The test wraps the rendered template as `defmodule Pulsar.Components.Widget do\n
-<indented body>\nend\n`, formats both sides, and compares. So: **the lib file and
-the template must be the same Elixir, differing only in the module wrapper and the
-`<%= @component_namespace %>` substitution.** Edit them together, every time.
+`mix pulsar.sync` wraps the rendered template as `defmodule Pulsar.Components.Widget
+do\n<indented body>\nend\n` and formats it. So the generated lib file is the
+template's Elixir, differing only in the module wrapper and the
+`<%= @component_namespace %>` substitution — produced for you, not maintained by hand.
 
-`@pairs` entry to add (step 5):
+`Pulsar.TemplateSync.pairs/0` entry to add (#3):
 ```elixir
 {:widget, "lib/pulsar/components/widget.ex", "Pulsar.Components", "Pulsar.Components.Widget"},
 ```

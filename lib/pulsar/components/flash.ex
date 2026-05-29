@@ -258,8 +258,7 @@ defmodule Pulsar.Components.Flash do
   def flash(assigns) do
     assigns = assign_new(assigns, :id, fn -> generate_id() end)
 
-    assigns =
-      assign(assigns, :auto_dismiss, resolve_auto_dismiss(assigns.auto_dismiss, assigns.role))
+    assigns = assign(assigns, :auto_dismiss, resolve_auto_dismiss(assigns.auto_dismiss, assigns.role))
 
     # Build complete class string using Twm
     assigns =

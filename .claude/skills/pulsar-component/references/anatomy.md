@@ -150,11 +150,12 @@ end
 A component MAY render another whole Pulsar component (button → link, link →
 icon, header → link + icon). When it does:
 
-1. In the **lib file**, alias the concrete module: `alias Pulsar.Components.Icon`.
-2. In the **template** (`priv/templates/widget.ex.eex`), write that alias as
+1. In the **template** (`priv/templates/widget.ex.eex`), write the alias as
    `alias <%= @component_namespace %>.Icon` so it resolves to the user's
    namespace after generation. (This is the only kind of line that differs
-   between lib and template beyond the module wrapper.)
+   between the generated lib file and the template beyond the module wrapper.)
+2. After `mix pulsar.sync`, the generated lib file has the concrete
+   `alias Pulsar.Components.Icon` — produced for you, don't hand-edit it.
 3. In `lib/mix/tasks/pulsar.install.ex`, declare the dependency in `@components`:
    `widget: [:icon]`. The dependency must itself be a key in `@components`.
 

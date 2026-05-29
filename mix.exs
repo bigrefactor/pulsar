@@ -170,6 +170,7 @@ defmodule Pulsar.MixProject do
       "pulsar.test_app.theme": ["pulsar.dev_app.theme"],
       check: [
         "compile --warnings-as-errors",
+        "pulsar.sync --check",
         "format --check-formatted",
         "credo --strict",
         "dialyzer",
@@ -180,6 +181,7 @@ defmodule Pulsar.MixProject do
         "format --check-formatted",
         "deps.unlock --check-unused",
         "compile --warnings-as-errors",
+        "pulsar.sync --check",
         "credo --strict",
         "dialyzer",
         "test --cover",
