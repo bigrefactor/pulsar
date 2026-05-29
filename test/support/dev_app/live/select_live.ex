@@ -42,6 +42,7 @@ defmodule Pulsar.DevApp.SelectLive do
               size={size}
               options={@options}
               prompt="Choose…"
+              aria-label={"#{variant} #{color} #{size} #{state_label}"}
               data-fixture-cell={"#{variant}-#{color}-#{size}-#{state_label}"}
               {state_attrs}
             />
@@ -54,6 +55,7 @@ defmodule Pulsar.DevApp.SelectLive do
           name="sel_multi"
           multiple
           options={@options}
+          aria-label="multi-select"
           data-fixture-cell="multi"
         />
       </.fixture_section>
