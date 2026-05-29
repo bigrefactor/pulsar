@@ -43,14 +43,21 @@ defmodule Pulsar.DevApp.Router do
     live "/components/form", FormLive, :index
     live "/components/header", HeaderLive, :index
     live "/components/icon", IconLive, :index
-    live "/components/input", InputLive, :index
+    live "/components/input/outline", InputLive, :outline
+    live "/components/input/ghost", InputLive, :ghost
+    live "/components/input/solid", InputLive, :solid
     live "/components/label", LabelLive, :index
     live "/components/link", LinkLive, :index
     live "/components/list", ListLive, :index
     live "/components/radio_group", RadioGroupLive, :index
-    live "/components/select", SelectLive, :index
+    live "/components/select/outline", SelectLive, :outline
+    live "/components/select/ghost", SelectLive, :ghost
+    live "/components/select/solid", SelectLive, :solid
+    live "/components/select/multi", SelectMultiLive, :index
     live "/components/switch", SwitchLive, :index
-    live "/components/table", TableLive, :index
+    live "/components/table/outline", TableLive, :outline
+    live "/components/table/ghost", TableLive, :ghost
+    live "/components/table/solid", TableLive, :solid
     live "/components/textarea", TextareaLive, :index
 
     live "/keyboard/button", Keyboard.ButtonLive, :index

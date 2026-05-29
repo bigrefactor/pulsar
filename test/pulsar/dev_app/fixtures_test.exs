@@ -15,33 +15,14 @@ defmodule Pulsar.DevApp.FixturesTest do
   import Phoenix.ConnTest
   import Phoenix.LiveViewTest
 
+  alias Pulsar.DevApp.Components
   alias Pulsar.DevApp.Endpoint
 
   @endpoint Endpoint
 
-  @paths [
-    "/",
-    "/components/badge",
-    "/components/button",
-    "/components/card",
-    "/components/checkbox",
-    "/components/divider",
-    "/components/field",
-    "/components/flash",
-    "/components/flash_group",
-    "/components/form",
-    "/components/header",
-    "/components/icon",
-    "/components/input",
-    "/components/label",
-    "/components/link",
-    "/components/list",
-    "/components/radio_group",
-    "/components/select",
-    "/components/switch",
-    "/components/table",
-    "/components/textarea"
-  ]
+  # Index + every fixture route registered in `Components.fixtures/0`. Stays
+  # in sync automatically when fixtures are added/split.
+  @paths ["/" | Enum.map(Components.fixtures(), fn {_label, path} -> path end)]
 
   for path <- @paths do
     test "mounts #{path} without warnings" do
