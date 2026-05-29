@@ -14,14 +14,25 @@ defmodule Pulsar.DevApp.A11y do
 
   @doc """
   Sets `document.documentElement.dataset.theme` on the current page.
+
+  Forces a synchronous style + layout flush after the attribute change.
+  Chromium batches style recalc, so without the flush the next `evaluate`
+  (e.g. axe-core injection in `assert_axe_clean/1`) can read stale computed
+  styles where CSS variables have updated to the new theme's values but
+  `color: var(--…)` properties using them still resolve to the previous
+  theme's value. Toggling `body.style.display` + reading `offsetHeight`
+  is the canonical way to force the flush.
   """
   def set_theme(conn, theme) when theme in [:light, :dark] do
     # Hard-coded JS payloads (no interpolation) so this call site stays
     # un-injectable even if the guard above is widened to accept strings later.
     js =
       case theme do
-        :light -> "document.documentElement.dataset.theme = 'light'"
-        :dark -> "document.documentElement.dataset.theme = 'dark'"
+        :light ->
+          "document.documentElement.dataset.theme = 'light'; document.body.style.display='none'; void document.body.offsetHeight; document.body.style.display=''; void document.body.offsetHeight"
+
+        :dark ->
+          "document.documentElement.dataset.theme = 'dark'; document.body.style.display='none'; void document.body.offsetHeight; document.body.style.display=''; void document.body.offsetHeight"
       end
 
     PhoenixTest.Playwright.evaluate(conn, js)
