@@ -326,7 +326,7 @@ defmodule Pulsar.Components.SelectTest do
         """)
 
       # Hook should be on wrapper div, not select element
-      assert html =~ ~s(phx-hook=".PulsarSelect")
+      assert html =~ ~s(phx-hook="Pulsar.Components.Select.PulsarSelect")
       # Wrapper should have ID for event targeting (uses field name + -wrapper)
       assert html =~ ~s(id="skills-wrapper")
     end
