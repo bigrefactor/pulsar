@@ -190,15 +190,16 @@ defmodule Pulsar.MixProject do
   defp description do
     """
     Beautiful, accessible Phoenix LiveView components.
-    Single-dependency component library with production-ready, styled components
-    providing full accessibility, security, and Phoenix integration.
+    Single-dependency, self-contained component library with styled components
+    providing accessibility, security, and Phoenix integration.
+    Early stage — work in progress, not ready for production use.
     """
   end
 
   defp package do
     [
       name: "pulsar",
-      maintainers: ["Your Name"],
+      maintainers: ["Matt Pruitt"],
       licenses: ["MIT"],
       links: %{
         "Changelog" => "#{@source_url}/blob/main/CHANGELOG.md",
