@@ -320,8 +320,7 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     PhoenixTest.Playwright.evaluate(conn, expr, fn results ->
       if results != [] do
         raise ExUnit.AssertionError,
-          message:
-            "found [data-fixture-cell] elements with tabindex=-1: #{inspect(results)}"
+          message: "found [data-fixture-cell] elements with tabindex=-1: #{inspect(results)}"
       end
     end)
   end
