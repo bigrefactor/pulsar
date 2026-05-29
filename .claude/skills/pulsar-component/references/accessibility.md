@@ -53,6 +53,32 @@ navigation, Escape, Home/End), you must:
    Switch blocks for the `visit |> await_live_connected |> press |> assert_has`
    pattern.
 
+## Localization (i18n)
+
+Pulsar supports Gettext and is CLDR-*compatible* without depending on `ex_cldr`.
+A new component must not bake untranslatable English into the DOM:
+
+- **Translatable strings are overridable attrs with English defaults.** Any string
+  the component renders itself — visible text, `aria-label`, `title`, status/sr-only
+  text — gets its own attr (e.g. `dismiss_label`, `remove_label`,
+  `sr_required_text`) defaulting to the English word. Apps pass `gettext("…")`.
+  Components do **not** call `gettext` internally. Document the attr with
+  `doc: ~s{… Use with i18n: gettext("…")}`. Examples: `flash.ex` `dismiss_label`,
+  `select.ex` `remove_label`, `label.ex` `sr_required_text`.
+- **Numbers run through a formatter attr.** If the component displays a number, add
+  a `format_count`-style function attr defaulting to `&Integer.to_string/1`, and
+  apply it to every integer rendered. Apps can pass `&MyAppWeb.Cldr.Number.to_string!/1`.
+  See `textarea.ex`'s character counter. **Never add `ex_cldr` as a dependency.**
+- **Form errors translate via Gettext automatically.** Inputs route through `Field`,
+  whose `translate_error/1` calls `Gettext.dngettext/dgettext(_, "errors", …)`
+  against the app's backend — don't re-translate on the leaf.
+- **Generator wiring for the backend:** the app's Gettext backend reaches templates
+  as the `@gettext_module` assign (only needed if the component itself translates —
+  i.e. error translation; leaf string attrs don't need it). The library reference
+  files render it as `Pulsar.Gettext`, and `template_sync_test.exs` passes
+  `gettext_module: "Pulsar.Gettext"`. Cover any new string attr / formatter in the
+  unit tests (assert the English default, then an override).
+
 ## The axe browser gate
 
 `test/integration/a11y/axe_clean_test.exs` auto-discovers fixtures from

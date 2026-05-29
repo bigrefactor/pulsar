@@ -409,6 +409,22 @@ defmodule Pulsar.Components.Textarea do
     doc: "Maximum characters for display counting (different from maxlength)"
   )
 
+  attr(:format_count, :any,
+    default: &Integer.to_string/1,
+    doc:
+      ~s{Function that formats counter integers for display. Defaults to Integer.to_string/1; pass a CLDR formatter such as &MyAppWeb.Cldr.Number.to_string!/1 for locale-aware grouping.}
+  )
+
+  attr(:remaining_label, :string,
+    default: "remaining",
+    doc: ~s{Word shown after the remaining-character count. Use with i18n: gettext("remaining")}
+  )
+
+  attr(:over_label, :string,
+    default: "over",
+    doc: ~s{Word shown after the over-limit count. Use with i18n: gettext("over")}
+  )
+
   # Styling
   attr(:class, :string,
     default: "",
@@ -510,6 +526,9 @@ defmodule Pulsar.Components.Textarea do
         max_length={@max_length_display}
         chars_remaining={@chars_remaining}
         over_limit={@over_limit}
+        format_count={@format_count}
+        remaining_label={@remaining_label}
+        over_label={@over_label}
       />
     </div>
     """
@@ -521,6 +540,9 @@ defmodule Pulsar.Components.Textarea do
   attr(:max_length, :integer, default: nil)
   attr(:chars_remaining, :integer, default: nil)
   attr(:over_limit, :boolean, default: false)
+  attr(:format_count, :any, default: &Integer.to_string/1)
+  attr(:remaining_label, :string, default: "remaining")
+  attr(:over_label, :string, default: "over")
 
   defp character_count_display(assigns) do
     count_color_class =
@@ -536,9 +558,9 @@ defmodule Pulsar.Components.Textarea do
     ~H"""
     <div class="flex justify-between items-center text-sm" aria-hidden="true">
       <div class={@count_color_class}>
-        <span>{@character_count}</span><span :if={@max_length}>/{@max_length}</span>
+        <span>{@format_count.(@character_count)}</span><span :if={@max_length}>/{@format_count.(@max_length)}</span>
         <span :if={@over_limit and @chars_remaining != nil}>
-          ({abs(@chars_remaining)} over)
+          ({@format_count.(abs(@chars_remaining))} {@over_label})
         </span>
       </div>
       <div
@@ -548,7 +570,7 @@ defmodule Pulsar.Components.Textarea do
         }
         class="text-warning"
       >
-        {@chars_remaining} remaining
+        {@format_count.(@chars_remaining)} {@remaining_label}
       </div>
     </div>
     """

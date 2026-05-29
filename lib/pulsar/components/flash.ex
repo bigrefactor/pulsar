@@ -162,6 +162,11 @@ defmodule Pulsar.Components.Flash do
     doc: "Show close button for manual dismissal"
   )
 
+  attr(:dismiss_label, :string,
+    default: "Dismiss",
+    doc: ~s{Accessible label for the close button. Use with i18n: gettext("Dismiss")}
+  )
+
   attr(:auto_dismiss, :boolean,
     default: nil,
     doc:
@@ -297,7 +302,7 @@ defmodule Pulsar.Components.Flash do
         :if={@dismissible}
         type="button"
         class={close_button_classes(@size)}
-        aria-label="Dismiss"
+        aria-label={@dismiss_label}
         aria-controls={@id}
         phx-click={JS.dispatch("pulsar:flash-dismiss", to: "##{@id}")}
       >

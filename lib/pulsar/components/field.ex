@@ -123,6 +123,22 @@ defmodule Pulsar.Components.Field do
         <:label>Dark mode</:label>
       </.field>
 
+  ## Forms without Ecto
+
+  Fields don't require an Ecto schema. Build a form from a plain map with
+  `Phoenix.Component.to_form/2`, passing errors through its `:errors` option,
+  then render the field as usual. Use `show_errors={:always}` to display them
+  immediately:
+
+      # In your LiveView
+      form = to_form(%{"email" => ""}, as: :signup, errors: [email: {"is required", []}])
+
+      # In your template
+      <.field field={@form[:email]} type="email" show_errors={:always} />
+
+  Error tuples (`{message, opts}`) are localized through Gettext just like
+  changeset errors.
+
   """
 
   use Phoenix.Component
@@ -640,11 +656,15 @@ defmodule Pulsar.Components.Field do
     ])
   end
 
-  # Simple error translation - in real apps this would use Gettext
+  # Translates a changeset error tuple through Gettext using the "errors"
+  # domain, falling back to count-aware plural forms when the error carries a
+  # `:count` option. Mirrors Phoenix's generated `translate_error/1`.
   defp translate_error({msg, opts}) do
-    Enum.reduce(opts, msg, fn {key, value}, acc ->
-      String.replace(acc, "%{#{key}}", to_string(value))
-    end)
+    if count = opts[:count] do
+      Gettext.dngettext(Pulsar.Gettext, "errors", msg, msg, count, opts)
+    else
+      Gettext.dgettext(Pulsar.Gettext, "errors", msg, opts)
+    end
   end
 
   defp translate_error(msg) when is_binary(msg), do: msg
