@@ -31,22 +31,37 @@ defmodule Pulsar.Integration.A11y.MeasureTest do
 
   @reflow_width 320
 
-  # Filter list: route → slug. Skips fixtures that don't map to an audit page
-  # (form is a composite, flash/trigger is a behavior duplicate of flash).
-  @fixtures Components.fixtures()
-            |> Enum.flat_map(fn
-              {_label, "/components/form"} -> []
-              {_label, "/components/flash/trigger"} -> []
-              {_label, "/components/" <> slug = route} -> [{slug, route}]
-              _ -> []
-            end)
+  # Group fixtures by component (the first path segment after `/components/`),
+  # mapping each component to all of its routes. Heavy components
+  # (input/select/table) are split across per-variant sub-routes
+  # (`/components/input/outline`, `.../ghost`, `.../solid`); their cells are
+  # aggregated into one report per component, since cell IDs already carry the
+  # variant. Skips fixtures that don't map to an audit page (form is a
+  # composite, flash/trigger is a behavior duplicate of flash).
+  @components Components.fixtures()
+              |> Enum.flat_map(fn
+                {_label, "/components/form"} ->
+                  []
 
-  for {slug, route} <- @fixtures, theme <- [:light, :dark] do
+                {_label, "/components/flash/trigger"} ->
+                  []
+
+                {_label, "/components/" <> rest = route} ->
+                  [{rest |> String.split("/") |> hd(), route}]
+
+                _ ->
+                  []
+              end)
+              |> Enum.group_by(fn {slug, _route} -> slug end, fn {_slug, route} -> route end)
+              |> Enum.map(fn {slug, routes} -> {slug, Enum.sort(routes)} end)
+              |> Enum.sort()
+
+  for {slug, routes} <- @components, theme <- [:light, :dark] do
     @slug slug
-    @route route
+    @routes routes
     @theme theme
 
-    test "measure #{@slug} (#{@route}) [#{@theme}]", %{conn: conn} do
+    test "measure #{@slug} [#{@theme}]", %{conn: conn} do
       component_filter = System.get_env("PULSAR_A11Y_COMPONENT")
       theme_filter = System.get_env("PULSAR_A11Y_THEME")
 
@@ -58,12 +73,29 @@ defmodule Pulsar.Integration.A11y.MeasureTest do
           :ok
 
         true ->
-          run_measurement(conn, @slug, @route, @theme)
+          run_measurement(conn, @slug, @routes, @theme)
       end
     end
   end
 
-  defp run_measurement(conn, slug, route, theme) do
+  defp run_measurement(conn, slug, routes, theme) do
+    measurements = Enum.map(routes, &measure_route(conn, &1, theme))
+
+    baseline = merge_baselines(Enum.map(measurements, & &1.baseline))
+    text_spacing_overflows = Enum.flat_map(measurements, & &1.text_spacing)
+    reflow_cells = Enum.flat_map(measurements, & &1.reflow_cells)
+    reflow_page = Enum.any?(measurements, & &1.reflow_page)
+
+    report =
+      build_report(slug, theme, baseline, text_spacing_overflows, reflow_cells, reflow_page)
+
+    File.mkdir_p!(@output_dir)
+    File.write!(Path.join(@output_dir, "#{slug}-#{theme}.md"), report)
+  end
+
+  # Visits one route and captures its baseline cells plus the text-spacing and
+  # reflow overflow probes for that page.
+  defp measure_route(conn, route, theme) do
     parent = self()
 
     conn
@@ -84,16 +116,21 @@ defmodule Pulsar.Integration.A11y.MeasureTest do
     )
     |> PhoenixTest.Playwright.evaluate("window.PulsarA11yMeasure.removeReflowConstraint()")
 
-    baseline = receive_msg(:baseline)
-    text_spacing_overflows = receive_msg(:text_spacing)
-    reflow_cells = receive_msg(:reflow_cells)
-    reflow_page = receive_msg(:reflow_page)
+    %{
+      baseline: receive_msg(:baseline),
+      text_spacing: receive_msg(:text_spacing),
+      reflow_cells: receive_msg(:reflow_cells),
+      reflow_page: receive_msg(:reflow_page)
+    }
+  end
 
-    report =
-      build_report(slug, theme, baseline, text_spacing_overflows, reflow_cells, reflow_page)
+  # Concatenates per-route baselines into one: cells from every route, with the
+  # viewport taken from the first (identical across a component's routes).
+  defp merge_baselines([]), do: %{"cells" => [], "viewport" => %{}}
 
-    File.mkdir_p!(@output_dir)
-    File.write!(Path.join(@output_dir, "#{slug}-#{theme}.md"), report)
+  defp merge_baselines([first | _] = baselines) do
+    cells = Enum.flat_map(baselines, &Map.get(&1, "cells", []))
+    %{"cells" => cells, "viewport" => Map.get(first, "viewport", %{})}
   end
 
   # Pipes the conn through evaluate-with-callback, sending the JS result to
