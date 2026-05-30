@@ -15,13 +15,6 @@ defmodule <%= @web_module %>.Storybook.Components.Icon do
         doc: "Heroicon name (e.g. hero-bell, hero-check-circle-solid)"
       },
       %Attr{
-        id: :variant,
-        type: :string,
-        values: ~w(outline solid mini micro),
-        default: "outline",
-        doc: "Heroicons variant"
-      },
-      %Attr{
         id: :size,
         type: :string,
         values: ~w(xs sm md lg xl),
@@ -80,8 +73,8 @@ defmodule <%= @web_module %>.Storybook.Components.Icon do
       },
       %Variation{
         id: :star_solid,
-        description: "Star icon (solid variant)",
-        attributes: %{name: "hero-star", variant: "solid", color: "warning"}
+        description: "Star icon (solid)",
+        attributes: %{name: "hero-star-solid", color: "warning"}
       },
       %Variation{
         id: :info_circle,
@@ -95,8 +88,8 @@ defmodule <%= @web_module %>.Storybook.Components.Icon do
       },
       %Variation{
         id: :size_xs_mini,
-        description: "Extra-small mini variant",
-        attributes: %{name: "hero-check", variant: "mini", size: "xs", color: "success"}
+        description: "Extra-small mini icon",
+        attributes: %{name: "hero-check-mini", size: "xs", color: "success"}
       },
       %Variation{
         id: :size_xl,

@@ -221,11 +221,11 @@ defmodule Pulsar.Components.FlashGroup do
 
   # Type to icon mapping
   @type_icons %{
-    error: "hero-x-circle",
-    warning: "hero-exclamation-triangle",
-    info: "hero-information-circle",
-    success: "hero-check-circle"
-    # All other types use "hero-bell" (see get_flash_icon/1)
+    error: "hero-x-circle-mini",
+    warning: "hero-exclamation-triangle-mini",
+    info: "hero-information-circle-mini",
+    success: "hero-check-circle-mini"
+    # All other types use "hero-bell-mini" (see get_flash_icon/1)
   }
 
   # Position configuration with container classes and animations (without z-index)
@@ -444,7 +444,7 @@ defmodule Pulsar.Components.FlashGroup do
         }
       >
         <:start_icon>
-          <Icon.icon name={get_flash_icon(type)} variant="mini" color={get_flash_color(type)} />
+          <Icon.icon name={get_flash_icon(type)} color={get_flash_color(type)} />
         </:start_icon>
         {message}
       </Flash.flash>
@@ -512,7 +512,7 @@ defmodule Pulsar.Components.FlashGroup do
 
   # Get icon for flash type
   defp get_flash_icon(type) do
-    @type_icons[normalize_type(type)] || "hero-bell"
+    @type_icons[normalize_type(type)] || "hero-bell-mini"
   end
 
   # Normalize flash type to atom for consistent lookups

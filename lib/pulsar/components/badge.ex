@@ -24,7 +24,7 @@ defmodule Pulsar.Components.Badge do
       # Badge with status icon
       <.badge color="success">
         <:start_addon>
-          <.icon name="hero-check-circle" variant="micro" size="xs" />
+          <.icon name="hero-check-circle-micro" size="xs" />
         </:start_addon>
         Completed
       </.badge>
@@ -34,7 +34,7 @@ defmodule Pulsar.Components.Badge do
         Error
         <:end_addon>
           <button phx-click="remove_error">
-            <.icon name="hero-x-mark" variant="micro" size="xs" />
+            <.icon name="hero-x-mark-micro" size="xs" />
           </button>
         </:end_addon>
       </.badge>
@@ -42,12 +42,12 @@ defmodule Pulsar.Components.Badge do
       # Badge with both start and end content
       <.badge color="info">
         <:start_addon>
-          <.icon name="hero-star" variant="micro" size="xs" />
+          <.icon name="hero-star-micro" size="xs" />
         </:start_addon>
         Featured
         <:end_addon>
           <button phx-click="remove_featured">
-            <.icon name="hero-x-mark" variant="micro" size="xs" />
+            <.icon name="hero-x-mark-micro" size="xs" />
           </button>
         </:end_addon>
       </.badge>

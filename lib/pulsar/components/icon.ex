@@ -2,26 +2,28 @@ defmodule Pulsar.Components.Icon do
   @moduledoc """
   Icon component supporting Heroicons with flexible sizing and coloring.
 
-  Provides access to all Heroicons variants (outline, solid, mini, micro) with
-  Pulsar's semantic color system and responsive sizing.
+  Provides access to all Heroicons variants with Pulsar's semantic color system
+  and responsive sizing.
 
-  ## Heroicons Variants
+  ## Heroicons Names
 
-  - **outline**: 24×24 stroke-based icons (default)
-  - **solid**: 24×24 filled icons
-  - **mini**: 20×20 filled icons for compact interfaces
-  - **micro**: 16×16 filled icons for very tight spaces
+  The `name` is the full Heroicon class, including the variant suffix:
+
+  - `hero-check` — 24×24 stroke-based outline icon
+  - `hero-check-solid` — 24×24 filled icon
+  - `hero-check-mini` — 20×20 filled icon for compact interfaces
+  - `hero-check-micro` — 16×16 filled icon for very tight spaces
 
   ## Examples
 
       # Basic outline icon (decorative by default)
       <.icon name="hero-check" />
 
-      # Solid variant with color
-      <.icon name="hero-heart" variant="solid" color="danger" />
+      # Solid icon with color
+      <.icon name="hero-heart-solid" color="danger" />
 
       # Micro icon scaled up
-      <.icon name="hero-x-mark" variant="micro" size="lg" />
+      <.icon name="hero-x-mark-micro" size="lg" />
 
       # Current color (inherits from parent)
       <.icon name="hero-information-circle" color="current" />
@@ -92,12 +94,7 @@ defmodule Pulsar.Components.Icon do
 
   attr :name, :string,
     required: true,
-    doc: "Heroicon name (e.g., 'hero-check', 'hero-x-mark')"
-
-  attr :variant, :string,
-    default: "outline",
-    values: ~w(outline solid mini micro),
-    doc: "Heroicon variant - which icon set to use"
+    doc: "Full Heroicon class including any variant suffix (e.g., 'hero-check', 'hero-x-mark-micro', 'hero-bell-solid')"
 
   attr :size, :string,
     default: "md",
@@ -145,18 +142,6 @@ defmodule Pulsar.Components.Icon do
   # ICON HELPER FUNCTIONS
   # ============================================================================
 
-  # Build the Heroicon CSS class name based on icon name and variant
-  defp build_heroicon_class(name, variant) do
-    case {name, variant} do
-      {"hero-" <> icon_name, "outline"} -> "hero-#{icon_name}"
-      {"hero-" <> icon_name, "solid"} -> "hero-#{icon_name}-solid"
-      {"hero-" <> icon_name, "mini"} -> "hero-#{icon_name}-mini"
-      {"hero-" <> icon_name, "micro"} -> "hero-#{icon_name}-micro"
-      # Pass through non-heroicon names
-      {name, _} -> name
-    end
-  end
-
   # Get size classes from configuration map
   @spec get_size_classes(String.t()) :: String.t()
   defp get_size_classes(size) do
@@ -175,11 +160,9 @@ defmodule Pulsar.Components.Icon do
 
   # Assign CSS classes with Twm
   defp assign_classes(assigns) do
-    heroicon_class = build_heroicon_class(assigns.name, assigns.variant)
-
     class =
       merge([
-        heroicon_class,
+        assigns.name,
         get_size_classes(assigns.size),
         get_color_classes(assigns.color),
         assigns.class

@@ -44,7 +44,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Flash do
     # Flash with icon and auto-dismiss
     <.flash color="info" auto_dismiss dismiss_after={3000}>
       <:start_icon>
-        <.icon name="hero-information-circle" variant="mini" size="sm" />
+        <.icon name="hero-information-circle-mini" size="sm" />
       </:start_icon>
       New feature available
     </.flash>
@@ -52,7 +52,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Flash do
     # Custom styled flash
     <.flash variant="outline" color="warning" dismissible>
       <:start_icon>
-        <.icon name="hero-exclamation-triangle" variant="mini" size="sm" />
+        <.icon name="hero-exclamation-triangle-mini" size="sm" />
       </:start_icon>
       <strong>Warning:</strong> This action cannot be undone
     </.flash>

@@ -92,7 +92,7 @@ defmodule Pulsar.CoreComponents do
         {Map.drop(@rest, [:class])}
       >
         <:start_icon>
-          <Icon.icon name={get_flash_icon(@kind)} variant="mini" size="sm" />
+          <Icon.icon name={get_flash_icon(@kind)} size="sm" />
         </:start_icon>
         <div :if={@title}>
           <p class="font-semibold">{@title}</p>
@@ -209,7 +209,7 @@ defmodule Pulsar.CoreComponents do
   ## Examples
 
       <.icon name="hero-check" class="size-4" />
-      <.icon name="hero-check" variant="solid" color="success" size="lg" />
+      <.icon name="hero-check-solid" color="success" size="lg" />
   """
   defdelegate icon(assigns), to: Icon
 
@@ -747,9 +747,9 @@ defmodule Pulsar.CoreComponents do
   defp map_kind_to_role(_), do: "status"
 
   # Get appropriate icon for flash kind
-  defp get_flash_icon(:info), do: "hero-information-circle"
-  defp get_flash_icon(:error), do: "hero-exclamation-circle"
-  defp get_flash_icon(_), do: "hero-bell"
+  defp get_flash_icon(:info), do: "hero-information-circle-mini"
+  defp get_flash_icon(:error), do: "hero-exclamation-circle-mini"
+  defp get_flash_icon(_), do: "hero-bell-mini"
 
   @doc """
   Translates a changeset error tuple through your app's Gettext backend.

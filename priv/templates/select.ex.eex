@@ -309,7 +309,7 @@ def select(assigns) do
     merge([
       get_select_classes(assigns.variant, effective_color, assigns.size),
       get_state_classes(assigns.disabled),
-      "pr-10",
+      if(assigns.multiple, do: "", else: "pr-10"),
       assigns.class
     ])
 
@@ -351,10 +351,10 @@ def select(assigns) do
             type="button"
             phx-click={remove_badge_js(@on_remove_badge, @id, option.value)}
             phx-value-option={option.value}
-            class="ml-1 hover:bg-foreground/10 rounded-full p-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current transition-colors"
+            class="ml-1 cursor-pointer hover:bg-foreground/10 rounded-full p-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current transition-colors"
             aria-label={"#{@remove_label} #{option.label}"}
           >
-            <.icon name="hero-x-mark" variant="micro" size="xs" color="current" aria-hidden="true" />
+            <.icon name="hero-x-mark-micro" size="xs" color="current" aria-hidden="true" />
           </button>
         </:end_addon>
       </Badge.badge>
@@ -384,12 +384,15 @@ def select(assigns) do
         {Phoenix.HTML.raw(@option_html)}
       </select>
 
-  <!-- Custom arrow icon -->
-      <div class={[
-        "absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none",
-        get_arrow_classes(@variant, @effective_color),
-        @disabled && "opacity-disabled"
-      ]}>
+  <!-- Custom arrow icon (single-select only; native multi-select listboxes have no dropdown affordance) -->
+      <div
+        :if={!@multiple}
+        class={[
+          "absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none",
+          get_arrow_classes(@variant, @effective_color),
+          @disabled && "opacity-disabled"
+        ]}
+      >
         <.icon name="hero-chevron-down" size="sm" color="current" />
       </div>
     </div>
