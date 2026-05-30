@@ -16,6 +16,9 @@ defmodule Pulsar.DocCoverageFixture do
   def bare, do: :ok
 
   # Behaviour callback implementation — exempt (documented by the behaviour).
-  @impl Mix.Task
+  # Deliberately *without* `@impl`, so its doc is `:none` rather than `:hidden`.
+  # That forces the audit's `callback_set/1` membership check to be the only thing
+  # exempting it; with `@impl` the `:hidden` doc would exempt it regardless,
+  # leaving the callback path untested.
   def run(_argv), do: :ok
 end

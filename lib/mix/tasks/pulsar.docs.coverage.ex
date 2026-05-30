@@ -26,6 +26,17 @@ defmodule Mix.Tasks.Pulsar.Docs.Coverage do
     Mix.Task.run("compile")
 
     case audit() do
+      {0, _} ->
+        Mix.raise("""
+        pulsar.docs.coverage measured 0 public functions.
+
+        Module discovery returned nothing — :pulsar's lib/ modules were not found
+        (e.g. the app failed to compile, or _build was restored at a different
+        path than the one this task scans). Refusing to report success vacuously,
+        since "0 undocumented of 0" is the silently-green failure this gate exists
+        to prevent.
+        """)
+
       {total, []} ->
         Mix.shell().info("pulsar.docs.coverage: 100% — #{total} public function(s), 0 undocumented.")
 
