@@ -257,25 +257,47 @@
 
   function measureBorderContrast(el) {
     const style = window.getComputedStyle(el);
-    const widthPx = parseFloat(style.borderTopWidth) || 0;
-    if (widthPx <= 0 || style.borderTopStyle === "none") {
-      return { ratio: null, reason: "no-border" };
-    }
-    const borderColor = parseColor(style.borderTopColor);
-    if (!borderColor || borderColor.a === 0) {
-      return { ratio: null, reason: "no-border" };
-    }
     const parent = el.parentElement;
     const adjacentBg = parent ? effectiveBackground(parent) : { r: 255, g: 255, b: 255, a: 1 };
-    const borderEffective = compositeOver(borderColor, adjacentBg);
-    const ratio = contrastRatio(borderEffective, adjacentBg);
+
+    // Inspect all four edges, not just the top — components like the header
+    // outline variant delineate with a single `border-b`, which a top-only
+    // read would miss and report as `no-border`. For each visible edge
+    // (width > 0, style not "none", non-transparent color) compute its
+    // contrast against the parent background. Report the thickest visible
+    // edge; on a width tie, prefer the lowest-contrast edge (worst case for
+    // the audit). Uniform four-edge borders collapse to a single value.
+    const edges = ["Top", "Right", "Bottom", "Left"]
+      .map((side) => {
+        const widthPx = parseFloat(style[`border${side}Width`]) || 0;
+        if (widthPx <= 0 || style[`border${side}Style`] === "none") return null;
+        const borderColor = parseColor(style[`border${side}Color`]);
+        if (!borderColor || borderColor.a === 0) return null;
+        const borderEffective = compositeOver(borderColor, adjacentBg);
+        return {
+          edge: side.toLowerCase(),
+          widthPx: round(widthPx, 1),
+          ratio: round(contrastRatio(borderEffective, adjacentBg), 2),
+          color: rgbString(borderEffective),
+        };
+      })
+      .filter(Boolean);
+
+    if (edges.length === 0) {
+      return { ratio: null, reason: "no-border" };
+    }
+
+    edges.sort((a, b) => b.widthPx - a.widthPx || a.ratio - b.ratio);
+    const chosen = edges[0];
+
     return {
-      ratio: round(ratio, 2),
-      color: rgbString(borderEffective),
+      ratio: chosen.ratio,
+      edge: chosen.edge,
+      color: chosen.color,
       bg: rgbString(adjacentBg),
-      widthPx: round(widthPx, 1),
+      widthPx: chosen.widthPx,
       threshold: 3.0,
-      pass: ratio >= 2.995,
+      pass: chosen.ratio >= 2.995,
     };
   }
 

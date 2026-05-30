@@ -165,13 +165,13 @@ defmodule Pulsar.Components.Header do
       "warning" => "text-warning"
     },
     "outline" => %{
-      "danger" => "border-b border-danger-200 pb-4 text-danger",
-      "info" => "border-b border-info-200 pb-4 text-info",
-      "neutral" => "border-b border-neutral-200 pb-4",
-      "primary" => "border-b border-primary-200 pb-4 text-primary",
-      "secondary" => "border-b border-secondary-200 pb-4 text-secondary",
-      "success" => "border-b border-success-200 pb-4 text-success",
-      "warning" => "border-b border-warning-200 pb-4 text-warning"
+      "danger" => "border-b border-border-strong pb-4 text-danger",
+      "info" => "border-b border-border-strong pb-4 text-info",
+      "neutral" => "border-b border-border-strong pb-4",
+      "primary" => "border-b border-border-strong pb-4 text-primary",
+      "secondary" => "border-b border-border-strong pb-4 text-secondary",
+      "success" => "border-b border-border-strong pb-4 text-success",
+      "warning" => "border-b border-border-strong pb-4 text-warning"
     },
     "solid" => %{
       "danger" => "bg-danger-100 text-danger-900 p-6 rounded-box",
@@ -335,7 +335,7 @@ defmodule Pulsar.Components.Header do
         </div>
       </div>
 
-      <hr :if={@divider && @variant != "outline"} class="border-border" />
+      <hr :if={@divider && @variant != "outline"} class="border-border-strong" />
     </header>
     """
   end

@@ -16,7 +16,10 @@ Columns:
   pass under WCAG 2.5.8 Target Size minimum.
 - **Text** — text-color vs effective background contrast ratio
   (alpha-resolved). Threshold 4.5:1 (3:1 for large text). `—` means no
-  text or no resolvable color.
+  text or no resolvable color. For mask-painted icon glyphs the value is
+  the painted glyph color vs the *ancestor* background at the 3:1 WCAG
+  1.4.11 non-text threshold, marked `(glyph)`; decorative
+  (`aria-hidden`) icons are exempt and marked `(glyph, decorative)`.
 - **Border** — border-color vs adjacent background contrast. `—` if no
   visible border. Threshold 3:1 per WCAG 1.4.11 Non-text Contrast.
 - **Focus** — focus-visible ring/outline vs adjacent background.
@@ -24,7 +27,7 @@ Columns:
 
 | Cell ID | Tag | Width | Height | ≥24×24 | Text | Border | Focus |
 |---------|-----|-------|--------|--------|------|--------|-------|
-| `external` | `a` | 87.69 | 24 | ✓ | 6.54:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `external` | `a` | 87.69 | 28 | ✓ | 6.54:1 ✓ | 6.54:1 ✓ (bottom) | 5.02:1 ✓ |
 | `ghost-danger-lg` | `a` | 75.63 | 32 | ✓ | 6.14:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-danger-md` | `a` | 78.25 | 28 | ✓ | 6.14:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-danger-sm` | `a` | 68.31 | 24 | ✓ | 6.14:1 ✓ | — (no-border) | 5.02:1 ✓ |
@@ -73,30 +76,30 @@ Columns:
 | `link-warning-md` | `a` | 85.11 | 24 | ✓ | 8.67:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `link-warning-sm` | `a` | 74.44 | 20 | ✗ | 8.67:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `link-warning-xs` | `a` | 60.83 | 16 | ✗ | 8.67:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-danger-lg` | `a` | 75.63 | 32 | ✓ | 6.14:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-danger-md` | `a` | 78.25 | 28 | ✓ | 6.14:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-danger-sm` | `a` | 68.31 | 24 | ✓ | 6.14:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-danger-xs` | `a` | 55.44 | 20 | ✗ | 6.14:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-neutral-lg` | `a` | 75.33 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-neutral-md` | `a` | 78.09 | 28 | ✓ | 19.27:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-neutral-sm` | `a` | 68.3 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-neutral-xs` | `a` | 55.56 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-primary-lg` | `a` | 79.8 | 32 | ✓ | 6.54:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-primary-md` | `a` | 82.06 | 28 | ✓ | 6.54:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-primary-sm` | `a` | 71.77 | 24 | ✓ | 6.54:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-primary-xs` | `a` | 58.55 | 20 | ✗ | 6.54:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-secondary-lg` | `a` | 102.86 | 32 | ✓ | 5.64:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-secondary-md` | `a` | 102.8 | 28 | ✓ | 5.64:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-secondary-sm` | `a` | 90.16 | 24 | ✓ | 5.64:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-secondary-xs` | `a` | 74.56 | 20 | ✗ | 5.64:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-success-lg` | `a` | 85.22 | 32 | ✓ | 8.66:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-success-md` | `a` | 86.86 | 28 | ✓ | 8.66:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-success-sm` | `a` | 75.97 | 24 | ✓ | 8.66:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-success-xs` | `a` | 62.14 | 20 | ✗ | 8.66:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-warning-lg` | `a` | 83.23 | 32 | ✓ | 8.67:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-warning-md` | `a` | 85.11 | 28 | ✓ | 8.67:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-warning-sm` | `a` | 74.44 | 24 | ✓ | 8.67:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-warning-xs` | `a` | 60.83 | 20 | ✗ | 8.67:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `outline-danger-lg` | `a` | 75.63 | 32 | ✓ | 6.14:1 ✓ | 6.14:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-danger-md` | `a` | 78.25 | 28 | ✓ | 6.14:1 ✓ | 6.14:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-danger-sm` | `a` | 68.31 | 24 | ✓ | 6.14:1 ✓ | 6.14:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-danger-xs` | `a` | 55.44 | 20 | ✗ | 6.14:1 ✓ | 6.14:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-neutral-lg` | `a` | 75.33 | 32 | ✓ | 19.27:1 ✓ | 19.27:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-neutral-md` | `a` | 78.09 | 28 | ✓ | 19.27:1 ✓ | 19.27:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-neutral-sm` | `a` | 68.3 | 24 | ✓ | 19.27:1 ✓ | 19.27:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-neutral-xs` | `a` | 55.56 | 20 | ✗ | 19.27:1 ✓ | 19.27:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-primary-lg` | `a` | 79.8 | 32 | ✓ | 6.54:1 ✓ | 6.54:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-primary-md` | `a` | 82.06 | 28 | ✓ | 6.54:1 ✓ | 6.54:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-primary-sm` | `a` | 71.77 | 24 | ✓ | 6.54:1 ✓ | 6.54:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-primary-xs` | `a` | 58.55 | 20 | ✗ | 6.54:1 ✓ | 6.54:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-secondary-lg` | `a` | 102.86 | 32 | ✓ | 5.64:1 ✓ | 5.64:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-secondary-md` | `a` | 102.8 | 28 | ✓ | 5.64:1 ✓ | 5.64:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-secondary-sm` | `a` | 90.16 | 24 | ✓ | 5.64:1 ✓ | 5.64:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-secondary-xs` | `a` | 74.56 | 20 | ✗ | 5.64:1 ✓ | 5.64:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-success-lg` | `a` | 85.22 | 32 | ✓ | 8.66:1 ✓ | 8.66:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-success-md` | `a` | 86.86 | 28 | ✓ | 8.66:1 ✓ | 8.66:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-success-sm` | `a` | 75.97 | 24 | ✓ | 8.66:1 ✓ | 8.66:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-success-xs` | `a` | 62.14 | 20 | ✗ | 8.66:1 ✓ | 8.66:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-warning-lg` | `a` | 83.23 | 32 | ✓ | 8.67:1 ✓ | 8.67:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-warning-md` | `a` | 85.11 | 28 | ✓ | 8.67:1 ✓ | 8.67:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-warning-sm` | `a` | 74.44 | 24 | ✓ | 8.67:1 ✓ | 8.67:1 ✓ (bottom) | 5.02:1 ✓ |
+| `outline-warning-xs` | `a` | 60.83 | 20 | ✗ | 8.67:1 ✓ | 8.67:1 ✓ (bottom) | 5.02:1 ✓ |
 | `solid-danger-lg` | `a` | 75.63 | 28 | ✓ | 6.14:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `solid-danger-md` | `a` | 78.25 | 24 | ✓ | 6.14:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `solid-danger-sm` | `a` | 68.31 | 20 | ✗ | 6.14:1 ✓ | — (no-border) | 5.02:1 ✓ |
