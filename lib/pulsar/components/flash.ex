@@ -29,7 +29,7 @@ defmodule Pulsar.Components.Flash do
       # Flash with icon and auto-dismiss
       <.flash color="info" auto_dismiss dismiss_after={3000}>
         <:start_icon>
-          <.icon name="hero-information-circle" variant="mini" size="sm" />
+          <.icon name="hero-information-circle-mini" size="sm" />
         </:start_icon>
         New feature available
       </.flash>
@@ -37,7 +37,7 @@ defmodule Pulsar.Components.Flash do
       # Custom styled flash
       <.flash variant="outline" color="warning" dismissible>
         <:start_icon>
-          <.icon name="hero-exclamation-triangle" variant="mini" size="sm" />
+          <.icon name="hero-exclamation-triangle-mini" size="sm" />
         </:start_icon>
         <strong>Warning:</strong> This action cannot be undone
       </.flash>
@@ -249,7 +249,7 @@ defmodule Pulsar.Components.Flash do
       # Error flash with icon
       <.flash variant="solid" color="danger" role="alert">
         <:start_icon>
-          <.icon name="hero-exclamation-circle" variant="mini" />
+          <.icon name="hero-exclamation-circle-mini" />
         </:start_icon>
         Failed to save changes
       </.flash>

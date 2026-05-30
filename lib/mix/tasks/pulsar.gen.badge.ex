@@ -39,7 +39,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Badge do
     # Badge with status icon
     <.badge color="success">
       <:start_addon>
-        <.icon name="hero-check-circle" variant="micro" size="xs" />
+        <.icon name="hero-check-circle-micro" size="xs" />
       </:start_addon>
       Completed
     </.badge>
@@ -49,7 +49,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Badge do
       Error
       <:end_addon>
         <button phx-click="remove_error">
-          <.icon name="hero-x-mark" variant="micro" size="xs" />
+          <.icon name="hero-x-mark-micro" size="xs" />
         </button>
       </:end_addon>
     </.badge>

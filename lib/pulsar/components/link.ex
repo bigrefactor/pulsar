@@ -21,9 +21,9 @@ defmodule Pulsar.Components.Link do
       </Link.a>
 
   ## Variants
-  - `solid` (default): No underline
+  - `outline` (default): Always underlined — use for links inline in body text
+  - `solid`: No underline — use for standalone / navigation links
   - `ghost`: Underline on hover
-  - `outline`: Always underlined
   """
 
   use Phoenix.Component
@@ -35,9 +35,10 @@ defmodule Pulsar.Components.Link do
 
   # Pulsar-specific styling attributes
   attr(:variant, :string,
-    default: "solid",
+    default: "outline",
     values: ~w(solid ghost outline),
-    doc: "Visual style variant of the link. solid=no underline, ghost=hover underline, outline=always underline"
+    doc:
+      "Visual style variant of the link. outline=always underlined (inline body text), solid=no underline (standalone/nav links), ghost=hover underline"
   )
 
   attr(:color, :string,

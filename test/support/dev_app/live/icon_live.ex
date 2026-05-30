@@ -4,31 +4,39 @@ defmodule Pulsar.DevApp.IconLive do
 
   alias Pulsar.Components.Icon
 
-  @icon_variants ~w(outline solid mini micro)
+  # Heroicon names are full classes including the variant suffix. The lists are
+  # spelled out as literals (not assembled from a suffix at runtime) so Tailwind
+  # detects every class and generates its mask CSS.
+  @variant_groups [
+    {"outline", ~w(hero-bolt hero-check hero-exclamation-triangle hero-information-circle hero-x-mark)},
+    {"solid",
+     ~w(hero-bolt-solid hero-check-solid hero-exclamation-triangle-solid hero-information-circle-solid hero-x-mark-solid)},
+    {"mini",
+     ~w(hero-bolt-mini hero-check-mini hero-exclamation-triangle-mini hero-information-circle-mini hero-x-mark-mini)},
+    {"micro",
+     ~w(hero-bolt-micro hero-check-micro hero-exclamation-triangle-micro hero-information-circle-micro hero-x-mark-micro)}
+  ]
   @sizes ~w(xs sm md lg xl)
   @colors ~w(neutral primary secondary success danger warning)
-  @names ~w(hero-bolt hero-check hero-exclamation-triangle hero-information-circle hero-x-mark)
 
   def render(assigns) do
     assigns =
       assign(assigns,
-        icon_variants: @icon_variants,
+        variant_groups: @variant_groups,
         sizes: @sizes,
-        colors: @colors,
-        names: @names
+        colors: @colors
       )
 
     ~H"""
     <.fixture_page name="icon" title="Icon">
       <.fixture_section
-        :for={variant <- @icon_variants}
+        :for={{variant, names} <- @variant_groups}
         name={"variant-#{variant}"}
         title={"variant: #{variant}"}
       >
-        <%= for name <- @names, size <- @sizes do %>
+        <%= for name <- names, size <- @sizes do %>
           <Icon.icon
             name={name}
-            variant={variant}
             size={size}
             data-fixture-cell={"#{variant}-#{name}-#{size}"}
           />

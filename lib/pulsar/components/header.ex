@@ -265,8 +265,7 @@ defmodule Pulsar.Components.Header do
           <li :for={{breadcrumb, index} <- Enum.with_index(@breadcrumb)} class="flex items-center">
             <.icon
               :if={index > 0}
-              name="hero-chevron-right"
-              variant="micro"
+              name="hero-chevron-right-micro"
               size="xs"
               color="neutral"
               class="mx-1"

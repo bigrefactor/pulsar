@@ -522,6 +522,7 @@ defmodule Pulsar.Components.Button do
       patch={@patch}
       method={@method}
       csrf_token={@csrf_token}
+      variant="solid"
       class={@merged_classes}
       id={@id}
       aria_label={@aria_label}

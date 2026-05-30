@@ -561,6 +561,20 @@ defmodule Pulsar.Components.ButtonTest do
       assert html =~ "Dashboard"
     end
 
+    test "navigation link does not inherit Link's underline border (uses solid variant)" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Button.button navigate="/dashboard">Dashboard</Button.button>
+        """)
+
+      # Buttons-as-links must not pick up Link.a's outline default, which would
+      # paint a border-b-2 border-current underline-equivalent on the button.
+      refute html =~ "border-b-2"
+      refute html =~ "border-current"
+    end
+
     test "renders as custom element type" do
       assigns = %{}
 

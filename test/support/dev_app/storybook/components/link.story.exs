@@ -13,8 +13,9 @@ defmodule Pulsar.DevApp.Storybook.Components.Link do
         id: :variant,
         type: :string,
         values: ~w(solid ghost outline),
-        default: "solid",
-        doc: "Visual style variant: solid=no underline, ghost=hover underline, outline=always underline"
+        default: "outline",
+        doc:
+          "Visual style variant: outline=always underlined (inline body text), solid=no underline (standalone/nav links), ghost=hover underline"
       },
       %Attr{
         id: :color,

@@ -157,6 +157,25 @@ defmodule <%= @web_module %>.Storybook.Components.Select do
           prompt: "Please select an option",
           options: [{"Option A", "a"}, {"Option B", "b"}]
         }
+      },
+      %Variation{
+        id: :multiple,
+        description: "Multi-select listbox (no chevron)",
+        attributes: %{
+          name: "skills",
+          multiple: true,
+          options: [{"Elixir", "elixir"}, {"Phoenix", "phoenix"}, {"LiveView", "liveview"}]
+        }
+      },
+      %Variation{
+        id: :multiple_with_badges,
+        description: "Multi-select with pre-selected removable badges",
+        attributes: %{
+          name: "skills",
+          multiple: true,
+          value: ["elixir", "phoenix"],
+          options: [{"Elixir", "elixir"}, {"Phoenix", "phoenix"}, {"LiveView", "liveview"}]
+        }
       }
     ]
   end

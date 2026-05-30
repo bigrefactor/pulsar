@@ -34,11 +34,11 @@ defmodule Mix.Tasks.Pulsar.Gen.Icon do
     # Basic outline icon (decorative)
     <.icon name="hero-check" />
 
-    # Solid variant with color
-    <.icon name="hero-heart" variant="solid" color="danger" />
+    # Solid icon with color
+    <.icon name="hero-heart-solid" color="danger" />
 
     # Micro icon scaled up
-    <.icon name="hero-x-mark" variant="micro" size="lg" />
+    <.icon name="hero-x-mark-micro" size="lg" />
 
     # Current color (inherits from parent)
     <.icon name="hero-information-circle" color="current" />

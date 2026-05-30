@@ -14,9 +14,9 @@ defmodule Pulsar.Components.IconTest do
       assert html =~ ~s(hero-check w-5 h-5 text-current)
     end
 
-    test "renders solid variant" do
+    test "renders solid icon by full name" do
       assigns = %{}
-      html = rendered_to_string(~H[<Icon.icon name="hero-check" variant="solid" />])
+      html = rendered_to_string(~H[<Icon.icon name="hero-check-solid" />])
 
       assert html =~ ~s(hero-check-solid w-5 h-5 text-current)
     end
@@ -47,30 +47,21 @@ defmodule Pulsar.Components.IconTest do
     end
   end
 
-  describe "icon/1 heroicon variants" do
-    test "renders outline variant (default)" do
+  describe "icon/1 heroicon names" do
+    test "renders the full heroicon class verbatim" do
+      assigns = %{}
+
+      assert rendered_to_string(~H[<Icon.icon name="hero-star" />]) =~ "hero-star"
+      assert rendered_to_string(~H[<Icon.icon name="hero-star-solid" />]) =~ "hero-star-solid"
+      assert rendered_to_string(~H[<Icon.icon name="hero-star-mini" />]) =~ "hero-star-mini"
+      assert rendered_to_string(~H[<Icon.icon name="hero-star-micro" />]) =~ "hero-star-micro"
+    end
+
+    test "does not append a variant suffix to the name" do
       assigns = %{}
       html = rendered_to_string(~H[<Icon.icon name="hero-star" />])
       assert html =~ ~s(hero-star)
       refute html =~ ~s(hero-star-solid)
-    end
-
-    test "renders solid variant with suffix" do
-      assigns = %{}
-      html = rendered_to_string(~H[<Icon.icon name="hero-star" variant="solid" />])
-      assert html =~ ~s(hero-star-solid)
-    end
-
-    test "renders mini variant with suffix" do
-      assigns = %{}
-      html = rendered_to_string(~H[<Icon.icon name="hero-star" variant="mini" />])
-      assert html =~ ~s(hero-star-mini)
-    end
-
-    test "renders micro variant with suffix" do
-      assigns = %{}
-      html = rendered_to_string(~H[<Icon.icon name="hero-star" variant="micro" />])
-      assert html =~ ~s(hero-star-micro)
     end
 
     test "passes through non-hero icon names unchanged" do

@@ -635,6 +635,20 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
       assert html =~ ~s(phx-value-option="elixir")
     end
+
+    test "omits the dropdown chevron and its reserved padding in multi-select mode" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select name="skills" options={["Elixir", "Phoenix", "LiveView"]} multiple={true} />
+        """)
+
+      # Native multi-select renders as a listbox; the single-select chevron and
+      # its reserved right-padding gutter must not be present.
+      refute html =~ "hero-chevron-down"
+      refute html =~ "pr-10"
+    end
   end
 
   describe "states and accessibility" do

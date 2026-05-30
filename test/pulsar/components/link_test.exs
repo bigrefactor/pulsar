@@ -7,7 +7,7 @@ defmodule Pulsar.Components.LinkTest do
   alias Pulsar.Components.Link
 
   describe "Link.a/1 basic functionality" do
-    test "renders link with default props (solid variant, primary color)" do
+    test "renders link with default props (outline variant, primary color)" do
       assigns = %{}
 
       html =
@@ -18,7 +18,10 @@ defmodule Pulsar.Components.LinkTest do
       assert html =~ ~s(href="/test")
       assert html =~ "Test Link"
       assert html =~ "text-primary"
-      assert html =~ "no-underline"
+      # outline (not ghost): contiguous "border-b-2 border-current".
+      # ghost renders "border-b-2 border-transparent ... hover:border-current",
+      # so a bare "border-current" check would also pass for ghost.
+      assert html =~ "border-b-2 border-current"
       refute html =~ ~s(target="_blank")
     end
 
@@ -47,7 +50,7 @@ defmodule Pulsar.Components.LinkTest do
   end
 
   describe "Link.a/1 variants" do
-    test "renders solid variant (default)" do
+    test "renders outline variant (default) with permanent border" do
       assigns = %{}
 
       html =
@@ -55,7 +58,21 @@ defmodule Pulsar.Components.LinkTest do
         <Link.a href="/test">Link</Link.a>
         """)
 
+      # Contiguous "border-b-2 border-current" pins outline over ghost, whose
+      # border-current only appears as "hover:border-current".
+      assert html =~ "border-b-2 border-current"
+    end
+
+    test "renders solid variant (no underline, no border)" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test" variant="solid">Link</Link.a>
+        """)
+
       assert html =~ "no-underline"
+      refute html =~ "border-b-2"
       refute html =~ "hover:underline"
       # Check for standalone "underline" class (not "no-underline")
       refute html =~ ~r/\s+underline(\s|")/
@@ -83,8 +100,7 @@ defmodule Pulsar.Components.LinkTest do
         <Link.a href="/test" variant="outline">Link</Link.a>
         """)
 
-      assert html =~ "border-b-2"
-      assert html =~ "border-current"
+      assert html =~ "border-b-2 border-current"
       # Still has no-underline, plus border
       assert html =~ "no-underline"
     end
@@ -616,7 +632,7 @@ defmodule Pulsar.Components.LinkTest do
   end
 
   describe "Link.a/1 variant and color combinations" do
-    test "solid primary (default) - no underline, primary color" do
+    test "outline primary (default) - bordered, primary color" do
       assigns = %{}
 
       html =
@@ -625,7 +641,7 @@ defmodule Pulsar.Components.LinkTest do
         """)
 
       assert html =~ "text-primary"
-      assert html =~ "no-underline"
+      assert html =~ "border-b-2"
     end
 
     test "ghost muted - transparent border, muted color" do

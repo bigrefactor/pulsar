@@ -23,10 +23,11 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
           }
         )
         |> Igniter.compose_task("pulsar.gen.theme", [])
-        |> apply_igniter!()
 
       # Verify a timestamped backup file was created
       assert_backup_created(igniter, "assets/css/app.css")
+
+      apply_igniter!(igniter)
     end
 
     test "creates new app.css with theme import" do
@@ -83,10 +84,11 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
           }
         )
         |> Igniter.compose_task("pulsar.gen.theme", [])
-        |> apply_igniter!()
 
       # Verify the backup contains the original app.css import
       assert_backup_contains(igniter, "assets/css/app.css", ~r/@import "tailwindcss"/)
+
+      apply_igniter!(igniter)
     end
 
     test "creates themes/light.css and themes/dark.css alongside the entry" do
@@ -101,12 +103,13 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
       igniter =
         phx_test_project()
         |> Igniter.compose_task("pulsar.gen.theme", [])
-        |> apply_igniter!()
 
       {:ok, source} = Map.fetch(igniter.rewrite.sources, "assets/css/theme.css")
       content = Rewrite.Source.get(source, :content)
       assert content =~ ~s(@import "./themes/light.css";)
       assert content =~ ~s(@import "./themes/dark.css";)
+
+      apply_igniter!(igniter)
     end
 
     test "backs up existing themes/dark.css before overwriting" do
@@ -121,10 +124,11 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
           }
         )
         |> Igniter.compose_task("pulsar.gen.theme", [])
-        |> apply_igniter!()
 
       assert_backup_created(igniter, "assets/css/themes/dark.css")
       assert_backup_contains(igniter, "assets/css/themes/dark.css", ~r/hotpink/)
+
+      apply_igniter!(igniter)
     end
   end
 
@@ -138,11 +142,12 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
         )
         |> Igniter.compose_task("pulsar.gen.theme", ["cupcake"])
         |> assert_creates("assets/css/themes/cupcake.css")
-        |> apply_igniter!()
 
       {:ok, source} = Map.fetch(igniter.rewrite.sources, "assets/css/themes/cupcake.css")
       content = Rewrite.Source.get(source, :content)
       assert content =~ ~s([data-theme="cupcake"])
+
+      apply_igniter!(igniter)
     end
 
     test "appends @import to theme.css" do
@@ -153,11 +158,12 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
           }
         )
         |> Igniter.compose_task("pulsar.gen.theme", ["cupcake"])
-        |> apply_igniter!()
 
       {:ok, source} = Map.fetch(igniter.rewrite.sources, "assets/css/theme.css")
       content = Rewrite.Source.get(source, :content)
       assert content =~ ~s(@import "./themes/cupcake.css";)
+
+      apply_igniter!(igniter)
     end
 
     test "re-running with the same name does not duplicate the @import" do
@@ -170,13 +176,14 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
           }
         )
         |> Igniter.compose_task("pulsar.gen.theme", ["cupcake"])
-        |> apply_igniter!()
 
       {:ok, source} = Map.fetch(igniter.rewrite.sources, "assets/css/theme.css")
       content = Rewrite.Source.get(source, :content)
       occurrences = content |> String.split(~s(@import "./themes/cupcake.css";)) |> length()
       # Splitting on N matches yields N+1 chunks; 1 match -> 2 chunks.
       assert occurrences == 2, "expected exactly one @import; got #{occurrences - 1}"
+
+      apply_igniter!(igniter)
     end
 
     test "refuses to overwrite an existing themes/<name>.css" do
@@ -190,11 +197,17 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
           }
         )
         |> Igniter.compose_task("pulsar.gen.theme", ["cupcake"])
-        |> apply_igniter!()
 
+      # The task leaves the existing file untouched, so it is not in the
+      # rewrite; load it to confirm its content is unchanged.
+      refute Igniter.changed?(igniter, "assets/css/themes/cupcake.css")
+
+      igniter = Igniter.include_existing_file(igniter, "assets/css/themes/cupcake.css")
       {:ok, source} = Map.fetch(igniter.rewrite.sources, "assets/css/themes/cupcake.css")
       content = Rewrite.Source.get(source, :content)
       assert content == original
+
+      apply_igniter!(igniter)
     end
 
     test "rejects invalid theme names" do
