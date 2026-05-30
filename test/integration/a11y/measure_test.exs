@@ -251,6 +251,11 @@ defmodule Pulsar.Integration.A11y.MeasureTest do
   defp format_ratio(%{"kind" => "icon-glyph", "ratio" => ratio, "pass" => pass}),
     do: "#{ratio}:1 #{format_pass(pass)} (glyph)"
 
+  # Border cells carry the edge that was measured (a single `border-b` rule
+  # reports `bottom`); surface it so single-edge borders are legible.
+  defp format_ratio(%{"edge" => edge, "ratio" => ratio, "pass" => pass}),
+    do: "#{ratio}:1 #{format_pass(pass)} (#{edge})"
+
   defp format_ratio(%{"ratio" => ratio, "pass" => pass}), do: "#{ratio}:1 #{format_pass(pass)}"
   defp format_ratio(_), do: "—"
 

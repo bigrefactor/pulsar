@@ -16,7 +16,10 @@ Columns:
   pass under WCAG 2.5.8 Target Size minimum.
 - **Text** — text-color vs effective background contrast ratio
   (alpha-resolved). Threshold 4.5:1 (3:1 for large text). `—` means no
-  text or no resolvable color.
+  text or no resolvable color. For mask-painted icon glyphs the value is
+  the painted glyph color vs the *ancestor* background at the 3:1 WCAG
+  1.4.11 non-text threshold, marked `(glyph)`; decorative
+  (`aria-hidden`) icons are exempt and marked `(glyph, decorative)`.
 - **Border** — border-color vs adjacent background contrast. `—` if no
   visible border. Threshold 3:1 per WCAG 1.4.11 Non-text Contrast.
 - **Focus** — focus-visible ring/outline vs adjacent background.
@@ -97,12 +100,12 @@ Columns:
 | `h-solid-warning-sm` | `div` | 958 | 1 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `h-solid-warning-xs` | `div` | 958 | 1 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `labeled` | `div` | 958 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `v-danger` | `div` | 2 | 64 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `v-neutral` | `div` | 2 | 64 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `v-primary` | `div` | 2 | 64 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `v-secondary` | `div` | 2 | 64 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `v-success` | `div` | 2 | 64 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `v-warning` | `div` | 2 | 64 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `v-danger` | `div` | 2 | 64 | ✗ | 19.27:1 ✓ | 3.39:1 ✓ (left) | — (not-focusable-in-state) |
+| `v-neutral` | `div` | 2 | 64 | ✗ | 19.27:1 ✓ | 1.18:1 ✗ (left) | — (not-focusable-in-state) |
+| `v-primary` | `div` | 2 | 64 | ✗ | 19.27:1 ✓ | 2.93:1 ✗ (left) | — (not-focusable-in-state) |
+| `v-secondary` | `div` | 2 | 64 | ✗ | 19.27:1 ✓ | 2.9:1 ✗ (left) | — (not-focusable-in-state) |
+| `v-success` | `div` | 2 | 64 | ✗ | 19.27:1 ✓ | 3.2:1 ✓ (left) | — (not-focusable-in-state) |
+| `v-warning` | `div` | 2 | 64 | ✗ | 19.27:1 ✓ | 3.22:1 ✓ (left) | — (not-focusable-in-state) |
 
 ## Text-spacing override (WCAG 1.4.12)
 

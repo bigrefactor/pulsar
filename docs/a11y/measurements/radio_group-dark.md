@@ -16,7 +16,10 @@ Columns:
   pass under WCAG 2.5.8 Target Size minimum.
 - **Text** — text-color vs effective background contrast ratio
   (alpha-resolved). Threshold 4.5:1 (3:1 for large text). `—` means no
-  text or no resolvable color.
+  text or no resolvable color. For mask-painted icon glyphs the value is
+  the painted glyph color vs the *ancestor* background at the 3:1 WCAG
+  1.4.11 non-text threshold, marked `(glyph)`; decorative
+  (`aria-hidden`) icons are exempt and marked `(glyph, decorative)`.
 - **Border** — border-color vs adjacent background contrast. `—` if no
   visible border. Threshold 3:1 per WCAG 1.4.11 Non-text Contrast.
 - **Focus** — focus-visible ring/outline vs adjacent background.
@@ -71,26 +74,26 @@ overflows as worst-case, not as media-query-aware behavior.
 **Cells overflowing (24):**
 
 - `neutral-xs` (x) — content 49×96 vs box 0×96
-- `neutral-sm` (x) — content 54×96 vs box 0×96
+- `neutral-sm` (x) — content 53×96 vs box 0×96
 - `neutral-md` (x) — content 58×96 vs box 0×96
 - `neutral-lg` (x) — content 63×108 vs box 0×108
 - `primary-xs` (x) — content 49×108 vs box 0×108
-- `primary-sm` (x) — content 54×108 vs box 0×108
+- `primary-sm` (x) — content 53×108 vs box 0×108
 - `primary-md` (x) — content 58×108 vs box 0×108
 - `primary-lg` (x) — content 63×108 vs box 0×108
 - `secondary-xs` (x) — content 49×108 vs box 0×108
-- `secondary-sm` (x) — content 54×108 vs box 0×108
+- `secondary-sm` (x) — content 53×108 vs box 0×108
 - `secondary-md` (x) — content 58×108 vs box 0×108
 - `secondary-lg` (x) — content 63×108 vs box 0×108
 - `success-xs` (x) — content 49×96 vs box 0×96
-- `success-sm` (x) — content 54×96 vs box 0×96
+- `success-sm` (x) — content 53×96 vs box 0×96
 - `success-md` (x) — content 58×96 vs box 0×96
 - `success-lg` (x) — content 63×108 vs box 0×108
 - `danger-xs` (x) — content 49×108 vs box 0×108
-- `danger-sm` (x) — content 54×108 vs box 0×108
+- `danger-sm` (x) — content 53×108 vs box 0×108
 - `danger-md` (x) — content 58×108 vs box 0×108
 - `danger-lg` (x) — content 63×108 vs box 0×108
 - `warning-xs` (x) — content 49×108 vs box 0×108
-- `warning-sm` (x) — content 54×108 vs box 0×108
+- `warning-sm` (x) — content 53×108 vs box 0×108
 - `warning-md` (x) — content 58×108 vs box 0×108
 - `warning-lg` (x) — content 63×108 vs box 0×108

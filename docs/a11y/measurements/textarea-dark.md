@@ -16,7 +16,10 @@ Columns:
   pass under WCAG 2.5.8 Target Size minimum.
 - **Text** — text-color vs effective background contrast ratio
   (alpha-resolved). Threshold 4.5:1 (3:1 for large text). `—` means no
-  text or no resolvable color.
+  text or no resolvable color. For mask-painted icon glyphs the value is
+  the painted glyph color vs the *ancestor* background at the 3:1 WCAG
+  1.4.11 non-text threshold, marked `(glyph)`; decorative
+  (`aria-hidden`) icons are exempt and marked `(glyph, decorative)`.
 - **Border** — border-color vs adjacent background contrast. `—` if no
   visible border. Threshold 3:1 per WCAG 1.4.11 Non-text Contrast.
 - **Focus** — focus-visible ring/outline vs adjacent background.
@@ -115,96 +118,96 @@ Columns:
 | `ghost-warning-sm-invalid` | `textarea` | 473 | 80 | ✓ | 9.25:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `ghost-warning-sm-readonly` | `textarea` | 473 | 80 | ✓ | 10.3:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `ghost-warning-sm-required` | `textarea` | 473 | 80 | ✓ | 10.3:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `outline-danger-lg-default` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-danger-lg-disabled` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-lg-invalid` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-danger-lg-readonly` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-danger-lg-required` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-danger-md-default` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-danger-md-disabled` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-md-invalid` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-danger-md-readonly` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-danger-md-required` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-danger-sm-default` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-danger-sm-disabled` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-sm-invalid` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-danger-sm-readonly` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-danger-sm-required` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-neutral-lg-default` | `textarea` | 473 | 128 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ | 6.72:1 ✓ |
-| `outline-neutral-lg-disabled` | `textarea` | 473 | 128 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-lg-invalid` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-neutral-lg-readonly` | `textarea` | 473 | 128 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ | 6.72:1 ✓ |
-| `outline-neutral-lg-required` | `textarea` | 473 | 128 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ | 6.72:1 ✓ |
-| `outline-neutral-md-default` | `textarea` | 473 | 96 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ | 6.72:1 ✓ |
-| `outline-neutral-md-disabled` | `textarea` | 473 | 96 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-md-invalid` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-neutral-md-readonly` | `textarea` | 473 | 96 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ | 6.72:1 ✓ |
-| `outline-neutral-md-required` | `textarea` | 473 | 96 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ | 6.72:1 ✓ |
-| `outline-neutral-sm-default` | `textarea` | 473 | 80 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ | 6.72:1 ✓ |
-| `outline-neutral-sm-disabled` | `textarea` | 473 | 80 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-sm-invalid` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-neutral-sm-readonly` | `textarea` | 473 | 80 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ | 6.72:1 ✓ |
-| `outline-neutral-sm-required` | `textarea` | 473 | 80 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ | 6.72:1 ✓ |
-| `outline-primary-lg-default` | `textarea` | 473 | 128 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ | 6.72:1 ✓ |
-| `outline-primary-lg-disabled` | `textarea` | 473 | 128 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ | — (not-focusable-in-state) |
-| `outline-primary-lg-invalid` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-primary-lg-readonly` | `textarea` | 473 | 128 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ | 6.72:1 ✓ |
-| `outline-primary-lg-required` | `textarea` | 473 | 128 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ | 6.72:1 ✓ |
-| `outline-primary-md-default` | `textarea` | 473 | 96 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ | 6.72:1 ✓ |
-| `outline-primary-md-disabled` | `textarea` | 473 | 96 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ | — (not-focusable-in-state) |
-| `outline-primary-md-invalid` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-primary-md-readonly` | `textarea` | 473 | 96 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ | 6.72:1 ✓ |
-| `outline-primary-md-required` | `textarea` | 473 | 96 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ | 6.72:1 ✓ |
-| `outline-primary-sm-default` | `textarea` | 473 | 80 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ | 6.72:1 ✓ |
-| `outline-primary-sm-disabled` | `textarea` | 473 | 80 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ | — (not-focusable-in-state) |
-| `outline-primary-sm-invalid` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-primary-sm-readonly` | `textarea` | 473 | 80 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ | 6.72:1 ✓ |
-| `outline-primary-sm-required` | `textarea` | 473 | 80 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ | 6.72:1 ✓ |
-| `outline-secondary-lg-default` | `textarea` | 473 | 128 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ | 6.72:1 ✓ |
-| `outline-secondary-lg-disabled` | `textarea` | 473 | 128 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ | — (not-focusable-in-state) |
-| `outline-secondary-lg-invalid` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-secondary-lg-readonly` | `textarea` | 473 | 128 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ | 6.72:1 ✓ |
-| `outline-secondary-lg-required` | `textarea` | 473 | 128 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ | 6.72:1 ✓ |
-| `outline-secondary-md-default` | `textarea` | 473 | 96 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ | 6.72:1 ✓ |
-| `outline-secondary-md-disabled` | `textarea` | 473 | 96 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ | — (not-focusable-in-state) |
-| `outline-secondary-md-invalid` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-secondary-md-readonly` | `textarea` | 473 | 96 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ | 6.72:1 ✓ |
-| `outline-secondary-md-required` | `textarea` | 473 | 96 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ | 6.72:1 ✓ |
-| `outline-secondary-sm-default` | `textarea` | 473 | 80 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ | 6.72:1 ✓ |
-| `outline-secondary-sm-disabled` | `textarea` | 473 | 80 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ | — (not-focusable-in-state) |
-| `outline-secondary-sm-invalid` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-secondary-sm-readonly` | `textarea` | 473 | 80 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ | 6.72:1 ✓ |
-| `outline-secondary-sm-required` | `textarea` | 473 | 80 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ | 6.72:1 ✓ |
-| `outline-success-lg-default` | `textarea` | 473 | 128 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ | 6.72:1 ✓ |
-| `outline-success-lg-disabled` | `textarea` | 473 | 128 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-lg-invalid` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-success-lg-readonly` | `textarea` | 473 | 128 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ | 6.72:1 ✓ |
-| `outline-success-lg-required` | `textarea` | 473 | 128 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ | 6.72:1 ✓ |
-| `outline-success-md-default` | `textarea` | 473 | 96 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ | 6.72:1 ✓ |
-| `outline-success-md-disabled` | `textarea` | 473 | 96 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-md-invalid` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-success-md-readonly` | `textarea` | 473 | 96 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ | 6.72:1 ✓ |
-| `outline-success-md-required` | `textarea` | 473 | 96 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ | 6.72:1 ✓ |
-| `outline-success-sm-default` | `textarea` | 473 | 80 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ | 6.72:1 ✓ |
-| `outline-success-sm-disabled` | `textarea` | 473 | 80 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-sm-invalid` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-success-sm-readonly` | `textarea` | 473 | 80 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ | 6.72:1 ✓ |
-| `outline-success-sm-required` | `textarea` | 473 | 80 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ | 6.72:1 ✓ |
-| `outline-warning-lg-default` | `textarea` | 473 | 128 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ | 6.72:1 ✓ |
-| `outline-warning-lg-disabled` | `textarea` | 473 | 128 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-lg-invalid` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-warning-lg-readonly` | `textarea` | 473 | 128 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ | 6.72:1 ✓ |
-| `outline-warning-lg-required` | `textarea` | 473 | 128 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ | 6.72:1 ✓ |
-| `outline-warning-md-default` | `textarea` | 473 | 96 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ | 6.72:1 ✓ |
-| `outline-warning-md-disabled` | `textarea` | 473 | 96 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-md-invalid` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-warning-md-readonly` | `textarea` | 473 | 96 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ | 6.72:1 ✓ |
-| `outline-warning-md-required` | `textarea` | 473 | 96 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ | 6.72:1 ✓ |
-| `outline-warning-sm-default` | `textarea` | 473 | 80 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ | 6.72:1 ✓ |
-| `outline-warning-sm-disabled` | `textarea` | 473 | 80 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-sm-invalid` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ | 6.72:1 ✓ |
-| `outline-warning-sm-readonly` | `textarea` | 473 | 80 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ | 6.72:1 ✓ |
-| `outline-warning-sm-required` | `textarea` | 473 | 80 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ | 6.72:1 ✓ |
+| `outline-danger-lg-default` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-danger-lg-disabled` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-danger-lg-invalid` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-danger-lg-readonly` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-danger-lg-required` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-danger-md-default` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-danger-md-disabled` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-danger-md-invalid` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-danger-md-readonly` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-danger-md-required` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-danger-sm-default` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-danger-sm-disabled` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-danger-sm-invalid` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-danger-sm-readonly` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-danger-sm-required` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-neutral-lg-default` | `textarea` | 473 | 128 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-neutral-lg-disabled` | `textarea` | 473 | 128 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-neutral-lg-invalid` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-neutral-lg-readonly` | `textarea` | 473 | 128 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-neutral-lg-required` | `textarea` | 473 | 128 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-neutral-md-default` | `textarea` | 473 | 96 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-neutral-md-disabled` | `textarea` | 473 | 96 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-neutral-md-invalid` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-neutral-md-readonly` | `textarea` | 473 | 96 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-neutral-md-required` | `textarea` | 473 | 96 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-neutral-sm-default` | `textarea` | 473 | 80 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-neutral-sm-disabled` | `textarea` | 473 | 80 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-neutral-sm-invalid` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-neutral-sm-readonly` | `textarea` | 473 | 80 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-neutral-sm-required` | `textarea` | 473 | 80 | ✓ | 19.27:1 ✓ | 6.82:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-primary-lg-default` | `textarea` | 473 | 128 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-primary-lg-disabled` | `textarea` | 473 | 128 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-primary-lg-invalid` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-primary-lg-readonly` | `textarea` | 473 | 128 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-primary-lg-required` | `textarea` | 473 | 128 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-primary-md-default` | `textarea` | 473 | 96 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-primary-md-disabled` | `textarea` | 473 | 96 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-primary-md-invalid` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-primary-md-readonly` | `textarea` | 473 | 96 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-primary-md-required` | `textarea` | 473 | 96 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-primary-sm-default` | `textarea` | 473 | 80 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-primary-sm-disabled` | `textarea` | 473 | 80 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-primary-sm-invalid` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-primary-sm-readonly` | `textarea` | 473 | 80 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-primary-sm-required` | `textarea` | 473 | 80 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-secondary-lg-default` | `textarea` | 473 | 128 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-secondary-lg-disabled` | `textarea` | 473 | 128 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-secondary-lg-invalid` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-secondary-lg-readonly` | `textarea` | 473 | 128 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-secondary-lg-required` | `textarea` | 473 | 128 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-secondary-md-default` | `textarea` | 473 | 96 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-secondary-md-disabled` | `textarea` | 473 | 96 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-secondary-md-invalid` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-secondary-md-readonly` | `textarea` | 473 | 96 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-secondary-md-required` | `textarea` | 473 | 96 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-secondary-sm-default` | `textarea` | 473 | 80 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-secondary-sm-disabled` | `textarea` | 473 | 80 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-secondary-sm-invalid` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-secondary-sm-readonly` | `textarea` | 473 | 80 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-secondary-sm-required` | `textarea` | 473 | 80 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-success-lg-default` | `textarea` | 473 | 128 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-success-lg-disabled` | `textarea` | 473 | 128 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-success-lg-invalid` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-success-lg-readonly` | `textarea` | 473 | 128 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-success-lg-required` | `textarea` | 473 | 128 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-success-md-default` | `textarea` | 473 | 96 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-success-md-disabled` | `textarea` | 473 | 96 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-success-md-invalid` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-success-md-readonly` | `textarea` | 473 | 96 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-success-md-required` | `textarea` | 473 | 96 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-success-sm-default` | `textarea` | 473 | 80 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-success-sm-disabled` | `textarea` | 473 | 80 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-success-sm-invalid` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-success-sm-readonly` | `textarea` | 473 | 80 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-success-sm-required` | `textarea` | 473 | 80 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-warning-lg-default` | `textarea` | 473 | 128 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-warning-lg-disabled` | `textarea` | 473 | 128 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-warning-lg-invalid` | `textarea` | 473 | 128 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-warning-lg-readonly` | `textarea` | 473 | 128 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-warning-lg-required` | `textarea` | 473 | 128 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-warning-md-default` | `textarea` | 473 | 96 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-warning-md-disabled` | `textarea` | 473 | 96 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-warning-md-invalid` | `textarea` | 473 | 96 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-warning-md-readonly` | `textarea` | 473 | 96 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-warning-md-required` | `textarea` | 473 | 96 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-warning-sm-default` | `textarea` | 473 | 80 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-warning-sm-disabled` | `textarea` | 473 | 80 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-warning-sm-invalid` | `textarea` | 473 | 80 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-warning-sm-readonly` | `textarea` | 473 | 80 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ (top) | 6.72:1 ✓ |
+| `outline-warning-sm-required` | `textarea` | 473 | 80 | ✓ | 11.69:1 ✓ | 10.3:1 ✓ (top) | 6.72:1 ✓ |
 | `solid-danger-lg-default` | `textarea` | 473 | 128 | ✓ | 7.74:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `solid-danger-lg-disabled` | `textarea` | 473 | 128 | ✓ | 7.74:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `solid-danger-lg-invalid` | `textarea` | 473 | 128 | ✓ | 7.74:1 ✓ | — (no-border) | 6.72:1 ✓ |

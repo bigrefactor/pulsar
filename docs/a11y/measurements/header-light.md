@@ -6,7 +6,7 @@ re-run the task to refresh. The canonical audit page is
 
 - **Theme:** `light`
 - **Viewport:** 1280×720 CSS px
-- **Cells:** 13
+- **Cells:** 20
 
 ## Per-cell measurements
 
@@ -16,7 +16,10 @@ Columns:
   pass under WCAG 2.5.8 Target Size minimum.
 - **Text** — text-color vs effective background contrast ratio
   (alpha-resolved). Threshold 4.5:1 (3:1 for large text). `—` means no
-  text or no resolvable color.
+  text or no resolvable color. For mask-painted icon glyphs the value is
+  the painted glyph color vs the *ancestor* background at the 3:1 WCAG
+  1.4.11 non-text threshold, marked `(glyph)`; decorative
+  (`aria-hidden`) icons are exempt and marked `(glyph, decorative)`.
 - **Border** — border-color vs adjacent background contrast. `—` if no
   visible border. Threshold 3:1 per WCAG 1.4.11 Non-text Contrast.
 - **Focus** — focus-visible ring/outline vs adjacent background.
@@ -32,6 +35,13 @@ Columns:
 | `as-h5` | `header` | 958 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `as-h6` | `header` | 958 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `breadcrumbs` | `header` | 194.53 | 68 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `outline-danger` | `header` | 958 | 73 | ✓ | 6.14:1 ✓ | 4.63:1 ✓ (bottom) | — (not-focusable-in-state) |
+| `outline-info` | `header` | 958 | 73 | ✓ | 3.46:1 ✗ | 4.63:1 ✓ (bottom) | — (not-focusable-in-state) |
+| `outline-neutral` | `header` | 958 | 73 | ✓ | 19.27:1 ✓ | 4.63:1 ✓ (bottom) | — (not-focusable-in-state) |
+| `outline-primary` | `header` | 958 | 73 | ✓ | 6.54:1 ✓ | 4.63:1 ✓ (bottom) | — (not-focusable-in-state) |
+| `outline-secondary` | `header` | 958 | 73 | ✓ | 5.64:1 ✓ | 4.63:1 ✓ (bottom) | — (not-focusable-in-state) |
+| `outline-success` | `header` | 958 | 73 | ✓ | 8.66:1 ✓ | 4.63:1 ✓ (bottom) | — (not-focusable-in-state) |
+| `outline-warning` | `header` | 958 | 73 | ✓ | 8.67:1 ✓ | 4.63:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `size-lg` | `header` | 958 | 64 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `size-md` | `header` | 958 | 56 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `size-sm` | `header` | 958 | 52 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
@@ -53,7 +63,7 @@ overflows as worst-case, not as media-query-aware behavior.
 
 - **Page horizontally overflows:** yes
 
-**Cells overflowing (11):**
+**Cells overflowing (18):**
 
 - `size-xs` (x) — content 62×120 vs box 0×120
 - `size-sm` (x) — content 67×128 vs box 0×128
@@ -66,3 +76,10 @@ overflows as worst-case, not as media-query-aware behavior.
 - `as-h4` (x) — content 29×32 vs box 0×32
 - `as-h5` (x) — content 29×32 vs box 0×32
 - `as-h6` (x) — content 30×32 vs box 0×32
+- `outline-neutral` (x) — content 79×156 vs box 0×156
+- `outline-primary` (x) — content 84×156 vs box 0×156
+- `outline-secondary` (x) — content 115×156 vs box 0×156
+- `outline-success` (x) — content 90×156 vs box 0×156
+- `outline-danger` (x) — content 79×156 vs box 0×156
+- `outline-warning` (x) — content 88×156 vs box 0×156
+- `outline-info` (x) — content 79×156 vs box 0×156
