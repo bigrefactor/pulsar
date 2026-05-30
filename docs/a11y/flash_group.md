@@ -182,8 +182,9 @@ affected area small but doesn't eliminate the overlap.
 **Notes:** WCAG 2.4.11 (Minimum) allows the user to scroll the focused
 element into view; toast notifications that auto-dismiss within a few
 seconds are a recognized acceptable pattern (per WCAG 2.4.11
-Understanding). For long-lived toasts (no `:auto_dismiss`) and
-focusable controls at the same edge, a caller-level fix is required
+Understanding). For long-lived toasts (`role="alert"` flashes, or any flash
+with `auto_dismiss={false}`) and focusable controls at the same edge, a
+caller-level fix is required
 (e.g. `scroll-margin-bottom` on focusable elements or relocating the
 flash group). Not a component-internal gap.
 
