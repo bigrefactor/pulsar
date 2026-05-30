@@ -134,8 +134,20 @@ if Code.ensure_loaded?(Igniter) do
       import_line = ~s(@import "./themes/#{name}.css";)
 
       igniter
-      |> Igniter.copy_template(template_path("themes/scaffold.css.eex"), dest, [theme_name: name], on_exists: :skip)
+      |> scaffold_theme_file(dest, name)
       |> add_theme_import("assets/css/theme.css", import_line, dest)
+    end
+
+    # Refuse to overwrite an existing theme file. We check the path directly
+    # rather than relying on `copy_template`'s `on_exists: :skip`, because
+    # Igniter only consults loaded sources for that check and won't see a file
+    # that exists on disk but hasn't been read into the rewrite yet.
+    defp scaffold_theme_file(igniter, dest, name) do
+      if Igniter.exists?(igniter, dest) do
+        igniter
+      else
+        Igniter.copy_template(igniter, template_path("themes/scaffold.css.eex"), dest, theme_name: name)
+      end
     end
 
     defp add_theme_import(igniter, theme_css_path, import_line, dest) do

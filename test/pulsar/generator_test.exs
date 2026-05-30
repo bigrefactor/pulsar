@@ -95,9 +95,10 @@ defmodule Pulsar.GeneratorTest do
         |> Igniter.compose_task("pulsar.gen.button", [])
         |> apply_igniter!()
         |> Igniter.compose_task("pulsar.gen.button", [])
-        |> apply_igniter!()
 
       assert_backup_created(igniter, "lib/test_web/components/button.ex")
+
+      apply_igniter!(igniter)
     end
 
     test "backup preserves original component content" do
@@ -106,19 +107,21 @@ defmodule Pulsar.GeneratorTest do
         |> Igniter.compose_task("pulsar.gen.button", [])
         |> apply_igniter!()
         |> Igniter.compose_task("pulsar.gen.button", [])
-        |> apply_igniter!()
 
       assert_backup_contains(igniter, "lib/test_web/components/button.ex", ~r/defmodule.*Button/)
       assert_backup_contains(igniter, "lib/test_web/components/button.ex", ~r/def button\(assigns\)/)
+
+      apply_igniter!(igniter)
     end
 
     test "does not create backup when component is new" do
       igniter =
         phx_test_project()
         |> Igniter.compose_task("pulsar.gen.button", [])
-        |> apply_igniter!()
 
       assert_no_backup_created(igniter, "lib/test_web/components/button.ex")
+
+      apply_igniter!(igniter)
     end
 
     test "multiple regenerations create timestamped backups" do
@@ -127,7 +130,6 @@ defmodule Pulsar.GeneratorTest do
         |> Igniter.compose_task("pulsar.gen.button", [])
         |> apply_igniter!()
         |> Igniter.compose_task("pulsar.gen.button", [])
-        |> apply_igniter!()
 
       backups = get_backup_files(igniter, "lib/test_web/components/button.ex")
 
@@ -138,6 +140,8 @@ defmodule Pulsar.GeneratorTest do
 
       assert backup_path =~ ~r/button\.ex\.bak\.\d{8}T\d{6}/,
              "Backup filename should have timestamp pattern"
+
+      apply_igniter!(igniter)
     end
 
     test "raises a descriptive error when a template is missing" do

@@ -157,12 +157,16 @@ defmodule Pulsar.Generator do
       |> Keyword.put_new(:gettext_module, inspect(Phoenix.web_module_name(igniter, "Gettext")))
 
     contents = contents(component_name, assigns)
-    {exists, igniter} = Igniter.Project.Module.module_exists(igniter, component)
+    path = Igniter.Project.Module.proper_location(igniter, component)
 
+    # A file already at the conventional location — Phoenix's own
+    # core_components.ex, or a previous Pulsar run — is replaced wholesale.
+    # We key off the file path rather than module detection: Igniter does not
+    # eagerly load every project source, so `module_exists?/2` reports false
+    # for an on-disk module it hasn't parsed, which would route an existing
+    # file into the create path and fail with "File already exists".
     igniter =
-      if exists do
-        {igniter, source, _} = Igniter.Project.Module.find_module!(igniter, component)
-
+      if Igniter.exists?(igniter, path) do
         # Wrap template contents in module definition for existing files
         wrapped_contents = """
         defmodule #{inspect(component)} do
@@ -171,9 +175,10 @@ defmodule Pulsar.Generator do
         """
 
         igniter
-        |> backup_existing_component(source.path)
+        |> Igniter.include_existing_file(path)
+        |> backup_existing_component(path)
         |> Igniter.compose_task("igniter.add_extension", ["phoenix"])
-        |> Igniter.update_file(source.path, fn source ->
+        |> Igniter.update_file(path, fn source ->
           Rewrite.Source.update(source, :content, wrapped_contents)
         end)
       else
