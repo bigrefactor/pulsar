@@ -6,7 +6,7 @@ re-run the task to refresh. The canonical audit page is
 
 - **Theme:** `light`
 - **Viewport:** 1280×720 CSS px
-- **Cells:** 108
+- **Cells:** 114
 
 ## Per-cell measurements
 
@@ -16,7 +16,10 @@ Columns:
   pass under WCAG 2.5.8 Target Size minimum.
 - **Text** — text-color vs effective background contrast ratio
   (alpha-resolved). Threshold 4.5:1 (3:1 for large text). `—` means no
-  text or no resolvable color.
+  text or no resolvable color. For mask-painted icon glyphs the value is
+  the painted glyph color vs the *ancestor* background at the 3:1 WCAG
+  1.4.11 non-text threshold, marked `(glyph)`; decorative
+  (`aria-hidden`) icons are exempt and marked `(glyph, decorative)`.
 - **Border** — border-color vs adjacent background contrast. `—` if no
   visible border. Threshold 3:1 per WCAG 1.4.11 Non-text Contrast.
 - **Focus** — focus-visible ring/outline vs adjacent background.
@@ -24,114 +27,120 @@ Columns:
 
 | Cell ID | Tag | Width | Height | ≥24×24 | Text | Border | Focus |
 |---------|-----|-------|--------|--------|------|--------|-------|
-| `aria-hidden` | `span` | 20 | 20 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `aria-label` | `span` | 20 | 20 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `color-danger` | `span` | 20 | 20 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `color-neutral` | `span` | 20 | 20 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `color-primary` | `span` | 20 | 20 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `color-secondary` | `span` | 20 | 20 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `color-success` | `span` | 20 | 20 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `color-warning` | `span` | 20 | 20 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-bolt-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-bolt-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-bolt-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-bolt-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-bolt-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-check-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-check-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-check-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-check-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-check-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-exclamation-triangle-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-exclamation-triangle-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-exclamation-triangle-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-exclamation-triangle-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-exclamation-triangle-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-information-circle-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-information-circle-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-information-circle-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-information-circle-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-information-circle-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-x-mark-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-x-mark-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-x-mark-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-x-mark-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `micro-hero-x-mark-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-bolt-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-bolt-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-bolt-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-bolt-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-bolt-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-check-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-check-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-check-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-check-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-check-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-exclamation-triangle-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-exclamation-triangle-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-exclamation-triangle-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-exclamation-triangle-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-exclamation-triangle-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-information-circle-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-information-circle-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-information-circle-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-information-circle-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-information-circle-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-x-mark-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-x-mark-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-x-mark-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-x-mark-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `mini-hero-x-mark-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-bolt-lg` | `span` | 24 | 24 | ✓ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-bolt-md` | `span` | 20 | 20 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-bolt-sm` | `span` | 16 | 16 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-bolt-xl` | `span` | 32 | 32 | ✓ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-bolt-xs` | `span` | 12 | 12 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-check-lg` | `span` | 24 | 24 | ✓ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-check-md` | `span` | 20 | 20 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-check-sm` | `span` | 16 | 16 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-check-xl` | `span` | 32 | 32 | ✓ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-check-xs` | `span` | 12 | 12 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-exclamation-triangle-lg` | `span` | 24 | 24 | ✓ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-exclamation-triangle-md` | `span` | 20 | 20 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-exclamation-triangle-sm` | `span` | 16 | 16 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-exclamation-triangle-xl` | `span` | 32 | 32 | ✓ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-exclamation-triangle-xs` | `span` | 12 | 12 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-information-circle-lg` | `span` | 24 | 24 | ✓ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-information-circle-md` | `span` | 20 | 20 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-information-circle-sm` | `span` | 16 | 16 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-information-circle-xl` | `span` | 32 | 32 | ✓ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-information-circle-xs` | `span` | 12 | 12 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-x-mark-lg` | `span` | 24 | 24 | ✓ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-x-mark-md` | `span` | 20 | 20 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-x-mark-sm` | `span` | 16 | 16 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-x-mark-xl` | `span` | 32 | 32 | ✓ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `outline-hero-x-mark-xs` | `span` | 12 | 12 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-bolt-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-bolt-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-bolt-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-bolt-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-bolt-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-check-lg` | `span` | 24 | 24 | ✓ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-check-md` | `span` | 20 | 20 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-check-sm` | `span` | 16 | 16 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-check-xl` | `span` | 32 | 32 | ✓ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-check-xs` | `span` | 12 | 12 | ✗ | 1:1 ✗ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-exclamation-triangle-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-exclamation-triangle-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-exclamation-triangle-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-exclamation-triangle-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-exclamation-triangle-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-information-circle-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-information-circle-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-information-circle-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-information-circle-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-information-circle-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-x-mark-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-x-mark-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-x-mark-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-x-mark-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `solid-hero-x-mark-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `aria-hidden` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `aria-label` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ (glyph) | — (no-border) | — (not-focusable-in-state) |
+| `color-danger` | `span` | 20 | 20 | ✗ | 6.14:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `color-neutral` | `span` | 20 | 20 | ✗ | 7.23:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `color-primary` | `span` | 20 | 20 | ✗ | 6.54:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `color-secondary` | `span` | 20 | 20 | ✗ | 5.64:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `color-success` | `span` | 20 | 20 | ✗ | 8.66:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `color-warning` | `span` | 20 | 20 | ✗ | 8.67:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `labelled-color-danger` | `span` | 20 | 20 | ✗ | 6.14:1 ✓ (glyph) | — (no-border) | — (not-focusable-in-state) |
+| `labelled-color-neutral` | `span` | 20 | 20 | ✗ | 7.23:1 ✓ (glyph) | — (no-border) | — (not-focusable-in-state) |
+| `labelled-color-primary` | `span` | 20 | 20 | ✗ | 6.54:1 ✓ (glyph) | — (no-border) | — (not-focusable-in-state) |
+| `labelled-color-secondary` | `span` | 20 | 20 | ✗ | 5.64:1 ✓ (glyph) | — (no-border) | — (not-focusable-in-state) |
+| `labelled-color-success` | `span` | 20 | 20 | ✗ | 8.66:1 ✓ (glyph) | — (no-border) | — (not-focusable-in-state) |
+| `labelled-color-warning` | `span` | 20 | 20 | ✗ | 8.67:1 ✓ (glyph) | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-bolt-micro-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-bolt-micro-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-bolt-micro-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-bolt-micro-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-bolt-micro-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-check-micro-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-check-micro-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-check-micro-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-check-micro-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-check-micro-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-exclamation-triangle-micro-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-exclamation-triangle-micro-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-exclamation-triangle-micro-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-exclamation-triangle-micro-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-exclamation-triangle-micro-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-information-circle-micro-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-information-circle-micro-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-information-circle-micro-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-information-circle-micro-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-information-circle-micro-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-x-mark-micro-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-x-mark-micro-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-x-mark-micro-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-x-mark-micro-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `micro-hero-x-mark-micro-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-bolt-mini-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-bolt-mini-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-bolt-mini-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-bolt-mini-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-bolt-mini-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-check-mini-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-check-mini-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-check-mini-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-check-mini-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-check-mini-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-exclamation-triangle-mini-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-exclamation-triangle-mini-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-exclamation-triangle-mini-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-exclamation-triangle-mini-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-exclamation-triangle-mini-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-information-circle-mini-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-information-circle-mini-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-information-circle-mini-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-information-circle-mini-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-information-circle-mini-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-x-mark-mini-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-x-mark-mini-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-x-mark-mini-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-x-mark-mini-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `mini-hero-x-mark-mini-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-bolt-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-bolt-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-bolt-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-bolt-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-bolt-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-check-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-check-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-check-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-check-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-check-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-exclamation-triangle-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-exclamation-triangle-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-exclamation-triangle-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-exclamation-triangle-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-exclamation-triangle-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-information-circle-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-information-circle-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-information-circle-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-information-circle-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-information-circle-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-x-mark-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-x-mark-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-x-mark-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-x-mark-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `outline-hero-x-mark-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-bolt-solid-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-bolt-solid-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-bolt-solid-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-bolt-solid-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-bolt-solid-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-check-solid-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-check-solid-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-check-solid-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-check-solid-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-check-solid-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ (glyph, decorative) | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-exclamation-triangle-solid-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-exclamation-triangle-solid-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-exclamation-triangle-solid-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-exclamation-triangle-solid-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-exclamation-triangle-solid-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-information-circle-solid-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-information-circle-solid-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-information-circle-solid-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-information-circle-solid-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-information-circle-solid-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-x-mark-solid-lg` | `span` | 24 | 24 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-x-mark-solid-md` | `span` | 20 | 20 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-x-mark-solid-sm` | `span` | 16 | 16 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-x-mark-solid-xl` | `span` | 32 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `solid-hero-x-mark-solid-xs` | `span` | 12 | 12 | ✗ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 
 ## Text-spacing override (WCAG 1.4.12)
 

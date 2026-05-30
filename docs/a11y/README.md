@@ -137,7 +137,7 @@ not-applicable). Detailed per-criterion grids follow.
 | [table](table.md) | 10/0/10 | 11/0/9 | 1/0/12 | 2/0/0 |
 | **Content** | | | | |
 | [badge](badge.md) | 10/0/10 | 3/1/16 | 0/0/13 | 1/0/1 |
-| [icon](icon.md) | 8/1/11 | 1/0/19 | 0/0/13 | 1/0/1 |
+| [icon](icon.md) | 9/0/11 | 1/0/19 | 0/0/13 | 1/0/1 |
 
 ### Perceivable (1.x)
 
@@ -161,7 +161,7 @@ not-applicable). Detailed per-criterion grids follow.
 | list | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | table | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | badge | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
-| icon | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | — | ✓ | — | ✓ | ⚠ | ✓ | — |
+| icon | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | — | ✓ | — | ✓ | ✓ | ✓ | — |
 
 ### Operable (2.x)
 

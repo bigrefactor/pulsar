@@ -88,25 +88,25 @@ here for traceability — see 1.4.11.
 
 **Notes:** Inline icon does not force horizontal scrolling at 320 CSS px.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — color-dependent
+### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** Icon glyph color is driven by semantic color tokens
-(`text-danger`/`text-success`/etc., with dark-mode pairs) —
-`lib/pulsar/components/icon.ex:82–91`. When `aria_label` is set the
-icon is meaningful and needs 3:1 against its background. Browser
-measurement of 108 cells: many cells report `unparseable-color` or
-`1.0:1` for the icon fill because the SVG renders text inside a
-parent-foreground-colored `<svg>` and the script's text-contrast
-walk evaluates the SVG content rather than the glyph stroke. Per-
-color glyph contrast against page background derives from the same
-token contrasts used by text (4.5:1 for primary, secondary, danger,
-neutral, info; success ~3.08:1 light, warning ~3.06:1 light).
+(`text-danger`/`text-success`/etc.) — `lib/pulsar/components/icon.ex:84–93`.
+When `aria_label` is set the icon is meaningful (`role="img"`) and needs 3:1
+against its background. Heroicons paint the glyph with
+`background-color: currentColor` behind a CSS mask; the measure tool reads
+that painted color against the ancestor background. Every labelled
+(informative) glyph clears 3:1 in both themes — the lowest is `neutral`
+3.67:1 (dark); the meaning-bearing `success`/`warning`/`danger` colors
+measure 6–10:1 (see the `labelled-color-*` and `aria-label` cells in
+[`measurements/icon-light.md`](measurements/icon-light.md) and
+[`measurements/icon-dark.md`](measurements/icon-dark.md)).
 
-**Notes:** The text-meaning success/warning glyphs share the same
-token shortfall as button/badge/link text and are tracked by the same
-upstream color-token follow-ups. Decorative icons (`aria-hidden="true"`)
-are exempt from 1.4.11. No new sub-issue needed — the upstream color
-token fix resolves icon contrast in parallel with text contrast.
+**Notes:** Decorative icons (`aria-hidden="true"`, the default) are exempt
+from 1.4.11. Earlier audits reported `unparseable-color` / `1:1` for these
+cells — a measurement blind spot in which the harness read the mask span's
+own `background-color` (the glyph paint) as the background; the measure tool
+now resolves the painted glyph color against the ancestor background.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 

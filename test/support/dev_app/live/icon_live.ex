@@ -51,6 +51,16 @@ defmodule Pulsar.DevApp.IconLive do
           />
         <% end %>
       </.fixture_section>
+      <.fixture_section name="labelled-colors" title="Labelled color tokens (informative)">
+        <%= for color <- @colors do %>
+          <Icon.icon
+            name="hero-bolt"
+            color={color}
+            aria_label={"#{color} bolt"}
+            data-fixture-cell={"labelled-color-#{color}"}
+          />
+        <% end %>
+      </.fixture_section>
       <.fixture_section name="aria" title="Decorative vs labelled">
         <Icon.icon name="hero-bolt" aria_hidden="true" data-fixture-cell="aria-hidden" />
         <Icon.icon name="hero-bolt" aria_label="Power bolt" data-fixture-cell="aria-label" />

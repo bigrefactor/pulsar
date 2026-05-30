@@ -196,8 +196,41 @@
     };
   }
 
+  // Heroicons paint the glyph with `background-color: currentColor` behind a
+  // CSS `mask`, so the visible color is the element's *background-color* and it
+  // sits on the *ancestor* background — not the element's own. Returns the
+  // painted glyph color for such elements, or null for ordinary (non-masked)
+  // elements.
+  function maskPaintColor(style) {
+    const mask = style.maskImage || style.webkitMaskImage;
+    if (!mask || mask === "none") return null;
+    const paint = parseColor(style.backgroundColor);
+    if (!paint || paint.a === 0) return null;
+    return paint;
+  }
+
   function measureTextContrast(el) {
     const style = window.getComputedStyle(el);
+
+    // Mask-painted icon glyph: the glyph color is `background-color`, composited
+    // over the ancestor background (the element's own background-color *is* the
+    // paint, so it must be excluded). Graphical object → WCAG 1.4.11, 3:1.
+    const glyph = maskPaintColor(style);
+    if (glyph) {
+      const bg = effectiveBackground(el.parentElement);
+      const fgEffective = compositeOver(glyph, bg);
+      const ratio = contrastRatio(fgEffective, bg);
+      return {
+        ratio: round(ratio, 2),
+        kind: "icon-glyph",
+        fg: rgbString(fgEffective),
+        bg: rgbString(bg),
+        decorative: el.getAttribute("aria-hidden") === "true",
+        threshold: 3.0,
+        pass: ratio >= 2.995,
+      };
+    }
+
     const fg = parseColor(style.color);
     if (!fg) return { ratio: null, reason: "unparseable-color" };
     const bg = effectiveBackground(el);
