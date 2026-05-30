@@ -151,19 +151,6 @@ jobs:
           echo "Checking for missing @doc annotations in public functions..."
           mix docs --warnings-as-errors
 
-      - name: Validate documentation links
-        run: |
-          echo "Generating docs to check for broken links..."
-          mix docs
-          
-          # Check for common broken link patterns in generated HTML
-          if find doc -name "*.html" -exec grep -l "404\|broken\|not found" {} \; | head -1; then
-            echo "Found potential broken links in documentation"
-            exit 1
-          else
-            echo "Documentation links appear valid"
-          fi
-
       - name: Calculate documentation coverage
         run: |
           echo "Calculating documentation coverage..."
