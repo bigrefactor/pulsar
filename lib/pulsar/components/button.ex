@@ -74,7 +74,7 @@ defmodule Pulsar.Components.Button do
   alias Pulsar.Components.Link
 
   # Custom guard for validating navigation links
-  defguard is_link(href) when is_binary(href) or is_struct(href, Route) or is_struct(href, URI)
+  defguardp is_link(href) when is_binary(href) or is_struct(href, Route) or is_struct(href, URI)
 
   # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
   defp generate_id(prefix \\ "button") do

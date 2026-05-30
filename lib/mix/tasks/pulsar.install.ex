@@ -1,16 +1,19 @@
 defmodule Mix.Tasks.Pulsar.Install.Docs do
   @moduledoc false
 
+  @doc false
   @spec short_doc() :: String.t()
   def short_doc do
     "Installs Pulsar components into your Phoenix application"
   end
 
+  @doc false
   @spec example() :: String.t()
   def example do
     "mix pulsar.install"
   end
 
+  @doc false
   @spec long_doc() :: String.t()
   def long_doc do
     """

@@ -142,6 +142,7 @@ defmodule Pulsar.Generator do
     end
   end
 
+  @doc false
   def install_component(igniter, component_name, assigns) do
     namespace = parse_components_module(igniter.args.options[:components_module])
     component = component_module(namespace, component_name)
@@ -225,6 +226,7 @@ defmodule Pulsar.Generator do
     end
   end
 
+  @doc false
   def set_default_component_module(igniter) do
     igniter = Igniter.compose_task(igniter, "igniter.add_extension", ["phoenix"])
     default = Phoenix.web_module_name(igniter, "Components")
