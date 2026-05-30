@@ -65,7 +65,7 @@ defmodule Mix.Tasks.Pulsar.Docs.Coverage do
       reduce: {0, []}
     ) do
       {total, missing} ->
-        if doc == :none and not MapSet.member?(callbacks, {name, arity}) do
+        if doc == :none and {name, arity} not in callbacks do
           {total + 1, [{mod, name, arity} | missing]}
         else
           {total + 1, missing}
@@ -82,16 +82,18 @@ defmodule Mix.Tasks.Pulsar.Docs.Coverage do
   end
 
   # `{name, arity}` of every callback declared by a behaviour `mod` implements, so
-  # callback implementations are not flagged as undocumented.
+  # callback implementations are not flagged as undocumented. Returned as a plain
+  # list (membership is checked against a handful of entries) — a MapSet here trips
+  # Dialyzer's opaque-type checking at the call site.
+  @spec callback_set(module()) :: [{atom(), arity()}]
   defp callback_set(mod) do
     mod.module_info(:attributes)
     |> Keyword.get_values(:behaviour)
     |> List.flatten()
     |> Enum.filter(&Code.ensure_loaded?/1)
     |> Enum.flat_map(& &1.behaviour_info(:callbacks))
-    |> MapSet.new()
   rescue
-    _ -> MapSet.new()
+    _ -> []
   end
 
   # Modules whose source lives under `lib/`. Excludes `test/support` fixtures
