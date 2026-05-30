@@ -1,16 +1,19 @@
 defmodule Mix.Tasks.Pulsar.Gen.Theme.Docs do
   @moduledoc false
 
+  @doc false
   @spec short_doc() :: String.t()
   def short_doc do
     "Generates Pulsar theme CSS files with semantic color tokens and design system"
   end
 
+  @doc false
   @spec example() :: String.t()
   def example do
     "mix pulsar.gen.theme"
   end
 
+  @doc false
   @spec long_doc() :: String.t()
   def long_doc do
     """

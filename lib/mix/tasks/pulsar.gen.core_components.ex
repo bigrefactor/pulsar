@@ -1,16 +1,19 @@
 defmodule Mix.Tasks.Pulsar.Gen.CoreComponents.Docs do
   @moduledoc false
 
+  @doc false
   @spec short_doc() :: String.t()
   def short_doc do
     "Generates core Phoenix components with Pulsar styling (replaces default core_components)"
   end
 
+  @doc false
   @spec example() :: String.t()
   def example do
     "mix pulsar.gen.core_components"
   end
 
+  @doc false
   @spec long_doc() :: String.t()
   def long_doc do
     """

@@ -1,16 +1,19 @@
 defmodule Mix.Tasks.Pulsar.Gen.Storybook.Docs do
   @moduledoc false
 
+  @doc false
   @spec short_doc() :: String.t()
   def short_doc do
     "Generates PhoenixStorybook story files for installed Pulsar components"
   end
 
+  @doc false
   @spec example() :: String.t()
   def example do
     "mix pulsar.gen.storybook"
   end
 
+  @doc false
   @spec long_doc() :: String.t()
   def long_doc do
     """
