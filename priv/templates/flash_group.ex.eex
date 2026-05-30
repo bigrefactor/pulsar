@@ -191,12 +191,12 @@ Six built-in positions with appropriate animations:
 
 ## Long-lived toasts and focus
 
-By default, flashes auto-dismiss, so the stack clears on its own. If you keep toasts on
-screen indefinitely (`auto_dismiss={false}`), a toast can sit on top of an interactive
-control pinned to the same screen edge while it is showing. When you disable auto-dismiss
-and have focusable controls at that edge, either pick a `position` away from them, or add a
-matching `scroll-margin` (e.g. `scroll-mb-*` for a bottom position) to those controls so
-they stay in view when focused.
+Status flashes (info, success) auto-dismiss by default, but error and warning flashes
+(`role="alert"`) stay until dismissed, as does any flash with `auto_dismiss={false}`. While
+a long-lived toast is showing, it can sit on top of an interactive control pinned to the
+same screen edge. When toasts can linger and you have focusable controls at that edge,
+either pick a `position` away from them, or add a matching `scroll-margin` (e.g. `scroll-mb-*`
+for a bottom position) to those controls so they stay in view when focused.
 """
 
 use Phoenix.Component
