@@ -177,7 +177,10 @@ defmodule Pulsar.Integration.A11y.MeasureTest do
       pass under WCAG 2.5.8 Target Size minimum.
     - **Text** — text-color vs effective background contrast ratio
       (alpha-resolved). Threshold 4.5:1 (3:1 for large text). `—` means no
-      text or no resolvable color.
+      text or no resolvable color. For mask-painted icon glyphs the value is
+      the painted glyph color vs the *ancestor* background at the 3:1 WCAG
+      1.4.11 non-text threshold, marked `(glyph)`; decorative
+      (`aria-hidden`) icons are exempt and marked `(glyph, decorative)`.
     - **Border** — border-color vs adjacent background contrast. `—` if no
       visible border. Threshold 3:1 per WCAG 1.4.11 Non-text Contrast.
     - **Focus** — focus-visible ring/outline vs adjacent background.
@@ -239,6 +242,15 @@ defmodule Pulsar.Integration.A11y.MeasureTest do
   # A ratio cell shows the contrast number and pass/fail marker, or `—` if
   # the measurement was skipped (no border, not focusable, etc.).
   defp format_ratio(%{"ratio" => nil, "reason" => reason}), do: "— (#{reason})"
+
+  # Mask-painted icon glyphs (1.4.11, 3:1). Decorative icons (`aria-hidden`)
+  # are exempt — tagged so the pass/fail marker is read as informational only.
+  defp format_ratio(%{"kind" => "icon-glyph", "ratio" => ratio, "pass" => pass, "decorative" => true}),
+    do: "#{ratio}:1 #{format_pass(pass)} (glyph, decorative)"
+
+  defp format_ratio(%{"kind" => "icon-glyph", "ratio" => ratio, "pass" => pass}),
+    do: "#{ratio}:1 #{format_pass(pass)} (glyph)"
+
   defp format_ratio(%{"ratio" => ratio, "pass" => pass}), do: "#{ratio}:1 #{format_pass(pass)}"
   defp format_ratio(_), do: "—"
 
