@@ -188,6 +188,15 @@ Six built-in positions with appropriate animations:
 - `bottom-right` - Slide up from bottom-right
 - `bottom-center` - Slide up from bottom
 - `bottom-left` - Slide up from bottom-left
+
+## Long-lived toasts and focus
+
+By default, flashes auto-dismiss, so the stack clears on its own. If you keep toasts on
+screen indefinitely (`auto_dismiss={false}`), a toast can sit on top of an interactive
+control pinned to the same screen edge while it is showing. When you disable auto-dismiss
+and have focusable controls at that edge, either pick a `position` away from them, or add a
+matching `scroll-margin` (e.g. `scroll-mb-*` for a bottom position) to those controls so
+they stay in view when focused.
 """
 
 use Phoenix.Component
