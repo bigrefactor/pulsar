@@ -16,7 +16,10 @@ Columns:
   pass under WCAG 2.5.8 Target Size minimum.
 - **Text** — text-color vs effective background contrast ratio
   (alpha-resolved). Threshold 4.5:1 (3:1 for large text). `—` means no
-  text or no resolvable color.
+  text or no resolvable color. For mask-painted icon glyphs the value is
+  the painted glyph color vs the *ancestor* background at the 3:1 WCAG
+  1.4.11 non-text threshold, marked `(glyph)`; decorative
+  (`aria-hidden`) icons are exempt and marked `(glyph, decorative)`.
 - **Border** — border-color vs adjacent background contrast. `—` if no
   visible border. Threshold 3:1 per WCAG 1.4.11 Non-text Contrast.
 - **Focus** — focus-visible ring/outline vs adjacent background.
@@ -216,102 +219,102 @@ Columns:
 | `link-warning-xs-disabled` | `button` | 148 | 24 | ✓ | 8.67:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `link-warning-xs-loading` | `button` | 139.52 | 24 | ✓ | 8.67:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `link-warning-xs-pressed` | `button` | 144.67 | 24 | ✓ | 8.67:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-danger-lg-default` | `button` | 192.44 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-danger-lg-disabled` | `button` | 204.78 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-lg-loading` | `button` | 223.36 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-lg-pressed` | `button` | 201.14 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-danger-md-default` | `button` | 172.86 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-danger-md-disabled` | `button` | 183.91 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-md-loading` | `button` | 199.44 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-md-pressed` | `button` | 180.58 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-danger-sm-default` | `button` | 148.61 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-danger-sm-disabled` | `button` | 158.42 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-sm-loading` | `button` | 170.88 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-sm-pressed` | `button` | 155.38 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-danger-xs-default` | `button` | 121.23 | 24 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-danger-xs-disabled` | `button` | 129.77 | 24 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-xs-loading` | `button` | 139.17 | 24 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-xs-pressed` | `button` | 127.03 | 24 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-lg-default` | `button` | 192.38 | 48 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-lg-disabled` | `button` | 204.72 | 48 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-lg-loading` | `button` | 223.3 | 48 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-lg-pressed` | `button` | 201.08 | 48 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-md-default` | `button` | 172.94 | 40 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-md-disabled` | `button` | 184 | 40 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-md-loading` | `button` | 199.52 | 40 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-md-pressed` | `button` | 180.66 | 40 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-sm-default` | `button` | 148.81 | 32 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-sm-disabled` | `button` | 158.61 | 32 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-sm-loading` | `button` | 171.06 | 32 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-sm-pressed` | `button` | 155.56 | 32 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-xs-default` | `button` | 121.53 | 24 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-xs-disabled` | `button` | 130.06 | 24 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-xs-loading` | `button` | 139.47 | 24 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-xs-pressed` | `button` | 127.33 | 24 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-lg-default` | `button` | 197.31 | 48 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-lg-disabled` | `button` | 209.66 | 48 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | — (not-focusable-in-state) |
-| `outline-primary-lg-loading` | `button` | 228.23 | 48 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | — (not-focusable-in-state) |
-| `outline-primary-lg-pressed` | `button` | 206 | 48 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-md-default` | `button` | 177.31 | 40 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-md-disabled` | `button` | 188.38 | 40 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | — (not-focusable-in-state) |
-| `outline-primary-md-loading` | `button` | 203.89 | 40 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | — (not-focusable-in-state) |
-| `outline-primary-md-pressed` | `button` | 185.03 | 40 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-sm-default` | `button` | 152.64 | 32 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-sm-disabled` | `button` | 162.44 | 32 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | — (not-focusable-in-state) |
-| `outline-primary-sm-loading` | `button` | 174.89 | 32 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | — (not-focusable-in-state) |
-| `outline-primary-sm-pressed` | `button` | 159.39 | 32 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-xs-default` | `button` | 124.81 | 24 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-xs-disabled` | `button` | 133.34 | 24 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | — (not-focusable-in-state) |
-| `outline-primary-xs-loading` | `button` | 142.75 | 24 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | — (not-focusable-in-state) |
-| `outline-primary-xs-pressed` | `button` | 130.61 | 24 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-lg-default` | `button` | 220.47 | 48 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-lg-disabled` | `button` | 232.83 | 48 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
-| `outline-secondary-lg-loading` | `button` | 251.39 | 48 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
-| `outline-secondary-lg-pressed` | `button` | 229.17 | 48 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-md-default` | `button` | 198.13 | 40 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-md-disabled` | `button` | 209.19 | 40 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
-| `outline-secondary-md-loading` | `button` | 224.7 | 40 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
-| `outline-secondary-md-pressed` | `button` | 205.84 | 40 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-sm-default` | `button` | 171.11 | 32 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-sm-disabled` | `button` | 180.91 | 32 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
-| `outline-secondary-sm-loading` | `button` | 193.36 | 32 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
-| `outline-secondary-sm-pressed` | `button` | 177.86 | 32 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-xs-default` | `button` | 140.91 | 24 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-xs-disabled` | `button` | 149.44 | 24 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
-| `outline-secondary-xs-loading` | `button` | 158.83 | 24 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
-| `outline-secondary-xs-pressed` | `button` | 146.69 | 24 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
-| `outline-success-lg-default` | `button` | 202.06 | 48 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | 5.02:1 ✓ |
-| `outline-success-lg-disabled` | `button` | 214.41 | 48 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-lg-loading` | `button` | 232.98 | 48 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-lg-pressed` | `button` | 210.75 | 48 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | 5.02:1 ✓ |
-| `outline-success-md-default` | `button` | 181.5 | 40 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | 5.02:1 ✓ |
-| `outline-success-md-disabled` | `button` | 192.56 | 40 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-md-loading` | `button` | 208.08 | 40 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-md-pressed` | `button` | 189.22 | 40 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | 5.02:1 ✓ |
-| `outline-success-sm-default` | `button` | 156.31 | 32 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | 5.02:1 ✓ |
-| `outline-success-sm-disabled` | `button` | 166.11 | 32 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-sm-loading` | `button` | 178.56 | 32 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-sm-pressed` | `button` | 163.06 | 32 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | 5.02:1 ✓ |
-| `outline-success-xs-default` | `button` | 127.97 | 24 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | 5.02:1 ✓ |
-| `outline-success-xs-disabled` | `button` | 136.48 | 24 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-xs-loading` | `button` | 145.89 | 24 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-xs-pressed` | `button` | 133.75 | 24 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-lg-default` | `button` | 200.47 | 48 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-lg-disabled` | `button` | 212.81 | 48 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-lg-loading` | `button` | 231.39 | 48 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-lg-pressed` | `button` | 209.17 | 48 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-md-default` | `button` | 180.13 | 40 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-md-disabled` | `button` | 191.19 | 40 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-md-loading` | `button` | 206.7 | 40 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-md-pressed` | `button` | 187.84 | 40 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-sm-default` | `button` | 155.11 | 32 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-sm-disabled` | `button` | 164.91 | 32 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-sm-loading` | `button` | 177.36 | 32 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-sm-pressed` | `button` | 161.86 | 32 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-xs-default` | `button` | 126.92 | 24 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-xs-disabled` | `button` | 135.45 | 24 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-xs-loading` | `button` | 144.86 | 24 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-xs-pressed` | `button` | 132.72 | 24 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | 5.02:1 ✓ |
+| `outline-danger-lg-default` | `button` | 192.44 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-danger-lg-disabled` | `button` | 204.78 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-danger-lg-loading` | `button` | 223.36 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-danger-lg-pressed` | `button` | 201.14 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-danger-md-default` | `button` | 172.86 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-danger-md-disabled` | `button` | 183.91 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-danger-md-loading` | `button` | 199.44 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-danger-md-pressed` | `button` | 180.58 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-danger-sm-default` | `button` | 148.61 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-danger-sm-disabled` | `button` | 158.42 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-danger-sm-loading` | `button` | 170.88 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-danger-sm-pressed` | `button` | 155.38 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-danger-xs-default` | `button` | 121.23 | 24 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-danger-xs-disabled` | `button` | 129.77 | 24 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-danger-xs-loading` | `button` | 139.17 | 24 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-danger-xs-pressed` | `button` | 127.03 | 24 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-lg-default` | `button` | 192.38 | 48 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-lg-disabled` | `button` | 204.72 | 48 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-neutral-lg-loading` | `button` | 223.3 | 48 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-neutral-lg-pressed` | `button` | 201.08 | 48 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-md-default` | `button` | 172.94 | 40 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-md-disabled` | `button` | 184 | 40 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-neutral-md-loading` | `button` | 199.52 | 40 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-neutral-md-pressed` | `button` | 180.66 | 40 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-sm-default` | `button` | 148.81 | 32 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-sm-disabled` | `button` | 158.61 | 32 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-neutral-sm-loading` | `button` | 171.06 | 32 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-neutral-sm-pressed` | `button` | 155.56 | 32 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-xs-default` | `button` | 121.53 | 24 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-xs-disabled` | `button` | 130.06 | 24 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-neutral-xs-loading` | `button` | 139.47 | 24 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-neutral-xs-pressed` | `button` | 127.33 | 24 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-lg-default` | `button` | 197.31 | 48 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-lg-disabled` | `button` | 209.66 | 48 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-primary-lg-loading` | `button` | 228.23 | 48 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-primary-lg-pressed` | `button` | 206 | 48 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-md-default` | `button` | 177.31 | 40 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-md-disabled` | `button` | 188.38 | 40 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-primary-md-loading` | `button` | 203.89 | 40 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-primary-md-pressed` | `button` | 185.03 | 40 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-sm-default` | `button` | 152.64 | 32 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-sm-disabled` | `button` | 162.44 | 32 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-primary-sm-loading` | `button` | 174.89 | 32 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-primary-sm-pressed` | `button` | 159.39 | 32 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-xs-default` | `button` | 124.81 | 24 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-xs-disabled` | `button` | 133.34 | 24 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-primary-xs-loading` | `button` | 142.75 | 24 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-primary-xs-pressed` | `button` | 130.61 | 24 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-lg-default` | `button` | 220.47 | 48 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-lg-disabled` | `button` | 232.83 | 48 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-secondary-lg-loading` | `button` | 251.39 | 48 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-secondary-lg-pressed` | `button` | 229.17 | 48 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-md-default` | `button` | 198.13 | 40 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-md-disabled` | `button` | 209.19 | 40 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-secondary-md-loading` | `button` | 224.7 | 40 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-secondary-md-pressed` | `button` | 205.84 | 40 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-sm-default` | `button` | 171.11 | 32 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-sm-disabled` | `button` | 180.91 | 32 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-secondary-sm-loading` | `button` | 193.36 | 32 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-secondary-sm-pressed` | `button` | 177.86 | 32 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-xs-default` | `button` | 140.91 | 24 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-xs-disabled` | `button` | 149.44 | 24 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-secondary-xs-loading` | `button` | 158.83 | 24 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-secondary-xs-pressed` | `button` | 146.69 | 24 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-lg-default` | `button` | 202.06 | 48 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-lg-disabled` | `button` | 214.41 | 48 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-success-lg-loading` | `button` | 232.98 | 48 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-success-lg-pressed` | `button` | 210.75 | 48 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-md-default` | `button` | 181.5 | 40 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-md-disabled` | `button` | 192.56 | 40 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-success-md-loading` | `button` | 208.08 | 40 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-success-md-pressed` | `button` | 189.22 | 40 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-sm-default` | `button` | 156.31 | 32 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-sm-disabled` | `button` | 166.11 | 32 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-success-sm-loading` | `button` | 178.56 | 32 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-success-sm-pressed` | `button` | 163.06 | 32 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-xs-default` | `button` | 127.97 | 24 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-xs-disabled` | `button` | 136.48 | 24 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-success-xs-loading` | `button` | 145.89 | 24 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-success-xs-pressed` | `button` | 133.75 | 24 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-lg-default` | `button` | 200.47 | 48 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-lg-disabled` | `button` | 212.81 | 48 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-warning-lg-loading` | `button` | 231.39 | 48 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-warning-lg-pressed` | `button` | 209.17 | 48 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-md-default` | `button` | 180.13 | 40 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-md-disabled` | `button` | 191.19 | 40 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-warning-md-loading` | `button` | 206.7 | 40 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-warning-md-pressed` | `button` | 187.84 | 40 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-sm-default` | `button` | 155.11 | 32 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-sm-disabled` | `button` | 164.91 | 32 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-warning-sm-loading` | `button` | 177.36 | 32 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-warning-sm-pressed` | `button` | 161.86 | 32 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-xs-default` | `button` | 126.92 | 24 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-xs-disabled` | `button` | 135.45 | 24 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-warning-xs-loading` | `button` | 144.86 | 24 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-warning-xs-pressed` | `button` | 132.72 | 24 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | 5.02:1 ✓ |
 | `solid-danger-lg-default` | `button` | 188.44 | 48 | ✓ | 6.42:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `solid-danger-lg-disabled` | `button` | 200.78 | 48 | ✓ | 6.42:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `solid-danger-lg-loading` | `button` | 219.36 | 48 | ✓ | 6.42:1 ✓ | — (no-border) | — (not-focusable-in-state) |

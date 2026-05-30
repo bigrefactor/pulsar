@@ -6,7 +6,7 @@ re-run the task to refresh. The canonical audit page is
 
 - **Theme:** `light`
 - **Viewport:** 1280×720 CSS px
-- **Cells:** 289
+- **Cells:** 290
 
 ## Per-cell measurements
 
@@ -16,7 +16,10 @@ Columns:
   pass under WCAG 2.5.8 Target Size minimum.
 - **Text** — text-color vs effective background contrast ratio
   (alpha-resolved). Threshold 4.5:1 (3:1 for large text). `—` means no
-  text or no resolvable color.
+  text or no resolvable color. For mask-painted icon glyphs the value is
+  the painted glyph color vs the *ancestor* background at the 3:1 WCAG
+  1.4.11 non-text threshold, marked `(glyph)`; decorative
+  (`aria-hidden`) icons are exempt and marked `(glyph, decorative)`.
 - **Border** — border-color vs adjacent background contrast. `—` if no
   visible border. Threshold 3:1 per WCAG 1.4.11 Non-text Contrast.
 - **Focus** — focus-visible ring/outline vs adjacent background.
@@ -120,103 +123,104 @@ Columns:
 | `ghost-warning-xs-disabled` | `select` | 311.33 | 24 | ✓ | 8.67:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `ghost-warning-xs-invalid` | `select` | 311.34 | 24 | ✓ | 6.14:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `ghost-warning-xs-required` | `select` | 311.33 | 24 | ✓ | 8.67:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `multi` | `select` | 94.14 | 88.75 | ✓ | 16.62:1 ✓ | — (no-border) | 5.02:1 ✓ |
-| `outline-danger-lg-default` | `select` | 311.33 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-danger-lg-disabled` | `select` | 311.33 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-lg-invalid` | `select` | 311.33 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-danger-lg-required` | `select` | 311.34 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-danger-md-default` | `select` | 311.33 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-danger-md-disabled` | `select` | 311.34 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-md-invalid` | `select` | 311.33 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-danger-md-required` | `select` | 311.33 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-danger-sm-default` | `select` | 311.34 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-danger-sm-disabled` | `select` | 311.33 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-sm-invalid` | `select` | 311.34 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-danger-sm-required` | `select` | 311.33 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-danger-xs-default` | `select` | 311.33 | 28 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-danger-xs-disabled` | `select` | 311.33 | 28 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-xs-invalid` | `select` | 311.33 | 28 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-danger-xs-required` | `select` | 311.34 | 28 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-lg-default` | `select` | 311.33 | 48 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-lg-disabled` | `select` | 311.34 | 48 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-lg-invalid` | `select` | 311.33 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-lg-required` | `select` | 311.33 | 48 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-md-default` | `select` | 311.34 | 40 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-md-disabled` | `select` | 311.33 | 40 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-md-invalid` | `select` | 311.34 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-md-required` | `select` | 311.33 | 40 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-sm-default` | `select` | 311.33 | 32 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-sm-disabled` | `select` | 311.33 | 32 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-sm-invalid` | `select` | 311.33 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-sm-required` | `select` | 311.34 | 32 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-xs-default` | `select` | 311.33 | 28 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-xs-disabled` | `select` | 311.34 | 28 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-xs-invalid` | `select` | 311.33 | 28 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-neutral-xs-required` | `select` | 311.33 | 28 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-lg-default` | `select` | 311.33 | 48 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-lg-disabled` | `select` | 311.33 | 48 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | — (not-focusable-in-state) |
-| `outline-primary-lg-invalid` | `select` | 311.33 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-lg-required` | `select` | 311.34 | 48 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-md-default` | `select` | 311.33 | 40 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-md-disabled` | `select` | 311.34 | 40 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | — (not-focusable-in-state) |
-| `outline-primary-md-invalid` | `select` | 311.33 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-md-required` | `select` | 311.33 | 40 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-sm-default` | `select` | 311.34 | 32 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-sm-disabled` | `select` | 311.33 | 32 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | — (not-focusable-in-state) |
-| `outline-primary-sm-invalid` | `select` | 311.34 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-sm-required` | `select` | 311.33 | 32 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-xs-default` | `select` | 311.33 | 28 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-xs-disabled` | `select` | 311.33 | 28 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | — (not-focusable-in-state) |
-| `outline-primary-xs-invalid` | `select` | 311.33 | 28 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-primary-xs-required` | `select` | 311.34 | 28 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-lg-default` | `select` | 311.34 | 48 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-lg-disabled` | `select` | 311.33 | 48 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
-| `outline-secondary-lg-invalid` | `select` | 311.34 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-lg-required` | `select` | 311.33 | 48 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-md-default` | `select` | 311.33 | 40 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-md-disabled` | `select` | 311.33 | 40 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
-| `outline-secondary-md-invalid` | `select` | 311.33 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-md-required` | `select` | 311.34 | 40 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-sm-default` | `select` | 311.33 | 32 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-sm-disabled` | `select` | 311.34 | 32 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
-| `outline-secondary-sm-invalid` | `select` | 311.33 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-sm-required` | `select` | 311.33 | 32 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-xs-default` | `select` | 311.34 | 28 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-xs-disabled` | `select` | 311.33 | 28 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | — (not-focusable-in-state) |
-| `outline-secondary-xs-invalid` | `select` | 311.34 | 28 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-secondary-xs-required` | `select` | 311.33 | 28 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ | 5.02:1 ✓ |
-| `outline-success-lg-default` | `select` | 311.33 | 48 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | 5.02:1 ✓ |
-| `outline-success-lg-disabled` | `select` | 311.34 | 48 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-lg-invalid` | `select` | 311.33 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-success-lg-required` | `select` | 311.33 | 48 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | 5.02:1 ✓ |
-| `outline-success-md-default` | `select` | 311.34 | 40 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | 5.02:1 ✓ |
-| `outline-success-md-disabled` | `select` | 311.33 | 40 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-md-invalid` | `select` | 311.34 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-success-md-required` | `select` | 311.33 | 40 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | 5.02:1 ✓ |
-| `outline-success-sm-default` | `select` | 311.33 | 32 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | 5.02:1 ✓ |
-| `outline-success-sm-disabled` | `select` | 311.33 | 32 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-sm-invalid` | `select` | 311.33 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-success-sm-required` | `select` | 311.34 | 32 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | 5.02:1 ✓ |
-| `outline-success-xs-default` | `select` | 311.33 | 28 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | 5.02:1 ✓ |
-| `outline-success-xs-disabled` | `select` | 311.34 | 28 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-xs-invalid` | `select` | 311.33 | 28 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-success-xs-required` | `select` | 311.33 | 28 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-lg-default` | `select` | 311.34 | 48 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-lg-disabled` | `select` | 311.33 | 48 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-lg-invalid` | `select` | 311.34 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-lg-required` | `select` | 311.33 | 48 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-md-default` | `select` | 311.33 | 40 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-md-disabled` | `select` | 311.33 | 40 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-md-invalid` | `select` | 311.33 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-md-required` | `select` | 311.34 | 40 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-sm-default` | `select` | 311.33 | 32 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-sm-disabled` | `select` | 311.34 | 32 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-sm-invalid` | `select` | 311.33 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-sm-required` | `select` | 311.33 | 32 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-xs-default` | `select` | 311.34 | 28 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-xs-disabled` | `select` | 311.33 | 28 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-xs-invalid` | `select` | 311.34 | 28 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ | 5.02:1 ✓ |
-| `outline-warning-xs-required` | `select` | 311.33 | 28 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ | 5.02:1 ✓ |
+| `multi` | `select` | 66.14 | 88.75 | ✓ | 16.62:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `multi-badges` | `select` | 118.06 | 88.75 | ✓ | 16.62:1 ✓ | — (no-border) | 5.02:1 ✓ |
+| `outline-danger-lg-default` | `select` | 311.33 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-danger-lg-disabled` | `select` | 311.33 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-danger-lg-invalid` | `select` | 311.33 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-danger-lg-required` | `select` | 311.34 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-danger-md-default` | `select` | 311.33 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-danger-md-disabled` | `select` | 311.34 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-danger-md-invalid` | `select` | 311.33 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-danger-md-required` | `select` | 311.33 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-danger-sm-default` | `select` | 311.34 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-danger-sm-disabled` | `select` | 311.33 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-danger-sm-invalid` | `select` | 311.34 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-danger-sm-required` | `select` | 311.33 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-danger-xs-default` | `select` | 311.33 | 28 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-danger-xs-disabled` | `select` | 311.33 | 28 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-danger-xs-invalid` | `select` | 311.33 | 28 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-danger-xs-required` | `select` | 311.34 | 28 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-lg-default` | `select` | 311.33 | 48 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-lg-disabled` | `select` | 311.34 | 48 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-neutral-lg-invalid` | `select` | 311.33 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-lg-required` | `select` | 311.33 | 48 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-md-default` | `select` | 311.34 | 40 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-md-disabled` | `select` | 311.33 | 40 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-neutral-md-invalid` | `select` | 311.34 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-md-required` | `select` | 311.33 | 40 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-sm-default` | `select` | 311.33 | 32 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-sm-disabled` | `select` | 311.33 | 32 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-neutral-sm-invalid` | `select` | 311.33 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-sm-required` | `select` | 311.34 | 32 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-xs-default` | `select` | 311.33 | 28 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-xs-disabled` | `select` | 311.34 | 28 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-neutral-xs-invalid` | `select` | 311.33 | 28 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-neutral-xs-required` | `select` | 311.33 | 28 | ✓ | 20.13:1 ✓ | 4.63:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-lg-default` | `select` | 311.33 | 48 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-lg-disabled` | `select` | 311.33 | 48 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-primary-lg-invalid` | `select` | 311.33 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-lg-required` | `select` | 311.34 | 48 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-md-default` | `select` | 311.33 | 40 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-md-disabled` | `select` | 311.34 | 40 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-primary-md-invalid` | `select` | 311.33 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-md-required` | `select` | 311.33 | 40 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-sm-default` | `select` | 311.34 | 32 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-sm-disabled` | `select` | 311.33 | 32 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-primary-sm-invalid` | `select` | 311.34 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-sm-required` | `select` | 311.33 | 32 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-xs-default` | `select` | 311.33 | 28 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-xs-disabled` | `select` | 311.33 | 28 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-primary-xs-invalid` | `select` | 311.33 | 28 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-primary-xs-required` | `select` | 311.34 | 28 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-lg-default` | `select` | 311.34 | 48 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-lg-disabled` | `select` | 311.33 | 48 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-secondary-lg-invalid` | `select` | 311.34 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-lg-required` | `select` | 311.33 | 48 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-md-default` | `select` | 311.33 | 40 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-md-disabled` | `select` | 311.33 | 40 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-secondary-md-invalid` | `select` | 311.33 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-md-required` | `select` | 311.34 | 40 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-sm-default` | `select` | 311.33 | 32 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-sm-disabled` | `select` | 311.34 | 32 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-secondary-sm-invalid` | `select` | 311.33 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-sm-required` | `select` | 311.33 | 32 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-xs-default` | `select` | 311.34 | 28 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-xs-disabled` | `select` | 311.33 | 28 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-secondary-xs-invalid` | `select` | 311.34 | 28 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-secondary-xs-required` | `select` | 311.33 | 28 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-lg-default` | `select` | 311.33 | 48 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-lg-disabled` | `select` | 311.34 | 48 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-success-lg-invalid` | `select` | 311.33 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-lg-required` | `select` | 311.33 | 48 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-md-default` | `select` | 311.34 | 40 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-md-disabled` | `select` | 311.33 | 40 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-success-md-invalid` | `select` | 311.34 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-md-required` | `select` | 311.33 | 40 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-sm-default` | `select` | 311.33 | 32 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-sm-disabled` | `select` | 311.33 | 32 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-success-sm-invalid` | `select` | 311.33 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-sm-required` | `select` | 311.34 | 32 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-xs-default` | `select` | 311.33 | 28 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-xs-disabled` | `select` | 311.34 | 28 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-success-xs-invalid` | `select` | 311.33 | 28 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-success-xs-required` | `select` | 311.33 | 28 | ✓ | 9.05:1 ✓ | 8.66:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-lg-default` | `select` | 311.34 | 48 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-lg-disabled` | `select` | 311.33 | 48 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-warning-lg-invalid` | `select` | 311.34 | 48 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-lg-required` | `select` | 311.33 | 48 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-md-default` | `select` | 311.33 | 40 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-md-disabled` | `select` | 311.33 | 40 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-warning-md-invalid` | `select` | 311.33 | 40 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-md-required` | `select` | 311.34 | 40 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-sm-default` | `select` | 311.33 | 32 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-sm-disabled` | `select` | 311.34 | 32 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-warning-sm-invalid` | `select` | 311.33 | 32 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-sm-required` | `select` | 311.33 | 32 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-xs-default` | `select` | 311.34 | 28 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-xs-disabled` | `select` | 311.33 | 28 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-warning-xs-invalid` | `select` | 311.34 | 28 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (top) | 5.02:1 ✓ |
+| `outline-warning-xs-required` | `select` | 311.33 | 28 | ✓ | 9.06:1 ✓ | 8.67:1 ✓ (top) | 5.02:1 ✓ |
 | `solid-danger-lg-default` | `select` | 311.33 | 48 | ✓ | 5.08:1 ✓ | — (no-border) | 5.02:1 ✓ |
 | `solid-danger-lg-disabled` | `select` | 311.33 | 48 | ✓ | 5.08:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `solid-danger-lg-invalid` | `select` | 311.33 | 48 | ✓ | 5.08:1 ✓ | — (no-border) | 5.02:1 ✓ |
@@ -427,7 +431,7 @@ overflows as worst-case, not as media-query-aware behavior.
 - `ghost-warning-lg-required` (x) — content 91×48 vs box 56×48
 - `ghost-warning-lg-disabled` (x) — content 91×48 vs box 56×48
 - `ghost-warning-lg-invalid` (x) — content 91×48 vs box 56×48
-- `multi` (x) — content 54×89 vs box 52×89
+- `multi` (x) — content 54×89 vs box 24×89
 - `outline-neutral-xs-default` (x) — content 61×24 vs box 48×24
 - `outline-neutral-xs-required` (x) — content 61×24 vs box 48×24
 - `outline-neutral-xs-disabled` (x) — content 61×24 vs box 48×24
@@ -440,10 +444,10 @@ overflows as worst-case, not as media-query-aware behavior.
 - `outline-neutral-md-required` (x) — content 80×36 vs box 52×36
 - `outline-neutral-md-disabled` (x) — content 80×36 vs box 52×36
 - `outline-neutral-md-invalid` (x) — content 80×36 vs box 52×36
-- `outline-neutral-lg-default` (x) — content 91×44 vs box 56×44
-- `outline-neutral-lg-required` (x) — content 91×44 vs box 56×44
-- `outline-neutral-lg-disabled` (x) — content 91×44 vs box 56×44
-- `outline-neutral-lg-invalid` (x) — content 91×44 vs box 56×44
+- `outline-neutral-lg-default` (x) — content 92×44 vs box 56×44
+- `outline-neutral-lg-required` (x) — content 92×44 vs box 56×44
+- `outline-neutral-lg-disabled` (x) — content 92×44 vs box 56×44
+- `outline-neutral-lg-invalid` (x) — content 92×44 vs box 56×44
 - `outline-primary-xs-default` (x) — content 61×24 vs box 48×24
 - `outline-primary-xs-required` (x) — content 61×24 vs box 48×24
 - `outline-primary-xs-disabled` (x) — content 61×24 vs box 48×24
@@ -456,10 +460,10 @@ overflows as worst-case, not as media-query-aware behavior.
 - `outline-primary-md-required` (x) — content 80×36 vs box 52×36
 - `outline-primary-md-disabled` (x) — content 80×36 vs box 52×36
 - `outline-primary-md-invalid` (x) — content 80×36 vs box 52×36
-- `outline-primary-lg-default` (x) — content 91×44 vs box 56×44
-- `outline-primary-lg-required` (x) — content 91×44 vs box 56×44
-- `outline-primary-lg-disabled` (x) — content 91×44 vs box 56×44
-- `outline-primary-lg-invalid` (x) — content 91×44 vs box 56×44
+- `outline-primary-lg-default` (x) — content 92×44 vs box 56×44
+- `outline-primary-lg-required` (x) — content 92×44 vs box 56×44
+- `outline-primary-lg-disabled` (x) — content 92×44 vs box 56×44
+- `outline-primary-lg-invalid` (x) — content 92×44 vs box 56×44
 - `outline-secondary-xs-default` (x) — content 61×24 vs box 48×24
 - `outline-secondary-xs-required` (x) — content 61×24 vs box 48×24
 - `outline-secondary-xs-disabled` (x) — content 61×24 vs box 48×24
@@ -472,10 +476,10 @@ overflows as worst-case, not as media-query-aware behavior.
 - `outline-secondary-md-required` (x) — content 80×36 vs box 52×36
 - `outline-secondary-md-disabled` (x) — content 80×36 vs box 52×36
 - `outline-secondary-md-invalid` (x) — content 80×36 vs box 52×36
-- `outline-secondary-lg-default` (x) — content 91×44 vs box 56×44
-- `outline-secondary-lg-required` (x) — content 91×44 vs box 56×44
-- `outline-secondary-lg-disabled` (x) — content 91×44 vs box 56×44
-- `outline-secondary-lg-invalid` (x) — content 91×44 vs box 56×44
+- `outline-secondary-lg-default` (x) — content 92×44 vs box 56×44
+- `outline-secondary-lg-required` (x) — content 92×44 vs box 56×44
+- `outline-secondary-lg-disabled` (x) — content 92×44 vs box 56×44
+- `outline-secondary-lg-invalid` (x) — content 92×44 vs box 56×44
 - `outline-success-xs-default` (x) — content 61×24 vs box 48×24
 - `outline-success-xs-required` (x) — content 61×24 vs box 48×24
 - `outline-success-xs-disabled` (x) — content 61×24 vs box 48×24
@@ -488,10 +492,10 @@ overflows as worst-case, not as media-query-aware behavior.
 - `outline-success-md-required` (x) — content 80×36 vs box 52×36
 - `outline-success-md-disabled` (x) — content 80×36 vs box 52×36
 - `outline-success-md-invalid` (x) — content 80×36 vs box 52×36
-- `outline-success-lg-default` (x) — content 91×44 vs box 56×44
-- `outline-success-lg-required` (x) — content 91×44 vs box 56×44
-- `outline-success-lg-disabled` (x) — content 91×44 vs box 56×44
-- `outline-success-lg-invalid` (x) — content 91×44 vs box 56×44
+- `outline-success-lg-default` (x) — content 92×44 vs box 56×44
+- `outline-success-lg-required` (x) — content 92×44 vs box 56×44
+- `outline-success-lg-disabled` (x) — content 92×44 vs box 56×44
+- `outline-success-lg-invalid` (x) — content 92×44 vs box 56×44
 - `outline-danger-xs-default` (x) — content 61×24 vs box 48×24
 - `outline-danger-xs-required` (x) — content 61×24 vs box 48×24
 - `outline-danger-xs-disabled` (x) — content 61×24 vs box 48×24
@@ -504,10 +508,10 @@ overflows as worst-case, not as media-query-aware behavior.
 - `outline-danger-md-required` (x) — content 80×36 vs box 52×36
 - `outline-danger-md-disabled` (x) — content 80×36 vs box 52×36
 - `outline-danger-md-invalid` (x) — content 80×36 vs box 52×36
-- `outline-danger-lg-default` (x) — content 91×44 vs box 56×44
-- `outline-danger-lg-required` (x) — content 91×44 vs box 56×44
-- `outline-danger-lg-disabled` (x) — content 91×44 vs box 56×44
-- `outline-danger-lg-invalid` (x) — content 91×44 vs box 56×44
+- `outline-danger-lg-default` (x) — content 92×44 vs box 56×44
+- `outline-danger-lg-required` (x) — content 92×44 vs box 56×44
+- `outline-danger-lg-disabled` (x) — content 92×44 vs box 56×44
+- `outline-danger-lg-invalid` (x) — content 92×44 vs box 56×44
 - `outline-warning-xs-default` (x) — content 61×24 vs box 48×24
 - `outline-warning-xs-required` (x) — content 61×24 vs box 48×24
 - `outline-warning-xs-disabled` (x) — content 61×24 vs box 48×24
@@ -520,10 +524,10 @@ overflows as worst-case, not as media-query-aware behavior.
 - `outline-warning-md-required` (x) — content 80×36 vs box 52×36
 - `outline-warning-md-disabled` (x) — content 80×36 vs box 52×36
 - `outline-warning-md-invalid` (x) — content 80×36 vs box 52×36
-- `outline-warning-lg-default` (x) — content 91×44 vs box 56×44
-- `outline-warning-lg-required` (x) — content 91×44 vs box 56×44
-- `outline-warning-lg-disabled` (x) — content 91×44 vs box 56×44
-- `outline-warning-lg-invalid` (x) — content 91×44 vs box 56×44
+- `outline-warning-lg-default` (x) — content 92×44 vs box 56×44
+- `outline-warning-lg-required` (x) — content 92×44 vs box 56×44
+- `outline-warning-lg-disabled` (x) — content 92×44 vs box 56×44
+- `outline-warning-lg-invalid` (x) — content 92×44 vs box 56×44
 - `solid-neutral-xs-default` (x) — content 61×24 vs box 48×24
 - `solid-neutral-xs-required` (x) — content 61×24 vs box 48×24
 - `solid-neutral-xs-disabled` (x) — content 61×24 vs box 48×24

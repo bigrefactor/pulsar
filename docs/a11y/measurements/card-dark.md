@@ -16,7 +16,10 @@ Columns:
   pass under WCAG 2.5.8 Target Size minimum.
 - **Text** — text-color vs effective background contrast ratio
   (alpha-resolved). Threshold 4.5:1 (3:1 for large text). `—` means no
-  text or no resolvable color.
+  text or no resolvable color. For mask-painted icon glyphs the value is
+  the painted glyph color vs the *ancestor* background at the 3:1 WCAG
+  1.4.11 non-text threshold, marked `(glyph)`; decorative
+  (`aria-hidden`) icons are exempt and marked `(glyph, decorative)`.
 - **Border** — border-color vs adjacent background contrast. `—` if no
   visible border. Threshold 3:1 per WCAG 1.4.11 Non-text Contrast.
 - **Focus** — focus-visible ring/outline vs adjacent background.
@@ -60,42 +63,42 @@ Columns:
 | `ghost-warning-lg` | `div` | 256 | 186 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `ghost-warning-md` | `div` | 256 | 150 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `ghost-warning-sm` | `div` | 256 | 134 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `outline-danger-lg` | `div` | 256 | 188 | ✓ | 16.98:1 ✓ | 9.25:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-md` | `div` | 256 | 172 | ✓ | 16.98:1 ✓ | 9.25:1 ✓ | — (not-focusable-in-state) |
-| `outline-danger-sm` | `div` | 256 | 136 | ✓ | 16.98:1 ✓ | 9.25:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-lg` | `div` | 256 | 188 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-md` | `div` | 256 | 172 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
-| `outline-neutral-sm` | `div` | 256 | 136 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
-| `outline-primary-lg` | `div` | 256 | 188 | ✓ | 16.98:1 ✓ | 6.72:1 ✓ | — (not-focusable-in-state) |
-| `outline-primary-md` | `div` | 256 | 172 | ✓ | 16.98:1 ✓ | 6.72:1 ✓ | — (not-focusable-in-state) |
-| `outline-primary-sm` | `div` | 256 | 136 | ✓ | 16.98:1 ✓ | 6.72:1 ✓ | — (not-focusable-in-state) |
-| `outline-secondary-lg` | `div` | 256 | 188 | ✓ | 16.98:1 ✓ | 6.22:1 ✓ | — (not-focusable-in-state) |
-| `outline-secondary-md` | `div` | 256 | 172 | ✓ | 16.98:1 ✓ | 6.22:1 ✓ | — (not-focusable-in-state) |
-| `outline-secondary-sm` | `div` | 256 | 136 | ✓ | 16.98:1 ✓ | 6.22:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-lg` | `div` | 256 | 188 | ✓ | 16.98:1 ✓ | 9.98:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-md` | `div` | 256 | 172 | ✓ | 16.98:1 ✓ | 9.98:1 ✓ | — (not-focusable-in-state) |
-| `outline-success-sm` | `div` | 256 | 136 | ✓ | 16.98:1 ✓ | 9.98:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-lg` | `div` | 256 | 188 | ✓ | 16.98:1 ✓ | 10.3:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-md` | `div` | 256 | 172 | ✓ | 16.98:1 ✓ | 10.3:1 ✓ | — (not-focusable-in-state) |
-| `outline-warning-sm` | `div` | 256 | 136 | ✓ | 16.98:1 ✓ | 10.3:1 ✓ | — (not-focusable-in-state) |
-| `solid-danger-lg` | `div` | 256 | 168 | ✓ | 14.22:1 ✓ | 1.49:1 ✗ | — (not-focusable-in-state) |
-| `solid-danger-md` | `div` | 256 | 152 | ✓ | 14.22:1 ✓ | 1.49:1 ✗ | — (not-focusable-in-state) |
-| `solid-danger-sm` | `div` | 256 | 136 | ✓ | 14.22:1 ✓ | 1.49:1 ✗ | — (not-focusable-in-state) |
-| `solid-neutral-lg` | `div` | 256 | 168 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
-| `solid-neutral-md` | `div` | 256 | 152 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
-| `solid-neutral-sm` | `div` | 256 | 136 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ | — (not-focusable-in-state) |
-| `solid-primary-lg` | `div` | 256 | 168 | ✓ | 14.61:1 ✓ | 1.4:1 ✗ | — (not-focusable-in-state) |
-| `solid-primary-md` | `div` | 256 | 152 | ✓ | 14.61:1 ✓ | 1.4:1 ✗ | — (not-focusable-in-state) |
-| `solid-primary-sm` | `div` | 256 | 136 | ✓ | 14.61:1 ✓ | 1.4:1 ✗ | — (not-focusable-in-state) |
-| `solid-secondary-lg` | `div` | 256 | 168 | ✓ | 14.73:1 ✓ | 1.37:1 ✗ | — (not-focusable-in-state) |
-| `solid-secondary-md` | `div` | 256 | 152 | ✓ | 14.73:1 ✓ | 1.37:1 ✗ | — (not-focusable-in-state) |
-| `solid-secondary-sm` | `div` | 256 | 136 | ✓ | 14.73:1 ✓ | 1.37:1 ✗ | — (not-focusable-in-state) |
-| `solid-success-lg` | `div` | 256 | 168 | ✓ | 14.03:1 ✓ | 1.53:1 ✗ | — (not-focusable-in-state) |
-| `solid-success-md` | `div` | 256 | 152 | ✓ | 14.03:1 ✓ | 1.53:1 ✗ | — (not-focusable-in-state) |
-| `solid-success-sm` | `div` | 256 | 136 | ✓ | 14.03:1 ✓ | 1.53:1 ✗ | — (not-focusable-in-state) |
-| `solid-warning-lg` | `div` | 256 | 168 | ✓ | 14.08:1 ✓ | 1.53:1 ✗ | — (not-focusable-in-state) |
-| `solid-warning-md` | `div` | 256 | 152 | ✓ | 14.08:1 ✓ | 1.53:1 ✗ | — (not-focusable-in-state) |
-| `solid-warning-sm` | `div` | 256 | 136 | ✓ | 14.08:1 ✓ | 1.53:1 ✗ | — (not-focusable-in-state) |
+| `outline-danger-lg` | `div` | 256 | 188 | ✓ | 16.98:1 ✓ | 9.25:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-danger-md` | `div` | 256 | 172 | ✓ | 16.98:1 ✓ | 9.25:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-danger-sm` | `div` | 256 | 136 | ✓ | 16.98:1 ✓ | 9.25:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-neutral-lg` | `div` | 256 | 188 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-neutral-md` | `div` | 256 | 172 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-neutral-sm` | `div` | 256 | 136 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-primary-lg` | `div` | 256 | 188 | ✓ | 16.98:1 ✓ | 6.72:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-primary-md` | `div` | 256 | 172 | ✓ | 16.98:1 ✓ | 6.72:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-primary-sm` | `div` | 256 | 136 | ✓ | 16.98:1 ✓ | 6.72:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-secondary-lg` | `div` | 256 | 188 | ✓ | 16.98:1 ✓ | 6.22:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-secondary-md` | `div` | 256 | 172 | ✓ | 16.98:1 ✓ | 6.22:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-secondary-sm` | `div` | 256 | 136 | ✓ | 16.98:1 ✓ | 6.22:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-success-lg` | `div` | 256 | 188 | ✓ | 16.98:1 ✓ | 9.98:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-success-md` | `div` | 256 | 172 | ✓ | 16.98:1 ✓ | 9.98:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-success-sm` | `div` | 256 | 136 | ✓ | 16.98:1 ✓ | 9.98:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-warning-lg` | `div` | 256 | 188 | ✓ | 16.98:1 ✓ | 10.3:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-warning-md` | `div` | 256 | 172 | ✓ | 16.98:1 ✓ | 10.3:1 ✓ (top) | — (not-focusable-in-state) |
+| `outline-warning-sm` | `div` | 256 | 136 | ✓ | 16.98:1 ✓ | 10.3:1 ✓ (top) | — (not-focusable-in-state) |
+| `solid-danger-lg` | `div` | 256 | 168 | ✓ | 14.22:1 ✓ | 1.49:1 ✗ (top) | — (not-focusable-in-state) |
+| `solid-danger-md` | `div` | 256 | 152 | ✓ | 14.22:1 ✓ | 1.49:1 ✗ (top) | — (not-focusable-in-state) |
+| `solid-danger-sm` | `div` | 256 | 136 | ✓ | 14.22:1 ✓ | 1.49:1 ✗ (top) | — (not-focusable-in-state) |
+| `solid-neutral-lg` | `div` | 256 | 168 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ (top) | — (not-focusable-in-state) |
+| `solid-neutral-md` | `div` | 256 | 152 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ (top) | — (not-focusable-in-state) |
+| `solid-neutral-sm` | `div` | 256 | 136 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ (top) | — (not-focusable-in-state) |
+| `solid-primary-lg` | `div` | 256 | 168 | ✓ | 14.61:1 ✓ | 1.4:1 ✗ (top) | — (not-focusable-in-state) |
+| `solid-primary-md` | `div` | 256 | 152 | ✓ | 14.61:1 ✓ | 1.4:1 ✗ (top) | — (not-focusable-in-state) |
+| `solid-primary-sm` | `div` | 256 | 136 | ✓ | 14.61:1 ✓ | 1.4:1 ✗ (top) | — (not-focusable-in-state) |
+| `solid-secondary-lg` | `div` | 256 | 168 | ✓ | 14.73:1 ✓ | 1.37:1 ✗ (top) | — (not-focusable-in-state) |
+| `solid-secondary-md` | `div` | 256 | 152 | ✓ | 14.73:1 ✓ | 1.37:1 ✗ (top) | — (not-focusable-in-state) |
+| `solid-secondary-sm` | `div` | 256 | 136 | ✓ | 14.73:1 ✓ | 1.37:1 ✗ (top) | — (not-focusable-in-state) |
+| `solid-success-lg` | `div` | 256 | 168 | ✓ | 14.03:1 ✓ | 1.53:1 ✗ (top) | — (not-focusable-in-state) |
+| `solid-success-md` | `div` | 256 | 152 | ✓ | 14.03:1 ✓ | 1.53:1 ✗ (top) | — (not-focusable-in-state) |
+| `solid-success-sm` | `div` | 256 | 136 | ✓ | 14.03:1 ✓ | 1.53:1 ✗ (top) | — (not-focusable-in-state) |
+| `solid-warning-lg` | `div` | 256 | 168 | ✓ | 14.08:1 ✓ | 1.53:1 ✗ (top) | — (not-focusable-in-state) |
+| `solid-warning-md` | `div` | 256 | 152 | ✓ | 14.08:1 ✓ | 1.53:1 ✗ (top) | — (not-focusable-in-state) |
+| `solid-warning-sm` | `div` | 256 | 136 | ✓ | 14.08:1 ✓ | 1.53:1 ✗ (top) | — (not-focusable-in-state) |
 
 ## Text-spacing override (WCAG 1.4.12)
 

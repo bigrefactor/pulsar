@@ -88,11 +88,13 @@ px.
 
 **Evidence:** Border colors come from semantic tokens with opacity
 modifiers (e.g., `border-border/30`, `border-primary/60`) —
-`lib/pulsar/components/divider.ex:155–183`. Measurement: the divider
-fixture's borders read `no-border` on the wrapper div because the
-visible line is rendered via `border-top` on the `<hr>` /
-`<div role="separator">` rather than on the data-fixture-cell
-wrapper.
+`lib/pulsar/components/divider.ex:155–183`. Measurement: horizontal
+dividers read `no-border` because the visible line is rendered via
+`border-top` on a child `<hr>` rather than on the data-fixture-cell
+element. Vertical dividers carry their rule as a `border-left` on the
+measured element, so they report a ratio — the lower-opacity neutral /
+primary / secondary tints land below 3:1 (e.g. `v-neutral` ≈1.18:1
+light), consistent with the decorative classification below.
 
 **Notes:** WCAG 1.4.11 applies to user interface components needed
 to understand the content (focusable elements, state indicators).

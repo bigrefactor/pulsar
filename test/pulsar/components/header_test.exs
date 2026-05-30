@@ -89,7 +89,7 @@ defmodule Pulsar.Components.HeaderTest do
 
       assert html =~ "Outline Header"
       assert html =~ "border-b"
-      assert html =~ "border-neutral-200"
+      assert html =~ "border-border-strong"
       assert html =~ "pb-4"
     end
 
@@ -130,7 +130,7 @@ defmodule Pulsar.Components.HeaderTest do
         <Header.header color="success" variant="outline">Success Header</Header.header>
         """)
 
-      assert html =~ "border-success-200"
+      assert html =~ "border-border-strong"
       assert html =~ "text-success"
     end
 
@@ -400,7 +400,7 @@ defmodule Pulsar.Components.HeaderTest do
         """)
 
       assert html =~ ~s(<hr)
-      assert html =~ "border-border"
+      assert html =~ "border-border-strong"
     end
 
     test "accepts custom classes" do

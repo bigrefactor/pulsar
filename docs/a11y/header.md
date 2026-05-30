@@ -73,15 +73,28 @@ across all sizes — `lib/pulsar/components/header.ex:130, 134, 138, 142, 146`.
 Breadcrumb text uses `text-neutral-500 dark:text-dark-neutral-400` —
 `lib/pulsar/components/header.ex:266, 316`. Solid variants pair `*-100`
 backgrounds with `*-900` foregrounds —
-`lib/pulsar/components/header.ex:178–186`. Browser measurement of 13
-cells across both themes: min 19.27:1 (light) / 16.98:1 (dark)
+`lib/pulsar/components/header.ex:178–186`. Browser measurement across
+both themes: neutral content cells reach 19.27:1 (light) / 16.98:1 (dark)
 ([light](measurements/header-light.md),
-[dark](measurements/header-dark.md)). All cells pass.
+[dark](measurements/header-dark.md)).
 
-**Notes:** The header fixture exercises sizes (xs–xl) and heading
-levels (h1–h6) at the default neutral color; per-color solid variants
-are not in the fixture. Token math (`*-100` bg + `*-900` fg) is
-verified to exceed 4.5:1 in both palettes.
+**Notes:** The header fixture exercises sizes (xs–xl), heading levels
+(h1–h6), and the outline variant in all seven colors. The
+`outline-<color>` cells carry `text-<color>` on the root `<header>`,
+which renders no text of its own; the color cascades to the large title
+(≥24px at the default size, the 3:1 large-text threshold), where even the
+lowest-contrast hue clears the minimum. The `outline-info` cell reads
+3.46:1 in light because the tool measures the root at its inherited 16px
+(normal-text 4.5:1 threshold), not the large title where `text-info`
+actually paints. One real caveat sits underneath that artifact: light
+`text-info` (`info-600`) is 3.46:1 against the page, so it satisfies AA
+only as large text (≥24px / ≥18.66px bold). At the default `md` size and
+larger the title is large text and passes; `color="info"` at the small
+`xs`/`sm` sizes would fall below the 4.5:1 normal-text minimum. This is a
+caller-tunable color choice shared by every component that exposes
+`color="info"`, not specific to the header, and is tracked for a
+follow-up. Subtitles use `text-muted-foreground`. Token math (`*-100` bg
++ `*-900` fg) is verified to exceed 4.5:1 in both palettes.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -104,22 +117,23 @@ verified to exceed 4.5:1 in both palettes.
 **Notes:** Layout collapses to a stacked column at narrow viewports;
 breadcrumb chips wrap rather than overflow.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — caller-tunable
+### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
-**Evidence:** Outline variant bottom border uses `border-*-200`
-(`lib/pulsar/components/header.ex:168–175`); divider hr uses
-`border-neutral-200` — `lib/pulsar/components/header.ex:341`. The
-header fixture doesn't render the outline variant, so per-cell
-border contrast isn't captured. The 200-shade pattern is also used
-by the divider component, where measurement shows neutral-200
-borders below the 3:1 threshold (`oklch` lightness ≈ 0.92, ratio
-≈ 1.18:1 in light).
+**Evidence:** The outline variant's bottom border routes through
+`border-border-strong` for every color —
+`lib/pulsar/components/header.ex:168–174`. The optional divider `hr` uses
+the same token — `lib/pulsar/components/header.ex:338`. Browser
+measurement of the outline variant across all seven colors: every border
+cell passes in both themes (4.63:1 light / 6.82:1 dark)
+([light](measurements/header-light.md),
+[dark](measurements/header-dark.md)).
 
-**Notes:** WCAG 1.4.11 covers UI components that need to be
-perceivable — decorative dividers between sections are not strictly
-in scope. Borders here serve as section separators rather than
-focusable component borders. Page-level / theme-level concern; not
-filed as a sub-issue.
+**Notes:** `--color-border-strong` resolves to `gray-500` (light) /
+`gray-400` (dark), so the bottom rule holds ≥4.6:1 against the page
+background for every color — the color is carried by the heading text, not
+the rule. The divider `hr` is a child element the per-cell tool tags on
+the parent, so its contrast rides on the same `border-border-strong` value
+measured on the outline cells.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 

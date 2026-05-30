@@ -7,9 +7,10 @@ defmodule Pulsar.DevApp.HeaderLive do
 
   @sizes ~w(xs sm md lg xl)
   @levels ~w(h1 h2 h3 h4 h5 h6)
+  @colors ~w(neutral primary secondary success danger warning info)
 
   def render(assigns) do
-    assigns = assign(assigns, sizes: @sizes, levels: @levels)
+    assigns = assign(assigns, sizes: @sizes, levels: @levels, colors: @colors)
 
     ~H"""
     <.fixture_page name="header" title="Header">
@@ -39,6 +40,19 @@ defmodule Pulsar.DevApp.HeaderLive do
             <Button.button variant="outline" color="neutral">Cancel</Button.button>
           </:actions>
         </Header.header>
+      </.fixture_section>
+      <.fixture_section name="outline" title="Outline variant">
+        <div class="w-full space-y-4">
+          <Header.header
+            :for={color <- @colors}
+            variant="outline"
+            color={color}
+            data-fixture-cell={"outline-#{color}"}
+          >
+            Outline @ {color}
+            <:subtitle>Subtitle line</:subtitle>
+          </Header.header>
+        </div>
       </.fixture_section>
       <.fixture_section name="breadcrumbs" title="With breadcrumbs">
         <Header.header data-fixture-cell="breadcrumbs">

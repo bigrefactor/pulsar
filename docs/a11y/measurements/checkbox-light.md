@@ -16,7 +16,10 @@ Columns:
   pass under WCAG 2.5.8 Target Size minimum.
 - **Text** — text-color vs effective background contrast ratio
   (alpha-resolved). Threshold 4.5:1 (3:1 for large text). `—` means no
-  text or no resolvable color.
+  text or no resolvable color. For mask-painted icon glyphs the value is
+  the painted glyph color vs the *ancestor* background at the 3:1 WCAG
+  1.4.11 non-text threshold, marked `(glyph)`; decorative
+  (`aria-hidden`) icons are exempt and marked `(glyph, decorative)`.
 - **Border** — border-color vs adjacent background contrast. `—` if no
   visible border. Threshold 3:1 per WCAG 1.4.11 Non-text Contrast.
 - **Focus** — focus-visible ring/outline vs adjacent background.
@@ -176,7 +179,7 @@ overflows as worst-case, not as media-query-aware behavior.
 - `neutral-sm-disabled` (x) — content 4×16 vs box 0×16
 - `neutral-sm-invalid` (x) — content 4×16 vs box 0×16
 - `neutral-md-unchecked` (x) — content 4×20 vs box 0×20
-- `neutral-md-checked` (x) — content 6×20 vs box 0×20
+- `neutral-md-checked` (x) — content 5×20 vs box 0×20
 - `neutral-md-indeterminate` (x) — content 4×20 vs box 0×20
 - `neutral-md-disabled` (x) — content 4×20 vs box 0×20
 - `neutral-md-invalid` (x) — content 4×20 vs box 0×20
@@ -196,7 +199,7 @@ overflows as worst-case, not as media-query-aware behavior.
 - `primary-sm-disabled` (x) — content 4×16 vs box 0×16
 - `primary-sm-invalid` (x) — content 4×16 vs box 0×16
 - `primary-md-unchecked` (x) — content 4×20 vs box 0×20
-- `primary-md-checked` (x) — content 6×20 vs box 0×20
+- `primary-md-checked` (x) — content 5×20 vs box 0×20
 - `primary-md-indeterminate` (x) — content 4×20 vs box 0×20
 - `primary-md-disabled` (x) — content 4×20 vs box 0×20
 - `primary-md-invalid` (x) — content 4×20 vs box 0×20
@@ -216,7 +219,7 @@ overflows as worst-case, not as media-query-aware behavior.
 - `secondary-sm-disabled` (x) — content 4×16 vs box 0×16
 - `secondary-sm-invalid` (x) — content 4×16 vs box 0×16
 - `secondary-md-unchecked` (x) — content 4×20 vs box 0×20
-- `secondary-md-checked` (x) — content 6×20 vs box 0×20
+- `secondary-md-checked` (x) — content 5×20 vs box 0×20
 - `secondary-md-indeterminate` (x) — content 4×20 vs box 0×20
 - `secondary-md-disabled` (x) — content 4×20 vs box 0×20
 - `secondary-md-invalid` (x) — content 4×20 vs box 0×20
@@ -236,7 +239,7 @@ overflows as worst-case, not as media-query-aware behavior.
 - `success-sm-disabled` (x) — content 4×16 vs box 0×16
 - `success-sm-invalid` (x) — content 4×16 vs box 0×16
 - `success-md-unchecked` (x) — content 4×20 vs box 0×20
-- `success-md-checked` (x) — content 6×20 vs box 0×20
+- `success-md-checked` (x) — content 5×20 vs box 0×20
 - `success-md-indeterminate` (x) — content 4×20 vs box 0×20
 - `success-md-disabled` (x) — content 4×20 vs box 0×20
 - `success-md-invalid` (x) — content 4×20 vs box 0×20
@@ -256,7 +259,7 @@ overflows as worst-case, not as media-query-aware behavior.
 - `danger-sm-disabled` (x) — content 4×16 vs box 0×16
 - `danger-sm-invalid` (x) — content 4×16 vs box 0×16
 - `danger-md-unchecked` (x) — content 4×20 vs box 0×20
-- `danger-md-checked` (x) — content 6×20 vs box 0×20
+- `danger-md-checked` (x) — content 5×20 vs box 0×20
 - `danger-md-indeterminate` (x) — content 4×20 vs box 0×20
 - `danger-md-disabled` (x) — content 4×20 vs box 0×20
 - `danger-md-invalid` (x) — content 4×20 vs box 0×20
@@ -276,7 +279,7 @@ overflows as worst-case, not as media-query-aware behavior.
 - `warning-sm-disabled` (x) — content 4×16 vs box 0×16
 - `warning-sm-invalid` (x) — content 4×16 vs box 0×16
 - `warning-md-unchecked` (x) — content 4×20 vs box 0×20
-- `warning-md-checked` (x) — content 6×20 vs box 0×20
+- `warning-md-checked` (x) — content 5×20 vs box 0×20
 - `warning-md-indeterminate` (x) — content 4×20 vs box 0×20
 - `warning-md-disabled` (x) — content 4×20 vs box 0×20
 - `warning-md-invalid` (x) — content 4×20 vs box 0×20
