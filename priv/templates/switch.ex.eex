@@ -101,27 +101,27 @@ alias Phoenix.LiveView.Rendered
 @size_config %{
   "lg" => %{
     spinner: "h-5 w-5",
-    thumb: "h-5 w-5 top-0.5 left-0.5 translate-x-0 peer-checked:translate-x-[32px]",
+    thumb: "h-5 w-5 top-1/2 left-0.5 -translate-y-1/2 translate-x-0 peer-checked:translate-x-[32px]",
     track: "h-6 w-14"
   },
   "md" => %{
     spinner: "h-4 w-4",
-    thumb: "h-4 w-4 top-0.5 left-0.5 translate-x-0 peer-checked:translate-x-[24px]",
+    thumb: "h-4 w-4 top-1/2 left-0.5 -translate-y-1/2 translate-x-0 peer-checked:translate-x-[24px]",
     track: "h-5 w-11"
   },
   "sm" => %{
     spinner: "h-3 w-3",
-    thumb: "h-3 w-3 top-0.5 left-0.5 translate-x-0 peer-checked:translate-x-[20px]",
+    thumb: "h-3 w-3 top-1/2 left-0.5 -translate-y-1/2 translate-x-0 peer-checked:translate-x-[20px]",
     track: "h-4 w-9"
   },
   "xl" => %{
     spinner: "h-6 w-6",
-    thumb: "h-[22px] w-[22px] top-[3px] left-[3px] translate-x-0 peer-checked:translate-x-[36px]",
+    thumb: "h-[22px] w-[22px] top-1/2 left-[3px] -translate-y-1/2 translate-x-0 peer-checked:translate-x-[36px]",
     track: "h-7 w-16"
   },
   "xs" => %{
     spinner: "h-2 w-2",
-    thumb: "h-2.5 w-2.5 top-0.5 left-0.5 translate-x-0 peer-checked:translate-x-[14px]",
+    thumb: "h-2.5 w-2.5 top-1/2 left-0.5 -translate-y-1/2 translate-x-0 peer-checked:translate-x-[14px]",
     track: "h-3.5 w-7"
   }
 }
