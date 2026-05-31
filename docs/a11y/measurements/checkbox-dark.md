@@ -27,129 +27,129 @@ Columns:
 
 | Cell ID | Tag | Width | Height | ≥24×24 | Text | Border | Focus |
 |---------|-----|-------|--------|--------|------|--------|-------|
-| `card-checked` | `label` | 229.97 | 60 | ✓ | 10.88:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `card-default` | `label` | 191.33 | 60 | ✓ | 14.61:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `card-checked` | `label` | 233.97 | 60 | ✓ | 10.88:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `card-default` | `label` | 195.33 | 60 | ✓ | 14.61:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `card-hidden-checkbox` | `label` | 233.16 | 60 | ✓ | 14.61:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `danger-lg-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `danger-lg-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `danger-lg-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `danger-lg-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `danger-lg-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `danger-md-checked` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `danger-md-disabled` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `danger-md-indeterminate` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `danger-md-invalid` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `danger-md-unchecked` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `danger-sm-checked` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `danger-sm-disabled` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `danger-sm-indeterminate` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `danger-sm-invalid` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `danger-sm-unchecked` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `danger-xs-checked` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `danger-xs-disabled` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `danger-xs-indeterminate` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `danger-xs-invalid` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `danger-xs-unchecked` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `danger-md-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `danger-md-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `danger-md-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `danger-md-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `danger-md-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `danger-sm-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `danger-sm-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `danger-sm-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `danger-sm-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `danger-sm-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `danger-xs-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `danger-xs-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `danger-xs-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `danger-xs-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `danger-xs-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `neutral-lg-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `neutral-lg-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `neutral-lg-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `neutral-lg-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `neutral-lg-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `neutral-md-checked` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `neutral-md-disabled` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `neutral-md-indeterminate` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `neutral-md-invalid` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `neutral-md-unchecked` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `neutral-sm-checked` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `neutral-sm-disabled` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `neutral-sm-indeterminate` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `neutral-sm-invalid` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `neutral-sm-unchecked` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `neutral-xs-checked` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `neutral-xs-disabled` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `neutral-xs-indeterminate` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `neutral-xs-invalid` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `neutral-xs-unchecked` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `neutral-md-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `neutral-md-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `neutral-md-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `neutral-md-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `neutral-md-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `neutral-sm-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `neutral-sm-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `neutral-sm-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `neutral-sm-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `neutral-sm-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `neutral-xs-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `neutral-xs-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `neutral-xs-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `neutral-xs-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `neutral-xs-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `primary-lg-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `primary-lg-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `primary-lg-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `primary-lg-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `primary-lg-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `primary-md-checked` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `primary-md-disabled` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `primary-md-indeterminate` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `primary-md-invalid` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `primary-md-unchecked` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `primary-sm-checked` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `primary-sm-disabled` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `primary-sm-indeterminate` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `primary-sm-invalid` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `primary-sm-unchecked` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `primary-xs-checked` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `primary-xs-disabled` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `primary-xs-indeterminate` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `primary-xs-invalid` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `primary-xs-unchecked` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `primary-md-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `primary-md-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `primary-md-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `primary-md-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `primary-md-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `primary-sm-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `primary-sm-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `primary-sm-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `primary-sm-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `primary-sm-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `primary-xs-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `primary-xs-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `primary-xs-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `primary-xs-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `primary-xs-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `secondary-lg-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `secondary-lg-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `secondary-lg-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `secondary-lg-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `secondary-lg-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `secondary-md-checked` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `secondary-md-disabled` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `secondary-md-indeterminate` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `secondary-md-invalid` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `secondary-md-unchecked` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `secondary-sm-checked` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `secondary-sm-disabled` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `secondary-sm-indeterminate` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `secondary-sm-invalid` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `secondary-sm-unchecked` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `secondary-xs-checked` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `secondary-xs-disabled` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `secondary-xs-indeterminate` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `secondary-xs-invalid` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `secondary-xs-unchecked` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `secondary-md-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `secondary-md-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `secondary-md-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `secondary-md-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `secondary-md-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `secondary-sm-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `secondary-sm-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `secondary-sm-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `secondary-sm-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `secondary-sm-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `secondary-xs-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `secondary-xs-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `secondary-xs-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `secondary-xs-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `secondary-xs-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `success-lg-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `success-lg-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `success-lg-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `success-lg-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `success-lg-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `success-md-checked` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `success-md-disabled` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `success-md-indeterminate` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `success-md-invalid` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `success-md-unchecked` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `success-sm-checked` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `success-sm-disabled` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `success-sm-indeterminate` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `success-sm-invalid` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `success-sm-unchecked` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `success-xs-checked` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `success-xs-disabled` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `success-xs-indeterminate` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `success-xs-invalid` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `success-xs-unchecked` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `success-md-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `success-md-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `success-md-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `success-md-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `success-md-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `success-sm-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `success-sm-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `success-sm-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `success-sm-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `success-sm-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `success-xs-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `success-xs-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `success-xs-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `success-xs-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `success-xs-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `warning-lg-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `warning-lg-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `warning-lg-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `warning-lg-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 | `warning-lg-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `warning-md-checked` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `warning-md-disabled` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `warning-md-indeterminate` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `warning-md-invalid` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `warning-md-unchecked` | `input` | 20 | 20 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `warning-sm-checked` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `warning-sm-disabled` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `warning-sm-indeterminate` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `warning-sm-invalid` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `warning-sm-unchecked` | `input` | 16 | 16 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `warning-xs-checked` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `warning-xs-disabled` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `warning-xs-indeterminate` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `warning-xs-invalid` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
-| `warning-xs-unchecked` | `input` | 12 | 12 | ✗ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `warning-md-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `warning-md-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `warning-md-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `warning-md-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `warning-md-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `warning-sm-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `warning-sm-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `warning-sm-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `warning-sm-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `warning-sm-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `warning-xs-checked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `warning-xs-disabled` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `warning-xs-indeterminate` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `warning-xs-invalid` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
+| `warning-xs-unchecked` | `input` | 24 | 24 | ✓ | 16.98:1 ✓ | — (no-border) | 6.72:1 ✓ |
 
 ## Text-spacing override (WCAG 1.4.12)
 
@@ -168,121 +168,121 @@ overflows as worst-case, not as media-query-aware behavior.
 
 **Cells overflowing (120):**
 
-- `neutral-xs-unchecked` (x) — content 4×12 vs box 0×12
-- `neutral-xs-checked` (x) — content 4×12 vs box 0×12
-- `neutral-xs-indeterminate` (x) — content 4×12 vs box 0×12
-- `neutral-xs-disabled` (x) — content 4×12 vs box 0×12
-- `neutral-xs-invalid` (x) — content 4×12 vs box 0×12
-- `neutral-sm-unchecked` (x) — content 4×16 vs box 0×16
-- `neutral-sm-checked` (x) — content 5×16 vs box 0×16
-- `neutral-sm-indeterminate` (x) — content 4×16 vs box 0×16
-- `neutral-sm-disabled` (x) — content 4×16 vs box 0×16
-- `neutral-sm-invalid` (x) — content 4×16 vs box 0×16
-- `neutral-md-unchecked` (x) — content 4×20 vs box 0×20
-- `neutral-md-checked` (x) — content 5×20 vs box 0×20
-- `neutral-md-indeterminate` (x) — content 4×20 vs box 0×20
-- `neutral-md-disabled` (x) — content 4×20 vs box 0×20
-- `neutral-md-invalid` (x) — content 4×20 vs box 0×20
+- `neutral-xs-unchecked` (x) — content 4×24 vs box 0×24
+- `neutral-xs-checked` (x) — content 4×24 vs box 0×24
+- `neutral-xs-indeterminate` (x) — content 4×24 vs box 0×24
+- `neutral-xs-disabled` (x) — content 4×24 vs box 0×24
+- `neutral-xs-invalid` (x) — content 4×24 vs box 0×24
+- `neutral-sm-unchecked` (x) — content 4×24 vs box 0×24
+- `neutral-sm-checked` (x) — content 5×24 vs box 0×24
+- `neutral-sm-indeterminate` (x) — content 4×24 vs box 0×24
+- `neutral-sm-disabled` (x) — content 4×24 vs box 0×24
+- `neutral-sm-invalid` (x) — content 4×24 vs box 0×24
+- `neutral-md-unchecked` (x) — content 4×24 vs box 0×24
+- `neutral-md-checked` (x) — content 5×24 vs box 0×24
+- `neutral-md-indeterminate` (x) — content 4×24 vs box 0×24
+- `neutral-md-disabled` (x) — content 4×24 vs box 0×24
+- `neutral-md-invalid` (x) — content 4×24 vs box 0×24
 - `neutral-lg-unchecked` (x) — content 4×24 vs box 0×24
 - `neutral-lg-checked` (x) — content 6×24 vs box 0×24
 - `neutral-lg-indeterminate` (x) — content 5×24 vs box 0×24
 - `neutral-lg-disabled` (x) — content 4×24 vs box 0×24
 - `neutral-lg-invalid` (x) — content 4×24 vs box 0×24
-- `primary-xs-unchecked` (x) — content 4×12 vs box 0×12
-- `primary-xs-checked` (x) — content 4×12 vs box 0×12
-- `primary-xs-indeterminate` (x) — content 4×12 vs box 0×12
-- `primary-xs-disabled` (x) — content 4×12 vs box 0×12
-- `primary-xs-invalid` (x) — content 4×12 vs box 0×12
-- `primary-sm-unchecked` (x) — content 4×16 vs box 0×16
-- `primary-sm-checked` (x) — content 5×16 vs box 0×16
-- `primary-sm-indeterminate` (x) — content 4×16 vs box 0×16
-- `primary-sm-disabled` (x) — content 4×16 vs box 0×16
-- `primary-sm-invalid` (x) — content 4×16 vs box 0×16
-- `primary-md-unchecked` (x) — content 4×20 vs box 0×20
-- `primary-md-checked` (x) — content 5×20 vs box 0×20
-- `primary-md-indeterminate` (x) — content 4×20 vs box 0×20
-- `primary-md-disabled` (x) — content 4×20 vs box 0×20
-- `primary-md-invalid` (x) — content 4×20 vs box 0×20
+- `primary-xs-unchecked` (x) — content 4×24 vs box 0×24
+- `primary-xs-checked` (x) — content 4×24 vs box 0×24
+- `primary-xs-indeterminate` (x) — content 4×24 vs box 0×24
+- `primary-xs-disabled` (x) — content 4×24 vs box 0×24
+- `primary-xs-invalid` (x) — content 4×24 vs box 0×24
+- `primary-sm-unchecked` (x) — content 4×24 vs box 0×24
+- `primary-sm-checked` (x) — content 5×24 vs box 0×24
+- `primary-sm-indeterminate` (x) — content 4×24 vs box 0×24
+- `primary-sm-disabled` (x) — content 4×24 vs box 0×24
+- `primary-sm-invalid` (x) — content 4×24 vs box 0×24
+- `primary-md-unchecked` (x) — content 4×24 vs box 0×24
+- `primary-md-checked` (x) — content 5×24 vs box 0×24
+- `primary-md-indeterminate` (x) — content 4×24 vs box 0×24
+- `primary-md-disabled` (x) — content 4×24 vs box 0×24
+- `primary-md-invalid` (x) — content 4×24 vs box 0×24
 - `primary-lg-unchecked` (x) — content 4×24 vs box 0×24
 - `primary-lg-checked` (x) — content 6×24 vs box 0×24
 - `primary-lg-indeterminate` (x) — content 5×24 vs box 0×24
 - `primary-lg-disabled` (x) — content 4×24 vs box 0×24
 - `primary-lg-invalid` (x) — content 4×24 vs box 0×24
-- `secondary-xs-unchecked` (x) — content 4×12 vs box 0×12
-- `secondary-xs-checked` (x) — content 4×12 vs box 0×12
-- `secondary-xs-indeterminate` (x) — content 4×12 vs box 0×12
-- `secondary-xs-disabled` (x) — content 4×12 vs box 0×12
-- `secondary-xs-invalid` (x) — content 4×12 vs box 0×12
-- `secondary-sm-unchecked` (x) — content 4×16 vs box 0×16
-- `secondary-sm-checked` (x) — content 5×16 vs box 0×16
-- `secondary-sm-indeterminate` (x) — content 4×16 vs box 0×16
-- `secondary-sm-disabled` (x) — content 4×16 vs box 0×16
-- `secondary-sm-invalid` (x) — content 4×16 vs box 0×16
-- `secondary-md-unchecked` (x) — content 4×20 vs box 0×20
-- `secondary-md-checked` (x) — content 5×20 vs box 0×20
-- `secondary-md-indeterminate` (x) — content 4×20 vs box 0×20
-- `secondary-md-disabled` (x) — content 4×20 vs box 0×20
-- `secondary-md-invalid` (x) — content 4×20 vs box 0×20
+- `secondary-xs-unchecked` (x) — content 4×24 vs box 0×24
+- `secondary-xs-checked` (x) — content 4×24 vs box 0×24
+- `secondary-xs-indeterminate` (x) — content 4×24 vs box 0×24
+- `secondary-xs-disabled` (x) — content 4×24 vs box 0×24
+- `secondary-xs-invalid` (x) — content 4×24 vs box 0×24
+- `secondary-sm-unchecked` (x) — content 4×24 vs box 0×24
+- `secondary-sm-checked` (x) — content 5×24 vs box 0×24
+- `secondary-sm-indeterminate` (x) — content 4×24 vs box 0×24
+- `secondary-sm-disabled` (x) — content 4×24 vs box 0×24
+- `secondary-sm-invalid` (x) — content 4×24 vs box 0×24
+- `secondary-md-unchecked` (x) — content 4×24 vs box 0×24
+- `secondary-md-checked` (x) — content 5×24 vs box 0×24
+- `secondary-md-indeterminate` (x) — content 4×24 vs box 0×24
+- `secondary-md-disabled` (x) — content 4×24 vs box 0×24
+- `secondary-md-invalid` (x) — content 4×24 vs box 0×24
 - `secondary-lg-unchecked` (x) — content 4×24 vs box 0×24
 - `secondary-lg-checked` (x) — content 6×24 vs box 0×24
 - `secondary-lg-indeterminate` (x) — content 5×24 vs box 0×24
 - `secondary-lg-disabled` (x) — content 4×24 vs box 0×24
 - `secondary-lg-invalid` (x) — content 4×24 vs box 0×24
-- `success-xs-unchecked` (x) — content 4×12 vs box 0×12
-- `success-xs-checked` (x) — content 4×12 vs box 0×12
-- `success-xs-indeterminate` (x) — content 4×12 vs box 0×12
-- `success-xs-disabled` (x) — content 4×12 vs box 0×12
-- `success-xs-invalid` (x) — content 4×12 vs box 0×12
-- `success-sm-unchecked` (x) — content 4×16 vs box 0×16
-- `success-sm-checked` (x) — content 5×16 vs box 0×16
-- `success-sm-indeterminate` (x) — content 4×16 vs box 0×16
-- `success-sm-disabled` (x) — content 4×16 vs box 0×16
-- `success-sm-invalid` (x) — content 4×16 vs box 0×16
-- `success-md-unchecked` (x) — content 4×20 vs box 0×20
-- `success-md-checked` (x) — content 5×20 vs box 0×20
-- `success-md-indeterminate` (x) — content 4×20 vs box 0×20
-- `success-md-disabled` (x) — content 4×20 vs box 0×20
-- `success-md-invalid` (x) — content 4×20 vs box 0×20
+- `success-xs-unchecked` (x) — content 4×24 vs box 0×24
+- `success-xs-checked` (x) — content 4×24 vs box 0×24
+- `success-xs-indeterminate` (x) — content 4×24 vs box 0×24
+- `success-xs-disabled` (x) — content 4×24 vs box 0×24
+- `success-xs-invalid` (x) — content 4×24 vs box 0×24
+- `success-sm-unchecked` (x) — content 4×24 vs box 0×24
+- `success-sm-checked` (x) — content 5×24 vs box 0×24
+- `success-sm-indeterminate` (x) — content 4×24 vs box 0×24
+- `success-sm-disabled` (x) — content 4×24 vs box 0×24
+- `success-sm-invalid` (x) — content 4×24 vs box 0×24
+- `success-md-unchecked` (x) — content 4×24 vs box 0×24
+- `success-md-checked` (x) — content 5×24 vs box 0×24
+- `success-md-indeterminate` (x) — content 4×24 vs box 0×24
+- `success-md-disabled` (x) — content 4×24 vs box 0×24
+- `success-md-invalid` (x) — content 4×24 vs box 0×24
 - `success-lg-unchecked` (x) — content 4×24 vs box 0×24
 - `success-lg-checked` (x) — content 6×24 vs box 0×24
 - `success-lg-indeterminate` (x) — content 5×24 vs box 0×24
 - `success-lg-disabled` (x) — content 4×24 vs box 0×24
 - `success-lg-invalid` (x) — content 4×24 vs box 0×24
-- `danger-xs-unchecked` (x) — content 4×12 vs box 0×12
-- `danger-xs-checked` (x) — content 4×12 vs box 0×12
-- `danger-xs-indeterminate` (x) — content 4×12 vs box 0×12
-- `danger-xs-disabled` (x) — content 4×12 vs box 0×12
-- `danger-xs-invalid` (x) — content 4×12 vs box 0×12
-- `danger-sm-unchecked` (x) — content 4×16 vs box 0×16
-- `danger-sm-checked` (x) — content 5×16 vs box 0×16
-- `danger-sm-indeterminate` (x) — content 4×16 vs box 0×16
-- `danger-sm-disabled` (x) — content 4×16 vs box 0×16
-- `danger-sm-invalid` (x) — content 4×16 vs box 0×16
-- `danger-md-unchecked` (x) — content 4×20 vs box 0×20
-- `danger-md-checked` (x) — content 5×20 vs box 0×20
-- `danger-md-indeterminate` (x) — content 4×20 vs box 0×20
-- `danger-md-disabled` (x) — content 4×20 vs box 0×20
-- `danger-md-invalid` (x) — content 4×20 vs box 0×20
+- `danger-xs-unchecked` (x) — content 4×24 vs box 0×24
+- `danger-xs-checked` (x) — content 4×24 vs box 0×24
+- `danger-xs-indeterminate` (x) — content 4×24 vs box 0×24
+- `danger-xs-disabled` (x) — content 4×24 vs box 0×24
+- `danger-xs-invalid` (x) — content 4×24 vs box 0×24
+- `danger-sm-unchecked` (x) — content 4×24 vs box 0×24
+- `danger-sm-checked` (x) — content 5×24 vs box 0×24
+- `danger-sm-indeterminate` (x) — content 4×24 vs box 0×24
+- `danger-sm-disabled` (x) — content 4×24 vs box 0×24
+- `danger-sm-invalid` (x) — content 4×24 vs box 0×24
+- `danger-md-unchecked` (x) — content 4×24 vs box 0×24
+- `danger-md-checked` (x) — content 5×24 vs box 0×24
+- `danger-md-indeterminate` (x) — content 4×24 vs box 0×24
+- `danger-md-disabled` (x) — content 4×24 vs box 0×24
+- `danger-md-invalid` (x) — content 4×24 vs box 0×24
 - `danger-lg-unchecked` (x) — content 4×24 vs box 0×24
 - `danger-lg-checked` (x) — content 6×24 vs box 0×24
 - `danger-lg-indeterminate` (x) — content 5×24 vs box 0×24
 - `danger-lg-disabled` (x) — content 4×24 vs box 0×24
 - `danger-lg-invalid` (x) — content 4×24 vs box 0×24
-- `warning-xs-unchecked` (x) — content 4×12 vs box 0×12
-- `warning-xs-checked` (x) — content 4×12 vs box 0×12
-- `warning-xs-indeterminate` (x) — content 4×12 vs box 0×12
-- `warning-xs-disabled` (x) — content 4×12 vs box 0×12
-- `warning-xs-invalid` (x) — content 4×12 vs box 0×12
-- `warning-sm-unchecked` (x) — content 4×16 vs box 0×16
-- `warning-sm-checked` (x) — content 5×16 vs box 0×16
-- `warning-sm-indeterminate` (x) — content 4×16 vs box 0×16
-- `warning-sm-disabled` (x) — content 4×16 vs box 0×16
-- `warning-sm-invalid` (x) — content 4×16 vs box 0×16
-- `warning-md-unchecked` (x) — content 4×20 vs box 0×20
-- `warning-md-checked` (x) — content 5×20 vs box 0×20
-- `warning-md-indeterminate` (x) — content 4×20 vs box 0×20
-- `warning-md-disabled` (x) — content 4×20 vs box 0×20
-- `warning-md-invalid` (x) — content 4×20 vs box 0×20
+- `warning-xs-unchecked` (x) — content 4×24 vs box 0×24
+- `warning-xs-checked` (x) — content 4×24 vs box 0×24
+- `warning-xs-indeterminate` (x) — content 4×24 vs box 0×24
+- `warning-xs-disabled` (x) — content 4×24 vs box 0×24
+- `warning-xs-invalid` (x) — content 4×24 vs box 0×24
+- `warning-sm-unchecked` (x) — content 4×24 vs box 0×24
+- `warning-sm-checked` (x) — content 5×24 vs box 0×24
+- `warning-sm-indeterminate` (x) — content 4×24 vs box 0×24
+- `warning-sm-disabled` (x) — content 4×24 vs box 0×24
+- `warning-sm-invalid` (x) — content 4×24 vs box 0×24
+- `warning-md-unchecked` (x) — content 4×24 vs box 0×24
+- `warning-md-checked` (x) — content 5×24 vs box 0×24
+- `warning-md-indeterminate` (x) — content 4×24 vs box 0×24
+- `warning-md-disabled` (x) — content 4×24 vs box 0×24
+- `warning-md-invalid` (x) — content 4×24 vs box 0×24
 - `warning-lg-unchecked` (x) — content 4×24 vs box 0×24
 - `warning-lg-checked` (x) — content 6×24 vs box 0×24
 - `warning-lg-indeterminate` (x) — content 5×24 vs box 0×24

@@ -147,24 +147,24 @@ inherit their own activation semantics (native buttons, etc.).
 **Notes:** Sample usage in module docs (`lib/pulsar/components/badge.ex:32–53`)
 uses `<button phx-click="...">` which fires on mouseup.
 
-### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ⚠ GAP (minor) — xs size below floor
+### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
-**Evidence:** Badge body is non-interactive (N/A for the wrapper).
-Interactive addon controls are caller-supplied via the
-`start_addon`/`end_addon` slots — `lib/pulsar/components/badge.ex:153–154`.
-The xs/sm sizes use small padding (`py-0.5`,
-`lib/pulsar/components/badge.ex:74–77`). Browser measurement: 73/91
-cells pass ≥ 24×24; 18 fail. All failures are `xs` size cells —
-they render at 20px height. `sm`, `md`, `lg`, `xl` all pass.
+**Evidence:** The badge body is non-interactive, so 2.5.8 does not apply
+to the wrapper `<span>` — the body-cell matrix still measures the `xs`
+body at 20px (73/91 body cells ≥24×24; the 18 sub-floor cells are `xs`
+bodies, which carry no pointer action). The *interactive* target is a
+caller-supplied control in `start_addon`/`end_addon`
+(`lib/pulsar/components/badge.ex:154–155`). Those slots are now wrapped
+so any direct `<button>`/`<a>` is sized to a ≥24px floor
+(`[&>button]:min-h-6 [&>button]:min-w-6`,
+`lib/pulsar/components/badge.ex:91–95, 174–176`), so a dismissible badge
+meets the floor even at `xs`.
 
-**Notes:** Badge is non-interactive on its own, so 2.5.8 doesn't
-strictly apply to the wrapper. However, if a caller adds a
-`<button>` to `end_addon` to make a dismissible badge, the addon
-inherits the badge's height — at `xs` (20 px) the addon falls below
-the 24×24 floor. WCAG 2.5.8 spacing exception applies for inline
-controls, but Badge `xs` is intentionally a "label, never
-interactive" size. Document this in the Badge usage docs;
-component-level fix not required.
+**Notes:** A decorative addon (icon, status dot) is left untouched — only
+interactive direct children are sized up, so the floor applies exactly
+where 2.5.8 does. Caveat: the selector targets *direct* `<button>`/`<a>`
+children; a control nested deeper inside custom addon markup should set
+its own ≥24px target.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 

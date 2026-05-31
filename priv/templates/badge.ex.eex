@@ -84,6 +84,15 @@ alias Phoenix.LiveView.Rendered
   "focus-within:ring-current focus-within:ring-offset-2"
 ]
 
+# Gives an interactive addon control (a direct <button>/<a> in an addon slot) a
+# guaranteed ≥24px pointer target so dismissible badges meet WCAG 2.5.8. Plain,
+# non-interactive addon content (icons, status dots) is left untouched.
+@addon_hit_classes "inline-flex items-center " <>
+                     "[&>button]:inline-flex [&>button]:items-center [&>button]:justify-center " <>
+                     "[&>button]:min-h-6 [&>button]:min-w-6 " <>
+                     "[&>a]:inline-flex [&>a]:items-center [&>a]:justify-center " <>
+                     "[&>a]:min-h-6 [&>a]:min-w-6"
+
 # Color configuration for each variant
 @color_config %{
   "ghost" => %{
@@ -161,13 +170,17 @@ Any interactivity is added through the addon slots.
 @spec badge(map()) :: Rendered.t()
 def badge(assigns) do
   class = build_badge_classes(assigns)
-  assigns = assign(assigns, :class, class)
+
+  assigns =
+    assigns
+    |> assign(:class, class)
+    |> assign(:addon_hit_classes, @addon_hit_classes)
 
   ~H"""
   <span class={@class} {@rest}>
-    {render_slot(@start_addon)}
+    <span :if={@start_addon != []} class={@addon_hit_classes}>{render_slot(@start_addon)}</span>
     {render_slot(@inner_block)}
-    {render_slot(@end_addon)}
+    <span :if={@end_addon != []} class={@addon_hit_classes}>{render_slot(@end_addon)}</span>
   </span>
   """
 end

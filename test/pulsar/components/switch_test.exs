@@ -37,6 +37,8 @@ defmodule Pulsar.Components.SwitchTest do
       assert html =~ ~s(class="sr-only peer")
       assert html =~ ~s(role="presentation")
       assert html =~ ~s(phx-click=)
+      # The click target is the wrapper, sized to a ≥24px hit box (WCAG 2.5.8)
+      assert html =~ "min-h-6"
     end
 
     test "renders with field attribute" do

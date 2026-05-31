@@ -27,7 +27,7 @@ Columns:
 
 | Cell ID | Tag | Width | Height | ≥24×24 | Text | Border | Focus |
 |---------|-----|-------|--------|--------|------|--------|-------|
-| `addons-both` | `span` | 125.81 | 24 | ✓ | 7.63:1 ✓ | — (no-border) | — (not-focusable-in-state) |
+| `addons-both` | `span` | 130.45 | 24 | ✓ | 7.63:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `ghost-danger-lg` | `span` | 94.23 | 32 | ✓ | 9.25:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `ghost-danger-md` | `span` | 91.33 | 24 | ✓ | 9.25:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `ghost-danger-sm` | `span` | 86.09 | 24 | ✓ | 9.25:1 ✓ | — (no-border) | — (not-focusable-in-state) |

@@ -219,7 +219,7 @@ defmodule Pulsar.Components.Switch do
     "data-[disabled=true]:opacity-disabled data-[disabled=true]:cursor-not-allowed data-[disabled=true]:pointer-events-none",
     "data-[loading=true]:cursor-wait",
     "shadow-inner shadow-black/5",
-    "hover:shadow-inner hover:shadow-black/10"
+    "group-hover:shadow-inner group-hover:shadow-black/10"
   ]
 
   # Base thumb classes
@@ -455,7 +455,7 @@ defmodule Pulsar.Components.Switch do
   # Switch only (no label wrapper) - now using checkbox for proper form submission
   defp render_switch_only(assigns) do
     ~H"""
-    <div class="relative inline-flex group">
+    <div class="relative inline-flex group items-center min-h-6">
       <input
         :if={@render_hidden}
         type="hidden"
@@ -480,10 +480,9 @@ defmodule Pulsar.Components.Switch do
         {@rest}
       />
       
-    <!-- Visual switch track (clickable) -->
+    <!-- Visual switch track (visual only; click target is the overlay below) -->
       <div
         role="presentation"
-        phx-click={JS.dispatch("click", to: "##{@id}")}
         class={@switch_class}
         data-loading={@loading && "true"}
         data-disabled={@disabled && "true"}
@@ -521,6 +520,15 @@ defmodule Pulsar.Components.Switch do
           {render_slot(@loading_content)}
         </div>
       </div>
+      
+    <!-- 24px click target. A sibling of the input (not an ancestor) so the
+         dispatched click does not bubble back into this handler and recurse. -->
+      <div
+        role="presentation"
+        phx-click={JS.dispatch("click", to: "##{@id}")}
+        data-disabled={@disabled && "true"}
+        class="absolute inset-0 cursor-pointer data-[disabled=true]:cursor-not-allowed data-[disabled=true]:pointer-events-none"
+      />
     </div>
     """
   end
@@ -546,7 +554,7 @@ defmodule Pulsar.Components.Switch do
   defp track_variant_classes("solid", color) do
     [
       "bg-border-strong",
-      "hover:bg-foreground/30",
+      "group-hover:bg-foreground/30",
       "peer-focus-visible:bg-foreground/30",
       @color_config[color][:solid][:checked]
     ]
@@ -557,7 +565,7 @@ defmodule Pulsar.Components.Switch do
     [
       "border-2",
       "bg-background border-border-strong",
-      "hover:border-foreground",
+      "group-hover:border-foreground",
       "peer-focus-visible:border-foreground",
       @color_config[color][:outline][:checked]
     ]
@@ -567,7 +575,7 @@ defmodule Pulsar.Components.Switch do
   defp track_variant_classes("ghost", color) do
     [
       "border-2 border-border-strong peer-checked:border-transparent",
-      "bg-muted/30 hover:bg-muted/40",
+      "bg-muted/30 group-hover:bg-muted/40",
       "peer-focus-visible:bg-muted/50",
       @color_config[color][:ghost][:checked]
     ]

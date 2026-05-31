@@ -175,6 +175,26 @@ defmodule Pulsar.Components.BadgeTest do
       assert html =~ "Middle"
       assert html =~ ~s(<span>End</span>)
     end
+
+    test "gives an interactive addon control a ≥24px target (WCAG 2.5.8)" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Badge.badge size="xs">
+          Content
+          <:end_addon>
+            <button type="button">Remove</button>
+          </:end_addon>
+        </Badge.badge>
+        """)
+
+      # The addon wrapper sizes interactive direct children up to 24px.
+      # (`&`/`>` are HTML-escaped in the rendered attribute value.)
+      assert html =~ "[&amp;&gt;button]:min-h-6"
+      assert html =~ "[&amp;&gt;button]:min-w-6"
+      assert html =~ "[&amp;&gt;a]:min-h-6"
+    end
   end
 
   describe "badge customization" do
