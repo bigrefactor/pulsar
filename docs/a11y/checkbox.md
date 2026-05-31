@@ -84,8 +84,9 @@ items-center` with no fixed widths —
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** Border `before:border-2` —
-`lib/pulsar/components/checkbox.ex:121`. Focus ring `focus-visible:ring-2
-focus-visible:ring-offset-2 focus-visible:ring-ring` —
+`lib/pulsar/components/checkbox.ex:121`. Focus ring
+`focus-visible:before:ring-2 focus-visible:before:ring-offset-2
+focus-visible:before:ring-ring` —
 `lib/pulsar/components/checkbox.ex:117–118`. Browser measurement of
 96 focus-ring cells per theme: 96/96 pass, ring contrast 5.02:1
 (light) / 6.72:1 (dark). The checkbox's `before:` pseudo-element
@@ -142,8 +143,8 @@ labels for default mode.
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
 **Evidence:** Default checkbox: `focus-visible:outline-none
-focus-visible:ring-2 focus-visible:ring-offset-2
-focus-visible:ring-ring` — `lib/pulsar/components/checkbox.ex:117–118`.
+focus-visible:before:ring-2 focus-visible:before:ring-offset-2
+focus-visible:before:ring-ring` — `lib/pulsar/components/checkbox.ex:117–118`.
 Card uses `focus-within:ring-2 focus-within:ring-offset-2
 focus-within:ring-ring` — `lib/pulsar/components/checkbox.ex:132–133`.
 Browser measurement: 96 focus-ring cells pass 5.02:1 (light) / 6.72:1
@@ -173,7 +174,7 @@ visible `::before` square (`before:inset-[6px]` / `[4px]` / `[2px]`),
 so the pointer target grows to the WCAG floor while the checkmark stays
 visually unchanged; `lg` (24 px) and `xl` (28 px) were already at/above
 the floor. Browser measurement: 123/123 cells pass ≥24×24 across all 6
-colors, 5 states, and 4 sizes, plus the card cells
+colors, 5 states, and 5 sizes, plus the card cells
 ([light](measurements/checkbox-light.md), [dark](measurements/checkbox-dark.md)).
 
 **Notes:** Passes outright on size — no spacing exception needed, so a

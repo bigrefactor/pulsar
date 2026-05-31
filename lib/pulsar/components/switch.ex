@@ -131,79 +131,79 @@ defmodule Pulsar.Components.Switch do
   @color_config %{
     "danger" => %{
       ghost: %{
-        checked: "peer-checked:bg-danger/15 hover:peer-checked:bg-danger/20"
+        checked: "peer-checked:bg-danger/15 group-hover:peer-checked:bg-danger/20"
       },
       outline: %{
         checked: "peer-checked:bg-danger/10 peer-checked:border-danger"
       },
       solid: %{
-        checked: "peer-checked:bg-danger/90 peer-checked:hover:bg-danger"
+        checked: "peer-checked:bg-danger/90 peer-checked:group-hover:bg-danger"
       }
     },
     "info" => %{
       ghost: %{
-        checked: "peer-checked:bg-info/15 hover:peer-checked:bg-info/20"
+        checked: "peer-checked:bg-info/15 group-hover:peer-checked:bg-info/20"
       },
       outline: %{
         checked: "peer-checked:bg-info/10 peer-checked:border-info"
       },
       solid: %{
-        checked: "peer-checked:bg-info/90 peer-checked:hover:bg-info"
+        checked: "peer-checked:bg-info/90 peer-checked:group-hover:bg-info"
       }
     },
     "neutral" => %{
       ghost: %{
-        checked: "peer-checked:bg-neutral/15 hover:peer-checked:bg-neutral/20"
+        checked: "peer-checked:bg-neutral/15 group-hover:peer-checked:bg-neutral/20"
       },
       outline: %{
         checked: "peer-checked:bg-neutral/10 peer-checked:border-neutral"
       },
       solid: %{
-        checked: "peer-checked:bg-neutral/90 peer-checked:hover:bg-neutral"
+        checked: "peer-checked:bg-neutral/90 peer-checked:group-hover:bg-neutral"
       }
     },
     "primary" => %{
       ghost: %{
-        checked: "peer-checked:bg-primary/15 hover:peer-checked:bg-primary/20"
+        checked: "peer-checked:bg-primary/15 group-hover:peer-checked:bg-primary/20"
       },
       outline: %{
         checked: "peer-checked:bg-primary/10 peer-checked:border-primary"
       },
       solid: %{
-        checked: "peer-checked:bg-primary/90 peer-checked:hover:bg-primary"
+        checked: "peer-checked:bg-primary/90 peer-checked:group-hover:bg-primary"
       }
     },
     "secondary" => %{
       ghost: %{
-        checked: "peer-checked:bg-secondary/15 hover:peer-checked:bg-secondary/20"
+        checked: "peer-checked:bg-secondary/15 group-hover:peer-checked:bg-secondary/20"
       },
       outline: %{
         checked: "peer-checked:bg-secondary/10 peer-checked:border-secondary"
       },
       solid: %{
-        checked: "peer-checked:bg-secondary/90 peer-checked:hover:bg-secondary"
+        checked: "peer-checked:bg-secondary/90 peer-checked:group-hover:bg-secondary"
       }
     },
     "success" => %{
       ghost: %{
-        checked: "peer-checked:bg-success/15 hover:peer-checked:bg-success/20"
+        checked: "peer-checked:bg-success/15 group-hover:peer-checked:bg-success/20"
       },
       outline: %{
         checked: "peer-checked:bg-success/10 peer-checked:border-success"
       },
       solid: %{
-        checked: "peer-checked:bg-success/90 peer-checked:hover:bg-success"
+        checked: "peer-checked:bg-success/90 peer-checked:group-hover:bg-success"
       }
     },
     "warning" => %{
       ghost: %{
-        checked: "peer-checked:bg-warning/15 hover:peer-checked:bg-warning/20"
+        checked: "peer-checked:bg-warning/15 group-hover:peer-checked:bg-warning/20"
       },
       outline: %{
         checked: "peer-checked:bg-warning/10 peer-checked:border-warning"
       },
       solid: %{
-        checked: "peer-checked:bg-warning/90 peer-checked:hover:bg-warning"
+        checked: "peer-checked:bg-warning/90 peer-checked:group-hover:bg-warning"
       }
     }
   }
@@ -479,7 +479,7 @@ defmodule Pulsar.Components.Switch do
         aria-invalid={@invalid && "true"}
         {@rest}
       />
-      
+
     <!-- Visual switch track (visual only; click target is the overlay below) -->
       <div
         role="presentation"
@@ -487,7 +487,7 @@ defmodule Pulsar.Components.Switch do
         data-loading={@loading && "true"}
         data-disabled={@disabled && "true"}
       />
-      
+
     <!-- Custom thumb with loading state -->
       <div
         class={@thumb_class}
@@ -514,13 +514,13 @@ defmodule Pulsar.Components.Switch do
           >
           </path>
         </svg>
-        
+
     <!-- Custom loading content -->
         <div :if={@loading && @loading_content != []}>
           {render_slot(@loading_content)}
         </div>
       </div>
-      
+
     <!-- 24px click target. A sibling of the input (not an ancestor) so the
          dispatched click does not bubble back into this handler and recurse. -->
       <div

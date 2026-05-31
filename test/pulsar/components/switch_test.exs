@@ -116,7 +116,7 @@ defmodule Pulsar.Components.SwitchTest do
       html = rendered_to_string(~H[<Switch.switch name="test" variant="solid" />])
 
       assert html =~ "bg-border-strong"
-      assert html =~ "hover:bg-foreground/30"
+      assert html =~ "group-hover:bg-foreground/30"
       assert html =~ "peer-focus-visible:bg-foreground/30"
     end
 
@@ -125,7 +125,7 @@ defmodule Pulsar.Components.SwitchTest do
       html = rendered_to_string(~H[<Switch.switch name="test" variant="outline" />])
 
       assert html =~ "border-border-strong"
-      assert html =~ "hover:border-foreground"
+      assert html =~ "group-hover:border-foreground"
       assert html =~ "peer-focus-visible:border-foreground"
       assert html =~ "bg-background"
     end
@@ -137,8 +137,20 @@ defmodule Pulsar.Components.SwitchTest do
       assert html =~ "border-border-strong"
       assert html =~ "peer-checked:border-transparent"
       assert html =~ "bg-muted/30"
-      assert html =~ "hover:bg-muted/40"
+      assert html =~ "group-hover:bg-muted/40"
       assert html =~ "peer-focus-visible:bg-muted/50"
+    end
+
+    test "checked-state track hover routes through group-hover (overlay-aware)" do
+      assigns = %{}
+      solid = rendered_to_string(~H[<Switch.switch name="test" variant="solid" />])
+      ghost = rendered_to_string(~H[<Switch.switch name="test" variant="ghost" />])
+
+      # The absolute click overlay covers the track, so the checked-state
+      # brightening must fire via the group, not the track's own :hover.
+      assert solid =~ "peer-checked:group-hover:"
+      assert ghost =~ "group-hover:peer-checked:"
+      refute solid =~ ~r/(?<!group-)hover:bg-primary\b/
     end
 
     test "outline thumb has border-strong border" do

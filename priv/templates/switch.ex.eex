@@ -131,7 +131,7 @@ alias Phoenix.LiveView.Rendered
   "danger" => %{
     ghost: %{
       checked:
-        "peer-checked:bg-danger/15 hover:peer-checked:bg-danger/20"
+        "peer-checked:bg-danger/15 group-hover:peer-checked:bg-danger/20"
     },
     outline: %{
       checked:
@@ -139,13 +139,13 @@ alias Phoenix.LiveView.Rendered
     },
     solid: %{
       checked:
-        "peer-checked:bg-danger/90 peer-checked:hover:bg-danger"
+        "peer-checked:bg-danger/90 peer-checked:group-hover:bg-danger"
     }
   },
   "info" => %{
     ghost: %{
       checked:
-        "peer-checked:bg-info/15 hover:peer-checked:bg-info/20"
+        "peer-checked:bg-info/15 group-hover:peer-checked:bg-info/20"
     },
     outline: %{
       checked:
@@ -153,13 +153,13 @@ alias Phoenix.LiveView.Rendered
     },
     solid: %{
       checked:
-        "peer-checked:bg-info/90 peer-checked:hover:bg-info"
+        "peer-checked:bg-info/90 peer-checked:group-hover:bg-info"
     }
   },
   "neutral" => %{
     ghost: %{
       checked:
-        "peer-checked:bg-neutral/15 hover:peer-checked:bg-neutral/20"
+        "peer-checked:bg-neutral/15 group-hover:peer-checked:bg-neutral/20"
     },
     outline: %{
       checked:
@@ -167,13 +167,13 @@ alias Phoenix.LiveView.Rendered
     },
     solid: %{
       checked:
-        "peer-checked:bg-neutral/90 peer-checked:hover:bg-neutral"
+        "peer-checked:bg-neutral/90 peer-checked:group-hover:bg-neutral"
     }
   },
   "primary" => %{
     ghost: %{
       checked:
-        "peer-checked:bg-primary/15 hover:peer-checked:bg-primary/20"
+        "peer-checked:bg-primary/15 group-hover:peer-checked:bg-primary/20"
     },
     outline: %{
       checked:
@@ -181,13 +181,13 @@ alias Phoenix.LiveView.Rendered
     },
     solid: %{
       checked:
-        "peer-checked:bg-primary/90 peer-checked:hover:bg-primary"
+        "peer-checked:bg-primary/90 peer-checked:group-hover:bg-primary"
     }
   },
   "secondary" => %{
     ghost: %{
       checked:
-        "peer-checked:bg-secondary/15 hover:peer-checked:bg-secondary/20"
+        "peer-checked:bg-secondary/15 group-hover:peer-checked:bg-secondary/20"
     },
     outline: %{
       checked:
@@ -195,13 +195,13 @@ alias Phoenix.LiveView.Rendered
     },
     solid: %{
       checked:
-        "peer-checked:bg-secondary/90 peer-checked:hover:bg-secondary"
+        "peer-checked:bg-secondary/90 peer-checked:group-hover:bg-secondary"
     }
   },
   "success" => %{
     ghost: %{
       checked:
-        "peer-checked:bg-success/15 hover:peer-checked:bg-success/20"
+        "peer-checked:bg-success/15 group-hover:peer-checked:bg-success/20"
     },
     outline: %{
       checked:
@@ -209,13 +209,13 @@ alias Phoenix.LiveView.Rendered
     },
     solid: %{
       checked:
-        "peer-checked:bg-success/90 peer-checked:hover:bg-success"
+        "peer-checked:bg-success/90 peer-checked:group-hover:bg-success"
     }
   },
   "warning" => %{
     ghost: %{
       checked:
-        "peer-checked:bg-warning/15 hover:peer-checked:bg-warning/20"
+        "peer-checked:bg-warning/15 group-hover:peer-checked:bg-warning/20"
     },
     outline: %{
       checked:
@@ -223,7 +223,7 @@ alias Phoenix.LiveView.Rendered
     },
     solid: %{
       checked:
-        "peer-checked:bg-warning/90 peer-checked:hover:bg-warning"
+        "peer-checked:bg-warning/90 peer-checked:group-hover:bg-warning"
     }
   }
 }

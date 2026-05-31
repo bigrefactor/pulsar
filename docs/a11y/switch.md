@@ -188,12 +188,13 @@ text — `lib/pulsar/components/field.ex:406–432`.
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** The visible track keeps its design width (`xs`=28px …
-`xl`=64px), all already ≥24px wide. The click target is the wrapper, not
-the track — it carries the `phx-click` and a 24px floor
-(`min-h-6`, `lib/pulsar/components/switch.ex:458–462`) with the pill
-centered inside, so every size clicks through a ≥24×24 box without
-changing the pill. Browser measurement: 120/120 cells pass ≥24×24 across
-all 6 colors, 5 states, and 4 sizes
+`xl`=64px), all already ≥24px wide. The wrapper sets a 24px floor
+(`min-h-6`, `lib/pulsar/components/switch.ex:458`) with the pill centered
+inside; the click target is an absolute overlay that is a sibling of the
+track (not the track itself) and carries the `phx-click`
+(`lib/pulsar/components/switch.ex:526–531`), so every size clicks through a
+≥24×24 box without changing the pill. Browser measurement: 120/120 cells
+pass ≥24×24 across all 6 colors, 5 states, and 5 sizes
 ([light](measurements/switch-light.md), [dark](measurements/switch-dark.md)).
 (Previously this read 0/120 because the measurement cell sat on the
 `sr-only` input at 0×0; the fixture now wraps the visible control.)
