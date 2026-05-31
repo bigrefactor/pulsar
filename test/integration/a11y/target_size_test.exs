@@ -7,11 +7,13 @@ defmodule Pulsar.Integration.A11y.TargetSizeTest do
   Interactive cells are those whose tag is `button`, `select`, or
   `textarea`, or whose tag is `input` and `type` is in the text-input
   allowlist (`text`, `email`, `password`, `number`, `search`, `tel`,
-  `url`, `date`, `datetime-local`, `month`, `time`, `week`). Checkbox /
-  radio / switch inputs are excluded — the effective target is the
-  wrapping label and the WCAG 2.5.8 spacing exception covers small
-  visual sizes (see `checkbox.md`, `switch.md`, `radio_group.md` 2.5.8
-  entries). `<a>` is excluded because the WCAG inline-link exception
+  `url`, `date`, `datetime-local`, `month`, `time`, `week`). Checkbox
+  inputs (`type="checkbox"`) and switch cells (any cell containing a
+  `[role="switch"]`) are also enforced: both carry a guaranteed 24×24
+  pointer hit box at every size, so they pass on size rather than via
+  the spacing exception (see `checkbox.md`, `switch.md` 2.5.8 entries).
+  Radio inputs (`type="radio"`) remain excluded — they still lean on the
+  spacing exception. `<a>` is excluded because the WCAG inline-link exception
   is context-dependent (the same link size can be a 2.5.8 violation
   standalone and a pass inline in body text); inline links are
   explicitly supported by the Link component, so gating them here
@@ -62,9 +64,17 @@ defmodule Pulsar.Integration.A11y.TargetSizeTest do
           document.querySelectorAll('[data-fixture-cell]').forEach((el) => {
             if (el.hasAttribute('data-target-size-exception')) return;
             const tag = el.tagName.toLowerCase();
+            const inputType = (el.getAttribute('type') || 'text').toLowerCase();
+            const role = (el.getAttribute('role') || '').toLowerCase();
             const isInteractive =
               interactiveTags.includes(tag) ||
-              (tag === 'input' && textTypes.includes((el.getAttribute('type') || 'text').toLowerCase()));
+              (tag === 'input' && textTypes.includes(inputType)) ||
+              // Visible checkbox input is its own 24×24 target. The switch's
+              // native input is `role="switch"` + `sr-only` (the hidden
+              // control) — skip it here; the switch is gated via its wrapper.
+              (tag === 'input' && inputType === 'checkbox' && role !== 'switch') ||
+              // Switch wrapper cell: a cell that wraps the [role="switch"] control.
+              el.querySelector('[role="switch"]') !== null;
             if (!isInteractive) return;
             const r = el.getBoundingClientRect();
             if (r.width < 24 || r.height < 24) {

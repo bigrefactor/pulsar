@@ -171,9 +171,9 @@ not-applicable). Detailed per-criterion grids follow.
 | input | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | textarea | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | select | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
-| checkbox | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ⚠ |
+| checkbox | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | radio_group | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
-| switch | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ⚠ |
+| switch | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | label | — | — | — | — | — | — | — | — | — | — | — | ✓ | — | — | — | — | ✓ | — | — | — |
 | button | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | link | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
@@ -184,7 +184,7 @@ not-applicable). Detailed per-criterion grids follow.
 | header | ✓ | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — | — | — | — | — | — |
 | list | — | — | — | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
 | table | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
-| badge | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ | — | ✓ | — | — | — | ⚠ |
+| badge | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ | — | ✓ | — | — | — | ✓ |
 | icon | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | — | — | — | — | — | — |
 
 ### Understandable (3.x) and Robust (4.x)
@@ -449,8 +449,10 @@ has a single-pointer alternative.
 are at least 24×24 CSS px, with exceptions for inline links and
 spacing.
 *Library note:* Button sizes — `xs` (h-6 = 24px) is exactly at minimum;
-others exceed. Checkbox/radio/switch hit areas, flash dismiss buttons,
-and icon-only buttons need explicit check.
+others exceed. Checkbox and switch carry a 24×24 pointer hit box at every
+size (the visible glyph is held to its design size via an inset visible
+box / centered pill), so both pass outright without the spacing
+exception; badge sizes its interactive addon controls to the same floor.
 
 ### Principle 3 — Understandable
 

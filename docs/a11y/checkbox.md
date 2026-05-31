@@ -84,8 +84,9 @@ items-center` with no fixed widths —
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** Border `before:border-2` —
-`lib/pulsar/components/checkbox.ex:121`. Focus ring `focus-visible:ring-2
-focus-visible:ring-offset-2 focus-visible:ring-ring` —
+`lib/pulsar/components/checkbox.ex:121`. Focus ring
+`focus-visible:before:ring-2 focus-visible:before:ring-offset-2
+focus-visible:before:ring-ring` —
 `lib/pulsar/components/checkbox.ex:117–118`. Browser measurement of
 96 focus-ring cells per theme: 96/96 pass, ring contrast 5.02:1
 (light) / 6.72:1 (dark). The checkbox's `before:` pseudo-element
@@ -142,8 +143,8 @@ labels for default mode.
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
 **Evidence:** Default checkbox: `focus-visible:outline-none
-focus-visible:ring-2 focus-visible:ring-offset-2
-focus-visible:ring-ring` — `lib/pulsar/components/checkbox.ex:117–118`.
+focus-visible:before:ring-2 focus-visible:before:ring-offset-2
+focus-visible:before:ring-ring` — `lib/pulsar/components/checkbox.ex:117–118`.
 Card uses `focus-within:ring-2 focus-within:ring-offset-2
 focus-within:ring-ring` — `lib/pulsar/components/checkbox.ex:132–133`.
 Browser measurement: 96 focus-ring cells pass 5.02:1 (light) / 6.72:1
@@ -164,27 +165,25 @@ no sticky overlap.
 **Evidence:** No `aria-label` set; accessible name flows from the
 associated label or card content.
 
-### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ⚠ GAP (minor) — per WCAG spacing exception
+### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
-**Evidence:** Sizes `xs`=12px (`h-3 w-3`), `sm`=16px, `md`=20px,
-`lg`=24px, `xl`=28px — `lib/pulsar/components/checkbox.ex:91–112`.
-Browser measurement: 33/123 pass — `lg` and `xl` pass; `xs`, `sm`,
-`md` fail (12, 16, 20 px respectively) across all 6 colors and 5
-states.
+**Evidence:** Every size clicks through a 24×24 CSS-px input box
+(`h-6 w-6`, `lib/pulsar/components/checkbox.ex:91–111`). At `xs`/`sm`/`md`
+the box is held to its glyph size — 12/16/20 px — by insetting the
+visible `::before` square (`before:inset-[6px]` / `[4px]` / `[2px]`),
+so the pointer target grows to the WCAG floor while the checkmark stays
+visually unchanged; `lg` (24 px) and `xl` (28 px) were already at/above
+the floor. Browser measurement: 123/123 cells pass ≥24×24 across all 6
+colors, 5 states, and 5 sizes, plus the card cells
+([light](measurements/checkbox-light.md), [dark](measurements/checkbox-dark.md)).
 
-**Notes:** The 2.5.8 spacing exception applies: each checkbox in
-the fixture (and in typical usage via `field`) is paired with a
-`<label>` and surrounded by gap-3 spacing in the form layout.
-Per the WCAG 2.2 understanding doc:
-"Targets that are smaller than 24 by 24 CSS pixels are positioned
-so that if a 24 CSS pixel diameter circle is centered on the
-bounding box of each, the circles do not intersect another target."
-Adjacent checkboxes are vertically stacked with `gap-3` (≈12 px), and
-horizontally paired with their label — the 24px circle from one
-checkbox does not intersect the next. PASS via exception. Document
-that `xs` / `sm` sizes should always be used with a wide enough
-parent label.
-Tracked under browser audit for measured spacing context.
+**Notes:** Passes outright on size — no spacing exception needed, so a
+standalone checkbox outside `field` is compliant at every size. The only
+residual is physics, shared by any technique: a *bare, label-less* grid
+packed tighter than `gap-3` (12 px) brings the 24 px hit boxes into
+contact; at `gap-3` they are exactly tangent (compliant), and normal
+`field`/form spacing clears it. The visible square and checkmark are
+pixel-identical to before.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 

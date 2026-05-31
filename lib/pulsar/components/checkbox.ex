@@ -95,11 +95,11 @@ defmodule Pulsar.Components.Checkbox do
     },
     "md" => %{
       card: "p-4 gap-3",
-      input: "h-5 w-5 rounded-field before:rounded-field after:text-xs"
+      input: "h-6 w-6 rounded-field before:inset-[2px] before:rounded-field after:text-xs"
     },
     "sm" => %{
       card: "p-3 gap-2 text-sm",
-      input: "h-4 w-4 rounded before:rounded after:text-[10px]"
+      input: "h-6 w-6 rounded before:inset-[4px] before:rounded after:text-[10px]"
     },
     "xl" => %{
       card: "p-6 gap-5 text-xl",
@@ -107,15 +107,15 @@ defmodule Pulsar.Components.Checkbox do
     },
     "xs" => %{
       card: "p-2 gap-2 text-xs",
-      input: "h-3 w-3 rounded before:rounded after:text-[8px]"
+      input: "h-6 w-6 rounded before:inset-[6px] before:rounded after:text-[8px]"
     }
   }
 
   # Base checkbox styling classes
   @checkbox_base_classes [
     "appearance-none relative cursor-pointer transition-all duration-normal ease-standard",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-    "focus-visible:ring-ring",
+    "focus-visible:outline-none focus-visible:before:ring-2 focus-visible:before:ring-offset-2",
+    "focus-visible:before:ring-ring",
     "disabled:cursor-not-allowed disabled:opacity-disabled",
     "before:content-[''] before:absolute before:inset-0 before:rounded-[inherit]",
     "before:border-2 before:transition-all before:duration-normal before:ease-standard",

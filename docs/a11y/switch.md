@@ -185,20 +185,24 @@ the 3:1 minimum.
 provides an inline `<label>`, the accessible name comes from that visible
 text — `lib/pulsar/components/field.ex:406–432`.
 
-### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ⚠ GAP (minor) — per WCAG spacing exception
+### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
-**Evidence:** Track sizes: `xs`=14×28px, `sm`=16×36px, `md`=20×44px,
-`lg`=24×56px, `xl`=28×64px — `lib/pulsar/components/switch.ex:104–127`.
-Browser measurement: 0/120 cells pass ≥ 24×24 — the data-fixture-cell
-is on the `sr-only` input which has size 0×0. The visible track meets
-24px floor only at `lg` and `xl`.
+**Evidence:** The visible track keeps its design width (`xs`=28px …
+`xl`=64px), all already ≥24px wide. The wrapper sets a 24px floor
+(`min-h-6`, `lib/pulsar/components/switch.ex:458`) with the pill centered
+inside; the click target is an absolute overlay that is a sibling of the
+track (not the track itself) and carries the `phx-click`
+(`lib/pulsar/components/switch.ex:526–531`), so every size clicks through a
+≥24×24 box without changing the pill. Browser measurement: 120/120 cells
+pass ≥24×24 across all 6 colors, 5 states, and 5 sizes
+([light](measurements/switch-light.md), [dark](measurements/switch-dark.md)).
+(Previously this read 0/120 because the measurement cell sat on the
+`sr-only` input at 0×0; the fixture now wraps the visible control.)
 
-**Notes:** WCAG 2.5.8 spacing exception applies: each switch in `field`
-usage is paired with a `<label>` (clickable via `for=`) and surrounded
-by flex-col gap-3 / form-grid spacing. The effective target is the
-label-plus-switch group which exceeds 24×24 even at `xs`. Document
-in usage notes that `xs` / `sm` / `md` switches should always be
-paired with a label of adequate width. Same situation as Checkbox.
+**Notes:** Passes outright on size — no spacing exception needed, so a
+standalone switch outside `field` is compliant at every size. The visible
+track and thumb are pixel-identical to before; only the wrapper's
+clickable height grew to the 24px floor.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 

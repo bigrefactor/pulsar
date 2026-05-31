@@ -48,9 +48,10 @@ defmodule Pulsar.Components.CheckboxTest do
       assert html =~ "cursor-pointer"
       assert html =~ "transition-all"
 
-      # Check for size classes (default is md)
-      assert html =~ "h-5"
-      assert html =~ "w-5"
+      # Check for size classes (default is md): 24px hit box, 20px visible box
+      assert html =~ "h-6"
+      assert html =~ "w-6"
+      assert html =~ "before:inset-[2px]"
       assert html =~ "rounded-field"
 
       # Check for color classes (default is primary)
@@ -77,8 +78,10 @@ defmodule Pulsar.Components.CheckboxTest do
         <.checkbox name="terms" size="xs" />
         """)
 
-      assert html =~ "h-3"
-      assert html =~ "w-3"
+      # 24px hit box (h-6 w-6) with a 12px visible box (before:inset-[6px])
+      assert html =~ "h-6"
+      assert html =~ "w-6"
+      assert html =~ "before:inset-[6px]"
       assert html =~ "text-[8px]"
     end
 
@@ -90,8 +93,10 @@ defmodule Pulsar.Components.CheckboxTest do
         <.checkbox name="terms" size="sm" />
         """)
 
-      assert html =~ "h-4"
-      assert html =~ "w-4"
+      # 24px hit box (h-6 w-6) with a 16px visible box (before:inset-[4px])
+      assert html =~ "h-6"
+      assert html =~ "w-6"
+      assert html =~ "before:inset-[4px]"
       assert html =~ "text-[10px]"
     end
 
@@ -103,8 +108,10 @@ defmodule Pulsar.Components.CheckboxTest do
         <.checkbox name="terms" size="md" />
         """)
 
-      assert html =~ "h-5"
-      assert html =~ "w-5"
+      # 24px hit box (h-6 w-6) with a 20px visible box (before:inset-[2px])
+      assert html =~ "h-6"
+      assert html =~ "w-6"
+      assert html =~ "before:inset-[2px]"
       assert html =~ "text-xs"
     end
 
@@ -668,8 +675,10 @@ defmodule Pulsar.Components.CheckboxTest do
         """)
 
       assert html =~ "focus-visible:outline-none"
-      assert html =~ "focus-visible:ring-2"
-      assert html =~ "focus-visible:ring-ring"
+      # Ring is drawn on the visible box (::before) so the focus state hugs the
+      # glyph, not the larger 24px hit box.
+      assert html =~ "focus-visible:before:ring-2"
+      assert html =~ "focus-visible:before:ring-ring"
     end
 
     test "includes keyboard interaction classes" do
@@ -804,12 +813,20 @@ defmodule Pulsar.Components.CheckboxTest do
     test "all size variants generate correct classes" do
       sizes = ~w(xs sm md lg xl)
 
+      # xs/sm/md grow their click box to 24px (h-6) for WCAG 2.5.8; the visible
+      # box is held to the glyph size via before:inset-[…]. lg/xl already pass.
       expected_heights = %{
         "lg" => "h-6",
-        "md" => "h-5",
-        "sm" => "h-4",
+        "md" => "h-6",
+        "sm" => "h-6",
         "xl" => "h-7",
-        "xs" => "h-3"
+        "xs" => "h-6"
+      }
+
+      expected_insets = %{
+        "md" => "before:inset-[2px]",
+        "sm" => "before:inset-[4px]",
+        "xs" => "before:inset-[6px]"
       }
 
       for size <- sizes do
@@ -821,6 +838,10 @@ defmodule Pulsar.Components.CheckboxTest do
           """)
 
         assert html =~ expected_heights[size]
+
+        if inset = expected_insets[size] do
+          assert html =~ inset
+        end
       end
     end
 

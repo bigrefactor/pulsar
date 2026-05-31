@@ -102,27 +102,27 @@ defmodule Pulsar.Components.Switch do
   @size_config %{
     "lg" => %{
       spinner: "h-5 w-5",
-      thumb: "h-5 w-5 top-0.5 left-0.5 translate-x-0 peer-checked:translate-x-[32px]",
+      thumb: "h-5 w-5 top-1/2 left-0.5 -translate-y-1/2 translate-x-0 peer-checked:translate-x-[32px]",
       track: "h-6 w-14"
     },
     "md" => %{
       spinner: "h-4 w-4",
-      thumb: "h-4 w-4 top-0.5 left-0.5 translate-x-0 peer-checked:translate-x-[24px]",
+      thumb: "h-4 w-4 top-1/2 left-0.5 -translate-y-1/2 translate-x-0 peer-checked:translate-x-[24px]",
       track: "h-5 w-11"
     },
     "sm" => %{
       spinner: "h-3 w-3",
-      thumb: "h-3 w-3 top-0.5 left-0.5 translate-x-0 peer-checked:translate-x-[20px]",
+      thumb: "h-3 w-3 top-1/2 left-0.5 -translate-y-1/2 translate-x-0 peer-checked:translate-x-[20px]",
       track: "h-4 w-9"
     },
     "xl" => %{
       spinner: "h-6 w-6",
-      thumb: "h-[22px] w-[22px] top-[3px] left-[3px] translate-x-0 peer-checked:translate-x-[36px]",
+      thumb: "h-[22px] w-[22px] top-1/2 left-[3px] -translate-y-1/2 translate-x-0 peer-checked:translate-x-[36px]",
       track: "h-7 w-16"
     },
     "xs" => %{
       spinner: "h-2 w-2",
-      thumb: "h-2.5 w-2.5 top-0.5 left-0.5 translate-x-0 peer-checked:translate-x-[14px]",
+      thumb: "h-2.5 w-2.5 top-1/2 left-0.5 -translate-y-1/2 translate-x-0 peer-checked:translate-x-[14px]",
       track: "h-3.5 w-7"
     }
   }
@@ -131,79 +131,79 @@ defmodule Pulsar.Components.Switch do
   @color_config %{
     "danger" => %{
       ghost: %{
-        checked: "peer-checked:bg-danger/15 hover:peer-checked:bg-danger/20"
+        checked: "peer-checked:bg-danger/15 group-hover:peer-checked:bg-danger/20"
       },
       outline: %{
         checked: "peer-checked:bg-danger/10 peer-checked:border-danger"
       },
       solid: %{
-        checked: "peer-checked:bg-danger/90 peer-checked:hover:bg-danger"
+        checked: "peer-checked:bg-danger/90 peer-checked:group-hover:bg-danger"
       }
     },
     "info" => %{
       ghost: %{
-        checked: "peer-checked:bg-info/15 hover:peer-checked:bg-info/20"
+        checked: "peer-checked:bg-info/15 group-hover:peer-checked:bg-info/20"
       },
       outline: %{
         checked: "peer-checked:bg-info/10 peer-checked:border-info"
       },
       solid: %{
-        checked: "peer-checked:bg-info/90 peer-checked:hover:bg-info"
+        checked: "peer-checked:bg-info/90 peer-checked:group-hover:bg-info"
       }
     },
     "neutral" => %{
       ghost: %{
-        checked: "peer-checked:bg-neutral/15 hover:peer-checked:bg-neutral/20"
+        checked: "peer-checked:bg-neutral/15 group-hover:peer-checked:bg-neutral/20"
       },
       outline: %{
         checked: "peer-checked:bg-neutral/10 peer-checked:border-neutral"
       },
       solid: %{
-        checked: "peer-checked:bg-neutral/90 peer-checked:hover:bg-neutral"
+        checked: "peer-checked:bg-neutral/90 peer-checked:group-hover:bg-neutral"
       }
     },
     "primary" => %{
       ghost: %{
-        checked: "peer-checked:bg-primary/15 hover:peer-checked:bg-primary/20"
+        checked: "peer-checked:bg-primary/15 group-hover:peer-checked:bg-primary/20"
       },
       outline: %{
         checked: "peer-checked:bg-primary/10 peer-checked:border-primary"
       },
       solid: %{
-        checked: "peer-checked:bg-primary/90 peer-checked:hover:bg-primary"
+        checked: "peer-checked:bg-primary/90 peer-checked:group-hover:bg-primary"
       }
     },
     "secondary" => %{
       ghost: %{
-        checked: "peer-checked:bg-secondary/15 hover:peer-checked:bg-secondary/20"
+        checked: "peer-checked:bg-secondary/15 group-hover:peer-checked:bg-secondary/20"
       },
       outline: %{
         checked: "peer-checked:bg-secondary/10 peer-checked:border-secondary"
       },
       solid: %{
-        checked: "peer-checked:bg-secondary/90 peer-checked:hover:bg-secondary"
+        checked: "peer-checked:bg-secondary/90 peer-checked:group-hover:bg-secondary"
       }
     },
     "success" => %{
       ghost: %{
-        checked: "peer-checked:bg-success/15 hover:peer-checked:bg-success/20"
+        checked: "peer-checked:bg-success/15 group-hover:peer-checked:bg-success/20"
       },
       outline: %{
         checked: "peer-checked:bg-success/10 peer-checked:border-success"
       },
       solid: %{
-        checked: "peer-checked:bg-success/90 peer-checked:hover:bg-success"
+        checked: "peer-checked:bg-success/90 peer-checked:group-hover:bg-success"
       }
     },
     "warning" => %{
       ghost: %{
-        checked: "peer-checked:bg-warning/15 hover:peer-checked:bg-warning/20"
+        checked: "peer-checked:bg-warning/15 group-hover:peer-checked:bg-warning/20"
       },
       outline: %{
         checked: "peer-checked:bg-warning/10 peer-checked:border-warning"
       },
       solid: %{
-        checked: "peer-checked:bg-warning/90 peer-checked:hover:bg-warning"
+        checked: "peer-checked:bg-warning/90 peer-checked:group-hover:bg-warning"
       }
     }
   }
@@ -219,7 +219,7 @@ defmodule Pulsar.Components.Switch do
     "data-[disabled=true]:opacity-disabled data-[disabled=true]:cursor-not-allowed data-[disabled=true]:pointer-events-none",
     "data-[loading=true]:cursor-wait",
     "shadow-inner shadow-black/5",
-    "hover:shadow-inner hover:shadow-black/10"
+    "group-hover:shadow-inner group-hover:shadow-black/10"
   ]
 
   # Base thumb classes
@@ -455,7 +455,7 @@ defmodule Pulsar.Components.Switch do
   # Switch only (no label wrapper) - now using checkbox for proper form submission
   defp render_switch_only(assigns) do
     ~H"""
-    <div class="relative inline-flex group">
+    <div class="relative inline-flex group items-center min-h-6">
       <input
         :if={@render_hidden}
         type="hidden"
@@ -480,10 +480,9 @@ defmodule Pulsar.Components.Switch do
         {@rest}
       />
       
-    <!-- Visual switch track (clickable) -->
+    <!-- Visual switch track (visual only; click target is the overlay below) -->
       <div
         role="presentation"
-        phx-click={JS.dispatch("click", to: "##{@id}")}
         class={@switch_class}
         data-loading={@loading && "true"}
         data-disabled={@disabled && "true"}
@@ -521,6 +520,15 @@ defmodule Pulsar.Components.Switch do
           {render_slot(@loading_content)}
         </div>
       </div>
+      
+    <!-- 24px click target. A sibling of the input (not an ancestor) so the
+         dispatched click does not bubble back into this handler and recurse. -->
+      <div
+        role="presentation"
+        phx-click={JS.dispatch("click", to: "##{@id}")}
+        data-disabled={@disabled && "true"}
+        class="absolute inset-0 cursor-pointer data-[disabled=true]:cursor-not-allowed data-[disabled=true]:pointer-events-none"
+      />
     </div>
     """
   end
@@ -546,7 +554,7 @@ defmodule Pulsar.Components.Switch do
   defp track_variant_classes("solid", color) do
     [
       "bg-border-strong",
-      "hover:bg-foreground/30",
+      "group-hover:bg-foreground/30",
       "peer-focus-visible:bg-foreground/30",
       @color_config[color][:solid][:checked]
     ]
@@ -557,7 +565,7 @@ defmodule Pulsar.Components.Switch do
     [
       "border-2",
       "bg-background border-border-strong",
-      "hover:border-foreground",
+      "group-hover:border-foreground",
       "peer-focus-visible:border-foreground",
       @color_config[color][:outline][:checked]
     ]
@@ -567,7 +575,7 @@ defmodule Pulsar.Components.Switch do
   defp track_variant_classes("ghost", color) do
     [
       "border-2 border-border-strong peer-checked:border-transparent",
-      "bg-muted/30 hover:bg-muted/40",
+      "bg-muted/30 group-hover:bg-muted/40",
       "peer-focus-visible:bg-muted/50",
       @color_config[color][:ghost][:checked]
     ]
