@@ -95,7 +95,7 @@ defmodule Pulsar.Components.Sidebar do
     "flex flex-col shrink-0 h-svh overflow-hidden",
     "focus-visible:outline-none",
     # Mobile: fixed off-canvas drawer above the backdrop.
-    "fixed inset-y-0 z-[var(--z-modal)]",
+    "fixed inset-y-0 z-modal",
     # Desktop: in-flow column so sibling content reflows on collapse.
     "lg:static lg:z-auto lg:translate-x-0",
     # Mobile drawer (transform): emphasized slow-in, accelerate fast-out.
@@ -115,7 +115,7 @@ defmodule Pulsar.Components.Sidebar do
 
   # Backdrop shown only while the mobile drawer is open.
   @backdrop_classes [
-    "fixed inset-0 z-[var(--z-overlay)] bg-foreground/50 lg:hidden",
+    "fixed inset-0 z-overlay bg-foreground/50 lg:hidden",
     "opacity-0 pointer-events-none",
     # Exit timing by default; enter timing while the drawer is open.
     "transition-opacity duration-fast ease-accelerate",
