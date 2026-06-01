@@ -49,6 +49,7 @@ defmodule Pulsar.DevApp.Router do
     live "/components/label", LabelLive, :index
     live "/components/link", LinkLive, :index
     live "/components/list", ListLive, :index
+    live "/components/navbar", NavbarLive, :index
     live "/components/radio_group", RadioGroupLive, :index
     live "/components/select/outline", SelectLive, :outline
     live "/components/select/ghost", SelectLive, :ghost
