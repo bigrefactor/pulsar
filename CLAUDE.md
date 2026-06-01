@@ -215,6 +215,9 @@ document.documentElement.classList.toggle('theme-dark');
 - **Tailwind-compatible**: Still get all Tailwind utilities and Tailwind v4 `@theme` integration
 - **PSB-compatible**: Same CSS works under attribute-based and class-based switchers
 
+Motion (durations, easing curves, the interaction→motion contract, and the
+`transition-all` ban) is documented in [`docs/motion.md`](docs/motion.md).
+
 ## Quality Standards
 
 ### Code Generation

@@ -173,12 +173,16 @@
   --shadow-modal: 0 8px 16px -6px rgb(0 0 0 / 0.12), 0 12px 24px -10px rgb(0 0 0 / 0.16);
   --shadow-toast: var(--shadow-dropdown);
 
-  /* Motion */
-  --duration-quick: 120ms;
+  /* Motion — durations */
+  --duration-fast: 120ms;
   --duration-normal: 200ms;
   --duration-slow: 320ms;
-  --easing-standard: cubic-bezier(0.2, 0, 0, 1);
-  --easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Motion — easing curves (Tailwind v4 --ease-* namespace → ease-<name> utilities) */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --ease-accelerate: cubic-bezier(0.4, 0, 1, 1);
+  --ease-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
 
   /* Opacity */
   --opacity-disabled: 0.5;
@@ -238,28 +242,43 @@
 
 /* Animation utilities */
 .animate-fade-in {
-  animation: fade-in var(--duration-normal, 200ms) var(--easing-standard);
+  animation: fade-in var(--duration-normal, 200ms) var(--ease-decelerate);
 }
 
 .animate-slide-in {
-  animation: slide-in var(--duration-normal, 200ms) var(--easing-standard);
+  animation: slide-in var(--duration-normal, 200ms) var(--ease-decelerate);
 }
 
 .animate-scale-in {
-  animation: scale-in var(--duration-quick, 120ms) var(--easing-standard);
+  animation: scale-in var(--duration-fast, 120ms) var(--ease-decelerate);
 }
 
 .animate-pulse-subtle {
   animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Respect user's motion preferences */
+/* Named duration utilities (token-backed; v4 has no --duration-* utility namespace) */
+@utility duration-fast {
+  transition-duration: var(--duration-fast);
+}
+
+@utility duration-normal {
+  transition-duration: var(--duration-normal);
+}
+
+@utility duration-slow {
+  transition-duration: var(--duration-slow);
+}
+
+/* Respect user's motion preferences — one global rule for the whole library.
+   Components do not carry their own motion-reduce guards. */
 @media (prefers-reduced-motion: reduce) {
-  .animate-fade-in,
-  .animate-slide-in,
-  .animate-scale-in,
-  .animate-pulse-subtle {
-    animation: none !important;
-    transition-duration: 0s !important;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
