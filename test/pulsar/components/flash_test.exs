@@ -4,6 +4,7 @@ defmodule Pulsar.Components.FlashTest do
   import Phoenix.Component
   import Phoenix.LiveViewTest
 
+  alias Phoenix.LiveView.JS
   alias Pulsar.Components.Flash
 
   describe "flash/1 basic functionality" do
@@ -136,16 +137,16 @@ defmodule Pulsar.Components.FlashTest do
       refute html =~ ~s(aria-label="Dismiss")
     end
 
-    test "includes dismiss event in phx-click" do
-      assigns = %{}
+    test "encodes the on_dismiss JS into data-on-dismiss" do
+      assigns = %{on_dismiss: JS.push("remove_flash", value: %{key: "error"})}
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash on_dismiss="remove_flash" flash_key="error">Flash with event</Flash.flash>
+        <Flash.flash on_dismiss={@on_dismiss}>Flash with event</Flash.flash>
         """)
 
-      assert html =~ ~s(phx-click=)
-      # Dismiss event name appears via data-on-dismiss; the hook performs pushEvent
+      # The hook runs this via liveSocket.execJS on dismiss.
+      assert html =~ ~s(data-on-dismiss=)
       assert html =~ "remove_flash"
     end
 
@@ -209,17 +210,6 @@ defmodule Pulsar.Components.FlashTest do
         """)
 
       assert html =~ ~s(data-auto-dismiss="false")
-    end
-
-    test "includes flash key in data attributes" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <Flash.flash flash_key="error">Flash with key</Flash.flash>
-        """)
-
-      assert html =~ ~s(data-flash-key="error")
     end
 
     test "auto_dismiss defaults to true for role=status" do
@@ -584,26 +574,16 @@ defmodule Pulsar.Components.FlashTest do
       assert html_disabled =~ ~s(data-auto-dismiss="false")
     end
 
-    test "includes flash_key for event handling" do
-      assigns = %{}
+    test "encodes a custom on_dismiss JS command" do
+      assigns = %{on_dismiss: JS.push("custom_dismiss")}
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash flash_key="error">Flash with key</Flash.flash>
+        <Flash.flash on_dismiss={@on_dismiss}>Custom dismiss event</Flash.flash>
         """)
 
-      assert html =~ ~s(data-flash-key="error")
-    end
-
-    test "includes on_dismiss event name" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <Flash.flash on_dismiss="custom_dismiss">Custom dismiss event</Flash.flash>
-        """)
-
-      assert html =~ ~s(data-on-dismiss="custom_dismiss")
+      assert html =~ ~s(data-on-dismiss=)
+      assert html =~ "custom_dismiss"
     end
   end
 
@@ -628,8 +608,7 @@ defmodule Pulsar.Components.FlashTest do
         <Flash.flash
           auto_dismiss={true}
           dismiss_after={5000}
-          flash_key="test_key"
-          on_dismiss="handle_dismiss"
+          on_dismiss={JS.push("handle_dismiss")}
         >
           Complete flash
         </Flash.flash>
@@ -638,35 +617,21 @@ defmodule Pulsar.Components.FlashTest do
       # All JavaScript hook data attributes should be present
       assert html =~ ~s(data-auto-dismiss="true")
       assert html =~ ~s(data-dismiss-after="5000")
-      assert html =~ ~s(data-flash-key="test_key")
-      assert html =~ ~s(data-on-dismiss="handle_dismiss")
+      assert html =~ ~s(data-on-dismiss=)
+      assert html =~ "handle_dismiss"
     end
 
-    test "handles nil flash_key gracefully" do
+    test "defaults on_dismiss to an empty JS command" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash flash_key={nil}>Flash without key</Flash.flash>
+        <Flash.flash>Flash without dismiss handler</Flash.flash>
         """)
 
-      # Phoenix doesn't render data attributes with nil values
-      refute html =~ ~s(data-flash-key)
-      # But the component should still render
-      assert html =~ "Flash without key"
-    end
-
-    test "handles nil on_dismiss gracefully" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <Flash.flash on_dismiss={nil}>Flash without dismiss handler</Flash.flash>
-        """)
-
-      # Phoenix doesn't render data attributes with nil values
-      refute html =~ ~s(data-on-dismiss)
-      # But the component should still render
+      # The empty %JS{} default encodes to "[]"; the hook treats it as
+      # "no callback" and removes the flash from the DOM instead.
+      assert html =~ ~s(data-on-dismiss="[]")
       assert html =~ "Flash without dismiss handler"
     end
   end

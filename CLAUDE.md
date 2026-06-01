@@ -218,6 +218,11 @@ document.documentElement.classList.toggle('theme-dark');
 Motion (durations, easing curves, the interaction→motion contract, and the
 `transition-all` ban) is documented in [`docs/motion.md`](docs/motion.md).
 
+Cross-cutting component conventions — notably that outgoing event callbacks are
+`%JS{}` attrs (`attr :on_x, JS, default: %JS{}`), run via `phx-*` bindings or
+`liveSocket.execJS`, with `JS.push(...)` for server events — are documented in
+[`docs/conventions.md`](docs/conventions.md). New interactive components follow it.
+
 ## Quality Standards
 
 ### Code Generation

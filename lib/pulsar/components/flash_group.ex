@@ -63,7 +63,10 @@ defmodule Pulsar.Components.FlashGroup do
 
           def render(assigns) do
             ~H\"\"\"
-            <.flash_group flash={@flash} on_dismiss="track_dismissal" />
+            <.flash_group
+              flash={@flash}
+              on_dismiss={fn key -> JS.push("track_dismissal", value: %{key: key}) end}
+            />
             <!-- your page content -->
             \"\"\"
           end
@@ -204,6 +207,7 @@ defmodule Pulsar.Components.FlashGroup do
 
   import Twm, only: [merge: 1]
 
+  alias Phoenix.LiveView.JS
   alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Flash
   alias Pulsar.Components.Icon
@@ -321,9 +325,11 @@ defmodule Pulsar.Components.FlashGroup do
     doc: "Milliseconds between staggered flash animations (0 to disable)"
   )
 
-  attr(:on_dismiss, :string,
-    default: "clear_flash",
-    doc: "Phoenix event to push when any flash is dismissed"
+  attr(:on_dismiss, :any,
+    default: nil,
+    doc:
+      "1-arity function `(flash_key) -> %JS{}` run when a flash is dismissed. " <>
+        "Defaults to pushing the \"clear_flash\" event with the dismissed key."
   )
 
   attr(:z_index, :string,
@@ -356,8 +362,8 @@ defmodule Pulsar.Components.FlashGroup do
 
   ## Event Handling
 
-  FlashGroup automatically handles flash dismissal through the configured event
-  (default: "clear_flash"). Your LiveView should handle this event:
+  By default, dismissing a flash pushes a "clear_flash" event carrying the
+  dismissed key. Your LiveView should handle this event:
 
       def handle_event("clear_flash", %{"key" => key}, socket) do
         # Safe atom handling to prevent atom exhaustion attacks
@@ -439,11 +445,10 @@ defmodule Pulsar.Components.FlashGroup do
         auto_dismiss={@auto_dismiss}
         dismiss_after={@dismiss_after}
         dismissible={@dismissible}
-        on_dismiss={@on_dismiss}
-        flash_key={normalize_flash_key(type)}
+        on_dismiss={dismiss_callback(@on_dismiss, normalize_flash_key(type))}
         style={get_animation_style(index, @stagger_delay)}
         phx-mounted={
-          Phoenix.LiveView.JS.show(
+          JS.show(
             transition: {
               "ease-standard duration-normal",
               "opacity-0 #{get_entry_from(@position)}",
@@ -535,10 +540,16 @@ defmodule Pulsar.Components.FlashGroup do
 
   defp normalize_type(_), do: :info
 
-  # Normalize flash key to string for flash_key attribute
+  # Normalize flash key to a string for the dismiss payload
   defp normalize_flash_key(type) when is_atom(type), do: Atom.to_string(type)
   defp normalize_flash_key(type) when is_binary(type), do: type
   defp normalize_flash_key(_), do: "info"
+
+  # Build the per-flash dismiss callback. The default pushes "clear_flash" with
+  # the dismissed key; a caller-supplied 1-arity function gets the key and
+  # returns its own %JS{}.
+  defp dismiss_callback(nil, key), do: JS.push("clear_flash", value: %{key: key})
+  defp dismiss_callback(fun, key) when is_function(fun, 1), do: fun.(key)
 
   # Get animation style with stagger delay
   defp get_animation_style(index, stagger_delay) when stagger_delay > 0 do

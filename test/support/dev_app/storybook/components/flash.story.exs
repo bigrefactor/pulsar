@@ -55,12 +55,6 @@ defmodule Pulsar.DevApp.Storybook.Components.Flash do
         doc: "ARIA role"
       },
       %Attr{
-        id: :flash_key,
-        type: :string,
-        default: nil,
-        doc: "Phoenix.Flash key to read from"
-      },
-      %Attr{
         id: :live,
         type: :string,
         values: ~w(polite assertive off auto),

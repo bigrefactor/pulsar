@@ -5,6 +5,7 @@ defmodule Pulsar.Components.FlashGroupTest do
   import Phoenix.Component
   import Phoenix.LiveViewTest
 
+  alias Phoenix.LiveView.JS
   alias Pulsar.Components.FlashGroup
 
   describe "flash_group/1 stagger delay functionality" do
@@ -412,13 +413,13 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       assert html =~ "Error message"
       assert html =~ "Success message"
-      refute html =~ ~s(data-flash-key="info")
-      refute html =~ ~s(data-flash-key="warning")
+      refute html =~ ~s(-info")
+      refute html =~ ~s(-warning")
     end
   end
 
   describe "flash_group/1 event handling" do
-    test "includes default dismiss event" do
+    test "defaults to pushing clear_flash with the dismissed key" do
       assigns = %{}
 
       html =
@@ -426,33 +427,24 @@ defmodule Pulsar.Components.FlashGroupTest do
         <FlashGroup.flash_group flash={%{error: "Error"}} />
         """)
 
-      assert html =~ ~s(data-on-dismiss="clear_flash")
+      # Default dismiss callback: JS.push("clear_flash", value: %{key: "error"})
+      assert html =~ ~s(data-on-dismiss=)
+      assert html =~ "clear_flash"
+      assert html =~ ~s(&quot;key&quot;:&quot;error&quot;)
     end
 
-    test "includes custom dismiss event" do
-      assigns = %{}
+    test "supports a custom on_dismiss function per flash key" do
+      assigns = %{
+        on_dismiss: fn key -> JS.push("custom_clear", value: %{key: key}) end
+      }
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group
-          flash={%{error: "Error"}}
-          on_dismiss="custom_clear"
-        />
+        <FlashGroup.flash_group flash={%{error: "Error"}} on_dismiss={@on_dismiss} />
         """)
 
-      assert html =~ ~s(data-on-dismiss="custom_clear")
-    end
-
-    test "includes flash keys for identification" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{error: "Error", info: "Info"}} />
-        """)
-
-      assert html =~ ~s(data-flash-key="error")
-      assert html =~ ~s(data-flash-key="info")
+      assert html =~ "custom_clear"
+      assert html =~ ~s(&quot;key&quot;:&quot;error&quot;)
     end
 
     test "renders dismiss button with accessible label by default" do

@@ -232,9 +232,9 @@ defmodule Pulsar.Components.Select do
   )
 
   # Multi-select badge removal
-  attr(:on_remove_badge, :any,
-    default: nil,
-    doc: "Event handler for removing badges in multi-select mode (Phoenix.LiveView.JS command or event name string)"
+  attr(:on_remove_badge, JS,
+    default: %JS{},
+    doc: "JS commands to run when a badge is removed in multi-select mode"
   )
 
   attr(:remove_label, :string,
@@ -585,19 +585,13 @@ defmodule Pulsar.Components.Select do
     assign(assigns, :name, final_name)
   end
 
-  # Badge removal JS command
+  # Badge removal JS command. Runs the caller's on_remove_badge commands (the
+  # empty %JS{} default is a no-op), then dispatches the internal event the hook
+  # listens for to drop the badge.
   defp remove_badge_js(handler, wrapper_id, option_value) do
-    opts = [to: "##{wrapper_id}-wrapper", detail: %{option: option_value}]
-
-    case handler do
-      %JS{} = custom_js ->
-        custom_js |> JS.dispatch("pulsar:remove-selection", opts)
-
-      event when is_binary(event) ->
-        JS.dispatch("pulsar:remove-selection", opts) |> JS.push(event)
-
-      _ ->
-        JS.dispatch("pulsar:remove-selection", opts)
-    end
+    JS.dispatch(handler, "pulsar:remove-selection",
+      to: "##{wrapper_id}-wrapper",
+      detail: %{option: option_value}
+    )
   end
 end
