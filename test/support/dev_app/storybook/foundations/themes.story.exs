@@ -380,7 +380,7 @@ defmodule Pulsar.DevApp.Storybook.Foundations.Themes do
       %{token: "shadow-card", role: "Resting card elevation"},
       %{token: "shadow-dropdown", role: "Floating menus"},
       %{token: "shadow-modal", role: "Dialog elevation"},
-      %{token: "duration-quick / normal / slow", role: "120 / 200 / 320 ms"},
+      %{token: "duration-fast / normal / slow", role: "120 / 200 / 320 ms"},
       %{token: "ease-standard / emphasized", role: "Transition easing"},
       %{token: "opacity-disabled / muted / overlay", role: "Disabled, muted, scrim"}
     ]

@@ -229,7 +229,7 @@ defmodule Pulsar.Components.Table do
 
   # Row base classes
   @row_base_classes [
-    "transition-colors duration-quick",
+    "transition-colors duration-fast",
     "border-b border-border/50 last:border-b-0"
   ]
 
