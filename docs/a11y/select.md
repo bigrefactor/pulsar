@@ -226,7 +226,7 @@ the `field` wrapper level.
 - Role: native `<select>` (with `multiple` as appropriate) —
   `lib/pulsar/components/select.ex:361–364`
 - Name: from `name=` attr (array-suffixed for multi-select) —
-  `lib/pulsar/components/select.ex:362, 589–598`
+  `lib/pulsar/components/select.ex:362, 588–596`
 - Value: rendered via `Form.options_for_select` —
   `lib/pulsar/components/select.ex:380`
 - State: `aria-invalid`, native `required`/`disabled`/`multiple` —

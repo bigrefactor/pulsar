@@ -86,8 +86,7 @@ defmodule Pulsar.CoreComponents do
         dismiss_after={@dismiss_after}
         dismissible={@dismissible}
         role={map_kind_to_role(@kind)}
-        on_dismiss="lv:clear-flash"
-        flash_key={@kind && to_string(@kind)}
+        on_dismiss={JS.push("lv:clear-flash", value: %{key: @kind})}
         class={@rest[:class] || ""}
         {Map.drop(@rest, [:class])}
       >

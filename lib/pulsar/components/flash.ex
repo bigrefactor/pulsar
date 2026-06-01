@@ -178,15 +178,9 @@ defmodule Pulsar.Components.Flash do
     doc: "Milliseconds before auto-dismiss (default 5 seconds)"
   )
 
-  attr(:on_dismiss, :string,
-    default: nil,
-    doc: "Phoenix event to push when flash is dismissed"
-  )
-
-  # State and behavior
-  attr(:flash_key, :string,
-    default: nil,
-    doc: "Key for identifying this flash message in Phoenix.Flash"
+  attr(:on_dismiss, JS,
+    default: %JS{},
+    doc: "JS commands to run when the flash is dismissed"
   )
 
   # ARIA and accessibility
@@ -284,7 +278,6 @@ defmodule Pulsar.Components.Flash do
       data-auto-dismiss={data_tf(@auto_dismiss)}
       data-dismissible={data_tf(@dismissible)}
       data-dismiss-after={@dismiss_after}
-      data-flash-key={@flash_key}
       data-on-dismiss={@on_dismiss}
       {@rest}
     >
@@ -331,8 +324,6 @@ defmodule Pulsar.Components.Flash do
             : Math.min(dismissAfterValue, 60000)
 
           this.autoDismiss = this.el.dataset.autoDismiss === "true"
-          this.onDismissEvent = this.el.dataset.onDismiss
-          this.flashKey = this.el.dataset.flashKey
           this.remainingTime = this.dismissAfter
           this.timer = null
           this.isVisible = false
@@ -464,17 +455,15 @@ defmodule Pulsar.Components.Flash do
           this.el.style.transform = "translateY(-8px)"
         },
 
-        // Schedule dismiss event after animation
+        // Run the on_dismiss JS (if any) after the exit animation, then remove
+        // the flash from the DOM so client-side-only callbacks don't leak a node.
         scheduleDismissEvent() {
           setTimeout(() => {
-            if (this.onDismissEvent && this.flashKey) {
-              this.pushEvent(this.onDismissEvent, {key: this.flashKey})
-            } else if (this.onDismissEvent) {
-              this.pushEvent(this.onDismissEvent, {})
-            } else {
-              // No dismiss handler, remove from DOM
-              this.el.remove()
+            const encoded = this.el.dataset.onDismiss
+            if (encoded && encoded !== "[]" && this.liveSocket) {
+              this.liveSocket.execJS(this.el, encoded)
             }
+            this.el.remove()
           }, EXIT_MS)
         },
 
@@ -485,8 +474,6 @@ defmodule Pulsar.Components.Flash do
 
           this.updateDismissAfter(newDismissAfter)
           this.updateAutoDismiss(newAutoDismiss)
-          this.onDismissEvent = this.el.dataset.onDismiss
-          this.flashKey = this.el.dataset.flashKey
         },
 
         // Update dismiss timeout if changed

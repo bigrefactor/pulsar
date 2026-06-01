@@ -438,8 +438,8 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ ~s(&quot;hide&quot;)
     end
 
-    test "supports string event name for on_remove_badge" do
-      assigns = %{}
+    test "supports a JS.push command for on_remove_badge" do
+      assigns = %{custom_js: JS.push("custom_remove")}
 
       html =
         rendered_to_string(~H"""
@@ -448,11 +448,11 @@ defmodule Pulsar.Components.SelectTest do
           options={[{"Elixir", "elixir"}]}
           value={["elixir"]}
           multiple={true}
-          on_remove_badge="custom_remove"
+          on_remove_badge={@custom_js}
         />
         """)
 
-      # Should dispatch event and push custom event
+      # Should run the caller's push and dispatch the internal event
       assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
       assert html =~ ~s(&quot;custom_remove&quot;)
     end
@@ -1024,8 +1024,8 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ "Germany"
     end
 
-    test "handles badges with custom phx-click-badge event" do
-      assigns = %{}
+    test "handles badges with custom on_remove_badge command" do
+      assigns = %{custom_js: JS.push("custom_remove")}
 
       html =
         rendered_to_string(~H"""
@@ -1034,7 +1034,7 @@ defmodule Pulsar.Components.SelectTest do
           options={[{"Elixir", "elixir"}, {"Phoenix", "phoenix"}]}
           value={["elixir"]}
           multiple={true}
-          on_remove_badge="custom_remove"
+          on_remove_badge={@custom_js}
         />
         """)
 
