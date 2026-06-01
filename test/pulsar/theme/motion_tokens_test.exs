@@ -67,8 +67,10 @@ defmodule Pulsar.Theme.MotionTokensTest do
     test "ease-* and duration-* utilities actually emit rules" do
       if File.exists?(@built_css) do
         css = File.read!(@built_css)
+        # Tailwind v4 inlines @theme inline values directly, so ease-standard emits
+        # transition-timing-function: cubic-bezier(0.2, 0, 0, 1) (spaced form)
         assert css =~ "transition-timing-function:var(--ease-standard)" or
-                 css =~ "cubic-bezier(0.2,0,0,1)",
+                 css =~ "cubic-bezier(0.2, 0, 0, 1)",
                "ease-standard utility not found in built CSS"
         assert css =~ "var(--duration-fast)", "duration-fast utility not found in built CSS"
       else
