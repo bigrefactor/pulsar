@@ -27,6 +27,7 @@ defmodule Pulsar.DevApp.Components do
     {"Select (ghost)", "/components/select/ghost"},
     {"Select (solid)", "/components/select/solid"},
     {"Select (multi)", "/components/select/multi"},
+    {"Sidebar", "/components/sidebar"},
     {"Switch", "/components/switch"},
     {"Table (outline)", "/components/table/outline"},
     {"Table (ghost)", "/components/table/ghost"},
@@ -42,19 +43,17 @@ defmodule Pulsar.DevApp.Components do
     assigns = assign(assigns, :fixtures, @fixtures)
 
     ~H"""
-    <nav aria-label="Fixtures" data-fixture-nav>
-      <ul class="space-y-1">
-        <li :for={{label, path} <- @fixtures}>
-          <.link
-            navigate={path}
-            class="block rounded px-3 py-1 text-sm hover:bg-surface-1-hover aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground aria-[current=page]:font-semibold"
-            aria-current={if @current_path == path, do: "page"}
-          >
-            {label}
-          </.link>
-        </li>
-      </ul>
-    </nav>
+    <ul class="space-y-1" data-fixture-nav>
+      <li :for={{label, path} <- @fixtures}>
+        <.link
+          navigate={path}
+          class="block rounded px-3 py-1 text-sm hover:bg-surface-1-hover aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground aria-[current=page]:font-semibold"
+          aria-current={if @current_path == path, do: "page"}
+        >
+          {label}
+        </.link>
+      </li>
+    </ul>
     """
   end
 

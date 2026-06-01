@@ -1,7 +1,7 @@
 # Pulsar accessibility audit — WCAG 2.2 Level AA
 
 This directory holds Pulsar's first formal accessibility audit. It covers
-every applicable WCAG 2.2 Level A and AA success criterion across all 19
+every applicable WCAG 2.2 Level A and AA success criterion across all 20
 components in `lib/pulsar/components/`. Original audit method was
 **code-only**; the browser-verification follow-up has
 since populated measured contrast, focus-ring, target-size, text-spacing,
@@ -134,6 +134,7 @@ not-applicable). Detailed per-criterion grids follow.
 | [divider](divider.md) | 8/1/11 | 1/0/19 | 0/0/13 | 1/0/1 |
 | [header](header.md) | 10/0/10 | 10/0/10 | 1/0/12 | 1/0/1 |
 | [list](list.md) | 10/0/10 | 1/0/19 | 0/0/13 | 1/0/1 |
+| [sidebar](sidebar.md) | 10/0/10 | 11/0/9 | 1/0/12 | 1/0/1 |
 | [table](table.md) | 10/0/10 | 11/0/9 | 1/0/12 | 2/0/0 |
 | **Content** | | | | |
 | [badge](badge.md) | 10/0/10 | 3/1/16 | 0/0/13 | 1/0/1 |
@@ -159,6 +160,7 @@ not-applicable). Detailed per-criterion grids follow.
 | divider | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | — | ✓ | — | ✓ | ⚠ | ✓ | — |
 | header | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | list | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
+| sidebar | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | table | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | badge | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | icon | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | — | ✓ | — | ✓ | ✓ | ✓ | — |
@@ -183,6 +185,7 @@ not-applicable). Detailed per-criterion grids follow.
 | divider | — | — | — | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
 | header | ✓ | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — | — | — | — | — | — |
 | list | — | — | — | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| sidebar | ✓ | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | — | — | — | ✓ |
 | table | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | badge | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ | — | ✓ | — | — | — | ✓ |
 | icon | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | — | — | — | — | — | — |
@@ -207,6 +210,7 @@ not-applicable). Detailed per-criterion grids follow.
 | divider | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | — |
 | header | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | — |
 | list | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | — |
+| sidebar | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | — |
 | table | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
 | badge | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | — |
 | icon | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | — |
@@ -329,7 +333,7 @@ that clip text under user-overrides. Usually inherits from the page.
 **1.4.13 Content on Hover or Focus (AA)** — Additional content triggered
 by hover/focus is dismissable, hoverable, and persistent.
 *Library note:* Applies to tooltips, popovers, dropdowns. None of the
-current 19 components ship a tooltip — mostly N/A.
+current 20 components ship a tooltip — mostly N/A.
 
 ### Principle 2 — Operable
 

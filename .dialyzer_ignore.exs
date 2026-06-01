@@ -29,9 +29,18 @@
   {"lib/pulsar/components/list.ex", :no_return},
   {"lib/pulsar/components/list.ex", :invalid_contract},
   {"lib/pulsar/components/list.ex", :unused_fun},
+  {"lib/pulsar/components/sidebar.ex", :no_return},
+  {"lib/pulsar/components/sidebar.ex", :invalid_contract},
   {"lib/pulsar/components/switch.ex", :no_return},
   {"lib/pulsar/components/switch.ex", :invalid_contract},
   {"lib/pulsar/components/textarea.ex", :no_return},
   {"lib/pulsar/components/textarea.ex", :invalid_contract},
-  {"lib/pulsar/components/textarea.ex", :unused_fun}
+  {"lib/pulsar/components/textarea.ex", :unused_fun},
+
+  # Sidebar's `toggle/2`, `show/2`, `hide/2` follow the idiomatic Phoenix
+  # `def helper(js \\ %JS{}, id)` shape. The `%JS{}` default literal builds the
+  # opaque `Phoenix.LiveView.JS.t()` outside the JS module, so dialyzer reports
+  # `call_without_opaque` when they are called with the default — the same
+  # false positive Phoenix's own JS helpers trip. Runtime behavior is correct.
+  {"lib/pulsar/components/sidebar.ex", :call_without_opaque}
 ]

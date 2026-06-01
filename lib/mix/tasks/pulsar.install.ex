@@ -116,6 +116,7 @@ if Code.ensure_loaded?(Igniter) do
       list: [],
       radio_group: [],
       select: [:badge],
+      sidebar: [],
       switch: [],
       table: [],
       textarea: []
@@ -160,6 +161,7 @@ if Code.ensure_loaded?(Igniter) do
           "pulsar.gen.list",
           "pulsar.gen.radio_group",
           "pulsar.gen.select",
+          "pulsar.gen.sidebar",
           "pulsar.gen.switch",
           "pulsar.gen.table",
           "pulsar.gen.textarea",
