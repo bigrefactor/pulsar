@@ -1,0 +1,85 @@
+defmodule Pulsar.DevApp.Storybook.Components.Menu do
+  use PhoenixStorybook.Story, :component
+
+  alias Pulsar.Components.Menu
+
+  def function, do: &Menu.menu/1
+  def render_source, do: :function
+
+  def attributes do
+    [
+      %Attr{
+        id: :orientation,
+        type: :string,
+        values: ~w(vertical horizontal),
+        default: "vertical",
+        doc: "Layout direction (vertical for a sidebar, horizontal for a top bar)"
+      },
+      %Attr{
+        id: :label,
+        type: :string,
+        default: "Primary",
+        doc: "Accessible name for the navigation landmark"
+      },
+      %Attr{
+        id: :landmark,
+        type: :boolean,
+        default: true,
+        doc: "Wrap the list in a <nav> landmark (set false when nesting inside an existing nav)"
+      },
+      %Attr{
+        id: :class,
+        type: :string,
+        default: "",
+        doc: "Additional CSS classes"
+      }
+    ]
+  end
+
+  def slots do
+    [
+      %Slot{id: :inner_block, required: true, doc: "Menu items, sections, and groups"}
+    ]
+  end
+
+  def variations do
+    flat =
+      ~s|<Menu.menu_item navigate="#" icon="hero-home" active>Home</Menu.menu_item>| <>
+        ~s|<Menu.menu_item navigate="#" icon="hero-inbox">Inbox</Menu.menu_item>| <>
+        ~s|<Menu.menu_item navigate="#" icon="hero-cog-6-tooth">Settings</Menu.menu_item>|
+
+    [
+      %Variation{
+        id: :default,
+        description: "Vertical menu with an active item",
+        slots: [flat]
+      },
+      %Variation{
+        id: :with_section,
+        description: "Vertical menu with a labelled section",
+        slots: [
+          ~s|<Menu.menu_item navigate="#" icon="hero-home" active>Home</Menu.menu_item>| <>
+            ~s|<Menu.menu_section label="Workspace"><Menu.menu_item navigate="#" icon="hero-folder">Projects</Menu.menu_item><Menu.menu_item navigate="#" icon="hero-users">Team</Menu.menu_item></Menu.menu_section>|
+        ]
+      },
+      %Variation{
+        id: :with_group,
+        description: "Vertical menu with an expanded collapsible group",
+        slots: [
+          ~s|<Menu.menu_item navigate="#" icon="hero-home">Home</Menu.menu_item>| <>
+            ~s|<Menu.menu_group label="Reports" icon="hero-chart-bar" open><Menu.menu_item navigate="#">Sales</Menu.menu_item><Menu.menu_item navigate="#">Traffic</Menu.menu_item></Menu.menu_group>|
+        ]
+      },
+      %Variation{
+        id: :horizontal,
+        description: "Horizontal menu with a dropdown group",
+        attributes: %{orientation: "horizontal"},
+        slots: [
+          ~s|<Menu.menu_item navigate="#" active>Home</Menu.menu_item>| <>
+            ~s|<Menu.menu_item navigate="#">Pricing</Menu.menu_item>| <>
+            ~s|<Menu.menu_group label="Products"><Menu.menu_item navigate="#">App</Menu.menu_item><Menu.menu_item navigate="#">API</Menu.menu_item></Menu.menu_group>|
+        ]
+      }
+    ]
+  end
+end

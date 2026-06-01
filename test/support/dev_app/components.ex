@@ -22,6 +22,7 @@ defmodule Pulsar.DevApp.Components do
     {"Label", "/components/label"},
     {"Link", "/components/link"},
     {"List", "/components/list"},
+    {"Menu", "/components/menu"},
     {"Navbar", "/components/navbar"},
     {"RadioGroup", "/components/radio_group"},
     {"Select (outline)", "/components/select/outline"},
