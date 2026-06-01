@@ -1,0 +1,100 @@
+defmodule <%= @web_module %>.Storybook.Components.Navbar do
+  use PhoenixStorybook.Story, :component
+
+  alias <%= @components_module %>.Navbar
+
+  def function, do: &Navbar.navbar/1
+  def render_source, do: :function
+
+  def attributes do
+    [
+      %Attr{
+        id: :variant,
+        type: :string,
+        values: ~w(solid outline ghost elevated),
+        default: "solid",
+        doc: "Visual style of the bar surface"
+      },
+      %Attr{
+        id: :color,
+        type: :string,
+        values: ~w(neutral primary secondary success danger warning info),
+        default: "neutral",
+        doc: "Color scheme of the bar"
+      },
+      %Attr{
+        id: :size,
+        type: :string,
+        values: ~w(xs sm md lg xl),
+        default: "md",
+        doc: "Bar height, horizontal padding, and region gap"
+      },
+      %Attr{
+        id: :sticky,
+        type: :boolean,
+        default: false,
+        doc: "Pin the bar to the top of the viewport as content scrolls"
+      },
+      %Attr{
+        id: :label,
+        type: :string,
+        default: nil,
+        doc: "Accessible name for the banner"
+      },
+      %Attr{
+        id: :class,
+        type: :string,
+        default: "",
+        doc: "Additional CSS classes"
+      }
+    ]
+  end
+
+  def slots do
+    [
+      %Slot{id: :left, doc: "Leading region (brand, logo, search)"},
+      %Slot{id: :center, doc: "Centered region"},
+      %Slot{id: :right, doc: "Trailing region (notifications, user menu)"}
+    ]
+  end
+
+  def variations do
+    brand = ~s|<:left><span class="font-semibold">Acme</span></:left>|
+    account = ~s|<:right><button class="rounded-field px-2 py-1.5 hover:bg-foreground/10">Account</button></:right>|
+
+    [
+      %Variation{
+        id: :default,
+        description: "Brand on the left, account on the right",
+        slots: [brand, account]
+      },
+      %Variation{
+        id: :with_search,
+        description: "Brand, a centered search field, and an account menu",
+        slots: [
+          brand,
+          ~s|<:center><input type="search" placeholder="Search" class="w-full max-w-sm rounded-field border border-border bg-input px-3 py-1.5 text-sm" /></:center>|,
+          account
+        ]
+      },
+      %Variation{
+        id: :outline_primary,
+        description: "Outline primary surface",
+        attributes: %{variant: "outline", color: "primary"},
+        slots: [brand, account]
+      },
+      %Variation{
+        id: :ghost,
+        description: "Transparent ghost surface",
+        attributes: %{variant: "ghost"},
+        slots: [brand, account]
+      },
+      %Variation{
+        id: :elevated,
+        description: "Elevated surface with shadow",
+        attributes: %{variant: "elevated"},
+        slots: [brand, account]
+      }
+    ]
+  end
+end

@@ -29,6 +29,8 @@
   {"lib/pulsar/components/list.ex", :no_return},
   {"lib/pulsar/components/list.ex", :invalid_contract},
   {"lib/pulsar/components/list.ex", :unused_fun},
+  {"lib/pulsar/components/navbar.ex", :no_return},
+  {"lib/pulsar/components/navbar.ex", :invalid_contract},
   {"lib/pulsar/components/sidebar.ex", :no_return},
   {"lib/pulsar/components/sidebar.ex", :invalid_contract},
   {"lib/pulsar/components/switch.ex", :no_return},

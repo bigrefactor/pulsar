@@ -3,7 +3,7 @@ defmodule Pulsar.DevApp.StorybookTest do
   Smoke tests for the Pulsar dev-app storybook backend.
 
   Verifies that `Pulsar.DevApp.Storybook` compiles, exposes the expected
-  content tree, and includes all 29 leaves (welcome + 20 components +
+  content tree, and includes all 30 leaves (welcome + 21 components +
   5 foundations + 3 examples).
   """
 
@@ -26,6 +26,7 @@ defmodule Pulsar.DevApp.StorybookTest do
     /components/label
     /components/link
     /components/list
+    /components/navbar
     /components/radio_group
     /components/select
     /components/sidebar
@@ -66,7 +67,7 @@ defmodule Pulsar.DevApp.StorybookTest do
       assert "/welcome" in paths
     end
 
-    test "includes all 20 component stories" do
+    test "includes all 21 component stories" do
       paths = leaf_paths()
 
       for expected <- @expected_component_paths do
@@ -92,8 +93,8 @@ defmodule Pulsar.DevApp.StorybookTest do
   end
 
   describe "leaves/0" do
-    test "returns exactly 29 leaves" do
-      assert length(Storybook.leaves()) == 29
+    test "returns exactly 30 leaves" do
+      assert length(Storybook.leaves()) == 30
     end
 
     test "all leaves are StoryEntry structs" do
