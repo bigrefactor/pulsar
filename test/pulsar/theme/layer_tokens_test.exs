@@ -15,7 +15,8 @@ defmodule Pulsar.Theme.LayerTokensTest do
                __DIR__
              )
 
-  @layers ~w(docked sticky dropdown overlay modal popover toast)
+  @layer_values [docked: 10, sticky: 20, dropdown: 30, overlay: 40, modal: 50, popover: 60, toast: 70]
+  @layers Keyword.keys(@layer_values)
 
   defp template, do: File.read!(@template)
 
@@ -45,19 +46,16 @@ defmodule Pulsar.Theme.LayerTokensTest do
         css = File.read!(@built_css)
 
         # Tailwind v4 may keep the var() reference or inline the @theme value;
-        # match both forms whitespace-tolerantly so the guard survives
-        # formatting changes.
-        modal_via_var = ~r/z-index:\s*var\(\s*--z-modal\s*\)/
-        modal_inlined = ~r/\.z-modal\s*\{\s*z-index:\s*50\s*;?\s*\}/
+        # match both forms whitespace-tolerantly. Both anchor on the
+        # `.z-<layer>` selector so a stray arbitrary value or unrelated rule
+        # using the token elsewhere can't satisfy the guard.
+        for {layer, z} <- @layer_values do
+          via_var = ~r/\.z-#{layer}\s*\{\s*z-index:\s*var\(\s*--z-#{layer}\s*\)/
+          inlined = ~r/\.z-#{layer}\s*\{\s*z-index:\s*#{z}\s*;?\s*\}/
 
-        assert css =~ modal_via_var or css =~ modal_inlined,
-               "z-modal utility not found in built CSS"
-
-        overlay_via_var = ~r/z-index:\s*var\(\s*--z-overlay\s*\)/
-        overlay_inlined = ~r/\.z-overlay\s*\{\s*z-index:\s*40\s*;?\s*\}/
-
-        assert css =~ overlay_via_var or css =~ overlay_inlined,
-               "z-overlay utility not found in built CSS"
+          assert css =~ via_var or css =~ inlined,
+                 "z-#{layer} utility not found in built CSS"
+        end
       else
         IO.puts(:stderr, "skip: build assets (mix assets.build) to verify generated CSS")
       end
