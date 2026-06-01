@@ -455,16 +455,15 @@ defmodule Pulsar.Components.Flash do
           this.el.style.transform = "translateY(-8px)"
         },
 
-        // Run the on_dismiss JS after the exit animation. With no callback
-        // (the empty %JS{} default) the flash removes itself from the DOM.
+        // Run the on_dismiss JS (if any) after the exit animation, then remove
+        // the flash from the DOM so client-side-only callbacks don't leak a node.
         scheduleDismissEvent() {
           setTimeout(() => {
             const encoded = this.el.dataset.onDismiss
             if (encoded && encoded !== "[]" && this.liveSocket) {
               this.liveSocket.execJS(this.el, encoded)
-            } else {
-              this.el.remove()
             }
+            this.el.remove()
           }, EXIT_MS)
         },
 

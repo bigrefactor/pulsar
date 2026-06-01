@@ -132,7 +132,7 @@ covered in `flash.md` 2.2.1.
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
 **Evidence:** Stagger animation completes in `index * stagger_delay`
-ms then settles; no continuous motion — `lib/pulsar/components/flash_group.ex:555–560`.
+ms then settles; no continuous motion — `lib/pulsar/components/flash_group.ex:556–561`.
 Hide via dismiss covered in `flash.md` 2.2.2.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS

@@ -413,8 +413,8 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       assert html =~ "Error message"
       assert html =~ "Success message"
-      refute html =~ ~s(-info")
-      refute html =~ ~s(-warning")
+      refute html =~ ~r/id="flash-\d+-info"/
+      refute html =~ ~r/id="flash-\d+-warning"/
     end
   end
 
@@ -445,6 +445,18 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       assert html =~ "custom_clear"
       assert html =~ ~s(&quot;key&quot;:&quot;error&quot;)
+    end
+
+    test "supports a bare %JS{} on_dismiss applied to every flash" do
+      assigns = %{on_dismiss: JS.push("custom_clear")}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{error: "Error"}} on_dismiss={@on_dismiss} />
+        """)
+
+      assert html =~ ~s(data-on-dismiss=)
+      assert html =~ "custom_clear"
     end
 
     test "renders dismiss button with accessible label by default" do

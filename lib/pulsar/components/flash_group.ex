@@ -328,8 +328,8 @@ defmodule Pulsar.Components.FlashGroup do
   attr(:on_dismiss, :any,
     default: nil,
     doc:
-      "1-arity function `(flash_key) -> %JS{}` run when a flash is dismissed. " <>
-        "Defaults to pushing the \"clear_flash\" event with the dismissed key."
+      "A `%JS{}` applied to every flash, or a 1-arity function `(flash_key) -> %JS{}` " <>
+        "for per-key payloads. Defaults to pushing \"clear_flash\" with the dismissed key."
   )
 
   attr(:z_index, :string,
@@ -546,9 +546,10 @@ defmodule Pulsar.Components.FlashGroup do
   defp normalize_flash_key(_), do: "info"
 
   # Build the per-flash dismiss callback. The default pushes "clear_flash" with
-  # the dismissed key; a caller-supplied 1-arity function gets the key and
-  # returns its own %JS{}.
+  # the dismissed key; a caller-supplied %JS{} is used as-is for every flash, and
+  # a 1-arity function gets the key and returns its own %JS{}.
   defp dismiss_callback(nil, key), do: JS.push("clear_flash", value: %{key: key})
+  defp dismiss_callback(%JS{} = js, _key), do: js
   defp dismiss_callback(fun, key) when is_function(fun, 1), do: fun.(key)
 
   # Get animation style with stagger delay

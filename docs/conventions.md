@@ -77,22 +77,25 @@ The sidebar's `runCallback/1` is the reference implementation.
 ### Fan-out wrapper
 
 When one component renders many children that each need their own payload, a
-single `%JS{}` can't carry per-child data. Take a function instead — the same
-shape as Phoenix core_components' `row_click` — and call it per child:
+single `%JS{}` can't carry per-child data. Take a function as well — the same
+shape as Phoenix core_components' `row_click` — and call it per child. A plain
+`%JS{}` is still accepted (applied to every child) for callers that don't need
+per-child data:
 
 ```elixir
 attr :on_dismiss, :any,
   default: nil,
-  doc: "1-arity function (flash_key) -> %JS{} run when a flash is dismissed"
+  doc: "%JS{} for every child, or a 1-arity function (flash_key) -> %JS{}"
 
 # per child:
 on_dismiss={dismiss_callback(@on_dismiss, normalize_flash_key(type))}
 
 defp dismiss_callback(nil, key), do: JS.push("clear_flash", value: %{key: key})
+defp dismiss_callback(%JS{} = js, _key), do: js
 defp dismiss_callback(fun, key) when is_function(fun, 1), do: fun.(key)
 ```
 
-The leaf still receives a plain `%JS{}`; only the wrapper deals in functions.
+The leaf always receives a plain `%JS{}`; only the wrapper deals in functions.
 
 ## Rules
 
