@@ -36,7 +36,7 @@ Columns:
 | `as-h6` | `header` | 958 | 32 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `breadcrumbs` | `header` | 194.53 | 68 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `outline-danger` | `header` | 958 | 73 | ✓ | 6.14:1 ✓ | 4.63:1 ✓ (bottom) | — (not-focusable-in-state) |
-| `outline-info` | `header` | 958 | 73 | ✓ | 3.46:1 ✗ | 4.63:1 ✓ (bottom) | — (not-focusable-in-state) |
+| `outline-info` | `header` | 958 | 73 | ✓ | 5.05:1 ✓ | 4.63:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `outline-neutral` | `header` | 958 | 73 | ✓ | 19.27:1 ✓ | 4.63:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `outline-primary` | `header` | 958 | 73 | ✓ | 6.54:1 ✓ | 4.63:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `outline-secondary` | `header` | 958 | 73 | ✓ | 5.64:1 ✓ | 4.63:1 ✓ (bottom) | — (not-focusable-in-state) |

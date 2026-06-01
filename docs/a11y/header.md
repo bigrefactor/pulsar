@@ -81,20 +81,14 @@ both themes: neutral content cells reach 19.27:1 (light) / 16.98:1 (dark)
 **Notes:** The header fixture exercises sizes (xs–xl), heading levels
 (h1–h6), and the outline variant in all seven colors. The
 `outline-<color>` cells carry `text-<color>` on the root `<header>`,
-which renders no text of its own; the color cascades to the large title
-(≥24px at the default size, the 3:1 large-text threshold), where even the
-lowest-contrast hue clears the minimum. The `outline-info` cell reads
-3.46:1 in light because the tool measures the root at its inherited 16px
-(normal-text 4.5:1 threshold), not the large title where `text-info`
-actually paints. One real caveat sits underneath that artifact: light
-`text-info` (`info-600`) is 3.46:1 against the page, so it satisfies AA
-only as large text (≥24px / ≥18.66px bold). At the default `md` size and
-larger the title is large text and passes; `color="info"` at the small
-`xs`/`sm` sizes would fall below the 4.5:1 normal-text minimum. This is a
-caller-tunable color choice shared by every component that exposes
-`color="info"`, not specific to the header, and is tracked for a
-follow-up. Subtitles use `text-muted-foreground`. Token math (`*-100` bg
-+ `*-900` fg) is verified to exceed 4.5:1 in both palettes.
+which renders no text of its own; the color cascades to the title, where
+every hue clears the minimum at any size. The `outline-info` cell reads
+5.05:1 in light: `text-info` (`info-700`) meets the 4.5:1 normal-text
+minimum, so `color="info"` is safe at the small `xs`/`sm` sizes as well
+as the default. This holds for every component that exposes
+`color="info"`, not just the header. Subtitles use
+`text-muted-foreground`. Token math (`*-100` bg + `*-900` fg) is verified
+to exceed 4.5:1 in both palettes.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
