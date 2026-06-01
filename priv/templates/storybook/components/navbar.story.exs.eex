@@ -60,7 +60,7 @@ defmodule <%= @web_module %>.Storybook.Components.Navbar do
 
   def variations do
     brand = ~s|<:left><span class="font-semibold">Acme</span></:left>|
-    account = ~s|<:right><button class="rounded-field px-2 py-1.5 hover:bg-foreground/10">Account</button></:right>|
+    account = ~s|<:right><button type="button" class="rounded-field px-2 py-1.5 hover:bg-foreground/10">Account</button></:right>|
 
     [
       %Variation{

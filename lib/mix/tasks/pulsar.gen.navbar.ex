@@ -29,6 +29,10 @@ defmodule Mix.Tasks.Pulsar.Gen.Navbar do
     - Optional menu button wired to an overridable `on_menu_toggle`
     - Accessibility built-in (banner landmark, labeled menu button)
 
+    ## Dependencies
+
+    This component requires: icon
+
     ## Usage Examples
 
     ```elixir

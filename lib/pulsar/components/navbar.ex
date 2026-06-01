@@ -15,7 +15,7 @@ defmodule Pulsar.Components.Navbar do
       <.navbar>
         <:left><span class="font-semibold">Acme</span></:left>
         <:right>
-          <button class="rounded-field px-2 py-1.5">Account</button>
+          <button type="button" class="rounded-field px-2 py-1.5">Account</button>
         </:right>
       </.navbar>
 
@@ -68,8 +68,7 @@ defmodule Pulsar.Components.Navbar do
   # Layout and the surface contract shared by every navbar.
   @bar_base_classes [
     "relative flex items-center w-full",
-    "border-b",
-    "focus-visible:outline-none"
+    "border-b"
   ]
 
   # Menu button (hamburger): a square, comfortably-sized hit target.
@@ -103,13 +102,13 @@ defmodule Pulsar.Components.Navbar do
       "info" => "bg-surface-1 text-foreground border-info"
     },
     "ghost" => %{
-      "neutral" => "bg-transparent text-foreground border-transparent",
-      "primary" => "bg-transparent text-foreground border-transparent",
-      "secondary" => "bg-transparent text-foreground border-transparent",
-      "success" => "bg-transparent text-foreground border-transparent",
-      "danger" => "bg-transparent text-foreground border-transparent",
-      "warning" => "bg-transparent text-foreground border-transparent",
-      "info" => "bg-transparent text-foreground border-transparent"
+      "neutral" => "text-foreground border-transparent",
+      "primary" => "text-foreground border-transparent",
+      "secondary" => "text-foreground border-transparent",
+      "success" => "text-foreground border-transparent",
+      "danger" => "text-foreground border-transparent",
+      "warning" => "text-foreground border-transparent",
+      "info" => "text-foreground border-transparent"
     },
     "elevated" => %{
       "neutral" => "bg-surface-1 text-foreground border-transparent shadow-dropdown",
@@ -129,9 +128,13 @@ defmodule Pulsar.Components.Navbar do
     end
   end
 
-  # When the bar is sticky, focusable controls scrolled to below it would be
-  # obscured. The sibling/descendant scroll-margin pushes those controls clear of
-  # the sticky band. Values approximate the per-size bar height.
+  # When the bar is sticky it needs an opaque background so scrolled content
+  # doesn't bleed through (the transparent `ghost` variant otherwise overlaps).
+  # Opaque variants set their own `bg-*`, which wins via the merge order below.
+  #
+  # Focusable controls scrolled to below the bar would also be obscured; the
+  # sibling/descendant scroll-margin pushes those controls clear of the sticky
+  # band (WCAG 2.4.11). Values approximate the per-size bar height.
   @sticky_scroll_margin %{
     "xs" => "[&~*]:scroll-mt-12 [&~*_*]:scroll-mt-12",
     "sm" => "[&~*]:scroll-mt-14 [&~*_*]:scroll-mt-14",
@@ -225,9 +228,9 @@ defmodule Pulsar.Components.Navbar do
         :bar_classes,
         merge([
           bar_base_classes(),
-          color_classes(assigns.variant, assigns.color),
           size_classes(assigns.size),
           sticky_classes(assigns.sticky, assigns.size),
+          color_classes(assigns.variant, assigns.color),
           assigns.class
         ])
       )
@@ -238,7 +241,6 @@ defmodule Pulsar.Components.Navbar do
         <button
           :if={@show_menu}
           type="button"
-          data-navbar-toggle
           phx-click={@on_menu_toggle}
           aria-label={@menu_label}
           aria-controls={@menu_controls}
@@ -279,7 +281,7 @@ defmodule Pulsar.Components.Navbar do
   defp color_classes(variant, color), do: @color_config[variant][color]
 
   @spec sticky_classes(boolean(), String.t()) :: String.t()
-  defp sticky_classes(true, size), do: "sticky top-0 z-docked #{sticky_scroll_margin(size)}"
+  defp sticky_classes(true, size), do: "sticky top-0 z-docked bg-background #{sticky_scroll_margin(size)}"
   defp sticky_classes(false, _size), do: ""
 
   @spec sticky_scroll_margin(String.t()) :: String.t()

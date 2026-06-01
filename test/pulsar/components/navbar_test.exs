@@ -36,7 +36,7 @@ defmodule Pulsar.Components.NavbarTest do
       assert html =~ ~s(id="navbar-)
     end
 
-    test "renders start, center, and end regions" do
+    test "renders left, center, and right regions" do
       assigns = %{}
 
       html =
@@ -78,7 +78,7 @@ defmodule Pulsar.Components.NavbarTest do
         </Navbar.navbar>
         """)
 
-      refute html =~ "data-navbar-toggle"
+      refute html =~ "<button"
     end
 
     test "renders a labeled hamburger wired to on_menu_toggle when set" do
@@ -91,7 +91,7 @@ defmodule Pulsar.Components.NavbarTest do
         </Navbar.navbar>
         """)
 
-      assert html =~ "data-navbar-toggle"
+      assert html =~ "<button"
       assert html =~ ~s(aria-label="Menu")
       # the override is composed into the button's click handler
       assert html =~ "pulsar:sidebar-toggle"
@@ -153,7 +153,7 @@ defmodule Pulsar.Components.NavbarTest do
       assert html =~ "border-primary"
     end
 
-    test "ghost is transparent" do
+    test "ghost carries no opaque fill (transparent by absence)" do
       assigns = %{}
 
       html =
@@ -163,7 +163,9 @@ defmodule Pulsar.Components.NavbarTest do
         </Navbar.navbar>
         """)
 
-      assert html =~ "bg-transparent"
+      assert html =~ "border-transparent"
+      refute html =~ "bg-surface-1"
+      refute html =~ "bg-background"
     end
 
     test "elevated carries a shadow" do
@@ -244,6 +246,33 @@ defmodule Pulsar.Components.NavbarTest do
         """)
 
       refute html =~ "sticky top-0"
+    end
+
+    test "ghost + sticky gets an opaque background so content can't bleed through" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Navbar.navbar id="bar" variant="ghost" sticky>
+          <:left>x</:left>
+        </Navbar.navbar>
+        """)
+
+      assert html =~ "bg-background"
+    end
+
+    test "sticky keeps the solid variant's own surface (no bg-background override)" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Navbar.navbar id="bar" variant="solid" color="neutral" sticky>
+          <:left>x</:left>
+        </Navbar.navbar>
+        """)
+
+      assert html =~ "bg-surface-1"
+      refute html =~ "bg-background"
     end
   end
 
