@@ -34,9 +34,15 @@ Principle: **exits are faster than entrances** — never make a user wait to dis
 
 - **No `transition-all`.** Transition explicit properties: `transition-colors`,
   `transition-opacity`, `transition-[transform,box-shadow]`, etc.
-- **No per-component reduced-motion guards.** A single global
+- **Don't guard duration/animation per component.** A single global
   `@media (prefers-reduced-motion: reduce)` rule near-zeroes all transition and
-  animation durations. Do not add `motion-reduce:` utilities to components.
+  animation durations — you don't need `motion-reduce:transition-none` or
+  `motion-reduce:animate-none` on individual components.
+- **Do reset transform-based motion.** The global rule only zeroes durations; it
+  does not undo a `transform`'s end state. If a component animates `transform`
+  (e.g. `hover:scale-[1.02]`), keep a `motion-reduce:` guard that resets it
+  (`motion-reduce:hover:scale-100`) — otherwise the scale still applies under
+  reduced motion, just instantly.
 - **No raw values.** Use the `duration-*` / `ease-*` utilities, never `duration-300`
   or `ease-in` directly.
 
