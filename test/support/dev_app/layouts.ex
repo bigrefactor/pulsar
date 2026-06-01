@@ -11,5 +11,7 @@ defmodule Pulsar.DevApp.Layouts do
   import Phoenix.Controller, only: [get_csrf_token: 0]
   import Pulsar.DevApp.Components, only: [fixture_nav: 1, theme_toggle: 1]
 
+  alias Pulsar.Components.Sidebar
+
   embed_templates "layouts/*"
 end

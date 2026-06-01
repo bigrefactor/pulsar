@@ -1,12 +1,26 @@
 <div class="flex min-h-screen">
-  <aside class="w-56 shrink-0 border-r border-border bg-surface-1 p-4">
-    <header class="mb-4 flex items-center justify-between">
-      <.link navigate={~p"/"} class="font-semibold">Pulsar</.link>
-      <.theme_toggle />
-    </header>
+  <Sidebar.sidebar id="fixtures-sidebar" label="Fixtures" collapsible="none">
+    <:header>
+      <div class="flex items-center justify-between gap-2">
+        <.link navigate={~p"/"} class="font-semibold">Pulsar</.link>
+        <.theme_toggle />
+      </div>
+    </:header>
     <.fixture_nav current_path={assigns[:current_path]} />
-  </aside>
-  <div class="flex-1 overflow-x-auto">
+  </Sidebar.sidebar>
+
+  <div class="flex min-w-0 flex-1 flex-col overflow-x-auto">
+    <div class="flex items-center gap-2 border-b border-border p-2 lg:hidden">
+      <button
+        type="button"
+        phx-click={Sidebar.toggle("fixtures-sidebar")}
+        aria-controls="fixtures-sidebar"
+        aria-label="Open navigation"
+        class="rounded border border-border px-3 py-1 text-sm"
+      >
+        Menu
+      </button>
+    </div>
     {@inner_content}
   </div>
 </div>
