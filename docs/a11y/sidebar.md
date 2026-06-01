@@ -15,38 +15,38 @@ hook. Navigation content (links, menu) is supplied by the caller through slots.
 ### 1.1.1 Non-text Content (A) — ✓ PASS
 
 **Evidence:** The sidebar renders no non-text content of its own; icons/images
-are caller-supplied slot content — `lib/pulsar/components/sidebar.ex:284–293`.
+are caller-supplied slot content — `lib/pulsar/components/sidebar.ex:289–298`.
 The backdrop is purely decorative and marked `aria-hidden="true"` —
-`lib/pulsar/components/sidebar.ex:298–299`.
+`lib/pulsar/components/sidebar.ex:303–304`.
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:**
-- Root is a `<nav>` landmark with an accessible name — `lib/pulsar/components/sidebar.ex:270, 274`
-- Header / body / footer render in distinct regions in DOM order — `:284–293`
+- Root is a `<nav>` landmark with an accessible name — `lib/pulsar/components/sidebar.ex:275, 279`
+- Header / body / footer render in distinct regions in DOM order — `:289–298`
 - Tests assert the landmark and the three slots render — `test/pulsar/components/sidebar_test.exs:11–26, 39–54`
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** Slots render header → body → footer top-to-bottom via `flex-col`,
-matching visual order — `lib/pulsar/components/sidebar.ex:283–293`.
+matching visual order — `lib/pulsar/components/sidebar.ex:288–298`.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** Collapse state and side are conveyed by `data-*` attributes and
-layout, not by sensory characteristics — `lib/pulsar/components/sidebar.ex:275–278`.
+layout, not by sensory characteristics — `lib/pulsar/components/sidebar.ex:280–283`.
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** Color encodes visual emphasis only; the open/collapsed state is
 exposed via `data-state` and focus movement, not color —
-`lib/pulsar/components/sidebar.ex:277, 366–377`.
+`lib/pulsar/components/sidebar.ex:282, 371–382`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Each variant/color pairs a semantic background with its matching
 `-foreground` (solid) or `text-foreground` on a surface (outline/ghost/elevated)
-— `lib/pulsar/components/sidebar.ex:126–160`. Slot text inherits the panel
+— `lib/pulsar/components/sidebar.ex:131–165`. Slot text inherits the panel
 foreground. Browser measurement of all 35 fixture cells per theme: every cell
 passes, min text contrast 5.28:1 (light, `solid-info`) / 7.06:1 (dark,
 `solid-secondary`) ([light](measurements/sidebar-light.md),
@@ -58,22 +58,22 @@ caller's responsibility.
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** No fixed `px` font sizes; padding and width use `rem`-based Tailwind
-utilities — `lib/pulsar/components/sidebar.ex:79–87, 270–296`.
+utilities — `lib/pulsar/components/sidebar.ex:79–87, 275–301`.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** Below `lg` the panel becomes a fixed off-canvas drawer overlay
 rather than consuming inline width, so main content reflows to full width —
-`lib/pulsar/components/sidebar.ex:93–102`. The body scrolls vertically
-(`overflow-y-auto`) — `:288`.
+`lib/pulsar/components/sidebar.ex:93–105`. The body scrolls vertically
+(`overflow-y-auto`) — `:293`.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS (decorative borders are out of scope)
 
 **Evidence:**
 - The neutral separating border routes through `border-border-strong` (≥3:1) in
-  both `solid` and `outline` — `lib/pulsar/components/sidebar.ex:128, 137`
+  both `solid` and `outline` — `lib/pulsar/components/sidebar.ex:133, 142`
 - Colored `outline` borders use the saturated brand/status color —
-  `lib/pulsar/components/sidebar.ex:137–145`
+  `lib/pulsar/components/sidebar.ex:142–150`
 
 Browser measurement of the bordered cells: all pass — `outline-neutral` and
 `solid-neutral` 4.63:1 (light) via `border-border-strong`; colored borders 5.05–8.67:1
@@ -83,7 +83,7 @@ Browser measurement of the bordered cells: all pass — `outline-neutral` and
 **Notes:** For colored `solid` panels the filled background provides the
 boundary and the same-hue border is decorative reinforcement; `ghost` has no
 boundary by design and `elevated` delineates with `shadow-dropdown` —
-`lib/pulsar/components/sidebar.ex:146–160`. Per WCAG 1.4.11 understanding,
+`lib/pulsar/components/sidebar.ex:151–165`. Per WCAG 1.4.11 understanding,
 decorative container outlines are out of scope; the one neutral case where the
 border *is* the boundary uses `border-border-strong`.
 
@@ -91,57 +91,60 @@ border *is* the boundary uses `border-border-strong`.
 
 **Evidence:** No fixed-height text containers and no `!important` spacing
 overrides; the scrollable body absorbs increased spacing —
-`lib/pulsar/components/sidebar.ex:288`.
+`lib/pulsar/components/sidebar.ex:293`.
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
 **Evidence:** The panel is driven by the `toggle/2`, `show/2`, `hide/2` helpers
 bound to a caller's `<button>` (native keyboard activation) —
-`lib/pulsar/components/sidebar.ex:462–480`. As a drawer it closes on Escape —
-`:385–387`.
+`lib/pulsar/components/sidebar.ex:467–485`. As a drawer it closes on Escape —
+`:390–392`.
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
 **Evidence:** The drawer focus loop is escapable — Escape closes it and returns
-focus to the opener — `lib/pulsar/components/sidebar.ex:373–377, 385–387`. The
-trap is only active while the mobile drawer is open — `:383–390`.
+focus to the opener — `lib/pulsar/components/sidebar.ex:378–382, 390–392`. The
+trap is only active while the mobile drawer is open — `:388–395`.
 
 **Notes:** Matches the WAI-ARIA modal-disclosure focus pattern (focus contained,
 Escape exits).
 
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
-**Evidence:** Only finite transitions are used (`transition-[transform,width]`,
-`transition-opacity`), gated by `motion-reduce:transition-none` —
-`lib/pulsar/components/sidebar.ex:101–102, 117`. No looping motion.
+**Evidence:** Only finite, token-driven transitions are used
+(`transition-transform`, `lg:transition-[width]`, `transition-opacity`) —
+`lib/pulsar/components/sidebar.ex:102–105, 121–123`. Reduced motion is honored
+globally: a single `@media (prefers-reduced-motion: reduce)` rule in the theme
+near-zeroes all transition durations, so the panel and backdrop snap to their end
+state without animation. No looping motion.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
 **Evidence:** No flashing; only smooth slide/width/opacity transitions —
-`lib/pulsar/components/sidebar.ex:101–102, 117`.
+`lib/pulsar/components/sidebar.ex:102–105, 121–123`.
 
 ### 2.4.1 Bypass Blocks (A) — ✓ PASS
 
 **Evidence:** The panel is a labeled `<nav>` landmark, so assistive tech can jump
-to or past it via landmark navigation — `lib/pulsar/components/sidebar.ex:270, 274`.
+to or past it via landmark navigation — `lib/pulsar/components/sidebar.ex:275, 279`.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
 **Evidence:** No positive `tabindex`; the root carries `tabindex="-1"` only as a
 programmatic focus fallback, and the drawer focuses its first focusable child on
-open — `lib/pulsar/components/sidebar.ex:273, 369, 397–400`.
+open — `lib/pulsar/components/sidebar.ex:278, 374, 402–405`.
 
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
 
 **Evidence:** The landmark has a descriptive, overridable `aria-label` —
-`lib/pulsar/components/sidebar.ex:274`. Test asserts default and override —
+`lib/pulsar/components/sidebar.ex:279`. Test asserts default and override —
 `test/pulsar/components/sidebar_test.exs:11–26, 212–221`.
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS (inferred)
 
 **Evidence:** The component does not suppress focus indicators on interactive
 slot content; `focus-visible:outline-none` is scoped to the `tabindex="-1"` root
-only — `lib/pulsar/components/sidebar.ex:96, 273`. Caller links/buttons keep
+only — `lib/pulsar/components/sidebar.ex:96, 278`. Caller links/buttons keep
 their own focus rings.
 
 **Notes:** The root is only programmatically focusable (drawer fallback), so it
@@ -155,30 +158,30 @@ interactive content.
 
 **Evidence:** While the drawer is open, focus is trapped inside the on-top panel
 (`z-modal`) above the backdrop (`z-overlay`), so the focused element is never
-obscured — `lib/pulsar/components/sidebar.ex:99, 114, 402–414`.
+obscured — `lib/pulsar/components/sidebar.ex:99, 117, 407–419`.
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 
 **Evidence:** The backdrop dismisses on `click` (pointer-up), which is
-cancellable by moving off-target before release — `lib/pulsar/components/sidebar.ex:300`.
+cancellable by moving off-target before release — `lib/pulsar/components/sidebar.ex:305`.
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** The component's only pointer target is the full-viewport backdrop —
-`lib/pulsar/components/sidebar.ex:298–301`. The toggle control is caller-supplied.
+`lib/pulsar/components/sidebar.ex:303–306`. The toggle control is caller-supplied.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 
 **Evidence:** Focusing the panel or its content triggers no context change; state
 changes happen only on explicit toggle/show/hide events —
-`lib/pulsar/components/sidebar.ex:355–360`.
+`lib/pulsar/components/sidebar.ex:360–365`.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
 **Evidence:**
-- `<nav>` role with `aria-label` name — `lib/pulsar/components/sidebar.ex:270, 274`
+- `<nav>` role with `aria-label` name — `lib/pulsar/components/sidebar.ex:275, 279`
 - Open/collapsed and drawer state exposed via `data-state` / `data-mobile`,
-  kept in sync by the hook (including `updated/0`) — `:277–278, 419–422`
+  kept in sync by the hook (including `updated/0`) — `:282–283, 441–443`
 - Tests assert the data-attribute contract — `test/pulsar/components/sidebar_test.exs:69–127`
 
 ## Not applicable

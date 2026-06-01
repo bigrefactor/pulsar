@@ -97,8 +97,11 @@ end
   "fixed inset-y-0 z-[var(--z-modal)]",
   # Desktop: in-flow column so sibling content reflows on collapse.
   "lg:static lg:z-auto lg:translate-x-0",
-  "transition-[transform,width] duration-normal ease-standard",
-  "motion-reduce:transition-none"
+  # Mobile drawer (transform): emphasized slow-in, accelerate fast-out.
+  "transition-transform duration-fast ease-accelerate",
+  "data-[mobile=open]:duration-slow data-[mobile=open]:ease-emphasized",
+  # Desktop collapse (width): disclosure, symmetric.
+  "lg:transition-[width] lg:duration-normal lg:ease-emphasized"
 ]
 
 # Desktop collapse behaviour, keyed off the panel's own data attributes.
@@ -113,8 +116,10 @@ end
 @backdrop_classes [
   "fixed inset-0 z-[var(--z-overlay)] bg-foreground/50 lg:hidden",
   "opacity-0 pointer-events-none",
-  "transition-opacity duration-normal ease-standard motion-reduce:transition-none",
+  # Exit timing by default; enter timing while the drawer is open.
+  "transition-opacity duration-fast ease-accelerate",
   "peer-data-[mobile=open]/sidebar:opacity-100",
+  "peer-data-[mobile=open]/sidebar:duration-normal peer-data-[mobile=open]/sidebar:ease-decelerate",
   "peer-data-[mobile=open]/sidebar:pointer-events-auto"
 ]
 
