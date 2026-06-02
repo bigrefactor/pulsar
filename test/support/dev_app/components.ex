@@ -3,6 +3,8 @@ defmodule Pulsar.DevApp.Components do
 
   use Phoenix.Component
 
+  alias Pulsar.Components.Menu
+
   @fixtures [
     {"Badge", "/components/badge"},
     {"Button", "/components/button"},
@@ -45,17 +47,15 @@ defmodule Pulsar.DevApp.Components do
     assigns = assign(assigns, :fixtures, @fixtures)
 
     ~H"""
-    <ul class="space-y-1" data-fixture-nav>
-      <li :for={{label, path} <- @fixtures}>
-        <.link
-          navigate={path}
-          class="block rounded px-3 py-1 text-sm hover:bg-surface-1-hover aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground aria-[current=page]:font-semibold"
-          aria-current={if @current_path == path, do: "page"}
-        >
-          {label}
-        </.link>
-      </li>
-    </ul>
+    <Menu.menu landmark={false} label="Fixtures" data-fixture-nav>
+      <Menu.menu_item
+        :for={{label, path} <- @fixtures}
+        navigate={path}
+        active={@current_path == path}
+      >
+        {label}
+      </Menu.menu_item>
+    </Menu.menu>
     """
   end
 

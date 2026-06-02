@@ -53,12 +53,13 @@ and a rotating chevron — `lib/pulsar/components/menu.ex:384, 479, 95`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
-**Evidence:** Rows use `text-foreground` on the inherited surface; the active row
+**Evidence:** Rows inherit the host surface's foreground (`text-inherit`), so they
+read correctly on a neutral panel or a colored sidebar/navbar; the active row
 pairs `bg-primary` with `text-primary-foreground`; section labels use
-`text-muted-foreground` — `lib/pulsar/components/menu.ex:84, 92, 95`. All are
-semantic token pairs that meet AA in light and dark. The axe gate scans the
-`/components/menu` fixture (vertical, horizontal, and collapsed icon rail) in
-both themes.
+`text-muted-foreground` — `lib/pulsar/components/menu.ex` (`@row_base`, `@row_active`,
+`@section_label_classes`). All are semantic token pairs that meet AA in light and
+dark. The axe gate scans the `/components/menu` fixture (vertical, horizontal, and
+collapsed icon rail) in both themes.
 
 **Notes:** Caller-supplied trailing content is the caller's responsibility.
 
@@ -95,7 +96,8 @@ overrides; labels truncate rather than clip layout — `lib/pulsar/components/me
 
 **Evidence:** The horizontal group's dropdown opens on **click/Enter** (not
 hover), is dismissable via Escape and click-outside, and is persistent until
-dismissed — `lib/pulsar/components/menu.ex:233–235, 271–279, 318–322`.
+dismissed — `lib/pulsar/components/menu.ex` (hook `handleClick`, `handleKeydown`,
+`handleDocPointer`).
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
@@ -113,10 +115,10 @@ focus to its trigger — `lib/pulsar/components/menu.ex:271–279`.
 
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
-**Evidence:** Transitions are finite (disclosure height, chevron rotation,
-dropdown opacity/transform) and collapse under the global
-`@media (prefers-reduced-motion: reduce)` rule via `motion-reduce:transition-none`
-— `lib/pulsar/components/menu.ex:104, 95, 107–113`.
+**Evidence:** Transitions are finite (the vertical disclosure height and the
+chevron rotation); the horizontal dropdown toggles via `display`, not animation.
+Transitions collapse under the global `@media (prefers-reduced-motion: reduce)`
+rule via `motion-reduce:transition-none` — `lib/pulsar/components/menu.ex` (`@chevron_classes`, `@disclosure_wrapper`).
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 

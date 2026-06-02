@@ -2,6 +2,7 @@ defmodule Pulsar.DevApp.SidebarLive do
   @moduledoc false
   use Pulsar.DevApp.Web, :live_view
 
+  alias Pulsar.Components.Menu
   alias Pulsar.Components.Sidebar
 
   @variants ~w(solid outline ghost elevated)
@@ -37,7 +38,7 @@ defmodule Pulsar.DevApp.SidebarLive do
           <:header>
             <span class="text-sm font-semibold">Acme</span>
           </:header>
-          <a href="#" class="rounded-field px-2 py-1.5 text-sm">{color}</a>
+          <.demo_menu label={"#{variant} #{color} nav"} />
           <:footer>
             <span class="text-xs">Signed in</span>
           </:footer>
@@ -55,7 +56,7 @@ defmodule Pulsar.DevApp.SidebarLive do
           class={@cell}
           data-fixture-cell={"size-#{size}"}
         >
-          <a href="#" class="rounded-field px-2 py-1.5 text-sm">size {size}</a>
+          <.demo_menu label={"size #{size} nav"} />
         </Sidebar.sidebar>
       </.fixture_section>
 
@@ -71,10 +72,24 @@ defmodule Pulsar.DevApp.SidebarLive do
           class={@cell}
           data-fixture-cell={"side-#{side}"}
         >
-          <a href="#" class="rounded-field px-2 py-1.5 text-sm">{side}</a>
+          <.demo_menu label={"side #{side} nav"} />
         </Sidebar.sidebar>
       </.fixture_section>
     </.fixture_page>
+    """
+  end
+
+  # A compact Menu instance dogfooding PUL-103 inside the sidebar's content slot.
+  # `landmark={false}` so it doesn't nest a second <nav> inside the sidebar's own
+  # landmark.
+  attr :label, :string, required: true
+
+  defp demo_menu(assigns) do
+    ~H"""
+    <Menu.menu landmark={false} label={@label}>
+      <Menu.menu_item href="#" icon="hero-home" active>Home</Menu.menu_item>
+      <Menu.menu_item href="#" icon="hero-chart-bar">Reports</Menu.menu_item>
+    </Menu.menu>
     """
   end
 end

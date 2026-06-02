@@ -78,9 +78,11 @@ defmodule Pulsar.Components.Menu do
   # CONFIGURATION & CONSTANTS
   # ============================================================================
 
-  # Shared row treatment for items and group triggers.
+  # Shared row treatment for items and group triggers. Text color is inherited
+  # from the host surface (text-inherit) so the menu reads correctly on a neutral
+  # panel or a colored sidebar/navbar alike; the active row supplies its own pair.
   @row_base [
-    "flex w-full items-center gap-2 rounded-field px-3 py-2 text-sm text-foreground no-underline",
+    "flex w-full items-center gap-2 rounded-field px-3 py-2 text-sm text-inherit no-underline",
     "hover:bg-foreground/10",
     "transition-colors duration-fast ease-standard",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
@@ -106,16 +108,15 @@ defmodule Pulsar.Components.Menu do
   @chevron_classes "ml-auto shrink-0 transition-transform duration-fast ease-standard group-data-[expanded]/disclosure:rotate-180 group-data-[orientation=horizontal]/menu:ml-1 group-data-[state=collapsed]/sidebar:lg:hidden"
 
   # Group panel wrapper. Vertical: an in-flow height disclosure. Horizontal: a
-  # dropdown popover anchored under the trigger.
+  # dropdown popover anchored under the trigger, toggled via display so a closed
+  # dropdown takes no layout space (and never widens the page at narrow widths).
   @disclosure_wrapper [
     "grid grid-rows-[0fr] group-data-[expanded]/disclosure:grid-rows-[1fr]",
     "transition-[grid-template-rows] duration-normal ease-emphasized motion-reduce:transition-none",
     "group-data-[orientation=horizontal]/menu:absolute group-data-[orientation=horizontal]/menu:left-0 group-data-[orientation=horizontal]/menu:top-full",
-    "group-data-[orientation=horizontal]/menu:z-dropdown group-data-[orientation=horizontal]/menu:mt-1 group-data-[orientation=horizontal]/menu:block group-data-[orientation=horizontal]/menu:min-w-48",
+    "group-data-[orientation=horizontal]/menu:z-dropdown group-data-[orientation=horizontal]/menu:mt-1 group-data-[orientation=horizontal]/menu:min-w-48",
     "group-data-[orientation=horizontal]/menu:rounded-box group-data-[orientation=horizontal]/menu:border group-data-[orientation=horizontal]/menu:border-border group-data-[orientation=horizontal]/menu:bg-surface-1 group-data-[orientation=horizontal]/menu:p-1 group-data-[orientation=horizontal]/menu:shadow-dropdown",
-    "group-data-[orientation=horizontal]/menu:opacity-0 group-data-[orientation=horizontal]/menu:-translate-y-1 group-data-[orientation=horizontal]/menu:pointer-events-none",
-    "group-data-[orientation=horizontal]/menu:transition-[opacity,transform] group-data-[orientation=horizontal]/menu:duration-normal group-data-[orientation=horizontal]/menu:ease-decelerate motion-reduce:transition-none",
-    "group-data-[orientation=horizontal]/menu:group-data-[expanded]/disclosure:opacity-100 group-data-[orientation=horizontal]/menu:group-data-[expanded]/disclosure:translate-y-0 group-data-[orientation=horizontal]/menu:group-data-[expanded]/disclosure:pointer-events-auto"
+    "group-data-[orientation=horizontal]/menu:hidden group-data-[orientation=horizontal]/menu:group-data-[expanded]/disclosure:block"
   ]
 
   # Group panel list. Hidden from focus order until expanded; indents under the

@@ -3,6 +3,7 @@ defmodule Pulsar.DevApp.NavbarLive do
   use Pulsar.DevApp.Web, :live_view
 
   alias Phoenix.LiveView.JS
+  alias Pulsar.Components.Menu
   alias Pulsar.Components.Navbar
 
   @variants ~w(solid outline ghost elevated)
@@ -65,6 +66,29 @@ defmodule Pulsar.DevApp.NavbarLive do
           <:left><span class="font-semibold">Acme</span></:left>
         </Navbar.navbar>
         <nav id="nb-menu-target" aria-label="Demo sidebar" hidden></nav>
+      </.fixture_section>
+
+      <.fixture_section name="with-menu" title="with a horizontal menu">
+        <Navbar.navbar
+          id="nb-with-menu"
+          variant="solid"
+          color="neutral"
+          size="md"
+          label="with menu"
+          data-fixture-cell="with-menu"
+        >
+          <:left><span class="font-semibold">Acme</span></:left>
+          <:center>
+            <Menu.menu orientation="horizontal" label="Primary">
+              <Menu.menu_item href="#" active>Dashboard</Menu.menu_item>
+              <Menu.menu_item href="#">Projects</Menu.menu_item>
+              <Menu.menu_group label="More">
+                <Menu.menu_item href="#">Settings</Menu.menu_item>
+                <Menu.menu_item href="#">Billing</Menu.menu_item>
+              </Menu.menu_group>
+            </Menu.menu>
+          </:center>
+        </Navbar.navbar>
       </.fixture_section>
     </.fixture_page>
     """
