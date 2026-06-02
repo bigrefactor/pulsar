@@ -183,10 +183,11 @@ def menu(assigns) do
     |> assign(:list_classes, merge([list_base(assigns.orientation), assigns.class]))
 
   ~H"""
-  <nav :if={@landmark} aria-label={@label}>
+  <.menu_landmark landmark={@landmark} label={@label}>
     <ul
       id={@id}
       role="list"
+      aria-label={!@landmark && @label || nil}
       phx-hook=".PulsarMenu"
       data-orientation={@orientation}
       data-on-group-open={@on_group_open}
@@ -196,27 +197,16 @@ def menu(assigns) do
     >
       {render_slot(@inner_block)}
     </ul>
-  </nav>
-
-  <ul
-    :if={!@landmark}
-    id={@id}
-    role="list"
-    aria-label={@label}
-    phx-hook=".PulsarMenu"
-    data-orientation={@orientation}
-    data-on-group-open={@on_group_open}
-    data-on-group-close={@on_group_close}
-    class={["group/menu", @list_classes]}
-    {@rest}
-  >
-    {render_slot(@inner_block)}
-  </ul>
+  </.menu_landmark>
 
   <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarMenu">
     export default {
       mounted() {
         this.orientation = this.el.dataset.orientation === "horizontal" ? "horizontal" : "vertical"
+        this.expanded = new Set()
+        this.el.querySelectorAll("[data-menu-group][data-expanded]").forEach((group) => {
+          if (group.id) this.expanded.add(group.id)
+        })
         this._onClick = (e) => this.handleClick(e)
         this._onKeydown = (e) => this.handleKeydown(e)
         this._onDocPointer = (e) => this.handleDocPointer(e)
@@ -227,6 +217,25 @@ def menu(assigns) do
 
       updated() {
         this.orientation = this.el.dataset.orientation === "horizontal" ? "horizontal" : "vertical"
+        this.restoreExpanded()
+      },
+
+      // A LiveView re-render reconciles aria-expanded/data-expanded back to the
+      // server-rendered @open and strips client-added attributes. Re-apply the
+      // expand state the user drove on the client so open groups stay open.
+      restoreExpanded() {
+        this.el.querySelectorAll("[data-menu-group]").forEach((group) => {
+          if (!group.id) return
+          const open = this.expanded.has(group.id)
+          const trigger = group.querySelector("[data-menu-trigger]")
+          if (open) {
+            group.setAttribute("data-expanded", "")
+            if (trigger) trigger.setAttribute("aria-expanded", "true")
+          } else {
+            group.removeAttribute("data-expanded")
+            if (trigger) trigger.setAttribute("aria-expanded", "false")
+          }
+        })
       },
 
       handleClick(e) {
@@ -249,21 +258,27 @@ def menu(assigns) do
         if (this.orientation === "horizontal") this.closeAll(group)
         group.setAttribute("data-expanded", "")
         trigger.setAttribute("aria-expanded", "true")
+        if (group.id) this.expanded.add(group.id)
         this.runCallback("onGroupOpen")
       },
 
       closeGroup(group, trigger) {
+        // Closing a panel that holds focus would strand the user on a hidden
+        // element, so return focus to the trigger (APG disclosure guidance).
+        const hadFocus = group.contains(document.activeElement)
         group.removeAttribute("data-expanded")
-        trigger.setAttribute("aria-expanded", "false")
+        if (trigger) trigger.setAttribute("aria-expanded", "false")
+        if (group.id) this.expanded.delete(group.id)
+        if (hadFocus && trigger) trigger.focus()
         this.runCallback("onGroupClose")
       },
 
       closeAll(except) {
         this.el.querySelectorAll("[data-menu-group][data-expanded]").forEach((group) => {
           if (group === except) return
-          group.removeAttribute("data-expanded")
-          const trigger = group.querySelector("[data-menu-trigger]")
-          if (trigger) trigger.setAttribute("aria-expanded", "false")
+          // Don't close an ancestor of the group being opened (nested groups).
+          if (except && group.contains(except)) return
+          this.closeGroup(group, group.querySelector("[data-menu-trigger]"))
         })
       },
 
@@ -272,9 +287,7 @@ def menu(assigns) do
           const open = e.target.closest("[data-menu-group][data-expanded]")
           if (open) {
             e.preventDefault()
-            const trigger = open.querySelector("[data-menu-trigger]")
-            this.closeGroup(open, trigger)
-            if (trigger) trigger.focus()
+            this.closeGroup(open, open.querySelector("[data-menu-trigger]"))
             return
           }
         }
@@ -313,7 +326,10 @@ def menu(assigns) do
         if (typeof el.checkVisibility === "function") {
           return el.checkVisibility({opacityProperty: true, visibilityProperty: true})
         }
-        return el.offsetParent !== null
+        // offsetParent misses visibility:hidden — collapsed groups hide via
+        // `invisible` (vertical) so check computed visibility too.
+        if (el.offsetParent === null) return false
+        return getComputedStyle(el).visibility !== "hidden"
       },
 
       handleDocPointer(e) {
@@ -336,6 +352,20 @@ def menu(assigns) do
       }
     }
   </script>
+  """
+end
+
+attr(:landmark, :boolean, required: true)
+attr(:label, :string, default: nil)
+slot(:inner_block, required: true)
+
+# Wraps the list in a `<nav>` landmark when requested; renders the list bare
+# otherwise (the caller moves `aria-label` onto the list itself in that case).
+@spec menu_landmark(map()) :: Rendered.t()
+defp menu_landmark(assigns) do
+  ~H"""
+  <nav :if={@landmark} aria-label={@label}>{render_slot(@inner_block)}</nav>
+  {if !@landmark, do: render_slot(@inner_block)}
   """
 end
 
@@ -470,7 +500,7 @@ def menu_group(assigns) do
     |> assign(:trigger_classes, merge([@row_base, trigger_active(assigns.active), assigns.class]))
 
   ~H"""
-  <li class="group/disclosure relative list-none" data-menu-group data-expanded={@open && "" || nil} {@rest}>
+  <li id={@id} class="group/disclosure relative list-none" data-menu-group data-expanded={@open && "" || nil} {@rest}>
     <button
       type="button"
       id={"#{@id}-trigger"}

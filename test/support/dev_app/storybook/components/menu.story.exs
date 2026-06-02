@@ -44,9 +44,9 @@ defmodule Pulsar.DevApp.Storybook.Components.Menu do
 
   def variations do
     flat =
-      ~s|<Menu.menu_item navigate="#" icon="hero-home" active>Home</Menu.menu_item>| <>
-        ~s|<Menu.menu_item navigate="#" icon="hero-inbox">Inbox</Menu.menu_item>| <>
-        ~s|<Menu.menu_item navigate="#" icon="hero-cog-6-tooth">Settings</Menu.menu_item>|
+      ~s|<Menu.menu_item href="#" icon="hero-home" active>Home</Menu.menu_item>| <>
+        ~s|<Menu.menu_item href="#" icon="hero-inbox">Inbox</Menu.menu_item>| <>
+        ~s|<Menu.menu_item href="#" icon="hero-cog-6-tooth">Settings</Menu.menu_item>|
 
     [
       %Variation{
@@ -58,16 +58,16 @@ defmodule Pulsar.DevApp.Storybook.Components.Menu do
         id: :with_section,
         description: "Vertical menu with a labelled section",
         slots: [
-          ~s|<Menu.menu_item navigate="#" icon="hero-home" active>Home</Menu.menu_item>| <>
-            ~s|<Menu.menu_section label="Workspace"><Menu.menu_item navigate="#" icon="hero-folder">Projects</Menu.menu_item><Menu.menu_item navigate="#" icon="hero-users">Team</Menu.menu_item></Menu.menu_section>|
+          ~s|<Menu.menu_item href="#" icon="hero-home" active>Home</Menu.menu_item>| <>
+            ~s|<Menu.menu_section label="Workspace"><Menu.menu_item href="#" icon="hero-folder">Projects</Menu.menu_item><Menu.menu_item href="#" icon="hero-users">Team</Menu.menu_item></Menu.menu_section>|
         ]
       },
       %Variation{
         id: :with_group,
         description: "Vertical menu with an expanded collapsible group",
         slots: [
-          ~s|<Menu.menu_item navigate="#" icon="hero-home">Home</Menu.menu_item>| <>
-            ~s|<Menu.menu_group label="Reports" icon="hero-chart-bar" open><Menu.menu_item navigate="#">Sales</Menu.menu_item><Menu.menu_item navigate="#">Traffic</Menu.menu_item></Menu.menu_group>|
+          ~s|<Menu.menu_item href="#" icon="hero-home">Home</Menu.menu_item>| <>
+            ~s|<Menu.menu_group label="Reports" icon="hero-chart-bar" open><Menu.menu_item href="#">Sales</Menu.menu_item><Menu.menu_item href="#">Traffic</Menu.menu_item></Menu.menu_group>|
         ]
       },
       %Variation{
@@ -75,9 +75,9 @@ defmodule Pulsar.DevApp.Storybook.Components.Menu do
         description: "Horizontal menu with a dropdown group",
         attributes: %{orientation: "horizontal"},
         slots: [
-          ~s|<Menu.menu_item navigate="#" active>Home</Menu.menu_item>| <>
-            ~s|<Menu.menu_item navigate="#">Pricing</Menu.menu_item>| <>
-            ~s|<Menu.menu_group label="Products"><Menu.menu_item navigate="#">App</Menu.menu_item><Menu.menu_item navigate="#">API</Menu.menu_item></Menu.menu_group>|
+          ~s|<Menu.menu_item href="#" active>Home</Menu.menu_item>| <>
+            ~s|<Menu.menu_item href="#">Pricing</Menu.menu_item>| <>
+            ~s|<Menu.menu_group label="Products"><Menu.menu_item href="#">App</Menu.menu_item><Menu.menu_item href="#">API</Menu.menu_item></Menu.menu_group>|
         ]
       }
     ]
