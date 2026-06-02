@@ -127,7 +127,7 @@ defmodule Pulsar.MixProject do
       {:phoenix_storybook, "~> 1.1", only: [:dev, :test]},
       {:heroicons,
        github: "tailwindlabs/heroicons",
-       tag: "v2.1.1",
+       tag: "v2.2.0",
        sparse: "optimized",
        app: false,
        compile: false,
