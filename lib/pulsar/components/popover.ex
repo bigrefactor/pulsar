@@ -4,7 +4,7 @@ defmodule Pulsar.Components.Popover do
 
   Wrap a trigger button and the floating content in `popover/1`. Clicking the
   trigger opens the panel anchored to it; clicking outside or pressing Escape
-  closes it and returns focus to the trigger. Use it for filter pickers,
+  closes it, and Escape returns focus to the trigger. Use it for filter pickers,
   settings menus, and inline info.
 
   ## Examples
@@ -38,7 +38,7 @@ defmodule Pulsar.Components.Popover do
 
   The `:trigger` slot must contain a single `<button>`. The panel opens, closes,
   and dismisses with the browser's built-in popover behavior; focus returns to
-  the trigger on close.
+  the trigger when closed with Escape.
 
   ## Accessibility
 

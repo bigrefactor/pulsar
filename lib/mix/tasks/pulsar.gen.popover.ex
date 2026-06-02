@@ -25,7 +25,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Popover do
     - Variants: solid, outline, ghost, elevated
     - Colors: neutral, primary, secondary, success, danger, warning, info
     - Sizes: xs, sm, md, lg, xl
-    - Outside-click + Escape dismissal and focus return (native)
+    - Outside-click + Escape dismissal (native); Escape returns focus to the trigger
     - Accessibility built-in (aria-controls / aria-expanded wiring)
 
     ## Usage Examples
