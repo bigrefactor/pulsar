@@ -73,7 +73,7 @@ defmodule Pulsar.DevApp.Storybook.Components.Popover do
       },
       %Variation{
         id: :solid_danger,
-        description: "Soft danger surface (confirmations)",
+        description: "Danger surface for confirmations",
         attributes: %{variant: "solid", color: "danger"},
         slots: [trigger, body]
       },
