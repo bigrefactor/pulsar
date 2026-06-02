@@ -54,7 +54,8 @@ defmodule Pulsar.DevApp.Storybook.Components.Popover do
   end
 
   def variations do
-    trigger = ~s|<:trigger><button class="rounded border border-border px-3 py-1.5 text-sm">Open</button></:trigger>|
+    trigger =
+      ~s|<:trigger><button type="button" class="rounded border border-border px-3 py-1.5 text-sm">Open</button></:trigger>|
 
     body =
       ~s|<div class="space-y-1"><p class="text-sm font-medium">Popover title</p><p class="text-sm text-muted-foreground">Anchored, dismissible content.</p></div>|

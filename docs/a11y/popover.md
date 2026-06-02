@@ -16,7 +16,7 @@ The panel imposes no role; callers pass `role="dialog"` and a name when needed.
 
 **Evidence:** The trigger's `aria-controls` points at the panel `id`, and the
 hook keeps `aria-expanded` in sync as the panel opens and closes — see the
-`mounted`/`onToggle` wiring in `lib/pulsar/components/popover.ex`. The keyboard
+`mounted`/`onToggle` wiring in `lib/pulsar/components/popover.ex:233–275`. The keyboard
 fixture asserts the expanded state on open/close — `test/integration/a11y/keyboard_test.exs`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
@@ -24,7 +24,8 @@ fixture asserts the expanded state on open/close — `test/integration/a11y/keyb
 **Evidence:** Panel surfaces use the same semantic-token matrix as Card:
 `elevated`/`outline` pair `bg-surface-1` with default foreground; `solid` uses a
 `bg-{color}/10` tint that keeps content on the inherited foreground; borders use
-`border-{color}` / `border-border-strong`. These token pairs are the
+`border-{color}` / `border-border-strong` — `lib/pulsar/components/popover.ex:88–125`.
+These token pairs are the
 browser-verified Card matrix — see [`card.md`](card.md). The axe gate scans the
 `/components/popover` fixture triggers in light and dark.
 The `ghost` variant is fully transparent — it inherits the ambient surface, so its content contrast is the caller's responsibility.
@@ -32,26 +33,27 @@ The `ghost` variant is fully transparent — it inherits the ambient surface, so
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** The panel is positioned by the hook with an 8px viewport margin and
-cross-axis shift-clamping, so it never forces horizontal scrolling at 320px; the
-only width floor is `min-w-48` — `lib/pulsar/components/popover.ex` (`position`,
-`@panel_base_classes`).
+both-axes shift-clamping, so it never forces horizontal scrolling at 320px; the
+only width floor is `min-w-48` — `lib/pulsar/components/popover.ex:282–335`
+(`position`), `:81` (`@panel_base_classes`).
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** `elevated` delineates with `shadow-dropdown`; `outline`/`solid` with
-a `border-{color}` (2px). Same tokens as Card's audited matrix — [`card.md`](card.md).
+a `border-{color}` (2px) — `lib/pulsar/components/popover.ex:88–125`. Same tokens as Card's audited matrix — [`card.md`](card.md).
 
 ### 1.4.13 Content on Hover or Focus (AA) — ✓ PASS
 
 **Evidence:** The panel opens on **click/activation** of the trigger button (not
 hover), is dismissable (Escape + outside click, native to `popover="auto"`), and
-is persistent until dismissed — `lib/pulsar/components/popover.ex` (the panel's
-`popover="auto"` attribute and the hook's `toggle` handling).
+is persistent until dismissed — `lib/pulsar/components/popover.ex:218` (the panel's
+`popover="auto"` attribute), `:262–275` (the hook's `toggle` handling).
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
 **Evidence:** The trigger is a native `<button>`; Enter/Space toggle the popover
-via the browser's `popovertarget` invoker; Escape closes natively. The keyboard
+via the browser's `popovertarget` invoker (stamped by the hook —
+`lib/pulsar/components/popover.ex:238`); Escape closes natively. The keyboard
 fixture exercises Enter-to-open and Escape-to-close — `test/integration/a11y/keyboard_test.exs`.
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
@@ -64,25 +66,25 @@ leaves it — `test/integration/a11y/keyboard_test.exs`.
 
 **Evidence:** A closed panel is `display:none` (native `[popover]` rule), so its
 content is out of the tab order until opened; no positive `tabindex` is used —
-`lib/pulsar/components/popover.ex`.
+`lib/pulsar/components/popover.ex:216–227`.
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
 **Evidence:** The panel sets `focus-visible:outline-none` on itself only; the
 trigger and any focusable panel content keep their own focus rings (caller
-responsibility) — `lib/pulsar/components/popover.ex` (`@panel_base_classes`).
+responsibility) — `lib/pulsar/components/popover.ex:81` (`@panel_base_classes`).
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** The panel renders in the browser top layer (native popover), so it
 is never clipped by `overflow:hidden` ancestors; the hook flips it to the
 opposite side when the requested side lacks room, keeping it off the trigger —
-`lib/pulsar/components/popover.ex` (`position`).
+`lib/pulsar/components/popover.ex:282–335` (`position`).
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 
 **Evidence:** The trigger activates on `click` (pointer-up); outside-click
-dismissal is the browser's native light-dismiss — `lib/pulsar/components/popover.ex`.
+dismissal is the browser's native light-dismiss — `lib/pulsar/components/popover.ex:218` (`popover="auto"`).
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
@@ -92,13 +94,13 @@ dismissal is the browser's native light-dismiss — `lib/pulsar/components/popov
 ### 3.2.1 On Focus (A) — ✓ PASS
 
 **Evidence:** Focusing the trigger causes no context change; the panel opens only
-on activation — `lib/pulsar/components/popover.ex`.
+on activation — `lib/pulsar/components/popover.ex:216–227`.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
 **Evidence:** The trigger is a native button exposing `aria-expanded` (synced on
 toggle) and `aria-controls`; the panel imposes no role and accepts `role`/name via
-attributes — `lib/pulsar/components/popover.ex` (hook `mounted`/`onToggle`; panel
+attributes — `lib/pulsar/components/popover.ex:233–275` (hook `mounted`/`onToggle`), `:226` (panel
 `{@rest}`). Unit tests assert the panel markup and passthrough —
 `test/pulsar/components/popover_test.exs`.
 

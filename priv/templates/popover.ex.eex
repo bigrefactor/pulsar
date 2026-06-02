@@ -30,8 +30,10 @@ settings menus, and inline info.
 ## Placement
 
 `placement` is `<side>` or `<side>-<align>`, where side is `top`/`bottom`/
-`left`/`right` and align is `start`/`center`/`end` (default center). The panel
-flips to the opposite side and shifts along the cross axis to stay on screen.
+`left`/`right` and align is `start`/`center`/`end`. Omitting the align suffix
+(a bare side like `bottom`) centers the panel on the cross axis; the component
+default is `bottom-start` (start-aligned), not center. The panel flips to the
+opposite side and shifts to stay on screen.
 
 ## Trigger
 
@@ -244,19 +246,30 @@ def popover(assigns) do
         this.el.addEventListener("toggle", this._onToggle)
       },
 
+      // Reposition listeners are idempotent (stable handler ref), so attaching
+      // when already attached is a no-op — safe to call from both onToggle and
+      // updated().
+      addRepositionListeners() {
+        window.addEventListener("scroll", this._reposition, { passive: true, capture: true })
+        window.addEventListener("resize", this._reposition)
+      },
+
+      removeRepositionListeners() {
+        window.removeEventListener("scroll", this._reposition, { capture: true })
+        window.removeEventListener("resize", this._reposition)
+      },
+
       onToggle(e) {
         if (e.newState === "open") {
           this.el.dataset.state = "open"
           if (this.trigger) this.trigger.setAttribute("aria-expanded", "true")
-          window.addEventListener("scroll", this._reposition, { passive: true, capture: true })
-          window.addEventListener("resize", this._reposition)
+          this.addRepositionListeners()
           this.position()
           this.runCallback("onOpen")
         } else {
           this.el.dataset.state = "closed"
           if (this.trigger) this.trigger.setAttribute("aria-expanded", "false")
-          window.removeEventListener("scroll", this._reposition, { capture: true })
-          window.removeEventListener("resize", this._reposition)
+          this.removeRepositionListeners()
           this.runCallback("onClose")
         }
       },
@@ -301,16 +314,19 @@ def popover(assigns) do
           if (align === "start") left = t.left
           else if (align === "end") left = t.right - p.width
           else left = t.left + t.width / 2 - p.width / 2
-          // Shift: clamp horizontally into the viewport.
-          left = Math.max(margin, Math.min(left, vw - p.width - margin))
         } else {
           left = side === "right" ? t.right + offset : t.left - offset - p.width
           if (align === "start") top = t.top
           else if (align === "end") top = t.bottom - p.height
           else top = t.top + t.height / 2 - p.height / 2
-          // Shift: clamp vertically into the viewport.
-          top = Math.max(margin, Math.min(top, vh - p.height - margin))
         }
+
+        // Shift: clamp the panel into the viewport on both axes. The cross-axis
+        // clamp keeps it beside the trigger; the main-axis clamp catches a panel
+        // taller/wider than the room left after a flip so it never renders
+        // partly off-screen.
+        left = Math.max(margin, Math.min(left, vw - p.width - margin))
+        top = Math.max(margin, Math.min(top, vh - p.height - margin))
 
         this.el.style.position = "fixed"
         this.el.style.margin = "0"
@@ -336,13 +352,19 @@ def popover(assigns) do
           this.trigger.setAttribute("aria-controls", this.el.id)
           this.trigger.setAttribute("aria-expanded", open ? "true" : "false")
         }
-        if (open) this.position()
+        // Keep the reposition listeners reconciled with the live open state in
+        // case a patch left them out of sync with the last toggle.
+        if (open) {
+          this.addRepositionListeners()
+          this.position()
+        } else {
+          this.removeRepositionListeners()
+        }
       },
 
       destroyed() {
         this.el.removeEventListener("toggle", this._onToggle)
-        window.removeEventListener("scroll", this._reposition, { capture: true })
-        window.removeEventListener("resize", this._reposition)
+        this.removeRepositionListeners()
       }
     }
   </script>
