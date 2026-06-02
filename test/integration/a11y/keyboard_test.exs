@@ -115,6 +115,48 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     end
   end
 
+  describe "Popover keyboard behavior" do
+    # The fixture at `/keyboard/popover` renders a trigger button
+    # (kbd-pop-trigger) wired by the `.PulsarPopover` colocated hook to a
+    # native `popover="auto"` panel (kbd-pop) holding a focusable link
+    # (kbd-pop-inside). Open/close/dismiss are native; the hook syncs
+    # `aria-expanded` and `data-state` on the `toggle` event.
+    #
+    # Verification: comment out the `aria-expanded` setAttribute calls in
+    # `onToggle` of the `.PulsarPopover` hook (priv/templates/popover.ex.eex
+    # and the synced lib file), run `MIX_ENV=test mix assets.build`, re-run —
+    # the open/close aria-expanded assertions fail.
+
+    test "Enter on the trigger opens the panel and reflects expanded state", %{conn: conn} do
+      conn
+      |> visit("/keyboard/popover")
+      |> A11y.await_live_connected()
+      |> press("#kbd-pop-trigger", "Enter")
+      |> assert_has(~s|#kbd-pop-trigger[aria-expanded="true"]|)
+      |> assert_has(~s|#kbd-pop[data-state="open"]|)
+    end
+
+    test "Escape closes the panel, restores focus to the trigger, and resets expanded", %{conn: conn} do
+      conn
+      |> visit("/keyboard/popover")
+      |> A11y.await_live_connected()
+      |> press("#kbd-pop-trigger", "Enter")
+      |> assert_has(~s|#kbd-pop-trigger[aria-expanded="true"]|)
+      |> press("#kbd-pop", "Escape")
+      |> assert_has(~s|#kbd-pop-trigger[aria-expanded="false"]|)
+      |> A11y.assert_focused("kbd-pop-trigger")
+    end
+
+    test "Tab from inside the open panel is not trapped", %{conn: conn} do
+      conn
+      |> visit("/keyboard/popover")
+      |> A11y.await_live_connected()
+      |> press("#kbd-pop-trigger", "Enter")
+      |> press("#kbd-pop-inside", "Tab")
+      |> A11y.refute_focused_within("#kbd-pop")
+    end
+  end
+
   describe "RadioGroup keyboard navigation" do
     # First group on the page: rg-neutral-xs (colors and sizes from
     # radio_group_live.ex are neutral-first, xs-first). Options have ids
