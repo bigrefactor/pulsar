@@ -75,10 +75,7 @@ end
 # Layout + the floating-panel contract shared by every popover. Color config
 # owns the border and background; the panel is hidden until opened by the
 # native `[popover]` UA rule.
-@panel_base_classes [
-  "min-w-48 z-popover",
-  "focus-visible:outline-none"
-]
+@panel_base_classes "min-w-48 z-popover focus-visible:outline-none"
 
 @valid_variants ~w(solid outline ghost elevated)
 @valid_colors ~w(neutral primary secondary success danger warning info)
@@ -356,11 +353,14 @@ end
 # HELPER FUNCTIONS
 # ============================================================================
 
-@spec base_classes() :: [String.t()]
+@spec base_classes() :: String.t()
 defp base_classes, do: @panel_base_classes
 
+# `|| ""` makes the return provably `String.t()` (not `String.t() | nil`) so the
+# value passed to `Twm.merge/1` type-checks. `attr :values` guarantees the key
+# exists at runtime, so the fallback is never actually hit.
 @spec color_classes(String.t(), String.t()) :: String.t()
-defp color_classes(variant, color), do: @color_config[variant][color]
+defp color_classes(variant, color), do: @color_config[variant][color] || ""
 
 @spec size_classes(String.t()) :: String.t()
-defp size_classes(size), do: @size_config[size]
+defp size_classes(size), do: @size_config[size] || ""
