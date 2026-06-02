@@ -73,6 +73,48 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     end
   end
 
+  describe "Menu keyboard navigation" do
+    # The fixture at `/keyboard/menu` renders a vertical menu (items
+    # kbd-v-home / kbd-v-inbox + a collapsed group kbd-v-grp) and a
+    # horizontal menu with a dropdown group (kbd-h-grp). Behavior comes
+    # from the `.PulsarMenu` colocated hook, which reads orientation from
+    # the menu root's `data-orientation`.
+    #
+    # Verification: comment out the ArrowDown/ArrowUp branch in the
+    # keydown handler of `.PulsarMenu` (see `lib/pulsar/components/menu.ex`,
+    # near `handleKeydown`), rebuild assets, and re-run — the ArrowDown
+    # test fails because focus stays on kbd-v-home.
+
+    test "ArrowDown moves focus to the next item in a vertical menu",
+         %{conn: conn} do
+      conn
+      |> visit("/keyboard/menu")
+      |> A11y.await_live_connected()
+      |> press("#kbd-v-home", "ArrowDown")
+      |> A11y.assert_focused("kbd-v-inbox")
+    end
+
+    test "Enter on a group trigger expands the disclosure", %{conn: conn} do
+      conn
+      |> visit("/keyboard/menu")
+      |> A11y.await_live_connected()
+      |> press("#kbd-v-grp-trigger", "Enter")
+      |> assert_has(~s|#kbd-v-grp-trigger[aria-expanded="true"]|)
+    end
+
+    test "Escape closes an open horizontal dropdown and restores focus to its trigger",
+         %{conn: conn} do
+      conn
+      |> visit("/keyboard/menu")
+      |> A11y.await_live_connected()
+      |> press("#kbd-h-grp-trigger", "Enter")
+      |> assert_has(~s|#kbd-h-grp-trigger[aria-expanded="true"]|)
+      |> press("#kbd-h-grp-trigger", "Escape")
+      |> assert_has(~s|#kbd-h-grp-trigger[aria-expanded="false"]|)
+      |> A11y.assert_focused("kbd-h-grp-trigger")
+    end
+  end
+
   describe "RadioGroup keyboard navigation" do
     # First group on the page: rg-neutral-xs (colors and sizes from
     # radio_group_live.ex are neutral-first, xs-first). Options have ids

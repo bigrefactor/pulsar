@@ -29,6 +29,7 @@ defmodule Pulsar.Generator.Storybook do
     :label,
     :link,
     :list,
+    :menu,
     :navbar,
     :radio_group,
     :select,
