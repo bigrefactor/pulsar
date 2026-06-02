@@ -5,56 +5,83 @@ defmodule Pulsar.DevApp.Components do
 
   alias Pulsar.Components.Menu
 
-  @fixtures [
-    {"Badge", "/components/badge"},
-    {"Button", "/components/button"},
-    {"Card", "/components/card"},
-    {"Checkbox", "/components/checkbox"},
-    {"Divider", "/components/divider"},
-    {"Field", "/components/field"},
-    {"Flash", "/components/flash"},
-    {"Flash (trigger)", "/components/flash/trigger"},
-    {"FlashGroup", "/components/flash_group"},
-    {"Form", "/components/form"},
-    {"Header", "/components/header"},
-    {"Icon", "/components/icon"},
-    {"Input (outline)", "/components/input/outline"},
-    {"Input (ghost)", "/components/input/ghost"},
-    {"Input (solid)", "/components/input/solid"},
-    {"Label", "/components/label"},
-    {"Link", "/components/link"},
-    {"List", "/components/list"},
-    {"Menu", "/components/menu"},
-    {"Navbar", "/components/navbar"},
-    {"RadioGroup", "/components/radio_group"},
-    {"Select (outline)", "/components/select/outline"},
-    {"Select (ghost)", "/components/select/ghost"},
-    {"Select (solid)", "/components/select/solid"},
-    {"Select (multi)", "/components/select/multi"},
-    {"Sidebar", "/components/sidebar"},
-    {"Switch", "/components/switch"},
-    {"Table (outline)", "/components/table/outline"},
-    {"Table (ghost)", "/components/table/ghost"},
-    {"Table (solid)", "/components/table/solid"},
-    {"Textarea", "/components/textarea"}
+  # Fixtures grouped by component category. `fixtures/0` flattens this for the
+  # integration test loops and the index page; `fixture_nav/1` renders a section
+  # per group.
+  @fixture_groups [
+    {"Forms",
+     [
+       {"Checkbox", "/components/checkbox"},
+       {"Field", "/components/field"},
+       {"Form", "/components/form"},
+       {"Input (outline)", "/components/input/outline"},
+       {"Input (ghost)", "/components/input/ghost"},
+       {"Input (solid)", "/components/input/solid"},
+       {"Label", "/components/label"},
+       {"RadioGroup", "/components/radio_group"},
+       {"Select (outline)", "/components/select/outline"},
+       {"Select (ghost)", "/components/select/ghost"},
+       {"Select (solid)", "/components/select/solid"},
+       {"Select (multi)", "/components/select/multi"},
+       {"Switch", "/components/switch"},
+       {"Textarea", "/components/textarea"}
+     ]},
+    {"Actions",
+     [
+       {"Button", "/components/button"},
+       {"Link", "/components/link"}
+     ]},
+    {"Navigation",
+     [
+       {"Menu", "/components/menu"},
+       {"Navbar", "/components/navbar"},
+       {"Sidebar", "/components/sidebar"}
+     ]},
+    {"Feedback",
+     [
+       {"Flash", "/components/flash"},
+       {"Flash (trigger)", "/components/flash/trigger"},
+       {"FlashGroup", "/components/flash_group"}
+     ]},
+    {"Layout",
+     [
+       {"Card", "/components/card"},
+       {"Divider", "/components/divider"},
+       {"Header", "/components/header"},
+       {"List", "/components/list"},
+       {"Table (outline)", "/components/table/outline"},
+       {"Table (ghost)", "/components/table/ghost"},
+       {"Table (solid)", "/components/table/solid"}
+     ]},
+    {"Content",
+     [
+       {"Badge", "/components/badge"},
+       {"Icon", "/components/icon"}
+     ]}
   ]
 
-  def fixtures, do: @fixtures
+  def fixtures, do: Enum.flat_map(@fixture_groups, fn {_group, items} -> items end)
 
   attr :current_path, :string, default: nil
 
   def fixture_nav(assigns) do
-    assigns = assign(assigns, :fixtures, @fixtures)
+    assigns = assign(assigns, :groups, @fixture_groups)
 
     ~H"""
     <Menu.menu landmark={false} label="Fixtures" data-fixture-nav>
-      <Menu.menu_item
-        :for={{label, path} <- @fixtures}
-        navigate={path}
-        active={@current_path == path}
+      <Menu.menu_section
+        :for={{group, items} <- @groups}
+        id={"fixnav-#{String.downcase(group)}"}
+        label={group}
       >
-        {label}
-      </Menu.menu_item>
+        <Menu.menu_item
+          :for={{label, path} <- items}
+          navigate={path}
+          active={@current_path == path}
+        >
+          {label}
+        </Menu.menu_item>
+      </Menu.menu_section>
     </Menu.menu>
     """
   end
