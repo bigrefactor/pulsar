@@ -28,7 +28,6 @@ defmodule Pulsar.DevApp.PopoverLive do
             <button
               type="button"
               class="rounded border border-border px-3 py-1.5 text-sm"
-              data-fixture-cell={"#{variant}-#{color}"}
             >
               {variant} {color}
             </button>
@@ -38,12 +37,15 @@ defmodule Pulsar.DevApp.PopoverLive do
       </.fixture_section>
 
       <.fixture_section name="placements" title="placements">
-        <Popover.popover :for={placement <- @placements} id={"pop-place-#{placement}"} placement={placement}>
+        <Popover.popover
+          :for={placement <- @placements}
+          id={"pop-place-#{placement}"}
+          placement={placement}
+        >
           <:trigger>
             <button
               type="button"
               class="rounded border border-border px-3 py-1.5 text-sm"
-              data-fixture-cell={"placement-#{placement}"}
             >
               {placement}
             </button>
