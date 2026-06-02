@@ -142,7 +142,7 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
       |> A11y.await_live_connected()
       |> press("#kbd-pop-trigger", "Enter")
       |> assert_has(~s|#kbd-pop-trigger[aria-expanded="true"]|)
-      |> press("#kbd-pop", "Escape")
+      |> press("#kbd-pop-inside", "Escape")
       |> assert_has(~s|#kbd-pop-trigger[aria-expanded="false"]|)
       |> A11y.assert_focused("kbd-pop-trigger")
     end
@@ -152,6 +152,7 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
       |> visit("/keyboard/popover")
       |> A11y.await_live_connected()
       |> press("#kbd-pop-trigger", "Enter")
+      |> assert_has(~s|#kbd-pop-trigger[aria-expanded="true"]|)
       |> press("#kbd-pop-inside", "Tab")
       |> A11y.refute_focused_within("#kbd-pop")
     end
