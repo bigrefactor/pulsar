@@ -7,7 +7,7 @@
 Anchored, dismissible, non-modal overlay built on the native HTML Popover API.
 A trigger button (wired with `aria-controls`/`aria-expanded` by the
 `.PulsarPopover` colocated hook) opens a `popover="auto"` panel anchored to it;
-the browser handles light-dismiss (outside click + Escape) and focus return.
+the browser handles light-dismiss (outside click + Escape); Escape returns focus to the trigger.
 The panel imposes no role; callers pass `role="dialog"` and a name when needed.
 
 ## Applicable criteria
@@ -27,6 +27,7 @@ fixture asserts the expanded state on open/close — `test/integration/a11y/keyb
 `border-{color}` / `border-border-strong`. These token pairs are the
 browser-verified Card matrix — see [`card.md`](card.md). The axe gate scans the
 `/components/popover` fixture triggers in light and dark.
+The `ghost` variant is fully transparent — it inherits the ambient surface, so its content contrast is the caller's responsibility.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
