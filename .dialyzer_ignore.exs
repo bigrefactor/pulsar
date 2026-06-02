@@ -1,8 +1,6 @@
-[
-  # Sidebar's `toggle/2`, `show/2`, `hide/2` follow the idiomatic Phoenix
-  # `def helper(js \\ %JS{}, id)` shape. The `%JS{}` default literal builds the
-  # opaque `Phoenix.LiveView.JS.t()` outside the JS module, so dialyzer reports
-  # `call_without_opaque` when they are called with the default — the same
-  # false positive Phoenix's own JS helpers trip. Runtime behavior is correct.
-  {"lib/pulsar/components/sidebar.ex", :call_without_opaque}
-]
+# Intentionally empty: every component's generated code type-checks cleanly.
+# Do not add component entries here — the ignore file does not travel into
+# client apps, so a suppressed warning still pollutes downstream `mix dialyzer`.
+# Fix the call site instead (see the Popover/Sidebar templates for the patterns:
+# flat String.t() args to Twm.merge/1; let JS.dispatch build the empty pipeline).
+[]

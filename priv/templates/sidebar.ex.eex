@@ -457,26 +457,29 @@ expands/collapses the panel. Pass the panel `id`.
 
     <button phx-click={Sidebar.toggle("app-sidebar")}>Menu</button>
 """
+# Two explicit arities instead of `js \\ %JS{}`: the one-arg form lets
+# `JS.dispatch/2` build the empty pipeline *inside* the JS module, so we never
+# construct the opaque `JS.t()` here (which would trip `call_without_opaque`).
+@spec toggle(String.t()) :: JS.t()
 @spec toggle(JS.t(), String.t()) :: JS.t()
-def toggle(js \\ %JS{}, id) do
-  JS.dispatch(js, "pulsar:sidebar-toggle", to: "##{id}")
-end
+def toggle(id), do: JS.dispatch("pulsar:sidebar-toggle", to: "##{id}")
+def toggle(js, id), do: JS.dispatch(js, "pulsar:sidebar-toggle", to: "##{id}")
 
 @doc """
 Opens (mobile) or expands (desktop) the sidebar. Pass the panel `id`.
 """
+@spec show(String.t()) :: JS.t()
 @spec show(JS.t(), String.t()) :: JS.t()
-def show(js \\ %JS{}, id) do
-  JS.dispatch(js, "pulsar:sidebar-show", to: "##{id}")
-end
+def show(id), do: JS.dispatch("pulsar:sidebar-show", to: "##{id}")
+def show(js, id), do: JS.dispatch(js, "pulsar:sidebar-show", to: "##{id}")
 
 @doc """
 Closes (mobile) or collapses (desktop) the sidebar. Pass the panel `id`.
 """
+@spec hide(String.t()) :: JS.t()
 @spec hide(JS.t(), String.t()) :: JS.t()
-def hide(js \\ %JS{}, id) do
-  JS.dispatch(js, "pulsar:sidebar-hide", to: "##{id}")
-end
+def hide(id), do: JS.dispatch("pulsar:sidebar-hide", to: "##{id}")
+def hide(js, id), do: JS.dispatch(js, "pulsar:sidebar-hide", to: "##{id}")
 
 # ============================================================================
 # HELPER FUNCTIONS
