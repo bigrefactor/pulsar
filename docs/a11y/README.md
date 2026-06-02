@@ -1,7 +1,7 @@
 # Pulsar accessibility audit — WCAG 2.2 Level AA
 
 This directory holds Pulsar's first formal accessibility audit. It covers
-every applicable WCAG 2.2 Level A and AA success criterion across all 22
+every applicable WCAG 2.2 Level A and AA success criterion across all 23
 components in `lib/pulsar/components/`. Original audit method was
 **code-only**; the browser-verification follow-up has
 since populated measured contrast, focus-ring, target-size, text-spacing,
@@ -126,6 +126,8 @@ not-applicable). Detailed per-criterion grids follow.
 | **Action / navigation** | | | | |
 | [button](button.md) | 10/0/10 | 12/0/8 | 1/0/12 | 2/0/0 |
 | [link](link.md) | 9/1/10 | 12/0/8 | 1/0/12 | 2/0/0 |
+| **Overlays** | | | | |
+| [popover](popover.md) | 5/0/15 | 7/0/13 | 1/0/12 | 1/0/1 |
 | **Feedback / notification** | | | | |
 | [flash](flash.md) | 11/0/9 | 11/0/9 | 1/0/12 | 2/0/0 |
 | [flash_group](flash_group.md) | 9/0/11 | 9/1/10 | 1/0/12 | 2/0/0 |
@@ -156,6 +158,7 @@ not-applicable). Detailed per-criterion grids follow.
 | label | — | — | — | — | — | — | ✓ | — | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | — | ✓ | — |
 | button | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | link | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
+| popover | — | — | — | — | — | — | ✓ | — | — | — | — | — | — | ✓ | — | — | ✓ | ✓ | — | ✓ |
 | flash | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | ✓ |
 | flash_group | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | — | — | — | ✓ | ✓ | ✓ | ✓ |
 | card | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
@@ -183,6 +186,7 @@ not-applicable). Detailed per-criterion grids follow.
 | label | — | — | — | — | — | — | — | — | — | — | — | ✓ | — | — | — | — | ✓ | — | — | — |
 | button | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | link | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
+| popover | ✓ | ✓ | — | — | — | — | — | — | ✓ | — | — | — | ✓ | ✓ | — | ✓ | — | — | — | ✓ |
 | flash | ✓ | ✓ | — | ✓ | ✓ | ✓ | — | — | ✓ | — | — | — | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | flash_group | ✓ | ✓ | — | ✓ | ✓ | ✓ | — | — | ✓ | — | — | — | ✓ | ⚠ | — | ✓ | — | — | — | ✓ |
 | card | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
@@ -210,6 +214,7 @@ not-applicable). Detailed per-criterion grids follow.
 | label | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | — |
 | button | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
 | link | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
+| popover | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | — |
 | flash | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
 | flash_group | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
 | card | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | — |
@@ -340,8 +345,9 @@ that clip text under user-overrides. Usually inherits from the page.
 
 **1.4.13 Content on Hover or Focus (AA)** — Additional content triggered
 by hover/focus is dismissable, hoverable, and persistent.
-*Library note:* Applies to tooltips, popovers, dropdowns. None of the
-current 21 components ship a tooltip — mostly N/A.
+*Library note:* Applies to tooltips, popovers, dropdowns. The popover
+component opens on click, is dismissable (Escape + outside click), and is
+persistent — see popover.md.
 
 ### Principle 2 — Operable
 
