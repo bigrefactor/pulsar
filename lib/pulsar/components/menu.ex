@@ -11,6 +11,10 @@ defmodule Pulsar.Components.Menu do
   Compose it from `menu_item`, `menu_section`, and `menu_group`. Mark the current
   page with `active` on its item.
 
+  Give each menu a distinct `label` when more than one appears on a page — two
+  landmarks sharing a name (the `"Primary"` default) are harder to tell apart in a
+  screen reader's landmark list.
+
   ## Examples
 
       # Vertical menu in a sidebar content slot
