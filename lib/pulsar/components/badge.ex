@@ -78,12 +78,10 @@ defmodule Pulsar.Components.Badge do
   }
 
   # Base badge styling classes
-  @badge_base_classes [
-    "inline-flex items-center font-medium rounded-field",
-    "transition-colors duration-normal",
-    "focus-within:outline-none focus-within:ring-2",
-    "focus-within:ring-current focus-within:ring-offset-2"
-  ]
+  @badge_base_classes "inline-flex items-center font-medium rounded-field " <>
+                        "transition-colors duration-normal " <>
+                        "focus-within:outline-none focus-within:ring-2 " <>
+                        "focus-within:ring-current focus-within:ring-offset-2"
 
   # Gives an interactive addon control (a direct <button>/<a> in an addon slot) a
   # guaranteed ≥24px pointer target so dismissible badges meet WCAG 2.5.8. Plain,
@@ -193,17 +191,20 @@ defmodule Pulsar.Components.Badge do
   end
 
   # Base styles shared by all badge variants
+  @spec base_badge_classes() :: String.t()
   defp base_badge_classes do
     @badge_base_classes
   end
 
   # Get size classes from config
+  @spec size_classes(String.t()) :: String.t()
   defp size_classes(size) do
-    @size_config[size]
+    @size_config[size] || ""
   end
 
   # Get variant and color classes from config
+  @spec variant_color_classes(String.t(), String.t()) :: String.t()
   defp variant_color_classes(variant, color) do
-    @color_config[variant][color]
+    @color_config[variant][color] || ""
   end
 end

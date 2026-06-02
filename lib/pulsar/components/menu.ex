@@ -85,15 +85,13 @@ defmodule Pulsar.Components.Menu do
   # Shared row treatment for items and group triggers. Text color is inherited
   # from the host surface (text-inherit) so the menu reads correctly on a neutral
   # panel or a colored sidebar/navbar alike; the active row supplies its own pair.
-  @row_base [
-    "flex w-full items-center gap-2 rounded-field px-3 py-2 text-sm text-inherit no-underline",
-    "hover:bg-foreground/10",
-    "transition-colors duration-fast ease-standard",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-    # Horizontal rows size to content; collapsed sidebar rail centers the icon.
-    "group-data-[orientation=horizontal]/menu:w-auto",
-    "group-data-[state=collapsed]/sidebar:lg:justify-center"
-  ]
+  # Horizontal rows size to content; collapsed sidebar rail centers the icon.
+  @row_base "flex w-full items-center gap-2 rounded-field px-3 py-2 text-sm text-inherit no-underline " <>
+              "hover:bg-foreground/10 " <>
+              "transition-colors duration-fast ease-standard " <>
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 " <>
+              "group-data-[orientation=horizontal]/menu:w-auto " <>
+              "group-data-[state=collapsed]/sidebar:lg:justify-center"
 
   # Active item / group treatment, applied via the aria-current attribute.
   @row_active "aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground aria-[current=page]:font-medium"

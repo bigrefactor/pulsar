@@ -135,10 +135,8 @@ defmodule Pulsar.Components.Textarea do
   }
 
   # Base textarea classes
-  @textarea_base_classes [
-    "w-full transition-all duration-normal ease-standard",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 resize-none"
-  ]
+  @textarea_base_classes "w-full transition-all duration-normal ease-standard " <>
+                           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 resize-none"
 
   # Variant configuration
   @variant_config %{
@@ -605,32 +603,38 @@ defmodule Pulsar.Components.Textarea do
   end
 
   # Modular styling system supporting all variants and colors
+  @spec get_classes(String.t(), String.t(), String.t()) :: String.t()
   defp get_classes(variant, color, size) do
     merge([
       @textarea_base_classes,
-      @variant_config[variant],
+      @variant_config[variant] || "",
       get_color_classes(variant, color),
       get_size_classes(size)
     ])
   end
 
   # New color lookup function
+  @spec get_color_classes(String.t(), String.t()) :: String.t()
   defp get_color_classes(variant, color) do
-    @color_config[variant][color] |> Enum.join(" ")
+    (@color_config[variant][color] || []) |> Enum.join(" ")
   end
 
   # Replace with map-based size lookup
+  @spec get_size_classes(String.t()) :: String.t()
   defp get_size_classes(size) do
     config = @size_config[size] || @size_config["md"]
-    [config.min_height, config.text_size, config.padding]
+    Enum.join([config.min_height, config.text_size, config.padding], " ")
   end
 
   # Replace with map-based height constraints lookup
+  @spec get_height_constraints(String.t(), String.t() | nil, String.t() | nil) :: String.t()
   defp get_height_constraints(size, custom_min, custom_max) do
     if is_nil(custom_min) and is_nil(custom_max) do
       config = @size_config[size] || @size_config["md"]
       config.max_height
       # When custom min/max are provided, don't add default max-height classes
+    else
+      ""
     end
   end
 

@@ -90,28 +90,23 @@ defmodule Pulsar.Components.Sidebar do
   }
 
   # Layout, positioning, and the CSS contract shared by every sidebar.
-  @panel_base_classes [
-    "group/sidebar peer/sidebar",
-    "flex flex-col shrink-0 h-svh overflow-hidden",
-    "focus-visible:outline-none",
-    # Mobile: fixed off-canvas drawer above the backdrop.
-    "fixed inset-y-0 z-modal",
-    # Desktop: in-flow column so sibling content reflows on collapse.
-    "lg:static lg:z-auto lg:translate-x-0",
-    # Mobile drawer (transform): emphasized slow-in, accelerate fast-out.
-    "transition-transform duration-fast ease-accelerate",
-    "data-[mobile=open]:duration-slow data-[mobile=open]:ease-emphasized",
-    # Desktop collapse (width): disclosure, symmetric.
-    "lg:transition-[width] lg:duration-normal lg:ease-emphasized"
-  ]
+  # Mobile: fixed off-canvas drawer above the backdrop. Desktop: in-flow column
+  # so sibling content reflows on collapse. Mobile drawer transform uses
+  # emphasized slow-in / accelerate fast-out; desktop collapse animates width.
+  @panel_base_classes "group/sidebar peer/sidebar " <>
+                        "flex flex-col shrink-0 h-svh overflow-hidden " <>
+                        "focus-visible:outline-none " <>
+                        "fixed inset-y-0 z-modal " <>
+                        "lg:static lg:z-auto lg:translate-x-0 " <>
+                        "transition-transform duration-fast ease-accelerate " <>
+                        "data-[mobile=open]:duration-slow data-[mobile=open]:ease-emphasized " <>
+                        "lg:transition-[width] lg:duration-normal lg:ease-emphasized"
 
   # Desktop collapse behaviour, keyed off the panel's own data attributes.
-  @collapse_classes [
-    "data-[collapsible=icon]:data-[state=collapsed]:lg:w-16",
-    "data-[collapsible=offcanvas]:data-[state=collapsed]:lg:w-0",
-    "data-[collapsible=offcanvas]:data-[state=collapsed]:lg:border-0",
-    "data-[collapsible=offcanvas]:data-[state=collapsed]:lg:overflow-hidden"
-  ]
+  @collapse_classes "data-[collapsible=icon]:data-[state=collapsed]:lg:w-16 " <>
+                      "data-[collapsible=offcanvas]:data-[state=collapsed]:lg:w-0 " <>
+                      "data-[collapsible=offcanvas]:data-[state=collapsed]:lg:border-0 " <>
+                      "data-[collapsible=offcanvas]:data-[state=collapsed]:lg:overflow-hidden"
 
   # Backdrop shown only while the mobile drawer is open.
   @backdrop_classes [
@@ -488,37 +483,37 @@ defmodule Pulsar.Components.Sidebar do
   # HELPER FUNCTIONS
   # ============================================================================
 
-  @spec base_classes() :: [String.t()]
+  @spec base_classes() :: String.t()
   defp base_classes, do: @panel_base_classes
 
-  @spec collapse_classes() :: [String.t()]
+  @spec collapse_classes() :: String.t()
   defp collapse_classes, do: @collapse_classes
 
   @spec backdrop_classes() :: [String.t()]
   defp backdrop_classes, do: @backdrop_classes
 
   # Edge anchoring, separating border, and the off-canvas drawer transform.
-  @spec side_classes(String.t()) :: [String.t()]
+  @spec side_classes(String.t()) :: String.t()
   defp side_classes("right") do
-    ["right-0 border-l", "data-[mobile=closed]:translate-x-full lg:data-[mobile=closed]:translate-x-0"]
+    "right-0 border-l data-[mobile=closed]:translate-x-full lg:data-[mobile=closed]:translate-x-0"
   end
 
   defp side_classes(_left) do
-    ["left-0 border-r", "data-[mobile=closed]:-translate-x-full lg:data-[mobile=closed]:translate-x-0"]
+    "left-0 border-r data-[mobile=closed]:-translate-x-full lg:data-[mobile=closed]:translate-x-0"
   end
 
   @spec width_classes(String.t()) :: String.t()
-  defp width_classes(size), do: @size_config[size][:width]
+  defp width_classes(size), do: @size_config[size][:width] || ""
 
   @spec color_classes(String.t(), String.t()) :: String.t()
-  defp color_classes(variant, color), do: @color_config[variant][color]
+  defp color_classes(variant, color), do: @color_config[variant][color] || ""
 
   @spec header_classes(String.t()) :: String.t()
-  defp header_classes(size), do: @size_config[size][:header]
+  defp header_classes(size), do: @size_config[size][:header] || ""
 
   @spec content_classes(String.t()) :: String.t()
-  defp content_classes(size), do: @size_config[size][:content]
+  defp content_classes(size), do: @size_config[size][:content] || ""
 
   @spec footer_classes(String.t()) :: String.t()
-  defp footer_classes(size), do: @size_config[size][:footer]
+  defp footer_classes(size), do: @size_config[size][:footer] || ""
 end

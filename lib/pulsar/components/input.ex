@@ -520,23 +520,26 @@ defmodule Pulsar.Components.Input do
   end
 
   # Modular styling system supporting all variants and colors
+  @spec get_classes(String.t(), String.t(), String.t()) :: String.t()
   defp get_classes(variant, color, size) do
     merge([
       Enum.join(@base_input_classes, " "),
-      @variant_config[variant],
+      @variant_config[variant] || "",
       get_color_classes(variant, color),
       get_container_size_classes(size)
     ])
   end
 
   # Get color classes from configuration
+  @spec get_color_classes(String.t(), String.t()) :: String.t()
   defp get_color_classes(variant, color) do
     @color_config[variant][color] || ""
   end
 
   # Get container size classes directly (direct map lookup)
+  @spec get_container_size_classes(String.t()) :: String.t()
   defp get_container_size_classes(size) do
-    @container_size_classes[size] || @container_size_classes["md"]
+    Enum.join(@container_size_classes[size] || @container_size_classes["md"], " ")
   end
 
   defp get_state_classes(disabled, readonly) do
@@ -571,14 +574,18 @@ defmodule Pulsar.Components.Input do
   end
 
   # Decorator functions supporting all variants and colors
+  @spec get_decorator_classes(String.t(), String.t(), String.t(), String.t()) :: String.t()
   defp get_decorator_classes(_position, variant, color, size) do
-    base_classes = [
-      "flex",
-      "items-center",
-      "justify-center",
-      get_decorator_padding_classes(size),
-      get_decorator_text_classes(size)
-    ]
+    base_classes =
+      [
+        "flex",
+        "items-center",
+        "justify-center",
+        get_decorator_padding_classes(size),
+        get_decorator_text_classes(size)
+      ]
+      |> List.flatten()
+      |> Enum.join(" ")
 
     color_classes = get_decorator_color_classes(variant, color)
 
@@ -586,17 +593,20 @@ defmodule Pulsar.Components.Input do
   end
 
   # Get decorator padding classes based on size (direct map lookup)
+  @spec get_decorator_padding_classes(String.t()) :: [String.t()]
   defp get_decorator_padding_classes(size) do
     @decorator_padding_classes[size] || @decorator_padding_classes["md"]
   end
 
   # Get decorator text size classes (direct map lookup)
+  @spec get_decorator_text_classes(String.t()) :: String.t()
   defp get_decorator_text_classes(size) do
     @decorator_text_classes[size] || @decorator_text_classes["md"]
   end
 
+  @spec get_decorator_color_classes(String.t(), String.t()) :: String.t()
   defp get_decorator_color_classes("ghost", _color) do
-    @decorator_config["ghost"]["all"]
+    @decorator_config["ghost"]["all"] || ""
   end
 
   defp get_decorator_color_classes(variant, color) do
