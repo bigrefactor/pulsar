@@ -449,6 +449,11 @@ def sidebar(assigns) do
   """
 end
 
+# Each helper is two explicit arities instead of `js \\ %JS{}`: the one-arg form
+# lets `JS.dispatch/2` build the empty pipeline *inside* the JS module, so we
+# never construct the opaque `JS.t()` here (which would trip
+# `call_without_opaque`). The two-arg form composes onto a caller's JS pipeline.
+
 @doc """
 Toggles the sidebar.
 
@@ -457,28 +462,37 @@ expands/collapses the panel. Pass the panel `id`.
 
     <button phx-click={Sidebar.toggle("app-sidebar")}>Menu</button>
 """
-# Two explicit arities instead of `js \\ %JS{}`: the one-arg form lets
-# `JS.dispatch/2` build the empty pipeline *inside* the JS module, so we never
-# construct the opaque `JS.t()` here (which would trip `call_without_opaque`).
 @spec toggle(String.t()) :: JS.t()
-@spec toggle(JS.t(), String.t()) :: JS.t()
 def toggle(id), do: JS.dispatch("pulsar:sidebar-toggle", to: "##{id}")
+
+@doc """
+Toggles the sidebar, composing onto an existing `Phoenix.LiveView.JS` pipeline.
+"""
+@spec toggle(JS.t(), String.t()) :: JS.t()
 def toggle(js, id), do: JS.dispatch(js, "pulsar:sidebar-toggle", to: "##{id}")
 
 @doc """
 Opens (mobile) or expands (desktop) the sidebar. Pass the panel `id`.
 """
 @spec show(String.t()) :: JS.t()
-@spec show(JS.t(), String.t()) :: JS.t()
 def show(id), do: JS.dispatch("pulsar:sidebar-show", to: "##{id}")
+
+@doc """
+Opens/expands the sidebar, composing onto an existing `Phoenix.LiveView.JS` pipeline.
+"""
+@spec show(JS.t(), String.t()) :: JS.t()
 def show(js, id), do: JS.dispatch(js, "pulsar:sidebar-show", to: "##{id}")
 
 @doc """
 Closes (mobile) or collapses (desktop) the sidebar. Pass the panel `id`.
 """
 @spec hide(String.t()) :: JS.t()
-@spec hide(JS.t(), String.t()) :: JS.t()
 def hide(id), do: JS.dispatch("pulsar:sidebar-hide", to: "##{id}")
+
+@doc """
+Closes/collapses the sidebar, composing onto an existing `Phoenix.LiveView.JS` pipeline.
+"""
+@spec hide(JS.t(), String.t()) :: JS.t()
 def hide(js, id), do: JS.dispatch(js, "pulsar:sidebar-hide", to: "##{id}")
 
 # ============================================================================
