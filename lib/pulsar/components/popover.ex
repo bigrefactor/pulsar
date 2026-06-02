@@ -277,6 +277,7 @@ defmodule Pulsar.Components.Popover do
         },
 
         position() {
+          if (!this.el.matches(":popover-open")) return
           if (!this.trigger) return
           const t = this.trigger.getBoundingClientRect()
           const p = this.el.getBoundingClientRect()
