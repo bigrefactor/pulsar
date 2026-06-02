@@ -241,17 +241,10 @@ defmodule Pulsar.Components.Popover do
             this.trigger.setAttribute("aria-expanded", "false")
           }
 
-          this._onBeforeToggle = (e) => this.onBeforeToggle(e)
           this._onToggle = (e) => this.onToggle(e)
           this._reposition = () => this.position()
 
-          this.el.addEventListener("beforetoggle", this._onBeforeToggle)
           this.el.addEventListener("toggle", this._onToggle)
-        },
-
-        onBeforeToggle(e) {
-          // The panel is laid out (measurable) as it transitions to open.
-          if (e.newState === "open") this.position()
         },
 
         onToggle(e) {
@@ -336,16 +329,20 @@ defmodule Pulsar.Components.Popover do
         },
 
         updated() {
-          // A server patch can replace data-* and strip the inline position.
+          // A server patch can revert client-applied attributes (data-state,
+          // aria-expanded) and strip the inline position — re-derive them from
+          // the live open state.
+          const open = this.el.matches(":popover-open")
+          this.el.dataset.state = open ? "open" : "closed"
           if (this.trigger) {
             this.trigger.setAttribute("popovertarget", this.el.id)
             this.trigger.setAttribute("aria-controls", this.el.id)
+            this.trigger.setAttribute("aria-expanded", open ? "true" : "false")
           }
-          if (this.el.matches(":popover-open")) this.position()
+          if (open) this.position()
         },
 
         destroyed() {
-          this.el.removeEventListener("beforetoggle", this._onBeforeToggle)
           this.el.removeEventListener("toggle", this._onToggle)
           window.removeEventListener("scroll", this._reposition, { capture: true })
           window.removeEventListener("resize", this._reposition)
