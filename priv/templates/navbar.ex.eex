@@ -65,10 +65,7 @@ end
 }
 
 # Layout and the surface contract shared by every navbar.
-@bar_base_classes [
-  "relative flex items-center w-full",
-  "border-b"
-]
+@bar_base_classes "relative flex items-center w-full border-b"
 
 # Menu button (hamburger): a square, comfortably-sized hit target.
 @menu_button_classes [
@@ -267,17 +264,17 @@ end
 # HELPER FUNCTIONS
 # ============================================================================
 
-@spec bar_base_classes() :: [String.t()]
+@spec bar_base_classes() :: String.t()
 defp bar_base_classes, do: @bar_base_classes
 
 @spec menu_button_classes() :: [String.t()]
 defp menu_button_classes, do: @menu_button_classes
 
 @spec size_classes(String.t()) :: String.t()
-defp size_classes(size), do: @size_config[size]
+defp size_classes(size), do: @size_config[size] || ""
 
 @spec color_classes(String.t(), String.t()) :: String.t()
-defp color_classes(variant, color), do: @color_config[variant][color]
+defp color_classes(variant, color), do: @color_config[variant][color] || ""
 
 @spec sticky_classes(boolean(), String.t()) :: String.t()
 defp sticky_classes(true, size), do: "sticky top-0 z-docked bg-background #{sticky_scroll_margin(size)}"

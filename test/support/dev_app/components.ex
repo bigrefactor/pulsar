@@ -37,6 +37,10 @@ defmodule Pulsar.DevApp.Components do
        {"Navbar", "/components/navbar"},
        {"Sidebar", "/components/sidebar"}
      ]},
+    {"Overlays",
+     [
+       {"Popover", "/components/popover"}
+     ]},
     {"Feedback",
      [
        {"Flash", "/components/flash"},

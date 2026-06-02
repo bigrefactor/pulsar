@@ -97,13 +97,11 @@ end
 }
 
 # Base flash styling classes
-@flash_base_classes [
-  "flex items-center justify-between",
-  "font-medium shadow-dropdown",
-  "transition-all duration-normal ease-standard",
-  # Restore pointer events for individual flashes
-  "pointer-events-auto"
-]
+# (Restores pointer events for individual flashes via pointer-events-auto.)
+@flash_base_classes "flex items-center justify-between " <>
+                      "font-medium shadow-dropdown " <>
+                      "transition-all duration-normal ease-standard " <>
+                      "pointer-events-auto"
 
 # Color configuration for each variant
 @color_config %{
@@ -564,38 +562,44 @@ end
 # === Helper Functions ===
 
 # Base styles shared by all flashes
+@spec base_flash_classes() :: String.t()
 defp base_flash_classes do
   @flash_base_classes
 end
 
 # Size-specific classes
+@spec size_classes(String.t()) :: String.t()
 defp size_classes(size) do
-  @size_config[size][:container]
+  @size_config[size][:container] || ""
 end
 
 # Color classes by variant
+@spec color_classes(String.t(), String.t()) :: String.t()
 defp color_classes(variant, color) do
-  get_in(@color_config, [variant, color]) || get_in(@color_config, ["solid", "neutral"])
+  get_in(@color_config, [variant, color]) || get_in(@color_config, ["solid", "neutral"]) || ""
 end
 
 # Icon size classes based on flash size
+@spec icon_size_classes(String.t()) :: String.t()
 defp icon_size_classes(size) do
-  @size_config[size][:icon]
+  @size_config[size][:icon] || ""
 end
 
 # Close button size classes based on flash size
+@spec close_button_classes(String.t()) :: String.t()
 defp close_button_classes(size) do
   merge([
     "flex-shrink-0 inline-flex items-center justify-center rounded-field transition-colors",
     "hover:bg-foreground/10",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2",
-    @size_config[size][:close_button]
+    @size_config[size][:close_button] || ""
   ])
 end
 
 # Inner content wrapper gap based on flash size (matches container gap)
+@spec inner_gap_classes(String.t()) :: String.t()
 defp inner_gap_classes(size) do
-  @size_config[size][:inner_gap]
+  @size_config[size][:inner_gap] || ""
 end
 
 # Resolve auto_dismiss: nil means "use the role-aware default"

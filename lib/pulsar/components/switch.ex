@@ -209,30 +209,26 @@ defmodule Pulsar.Components.Switch do
   }
 
   # Base switch track classes
-  @switch_base_classes [
-    "relative inline-flex rounded-full cursor-pointer",
-    "transition-all duration-normal ease-standard",
-    "transform-gpu",
-    "peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2",
-    "peer-focus-visible:ring-ring",
-    "peer-focus-visible:ring-offset-background",
-    "data-[disabled=true]:opacity-disabled data-[disabled=true]:cursor-not-allowed data-[disabled=true]:pointer-events-none",
-    "data-[loading=true]:cursor-wait",
-    "shadow-inner shadow-black/5",
-    "group-hover:shadow-inner group-hover:shadow-black/10"
-  ]
+  @switch_base_classes "relative inline-flex rounded-full cursor-pointer " <>
+                         "transition-all duration-normal ease-standard " <>
+                         "transform-gpu " <>
+                         "peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 " <>
+                         "peer-focus-visible:ring-ring " <>
+                         "peer-focus-visible:ring-offset-background " <>
+                         "data-[disabled=true]:opacity-disabled data-[disabled=true]:cursor-not-allowed data-[disabled=true]:pointer-events-none " <>
+                         "data-[loading=true]:cursor-wait " <>
+                         "shadow-inner shadow-black/5 " <>
+                         "group-hover:shadow-inner group-hover:shadow-black/10"
 
   # Base thumb classes
-  @thumb_base_classes [
-    "absolute rounded-full",
-    "transition-all duration-normal ease-standard",
-    "transform-gpu",
-    "flex items-center justify-center pointer-events-none",
-    "data-[loading=true]:bg-background",
-    "group-hover:scale-105",
-    "group-active:scale-95",
-    "peer-focus-visible:scale-110"
-  ]
+  @thumb_base_classes "absolute rounded-full " <>
+                        "transition-all duration-normal ease-standard " <>
+                        "transform-gpu " <>
+                        "flex items-center justify-center pointer-events-none " <>
+                        "data-[loading=true]:bg-background " <>
+                        "group-hover:scale-105 " <>
+                        "group-active:scale-95 " <>
+                        "peer-focus-visible:scale-110"
 
   # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
   defp generate_id(prefix) do
@@ -538,7 +534,7 @@ defmodule Pulsar.Components.Switch do
   # ============================================================================
 
   # Base switch track classes using module attribute
-  @spec base_switch_classes() :: list(String.t())
+  @spec base_switch_classes() :: String.t()
   defp base_switch_classes do
     @switch_base_classes
   end
@@ -546,7 +542,7 @@ defmodule Pulsar.Components.Switch do
   # Track size classes from configuration map
   @spec track_size_classes(String.t()) :: String.t()
   defp track_size_classes(size) do
-    @size_config[size][:track]
+    @size_config[size][:track] || ""
   end
 
   # Track variant classes using configuration map
@@ -556,7 +552,7 @@ defmodule Pulsar.Components.Switch do
       "bg-border-strong",
       "group-hover:bg-foreground/30",
       "peer-focus-visible:bg-foreground/30",
-      @color_config[color][:solid][:checked]
+      @color_config[color][:solid][:checked] || ""
     ]
     |> Enum.join(" ")
   end
@@ -567,7 +563,7 @@ defmodule Pulsar.Components.Switch do
       "bg-background border-border-strong",
       "group-hover:border-foreground",
       "peer-focus-visible:border-foreground",
-      @color_config[color][:outline][:checked]
+      @color_config[color][:outline][:checked] || ""
     ]
     |> Enum.join(" ")
   end
@@ -577,13 +573,13 @@ defmodule Pulsar.Components.Switch do
       "border-2 border-border-strong peer-checked:border-transparent",
       "bg-muted/30 group-hover:bg-muted/40",
       "peer-focus-visible:bg-muted/50",
-      @color_config[color][:ghost][:checked]
+      @color_config[color][:ghost][:checked] || ""
     ]
     |> Enum.join(" ")
   end
 
   # Base thumb classes using module attribute
-  @spec base_thumb_classes() :: list(String.t())
+  @spec base_thumb_classes() :: String.t()
   defp base_thumb_classes do
     @thumb_base_classes
   end
@@ -592,7 +588,7 @@ defmodule Pulsar.Components.Switch do
   @spec thumb_classes(String.t(), String.t()) :: String.t()
   defp thumb_classes(size, variant) do
     [
-      @size_config[size][:thumb],
+      @size_config[size][:thumb] || "",
       thumb_variant_classes(variant)
     ]
     |> Enum.join(" ")
@@ -625,6 +621,6 @@ defmodule Pulsar.Components.Switch do
   # Loading spinner size classes from configuration map
   @spec spinner_size_classes(String.t()) :: String.t()
   defp spinner_size_classes(size) do
-    @size_config[size][:spinner]
+    @size_config[size][:spinner] || ""
   end
 end

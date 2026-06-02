@@ -130,22 +130,16 @@ defmodule Pulsar.Components.List do
   }
 
   # Base classes for the list container
-  @container_base_classes []
+  @container_base_classes ""
 
   # Base classes for list items
-  @item_base_classes [
-    "flex"
-  ]
+  @item_base_classes "flex"
 
   # Variant-specific classes for container
   @variant_container_classes %{
-    "ghost" => [],
-    "outline" => [
-      "border rounded-box"
-    ],
-    "solid" => [
-      "rounded-box"
-    ]
+    "ghost" => "",
+    "outline" => "border rounded-box",
+    "solid" => "rounded-box"
   }
 
   # Color configuration for each variant
@@ -349,7 +343,7 @@ defmodule Pulsar.Components.List do
               merge([
                 @item_base,
                 item_variant_classes(@variant, @color, index, @striped, @item_count),
-                @dividers && index > 0 && "border-t border-border",
+                (@dividers && index > 0 && "border-t border-border") || "",
                 item[:class] || ""
               ])
             }
@@ -387,7 +381,7 @@ defmodule Pulsar.Components.List do
           merge([
             @item_base,
             item_variant_classes(@variant, @color, index, @striped, @item_count),
-            @dividers && index > 0 && "border-t border-border",
+            (@dividers && index > 0 && "border-t border-border") || "",
             item[:class] || ""
           ])
         }
@@ -424,14 +418,14 @@ defmodule Pulsar.Components.List do
   # ============================================================================
 
   defp build_container_classes(assigns, has_header) do
-    size_classes = Map.get(@size_config, assigns.size).container
+    size_classes = Map.get(Map.get(@size_config, assigns.size, %{}), :container, "")
 
     # When we have a header, don't apply variant styling to container (wrapper handles it)
     variant_classes =
       if has_header do
-        []
+        ""
       else
-        Map.get(@variant_container_classes, assigns.variant)
+        Map.get(@variant_container_classes, assigns.variant) || ""
       end
 
     color_config = get_in(@color_config, [assigns.variant, assigns.color])
@@ -457,7 +451,7 @@ defmodule Pulsar.Components.List do
 
   defp build_item_base_classes(assigns) do
     size_config = Map.get(@size_config, assigns.size)
-    item_spacing = Map.get(size_config, :item)
+    item_spacing = Map.get(size_config, :item, "")
 
     merge([
       @item_base_classes,
@@ -486,8 +480,8 @@ defmodule Pulsar.Components.List do
   end
 
   defp title_classes(variant, color, size) do
-    size_config = Map.get(@size_config, size)
-    base_title = Map.get(size_config, :title)
+    size_config = Map.get(@size_config, size, %{})
+    base_title = Map.get(size_config, :title, "")
 
     color_config = get_in(@color_config, [variant, color])
     color_classes = Map.get(color_config, :title, "")
@@ -496,16 +490,16 @@ defmodule Pulsar.Components.List do
   end
 
   defp content_classes(size) do
-    size_config = Map.get(@size_config, size)
-    base_content = Map.get(size_config, :content)
+    size_config = Map.get(@size_config, size, %{})
+    base_content = Map.get(size_config, :content, "")
 
     merge([base_content, "mt-1 sm:col-span-2 sm:mt-0"])
   end
 
   defp empty_classes(size) do
-    size_config = Map.get(@size_config, size)
-    padding = Map.get(size_config, :item)
-    text_size = Map.get(size_config, :content)
+    size_config = Map.get(@size_config, size, %{})
+    padding = Map.get(size_config, :item, "")
+    text_size = Map.get(size_config, :content, "")
 
     merge([
       padding,
@@ -515,35 +509,25 @@ defmodule Pulsar.Components.List do
   end
 
   defp wrapper_classes(variant, color, user_class) do
-    base_classes = ["overflow-hidden"]
-
     variant_classes =
       case variant do
         "outline" ->
           color_config = get_in(@color_config, [variant, color])
           container_styles = Map.get(color_config, :container, "")
 
-          [
-            "border rounded-box",
-            container_styles
-          ]
+          "border rounded-box #{container_styles}"
 
         "solid" ->
           color_config = get_in(@color_config, [variant, color])
           container_styles = Map.get(color_config, :container, "")
 
-          [
-            "rounded-box",
-            container_styles
-          ]
+          "rounded-box #{container_styles}"
 
         "ghost" ->
-          [
-            "rounded-box bg-background/30 border border-border/20"
-          ]
+          "rounded-box bg-background/30 border border-border/20"
       end
 
-    merge([base_classes, variant_classes, user_class])
+    merge(["overflow-hidden", variant_classes, user_class])
   end
 
   defp header_classes(size) do

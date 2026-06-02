@@ -1,0 +1,389 @@
+defmodule Pulsar.Components.Popover do
+  @moduledoc """
+  Anchored, dismissible, non-modal overlay panel.
+
+  Wrap a trigger button and the floating content in `popover/1`. Clicking the
+  trigger opens the panel anchored to it; clicking outside or pressing Escape
+  closes it, and Escape returns focus to the trigger. Use it for filter pickers,
+  settings menus, and inline info.
+
+  ## Examples
+
+      <.popover id="filters" placement="bottom-start">
+        <:trigger>
+          <.button>Filters</.button>
+        </:trigger>
+
+        <div class="space-y-2">
+          <p class="text-sm">Filter options</p>
+        </div>
+      </.popover>
+
+      # A colored confirmation popover with a dialog role
+      <.popover id="confirm" color="danger" variant="solid" role="dialog" aria-label="Confirm delete">
+        <:trigger>
+          <.button color="danger">Delete</.button>
+        </:trigger>
+
+        <p class="text-sm">This can't be undone.</p>
+      </.popover>
+
+  ## Placement
+
+  `placement` is `<side>` or `<side>-<align>`, where side is `top`/`bottom`/
+  `left`/`right` and align is `start`/`center`/`end`. Omitting the align suffix
+  (a bare side like `bottom`) centers the panel on the cross axis; the component
+  default is `bottom-start` (start-aligned), not center. The panel flips to the
+  opposite side and shifts to stay on screen.
+
+  ## Trigger
+
+  The `:trigger` slot must contain a single `<button>`. The panel opens, closes,
+  and dismisses with the browser's built-in popover behavior; focus returns to
+  the trigger when closed with Escape.
+
+  ## Accessibility
+
+  - The trigger exposes `aria-controls` and `aria-expanded` (kept in sync as the
+    panel opens and closes).
+  - The panel imposes no role; pass `role="dialog"` and a name
+    (`aria-label`/`aria-labelledby`) via attributes when appropriate.
+  """
+
+  use Phoenix.Component
+
+  import Twm, only: [merge: 1]
+
+  alias Phoenix.LiveView.JS
+  alias Phoenix.LiveView.Rendered
+
+  # Inline ID generator
+  defp generate_id(prefix \\ "popover") do
+    "#{prefix}-#{System.unique_integer([:positive])}"
+  end
+
+  # ============================================================================
+  # CONFIGURATION & CONSTANTS
+  # ============================================================================
+
+  # Interior padding and corner radius per size.
+  @size_config %{
+    "xs" => "p-2 rounded-field",
+    "sm" => "p-3 rounded-box",
+    "md" => "p-4 rounded-box",
+    "lg" => "p-5 rounded-xl",
+    "xl" => "p-6 rounded-2xl"
+  }
+
+  # Layout + the floating-panel contract shared by every popover. Color config
+  # owns the border and background; the panel is hidden until opened by the
+  # native `[popover]` UA rule.
+  @panel_base_classes "min-w-48 z-popover focus-visible:outline-none"
+
+  @valid_variants ~w(solid outline ghost elevated)
+  @valid_colors ~w(neutral primary secondary success danger warning info)
+
+  # Surface treatment per variant and color (semantic tokens only). Tints keep
+  # arbitrary panel content legible.
+  @color_config %{
+    "solid" => %{
+      "neutral" => "bg-surface-1 border-2 border-border-strong",
+      "primary" => "bg-primary/10 border-2 border-primary/20",
+      "secondary" => "bg-secondary/10 border-2 border-secondary/20",
+      "success" => "bg-success/10 border-2 border-success/20",
+      "danger" => "bg-danger/10 border-2 border-danger/20",
+      "warning" => "bg-warning/10 border-2 border-warning/20",
+      "info" => "bg-info/10 border-2 border-info/20"
+    },
+    "outline" => %{
+      "neutral" => "bg-surface-1 border-2 border-border-strong",
+      "primary" => "bg-surface-1 border-2 border-primary",
+      "secondary" => "bg-surface-1 border-2 border-secondary",
+      "success" => "bg-surface-1 border-2 border-success",
+      "danger" => "bg-surface-1 border-2 border-danger",
+      "warning" => "bg-surface-1 border-2 border-warning",
+      "info" => "bg-surface-1 border-2 border-info"
+    },
+    "ghost" => %{
+      "neutral" => "bg-transparent border border-transparent",
+      "primary" => "bg-transparent border border-transparent",
+      "secondary" => "bg-transparent border border-transparent",
+      "success" => "bg-transparent border border-transparent",
+      "danger" => "bg-transparent border border-transparent",
+      "warning" => "bg-transparent border border-transparent",
+      "info" => "bg-transparent border border-transparent"
+    },
+    "elevated" => %{
+      "neutral" => "bg-surface-1 shadow-dropdown",
+      "primary" => "bg-surface-1 shadow-dropdown",
+      "secondary" => "bg-surface-1 shadow-dropdown",
+      "success" => "bg-surface-1 shadow-dropdown",
+      "danger" => "bg-surface-1 shadow-dropdown",
+      "warning" => "bg-surface-1 shadow-dropdown",
+      "info" => "bg-surface-1 shadow-dropdown"
+    }
+  }
+
+  # Compile-time check that every variant/color combination is defined.
+  for variant <- @valid_variants, color <- @valid_colors do
+    if !get_in(@color_config, [variant, color]) do
+      raise CompileError, description: "Missing color config for variant=#{variant}, color=#{color}"
+    end
+  end
+
+  # ============================================================================
+  # COMPONENT
+  # ============================================================================
+
+  attr(:id, :string, doc: "Panel ID (auto-generated if omitted). Wires the trigger to the panel.")
+
+  attr(:placement, :string,
+    default: "bottom-start",
+    values:
+      ~w(top top-start top-end bottom bottom-start bottom-end left left-start left-end right right-start right-end),
+    doc: "Preferred anchor placement; flips/shifts to stay on screen"
+  )
+
+  attr(:offset, :integer,
+    default: 8,
+    doc: "Gap in px between the trigger and the panel along the main axis"
+  )
+
+  attr(:variant, :string,
+    default: "elevated",
+    values: ~w(solid outline ghost elevated),
+    doc: "Visual style of the panel surface"
+  )
+
+  attr(:color, :string,
+    default: "neutral",
+    values: ~w(neutral primary secondary success danger warning info),
+    doc: "Color scheme of the panel surface"
+  )
+
+  attr(:size, :string,
+    default: "md",
+    values: ~w(xs sm md lg xl),
+    doc: "Interior padding and corner radius"
+  )
+
+  attr(:on_open, JS,
+    default: %JS{},
+    doc: "JS commands to run when the panel opens"
+  )
+
+  attr(:on_close, JS,
+    default: %JS{},
+    doc: "JS commands to run when the panel closes (including outside-click/Escape dismissal)"
+  )
+
+  attr(:class, :string, default: "", doc: "Additional CSS classes for the panel")
+
+  attr(:rest, :global, doc: "Additional panel attributes (e.g. role, aria-label, aria-labelledby)")
+
+  slot(:trigger, required: true, doc: "The activating control — a single <button>")
+  slot(:inner_block, required: true, doc: "Panel content")
+
+  @doc """
+  Renders an anchored, dismissible, non-modal popover.
+
+  The `:trigger` slot holds a button; the default slot holds the panel content.
+
+  ## Examples
+
+      <.popover id="filters" placement="bottom-start">
+        <:trigger><.button>Filters</.button></:trigger>
+        <div>...</div>
+      </.popover>
+  """
+  @spec popover(map()) :: Rendered.t()
+  def popover(assigns) do
+    assigns = assign_new(assigns, :id, fn -> generate_id() end)
+
+    assigns =
+      assign(
+        assigns,
+        :panel_classes,
+        merge([
+          base_classes(),
+          color_classes(assigns.variant, assigns.color),
+          size_classes(assigns.size),
+          assigns.class
+        ])
+      )
+
+    ~H"""
+    {render_slot(@trigger)}<div
+      id={@id}
+      popover="auto"
+      phx-hook=".PulsarPopover"
+      data-placement={@placement}
+      data-offset={@offset}
+      data-state="closed"
+      data-on-open={@on_open}
+      data-on-close={@on_close}
+      class={@panel_classes}
+      {@rest}
+    >
+      {render_slot(@inner_block)}
+    </div>
+
+    <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarPopover">
+      export default {
+        mounted() {
+          // The trigger is the element immediately before the panel (the
+          // rendered :trigger slot). Wire it once the hook mounts.
+          this.trigger = this.el.previousElementSibling
+          if (this.trigger) {
+            this.trigger.setAttribute("popovertarget", this.el.id)
+            this.trigger.setAttribute("aria-controls", this.el.id)
+            this.trigger.setAttribute("aria-expanded", "false")
+          }
+
+          this._onToggle = (e) => this.onToggle(e)
+          this._reposition = () => this.position()
+
+          this.el.addEventListener("toggle", this._onToggle)
+        },
+
+        // Reposition listeners are idempotent (stable handler ref), so attaching
+        // when already attached is a no-op — safe to call from both onToggle and
+        // updated().
+        addRepositionListeners() {
+          window.addEventListener("scroll", this._reposition, { passive: true, capture: true })
+          window.addEventListener("resize", this._reposition)
+        },
+
+        removeRepositionListeners() {
+          window.removeEventListener("scroll", this._reposition, { capture: true })
+          window.removeEventListener("resize", this._reposition)
+        },
+
+        onToggle(e) {
+          if (e.newState === "open") {
+            this.el.dataset.state = "open"
+            if (this.trigger) this.trigger.setAttribute("aria-expanded", "true")
+            this.addRepositionListeners()
+            this.position()
+            this.runCallback("onOpen")
+          } else {
+            this.el.dataset.state = "closed"
+            if (this.trigger) this.trigger.setAttribute("aria-expanded", "false")
+            this.removeRepositionListeners()
+            this.runCallback("onClose")
+          }
+        },
+
+        parsePlacement() {
+          const [side, align = "center"] = (this.el.dataset.placement || "bottom-start").split("-")
+          return { side, align }
+        },
+
+        position() {
+          if (!this.el.matches(":popover-open")) return
+          if (!this.trigger) return
+          const t = this.trigger.getBoundingClientRect()
+          const p = this.el.getBoundingClientRect()
+          // A zero-size rect means the panel isn't laid out yet; retry next frame.
+          if (p.width === 0 && p.height === 0) {
+            requestAnimationFrame(() => this.position())
+            return
+          }
+
+          const vw = window.innerWidth
+          const vh = window.innerHeight
+          const margin = 8
+          const offset = parseInt(this.el.dataset.offset, 10) || 0
+          let { side, align } = this.parsePlacement()
+
+          // Flip on the main axis when the requested side lacks room and the
+          // opposite side has it.
+          if (side === "bottom" && t.bottom + offset + p.height > vh && t.top - offset - p.height >= 0) {
+            side = "top"
+          } else if (side === "top" && t.top - offset - p.height < 0 && t.bottom + offset + p.height <= vh) {
+            side = "bottom"
+          } else if (side === "right" && t.right + offset + p.width > vw && t.left - offset - p.width >= 0) {
+            side = "left"
+          } else if (side === "left" && t.left - offset - p.width < 0 && t.right + offset + p.width <= vw) {
+            side = "right"
+          }
+
+          let top, left
+          if (side === "bottom" || side === "top") {
+            top = side === "bottom" ? t.bottom + offset : t.top - offset - p.height
+            if (align === "start") left = t.left
+            else if (align === "end") left = t.right - p.width
+            else left = t.left + t.width / 2 - p.width / 2
+          } else {
+            left = side === "right" ? t.right + offset : t.left - offset - p.width
+            if (align === "start") top = t.top
+            else if (align === "end") top = t.bottom - p.height
+            else top = t.top + t.height / 2 - p.height / 2
+          }
+
+          // Shift: clamp the panel into the viewport on both axes. The cross-axis
+          // clamp keeps it beside the trigger; the main-axis clamp catches a panel
+          // taller/wider than the room left after a flip so it never renders
+          // partly off-screen.
+          left = Math.max(margin, Math.min(left, vw - p.width - margin))
+          top = Math.max(margin, Math.min(top, vh - p.height - margin))
+
+          this.el.style.position = "fixed"
+          this.el.style.margin = "0"
+          this.el.style.top = `${Math.round(top)}px`
+          this.el.style.left = `${Math.round(left)}px`
+        },
+
+        runCallback(name) {
+          const encoded = this.el.dataset[name]
+          if (encoded && encoded !== "[]" && this.liveSocket) {
+            this.liveSocket.execJS(this.el, encoded)
+          }
+        },
+
+        updated() {
+          // A server patch can revert client-applied attributes (data-state,
+          // aria-expanded) and strip the inline position — re-derive them from
+          // the live open state.
+          const open = this.el.matches(":popover-open")
+          this.el.dataset.state = open ? "open" : "closed"
+          if (this.trigger) {
+            this.trigger.setAttribute("popovertarget", this.el.id)
+            this.trigger.setAttribute("aria-controls", this.el.id)
+            this.trigger.setAttribute("aria-expanded", open ? "true" : "false")
+          }
+          // Keep the reposition listeners reconciled with the live open state in
+          // case a patch left them out of sync with the last toggle.
+          if (open) {
+            this.addRepositionListeners()
+            this.position()
+          } else {
+            this.removeRepositionListeners()
+          }
+        },
+
+        destroyed() {
+          this.el.removeEventListener("toggle", this._onToggle)
+          this.removeRepositionListeners()
+        }
+      }
+    </script>
+    """
+  end
+
+  # ============================================================================
+  # HELPER FUNCTIONS
+  # ============================================================================
+
+  @spec base_classes() :: String.t()
+  defp base_classes, do: @panel_base_classes
+
+  # `|| ""` makes the return provably `String.t()` (not `String.t() | nil`) so the
+  # value passed to `Twm.merge/1` type-checks. `attr :values` guarantees the key
+  # exists at runtime, so the fallback is never actually hit.
+  @spec color_classes(String.t(), String.t()) :: String.t()
+  defp color_classes(variant, color), do: @color_config[variant][color] || ""
+
+  @spec size_classes(String.t()) :: String.t()
+  defp size_classes(size), do: @size_config[size] || ""
+end

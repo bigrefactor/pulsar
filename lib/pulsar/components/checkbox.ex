@@ -112,26 +112,22 @@ defmodule Pulsar.Components.Checkbox do
   }
 
   # Base checkbox styling classes
-  @checkbox_base_classes [
-    "appearance-none relative cursor-pointer transition-all duration-normal ease-standard",
-    "focus-visible:outline-none focus-visible:before:ring-2 focus-visible:before:ring-offset-2",
-    "focus-visible:before:ring-ring",
-    "disabled:cursor-not-allowed disabled:opacity-disabled",
-    "before:content-[''] before:absolute before:inset-0 before:rounded-[inherit]",
-    "before:border-2 before:transition-all before:duration-normal before:ease-standard",
-    "after:content-['✓'] after:absolute after:inset-0 after:flex after:items-center after:justify-center",
-    "after:text-current after:font-bold after:transition-all after:duration-normal after:ease-standard",
-    "after:scale-0 after:opacity-0",
-    "data-[checked=true]:after:scale-100 data-[checked=true]:after:opacity-100",
-    "data-[indeterminate=true]:after:content-['−'] data-[indeterminate=true]:after:scale-100 data-[indeterminate=true]:after:opacity-100"
-  ]
+  @checkbox_base_classes "appearance-none relative cursor-pointer transition-all duration-normal ease-standard " <>
+                           "focus-visible:outline-none focus-visible:before:ring-2 focus-visible:before:ring-offset-2 " <>
+                           "focus-visible:before:ring-ring " <>
+                           "disabled:cursor-not-allowed disabled:opacity-disabled " <>
+                           "before:content-[''] before:absolute before:inset-0 before:rounded-[inherit] " <>
+                           "before:border-2 before:transition-all before:duration-normal before:ease-standard " <>
+                           "after:content-['✓'] after:absolute after:inset-0 after:flex after:items-center after:justify-center " <>
+                           "after:text-current after:font-bold after:transition-all after:duration-normal after:ease-standard " <>
+                           "after:scale-0 after:opacity-0 " <>
+                           "data-[checked=true]:after:scale-100 data-[checked=true]:after:opacity-100 " <>
+                           "data-[indeterminate=true]:after:content-['−'] data-[indeterminate=true]:after:scale-100 data-[indeterminate=true]:after:opacity-100"
 
   # Base card container styling classes
-  @card_base_classes [
-    "flex items-center gap-3 rounded-box cursor-pointer transition-all duration-normal ease-standard",
-    "focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-ring",
-    "has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-disabled"
-  ]
+  @card_base_classes "flex items-center gap-3 rounded-box cursor-pointer transition-all duration-normal ease-standard " <>
+                       "focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-ring " <>
+                       "has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-disabled"
 
   # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
   defp generate_id(prefix) do
@@ -406,12 +402,13 @@ defmodule Pulsar.Components.Checkbox do
   defp render_card_checkbox(assigns) do
     base_container_class =
       [
-        [card_base_classes()],
+        card_base_classes(),
         card_variant_classes(assigns.variant, assigns.effective_color),
-        [card_size_classes(assigns.size)],
-        [card_state_classes(assigns.disabled, assigns.invalid)]
+        card_size_classes(assigns.size),
+        card_state_classes(assigns.disabled, assigns.invalid)
       ]
       |> List.flatten()
+      |> Enum.join(" ")
 
     # Merge base classes with user-provided container_class
     final_container_class = merge([base_container_class, assigns[:container_class] || ""])
@@ -485,7 +482,7 @@ defmodule Pulsar.Components.Checkbox do
   end
 
   # Base styles for checkbox input with custom checkmark
-  @spec base_checkbox_classes() :: list(String.t())
+  @spec base_checkbox_classes() :: String.t()
   defp base_checkbox_classes do
     @checkbox_base_classes
   end
@@ -493,7 +490,7 @@ defmodule Pulsar.Components.Checkbox do
   # Size classes for checkbox
   @spec size_classes(String.t()) :: String.t()
   defp size_classes(size) do
-    @size_config[size][:input]
+    @size_config[size][:input] || ""
   end
 
   # Color classes for checkbox
@@ -702,7 +699,7 @@ defmodule Pulsar.Components.Checkbox do
   # ============================================================================
 
   # Base card classes shared by all card variants
-  @spec card_base_classes() :: list(String.t())
+  @spec card_base_classes() :: String.t()
   defp card_base_classes do
     @card_base_classes
   end
@@ -710,7 +707,7 @@ defmodule Pulsar.Components.Checkbox do
   # Card size classes
   @spec card_size_classes(String.t()) :: String.t()
   defp card_size_classes(size) do
-    @size_config[size][:card]
+    @size_config[size][:card] || ""
   end
 
   # Card variant classes using helper functions to reduce repetition

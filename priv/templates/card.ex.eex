@@ -185,10 +185,8 @@ alias Phoenix.LiveView.Rendered
 }
 
 # Base card styling classes
-@card_base_classes [
-  "block w-full overflow-hidden",
-  "transition-colors duration-normal ease-standard"
-]
+@card_base_classes "block w-full overflow-hidden " <>
+                     "transition-colors duration-normal ease-standard"
 
 # Valid variants and colors for compile-time validation
 @valid_variants ~w(solid outline ghost elevated)
@@ -403,7 +401,7 @@ end
 # ============================================================================
 
 # Base card classes
-@spec base_card_classes() :: list(String.t())
+@spec base_card_classes() :: String.t()
 defp base_card_classes do
   @card_base_classes
 end
@@ -411,28 +409,23 @@ end
 # Color classes by variant
 @spec color_classes(String.t(), String.t()) :: String.t()
 defp color_classes(variant, color) do
-  @color_config[variant][color]
+  @color_config[variant][color] || ""
 end
 
 # Size classes - supports different parts (body, header, footer, radius)
 @spec size_classes(String.t(), atom()) :: String.t()
 defp size_classes(size, part) do
-  @size_config[size][part]
+  @size_config[size][part] || ""
 end
 
 # Interactive classes for clickable cards
-@spec interactive_classes(map()) :: [String.t()]
+@spec interactive_classes(map()) :: String.t()
 defp interactive_classes(rest) do
   if interactive?(rest) do
-    [
-      "cursor-pointer",
-      "focus-visible:outline-none",
-      "focus-visible:ring-2",
-      "focus-visible:ring-primary",
-      "focus-visible:ring-offset-2"
-    ]
+    "cursor-pointer focus-visible:outline-none focus-visible:ring-2 " <>
+      "focus-visible:ring-primary focus-visible:ring-offset-2"
   else
-    []
+    ""
   end
 end
 

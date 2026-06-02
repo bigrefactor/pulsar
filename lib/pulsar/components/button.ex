@@ -110,35 +110,29 @@ defmodule Pulsar.Components.Button do
   }
 
   # Base button styling classes
-  @button_base_classes [
-    "font-medium cursor-pointer transition-[transform,box-shadow,background-color,border-color,color,opacity] duration-normal ease-standard",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-    "focus-visible:ring-ring",
-    "disabled:pointer-events-none disabled:opacity-disabled disabled:cursor-not-allowed",
-    "data-[loading=true]:pointer-events-none data-[loading=true]:opacity-disabled data-[loading=true]:cursor-wait",
-    "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-disabled data-[disabled=true]:cursor-not-allowed"
-  ]
+  @button_base_classes "font-medium cursor-pointer transition-[transform,box-shadow,background-color,border-color,color,opacity] duration-normal ease-standard " <>
+                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 " <>
+                         "focus-visible:ring-ring " <>
+                         "disabled:pointer-events-none disabled:opacity-disabled disabled:cursor-not-allowed " <>
+                         "data-[loading=true]:pointer-events-none data-[loading=true]:opacity-disabled data-[loading=true]:cursor-wait " <>
+                         "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-disabled data-[disabled=true]:cursor-not-allowed"
 
   # Variant-specific layout and behavior classes
   @variant_classes %{
-    "ghost" => [
-      "inline-flex items-center justify-center shadow-card hover:shadow-dropdown",
-      "hover:scale-[1.02] active:scale-[0.98]",
-      "motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none"
-    ],
-    "link" => [
-      "inline underline-offset-4 hover:underline focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:underline"
-    ],
-    "outline" => [
-      "inline-flex items-center justify-center shadow-card hover:shadow-dropdown",
-      "hover:scale-[1.02] active:scale-[0.98]",
-      "motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none"
-    ],
-    "solid" => [
-      "inline-flex items-center justify-center shadow-card hover:shadow-dropdown",
-      "hover:scale-[1.02] active:scale-[0.98]",
-      "motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none"
-    ]
+    "ghost" =>
+      "inline-flex items-center justify-center shadow-card hover:shadow-dropdown " <>
+        "hover:scale-[1.02] active:scale-[0.98] " <>
+        "motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none",
+    "link" =>
+      "inline underline-offset-4 hover:underline focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:underline",
+    "outline" =>
+      "inline-flex items-center justify-center shadow-card hover:shadow-dropdown " <>
+        "hover:scale-[1.02] active:scale-[0.98] " <>
+        "motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none",
+    "solid" =>
+      "inline-flex items-center justify-center shadow-card hover:shadow-dropdown " <>
+        "hover:scale-[1.02] active:scale-[0.98] " <>
+        "motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none"
   }
 
   # Color configuration for each variant and color combination
@@ -615,28 +609,33 @@ defmodule Pulsar.Components.Button do
   end
 
   # Base styles shared by all buttons
+  @spec base_button_classes() :: String.t()
   defp base_button_classes do
     @button_base_classes
   end
 
   # Variant-specific layout and behavior
+  @spec variant_classes(String.t()) :: String.t()
   defp variant_classes(variant) do
     @variant_classes[variant] || @variant_classes["solid"]
   end
 
   # Size classes
+  @spec size_classes(String.t()) :: String.t()
   defp size_classes(size) do
-    @size_config[size][:button]
+    @size_config[size][:button] || ""
   end
 
   # Color classes by variant
+  @spec color_classes(String.t(), String.t()) :: String.t()
   defp color_classes(variant, color) do
-    get_in(@color_config, [variant, color]) || get_in(@color_config, ["solid", "primary"])
+    get_in(@color_config, [variant, color]) || get_in(@color_config, ["solid", "primary"]) || ""
   end
 
   # Spinner size classes based on button size
+  @spec spinner_size_classes(String.t()) :: String.t()
   defp spinner_size_classes(size) do
-    @size_config[size][:spinner]
+    @size_config[size][:spinner] || ""
   end
 
   # === Helper Functions ===

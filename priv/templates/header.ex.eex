@@ -148,9 +148,7 @@ alias <%= @component_namespace %>.Link
 }
 
 # Base header styling classes
-@header_base_classes [
-  "flex flex-col gap-4"
-]
+@header_base_classes "flex flex-col gap-4"
 
 # Color configuration for each variant
 @color_config %{
@@ -355,8 +353,9 @@ defp build_header_classes(assigns) do
 end
 
 # Get variant-specific classes
+@spec variant_classes(String.t(), String.t()) :: String.t()
 defp variant_classes(variant, color) do
-  @color_config[variant][color]
+  @color_config[variant][color] || ""
 end
 
 # Get sticky positioning classes.
