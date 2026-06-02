@@ -33,6 +33,8 @@
   {"lib/pulsar/components/menu.ex", :invalid_contract},
   {"lib/pulsar/components/navbar.ex", :no_return},
   {"lib/pulsar/components/navbar.ex", :invalid_contract},
+  {"lib/pulsar/components/popover.ex", :no_return},
+  {"lib/pulsar/components/popover.ex", :invalid_contract},
   {"lib/pulsar/components/sidebar.ex", :no_return},
   {"lib/pulsar/components/sidebar.ex", :invalid_contract},
   {"lib/pulsar/components/switch.ex", :no_return},
