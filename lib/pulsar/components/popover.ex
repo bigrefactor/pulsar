@@ -77,8 +77,10 @@ defmodule Pulsar.Components.Popover do
 
   # Layout + the floating-panel contract shared by every popover. Color config
   # owns the border and background; the panel is hidden until opened by the
-  # native `[popover]` UA rule.
-  @panel_base_classes "min-w-48 z-popover focus-visible:outline-none"
+  # native `[popover]` UA rule. `animate-fade-in` plays the overlay entrance
+  # (normal/decelerate) each time the panel is shown; dismissal is immediate so a
+  # user never waits to close it. The global reduced-motion rule near-zeroes it.
+  @panel_base_classes "min-w-48 z-popover focus-visible:outline-none animate-fade-in"
 
   @valid_variants ~w(solid outline ghost elevated)
   @valid_colors ~w(neutral primary secondary success danger warning info)

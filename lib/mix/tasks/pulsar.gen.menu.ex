@@ -34,7 +34,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Menu do
 
     ## Dependencies
 
-    This component requires: icon
+    This component requires: icon, popover
 
     ## Usage Examples
 
@@ -51,7 +51,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Menu do
     # Horizontal menu in a navbar region — groups open as dropdowns
     <.menu orientation="horizontal" label="Primary">
       <.menu_item navigate={~p"/"} active>Home</.menu_item>
-      <.menu_group label="Products">
+      <.menu_group orientation="horizontal" label="Products">
         <.menu_item navigate={~p"/products/app"}>App</.menu_item>
       </.menu_group>
     </.menu>

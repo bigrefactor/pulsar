@@ -373,4 +373,45 @@ defmodule Pulsar.Components.MenuTest do
       assert html =~ "group-data-[state=collapsed]/sidebar:lg:sr-only"
     end
   end
+
+  describe "menu_group/1 horizontal dropdown" do
+    test "renders the dropdown through the Popover primitive" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Menu.menu_group id="grp" orientation="horizontal" label="Products">
+          <Menu.menu_item navigate="/products/app">App</Menu.menu_item>
+        </Menu.menu_group>
+        """)
+
+      # The panel is a native popover supplied by the Popover primitive.
+      assert html =~ ~s(popover="auto")
+      assert html =~ ~s(id="grp-panel")
+      assert html =~ ~s(data-menu-panel)
+      # The trigger keeps the APG disclosure wiring server-side.
+      assert html =~ ~s(data-menu-trigger)
+      assert html =~ ~s(aria-expanded="false")
+      assert html =~ ~s(aria-controls="grp-panel")
+      # The trigger is a roving menu item (arrow nav + callback bridge depend on it).
+      assert html =~ ~s(data-menu-item)
+      # The chevron rotates with the popover's aria-expanded.
+      assert html =~ "group-aria-expanded/trigger:rotate-180"
+      assert html =~ "Products"
+      assert html =~ "App"
+    end
+
+    test "does not render the vertical in-place disclosure" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Menu.menu_group id="grp" orientation="horizontal" label="Products">
+          <Menu.menu_item navigate="/products/app">App</Menu.menu_item>
+        </Menu.menu_group>
+        """)
+
+      refute html =~ "grid-rows-[0fr]"
+    end
+  end
 end

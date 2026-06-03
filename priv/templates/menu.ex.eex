@@ -33,10 +33,11 @@ screen reader's landmark list.
       </.menu_section>
     </.menu>
 
-    # Horizontal menu in a navbar region — groups open as dropdowns
+    # Horizontal menu in a navbar region — groups open as dropdowns. Set
+    # `orientation="horizontal"` on each group to match the menu.
     <.menu orientation="horizontal" label="Primary">
       <.menu_item navigate={~p"/"} active>Home</.menu_item>
-      <.menu_group label="Products">
+      <.menu_group orientation="horizontal" label="Products">
         <.menu_item navigate={~p"/products/app"}>App</.menu_item>
         <.menu_item navigate={~p"/products/api"}>API</.menu_item>
       </.menu_group>
@@ -69,6 +70,7 @@ use Phoenix.Component
 import Twm, only: [merge: 1]
 
 alias <%= @component_namespace %>.Icon
+alias <%= @component_namespace %>.Popover
 alias Phoenix.LiveView.JS
 alias Phoenix.LiveView.Rendered
 
@@ -105,27 +107,27 @@ end
 # Section label: small caps heading naming the grouped list.
 @section_label_classes "px-3 pb-1 pt-3 text-xs font-medium uppercase tracking-wide text-muted-foreground group-data-[state=collapsed]/sidebar:lg:hidden"
 
-# Disclosure chevron: rotates when the group is expanded.
-@chevron_classes "ml-auto shrink-0 transition-transform duration-fast ease-standard group-data-[expanded]/disclosure:rotate-180 group-data-[orientation=horizontal]/menu:ml-1 group-data-[state=collapsed]/sidebar:lg:hidden"
+# Disclosure chevron (vertical): rotates when the in-place group is expanded.
+@chevron_classes "ml-auto shrink-0 transition-transform duration-fast ease-standard group-data-[expanded]/disclosure:rotate-180 group-data-[state=collapsed]/sidebar:lg:hidden"
 
-# Group panel wrapper. Vertical: an in-flow height disclosure. Horizontal: a
-# dropdown popover anchored under the trigger, toggled via display so a closed
-# dropdown takes no layout space (and never widens the page at narrow widths).
+# Disclosure chevron (horizontal): rotates while the dropdown is open. The
+# trigger publishes `aria-expanded` (kept in sync by the Popover), so the
+# chevron keys off the trigger group rather than a data-attr.
+@chevron_horizontal "ml-1 shrink-0 transition-transform duration-fast ease-standard group-aria-expanded/trigger:rotate-180"
+
+# Group panel wrapper (vertical): an in-flow height disclosure. The horizontal
+# group renders its dropdown through the Popover primitive instead.
 @disclosure_wrapper [
   "grid grid-rows-[0fr] group-data-[expanded]/disclosure:grid-rows-[1fr]",
-  "transition-[grid-template-rows] duration-normal ease-emphasized motion-reduce:transition-none",
-  "group-data-[orientation=horizontal]/menu:absolute group-data-[orientation=horizontal]/menu:left-0 group-data-[orientation=horizontal]/menu:top-full",
-  "group-data-[orientation=horizontal]/menu:z-dropdown group-data-[orientation=horizontal]/menu:mt-1 group-data-[orientation=horizontal]/menu:min-w-48",
-  "group-data-[orientation=horizontal]/menu:rounded-box group-data-[orientation=horizontal]/menu:border group-data-[orientation=horizontal]/menu:border-border group-data-[orientation=horizontal]/menu:bg-surface-1 group-data-[orientation=horizontal]/menu:p-1 group-data-[orientation=horizontal]/menu:shadow-dropdown",
-  "group-data-[orientation=horizontal]/menu:hidden group-data-[orientation=horizontal]/menu:group-data-[expanded]/disclosure:block"
+  "transition-[grid-template-rows] duration-normal ease-emphasized motion-reduce:transition-none"
 ]
 
-# Group panel list. Hidden from focus order until expanded; indents under the
-# parent in vertical layout.
+# Group panel list (vertical). Hidden from focus order until expanded; indents
+# under the parent.
 @disclosure_list [
   "overflow-hidden invisible group-data-[expanded]/disclosure:visible",
   "flex flex-col gap-0.5",
-  "group-data-[orientation=vertical]/menu:pl-3 group-data-[orientation=vertical]/menu:pt-0.5"
+  "pl-3 pt-0.5"
 ]
 
 # ============================================================================
@@ -211,21 +213,28 @@ def menu(assigns) do
         })
         this._onClick = (e) => this.handleClick(e)
         this._onKeydown = (e) => this.handleKeydown(e)
-        this._onDocPointer = (e) => this.handleDocPointer(e)
+        this._onPanelToggle = (e) => this.handlePanelToggle(e)
         this.el.addEventListener("click", this._onClick)
         this.el.addEventListener("keydown", this._onKeydown)
-        document.addEventListener("pointerdown", this._onDocPointer)
+        // Horizontal group dropdowns are native `[popover]` panels (the Popover
+        // primitive). `toggle` doesn't bubble, so listen in the capture phase to
+        // bridge their open/close to the menu-level group callbacks.
+        this.el.addEventListener("toggle", this._onPanelToggle, true)
+        this.warnOrientationMismatch()
       },
 
       updated() {
         this.orientation = this.el.dataset.orientation === "horizontal" ? "horizontal" : "vertical"
         this.restoreExpanded()
+        this.warnOrientationMismatch()
       },
 
-      // A LiveView re-render reconciles aria-expanded/data-expanded back to the
-      // server-rendered @open and strips client-added attributes. Re-apply the
-      // expand state the user drove on the client so open groups stay open.
+      // Vertical only. A LiveView re-render reconciles aria-expanded/data-expanded
+      // back to the server-rendered @open and strips client-added attributes.
+      // Re-apply the expand state the user drove on the client so open groups
+      // stay open. (Horizontal dropdowns are reconciled by the Popover hook.)
       restoreExpanded() {
+        if (this.orientation === "horizontal") return
         this.el.querySelectorAll("[data-menu-group]").forEach((group) => {
           if (!group.id) return
           const open = this.expanded.has(group.id)
@@ -241,6 +250,9 @@ def menu(assigns) do
       },
 
       handleClick(e) {
+        // Horizontal dropdowns toggle natively via the trigger's popovertarget;
+        // the hook only drives the vertical in-place disclosure.
+        if (this.orientation === "horizontal") return
         const trigger = e.target.closest("[data-menu-trigger]")
         if (trigger && this.el.contains(trigger)) {
           e.preventDefault()
@@ -257,7 +269,6 @@ def menu(assigns) do
       },
 
       openGroup(group, trigger) {
-        if (this.orientation === "horizontal") this.closeAll(group)
         group.setAttribute("data-expanded", "")
         trigger.setAttribute("aria-expanded", "true")
         if (group.id) this.expanded.add(group.id)
@@ -275,25 +286,7 @@ def menu(assigns) do
         this.runCallback("onGroupClose")
       },
 
-      closeAll(except) {
-        this.el.querySelectorAll("[data-menu-group][data-expanded]").forEach((group) => {
-          if (group === except) return
-          // Don't close an ancestor of the group being opened (nested groups).
-          if (except && group.contains(except)) return
-          this.closeGroup(group, group.querySelector("[data-menu-trigger]"))
-        })
-      },
-
       handleKeydown(e) {
-        if (e.key === "Escape" && this.orientation === "horizontal") {
-          const open = e.target.closest("[data-menu-group][data-expanded]")
-          if (open) {
-            e.preventDefault()
-            this.closeGroup(open, open.querySelector("[data-menu-trigger]"))
-            return
-          }
-        }
-
         const next = this.orientation === "horizontal" ? "ArrowRight" : "ArrowDown"
         const prev = this.orientation === "horizontal" ? "ArrowLeft" : "ArrowUp"
 
@@ -334,10 +327,14 @@ def menu(assigns) do
         return getComputedStyle(el).visibility !== "hidden"
       },
 
-      handleDocPointer(e) {
+      // Native popover supplies the horizontal dropdown's open/close, Escape,
+      // outside-click dismissal, focus-return, and sibling auto-close. Mirror
+      // those state changes onto the menu-level group callbacks.
+      handlePanelToggle(e) {
         if (this.orientation !== "horizontal") return
-        if (this.el.contains(e.target)) return
-        this.closeAll(null)
+        const panel = e.target
+        if (!panel || !panel.matches || !panel.matches("[data-menu-panel]")) return
+        this.runCallback(e.newState === "open" ? "onGroupOpen" : "onGroupClose")
       },
 
       runCallback(name) {
@@ -347,10 +344,24 @@ def menu(assigns) do
         }
       },
 
+      // Dev aid: a group picks its disclosure type from its own `orientation`,
+      // which must match the menu. A mismatch renders the wrong affordance
+      // silently, so surface it.
+      warnOrientationMismatch() {
+        this.el.querySelectorAll("[data-menu-group]").forEach((group) => {
+          const isPopover = !!group.querySelector(":scope > [popover]")
+          if (this.orientation === "horizontal" && !isPopover) {
+            console.warn(`[Menu] group "${group.id}" sits in a horizontal menu but rendered an in-place disclosure — set orientation="horizontal" on it.`)
+          } else if (this.orientation === "vertical" && isPopover) {
+            console.warn(`[Menu] group "${group.id}" sits in a vertical menu but rendered a dropdown — remove orientation="horizontal" from it.`)
+          }
+        })
+      },
+
       destroyed() {
         this.el.removeEventListener("click", this._onClick)
         this.el.removeEventListener("keydown", this._onKeydown)
-        document.removeEventListener("pointerdown", this._onDocPointer)
+        this.el.removeEventListener("toggle", this._onPanelToggle, true)
       }
     }
   </script>
@@ -471,8 +482,16 @@ end
 
 attr(:id, :string, doc: "Group ID (auto-generated if omitted), wires the trigger to its panel")
 attr(:label, :string, required: true, doc: ~s{Group label shown on the trigger. Use with i18n: gettext("...")})
+
+attr(:orientation, :string,
+  default: "vertical",
+  values: ~w(vertical horizontal),
+  doc:
+    "Set to match the parent menu. vertical renders an in-place disclosure; horizontal renders a dropdown."
+)
+
 attr(:icon, :string, default: nil, doc: ~s{Leading Heroicon name, e.g. "hero-chart-bar"})
-attr(:open, :boolean, default: false, doc: "Initial expanded state")
+attr(:open, :boolean, default: false, doc: "Initial expanded state (vertical only)")
 
 attr(:active, :boolean,
   default: false,
@@ -486,12 +505,16 @@ slot(:inner_block, required: true, doc: "Child items")
 
 @doc """
 Renders a collapsible group — an in-place disclosure when vertical, a dropdown
-popover when horizontal.
+popover when horizontal. Set `orientation` to match the parent menu.
 
 ## Examples
 
     <.menu_group label="Reports" icon="hero-chart-bar">
       <.menu_item navigate={~p"/reports/sales"}>Sales</.menu_item>
+    </.menu_group>
+
+    <.menu_group orientation="horizontal" label="Products">
+      <.menu_item navigate={~p"/products/app"}>App</.menu_item>
     </.menu_group>
 """
 @spec menu_group(map()) :: Rendered.t()
@@ -502,7 +525,43 @@ def menu_group(assigns) do
     |> assign(:trigger_classes, merge([@row_base, trigger_active(assigns.active), assigns.class]))
 
   ~H"""
-  <li id={@id} class="group/disclosure relative list-none" data-menu-group data-expanded={@open && "" || nil} {@rest}>
+  <li
+    :if={@orientation == "horizontal"}
+    id={@id}
+    class="list-none group-data-[orientation=horizontal]/menu:shrink-0"
+    data-menu-group
+    {@rest}
+  >
+    <Popover.popover id={"#{@id}-panel"} variant="elevated" class="p-1 border border-border" data-menu-panel>
+      <:trigger>
+        <button
+          type="button"
+          id={"#{@id}-trigger"}
+          data-menu-trigger
+          data-menu-item
+          aria-expanded="false"
+          aria-controls={"#{@id}-panel"}
+          class={[@trigger_classes, "group/trigger"]}
+        >
+          <Icon.icon :if={@icon} name={@icon} size="sm" class="shrink-0" />
+          <span class={label_classes()}>{@label}</span>
+          <Icon.icon name="hero-chevron-down" size="xs" class={chevron_horizontal_classes()} />
+        </button>
+      </:trigger>
+      <ul role="list" class="flex flex-col gap-0.5">
+        {render_slot(@inner_block)}
+      </ul>
+    </Popover.popover>
+  </li>
+
+  <li
+    :if={@orientation != "horizontal"}
+    id={@id}
+    class="group/disclosure relative list-none"
+    data-menu-group
+    data-expanded={(@open && "") || nil}
+    {@rest}
+  >
     <button
       type="button"
       id={"#{@id}-trigger"}
@@ -545,6 +604,9 @@ defp section_label_classes, do: @section_label_classes
 
 @spec chevron_classes() :: String.t()
 defp chevron_classes, do: @chevron_classes
+
+@spec chevron_horizontal_classes() :: String.t()
+defp chevron_horizontal_classes, do: @chevron_horizontal
 
 @spec section_list_classes() :: String.t()
 defp section_list_classes do
