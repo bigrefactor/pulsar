@@ -52,7 +52,12 @@ defmodule Pulsar.DevApp.MenuLive do
         >
           <Menu.menu_item href="#" active data-fixture-cell="h-active-item">Home</Menu.menu_item>
           <Menu.menu_item href="#" data-fixture-cell="h-item">Pricing</Menu.menu_item>
-          <Menu.menu_group id="menu-horizontal-products" label="Products" data-fixture-cell="h-group">
+          <Menu.menu_group
+            id="menu-horizontal-products"
+            orientation="horizontal"
+            label="Products"
+            data-fixture-cell="h-group"
+          >
             <Menu.menu_item href="#">App</Menu.menu_item>
             <Menu.menu_item href="#">API</Menu.menu_item>
           </Menu.menu_group>

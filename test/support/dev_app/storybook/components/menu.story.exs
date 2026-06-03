@@ -77,7 +77,7 @@ defmodule Pulsar.DevApp.Storybook.Components.Menu do
         slots: [
           ~s|<Menu.menu_item href="#" active>Home</Menu.menu_item>| <>
             ~s|<Menu.menu_item href="#">Pricing</Menu.menu_item>| <>
-            ~s|<Menu.menu_group label="Products"><Menu.menu_item href="#">App</Menu.menu_item><Menu.menu_item href="#">API</Menu.menu_item></Menu.menu_group>|
+            ~s|<Menu.menu_group orientation="horizontal" label="Products"><Menu.menu_item href="#">App</Menu.menu_item><Menu.menu_item href="#">API</Menu.menu_item></Menu.menu_group>|
         ]
       }
     ]

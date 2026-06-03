@@ -114,7 +114,7 @@ if Code.ensure_loaded?(Igniter) do
       label: [],
       link: [:icon],
       list: [],
-      menu: [:icon],
+      menu: [:icon, :popover],
       navbar: [:icon],
       popover: [],
       radio_group: [],
