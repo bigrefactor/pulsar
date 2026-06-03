@@ -20,7 +20,7 @@ defmodule Pulsar.DevApp.Endpoint do
     at: "/assets",
     from: Path.expand("priv/static/assets", __DIR__),
     gzip: false,
-    only: ~w(app.css app.js)
+    only: ~w(app.css app.js storybook.js)
 
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]

@@ -158,6 +158,46 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     end
   end
 
+  describe "Tooltip keyboard behavior" do
+    # The fixture at `/keyboard/tooltip` renders a trigger button
+    # (kbd-tip-trigger) wired by the `.PulsarPopover` colocated hook in hover
+    # mode to a `popover="manual"` panel (kbd-tip) carrying role="tooltip".
+    # Keyboard focus opens it immediately and the hook wires aria-describedby;
+    # Escape dismisses it.
+    #
+    # Verification: comment out the `_openNow` focus listener in `setupHover`
+    # of the `.PulsarPopover` hook (priv/templates/popover.ex.eex and the
+    # synced lib file), run `MIX_ENV=test mix assets.build`, re-run — the
+    # focus-show assertion fails.
+
+    test "the trigger describes the tooltip via aria-describedby", %{conn: conn} do
+      conn
+      |> visit("/keyboard/tooltip")
+      |> A11y.await_live_connected()
+      |> assert_has(~s|#kbd-tip-trigger[aria-describedby="kbd-tip"]|)
+    end
+
+    test "keyboard focus opens the tooltip", %{conn: conn} do
+      conn
+      |> visit("/keyboard/tooltip")
+      |> A11y.await_live_connected()
+      |> A11y.focus("kbd-tip-trigger")
+      |> assert_has(~s|#kbd-tip[data-state="open"]|)
+    end
+
+    test "Escape dismisses the open tooltip", %{conn: conn} do
+      conn
+      |> visit("/keyboard/tooltip")
+      |> A11y.await_live_connected()
+      |> A11y.focus("kbd-tip-trigger")
+      |> assert_has(~s|#kbd-tip[data-state="open"]|)
+      |> press("#kbd-tip-trigger", "Escape")
+      # A closed manual popover is display:none, so assert the open state is gone
+      # rather than matching the now-hidden panel.
+      |> refute_has(~s|#kbd-tip[data-state="open"]|)
+    end
+  end
+
   describe "Modal keyboard behavior" do
     # The fixture at `/keyboard/modal` renders a trigger button
     # (kbd-modal-open) that opens a native `<dialog>` (kbd-modal) via the

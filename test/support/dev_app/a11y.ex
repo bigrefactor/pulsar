@@ -65,6 +65,16 @@ defmodule Pulsar.DevApp.A11y do
   end
 
   @doc """
+  Focuses the element with the given `id`, firing its `focus`/`focusin`
+  handlers. Used to exercise focus-driven behavior (e.g. a tooltip opening on
+  keyboard focus) without conflating it with a key press.
+  """
+  def focus(conn, id) when is_binary(id) do
+    expr = "var el = document.getElementById(#{Jason.encode!(id)}); el && el.focus()"
+    PhoenixTest.Playwright.evaluate(conn, expr)
+  end
+
+  @doc """
   Asserts that the element with the given `id` is an open *modal* dialog
   (`:modal` matches). Distinguishes a `showModal()` dialog — which traps focus
   and is dismissable by Escape — from a non-modal `<dialog open>`.

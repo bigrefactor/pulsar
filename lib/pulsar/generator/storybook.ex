@@ -38,7 +38,8 @@ defmodule Pulsar.Generator.Storybook do
     :sidebar,
     :switch,
     :table,
-    :textarea
+    :textarea,
+    :tooltip
   ]
 
   @foundations [:colors, :dark_mode, :spacing, :themes, :typography]
@@ -151,10 +152,25 @@ defmodule Pulsar.Generator.Storybook do
                content_path: Path.expand("storybook", __DIR__),
                title: "#{Macro.camelize(app_name)} Storybook",
                css_path: "/assets/app.css",
+               js_path: "/assets/storybook.js",
                sandbox_class: "pulsar-sandbox"
            end
 
-    3. Mount in your router (lib/#{app_name}_web/router.ex):
+    3. Make JS-driven components (Popover, Menu, Modal, Tooltip, …) interactive
+       in the storybook by registering Pulsar's colocated hooks on its LiveSocket.
+
+       Create assets/js/storybook.js:
+
+           import { hooks } from "phoenix-colocated/#{app_name}"
+           ;(function () { window.storybook = { Hooks: hooks } })()
+
+       PhoenixStorybook loads js_path as a CLASSIC <script> (text/javascript), so
+       this file must be a self-contained bundle, NOT an ES module — build it with
+       esbuild's `--format=iife`. Serve it at /assets/storybook.js (add
+       `storybook.js` to your endpoint's `Plug.Static` `:only` list). Without this,
+       stories still render but hover/click/keyboard behavior won't run.
+
+    4. Mount in your router (lib/#{app_name}_web/router.ex):
 
            import PhoenixStorybook.Router
 
@@ -167,7 +183,7 @@ defmodule Pulsar.Generator.Storybook do
              live_storybook "/storybook", backend_module: #{web_module}.Storybook
            end
 
-    4. Scope your styles to match the sandbox class.
+    5. Scope your styles to match the sandbox class.
 
        Add the following to your app.css (or equivalent) so story content
        uses your app's font baseline. Without this, PSB stories render
@@ -189,7 +205,7 @@ defmodule Pulsar.Generator.Storybook do
 
        Background: https://hexdocs.pm/phoenix_storybook/sandboxing.html
 
-    5. Visit http://localhost:4000/storybook
+    6. Visit http://localhost:4000/storybook
 
     Full setup guide: https://hexdocs.pm/phoenix_storybook/setup.html
     """

@@ -150,7 +150,8 @@ defmodule Pulsar.MixProject do
       "assets.build": [
         "pulsar.dev_app.theme",
         "tailwind dev_app",
-        "esbuild dev_app"
+        "esbuild dev_app",
+        "esbuild dev_app_storybook"
       ],
       "dev_app.server": [
         "assets.build",

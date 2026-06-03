@@ -15,6 +15,17 @@ if config_env() in [:dev, :test] do
       _ -> ":"
     end
 
+  esbuild_env = %{
+    "NODE_PATH" =>
+      Enum.join(
+        [
+          Path.expand("../deps", __DIR__),
+          Path.expand("../_build/#{config_env()}", __DIR__)
+        ],
+        node_path_sep
+      )
+  }
+
   config :esbuild,
     version: "0.25.0",
     dev_app: [
@@ -26,16 +37,20 @@ if config_env() in [:dev, :test] do
         --outfile=test/support/dev_app/priv/static/assets/app.js
       ),
       cd: Path.expand("..", __DIR__),
-      env: %{
-        "NODE_PATH" =>
-          Enum.join(
-            [
-              Path.expand("../deps", __DIR__),
-              Path.expand("../_build/#{config_env()}", __DIR__)
-            ],
-            node_path_sep
-          )
-      }
+      env: esbuild_env
+    ],
+    # PhoenixStorybook injects `js_path` as a classic <script> (text/javascript),
+    # so its hook bundle must be a self-contained IIFE, not an ES module.
+    dev_app_storybook: [
+      args: ~w(
+        test/support/dev_app/assets/js/storybook.js
+        --bundle
+        --target=es2022
+        --format=iife
+        --outfile=test/support/dev_app/priv/static/assets/storybook.js
+      ),
+      cd: Path.expand("..", __DIR__),
+      env: esbuild_env
     ]
 
   config :tailwind,

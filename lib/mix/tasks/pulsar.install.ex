@@ -123,7 +123,8 @@ if Code.ensure_loaded?(Igniter) do
       sidebar: [],
       switch: [],
       table: [],
-      textarea: []
+      textarea: [],
+      tooltip: [:popover]
     }
 
     @impl Igniter.Mix.Task
@@ -173,6 +174,7 @@ if Code.ensure_loaded?(Igniter) do
           "pulsar.gen.switch",
           "pulsar.gen.table",
           "pulsar.gen.textarea",
+          "pulsar.gen.tooltip",
           "pulsar.gen.core_components",
           "pulsar.gen.storybook"
         ],
