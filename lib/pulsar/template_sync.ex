@@ -50,6 +50,7 @@ defmodule Pulsar.TemplateSync do
     {:link, "lib/pulsar/components/link.ex", "Pulsar.Components", "Pulsar.Components.Link"},
     {:list, "lib/pulsar/components/list.ex", "Pulsar.Components", "Pulsar.Components.List"},
     {:menu, "lib/pulsar/components/menu.ex", "Pulsar.Components", "Pulsar.Components.Menu"},
+    {:modal, "lib/pulsar/components/modal.ex", "Pulsar.Components", "Pulsar.Components.Modal"},
     {:navbar, "lib/pulsar/components/navbar.ex", "Pulsar.Components", "Pulsar.Components.Navbar"},
     {:popover, "lib/pulsar/components/popover.ex", "Pulsar.Components", "Pulsar.Components.Popover"},
     {:radio_group, "lib/pulsar/components/radio_group.ex", "Pulsar.Components", "Pulsar.Components.RadioGroup"},

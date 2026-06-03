@@ -1,0 +1,113 @@
+defmodule Pulsar.DevApp.Storybook.Components.Modal do
+  use PhoenixStorybook.Story, :component
+
+  alias Pulsar.Components.Modal
+
+  def function, do: &Modal.modal/1
+  def render_source, do: :function
+
+  def attributes do
+    [
+      %Attr{
+        id: :variant,
+        type: :string,
+        values: ~w(solid outline ghost elevated),
+        default: "elevated",
+        doc: "Visual style of the dialog surface"
+      },
+      %Attr{
+        id: :color,
+        type: :string,
+        values: ~w(neutral primary secondary success danger warning info),
+        default: "neutral",
+        doc: "Color scheme of the dialog surface"
+      },
+      %Attr{
+        id: :size,
+        type: :string,
+        values: ~w(sm md lg xl),
+        default: "md",
+        doc: "Max width and interior padding"
+      },
+      %Attr{
+        id: :title,
+        type: :string,
+        default: nil,
+        doc: "Heading text; wired as the dialog's accessible name"
+      },
+      %Attr{
+        id: :dismissable,
+        type: :boolean,
+        default: true,
+        doc: "When true, Escape and backdrop clicks close the dialog and a close button is shown"
+      },
+      %Attr{
+        id: :class,
+        type: :string,
+        default: "",
+        doc: "Additional CSS classes for the dialog"
+      }
+    ]
+  end
+
+  def slots do
+    [
+      %Slot{id: :description, doc: "Supporting text below the heading; wired as aria-describedby"},
+      %Slot{id: :inner_block, required: true, doc: "Dialog body"},
+      %Slot{id: :footer, doc: "Action row pinned below the body"}
+    ]
+  end
+
+  def variations do
+    # Stories render the dialog with the `open` attribute so the panel is
+    # visible inline in the canvas (a closed <dialog> is display:none); the
+    # static `class` override keeps it in flow instead of centered.
+    open = %{open: true, class: "static m-0"}
+
+    body = ~s|<p class="text-sm text-foreground">Dialog content goes here.</p>|
+
+    footer =
+      ~s|<:footer><button type="button" class="rounded-field border border-border px-3 py-1.5 text-sm">Cancel</button><button type="button" class="rounded-field bg-primary px-3 py-1.5 text-sm text-primary-foreground">Save</button></:footer>|
+
+    [
+      %Variation{
+        id: :default,
+        description: "Elevated neutral dialog with title, description, and footer",
+        attributes: Map.put(open, :title, "Edit user"),
+        slots: [
+          ~s|<:description>Update the user's details below.</:description>|,
+          body,
+          footer
+        ]
+      },
+      %Variation{
+        id: :outline_primary,
+        description: "Outline primary surface",
+        attributes: Map.merge(open, %{variant: "outline", color: "primary", title: "Details"}),
+        slots: [body, footer]
+      },
+      %Variation{
+        id: :solid_danger,
+        description: "Danger surface for a destructive confirmation",
+        attributes: Map.merge(open, %{variant: "solid", color: "danger", title: "Delete project?"}),
+        slots: [
+          ~s|<:description>This can't be undone.</:description>|,
+          body,
+          footer
+        ]
+      },
+      %Variation{
+        id: :non_dismissable,
+        description: "Locked dialog — no close button; Escape/backdrop ignored",
+        attributes: Map.merge(open, %{title: "Confirm", dismissable: false}),
+        slots: [body, footer]
+      },
+      %Variation{
+        id: :large,
+        description: "Large dialog",
+        attributes: Map.merge(open, %{size: "xl", title: "Wide content"}),
+        slots: [body]
+      }
+    ]
+  end
+end

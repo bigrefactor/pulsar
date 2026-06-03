@@ -50,6 +50,7 @@ defmodule Pulsar.DevApp.Router do
     live "/components/link", LinkLive, :index
     live "/components/list", ListLive, :index
     live "/components/menu", MenuLive, :index
+    live "/components/modal", ModalLive, :index
     live "/components/navbar", NavbarLive, :index
     live "/components/popover", PopoverLive, :index
     live "/components/radio_group", RadioGroupLive, :index
@@ -68,6 +69,7 @@ defmodule Pulsar.DevApp.Router do
     live "/keyboard/button", Keyboard.ButtonLive, :index
     live "/keyboard/card", Keyboard.CardLive, :index
     live "/keyboard/menu", Keyboard.MenuLive, :index
+    live "/keyboard/modal", Keyboard.ModalLive, :index
     live "/keyboard/popover", Keyboard.PopoverLive, :index
     live "/keyboard/radio_group", Keyboard.RadioGroupLive, :index
   end

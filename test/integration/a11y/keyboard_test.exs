@@ -158,6 +158,51 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     end
   end
 
+  describe "Modal keyboard behavior" do
+    # The fixture at `/keyboard/modal` renders a trigger button
+    # (kbd-modal-open) that opens a native `<dialog>` (kbd-modal) via the
+    # `.PulsarModal` colocated hook's `showModal()`. The dialog autofocuses
+    # its text input (kbd-modal-input); the browser provides the modal focus
+    # trap and Escape handling, and restores focus to the opener on close. A
+    # second, `dismissable={false}` dialog (kbd-modal-locked) ignores Escape.
+    #
+    # Verification: comment out the `showModal()` call in the `.PulsarModal`
+    # hook's `open()` (priv/templates/modal.ex.eex and the synced lib file),
+    # run `MIX_ENV=test mix assets.build`, re-run — the open assertions fail.
+
+    test "opening shows a modal dialog and moves focus inside", %{conn: conn} do
+      conn
+      |> visit("/keyboard/modal")
+      |> A11y.await_live_connected()
+      |> press("#kbd-modal-open", "Enter")
+      |> assert_has(~s|#kbd-modal[data-state="open"]|)
+      |> A11y.assert_modal("kbd-modal")
+      |> A11y.assert_focused("kbd-modal-input")
+    end
+
+    test "Escape closes a dismissable dialog and restores focus to the opener", %{conn: conn} do
+      conn
+      |> visit("/keyboard/modal")
+      |> A11y.await_live_connected()
+      |> press("#kbd-modal-open", "Enter")
+      |> assert_has(~s|#kbd-modal[data-state="open"]|)
+      |> press("#kbd-modal-input", "Escape")
+      |> A11y.assert_focused("kbd-modal-open")
+    end
+
+    test "a non-dismissable dialog ignores Escape and stays open", %{conn: conn} do
+      conn
+      |> visit("/keyboard/modal")
+      |> A11y.await_live_connected()
+      |> press("#kbd-modal-locked-open", "Enter")
+      |> assert_has(~s|#kbd-modal-locked[data-state="open"]|)
+      |> A11y.assert_modal("kbd-modal-locked")
+      |> press("#kbd-modal-locked-input", "Escape")
+      |> assert_has(~s|#kbd-modal-locked[data-state="open"]|)
+      |> A11y.assert_modal("kbd-modal-locked")
+    end
+  end
+
   describe "RadioGroup keyboard navigation" do
     # First group on the page: rg-neutral-xs (colors and sizes from
     # radio_group_live.ex are neutral-first, xs-first). Options have ids
