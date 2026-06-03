@@ -198,6 +198,88 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     end
   end
 
+  describe "DropdownMenu keyboard navigation" do
+    # The fixture at `/keyboard/dropdown_menu` renders a trigger button
+    # (kbd-dm-trigger) opening a `role="menu"` panel (kbd-dm) of items
+    # (kbd-dm-profile, kbd-dm-settings) plus a submenu trigger
+    # (kbd-dm-sub-trigger) owning a nested menu (kbd-dm-sub) with one item
+    # (kbd-dm-email). The `.PulsarDropdownMenu` colocated hook drives roving
+    # focus, opening from the trigger, and submenu navigation; open/close and
+    # Escape come from the native `[popover]` it composes.
+    #
+    # Verification: comment out the ArrowDown/ArrowUp branch in
+    # `handleTriggerKeydown` of `.PulsarDropdownMenu` (priv/templates/
+    # dropdown_menu.ex.eex and the synced lib file), run
+    # `MIX_ENV=test mix assets.build`, re-run — the "ArrowDown opens" test
+    # fails because the menu never opens from the keyboard.
+
+    test "ArrowDown on the trigger opens the menu and focuses the first item", %{conn: conn} do
+      conn
+      |> visit("/keyboard/dropdown_menu")
+      |> A11y.await_live_connected()
+      |> press("#kbd-dm-trigger", "ArrowDown")
+      |> assert_has(~s|#kbd-dm-trigger[aria-expanded="true"]|)
+      |> assert_has(~s|#kbd-dm[data-state="open"]|)
+      |> A11y.assert_focused("kbd-dm-profile")
+    end
+
+    test "clicking the trigger opens the menu and moves focus to the first item", %{conn: conn} do
+      # The mouse path: a click opens the menu (and on Safari/Firefox the trigger
+      # button isn't even focused on click), so the hook must move focus into the
+      # menu on the toggle. Arrow keys then rove.
+      conn
+      |> visit("/keyboard/dropdown_menu")
+      |> A11y.await_live_connected()
+      |> click("#kbd-dm-trigger")
+      |> assert_has(~s|#kbd-dm[data-state="open"]|)
+      |> A11y.assert_focused("kbd-dm-profile")
+      |> press("#kbd-dm-profile", "ArrowDown")
+      |> A11y.assert_focused("kbd-dm-settings")
+    end
+
+    test "Enter on the trigger opens the menu and moves focus to the first item", %{conn: conn} do
+      conn
+      |> visit("/keyboard/dropdown_menu")
+      |> A11y.await_live_connected()
+      |> press("#kbd-dm-trigger", "Enter")
+      |> assert_has(~s|#kbd-dm[data-state="open"]|)
+      |> A11y.assert_focused("kbd-dm-profile")
+    end
+
+    test "ArrowDown moves roving focus to the next item", %{conn: conn} do
+      conn
+      |> visit("/keyboard/dropdown_menu")
+      |> A11y.await_live_connected()
+      |> press("#kbd-dm-trigger", "ArrowDown")
+      |> A11y.assert_focused("kbd-dm-profile")
+      |> press("#kbd-dm-profile", "ArrowDown")
+      |> A11y.assert_focused("kbd-dm-settings")
+    end
+
+    test "Escape closes the menu and restores focus to the trigger", %{conn: conn} do
+      conn
+      |> visit("/keyboard/dropdown_menu")
+      |> A11y.await_live_connected()
+      |> press("#kbd-dm-trigger", "Enter")
+      |> assert_has(~s|#kbd-dm-trigger[aria-expanded="true"]|)
+      |> press("#kbd-dm-profile", "Escape")
+      |> assert_has(~s|#kbd-dm-trigger[aria-expanded="false"]|)
+      |> A11y.assert_focused("kbd-dm-trigger")
+    end
+
+    test "ArrowRight on a submenu item opens its submenu and focuses the first child", %{conn: conn} do
+      conn
+      |> visit("/keyboard/dropdown_menu")
+      |> A11y.await_live_connected()
+      |> press("#kbd-dm-trigger", "ArrowDown")
+      |> press("#kbd-dm-profile", "ArrowDown")
+      |> press("#kbd-dm-settings", "ArrowDown")
+      |> A11y.assert_focused("kbd-dm-sub-trigger")
+      |> press("#kbd-dm-sub-trigger", "ArrowRight")
+      |> A11y.assert_focused("kbd-dm-email")
+    end
+  end
+
   describe "Modal keyboard behavior" do
     # The fixture at `/keyboard/modal` renders a trigger button
     # (kbd-modal-open) that opens a native `<dialog>` (kbd-modal) via the

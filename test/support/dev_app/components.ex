@@ -39,6 +39,7 @@ defmodule Pulsar.DevApp.Components do
      ]},
     {"Overlays",
      [
+       {"DropdownMenu", "/components/dropdown_menu"},
        {"Modal", "/components/modal"},
        {"Popover", "/components/popover"},
        {"Tooltip", "/components/tooltip"}

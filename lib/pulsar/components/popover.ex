@@ -99,12 +99,18 @@ defmodule Pulsar.Components.Popover do
   @color_config %{
     "solid" => %{
       "neutral" => "bg-surface-1 border-2 border-border-strong",
-      "primary" => "bg-primary/10 border-2 border-primary/20",
-      "secondary" => "bg-secondary/10 border-2 border-secondary/20",
-      "success" => "bg-success/10 border-2 border-success/20",
-      "danger" => "bg-danger/10 border-2 border-danger/20",
-      "warning" => "bg-warning/10 border-2 border-warning/20",
-      "info" => "bg-info/10 border-2 border-info/20"
+      "primary" =>
+        "bg-[color-mix(in_oklab,var(--color-primary)_10%,var(--color-surface-1))] border-2 border-[color-mix(in_oklab,var(--color-primary)_22%,var(--color-surface-1))]",
+      "secondary" =>
+        "bg-[color-mix(in_oklab,var(--color-secondary)_10%,var(--color-surface-1))] border-2 border-[color-mix(in_oklab,var(--color-secondary)_22%,var(--color-surface-1))]",
+      "success" =>
+        "bg-[color-mix(in_oklab,var(--color-success)_10%,var(--color-surface-1))] border-2 border-[color-mix(in_oklab,var(--color-success)_22%,var(--color-surface-1))]",
+      "danger" =>
+        "bg-[color-mix(in_oklab,var(--color-danger)_10%,var(--color-surface-1))] border-2 border-[color-mix(in_oklab,var(--color-danger)_22%,var(--color-surface-1))]",
+      "warning" =>
+        "bg-[color-mix(in_oklab,var(--color-warning)_10%,var(--color-surface-1))] border-2 border-[color-mix(in_oklab,var(--color-warning)_22%,var(--color-surface-1))]",
+      "info" =>
+        "bg-[color-mix(in_oklab,var(--color-info)_10%,var(--color-surface-1))] border-2 border-[color-mix(in_oklab,var(--color-info)_22%,var(--color-surface-1))]"
     },
     "outline" => %{
       "neutral" => "bg-surface-1 border-2 border-border-strong",

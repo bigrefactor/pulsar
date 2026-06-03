@@ -1,0 +1,780 @@
+defmodule Pulsar.Components.DropdownMenu do
+  @moduledoc """
+  Anchored action menu opened from a trigger button.
+
+  Wrap a trigger button and a list of actions in `dropdown_menu/1`. Clicking the
+  trigger (or pressing Enter/Space/Arrow keys on it) opens a menu anchored to it;
+  clicking outside or pressing Escape closes it and returns focus to the trigger.
+  Use it for user menus, row actions, and "more" overflow menus.
+
+  Compose the body from `dropdown_menu_item/1`, `dropdown_menu_checkbox_item/1`,
+  `dropdown_menu_radio_group/1` + `dropdown_menu_radio_item/1`,
+  `dropdown_menu_label/1`, `dropdown_menu_group/1`, `dropdown_menu_separator/1`,
+  and `dropdown_menu_submenu/1`.
+
+  ## Examples
+
+      <.dropdown_menu id="account" label="Account">
+        <:trigger>
+          <.button>Account</.button>
+        </:trigger>
+
+        <.dropdown_menu_label>Signed in as Ada</.dropdown_menu_label>
+        <.dropdown_menu_item navigate={~p"/profile"} icon="hero-user">Profile</.dropdown_menu_item>
+        <.dropdown_menu_item navigate={~p"/settings"} icon="hero-cog-6-tooth">
+          Settings
+          <:trailing>⌘,</:trailing>
+        </.dropdown_menu_item>
+        <.dropdown_menu_separator />
+        <.dropdown_menu_item phx-click="sign_out" destructive icon="hero-arrow-right-start-on-rectangle">
+          Sign out
+        </.dropdown_menu_item>
+      </.dropdown_menu>
+
+      # Row actions with a submenu and a checkbox toggle
+      <.dropdown_menu id="row-actions" label="Row actions">
+        <:trigger>
+          <.button variant="ghost" aria-label="Actions"><.icon name="hero-ellipsis-vertical" /></.button>
+        </:trigger>
+
+        <.dropdown_menu_item phx-click="edit">Edit</.dropdown_menu_item>
+        <.dropdown_menu_checkbox_item checked={@pinned} phx-click="toggle_pin">Pinned</.dropdown_menu_checkbox_item>
+        <.dropdown_menu_submenu id="share" label="Share" icon="hero-share">
+          <.dropdown_menu_item phx-click="share_email">Email</.dropdown_menu_item>
+          <.dropdown_menu_item phx-click="share_link">Copy link</.dropdown_menu_item>
+        </.dropdown_menu_submenu>
+      </.dropdown_menu>
+
+  ## Placement
+
+  `placement` is `<side>` or `<side>-<align>`, where side is `top`/`bottom`/
+  `left`/`right` and align is `start`/`center`/`end`. The menu flips to the
+  opposite side and shifts to stay on screen; the default is `bottom-start`.
+
+  ## Trigger
+
+  The `:trigger` slot holds a single focusable control — a `<button>` (or Pulsar
+  `<.button>`). It is announced as a menu button (`aria-haspopup="menu"`,
+  `aria-expanded`) and names the menu unless you pass `label`.
+
+  ## Keyboard
+
+  - On the trigger: Enter/Space/ArrowDown open the menu and focus the first item;
+    ArrowUp opens it and focuses the last item.
+  - In the menu: ArrowUp/ArrowDown move between items, Home/End jump to the
+    first/last, and typing characters jumps to the next item that starts with them.
+  - Enter/Space activate the focused item; a plain item then closes the menu, while
+    a checkbox or radio item stays open so several can be toggled.
+  - ArrowRight (or hovering) opens a submenu; ArrowLeft or Escape closes it and
+    returns focus to its parent item. Escape closes the menu and returns focus to
+    the trigger.
+  """
+
+  use Phoenix.Component
+
+  import Twm, only: [merge: 1]
+
+  alias Phoenix.LiveView.JS
+  alias Phoenix.LiveView.Rendered
+  alias Pulsar.Components.Icon
+  alias Pulsar.Components.Popover
+
+  # Inline ID generator
+  defp generate_id(prefix \\ "dropdown-menu") do
+    "#{prefix}-#{System.unique_integer([:positive])}"
+  end
+
+  # ============================================================================
+  # CONFIGURATION & CONSTANTS
+  # ============================================================================
+
+  # Shared row treatment for every interactive item. Items are highlighted on
+  # hover and on roving focus; the focus ring keys off `focus-visible` (keyboard)
+  # while the background highlight covers both pointer and keyboard. Disabled rows
+  # dim and ignore the pointer.
+  @item_base "relative flex w-full cursor-default select-none items-center gap-2 rounded-field px-2 py-1.5 text-sm text-foreground no-underline outline-none " <>
+               "hover:bg-surface-2 focus:bg-surface-2 " <>
+               "focus-visible:bg-surface-2 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring " <>
+               "data-[disabled]:pointer-events-none data-[disabled]:opacity-50 " <>
+               "transition-colors duration-fast ease-standard"
+
+  # Destructive rows recolor to the danger token (text, hover/focus tint, ring).
+  @item_destructive "text-danger hover:bg-danger/10 focus:bg-danger/10 focus-visible:bg-danger/10 focus-visible:ring-danger"
+
+  # Trailing affordance (shortcut hint / badge), pinned to the row end.
+  @trailing_classes "ml-auto inline-flex shrink-0 items-center gap-1 pl-4 text-xs text-muted-foreground"
+
+  # Leading indicator slot for checkbox/radio rows — fixed width so labels align
+  # whether or not the row is checked.
+  @indicator_classes "flex h-4 w-4 shrink-0 items-center justify-center"
+
+  # Non-interactive label / group heading. `text-foreground` (not muted) keeps the
+  # essential heading at AA contrast.
+  @label_classes "px-2 py-1.5 text-xs font-medium text-foreground"
+
+  # ============================================================================
+  # COMPONENT
+  # ============================================================================
+
+  attr(:id, :string, doc: "Menu ID (auto-generated if omitted). Wires the trigger to the menu.")
+
+  attr(:label, :string,
+    default: nil,
+    doc: ~s{Accessible name for the menu. Use with i18n: gettext("Account"). Omit to name it by the trigger.}
+  )
+
+  attr(:placement, :string,
+    default: "bottom-start",
+    values:
+      ~w(top top-start top-end bottom bottom-start bottom-end left left-start left-end right right-start right-end),
+    doc: "Preferred anchor placement; flips/shifts to stay on screen"
+  )
+
+  attr(:offset, :integer,
+    default: 8,
+    doc: "Gap in px between the trigger and the menu along the main axis"
+  )
+
+  attr(:variant, :string,
+    default: "elevated",
+    values: ~w(solid outline ghost elevated),
+    doc: "Visual style of the menu surface"
+  )
+
+  attr(:color, :string,
+    default: "neutral",
+    values: ~w(neutral primary secondary success danger warning info),
+    doc: "Color scheme of the menu surface"
+  )
+
+  attr(:size, :string,
+    default: "md",
+    values: ~w(xs sm md lg xl),
+    doc: "Corner radius of the menu surface"
+  )
+
+  attr(:on_open, JS, default: %JS{}, doc: "JS commands to run when the menu opens")
+
+  attr(:on_close, JS,
+    default: %JS{},
+    doc: "JS commands to run when the menu closes (including outside-click/Escape dismissal)"
+  )
+
+  attr(:class, :string, default: "", doc: "Additional CSS classes for the menu panel")
+
+  attr(:rest, :global, doc: "Additional menu panel attributes (e.g. aria-labelledby)")
+
+  slot(:trigger, required: true, doc: "The activating control — a single focusable <button>")
+  slot(:inner_block, required: true, doc: "Menu items, separators, labels, groups, and submenus")
+
+  @doc """
+  Renders an anchored action menu opened from a trigger button.
+
+  The `:trigger` slot holds the button; the default slot holds the menu content.
+
+  ## Examples
+
+      <.dropdown_menu id="account" label="Account">
+        <:trigger><.button>Account</.button></:trigger>
+        <.dropdown_menu_item navigate={~p"/profile"}>Profile</.dropdown_menu_item>
+      </.dropdown_menu>
+  """
+  @spec dropdown_menu(map()) :: Rendered.t()
+  def dropdown_menu(assigns) do
+    assigns =
+      assigns
+      |> assign_new(:id, fn -> generate_id() end)
+      |> assign(:rest, put_aria_label(assigns.rest, assigns.label))
+
+    ~H"""
+    <div id={"#{@id}-root"} class="contents" phx-hook=".PulsarDropdownMenu">
+      <Popover.popover
+        id={@id}
+        placement={@placement}
+        offset={@offset}
+        trigger_mode="click"
+        variant={@variant}
+        color={@color}
+        size={@size}
+        on_open={@on_open}
+        on_close={@on_close}
+        role="menu"
+        class={menu_panel_classes(@class)}
+        {@rest}
+      >
+        <:trigger>{render_slot(@trigger)}</:trigger>
+        {render_slot(@inner_block)}
+      </Popover.popover>
+    </div>
+
+    <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarDropdownMenu">
+      export default {
+        mounted() {
+          this.panel = this.el.querySelector(":scope > [popover]")
+          if (!this.panel) return
+          this.trigger = this.panel.previousElementSibling
+          this.typeahead = ""
+
+          if (this.trigger) {
+            this.trigger.setAttribute("aria-haspopup", "menu")
+            this.ensureMenuName()
+          }
+
+          this._onTriggerKeydown = (e) => this.handleTriggerKeydown(e)
+          this._onKeydown = (e) => this.handleKeydown(e)
+          this._onClick = (e) => this.handleClick(e)
+          this._onPointerOver = (e) => this.handlePointerOver(e)
+          this._onToggle = (e) => this.handleToggle(e)
+
+          if (this.trigger) this.trigger.addEventListener("keydown", this._onTriggerKeydown)
+          this.el.addEventListener("keydown", this._onKeydown)
+          this.el.addEventListener("click", this._onClick)
+          this.el.addEventListener("pointerover", this._onPointerOver)
+          // `toggle` doesn't bubble; capture it so the root open (and any submenu)
+          // is seen on the wrapper.
+          this.el.addEventListener("toggle", this._onToggle, true)
+        },
+
+        updated() {
+          if (this.trigger) {
+            this.trigger.setAttribute("aria-haspopup", "menu")
+            this.ensureMenuName()
+          }
+        },
+
+        // A menu needs an accessible name. Prefer the caller's aria-label /
+        // aria-labelledby; otherwise label it by the trigger.
+        ensureMenuName() {
+          if (!this.panel || !this.trigger) return
+          if (this.panel.hasAttribute("aria-label") || this.panel.hasAttribute("aria-labelledby")) return
+          if (!this.trigger.id) this.trigger.id = `${this.panel.id}-trigger`
+          this.panel.setAttribute("aria-labelledby", this.trigger.id)
+        },
+
+        handleTriggerKeydown(e) {
+          if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return
+          e.preventDefault()
+          const edge = e.key === "ArrowUp" ? "last" : "first"
+          this.openEdge = edge
+          if (!this.panel.matches(":popover-open")) this.panel.showPopover()
+          // showPopover reveals the panel synchronously, so focus the edge now
+          // rather than waiting for the async toggle event.
+          this.focusEdge(this.panel, edge)
+        },
+
+        // Fires on every open, including pointer/Enter opens (native popovertarget)
+        // that never run handleTriggerKeydown. Move focus into the menu unless the
+        // keyboard path already did (focus is already inside the panel).
+        handleToggle(e) {
+          if (e.target !== this.panel || e.newState !== "open") return
+          const edge = this.openEdge || "first"
+          this.openEdge = null
+          if (this.panel.contains(document.activeElement)) return
+          this.focusEdge(this.panel, edge)
+        },
+
+        handleKeydown(e) {
+          const menu = e.target.closest('[role="menu"]')
+          if (!menu || !this.el.contains(menu)) return
+          const item = e.target.closest("[data-menu-item]")
+
+          switch (e.key) {
+            case "ArrowDown":
+              e.preventDefault()
+              this.move(menu, item, 1)
+              break
+            case "ArrowUp":
+              e.preventDefault()
+              this.move(menu, item, -1)
+              break
+            case "Home":
+              e.preventDefault()
+              this.focusEdge(menu, "first")
+              break
+            case "End":
+              e.preventDefault()
+              this.focusEdge(menu, "last")
+              break
+            case "ArrowRight":
+              if (item && item.hasAttribute("data-submenu-trigger")) {
+                e.preventDefault()
+                this.openSubmenu(item)
+              }
+              break
+            case "ArrowLeft":
+              if (menu !== this.panel) {
+                e.preventDefault()
+                this.closeSubmenu(menu)
+              }
+              break
+            case "Enter":
+            case " ":
+              if (item) {
+                e.preventDefault()
+                this.activate(item)
+              }
+              break
+            default:
+              if (e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey) {
+                this.typeaheadTo(menu, e.key)
+              }
+          }
+        },
+
+        // Navigable items of one menu: every [data-menu-item] whose nearest menu is
+        // this one (so a nested submenu's items are excluded), that is visible and
+        // not disabled.
+        items(menu) {
+          return Array.from(menu.querySelectorAll("[data-menu-item]")).filter(
+            (el) =>
+              el.closest('[role="menu"]') === menu &&
+              this.isVisible(el) &&
+              el.getAttribute("aria-disabled") !== "true"
+          )
+        },
+
+        isVisible(el) {
+          // Only `display:none` (a closed popover) and `visibility:hidden` (a
+          // collapsed group) hide a menu item; opacity is excluded so the panel's
+          // entrance fade doesn't read its just-shown items as hidden.
+          if (typeof el.checkVisibility === "function") {
+            return el.checkVisibility({ visibilityProperty: true })
+          }
+          return getComputedStyle(el).display !== "none" && getComputedStyle(el).visibility !== "hidden"
+        },
+
+        move(menu, item, delta) {
+          const items = this.items(menu)
+          if (!items.length) return
+          const idx = items.indexOf(item)
+          const next = idx === -1 ? (delta > 0 ? 0 : items.length - 1) : (idx + delta + items.length) % items.length
+          items[next].focus()
+        },
+
+        focusEdge(menu, edge) {
+          const items = this.items(menu)
+          if (!items.length) return
+          ;(edge === "last" ? items[items.length - 1] : items[0]).focus()
+        },
+
+        activate(item) {
+          if (item.getAttribute("aria-disabled") === "true") return
+          if (item.hasAttribute("data-submenu-trigger")) {
+            this.openSubmenu(item)
+            return
+          }
+          item.click()
+          const role = item.getAttribute("role")
+          if (role !== "menuitemcheckbox" && role !== "menuitemradio") this.closeAll()
+        },
+
+        handleClick(e) {
+          const item = e.target.closest("[data-menu-item]")
+          if (!item) return
+          if (item.getAttribute("aria-disabled") === "true") {
+            e.preventDefault()
+            return
+          }
+          if (item.hasAttribute("data-submenu-trigger")) return
+          const role = item.getAttribute("role")
+          if (role === "menuitemcheckbox" || role === "menuitemradio") return
+          this.closeAll()
+        },
+
+        handlePointerOver(e) {
+          const item = e.target.closest("[data-menu-item]")
+          if (!item || item.getAttribute("aria-disabled") === "true") return
+          item.focus()
+          if (item.hasAttribute("data-submenu-trigger")) {
+            clearTimeout(this._subTimer)
+            this._subTimer = setTimeout(() => this.openSubmenu(item), 120)
+          }
+        },
+
+        submenuFor(trigger) {
+          const id = trigger.getAttribute("aria-controls") || trigger.getAttribute("popovertarget")
+          return id ? document.getElementById(id) : null
+        },
+
+        openSubmenu(trigger) {
+          const sub = this.submenuFor(trigger)
+          if (!sub) return
+          if (!sub.matches(":popover-open")) sub.showPopover()
+          this.focusEdge(sub, "first")
+        },
+
+        closeSubmenu(menu) {
+          const trigger = this.el.querySelector(`[aria-controls="${menu.id}"], [popovertarget="${menu.id}"]`)
+          if (menu.matches(":popover-open")) menu.hidePopover()
+          if (trigger) trigger.focus()
+        },
+
+        closeAll() {
+          if (this.panel.matches(":popover-open")) this.panel.hidePopover()
+        },
+
+        typeaheadTo(menu, char) {
+          this.typeahead += char.toLowerCase()
+          clearTimeout(this._typeTimer)
+          this._typeTimer = setTimeout(() => {
+            this.typeahead = ""
+          }, 500)
+          const items = this.items(menu)
+          const match = items.find((el) => (el.textContent || "").trim().toLowerCase().startsWith(this.typeahead))
+          if (match) match.focus()
+        },
+
+        destroyed() {
+          if (this.trigger) this.trigger.removeEventListener("keydown", this._onTriggerKeydown)
+          this.el.removeEventListener("keydown", this._onKeydown)
+          this.el.removeEventListener("click", this._onClick)
+          this.el.removeEventListener("pointerover", this._onPointerOver)
+          this.el.removeEventListener("toggle", this._onToggle, true)
+          clearTimeout(this._subTimer)
+          clearTimeout(this._typeTimer)
+        }
+      }
+    </script>
+    """
+  end
+
+  attr(:navigate, :any, default: nil, doc: "Phoenix route to navigate to (string or VerifiedRoute)")
+  attr(:patch, :any, default: nil, doc: "Phoenix route to patch navigate to (string or VerifiedRoute)")
+  attr(:href, :string, default: nil, doc: "URL to link to. Renders an action button when no target is given.")
+  attr(:icon, :string, default: nil, doc: ~s{Leading Heroicon name, e.g. "hero-user"})
+  attr(:disabled, :boolean, default: false, doc: "Marks the item as disabled (not actionable, skipped by arrow keys)")
+  attr(:destructive, :boolean, default: false, doc: "Styles the item as a destructive action (e.g. delete)")
+  attr(:class, :string, default: "", doc: "Additional CSS classes")
+
+  attr(:rest, :global, doc: "Additional HTML attributes (e.g. phx-click on an action item)")
+
+  slot(:inner_block, required: true, doc: "Item label")
+  slot(:trailing, doc: "Trailing affordance (keyboard shortcut hint, badge)")
+
+  @doc """
+  Renders a menu item — a navigation link, or an action button when no target is given.
+
+  ## Examples
+
+      <.dropdown_menu_item navigate={~p"/profile"} icon="hero-user">Profile</.dropdown_menu_item>
+      <.dropdown_menu_item phx-click="sign_out" destructive>Sign out</.dropdown_menu_item>
+  """
+  @spec dropdown_menu_item(map()) :: Rendered.t()
+  def dropdown_menu_item(assigns) do
+    assigns =
+      assigns
+      |> assign(:link?, assigns.navigate != nil or assigns.patch != nil or assigns.href != nil)
+      |> assign(:row_classes, merge([@item_base, item_destructive(assigns.destructive), assigns.class]))
+
+    ~H"""
+    <.link
+      :if={@link?}
+      role="menuitem"
+      data-menu-item
+      tabindex="-1"
+      navigate={@navigate}
+      patch={@patch}
+      href={@href}
+      aria-disabled={(@disabled && "true") || nil}
+      data-disabled={(@disabled && "") || nil}
+      class={@row_classes}
+      {@rest}
+    >
+      <Icon.icon :if={@icon} name={@icon} size="sm" class="shrink-0" />
+      <span class="min-w-0 flex-1 truncate text-left">{render_slot(@inner_block)}</span>
+      <span :if={@trailing != []} class={trailing_classes()}>{render_slot(@trailing)}</span>
+    </.link>
+
+    <button
+      :if={!@link?}
+      type="button"
+      role="menuitem"
+      data-menu-item
+      tabindex="-1"
+      aria-disabled={(@disabled && "true") || nil}
+      data-disabled={(@disabled && "") || nil}
+      class={@row_classes}
+      {@rest}
+    >
+      <Icon.icon :if={@icon} name={@icon} size="sm" class="shrink-0" />
+      <span class="min-w-0 flex-1 truncate text-left">{render_slot(@inner_block)}</span>
+      <span :if={@trailing != []} class={trailing_classes()}>{render_slot(@trailing)}</span>
+    </button>
+    """
+  end
+
+  attr(:checked, :boolean, default: false, doc: "Whether the item is checked")
+  attr(:disabled, :boolean, default: false, doc: "Marks the item as disabled")
+  attr(:icon, :string, default: nil, doc: "Optional leading Heroicon (shown alongside the check)")
+  attr(:class, :string, default: "", doc: "Additional CSS classes")
+  attr(:rest, :global, doc: "Additional HTML attributes (e.g. phx-click)")
+  slot(:inner_block, required: true, doc: "Item label")
+  slot(:trailing, doc: "Trailing affordance")
+
+  @doc """
+  Renders a checkable menu item. Toggling it keeps the menu open.
+
+  ## Examples
+
+      <.dropdown_menu_checkbox_item checked={@grid} phx-click="toggle_grid">Show grid</.dropdown_menu_checkbox_item>
+  """
+  @spec dropdown_menu_checkbox_item(map()) :: Rendered.t()
+  def dropdown_menu_checkbox_item(assigns) do
+    assigns = assign(assigns, :row_classes, merge([@item_base, assigns.class]))
+
+    ~H"""
+    <button
+      type="button"
+      role="menuitemcheckbox"
+      data-menu-item
+      tabindex="-1"
+      aria-checked={to_string(@checked)}
+      aria-disabled={(@disabled && "true") || nil}
+      data-disabled={(@disabled && "") || nil}
+      class={@row_classes}
+      {@rest}
+    >
+      <span class={indicator_classes()}>
+        <Icon.icon :if={@checked} name="hero-check-mini" size="xs" />
+      </span>
+      <Icon.icon :if={@icon} name={@icon} size="sm" class="shrink-0" />
+      <span class="min-w-0 flex-1 truncate text-left">{render_slot(@inner_block)}</span>
+      <span :if={@trailing != []} class={trailing_classes()}>{render_slot(@trailing)}</span>
+    </button>
+    """
+  end
+
+  attr(:label, :string, default: nil, doc: ~s{Accessible name for the radio group. Use with i18n: gettext("Sort by")})
+  attr(:class, :string, default: "", doc: "Additional CSS classes")
+  attr(:rest, :global, doc: "Additional HTML attributes")
+  slot(:inner_block, required: true, doc: "Radio items")
+
+  @doc """
+  Renders a group of mutually exclusive radio menu items.
+
+  ## Examples
+
+      <.dropdown_menu_radio_group label="Sort by">
+        <.dropdown_menu_radio_item checked={@sort == "name"} phx-click="sort" phx-value-by="name">Name</.dropdown_menu_radio_item>
+        <.dropdown_menu_radio_item checked={@sort == "date"} phx-click="sort" phx-value-by="date">Date</.dropdown_menu_radio_item>
+      </.dropdown_menu_radio_group>
+  """
+  @spec dropdown_menu_radio_group(map()) :: Rendered.t()
+  def dropdown_menu_radio_group(assigns) do
+    ~H"""
+    <div role="group" aria-label={@label} class={merge(["flex flex-col", @class])} {@rest}>
+      {render_slot(@inner_block)}
+    </div>
+    """
+  end
+
+  attr(:checked, :boolean, default: false, doc: "Whether this option is selected")
+  attr(:disabled, :boolean, default: false, doc: "Marks the item as disabled")
+  attr(:class, :string, default: "", doc: "Additional CSS classes")
+  attr(:rest, :global, doc: "Additional HTML attributes (e.g. phx-click)")
+  slot(:inner_block, required: true, doc: "Item label")
+  slot(:trailing, doc: "Trailing affordance")
+
+  @doc """
+  Renders a single radio menu item. Use inside `dropdown_menu_radio_group/1`.
+  Selecting it keeps the menu open.
+  """
+  @spec dropdown_menu_radio_item(map()) :: Rendered.t()
+  def dropdown_menu_radio_item(assigns) do
+    assigns = assign(assigns, :row_classes, merge([@item_base, assigns.class]))
+
+    ~H"""
+    <button
+      type="button"
+      role="menuitemradio"
+      data-menu-item
+      tabindex="-1"
+      aria-checked={to_string(@checked)}
+      aria-disabled={(@disabled && "true") || nil}
+      data-disabled={(@disabled && "") || nil}
+      class={@row_classes}
+      {@rest}
+    >
+      <span class={indicator_classes()}>
+        <span :if={@checked} class="h-1.5 w-1.5 rounded-full bg-current"></span>
+      </span>
+      <span class="min-w-0 flex-1 truncate text-left">{render_slot(@inner_block)}</span>
+      <span :if={@trailing != []} class={trailing_classes()}>{render_slot(@trailing)}</span>
+    </button>
+    """
+  end
+
+  attr(:class, :string, default: "", doc: "Additional CSS classes")
+  attr(:rest, :global, doc: "Additional HTML attributes")
+  slot(:inner_block, required: true, doc: "Label text")
+
+  @doc """
+  Renders a non-interactive label/heading inside a menu.
+
+  ## Examples
+
+      <.dropdown_menu_label>Signed in as Ada</.dropdown_menu_label>
+  """
+  @spec dropdown_menu_label(map()) :: Rendered.t()
+  def dropdown_menu_label(assigns) do
+    ~H"""
+    <div class={merge([label_classes(), @class])} {@rest}>{render_slot(@inner_block)}</div>
+    """
+  end
+
+  attr(:id, :string, doc: "Group ID (auto-generated if omitted), used to label the group")
+  attr(:label, :string, default: nil, doc: ~s{Optional group heading. Use with i18n: gettext("...")})
+  attr(:class, :string, default: "", doc: "Additional CSS classes")
+  attr(:rest, :global, doc: "Additional HTML attributes")
+  slot(:inner_block, required: true, doc: "Items in this group")
+
+  @doc """
+  Renders a labelled group of related items inside a menu.
+
+  ## Examples
+
+      <.dropdown_menu_group label="Workspace">
+        <.dropdown_menu_item navigate={~p"/projects"}>Projects</.dropdown_menu_item>
+      </.dropdown_menu_group>
+  """
+  @spec dropdown_menu_group(map()) :: Rendered.t()
+  def dropdown_menu_group(assigns) do
+    assigns = assign_new(assigns, :id, fn -> generate_id("dropdown-menu-group") end)
+
+    ~H"""
+    <div
+      role="group"
+      aria-labelledby={(@label && "#{@id}-label") || nil}
+      class={merge(["flex flex-col", @class])}
+      {@rest}
+    >
+      <div :if={@label} id={"#{@id}-label"} class={label_classes()}>{@label}</div>
+      {render_slot(@inner_block)}
+    </div>
+    """
+  end
+
+  attr(:class, :string, default: "", doc: "Additional CSS classes")
+  attr(:rest, :global, doc: "Additional HTML attributes")
+
+  @doc """
+  Renders a horizontal separator between menu items.
+  """
+  @spec dropdown_menu_separator(map()) :: Rendered.t()
+  def dropdown_menu_separator(assigns) do
+    ~H"""
+    <div role="separator" aria-orientation="horizontal" class={merge(["-mx-1 my-1 h-px bg-border", @class])} {@rest}></div>
+    """
+  end
+
+  attr(:id, :string, doc: "Submenu ID (auto-generated if omitted), wires the trigger to its panel")
+
+  attr(:label, :string,
+    required: true,
+    doc: ~s{Trigger text and accessible name for the submenu. Use with i18n: gettext("Share")}
+  )
+
+  attr(:icon, :string, default: nil, doc: ~s{Leading Heroicon name for the trigger row, e.g. "hero-share"})
+  attr(:disabled, :boolean, default: false, doc: "Marks the submenu trigger as disabled")
+
+  attr(:placement, :string,
+    default: "right-start",
+    values:
+      ~w(top top-start top-end bottom bottom-start bottom-end left left-start left-end right right-start right-end),
+    doc: "Preferred placement of the submenu relative to its trigger"
+  )
+
+  attr(:offset, :integer, default: 4, doc: "Gap in px between the trigger and the submenu")
+  attr(:variant, :string, default: "elevated", values: ~w(solid outline ghost elevated), doc: "Submenu surface variant")
+
+  attr(:color, :string,
+    default: "neutral",
+    values: ~w(neutral primary secondary success danger warning info),
+    doc: "Submenu surface color"
+  )
+
+  attr(:size, :string, default: "md", values: ~w(xs sm md lg xl), doc: "Submenu surface corner radius")
+  attr(:class, :string, default: "", doc: "Additional CSS classes for the trigger row")
+  attr(:rest, :global, doc: "Additional submenu panel attributes")
+  slot(:inner_block, required: true, doc: "Submenu items")
+
+  @doc """
+  Renders a submenu — a menu item that opens a nested menu of its own.
+
+  ## Examples
+
+      <.dropdown_menu_submenu id="share" label="Share" icon="hero-share">
+        <.dropdown_menu_item phx-click="share_email">Email</.dropdown_menu_item>
+      </.dropdown_menu_submenu>
+  """
+  @spec dropdown_menu_submenu(map()) :: Rendered.t()
+  def dropdown_menu_submenu(assigns) do
+    assigns =
+      assigns
+      |> assign_new(:id, fn -> generate_id("dropdown-menu-sub") end)
+      |> assign(:row_classes, merge([@item_base, assigns.class]))
+      |> assign(:rest, put_aria_label(assigns.rest, assigns.label))
+
+    ~H"""
+    <Popover.popover
+      id={@id}
+      placement={@placement}
+      offset={@offset}
+      trigger_mode="click"
+      variant={@variant}
+      color={@color}
+      size={@size}
+      role="menu"
+      data-submenu
+      class="p-1"
+      {@rest}
+    >
+      <:trigger>
+        <button
+          type="button"
+          id={"#{@id}-trigger"}
+          role="menuitem"
+          data-menu-item
+          data-submenu-trigger
+          tabindex="-1"
+          aria-haspopup="menu"
+          aria-disabled={(@disabled && "true") || nil}
+          data-disabled={(@disabled && "") || nil}
+          class={@row_classes}
+        >
+          <Icon.icon :if={@icon} name={@icon} size="sm" class="shrink-0" />
+          <span class="min-w-0 flex-1 truncate text-left">{@label}</span>
+          <Icon.icon name="hero-chevron-right-mini" size="xs" class="ml-auto shrink-0" />
+        </button>
+      </:trigger>
+      {render_slot(@inner_block)}
+    </Popover.popover>
+    """
+  end
+
+  # ============================================================================
+  # HELPER FUNCTIONS
+  # ============================================================================
+
+  @spec menu_panel_classes(String.t()) :: String.t()
+  defp menu_panel_classes(class), do: merge(["p-1", class])
+
+  # Folds the optional `label` into the global attrs as `aria-label` so it never
+  # collides with a caller-supplied aria-label/aria-labelledby passed through rest.
+  @spec put_aria_label(map(), String.t() | nil) :: map()
+  defp put_aria_label(rest, nil), do: rest
+  defp put_aria_label(rest, label), do: Map.put(rest, "aria-label", label)
+
+  @spec item_destructive(boolean()) :: String.t()
+  defp item_destructive(true), do: @item_destructive
+  defp item_destructive(false), do: ""
+
+  @spec label_classes() :: String.t()
+  defp label_classes, do: @label_classes
+
+  @spec trailing_classes() :: String.t()
+  defp trailing_classes, do: @trailing_classes
+
+  @spec indicator_classes() :: String.t()
+  defp indicator_classes, do: @indicator_classes
+end
