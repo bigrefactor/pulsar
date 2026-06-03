@@ -38,14 +38,23 @@ defmodule Pulsar.Components.Popover do
 
   ## Trigger
 
-  The `:trigger` slot must contain a single `<button>`. The panel opens, closes,
-  and dismisses with the browser's built-in popover behavior; focus returns to
-  the trigger when closed with Escape.
+  The `:trigger` slot must contain a single `<button>`. How the panel opens
+  depends on `trigger_mode`:
+
+  - `"click"` (the default) — the trigger toggles the panel; clicking outside or
+    pressing Escape closes it, and focus returns to the trigger on Escape.
+  - `"hover"` — the panel opens on pointer hover (after a short delay) and on
+    keyboard focus (immediately), stays open while the pointer is over the trigger
+    or the panel, and dismisses on leave, blur, or Escape. Use it for
+    tooltip-style, non-interactive overlays.
 
   ## Accessibility
 
-  - The trigger exposes `aria-controls` and `aria-expanded` (kept in sync as the
-    panel opens and closes).
+  - In `trigger_mode="click"`, the trigger exposes `aria-controls` and
+    `aria-expanded` (kept in sync as the panel opens and closes).
+  - In `trigger_mode="hover"`, the trigger instead exposes `aria-describedby`
+    pointing at the panel, so its content is announced as the trigger's
+    description.
   - The panel imposes no role; pass `role="dialog"` and a name
     (`aria-label`/`aria-labelledby`) via attributes when appropriate.
   """
@@ -151,6 +160,13 @@ defmodule Pulsar.Components.Popover do
     doc: "Gap in px between the trigger and the panel along the main axis"
   )
 
+  attr(:trigger_mode, :string,
+    default: "click",
+    values: ~w(click hover),
+    doc:
+      ~s{How the panel opens. "click" toggles it from the trigger button. "hover" opens it on pointer hover and keyboard focus and closes on leave/blur or Escape — for tooltip-style, non-interactive overlays.}
+  )
+
   attr(:variant, :string,
     default: "elevated",
     values: ~w(solid outline ghost elevated),
@@ -217,10 +233,11 @@ defmodule Pulsar.Components.Popover do
     ~H"""
     {render_slot(@trigger)}<div
       id={@id}
-      popover="auto"
+      popover={if @trigger_mode == "hover", do: "manual", else: "auto"}
       phx-hook=".PulsarPopover"
       data-placement={@placement}
       data-offset={@offset}
+      data-trigger={@trigger_mode}
       data-state="closed"
       data-on-open={@on_open}
       data-on-close={@on_close}
@@ -236,21 +253,97 @@ defmodule Pulsar.Components.Popover do
           // The trigger is the element immediately before the panel (the
           // rendered :trigger slot). Wire it once the hook mounts.
           this.trigger = this.el.previousElementSibling
+          this.mode = this.el.dataset.trigger || "click"
+          this._reposition = () => this.position()
+
+          if (this.mode === "hover") {
+            this.setupHover()
+          } else {
+            this.setupClick()
+          }
+        },
+
+        // Click mode: the native [popover="auto"] toggle wired through the
+        // browser's popovertarget invoker; the toggle event drives state.
+        setupClick() {
           if (this.trigger) {
             this.trigger.setAttribute("popovertarget", this.el.id)
             this.trigger.setAttribute("aria-controls", this.el.id)
             this.trigger.setAttribute("aria-expanded", "false")
           }
-
-          this._onToggle = (e) => this.onToggle(e)
-          this._reposition = () => this.position()
-
+          this._onToggle = (e) => this.onStateChange(e.newState)
           this.el.addEventListener("toggle", this._onToggle)
         },
 
+        // Hover mode: a [popover="manual"] panel opened on hover/focus and closed
+        // on leave/blur or Escape. The panel describes the trigger.
+        setupHover() {
+          this.openDelay = 500
+          this.closeDelay = 100
+          this._dismissed = false
+
+          if (this.trigger) this.trigger.setAttribute("aria-describedby", this.el.id)
+
+          // Hover waits before opening so passing the pointer over a control
+          // doesn't flash the panel; focus opens immediately.
+          this._openSoon = () => {
+            clearTimeout(this._closeTimer)
+            if (this._dismissed) return
+            this._openTimer = setTimeout(() => this.show(), this.openDelay)
+          }
+          this._openNow = () => {
+            clearTimeout(this._closeTimer)
+            if (this._dismissed) return
+            this.show()
+          }
+          // A close grace period lets the pointer travel from trigger to panel
+          // without dismissing it (the panel is hoverable).
+          this._closeSoon = () => {
+            clearTimeout(this._openTimer)
+            this._closeTimer = setTimeout(() => this.hide(), this.closeDelay)
+          }
+          this._cancelClose = () => clearTimeout(this._closeTimer)
+          // Escape dismisses and keeps it dismissed until the trigger is left and
+          // re-entered, so it doesn't immediately reopen while still hovered.
+          this._onKeydown = (e) => {
+            if (e.key === "Escape" && this.el.matches(":popover-open")) {
+              this._dismissed = true
+              this.hide()
+            }
+          }
+          this._clearDismiss = () => {
+            this._dismissed = false
+          }
+
+          if (this.trigger) {
+            this.trigger.addEventListener("mouseenter", this._openSoon)
+            this.trigger.addEventListener("mouseleave", this._closeSoon)
+            this.trigger.addEventListener("mouseleave", this._clearDismiss)
+            this.trigger.addEventListener("focusin", this._openNow)
+            this.trigger.addEventListener("focusout", this._closeSoon)
+            this.trigger.addEventListener("focusout", this._clearDismiss)
+            this.trigger.addEventListener("keydown", this._onKeydown)
+          }
+          this.el.addEventListener("mouseenter", this._cancelClose)
+          this.el.addEventListener("mouseleave", this._closeSoon)
+          this.el.addEventListener("keydown", this._onKeydown)
+        },
+
+        show() {
+          if (this.el.matches(":popover-open")) return
+          this.el.showPopover()
+          this.onStateChange("open")
+        },
+
+        hide() {
+          if (!this.el.matches(":popover-open")) return
+          this.el.hidePopover()
+          this.onStateChange("closed")
+        },
+
         // Reposition listeners are idempotent (stable handler ref), so attaching
-        // when already attached is a no-op — safe to call from both onToggle and
-        // updated().
+        // when already attached is a no-op — safe to call from both onStateChange
+        // and updated().
         addRepositionListeners() {
           window.addEventListener("scroll", this._reposition, { passive: true, capture: true })
           window.addEventListener("resize", this._reposition)
@@ -261,16 +354,17 @@ defmodule Pulsar.Components.Popover do
           window.removeEventListener("resize", this._reposition)
         },
 
-        onToggle(e) {
-          if (e.newState === "open") {
-            this.el.dataset.state = "open"
-            if (this.trigger) this.trigger.setAttribute("aria-expanded", "true")
+        onStateChange(newState) {
+          const open = newState === "open"
+          this.el.dataset.state = open ? "open" : "closed"
+          if (this.mode === "click" && this.trigger) {
+            this.trigger.setAttribute("aria-expanded", open ? "true" : "false")
+          }
+          if (open) {
             this.addRepositionListeners()
             this.position()
             this.runCallback("onOpen")
           } else {
-            this.el.dataset.state = "closed"
-            if (this.trigger) this.trigger.setAttribute("aria-expanded", "false")
             this.removeRepositionListeners()
             this.runCallback("onClose")
           }
@@ -334,6 +428,9 @@ defmodule Pulsar.Components.Popover do
           this.el.style.margin = "0"
           this.el.style.top = `${Math.round(top)}px`
           this.el.style.left = `${Math.round(left)}px`
+          // The side the panel actually landed on (after any flip), exposed for
+          // CSS that points at the trigger (e.g. a tooltip arrow).
+          this.el.dataset.side = side
         },
 
         runCallback(name) {
@@ -350,9 +447,13 @@ defmodule Pulsar.Components.Popover do
           const open = this.el.matches(":popover-open")
           this.el.dataset.state = open ? "open" : "closed"
           if (this.trigger) {
-            this.trigger.setAttribute("popovertarget", this.el.id)
-            this.trigger.setAttribute("aria-controls", this.el.id)
-            this.trigger.setAttribute("aria-expanded", open ? "true" : "false")
+            if (this.mode === "click") {
+              this.trigger.setAttribute("popovertarget", this.el.id)
+              this.trigger.setAttribute("aria-controls", this.el.id)
+              this.trigger.setAttribute("aria-expanded", open ? "true" : "false")
+            } else {
+              this.trigger.setAttribute("aria-describedby", this.el.id)
+            }
           }
           // Keep the reposition listeners reconciled with the live open state in
           // case a patch left them out of sync with the last toggle.
@@ -365,7 +466,24 @@ defmodule Pulsar.Components.Popover do
         },
 
         destroyed() {
-          this.el.removeEventListener("toggle", this._onToggle)
+          if (this.mode === "click") {
+            this.el.removeEventListener("toggle", this._onToggle)
+          } else {
+            clearTimeout(this._openTimer)
+            clearTimeout(this._closeTimer)
+            if (this.trigger) {
+              this.trigger.removeEventListener("mouseenter", this._openSoon)
+              this.trigger.removeEventListener("mouseleave", this._closeSoon)
+              this.trigger.removeEventListener("mouseleave", this._clearDismiss)
+              this.trigger.removeEventListener("focusin", this._openNow)
+              this.trigger.removeEventListener("focusout", this._closeSoon)
+              this.trigger.removeEventListener("focusout", this._clearDismiss)
+              this.trigger.removeEventListener("keydown", this._onKeydown)
+            }
+            this.el.removeEventListener("mouseenter", this._cancelClose)
+            this.el.removeEventListener("mouseleave", this._closeSoon)
+            this.el.removeEventListener("keydown", this._onKeydown)
+          }
           this.removeRepositionListeners()
         }
       }

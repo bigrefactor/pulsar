@@ -1,0 +1,209 @@
+@moduledoc """
+Hover/focus label that describes its trigger.
+
+Wrap a focusable trigger and a terse hint in `tooltip/1`. The hint appears when
+the trigger is hovered or focused and disappears on leave, blur, or Escape. Use
+it for icon buttons, truncated text, and short hints — not for interactive
+content (use a popover for that).
+
+## Examples
+
+    <.tooltip id="save-tip">
+      <:trigger>
+        <.button aria-label="Save">
+          <.icon name="hero-check" />
+        </.button>
+      </:trigger>
+      Save changes
+    </.tooltip>
+
+    # A colored tooltip anchored to the side
+    <.tooltip id="info" color="primary" placement="right">
+      <:trigger>
+        <button type="button" class="underline decoration-dotted">details</button>
+      </:trigger>
+      Extra context for this field
+    </.tooltip>
+
+## Placement
+
+`placement` is `<side>` or `<side>-<align>`, where side is `top`/`bottom`/
+`left`/`right` and align is `start`/`center`/`end`. A bare side centers the
+tooltip on the cross axis; the default is `top`. The tooltip flips to the
+opposite side and shifts to stay on screen.
+
+## Trigger
+
+The `:trigger` slot holds a single focusable element (a `<button>`, `<a>`, or an
+element with `tabindex`). The tooltip wires `aria-describedby` from the trigger
+to the hint, so it is announced as the trigger's description. The hint content
+must be plain, non-interactive text.
+"""
+
+use Phoenix.Component
+
+import Twm, only: [merge: 1]
+
+alias Phoenix.LiveView.JS
+alias Phoenix.LiveView.Rendered
+alias <%= @component_namespace %>.Popover
+
+# Inline ID generator
+defp generate_id(prefix \\ "tooltip") do
+  "#{prefix}-#{System.unique_integer([:positive])}"
+end
+
+# ============================================================================
+# CONFIGURATION & CONSTANTS
+# ============================================================================
+
+# Opaque solid surfaces keyed by color, each pairing a fill with its readable
+# foreground (the same pairs Button uses) so the hint meets contrast on every
+# color. The caret borrows the fill via `bg-inherit`; because the fill is opaque,
+# the caret's inner half blends seamlessly into the panel and only its tip shows.
+@surface_config %{
+  "neutral" => "bg-neutral text-neutral-foreground",
+  "primary" => "bg-primary text-primary-foreground",
+  "secondary" => "bg-secondary text-secondary-foreground",
+  "success" => "bg-success text-success-foreground",
+  "danger" => "bg-danger text-danger-foreground",
+  "warning" => "bg-warning text-warning-foreground",
+  "info" => "bg-info text-info-foreground"
+}
+
+@valid_colors ~w(neutral primary secondary success danger warning info)
+
+# Compile-time check that every color has a surface.
+for color <- @valid_colors do
+  if !@surface_config[color] do
+    raise CompileError, description: "Missing tooltip surface for color=#{color}"
+  end
+end
+
+# Layout shared by every tooltip: it sizes to its content (`min-w-0`/`max-w-xs`),
+# keeps the hint small (`text-sm`), and exposes a positioning context (`group`) so
+# the caret can point at the resolved side. `overflow-visible` overrides the native
+# `[popover]` `overflow: auto` so the caret can sit outside the panel edge.
+# `drop-shadow-md` is a filter (not a box-shadow): it traces the combined panel +
+# caret silhouette so both lift off the page together.
+@panel_base_classes "group min-w-0 max-w-xs overflow-visible text-sm drop-shadow-md"
+
+# The caret: a small rotated square that borrows the panel's opaque fill
+# (`bg-inherit`) and sits just outside the edge facing the trigger, chosen by the
+# panel's resolved side. Its inner half blends into the panel; only the tip shows.
+@arrow_classes "pointer-events-none absolute h-2 w-2 rotate-45 bg-inherit " <>
+                 "group-data-[side=bottom]:-top-1 group-data-[side=bottom]:left-1/2 group-data-[side=bottom]:-translate-x-1/2 " <>
+                 "group-data-[side=top]:-bottom-1 group-data-[side=top]:left-1/2 group-data-[side=top]:-translate-x-1/2 " <>
+                 "group-data-[side=left]:-right-1 group-data-[side=left]:top-1/2 group-data-[side=left]:-translate-y-1/2 " <>
+                 "group-data-[side=right]:-left-1 group-data-[side=right]:top-1/2 group-data-[side=right]:-translate-y-1/2"
+
+# ============================================================================
+# COMPONENT
+# ============================================================================
+
+attr(:id, :string, doc: "Tooltip ID (auto-generated if omitted). Describes the trigger.")
+
+attr(:placement, :string,
+  default: "top",
+  values: ~w(top top-start top-end bottom bottom-start bottom-end left left-start left-end right right-start right-end),
+  doc: "Preferred anchor placement; flips/shifts to stay on screen"
+)
+
+attr(:offset, :integer,
+  default: 8,
+  doc: "Gap in px between the trigger and the tooltip along the main axis"
+)
+
+attr(:color, :string,
+  default: "neutral",
+  values: ~w(neutral primary secondary success danger warning info),
+  doc: "Color of the tooltip's solid surface"
+)
+
+attr(:size, :string,
+  default: "sm",
+  values: ~w(xs sm md lg xl),
+  doc: "Interior padding and corner radius"
+)
+
+attr(:arrow, :boolean,
+  default: true,
+  doc: "Render a caret pointing at the trigger"
+)
+
+attr(:on_open, JS,
+  default: %JS{},
+  doc: "JS commands to run when the tooltip opens"
+)
+
+attr(:on_close, JS,
+  default: %JS{},
+  doc: "JS commands to run when the tooltip closes"
+)
+
+attr(:class, :string, default: "", doc: "Additional CSS classes for the tooltip")
+
+attr(:rest, :global,
+  doc: "Additional panel attributes (e.g. aria-label)"
+)
+
+slot(:trigger, required: true, doc: "The element the tooltip describes — a focusable control")
+slot(:inner_block, required: true, doc: "Tooltip content (plain, non-interactive text)")
+
+@doc """
+Renders a hover/focus tooltip describing its trigger.
+
+The `:trigger` slot holds the focusable control; the default slot holds the hint.
+
+## Examples
+
+    <.tooltip id="save-tip">
+      <:trigger><.button aria-label="Save"><.icon name="hero-check" /></.button></:trigger>
+      Save changes
+    </.tooltip>
+"""
+@spec tooltip(map()) :: Rendered.t()
+def tooltip(assigns) do
+  assigns = assign_new(assigns, :id, fn -> generate_id() end)
+
+  assigns =
+    assign(
+      assigns,
+      :panel_classes,
+      merge([surface_classes(assigns.color), panel_base_classes(), assigns.class])
+    )
+
+  ~H"""
+  <Popover.popover
+    id={@id}
+    trigger_mode="hover"
+    placement={@placement}
+    offset={@offset}
+    variant="ghost"
+    size={@size}
+    on_open={@on_open}
+    on_close={@on_close}
+    role="tooltip"
+    class={@panel_classes}
+    {@rest}
+  >
+    <:trigger>{render_slot(@trigger)}</:trigger>
+    <span :if={@arrow} data-part="arrow" aria-hidden="true" class={arrow_classes()}></span>{render_slot(
+      @inner_block
+    )}
+  </Popover.popover>
+  """
+end
+
+# ============================================================================
+# HELPER FUNCTIONS
+# ============================================================================
+
+@spec surface_classes(String.t()) :: String.t()
+defp surface_classes(color), do: @surface_config[color] || ""
+
+@spec panel_base_classes() :: String.t()
+defp panel_base_classes, do: @panel_base_classes
+
+@spec arrow_classes() :: String.t()
+defp arrow_classes, do: @arrow_classes

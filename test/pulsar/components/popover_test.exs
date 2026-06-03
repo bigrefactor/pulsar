@@ -154,6 +154,38 @@ defmodule Pulsar.Components.PopoverTest do
     end
   end
 
+  describe "popover/1 trigger mode" do
+    test "defaults to click: native auto popover" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Popover.popover id="pop">
+          <:trigger><button>Open</button></:trigger>
+          Body
+        </Popover.popover>
+        """)
+
+      assert html =~ ~s(popover="auto")
+      assert html =~ ~s(data-trigger="click")
+    end
+
+    test "hover mode emits a manual popover the hook drives on hover/focus" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Popover.popover id="pop" trigger_mode="hover">
+          <:trigger><button>Open</button></:trigger>
+          Body
+        </Popover.popover>
+        """)
+
+      assert html =~ ~s(popover="manual")
+      assert html =~ ~s(data-trigger="hover")
+    end
+  end
+
   describe "popover/1 callbacks and passthrough" do
     test "on_open / on_close are emitted as JS commands" do
       assigns = %{
