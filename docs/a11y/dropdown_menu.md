@@ -57,12 +57,16 @@ text label (and typically an icon) — `:813–814`.
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Item text and headings use `text-foreground`
-(`lib/pulsar/components/dropdown_menu.ex:95`, `:110`); items set to `color="danger"`
-use `text-danger`, the same token Button uses for danger text (`:813`); the surface is
-the popover's `bg-surface-1` (`lib/pulsar/components/popover.ex:133–141`). All clear
-4.5:1 in both themes. The trailing shortcut hint is supplementary
-(`text-muted-foreground`, `:102`). The axe gate scans the `/components/dropdown_menu`
-fixture in light and dark.
+(`lib/pulsar/components/dropdown_menu.ex:95`, `:110`); an item's optional `color`
+emphasis recolors the text to the matching semantic token (`item_color/1`, `:799–822`),
+each of which clears 4.5:1 as text on the popover's `bg-surface-1`
+(`lib/pulsar/components/popover.ex:133–141`) in both themes — measured at the settled
+(post fade-in) state. The trailing shortcut hint is supplementary
+(`text-muted-foreground`, `:102`). Because a closed `[popover]` is `display:none`
+(axe skips it), the generic per-fixture scan can't see menu items; a dedicated test
+opens the menu, waits for the entrance animation to settle, then runs axe over every
+color in light and dark — see `test/integration/a11y/axe_clean_test.exs` ("open
+DropdownMenu items are axe-clean").
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
