@@ -106,6 +106,26 @@ defmodule Pulsar.DevApp.A11y do
   end
 
   @doc """
+  Waits for any running CSS animations/transitions on the element `id` (and its
+  descendants) to finish, so a subsequent contrast sample reads the settled
+  colors. Overlays like DropdownMenu play a `fade-in` (opacity 0 → 1) on open;
+  axe-core composites the live pixel, so sampling mid-fade reports a blended,
+  artificially low contrast. `Element.getAnimations({subtree: true})` covers the
+  panel and its items; each animation's `finished` promise resolves when it ends.
+  """
+  def await_animations(conn, id) when is_binary(id) do
+    fun = """
+    async () => {
+      const el = document.getElementById(#{Jason.encode!(id)});
+      if (!el || !el.getAnimations) return;
+      await Promise.all(el.getAnimations({ subtree: true }).map((a) => a.finished.catch(() => {})));
+    }
+    """
+
+    PhoenixTest.Playwright.evaluate(conn, fun, is_function: true, timeout: 2_000)
+  end
+
+  @doc """
   Injects axe-core into the current page, runs the audit, and asserts
   zero violations via `A11yAudit.Assertions.assert_no_violations/1`.
   """

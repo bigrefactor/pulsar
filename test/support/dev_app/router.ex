@@ -36,6 +36,7 @@ defmodule Pulsar.DevApp.Router do
     live "/components/card", CardLive, :index
     live "/components/checkbox", CheckboxLive, :index
     live "/components/divider", DividerLive, :index
+    live "/components/dropdown_menu", DropdownMenuLive, :index
     live "/components/field", FieldLive, :index
     live "/components/flash", FlashLive, :index
     live "/components/flash/trigger", FlashTriggerLive, :index
@@ -69,6 +70,7 @@ defmodule Pulsar.DevApp.Router do
 
     live "/keyboard/button", Keyboard.ButtonLive, :index
     live "/keyboard/card", Keyboard.CardLive, :index
+    live "/keyboard/dropdown_menu", Keyboard.DropdownMenuLive, :index
     live "/keyboard/menu", Keyboard.MenuLive, :index
     live "/keyboard/modal", Keyboard.ModalLive, :index
     live "/keyboard/popover", Keyboard.PopoverLive, :index

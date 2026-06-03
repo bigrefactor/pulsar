@@ -20,6 +20,7 @@ defmodule Pulsar.Generator.Storybook do
     :card,
     :checkbox,
     :divider,
+    :dropdown_menu,
     :field,
     :flash,
     :flash_group,

@@ -91,7 +91,7 @@ defmodule Pulsar.Components.PopoverTest do
       assert html =~ "shadow-dropdown"
     end
 
-    test "solid color uses a soft tint + border" do
+    test "solid color uses an opaque soft tint + border" do
       assigns = %{}
 
       html =
@@ -102,8 +102,11 @@ defmodule Pulsar.Components.PopoverTest do
         </Popover.popover>
         """)
 
-      assert html =~ "bg-danger/10"
-      assert html =~ "border-danger/20"
+      # Opaque mix into the surface (not a translucent alpha tint) so the
+      # floating panel never lets page content bleed through.
+      assert html =~ "color-mix(in_oklab,var(--color-danger)_10%,var(--color-surface-1))"
+      assert html =~ "color-mix(in_oklab,var(--color-danger)_22%,var(--color-surface-1))"
+      refute html =~ "bg-danger/10"
     end
 
     test "outline color uses a colored border on a surface" do
