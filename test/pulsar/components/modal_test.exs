@@ -115,6 +115,22 @@ defmodule Pulsar.Components.ModalTest do
       assert html =~ ~s(aria-describedby="m-desc")
     end
 
+    test "renders the description when there is no title and the dialog is non-dismissable" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Modal.modal id="m" dismissable={false}>
+          <:description>Help text.</:description>
+          Body
+        </Modal.modal>
+        """)
+
+      assert html =~ ~s(id="m-desc")
+      assert html =~ "Help text."
+      assert html =~ ~s(aria-describedby="m-desc")
+    end
+
     test "omits labelledby/describedby when neither title nor description is given" do
       assigns = %{}
 

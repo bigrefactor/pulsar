@@ -64,7 +64,7 @@ defmodule Pulsar.DevApp.Storybook.Components.Modal do
     # static `class` override keeps it in flow instead of centered.
     open = %{open: true, class: "static m-0"}
 
-    body = ~s|<p class="text-sm text-muted-foreground">Dialog content goes here.</p>|
+    body = ~s|<p class="text-sm text-foreground">Dialog content goes here.</p>|
 
     footer =
       ~s|<:footer><button type="button" class="rounded-field border border-border px-3 py-1.5 text-sm">Cancel</button><button type="button" class="rounded-field bg-primary px-3 py-1.5 text-sm text-primary-foreground">Save</button></:footer>|

@@ -18,7 +18,7 @@ dismissal, and the `dismissable={false}` lock. `title` is wired as the dialog's
 **Evidence:** The native `<dialog>` exposes a `dialog` role; `title` renders a
 `<h2>` referenced by `aria-labelledby`, and the `:description` slot renders a
 `<p>` referenced by `aria-describedby` — `lib/pulsar/components/modal.ex:241–242`
-(wiring), `:248–256` (heading/description). Unit tests assert the id wiring —
+(wiring), `:248–251` (heading/description). Unit tests assert the id wiring —
 `test/pulsar/components/modal_test.exs`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
@@ -36,28 +36,33 @@ fixture cells in light and dark with zero violations.
 **Evidence:** The dialog is `w-[calc(100%-2rem)]` (a 1rem gutter each side) capped
 by a `max-w-*` per size, and `max-h-[85vh] overflow-y-auto`, so it never forces
 horizontal scrolling at 320px and long content scrolls inside the panel —
-`lib/pulsar/components/modal.ex:83–84` (`@panel_base_classes`), `:69–74` (`@size_config`).
+`lib/pulsar/components/modal.ex:83–85` (`@panel_base_classes`), `:72–77` (`@size_config`).
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
-**Evidence:** `elevated` delineates the panel from the dimmed backdrop with
-`shadow-modal`; `outline`/`solid` add a 2px `border-{color}` / `border-border-strong` —
-`lib/pulsar/components/modal.ex:92–127`. The dimmed backdrop is `bg-foreground/50`.
-Same audited token matrix as [`card.md`](card.md).
+**Evidence:** `elevated` delineates the panel from the page with `shadow-modal`;
+`outline`/`solid` add a 2px `border-{color}` / `border-border-strong` —
+`lib/pulsar/components/modal.ex:92–127`. These panel boundaries are rendered in
+the `/components/modal` fixture cells and pass the axe gate (same audited token
+matrix as [`card.md`](card.md)). The dimmed backdrop is `bg-foreground/50`; this
+is verified by code inspection, not the axe gate — the fixtures render the
+`<dialog>` with the `open` attribute (the established pattern for visible-in-flow
+cells), which produces no `::backdrop` pseudo-element and does not enter the top
+layer, so axe never evaluates the backdrop.
 
 ### 1.4.13 Content on Hover or Focus (AA) — ✓ PASS
 
 **Evidence:** The dialog opens on explicit activation (an `open/2` command on a
 button), never on hover or focus; it is dismissable (Escape + backdrop click,
 unless `dismissable={false}`) and persistent until dismissed —
-`lib/pulsar/components/modal.ex:294–320` (hook open/cancel/click handling).
+`lib/pulsar/components/modal.ex:306–338` (hook open/cancel/click handling).
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
 **Evidence:** The dialog is opened/closed by `open/2`/`close/2` composed onto
 keyboard-operable controls; the built-in close button is a native `<button>`;
 Escape dismissal is native to the modal `<dialog>` —
-`lib/pulsar/components/modal.ex:254–262` (close button), `:366–384` (helpers). The
+`lib/pulsar/components/modal.ex:254–262` (close button), `:392–410` (helpers). The
 keyboard fixture exercises open, Escape-to-close, and the non-dismissable lock —
 `test/integration/a11y/keyboard_test.exs`.
 
@@ -68,7 +73,7 @@ permitted modal pattern); focus is always releasable by keyboard — Escape clos
 a dismissable dialog, and a `dismissable={false}` dialog is closed by activating
 one of its footer action buttons, which return a `close/2` command. Either path
 returns focus to the opener (native `<dialog>` behavior) —
-`lib/pulsar/components/modal.ex:311–313` (Escape lock only when non-dismissable).
+`lib/pulsar/components/modal.ex:324–326` (Escape lock only when non-dismissable).
 The keyboard fixture asserts Escape closes the dismissable dialog and restores
 focus, and that the locked dialog stays open on Escape —
 `test/integration/a11y/keyboard_test.exs`.
@@ -77,8 +82,8 @@ focus, and that the locked dialog stays open on Escape —
 
 **Evidence:** `showModal()` moves focus into the dialog on open (to `[autofocus]`
 or the first focusable control) and restores it to the opener on close; no
-positive `tabindex` is used — `lib/pulsar/components/modal.ex:294–296` (open),
-`:298–300` (close). The keyboard fixture asserts focus lands inside on open and
+positive `tabindex` is used — `lib/pulsar/components/modal.ex:306–312` (open),
+`:314–316` (close). The keyboard fixture asserts focus lands inside on open and
 returns to the opener on close — `test/integration/a11y/keyboard_test.exs`.
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
@@ -92,13 +97,13 @@ caller-supplied controls keep their own focus rings —
 
 **Evidence:** The dialog renders in the browser top layer (native `showModal()`),
 above all page content and never clipped by `overflow:hidden` ancestors —
-`lib/pulsar/components/modal.ex:294–295`.
+`lib/pulsar/components/modal.ex:306–308`.
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 
 **Evidence:** The close button activates on `click` (pointer-up); backdrop
 dismissal fires on a `click` whose target is the dialog box outside the panel —
-`lib/pulsar/components/modal.ex:315–322` (`handleClick`).
+`lib/pulsar/components/modal.ex:328–338` (`handleClick`).
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
@@ -110,7 +115,7 @@ which meets 24×24) are the caller's responsibility —
 ### 3.2.1 On Focus (A) — ✓ PASS
 
 **Evidence:** Focusing any control causes no context change; the dialog opens
-only on explicit `open/2` activation — `lib/pulsar/components/modal.ex:366–372`.
+only on explicit `open/2` activation — `lib/pulsar/components/modal.ex:392–398`.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 

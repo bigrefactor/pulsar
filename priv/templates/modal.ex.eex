@@ -242,7 +242,7 @@ def modal(assigns) do
     class={@dialog_classes}
     {@rest}
   >
-    <div :if={@has_title || @dismissable} class="mb-4 flex items-start justify-between gap-4">
+    <div :if={@has_title || @has_description || @dismissable} class="mb-4 flex items-start justify-between gap-4">
       <div :if={@has_title || @has_description} class="space-y-1">
         <h2 :if={@has_title} id={"#{@id}-title"} class="text-lg font-semibold">{@title}</h2>
         <p :if={@has_description} id={"#{@id}-desc"} class="text-sm text-foreground">
@@ -268,20 +268,33 @@ def modal(assigns) do
     </div>
 
     <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarModal">
+      // Shared across every modal instance so stacked dialogs refcount the body
+      // scroll lock: the first to open captures the prior overflow and the last
+      // to close restores it.
+      let openModalCount = 0
+      let savedBodyOverflow = ""
+
       export default {
         mounted() {
-          this.bodyOverflow = ""
+          this.scrollLocked = false
+          this.downTarget = null
+
+          // The markup ships data-state="closed"; reconcile it with the real
+          // open state for dialogs pre-opened via the `open` attribute.
+          this.el.dataset.state = this.el.open ? "open" : "closed"
 
           this._onOpen = () => this.open()
           this._onClose = () => this.close()
           this._onCancel = (e) => this.handleCancel(e)
           this._onNativeClose = () => this.handleClose()
+          this._onMouseDown = (e) => { this.downTarget = e.target }
           this._onClick = (e) => this.handleClick(e)
 
           this.el.addEventListener("pulsar:modal-open", this._onOpen)
           this.el.addEventListener("pulsar:modal-close", this._onClose)
           this.el.addEventListener("cancel", this._onCancel)
           this.el.addEventListener("close", this._onNativeClose)
+          this.el.addEventListener("mousedown", this._onMouseDown)
           this.el.addEventListener("click", this._onClick)
         },
 
@@ -314,20 +327,32 @@ def modal(assigns) do
         handleClick(e) {
           if (!this.isDismissable()) return
           // A backdrop click reports the dialog as the target but lands outside
-          // the dialog's box; a click on content lands inside it.
+          // the dialog's box; a click on content lands inside it. Require the
+          // pointer-down to have landed on the backdrop too, so a text-selection
+          // drag that ends on the backdrop doesn't dismiss the dialog.
           const r = this.el.getBoundingClientRect()
           const outside =
             e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom
-          if (e.target === this.el && outside) this.el.close()
+          if (e.target === this.el && this.downTarget === this.el && outside) this.el.close()
         },
 
         lockScroll() {
-          this.bodyOverflow = document.body.style.overflow
-          document.body.style.overflow = "hidden"
+          if (this.scrollLocked) return
+          this.scrollLocked = true
+          if (openModalCount === 0) {
+            savedBodyOverflow = document.body.style.overflow
+            document.body.style.overflow = "hidden"
+          }
+          openModalCount++
         },
 
         unlockScroll() {
-          document.body.style.overflow = this.bodyOverflow
+          if (!this.scrollLocked) return
+          this.scrollLocked = false
+          openModalCount--
+          if (openModalCount === 0) {
+            document.body.style.overflow = savedBodyOverflow
+          }
         },
 
         runCallback(name) {
@@ -343,6 +368,7 @@ def modal(assigns) do
           this.el.removeEventListener("pulsar:modal-close", this._onClose)
           this.el.removeEventListener("cancel", this._onCancel)
           this.el.removeEventListener("close", this._onNativeClose)
+          this.el.removeEventListener("mousedown", this._onMouseDown)
           this.el.removeEventListener("click", this._onClick)
         }
       }
