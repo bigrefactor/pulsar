@@ -100,7 +100,7 @@ defmodule Pulsar.MixProject do
       {:phoenix_live_view, "~> 1.1", optional: true},
       {:phoenix_html, "~> 4.0", optional: true},
       {:phoenix_html_helpers, "~> 1.0", optional: true},
-      {:gettext, "~> 0.26", optional: true},
+      {:gettext, "~> 1.0", optional: true},
       {:twm, "~> 0.1"},
 
       # Quality tools
