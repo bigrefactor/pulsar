@@ -393,6 +393,10 @@ defmodule Pulsar.Components.MenuTest do
       assert html =~ ~s(data-menu-trigger)
       assert html =~ ~s(aria-expanded="false")
       assert html =~ ~s(aria-controls="grp-panel")
+      # The trigger is a roving menu item (arrow nav + callback bridge depend on it).
+      assert html =~ ~s(data-menu-item)
+      # The chevron rotates with the popover's aria-expanded.
+      assert html =~ "group-aria-expanded/trigger:rotate-180"
       assert html =~ "Products"
       assert html =~ "App"
     end

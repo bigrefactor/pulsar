@@ -227,6 +227,7 @@ defmodule Pulsar.Components.Menu do
         updated() {
           this.orientation = this.el.dataset.orientation === "horizontal" ? "horizontal" : "vertical"
           this.restoreExpanded()
+          this.warnOrientationMismatch()
         },
 
         // Vertical only. A LiveView re-render reconciles aria-expanded/data-expanded

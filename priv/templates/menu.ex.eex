@@ -226,6 +226,7 @@ def menu(assigns) do
       updated() {
         this.orientation = this.el.dataset.orientation === "horizontal" ? "horizontal" : "vertical"
         this.restoreExpanded()
+        this.warnOrientationMismatch()
       },
 
       // Vertical only. A LiveView re-render reconciles aria-expanded/data-expanded
