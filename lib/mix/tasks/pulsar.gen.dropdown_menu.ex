@@ -42,7 +42,7 @@ defmodule Mix.Tasks.Pulsar.Gen.DropdownMenu do
       <:trigger><.button>Account</.button></:trigger>
       <.dropdown_menu_item navigate={~p"/profile"} icon="hero-user">Profile</.dropdown_menu_item>
       <.dropdown_menu_separator />
-      <.dropdown_menu_item phx-click="sign_out" destructive>Sign out</.dropdown_menu_item>
+      <.dropdown_menu_item phx-click="sign_out" color="danger">Sign out</.dropdown_menu_item>
     </.dropdown_menu>
     ```
 

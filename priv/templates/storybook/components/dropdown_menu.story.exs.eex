@@ -62,7 +62,13 @@ defmodule <%= @web_module %>.Storybook.Components.DropdownMenu do
         ~s|<DropdownMenu.dropdown_menu_item icon="hero-user" href="#">Profile</DropdownMenu.dropdown_menu_item>| <>
         ~s|<DropdownMenu.dropdown_menu_item icon="hero-cog-6-tooth" href="#">Settings</DropdownMenu.dropdown_menu_item>| <>
         ~s|<DropdownMenu.dropdown_menu_separator />| <>
-        ~s|<DropdownMenu.dropdown_menu_item destructive icon="hero-arrow-right-start-on-rectangle" href="#">Sign out</DropdownMenu.dropdown_menu_item>|
+        ~s|<DropdownMenu.dropdown_menu_item color="danger" icon="hero-arrow-right-start-on-rectangle" href="#">Sign out</DropdownMenu.dropdown_menu_item>|
+
+    colored =
+      ~s|<DropdownMenu.dropdown_menu_item color="primary" icon="hero-star" href="#">Upgrade plan</DropdownMenu.dropdown_menu_item>| <>
+        ~s|<DropdownMenu.dropdown_menu_item color="warning" icon="hero-exclamation-triangle" href="#">Archive project</DropdownMenu.dropdown_menu_item>| <>
+        ~s|<DropdownMenu.dropdown_menu_separator />| <>
+        ~s|<DropdownMenu.dropdown_menu_item color="danger" icon="hero-trash" href="#">Delete</DropdownMenu.dropdown_menu_item>|
 
     selections =
       ~s|<DropdownMenu.dropdown_menu_checkbox_item checked>Show grid</DropdownMenu.dropdown_menu_checkbox_item>| <>
@@ -78,6 +84,11 @@ defmodule <%= @web_module %>.Storybook.Components.DropdownMenu do
         id: :default,
         description: "Account menu with a destructive action",
         slots: [trigger, actions]
+      },
+      %Variation{
+        id: :colored_items,
+        description: "Items emphasized with the color attr (primary, warning, danger)",
+        slots: [trigger, colored]
       },
       %Variation{
         id: :selections,

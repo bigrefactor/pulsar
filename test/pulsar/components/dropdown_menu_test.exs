@@ -129,18 +129,50 @@ defmodule Pulsar.Components.DropdownMenuTest do
       assert html =~ "pointer-events-none"
     end
 
-    test "a destructive item carries danger styling" do
+    test "color=danger recolors the item to the danger token" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
         <DropdownMenu.dropdown_menu id="dm">
           <:trigger><button>Open</button></:trigger>
-          <DropdownMenu.dropdown_menu_item destructive>Delete</DropdownMenu.dropdown_menu_item>
+          <DropdownMenu.dropdown_menu_item color="danger">Delete</DropdownMenu.dropdown_menu_item>
         </DropdownMenu.dropdown_menu>
         """)
 
       assert html =~ "text-danger"
+      assert html =~ "focus-visible:ring-danger"
+    end
+
+    test "color maps to the matching semantic token (e.g. primary)" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu id="dm">
+          <:trigger><button>Open</button></:trigger>
+          <DropdownMenu.dropdown_menu_item color="primary">Upgrade</DropdownMenu.dropdown_menu_item>
+        </DropdownMenu.dropdown_menu>
+        """)
+
+      assert html =~ "text-primary"
+      refute html =~ "text-danger"
+    end
+
+    test "a neutral item (default) carries no color tint" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu id="dm">
+          <:trigger><button>Open</button></:trigger>
+          <DropdownMenu.dropdown_menu_item>Profile</DropdownMenu.dropdown_menu_item>
+        </DropdownMenu.dropdown_menu>
+        """)
+
+      assert html =~ "text-foreground"
+      refute html =~ "text-danger"
+      refute html =~ "text-primary"
     end
   end
 
@@ -175,6 +207,20 @@ defmodule Pulsar.Components.DropdownMenuTest do
         """)
 
       assert html =~ ~s(aria-checked="false")
+    end
+
+    test "honors the color attr (shares the item_color mapping)" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu id="dm">
+          <:trigger><button>Open</button></:trigger>
+          <DropdownMenu.dropdown_menu_checkbox_item color="danger">Delete on save</DropdownMenu.dropdown_menu_checkbox_item>
+        </DropdownMenu.dropdown_menu>
+        """)
+
+      assert html =~ "text-danger"
     end
   end
 

@@ -76,7 +76,13 @@ defmodule Pulsar.DevApp.DropdownMenuLive do
 
           <DropdownMenu.dropdown_menu_separator />
 
-          <DropdownMenu.dropdown_menu_item destructive icon="hero-trash" phx-click="noop">
+          <DropdownMenu.dropdown_menu_item color="primary" icon="hero-star" phx-click="noop">
+            Upgrade plan
+          </DropdownMenu.dropdown_menu_item>
+          <DropdownMenu.dropdown_menu_item color="warning" icon="hero-exclamation-triangle" phx-click="noop">
+            Archive
+          </DropdownMenu.dropdown_menu_item>
+          <DropdownMenu.dropdown_menu_item color="danger" icon="hero-trash" phx-click="noop">
             Delete
           </DropdownMenu.dropdown_menu_item>
         </DropdownMenu.dropdown_menu>

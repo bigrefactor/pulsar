@@ -26,7 +26,7 @@ defmodule Pulsar.Components.DropdownMenu do
           <:trailing>⌘,</:trailing>
         </.dropdown_menu_item>
         <.dropdown_menu_separator />
-        <.dropdown_menu_item phx-click="sign_out" destructive icon="hero-arrow-right-start-on-rectangle">
+        <.dropdown_menu_item phx-click="sign_out" color="danger" icon="hero-arrow-right-start-on-rectangle">
           Sign out
         </.dropdown_menu_item>
       </.dropdown_menu>
@@ -97,9 +97,6 @@ defmodule Pulsar.Components.DropdownMenu do
                "focus-visible:bg-surface-2 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring " <>
                "data-[disabled]:pointer-events-none data-[disabled]:opacity-50 " <>
                "transition-colors duration-fast ease-standard"
-
-  # Destructive rows recolor to the danger token (text, hover/focus tint, ring).
-  @item_destructive "text-danger hover:bg-danger/10 focus:bg-danger/10 focus-visible:bg-danger/10 focus-visible:ring-danger"
 
   # Trailing affordance (shortcut hint / badge), pinned to the row end.
   @trailing_classes "ml-auto inline-flex shrink-0 items-center gap-1 pl-4 text-xs text-muted-foreground"
@@ -448,7 +445,13 @@ defmodule Pulsar.Components.DropdownMenu do
   attr(:href, :string, default: nil, doc: "URL to link to. Renders an action button when no target is given.")
   attr(:icon, :string, default: nil, doc: ~s{Leading Heroicon name, e.g. "hero-user"})
   attr(:disabled, :boolean, default: false, doc: "Marks the item as disabled (not actionable, skipped by arrow keys)")
-  attr(:destructive, :boolean, default: false, doc: "Styles the item as a destructive action (e.g. delete)")
+
+  attr(:color, :string,
+    default: "neutral",
+    values: ~w(neutral primary secondary success danger warning info),
+    doc: ~s{Emphasis color for the item (e.g. "danger" for a destructive action)}
+  )
+
   attr(:class, :string, default: "", doc: "Additional CSS classes")
 
   attr(:rest, :global, doc: "Additional HTML attributes (e.g. phx-click on an action item)")
@@ -462,14 +465,14 @@ defmodule Pulsar.Components.DropdownMenu do
   ## Examples
 
       <.dropdown_menu_item navigate={~p"/profile"} icon="hero-user">Profile</.dropdown_menu_item>
-      <.dropdown_menu_item phx-click="sign_out" destructive>Sign out</.dropdown_menu_item>
+      <.dropdown_menu_item phx-click="sign_out" color="danger">Sign out</.dropdown_menu_item>
   """
   @spec dropdown_menu_item(map()) :: Rendered.t()
   def dropdown_menu_item(assigns) do
     assigns =
       assigns
       |> assign(:link?, assigns.navigate != nil or assigns.patch != nil or assigns.href != nil)
-      |> assign(:row_classes, merge([@item_base, item_destructive(assigns.destructive), assigns.class]))
+      |> assign(:row_classes, merge([@item_base, item_color(assigns.color), assigns.class]))
 
     ~H"""
     <.link
@@ -511,6 +514,13 @@ defmodule Pulsar.Components.DropdownMenu do
   attr(:checked, :boolean, default: false, doc: "Whether the item is checked")
   attr(:disabled, :boolean, default: false, doc: "Marks the item as disabled")
   attr(:icon, :string, default: nil, doc: "Optional leading Heroicon (shown alongside the check)")
+
+  attr(:color, :string,
+    default: "neutral",
+    values: ~w(neutral primary secondary success danger warning info),
+    doc: ~s{Emphasis color for the item (e.g. "danger" for a destructive action)}
+  )
+
   attr(:class, :string, default: "", doc: "Additional CSS classes")
   attr(:rest, :global, doc: "Additional HTML attributes (e.g. phx-click)")
   slot(:inner_block, required: true, doc: "Item label")
@@ -525,7 +535,7 @@ defmodule Pulsar.Components.DropdownMenu do
   """
   @spec dropdown_menu_checkbox_item(map()) :: Rendered.t()
   def dropdown_menu_checkbox_item(assigns) do
-    assigns = assign(assigns, :row_classes, merge([@item_base, assigns.class]))
+    assigns = assign(assigns, :row_classes, merge([@item_base, item_color(assigns.color), assigns.class]))
 
     ~H"""
     <button
@@ -575,6 +585,13 @@ defmodule Pulsar.Components.DropdownMenu do
 
   attr(:checked, :boolean, default: false, doc: "Whether this option is selected")
   attr(:disabled, :boolean, default: false, doc: "Marks the item as disabled")
+
+  attr(:color, :string,
+    default: "neutral",
+    values: ~w(neutral primary secondary success danger warning info),
+    doc: ~s{Emphasis color for the item (e.g. "danger" for a destructive action)}
+  )
+
   attr(:class, :string, default: "", doc: "Additional CSS classes")
   attr(:rest, :global, doc: "Additional HTML attributes (e.g. phx-click)")
   slot(:inner_block, required: true, doc: "Item label")
@@ -586,7 +603,7 @@ defmodule Pulsar.Components.DropdownMenu do
   """
   @spec dropdown_menu_radio_item(map()) :: Rendered.t()
   def dropdown_menu_radio_item(assigns) do
-    assigns = assign(assigns, :row_classes, merge([@item_base, assigns.class]))
+    assigns = assign(assigns, :row_classes, merge([@item_base, item_color(assigns.color), assigns.class]))
 
     ~H"""
     <button
@@ -779,9 +796,30 @@ defmodule Pulsar.Components.DropdownMenu do
     end
   end
 
-  @spec item_destructive(boolean()) :: String.t()
-  defp item_destructive(true), do: @item_destructive
-  defp item_destructive(false), do: ""
+  # Emphasis color for an item row: recolors text, hover/focus tint, and focus ring
+  # to the semantic token. Neutral keeps the base styling (text-foreground +
+  # surface-2 tint); the color classes override the base via Twm last-in-wins.
+  @spec item_color(String.t()) :: String.t()
+  defp item_color("primary"),
+    do: "text-primary hover:bg-primary/10 focus:bg-primary/10 focus-visible:bg-primary/10 focus-visible:ring-primary"
+
+  defp item_color("secondary"),
+    do:
+      "text-secondary hover:bg-secondary/10 focus:bg-secondary/10 focus-visible:bg-secondary/10 focus-visible:ring-secondary"
+
+  defp item_color("success"),
+    do: "text-success hover:bg-success/10 focus:bg-success/10 focus-visible:bg-success/10 focus-visible:ring-success"
+
+  defp item_color("danger"),
+    do: "text-danger hover:bg-danger/10 focus:bg-danger/10 focus-visible:bg-danger/10 focus-visible:ring-danger"
+
+  defp item_color("warning"),
+    do: "text-warning hover:bg-warning/10 focus:bg-warning/10 focus-visible:bg-warning/10 focus-visible:ring-warning"
+
+  defp item_color("info"),
+    do: "text-info hover:bg-info/10 focus:bg-info/10 focus-visible:bg-info/10 focus-visible:ring-info"
+
+  defp item_color(_neutral), do: ""
 
   @spec label_classes() :: String.t()
   defp label_classes, do: @label_classes
