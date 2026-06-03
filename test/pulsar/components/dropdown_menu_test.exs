@@ -361,6 +361,38 @@ defmodule Pulsar.Components.DropdownMenuTest do
 
       assert html =~ ~s(aria-label="Account menu")
     end
+
+    test "a caller-supplied aria-label wins over label without duplicating the attribute" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu id="dm" label="Folded" aria-label="Caller wins">
+          <:trigger><button>Open</button></:trigger>
+          <DropdownMenu.dropdown_menu_item>One</DropdownMenu.dropdown_menu_item>
+        </DropdownMenu.dropdown_menu>
+        """)
+
+      assert html =~ ~s(aria-label="Caller wins")
+      refute html =~ ~s(aria-label="Folded")
+      # the folded label must never emit a second aria-label attribute
+      assert html |> String.split("aria-label=") |> length() == 2
+    end
+
+    test "label yields to a caller-supplied aria-labelledby" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu id="dm" label="Folded" aria-labelledby="heading">
+          <:trigger><button>Open</button></:trigger>
+          <DropdownMenu.dropdown_menu_item>One</DropdownMenu.dropdown_menu_item>
+        </DropdownMenu.dropdown_menu>
+        """)
+
+      assert html =~ ~s(aria-labelledby="heading")
+      refute html =~ "aria-label="
+    end
   end
 
   describe "dropdown_menu/1 customization (Twm merge)" do

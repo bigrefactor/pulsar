@@ -255,8 +255,13 @@ defmodule Pulsar.Components.DropdownMenu do
           if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return
           e.preventDefault()
           const edge = e.key === "ArrowUp" ? "last" : "first"
-          this.openEdge = edge
-          if (!this.panel.matches(":popover-open")) this.panel.showPopover()
+          // Only stage openEdge when this keypress actually opens the menu. A value
+          // left set while already open would survive a close and misdirect the
+          // edge focused by the next click/Enter open (handleToggle).
+          if (!this.panel.matches(":popover-open")) {
+            this.openEdge = edge
+            this.panel.showPopover()
+          }
           // showPopover reveals the panel synchronously, so focus the edge now
           // rather than waiting for the async toggle event.
           this.focusEdge(this.panel, edge)
@@ -759,11 +764,20 @@ defmodule Pulsar.Components.DropdownMenu do
   @spec menu_panel_classes(String.t()) :: String.t()
   defp menu_panel_classes(class), do: merge(["p-1", class])
 
-  # Folds the optional `label` into the global attrs as `aria-label` so it never
-  # collides with a caller-supplied aria-label/aria-labelledby passed through rest.
+  # Folds the optional `label` into the global attrs as `aria-label`, but only as
+  # a fallback: a caller-supplied aria-label/aria-labelledby in rest wins. Keys
+  # match how :global stores attrs (atoms), so the folded name can never collide
+  # with a caller-supplied one into a duplicate attribute.
   @spec put_aria_label(map(), String.t() | nil) :: map()
   defp put_aria_label(rest, nil), do: rest
-  defp put_aria_label(rest, label), do: Map.put(rest, "aria-label", label)
+
+  defp put_aria_label(rest, label) do
+    if Map.has_key?(rest, :"aria-label") or Map.has_key?(rest, :"aria-labelledby") do
+      rest
+    else
+      Map.put(rest, :"aria-label", label)
+    end
+  end
 
   @spec item_destructive(boolean()) :: String.t()
   defp item_destructive(true), do: @item_destructive
