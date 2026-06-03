@@ -123,7 +123,7 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     # `aria-expanded` and `data-state` on the `toggle` event.
     #
     # Verification: comment out the `aria-expanded` setAttribute calls in
-    # `onToggle` of the `.PulsarPopover` hook (priv/templates/popover.ex.eex
+    # `onStateChange` of the `.PulsarPopover` hook (priv/templates/popover.ex.eex
     # and the synced lib file), run `MIX_ENV=test mix assets.build`, re-run —
     # the open/close aria-expanded assertions fail.
 

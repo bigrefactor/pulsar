@@ -37,14 +37,23 @@ opposite side and shifts to stay on screen.
 
 ## Trigger
 
-The `:trigger` slot must contain a single `<button>`. The panel opens, closes,
-and dismisses with the browser's built-in popover behavior; focus returns to
-the trigger when closed with Escape.
+The `:trigger` slot must contain a single `<button>`. How the panel opens
+depends on `trigger_mode`:
+
+- `"click"` (the default) — the trigger toggles the panel; clicking outside or
+  pressing Escape closes it, and focus returns to the trigger on Escape.
+- `"hover"` — the panel opens on pointer hover (after a short delay) and on
+  keyboard focus (immediately), stays open while the pointer is over the trigger
+  or the panel, and dismisses on leave, blur, or Escape. Use it for
+  tooltip-style, non-interactive overlays.
 
 ## Accessibility
 
-- The trigger exposes `aria-controls` and `aria-expanded` (kept in sync as the
-  panel opens and closes).
+- In `trigger_mode="click"`, the trigger exposes `aria-controls` and
+  `aria-expanded` (kept in sync as the panel opens and closes).
+- In `trigger_mode="hover"`, the trigger instead exposes `aria-describedby`
+  pointing at the panel, so its content is announced as the trigger's
+  description.
 - The panel imposes no role; pass `role="dialog"` and a name
   (`aria-label`/`aria-labelledby`) via attributes when appropriate.
 """
@@ -333,8 +342,8 @@ def popover(assigns) do
       },
 
       // Reposition listeners are idempotent (stable handler ref), so attaching
-      // when already attached is a no-op — safe to call from both onToggle and
-      // updated().
+      // when already attached is a no-op — safe to call from both onStateChange
+      // and updated().
       addRepositionListeners() {
         window.addEventListener("scroll", this._reposition, { passive: true, capture: true })
         window.addEventListener("resize", this._reposition)

@@ -29,7 +29,7 @@ itself is caller-supplied text.
 **Evidence:** The panel carries `role="tooltip"` and the hook stamps
 `aria-describedby` on the trigger pointing at the panel `id`, so the
 trigger→hint relationship is programmatic — `lib/pulsar/components/tooltip.ex:186`,
-`lib/pulsar/components/popover.ex:276` (hover-mode `mounted`), `:446` (`updated`
+`lib/pulsar/components/popover.ex:285` (hover-mode `setupHover`), `:455` (`updated`
 re-sync). The keyboard fixture asserts the `aria-describedby` linkage —
 `test/integration/a11y/keyboard_test.exs`.
 
@@ -52,7 +52,7 @@ text scales with the user's font size and wraps rather than clipping —
 **Evidence:** The tooltip sizes to its content with no min-width floor (`min-w-0`)
 and a `max-w-xs` cap, and the hook positions it with an 8px viewport margin and
 both-axes shift-clamping, so it never forces horizontal scrolling at 320px —
-`lib/pulsar/components/tooltip.ex:90`, `lib/pulsar/components/popover.ex:391–425`
+`lib/pulsar/components/tooltip.ex:90`, `lib/pulsar/components/popover.ex:420–425`
 (`position`).
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
@@ -68,13 +68,13 @@ itself is a filled shape against the page, not a bordered control.
 
 - **Dismissable:** Escape hides it (and keeps it dismissed until the trigger is
   left and re-entered) without moving the pointer —
-  `lib/pulsar/components/popover.ex:299–303`.
+  `lib/pulsar/components/popover.ex:308–312`.
 - **Hoverable:** leaving the trigger starts a short close timer rather than hiding
   immediately, and `mouseenter` on the panel cancels it, so the pointer can move
-  onto the hint — `lib/pulsar/components/popover.ex:292–297` (`_closeSoon`),
-  `:318` (panel `mouseenter` → `_cancelClose`).
+  onto the hint — `lib/pulsar/components/popover.ex:301–304` (`_closeSoon`),
+  `:327` (panel `mouseenter` → `_cancelClose`).
 - **Persistent:** it stays open while hovered/focused with no timeout; it closes
-  only on leave, blur, or Escape — `lib/pulsar/components/popover.ex:271–330`.
+  only on leave, blur, or Escape — `lib/pulsar/components/popover.ex:278–330`.
 
 The keyboard fixture asserts focus-to-open and Escape-to-dismiss —
 `test/integration/a11y/keyboard_test.exs`.
@@ -82,33 +82,33 @@ The keyboard fixture asserts focus-to-open and Escape-to-dismiss —
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
 **Evidence:** The hint is reachable without a pointer: focusing the trigger opens
-it immediately, and Escape dismisses it — `lib/pulsar/components/popover.ex:285–290`
-(`_openNow` on `focusin`), `:299–303` (Escape). The keyboard fixture exercises
+it immediately, and Escape dismisses it — `lib/pulsar/components/popover.ex:294–298`
+(`_openNow` on `focusin`), `:308–312` (Escape). The keyboard fixture exercises
 both — `test/integration/a11y/keyboard_test.exs`.
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
 **Evidence:** The hint is non-interactive text and is not focusable; nothing holds
 focus, and Tab moves on from the trigger normally —
-`lib/pulsar/components/tooltip.ex:190–191`.
+`lib/pulsar/components/tooltip.ex:191`.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
 **Evidence:** A closed panel is `display:none` (native `[popover]` rule) and its
 text content is non-focusable, so it never enters the tab order; no positive
-`tabindex` is used — `lib/pulsar/components/popover.ex:223–237`.
+`tabindex` is used — `lib/pulsar/components/popover.ex:234–248`.
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
 **Evidence:** The panel suppresses only its own ring (`focus-visible:outline-none`,
 inherited from the popover base); the caller's trigger keeps its focus ring —
-`lib/pulsar/components/popover.ex:83` (`@panel_base_classes`).
+`lib/pulsar/components/popover.ex:92` (`@panel_base_classes`).
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** The panel renders in the browser top layer (native popover), so it is
 never clipped by `overflow:hidden` ancestors, and the hook flips it to the opposite
-side when the requested side lacks room — `lib/pulsar/components/popover.ex:391–425`
+side when the requested side lacks room — `lib/pulsar/components/popover.ex:395–405`
 (`position`). The trigger itself is never covered (the panel is offset from it).
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
@@ -126,13 +126,13 @@ trigger. No functionality is triggered on pointer-down.
 
 **Evidence:** Focusing the trigger reveals the hint, which is supplementary content
 — not a change of context (no focus move, navigation, or content reorder) —
-`lib/pulsar/components/popover.ex:285–290`.
+`lib/pulsar/components/popover.ex:294–298`.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
 **Evidence:** The panel exposes `role="tooltip"`; the trigger exposes
 `aria-describedby` pointing at it — `lib/pulsar/components/tooltip.ex:186`,
-`lib/pulsar/components/popover.ex:276`. Unit tests assert the role and the
+`lib/pulsar/components/popover.ex:285`. Unit tests assert the role and the
 hover/manual wiring — `test/pulsar/components/tooltip_test.exs`.
 
 ## Not applicable
