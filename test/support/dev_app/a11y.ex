@@ -65,6 +65,22 @@ defmodule Pulsar.DevApp.A11y do
   end
 
   @doc """
+  Asserts that the element with the given `id` is an open *modal* dialog
+  (`:modal` matches). Distinguishes a `showModal()` dialog — which traps focus
+  and is dismissable by Escape — from a non-modal `<dialog open>`.
+  """
+  def assert_modal(conn, id) when is_binary(id) do
+    expr =
+      "Boolean(document.getElementById(#{Jason.encode!(id)}) && document.getElementById(#{Jason.encode!(id)}).matches(':modal'))"
+
+    PhoenixTest.Playwright.evaluate(conn, expr, fn modal? ->
+      if !modal? do
+        raise ExUnit.AssertionError, message: "expected ##{id} to be an open modal dialog"
+      end
+    end)
+  end
+
+  @doc """
   Asserts that the currently focused element is NOT inside any ancestor
   matching `selector`. Used to verify focus has moved out of a container
   (e.g. tabbing out of a radio group).

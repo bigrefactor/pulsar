@@ -1,7 +1,7 @@
 # Pulsar accessibility audit — WCAG 2.2 Level AA
 
 This directory holds Pulsar's first formal accessibility audit. It covers
-every applicable WCAG 2.2 Level A and AA success criterion across all 23
+every applicable WCAG 2.2 Level A and AA success criterion across all 24
 components in `lib/pulsar/components/`. Original audit method was
 **code-only**; the browser-verification follow-up has
 since populated measured contrast, focus-ring, target-size, text-spacing,
@@ -127,6 +127,7 @@ not-applicable). Detailed per-criterion grids follow.
 | [button](button.md) | 10/0/10 | 12/0/8 | 1/0/12 | 2/0/0 |
 | [link](link.md) | 9/1/10 | 12/0/8 | 1/0/12 | 2/0/0 |
 | **Overlays** | | | | |
+| [modal](modal.md) | 5/0/15 | 7/0/13 | 1/0/12 | 1/0/1 |
 | [popover](popover.md) | 5/0/15 | 7/0/13 | 1/0/12 | 1/0/1 |
 | **Feedback / notification** | | | | |
 | [flash](flash.md) | 11/0/9 | 11/0/9 | 1/0/12 | 2/0/0 |
@@ -158,6 +159,7 @@ not-applicable). Detailed per-criterion grids follow.
 | label | — | — | — | — | — | — | ✓ | — | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | — | ✓ | — |
 | button | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | link | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
+| modal | — | — | — | — | — | — | ✓ | — | — | — | — | — | — | ✓ | — | — | ✓ | ✓ | — | ✓ |
 | popover | — | — | — | — | — | — | ✓ | — | — | — | — | — | — | ✓ | — | — | ✓ | ✓ | — | ✓ |
 | flash | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | ✓ |
 | flash_group | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | — | — | — | ✓ | ✓ | ✓ | ✓ |
@@ -186,6 +188,7 @@ not-applicable). Detailed per-criterion grids follow.
 | label | — | — | — | — | — | — | — | — | — | — | — | ✓ | — | — | — | — | ✓ | — | — | — |
 | button | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | link | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
+| modal | ✓ | ✓ | — | — | — | — | — | — | ✓ | — | — | — | ✓ | ✓ | — | ✓ | — | — | — | ✓ |
 | popover | ✓ | ✓ | — | — | — | — | — | — | ✓ | — | — | — | ✓ | ✓ | — | ✓ | — | — | — | ✓ |
 | flash | ✓ | ✓ | — | ✓ | ✓ | ✓ | — | — | ✓ | — | — | — | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | flash_group | ✓ | ✓ | — | ✓ | ✓ | ✓ | — | — | ✓ | — | — | — | ✓ | ⚠ | — | ✓ | — | — | — | ✓ |
@@ -214,6 +217,7 @@ not-applicable). Detailed per-criterion grids follow.
 | label | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | — |
 | button | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
 | link | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
+| modal | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | — |
 | popover | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | — |
 | flash | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
 | flash_group | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
@@ -362,8 +366,10 @@ handle Space/Enter via JS hook.
 
 **2.1.2 No Keyboard Trap (A)** — Keyboard focus can be moved away from any
 component.
-*Library note:* No component should trap Tab/Shift+Tab. No modal/dialog
-components in the current inventory.
+*Library note:* Most components don't trap Tab/Shift+Tab. The modal/dialog is
+the permitted exception: a modal `<dialog>` contains focus while open but is
+always closable by keyboard (Escape, or activating a footer action), which
+releases focus and returns it to the opener.
 
 **2.1.4 Character Key Shortcuts (A)** — Single-key shortcuts can be
 turned off or remapped.
