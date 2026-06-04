@@ -32,6 +32,7 @@ defmodule Pulsar.DevApp.Router do
 
     live "/", IndexLive, :index
     live "/components/alert_dialog", AlertDialogLive, :index
+    live "/components/avatar", AvatarLive, :index
     live "/components/badge", BadgeLive, :index
     live "/components/button", ButtonLive, :index
     live "/components/card", CardLive, :index

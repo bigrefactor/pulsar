@@ -21,6 +21,7 @@ Pulsar is a **single-dependency component library** for Phoenix LiveView. This s
 lib/pulsar/
 ├── pulsar.ex              # Main module 
 └── components/            # Self-contained components (no external dependencies)
+    ├── avatar.ex          # Avatar component (image/initials/icon, group)
     ├── badge.ex          # Badge component
     ├── button.ex         # Button component with colocated JS
     ├── checkbox.ex       # Checkbox component with card variants

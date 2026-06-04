@@ -133,6 +133,7 @@
   --radius-field: var(--radius-md);      /* inputs, buttons, badges, chips */
   --radius-box: var(--radius-lg);        /* cards, modals, popovers, panels */
   --radius-pill: var(--radius-full);     /* pill-shaped tags */
+  --radius-avatar: var(--radius-full);   /* avatars — set to a smaller value for squared-off avatars */
 
   /* Typography */
   --font-sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
