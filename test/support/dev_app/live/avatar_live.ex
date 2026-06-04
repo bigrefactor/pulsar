@@ -6,7 +6,7 @@ defmodule Pulsar.DevApp.AvatarLive do
 
   @variants ~w(solid outline)
   @sizes ~w(xs sm md lg xl 2xl)
-  @sample_image "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='80' height='80' fill='%234f46e5'/><text x='50%' y='54%' font-size='32' fill='white' text-anchor='middle' dominant-baseline='middle'>JD</text></svg>"
+  @sample_image "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='80' height='80' fill='%234f46e5'/><text x='50%' y='54%' font-family='system-ui, -apple-system, sans-serif' font-size='32' fill='white' text-anchor='middle' dominant-baseline='middle'>JD</text></svg>"
 
   def render(assigns) do
     assigns =
