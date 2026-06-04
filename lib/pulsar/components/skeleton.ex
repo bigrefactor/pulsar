@@ -82,7 +82,7 @@ defmodule Pulsar.Components.Skeleton do
 
   # Streaming-text mode pulses the text color; it is real text, so it uses the
   # AA-legible foreground token rather than a muted fill.
-  @shimmer_text_classes "animate-pulse-subtle text-foreground"
+  @animate_text_classes "animate-pulse-subtle text-foreground"
 
   # ============================================================================
   # SKELETON COMPONENT
@@ -110,7 +110,11 @@ defmodule Pulsar.Components.Skeleton do
     default: nil,
     doc: "When set, wrap the shapes in a polite role=\"status\" loading region with this name"
 
-  attr :class, :string, default: "", doc: "Additional CSS classes (the primary lever for width/height)"
+  attr :class, :string,
+    default: "",
+    doc:
+      "Additional CSS classes — the primary lever for width. For multi-line text it applies to the container, so a height override sizes the container, not each bar"
+
   attr :rest, :global, doc: "Additional HTML attributes"
 
   slot :inner_block, doc: "Text content shown when animate_text is set"
@@ -125,11 +129,14 @@ defmodule Pulsar.Components.Skeleton do
     render_skeleton(assigns)
   end
 
-  # Labelled: a polite status region announces loading; the inner shapes are
-  # decorative. The region carries @rest; @class sizes the inner shape.
+  # Labelled: a polite status region announces loading. The label is a real
+  # (sr-only) text node — live regions announce their text content, so this is
+  # spoken reliably across screen readers where a bare aria-label may not be. The
+  # inner shapes are decorative. The region carries @rest; @class sizes the shape.
   defp render_skeleton(%{labelled: true} = assigns) do
     ~H"""
-    <div role="status" aria-busy="true" aria-label={@label} {@rest}>
+    <div role="status" aria-busy="true" aria-live="polite" aria-atomic="true" {@rest}>
+      <span class="sr-only">{@label}</span>
       <.skeleton_body
         kind={@kind}
         size={@size}
@@ -183,7 +190,7 @@ defmodule Pulsar.Components.Skeleton do
       |> assign(:text_hidden, if(assigns.labelled, do: "true"))
       |> assign(:shape_class, merge([shape_classes(assigns.kind, assigns.size), assigns.class]))
       |> assign(:container_class, merge(["flex flex-col gap-2", assigns.class]))
-      |> assign(:text_class, merge([@shimmer_text_classes, assigns.class]))
+      |> assign(:text_class, merge([@animate_text_classes, assigns.class]))
 
     ~H"""
     <span :if={@animate_text} class={@text_class} aria-hidden={@text_hidden} {@rest}>{render_slot(@inner_block)}</span>

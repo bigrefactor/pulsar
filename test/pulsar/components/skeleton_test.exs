@@ -43,6 +43,15 @@ defmodule Pulsar.Components.SkeletonTest do
       assert rendered_to_string(~H[<Skeleton.skeleton kind="circle" size="lg" />]) =~ "w-12 h-12"
       assert rendered_to_string(~H[<Skeleton.skeleton kind="circle" size="2xl" />]) =~ "w-16 h-16"
     end
+
+    test "size is ignored for non-circle kinds" do
+      for kind <- ~w(text rect) do
+        assigns = %{kind: kind}
+        html = rendered_to_string(~H[<Skeleton.skeleton kind={@kind} size="2xl" />])
+
+        refute html =~ "w-16 h-16"
+      end
+    end
   end
 
   describe "skeleton/1 text lines" do
@@ -109,9 +118,23 @@ defmodule Pulsar.Components.SkeletonTest do
 
       assert html =~ ~s(role="status")
       assert html =~ ~s(aria-busy="true")
-      assert html =~ ~s(aria-label="Loading profile")
-      # the inner shape stays decorative; the wrapper carries the announcement
+      assert html =~ ~s(aria-live="polite")
+      # the label is a real (sr-only) text node so live regions announce it reliably
+      assert html =~ ~s(<span class="sr-only">Loading profile</span>)
+      # the inner shape stays decorative
       assert html =~ ~s(aria-hidden="true")
+    end
+
+    test "label + animate_text hides the inline text so it is not announced twice" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H[<Skeleton.skeleton label="Thinking" animate_text>Thinking…</Skeleton.skeleton>])
+
+      # the status region announces the label
+      assert html =~ ~s(<span class="sr-only">Thinking</span>)
+      # the inline streaming text is hidden so it is not double-announced
+      assert html =~ ~r/aria-hidden="true"[^>]*>\s*Thinking…/
     end
   end
 
