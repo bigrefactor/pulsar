@@ -39,6 +39,7 @@ defmodule Pulsar.Generator.Storybook do
     :radio_group,
     :select,
     :sidebar,
+    :skeleton,
     :switch,
     :table,
     :textarea,

@@ -36,6 +36,7 @@ defmodule Pulsar.DevApp.StorybookTest do
     /components/radio_group
     /components/select
     /components/sidebar
+    /components/skeleton
     /components/switch
     /components/table
     /components/textarea
@@ -100,8 +101,8 @@ defmodule Pulsar.DevApp.StorybookTest do
   end
 
   describe "leaves/0" do
-    test "returns exactly 37 leaves" do
-      assert length(Storybook.leaves()) == 37
+    test "returns exactly 38 leaves" do
+      assert length(Storybook.leaves()) == 38
     end
 
     test "all leaves are StoryEntry structs" do
