@@ -6,7 +6,8 @@ defmodule Pulsar.DevApp.Storybook.Components.Avatar do
   def function, do: &Avatar.avatar/1
   def render_source, do: :function
 
-  @sample_image "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='80' height='80' fill='%234f46e5'/><text x='50%' y='54%' font-family='system-ui, -apple-system, sans-serif' font-size='32' fill='white' text-anchor='middle' dominant-baseline='middle'>JD</text></svg>"
+  @photo "https://i.pravatar.cc/150?img=12"
+  @photo_alt "https://i.pravatar.cc/150?img=32"
 
   def attributes do
     [
@@ -46,9 +47,24 @@ defmodule Pulsar.DevApp.Storybook.Components.Avatar do
   def variations do
     [
       %Variation{
-        id: :image,
-        description: "Image avatar",
-        attributes: %{src: @sample_image, name: "Jane Doe"}
+        id: :photo,
+        description: "Photo avatar",
+        attributes: %{src: @photo, name: "Jane Doe"}
+      },
+      %Variation{
+        id: :photo_large,
+        description: "Photo avatar (large)",
+        attributes: %{src: @photo_alt, name: "John Roe", size: "2xl"}
+      },
+      %Variation{
+        id: :photo_outline,
+        description: "Photo avatar with outline ring",
+        attributes: %{src: @photo, name: "Jane Doe", variant: "outline"}
+      },
+      %Variation{
+        id: :photo_linked,
+        description: "Linked photo avatar",
+        attributes: %{src: @photo, name: "Jane Doe", navigate: "/storybook/components/avatar"}
       },
       %Variation{
         id: :initials,
