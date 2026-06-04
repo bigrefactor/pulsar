@@ -11,6 +11,9 @@ defmodule Pulsar.DevApp.ModalLive do
   def render(assigns) do
     assigns = assign(assigns, variants: @variants, colors: @colors, sizes: @sizes)
 
+    # `style="animation: none"` renders these static cells settled: without it the
+    # axe gate can scan mid-`animate-scale-in` and composite the panel text/buttons
+    # against the page, yielding flaky false sub-4.5:1 contrast readings.
     ~H"""
     <.fixture_page name="modal" title="Modal">
       <.fixture_section
@@ -25,6 +28,7 @@ defmodule Pulsar.DevApp.ModalLive do
           color={color}
           title={"#{variant} #{color}"}
           open
+          style="animation: none"
           class="static m-0 w-64"
           data-fixture-cell={"#{variant}-#{color}"}
         >
@@ -45,6 +49,7 @@ defmodule Pulsar.DevApp.ModalLive do
           size={size}
           title={"size #{size}"}
           open
+          style="animation: none"
           class="static m-0"
           data-fixture-cell={"size-#{size}"}
         >

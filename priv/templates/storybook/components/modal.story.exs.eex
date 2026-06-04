@@ -42,6 +42,18 @@ defmodule <%= @web_module %>.Storybook.Components.Modal do
         doc: "When true, Escape and backdrop clicks close the dialog and a close button is shown"
       },
       %Attr{
+        id: :backdrop_close,
+        type: :boolean,
+        default: true,
+        doc: "When true (and dismissable), a backdrop click closes the dialog"
+      },
+      %Attr{
+        id: :show_close_button,
+        type: :boolean,
+        default: true,
+        doc: "When true (and dismissable), the corner close (X) button is shown"
+      },
+      %Attr{
         id: :class,
         type: :string,
         default: "",

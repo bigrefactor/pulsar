@@ -83,6 +83,37 @@ defmodule Pulsar.Components.ModalTest do
 
       assert html =~ ~s(aria-label="Fermer")
     end
+
+    test "backdrop_close is true by default and toggles the data attribute" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Modal.modal id="m" title="Edit">Body</Modal.modal>
+        """)
+
+      assert html =~ ~s(data-backdrop-close="true")
+
+      html =
+        rendered_to_string(~H"""
+        <Modal.modal id="m" title="Edit" backdrop_close={false}>Body</Modal.modal>
+        """)
+
+      assert html =~ ~s(data-backdrop-close="false")
+    end
+
+    test "show_close_button={false} hides the close button but keeps the title heading" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Modal.modal id="m" title="Confirm" show_close_button={false}>Body</Modal.modal>
+        """)
+
+      refute html =~ ~s(aria-label="Close")
+      assert html =~ ~s(id="m-title")
+      assert html =~ "Confirm"
+    end
   end
 
   describe "modal/1 title and description wiring" do

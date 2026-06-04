@@ -71,7 +71,7 @@ defmodule Mix.Tasks.Pulsar.Install.Docs do
 
     Form components: badge, button, checkbox, field, input, label, radio_group, select, switch, textarea
 
-    UI components: card, divider, dropdown_menu, flash, flash_group, header, icon, link, list, menu, modal, navbar, popover, sidebar, table, tooltip
+    UI components: alert_dialog, card, divider, dropdown_menu, flash, flash_group, header, icon, link, list, menu, modal, navbar, popover, sidebar, table, tooltip
 
     ## Component Dependencies
 
@@ -99,6 +99,7 @@ if Code.ensure_loaded?(Igniter) do
     alias Igniter.Project.Deps
 
     @components %{
+      alert_dialog: [:modal, :button],
       badge: [],
       button: [:link],
       card: [],
@@ -150,6 +151,7 @@ if Code.ensure_loaded?(Igniter) do
         # This ensures your option schema includes options from nested tasks
         composes: [
           "pulsar.gen.theme",
+          "pulsar.gen.alert_dialog",
           "pulsar.gen.badge",
           "pulsar.gen.button",
           "pulsar.gen.card",
