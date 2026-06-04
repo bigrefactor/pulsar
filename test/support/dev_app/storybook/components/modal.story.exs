@@ -39,7 +39,8 @@ defmodule Pulsar.DevApp.Storybook.Components.Modal do
         id: :dismissable,
         type: :boolean,
         default: true,
-        doc: "When true, Escape and backdrop clicks close the dialog and a close button is shown"
+        doc:
+          "When true, Escape closes the dialog; backdrop clicks additionally require backdrop_close and the close button additionally requires show_close_button"
       },
       %Attr{
         id: :backdrop_close,

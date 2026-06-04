@@ -91,7 +91,7 @@ defmodule Pulsar.Components.AlertDialog do
 
   attr(:id, :string, doc: "Dialog ID (auto-generated if omitted). Targeted by the open/close helpers.")
 
-  attr(:title, :string, default: nil, doc: "The question; wired as the dialog's accessible name")
+  attr(:title, :string, required: true, doc: "The question; wired as the dialog's accessible name")
 
   attr(:on_confirm, JS,
     default: %JS{},
