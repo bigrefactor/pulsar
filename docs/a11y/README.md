@@ -147,6 +147,7 @@ not-applicable). Detailed per-criterion grids follow.
 | **Content** | | | | |
 | [badge](badge.md) | 10/0/10 | 3/1/16 | 0/0/13 | 1/0/1 |
 | [icon](icon.md) | 9/0/11 | 1/0/19 | 0/0/13 | 1/0/1 |
+| [skeleton](skeleton.md) | 10/0/10 | 2/0/18 | 0/0/13 | 2/0/0 |
 
 ### Perceivable (1.x)
 
@@ -179,6 +180,7 @@ not-applicable). Detailed per-criterion grids follow.
 | table | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | badge | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | icon | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | — | ✓ | — | ✓ | ✓ | ✓ | — |
+| skeleton | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 
 ### Operable (2.x)
 
@@ -211,6 +213,7 @@ not-applicable). Detailed per-criterion grids follow.
 | table | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | badge | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ | — | ✓ | — | — | — | ✓ |
 | icon | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | — | — | — | — | — | — |
+| skeleton | — | — | — | — | ✓ | ✓ | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
 
 ### Understandable (3.x) and Robust (4.x)
 
@@ -243,6 +246,7 @@ not-applicable). Detailed per-criterion grids follow.
 | table | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
 | badge | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | — |
 | icon | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | — |
+| skeleton | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
 
 ---
 

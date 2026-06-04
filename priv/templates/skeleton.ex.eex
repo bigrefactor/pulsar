@@ -1,0 +1,209 @@
+@moduledoc """
+Skeleton loading-placeholder component.
+
+Renders muted, gently pulsing shapes that stand in for content while it loads —
+text lines, a circle (for an avatar), or a rectangular block. Compose several to
+mirror the layout you are waiting on.
+
+## Features
+
+- **Kinds**: `text` (a line), `circle` (avatar placeholder), `rect` (block)
+- **Multi-line text**: `lines` stacks several text bars, shortening the last one
+- **Circle sizes**: `size` (xs–2xl) matches the Avatar size scale
+- **Streaming text**: `animate_text` pulses real inline text (e.g. "Thinking…")
+- **Loading status**: `label` wraps the shapes in a polite `role="status"` region
+
+## Examples
+
+    # A line of text
+    <.skeleton />
+
+    # Three stacked text lines (last one shorter)
+    <.skeleton kind="text" lines={3} />
+
+    # A circle the size of a large avatar
+    <.skeleton kind="circle" size="lg" />
+
+    # A block, sized to the content it replaces
+    <.skeleton kind="rect" class="h-40 w-full" />
+
+    # A composed card placeholder announced to screen readers
+    <div class="flex items-center gap-4">
+      <.skeleton kind="circle" size="lg" />
+      <.skeleton kind="text" lines={2} class="w-40" label="Loading profile" />
+    </div>
+
+    # Streaming-text placeholder
+    <.skeleton animate_text>Thinking…</.skeleton>
+
+## Accessibility
+
+The shapes are decorative and carry `aria-hidden="true"`, so screen readers skip
+them. Pass `label` to wrap them in a `role="status" aria-busy="true"` region that
+announces the loading state; clear the skeleton (render the real content) to
+signal completion. When `animate_text` is used without a `label`, the inline text
+is exposed as-is so it can be read aloud.
+"""
+
+use Phoenix.Component
+
+import Twm, only: [merge: 1]
+
+alias Phoenix.LiveView.Rendered
+
+# ============================================================================
+# CONFIGURATION & CONSTANTS
+# ============================================================================
+
+# Shared base: the subtle opacity pulse plus the muted placeholder fill. The
+# global prefers-reduced-motion rule stops the animation; no per-component guard.
+@base_classes "animate-pulse-subtle bg-muted"
+
+# Per-kind default dimensions and radius token.
+@kind_config %{
+  "text" => "h-4 w-full rounded-field",
+  "circle" => "rounded-full",
+  "rect" => "h-32 w-full rounded-box"
+}
+
+# Circle box dimensions, matching the Avatar size scale so a circle skeleton
+# lines up with the avatar it stands in for.
+@circle_size_config %{
+  "xs" => "w-6 h-6",
+  "sm" => "w-8 h-8",
+  "md" => "w-10 h-10",
+  "lg" => "w-12 h-12",
+  "xl" => "w-14 h-14",
+  "2xl" => "w-16 h-16"
+}
+
+# Streaming-text mode pulses the text color; it is real text, so it uses the
+# AA-legible foreground token rather than a muted fill.
+@shimmer_text_classes "animate-pulse-subtle text-foreground"
+
+# ============================================================================
+# SKELETON COMPONENT
+# ============================================================================
+
+attr :kind, :string,
+  default: "text",
+  values: ~w(text circle rect),
+  doc: "Shape: text (a line), circle (avatar placeholder), or rect (block)"
+
+attr :lines, :integer,
+  default: 1,
+  doc: "For kind=\"text\": number of stacked line bars; the last one is shortened"
+
+attr :size, :string,
+  default: "md",
+  values: ~w(xs sm md lg xl 2xl),
+  doc: "For kind=\"circle\": box size, matching the Avatar scale. Ignored otherwise"
+
+attr :animate_text, :boolean,
+  default: false,
+  doc: "Render the inner text content with a pulsing color (streaming-text placeholder)"
+
+attr :label, :string,
+  default: nil,
+  doc: "When set, wrap the shapes in a polite role=\"status\" loading region with this name"
+
+attr :class, :string, default: "", doc: "Additional CSS classes (the primary lever for width/height)"
+attr :rest, :global, doc: "Additional HTML attributes"
+
+slot :inner_block, doc: "Text content shown when animate_text is set"
+
+@doc """
+Renders a loading-placeholder shape (or stacked text lines).
+"""
+@spec skeleton(map()) :: Rendered.t()
+def skeleton(assigns) do
+  assigns = assign(assigns, :labelled, present?(assigns.label))
+
+  render_skeleton(assigns)
+end
+
+# Labelled: a polite status region announces loading; the inner shapes are
+# decorative. The region carries @rest; @class sizes the inner shape.
+defp render_skeleton(%{labelled: true} = assigns) do
+  ~H"""
+  <div role="status" aria-busy="true" aria-label={@label} {@rest}>
+    <.skeleton_body
+      kind={@kind}
+      size={@size}
+      lines={@lines}
+      animate_text={@animate_text}
+      class={@class}
+      labelled={true}
+    >{render_slot(@inner_block)}</.skeleton_body>
+  </div>
+  """
+end
+
+# Unlabelled: the body element is the outermost node and carries @rest.
+defp render_skeleton(assigns) do
+  ~H"""
+  <.skeleton_body
+    kind={@kind}
+    size={@size}
+    lines={@lines}
+    animate_text={@animate_text}
+    class={@class}
+    labelled={false}
+    {@rest}
+  >{render_slot(@inner_block)}</.skeleton_body>
+  """
+end
+
+# ============================================================================
+# BODY (shape rendering)
+# ============================================================================
+
+attr :kind, :string, required: true
+attr :size, :string, required: true
+attr :lines, :integer, required: true
+attr :animate_text, :boolean, required: true
+attr :class, :string, required: true
+attr :labelled, :boolean, default: false
+attr :rest, :global
+slot :inner_block
+
+# The shapes themselves. Decorative shapes are aria-hidden; streaming text is
+# only hidden when a label already announces the region.
+defp skeleton_body(assigns) do
+  assigns =
+    assigns
+    |> assign(:multiline, assigns.kind == "text" and assigns.lines > 1 and not assigns.animate_text)
+    |> assign(:text_hidden, if(assigns.labelled, do: "true", else: nil))
+    |> assign(:shape_class, merge([shape_classes(assigns.kind, assigns.size), assigns.class]))
+    |> assign(:container_class, merge(["flex flex-col gap-2", assigns.class]))
+    |> assign(:text_class, merge([@shimmer_text_classes, assigns.class]))
+
+  ~H"""
+  <span :if={@animate_text} class={@text_class} aria-hidden={@text_hidden} {@rest}>{render_slot(@inner_block)}</span>
+  <div :if={not @animate_text and @multiline} class={@container_class} aria-hidden="true" {@rest}>
+    <div :for={i <- 1..@lines} class={line_classes(i, @lines)}></div>
+  </div>
+  <div :if={not @animate_text and not @multiline} class={@shape_class} aria-hidden="true" {@rest}></div>
+  """
+end
+
+# ============================================================================
+# HELPER FUNCTIONS
+# ============================================================================
+
+@spec shape_classes(String.t(), String.t()) :: String.t()
+defp shape_classes("circle", size), do: merge([@base_classes, @kind_config["circle"], circle_size(size)])
+defp shape_classes(kind, _size), do: merge([@base_classes, @kind_config[kind] || @kind_config["text"]])
+
+@spec circle_size(String.t()) :: String.t()
+defp circle_size(size), do: @circle_size_config[size] || @circle_size_config["md"]
+
+# One text bar; the final bar in a multi-line stack is shortened.
+@spec line_classes(integer(), integer()) :: String.t()
+defp line_classes(index, total) do
+  width = if index == total, do: "w-3/4", else: "w-full"
+  merge([@base_classes, "h-4 rounded-field", width])
+end
+
+@spec present?(String.t() | nil) :: boolean()
+defp present?(value), do: is_binary(value) and String.trim(value) != ""
