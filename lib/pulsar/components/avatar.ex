@@ -45,6 +45,10 @@ defmodule Pulsar.Components.Avatar do
   `aria-label`. Pass `alt=""` to mark an avatar purely decorative. Provide `name`
   (or `alt`) whenever the avatar conveys identity — an unnamed icon avatar is
   silent to screen readers.
+
+  A linked avatar (`href`, `navigate`, or `patch`) must be given a `name` or
+  `alt` so the link has an accessible name; rendered without one it logs a
+  warning.
   """
 
   use Phoenix.Component
@@ -115,6 +119,12 @@ defmodule Pulsar.Components.Avatar do
   attr :navigate, :any, default: nil, doc: "Phoenix route to navigate to — makes the avatar a link"
   attr :patch, :any, default: nil, doc: "Phoenix route to patch to — makes the avatar a link"
 
+  attr :target, :string,
+    default: nil,
+    doc:
+      "Link target for a linked avatar. Defaults to same-tab; pass \"_blank\" to open a new tab " <>
+        "(an external href otherwise stays in place rather than inheriting Link's forced new tab)"
+
   attr :class, :string, default: "", doc: "Additional CSS classes"
   attr :rest, :global, doc: "Additional HTML attributes"
 
@@ -143,6 +153,8 @@ defmodule Pulsar.Components.Avatar do
       |> assign(:text_class, text_classes(assigns.size))
       |> assign(:icon_class, icon_classes(assigns.size))
 
+    warn_if_unnamed_link(assigns)
+
     render_avatar(assigns)
   end
 
@@ -153,6 +165,7 @@ defmodule Pulsar.Components.Avatar do
       href={@href}
       navigate={@navigate}
       patch={@patch}
+      target={@target || "_self"}
       variant="solid"
       color="inherit"
       size="inherit"
@@ -229,6 +242,7 @@ defmodule Pulsar.Components.Avatar do
   attr :href, :any, default: nil, doc: "External URL for the overflow counter"
   attr :navigate, :any, default: nil, doc: "Phoenix route for the overflow counter"
   attr :patch, :any, default: nil, doc: "Phoenix route for the overflow counter"
+  attr :target, :string, default: nil, doc: "Link target for a linked overflow counter"
 
   attr :class, :string, default: "", doc: "Additional CSS classes"
   attr :rest, :global, doc: "Additional HTML attributes"
@@ -263,13 +277,13 @@ defmodule Pulsar.Components.Avatar do
       <.avatar_group_item :for={item <- @visible} item={item} />
       <.overflow_counter
         :if={@overflow > 0}
-        count={@overflow}
         label={"+" <> @format_count.(@overflow)}
         class={@counter_class}
         interactive={@overflow_interactive}
         href={@href}
         navigate={@navigate}
         patch={@patch}
+        target={@target}
       />
     </div>
     """
@@ -289,6 +303,7 @@ defmodule Pulsar.Components.Avatar do
       href={@href}
       navigate={@navigate}
       patch={@patch}
+      target={@target || "_self"}
       variant="solid"
       color="inherit"
       size="inherit"
@@ -347,6 +362,28 @@ defmodule Pulsar.Components.Avatar do
   # Accessible name precedence: an explicit alt (including "") wins over name.
   defp accessible_name(nil, name), do: name
   defp accessible_name(alt, _name), do: alt
+
+  # Emit a dev-time nudge when a linked avatar has no accessible name. An
+  # interactive avatar with no name/alt renders an <a> with no discernible text
+  # (the icon/initials content is aria-hidden) — a WCAG 2.4.4 / 4.1.2 failure.
+  # Phoenix convention: caller-facing "you may be holding it wrong" nudges use
+  # Logger.warning; the caller's log level filter controls visibility.
+  defp warn_if_unnamed_link(%{interactive: true, acc_name: acc_name}) do
+    if !present?(acc_name) do
+      require Logger
+
+      Logger.warning("""
+      <.avatar> rendered as a link without an accessible name. A linked avatar
+      needs a discernible name (WCAG 2.4.4). Provide one of:
+        * name attr
+        * alt attr
+      """)
+    end
+
+    :ok
+  end
+
+  defp warn_if_unnamed_link(_assigns), do: :ok
 
   # The link/wrapper label is suppressed in image mode, where <img alt> names it.
   defp link_label(:image, _acc), do: nil

@@ -1,6 +1,7 @@
 defmodule Pulsar.Components.AvatarTest do
   use ExUnit.Case, async: true
 
+  import ExUnit.CaptureLog
   import Phoenix.Component
   import Phoenix.LiveViewTest
 
@@ -208,6 +209,78 @@ defmodule Pulsar.Components.AvatarTest do
       html = rendered_to_string(~H[<Avatar.avatar name="Jane Doe" />])
 
       refute html =~ ~s(<a)
+    end
+
+    test "an external href avatar stays in the same tab, keeping its external icon hidden" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(
+          ~H[<Avatar.avatar src="/jane.png" name="Jane Doe" href="https://example.com/jane" csrf_token={false} />]
+        )
+
+      # target="_self" both keeps the avatar in place and leaves data-target != "_blank",
+      # so Link's external-link icon stays display:none (no clipping inside the avatar box).
+      assert html =~ ~s(target="_self")
+      assert html =~ ~s(data-target="_self")
+      refute html =~ ~s(target="_blank")
+    end
+
+    test "a caller can opt a linked avatar into a new tab" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(
+          ~H[<Avatar.avatar src="/jane.png" name="Jane Doe" href="https://example.com/jane" target="_blank" csrf_token={false} />]
+        )
+
+      assert html =~ ~s(target="_blank")
+    end
+  end
+
+  describe "avatar/1 accessible-name warnings" do
+    test "warns when a linked avatar has no accessible name" do
+      assigns = %{}
+
+      log =
+        capture_log(fn ->
+          rendered_to_string(~H[<Avatar.avatar navigate="/users/1" />])
+        end)
+
+      assert log =~ "without an accessible name"
+    end
+
+    test "warns when a linked image avatar is explicitly decorative" do
+      assigns = %{}
+
+      log =
+        capture_log(fn ->
+          rendered_to_string(~H[<Avatar.avatar src="/jane.png" alt="" navigate="/users/1" />])
+        end)
+
+      assert log =~ "without an accessible name"
+    end
+
+    test "does not warn when a linked avatar is named" do
+      assigns = %{}
+
+      log =
+        capture_log(fn ->
+          rendered_to_string(~H[<Avatar.avatar name="Jane Doe" navigate="/users/1" />])
+        end)
+
+      refute log =~ "without an accessible name"
+    end
+
+    test "does not warn for a non-interactive unnamed avatar" do
+      assigns = %{}
+
+      log =
+        capture_log(fn ->
+          rendered_to_string(~H[<Avatar.avatar />])
+        end)
+
+      refute log =~ "without an accessible name"
     end
   end
 
