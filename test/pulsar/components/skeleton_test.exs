@@ -7,12 +7,12 @@ defmodule Pulsar.Components.SkeletonTest do
   alias Pulsar.Components.Skeleton
 
   describe "skeleton/1 kinds" do
-    test "text (default) renders a pulsing muted bar with the field radius" do
+    test "text (default) renders a pulsing placeholder bar with the field radius" do
       assigns = %{}
       html = rendered_to_string(~H[<Skeleton.skeleton />])
 
       assert html =~ "animate-pulse-subtle"
-      assert html =~ "bg-muted"
+      assert html =~ "bg-surface-3"
       assert html =~ "h-4"
       assert html =~ "rounded-field"
     end
@@ -81,7 +81,7 @@ defmodule Pulsar.Components.SkeletonTest do
       assert html =~ "AI is thinking"
       assert html =~ "animate-pulse-subtle"
       assert html =~ "text-foreground"
-      refute html =~ "bg-muted"
+      refute html =~ "bg-surface-3"
     end
 
     test "without a label the shimmer text is real content (not aria-hidden)" do

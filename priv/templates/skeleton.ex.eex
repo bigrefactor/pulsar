@@ -55,9 +55,11 @@ alias Phoenix.LiveView.Rendered
 # CONFIGURATION & CONSTANTS
 # ============================================================================
 
-# Shared base: the subtle opacity pulse plus the muted placeholder fill. The
+# Shared base: the subtle opacity pulse plus the placeholder fill. The fill rides
+# the top of the surface-elevation scale (bg-surface-3) so the shape reads clearly
+# above the page background in both themes — bg-muted sits flush with it. The
 # global prefers-reduced-motion rule stops the animation; no per-component guard.
-@base_classes "animate-pulse-subtle bg-muted"
+@base_classes "animate-pulse-subtle bg-surface-3"
 
 # Per-kind default dimensions and radius token.
 @kind_config %{
