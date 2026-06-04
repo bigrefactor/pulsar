@@ -13,6 +13,7 @@ defmodule Pulsar.DevApp.StorybookTest do
 
   @expected_component_paths ~w[
     /components/alert_dialog
+    /components/avatar
     /components/badge
     /components/button
     /components/card
@@ -100,8 +101,8 @@ defmodule Pulsar.DevApp.StorybookTest do
   end
 
   describe "leaves/0" do
-    test "returns exactly 37 leaves" do
-      assert length(Storybook.leaves()) == 37
+    test "returns exactly 38 leaves" do
+      assert length(Storybook.leaves()) == 38
     end
 
     test "all leaves are StoryEntry structs" do
