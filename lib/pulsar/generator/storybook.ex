@@ -15,6 +15,7 @@ defmodule Pulsar.Generator.Storybook do
   alias Igniter.Libs.Phoenix
 
   @components [
+    :alert_dialog,
     :badge,
     :button,
     :card,

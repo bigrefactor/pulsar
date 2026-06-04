@@ -163,12 +163,23 @@ defmodule Pulsar.Components.Modal do
 
   attr(:dismissable, :boolean,
     default: true,
-    doc: "When true, Escape and backdrop clicks close the dialog and a close button is shown"
+    doc:
+      "When true, Escape closes the dialog; backdrop clicks additionally require backdrop_close and the close button additionally requires show_close_button"
   )
 
   attr(:close_label, :string,
     default: "Close",
     doc: ~s{Accessible label for the close button. Use with i18n: gettext("Close")}
+  )
+
+  attr(:backdrop_close, :boolean,
+    default: true,
+    doc: "When true (and dismissable), a backdrop click closes the dialog"
+  )
+
+  attr(:show_close_button, :boolean,
+    default: true,
+    doc: "When true (and dismissable), the corner close (X) button is shown"
   )
 
   attr(:on_open, JS,
@@ -236,6 +247,7 @@ defmodule Pulsar.Components.Modal do
       phx-hook=".PulsarModal"
       data-state="closed"
       data-dismissable={to_string(@dismissable)}
+      data-backdrop-close={to_string(@backdrop_close)}
       data-on-open={@on_open}
       data-on-close={@on_close}
       aria-labelledby={@has_title && "#{@id}-title"}
@@ -243,7 +255,10 @@ defmodule Pulsar.Components.Modal do
       class={@dialog_classes}
       {@rest}
     >
-      <div :if={@has_title || @has_description || @dismissable} class="mb-4 flex items-start justify-between gap-4">
+      <div
+        :if={@has_title || @has_description || (@dismissable && @show_close_button)}
+        class="mb-4 flex items-start justify-between gap-4"
+      >
         <div :if={@has_title || @has_description} class="space-y-1">
           <h2 :if={@has_title} id={"#{@id}-title"} class="text-lg font-semibold">{@title}</h2>
           <p :if={@has_description} id={"#{@id}-desc"} class="text-sm text-foreground">
@@ -252,7 +267,7 @@ defmodule Pulsar.Components.Modal do
         </div>
 
         <button
-          :if={@dismissable}
+          :if={@dismissable && @show_close_button}
           type="button"
           aria-label={@close_label}
           phx-click={JS.dispatch("pulsar:modal-close", to: "##{@id}")}
@@ -303,6 +318,10 @@ defmodule Pulsar.Components.Modal do
             return this.el.dataset.dismissable !== "false"
           },
 
+          backdropClose() {
+            return this.el.dataset.backdropClose !== "false"
+          },
+
           open() {
             if (this.el.open) return
             this.el.showModal()
@@ -326,7 +345,7 @@ defmodule Pulsar.Components.Modal do
           },
 
           handleClick(e) {
-            if (!this.isDismissable()) return
+            if (!this.isDismissable() || !this.backdropClose()) return
             // A backdrop click reports the dialog as the target but lands outside
             // the dialog's box; a click on content lands inside it. Require the
             // pointer-down to have landed on the backdrop too, so a text-selection
