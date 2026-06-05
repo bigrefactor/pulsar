@@ -126,4 +126,63 @@ defmodule Pulsar.Components.AlertTest do
       refute html =~ "p-3"
     end
   end
+
+  describe "alert/1 dismiss" do
+    test "is not dismissible by default" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Alert.alert description="x" />])
+      refute html =~ "<button"
+    end
+
+    test "dismissible renders a labelled close button wired to hide itself" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Alert.alert id="a1" dismissible description="x" />])
+      assert html =~ "<button"
+      assert html =~ ~s(type="button")
+      assert html =~ ~s(aria-label="Dismiss")
+      assert html =~ ~s(aria-controls="a1")
+      assert html =~ "hero-x-mark"
+      assert html =~ "phx-click"
+      assert html =~ "#a1"
+    end
+
+    test "dismiss_label overrides the close button label" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Alert.alert dismissible dismiss_label="Close" description="x" />])
+      assert html =~ ~s(aria-label="Close")
+    end
+  end
+
+  describe "alert/1 actions" do
+    test "renders the actions slot" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H[<Alert.alert description="x">
+  <:actions><button>Renew</button></:actions>
+</Alert.alert>])
+
+      assert html =~ "Renew"
+    end
+
+    test "no actions wrapper is rendered without the slot" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Alert.alert description="x" />])
+      refute html =~ ~s(flex shrink-0 items-center gap-2)
+    end
+  end
+
+  describe "alert/1 role" do
+    test "has no role by default" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Alert.alert description="x" />])
+      refute html =~ ~s(role=)
+    end
+
+    test "applies an explicit role" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Alert.alert role="alert" description="x" />])
+      assert html =~ ~s(role="alert")
+    end
+  end
 end
