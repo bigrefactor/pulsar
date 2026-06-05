@@ -69,6 +69,10 @@ defmodule Pulsar.DevApp.Router do
     live "/components/table/outline", TableLive, :outline
     live "/components/table/ghost", TableLive, :ghost
     live "/components/table/solid", TableLive, :solid
+    live "/components/tabs/ghost", TabsLive, :ghost
+    live "/components/tabs/solid", TabsLive, :solid
+    live "/components/tabs/outline", TabsLive, :outline
+    live "/components/tabs/elevated", TabsLive, :elevated
     live "/components/textarea", TextareaLive, :index
     live "/components/tooltip", TooltipLive, :index
 

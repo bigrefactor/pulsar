@@ -35,7 +35,11 @@ defmodule Pulsar.DevApp.Components do
      [
        {"Menu", "/components/menu"},
        {"Navbar", "/components/navbar"},
-       {"Sidebar", "/components/sidebar"}
+       {"Sidebar", "/components/sidebar"},
+       {"Tabs (ghost)", "/components/tabs/ghost"},
+       {"Tabs (solid)", "/components/tabs/solid"},
+       {"Tabs (outline)", "/components/tabs/outline"},
+       {"Tabs (elevated)", "/components/tabs/elevated"}
      ]},
     {"Overlays",
      [
