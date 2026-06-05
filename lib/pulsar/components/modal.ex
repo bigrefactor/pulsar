@@ -261,7 +261,7 @@ defmodule Pulsar.Components.Modal do
       >
         <div :if={@has_title || @has_description} class="space-y-1">
           <h2 :if={@has_title} id={"#{@id}-title"} class="text-lg font-semibold">{@title}</h2>
-          <p :if={@has_description} id={"#{@id}-desc"} class="text-sm text-foreground">
+          <p :if={@has_description} id={"#{@id}-desc"} class="text-sm text-muted-foreground">
             {render_slot(@description)}
           </p>
         </div>
