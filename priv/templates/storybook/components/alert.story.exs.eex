@@ -1,0 +1,82 @@
+defmodule <%= @web_module %>.Storybook.Components.Alert do
+  use PhoenixStorybook.Story, :component
+
+  alias <%= @components_module %>.Alert
+
+  def function, do: &Alert.alert/1
+  def render_source, do: :function
+
+  def attributes do
+    [
+      %Attr{
+        id: :variant,
+        type: :string,
+        values: ~w(solid outline ghost),
+        default: "ghost",
+        doc: "Visual style variant"
+      },
+      %Attr{
+        id: :color,
+        type: :string,
+        values: ~w(neutral primary secondary success danger warning info),
+        default: "info",
+        doc: "Color scheme; also selects the default status icon"
+      },
+      %Attr{id: :size, type: :string, values: ~w(sm md lg), default: "md", doc: "Alert size"},
+      %Attr{id: :title, type: :string, default: nil, doc: "Optional heading line"},
+      %Attr{id: :description, type: :string, default: nil, doc: "Body text (falls back to inner_block)"},
+      %Attr{id: :dismissible, type: :boolean, default: false, doc: "Show a close button"},
+      %Attr{id: :role, type: :string, values: [nil, "alert", "status"], default: nil, doc: "Opt-in ARIA role"},
+      %Attr{id: :class, type: :string, default: "", doc: "Additional CSS classes"}
+    ]
+  end
+
+  def slots do
+    [
+      %Slot{id: :inner_block, doc: "Rich body content, used when description is omitted"},
+      %Slot{id: :actions, doc: "Right-aligned action buttons"}
+    ]
+  end
+
+  def variations do
+    [
+      %Variation{id: :info, description: "Info (default)", attributes: %{description: "A new version is available."}},
+      %Variation{
+        id: :success,
+        description: "Success",
+        attributes: %{color: "success", title: "Saved", description: "Your changes have been saved."}
+      },
+      %Variation{
+        id: :warning,
+        description: "Warning",
+        attributes: %{color: "warning", title: "Heads up", description: "Your trial ends in 3 days."}
+      },
+      %Variation{
+        id: :danger,
+        description: "Danger",
+        attributes: %{color: "danger", title: "Payment failed", description: "Update your card to continue."}
+      },
+      %Variation{
+        id: :solid,
+        description: "Solid variant",
+        attributes: %{variant: "solid", color: "success", description: "Solid success alert."}
+      },
+      %Variation{
+        id: :outline,
+        description: "Outline variant",
+        attributes: %{variant: "outline", color: "danger", description: "Outline danger alert."}
+      },
+      %Variation{
+        id: :dismissible,
+        description: "Dismissible",
+        attributes: %{color: "warning", title: "Heads up", description: "Dismiss me.", dismissible: true}
+      },
+      %Variation{
+        id: :with_actions,
+        description: "With actions",
+        attributes: %{color: "danger", title: "Subscription expired", description: "Renew to keep your data."},
+        slots: ["<:actions><button class=\"text-sm font-medium\">Renew</button></:actions>"]
+      }
+    ]
+  end
+end
