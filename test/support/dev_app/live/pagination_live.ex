@@ -33,14 +33,29 @@ defmodule Pulsar.DevApp.PaginationLive do
             variant={variant}
             color={color}
             size={size}
+            aria_label={"Pagination #{variant} #{color} #{size}"}
             data-fixture-cell={"#{variant}-#{color}-#{size}"}
           />
         <% end %>
       </.fixture_section>
 
       <.fixture_section name="boundaries" title="disabled boundaries">
-        <Pagination.pagination page={1} total_pages={5} page_href={@href} link_type="href" data-fixture-cell="first-page" />
-        <Pagination.pagination page={5} total_pages={5} page_href={@href} link_type="href" data-fixture-cell="last-page" />
+        <Pagination.pagination
+          page={1}
+          total_pages={5}
+          page_href={@href}
+          link_type="href"
+          aria_label="Pagination first page"
+          data-fixture-cell="first-page"
+        />
+        <Pagination.pagination
+          page={5}
+          total_pages={5}
+          page_href={@href}
+          link_type="href"
+          aria_label="Pagination last page"
+          data-fixture-cell="last-page"
+        />
       </.fixture_section>
 
       <.fixture_section name="summary" title="with summary">
@@ -52,6 +67,7 @@ defmodule Pulsar.DevApp.PaginationLive do
           show_summary
           page_href={@href}
           link_type="href"
+          aria_label="Pagination with summary"
           data-fixture-cell="summary"
         />
       </.fixture_section>
@@ -62,6 +78,7 @@ defmodule Pulsar.DevApp.PaginationLive do
           prev_href="/components/pagination?before=abc"
           next_href="/components/pagination?after=xyz"
           link_type="href"
+          aria_label="Pagination cursor both"
           data-fixture-cell="cursor-both"
         />
         <Pagination.pagination
@@ -69,6 +86,7 @@ defmodule Pulsar.DevApp.PaginationLive do
           prev_href={false}
           next_href="/components/pagination?after=xyz"
           link_type="href"
+          aria_label="Pagination cursor start"
           data-fixture-cell="cursor-start"
         />
       </.fixture_section>
