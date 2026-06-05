@@ -202,7 +202,6 @@ defmodule Pulsar.Components.Tabs do
     assigns =
       assigns
       |> assign(:prepared, prepared)
-      |> assign(:hook_name, ".PulsarTabs")
       |> assign(:wrapper_class, merge([@wrapper[assigns.orientation], assigns.class]))
       |> assign(:tablist_class, tablist_classes(assigns.variant, assigns.orientation))
       |> assign(:panels_wrapper_class, @panels_wrapper[assigns.orientation])
@@ -210,7 +209,7 @@ defmodule Pulsar.Components.Tabs do
     ~H"""
     <div
       id={@id}
-      phx-hook={@hook_name}
+      phx-hook=".PulsarTabs"
       data-orientation={@orientation}
       data-on-change={@on_change}
       class={@wrapper_class}
