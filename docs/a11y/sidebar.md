@@ -48,7 +48,7 @@ exposed via `data-state` and focus movement, not color —
 `-foreground` (solid) or `text-foreground` on a surface (outline/ghost/elevated)
 — `lib/pulsar/components/sidebar.ex:131–165`. Slot text inherits the panel
 foreground. Browser measurement of all 35 fixture cells per theme: every cell
-passes, min text contrast 5.28:1 (light, `solid-info`) / 7.06:1 (dark,
+passes, min text contrast 5.89:1 (light, `solid-secondary`) / 7.06:1 (dark,
 `solid-secondary`) ([light](measurements/sidebar-light.md),
 [dark](measurements/sidebar-dark.md)). The axe gate is clean in both themes.
 

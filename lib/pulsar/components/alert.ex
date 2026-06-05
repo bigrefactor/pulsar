@@ -48,7 +48,7 @@ defmodule Pulsar.Components.Alert do
 
   # Per-size container padding/text/gap/radius, icon size token, title text size,
   # and close-button box. close keeps a uniform 24x24 (h-6 w-6) hit target across
-  # sizes to satisfy WCAG 2.5.8; padding scales the inner glyph.
+  # sizes to satisfy WCAG 2.5.8; the glyph is a fixed size and padding insets it.
   @size_config %{
     "sm" => %{container: "gap-2 rounded-field p-2 text-sm", icon: "sm", title: "text-sm", close: "h-6 w-6 p-1.5"},
     "md" => %{container: "gap-2 rounded-field p-3 text-base", icon: "md", title: "text-base", close: "h-6 w-6 p-1"},

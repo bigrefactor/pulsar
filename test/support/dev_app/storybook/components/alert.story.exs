@@ -75,7 +75,7 @@ defmodule Pulsar.DevApp.Storybook.Components.Alert do
         id: :with_actions,
         description: "With actions",
         attributes: %{color: "danger", title: "Subscription expired", description: "Renew to keep your data."},
-        slots: ["<:actions><button class=\"text-sm font-medium\">Renew</button></:actions>"]
+        slots: [~s(<:actions><button type="button" class="text-sm font-medium">Renew</button></:actions>)]
       }
     ]
   end

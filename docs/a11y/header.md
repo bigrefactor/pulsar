@@ -83,7 +83,7 @@ both themes: neutral content cells reach 19.27:1 (light) / 16.98:1 (dark)
 `outline-<color>` cells carry `text-<color>` on the root `<header>`,
 which renders no text of its own; the color cascades to the title, where
 every hue clears the minimum at any size. The `outline-info` cell reads
-5.05:1 in light: `text-info` (`info-700`) meets the 4.5:1 normal-text
+6.91:1 in light: `text-info` (`info-800`) meets the 4.5:1 normal-text
 minimum, so `color="info"` is safe at the small `xs`/`sm` sizes as well
 as the default. This holds for every component that exposes
 `color="info"`, not just the header. Subtitles use

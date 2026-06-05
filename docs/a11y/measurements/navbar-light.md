@@ -43,7 +43,7 @@ Columns:
 | `ghost-warning` | `header` | 926 | 64 | ✓ | 19.27:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `menu-button` | `header` | 926 | 64 | ✓ | 19.27:1 ✓ | 4.63:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `outline-danger` | `header` | 926 | 64 | ✓ | 19.27:1 ✓ | 6.14:1 ✓ (bottom) | — (not-focusable-in-state) |
-| `outline-info` | `header` | 926 | 64 | ✓ | 19.27:1 ✓ | 5.05:1 ✓ (bottom) | — (not-focusable-in-state) |
+| `outline-info` | `header` | 926 | 64 | ✓ | 19.27:1 ✓ | 6.91:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `outline-neutral` | `header` | 926 | 64 | ✓ | 19.27:1 ✓ | 4.63:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `outline-primary` | `header` | 926 | 64 | ✓ | 19.27:1 ✓ | 6.54:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `outline-secondary` | `header` | 926 | 64 | ✓ | 19.27:1 ✓ | 5.64:1 ✓ (bottom) | — (not-focusable-in-state) |
@@ -55,7 +55,7 @@ Columns:
 | `size-xl` | `header` | 926 | 96 | ✓ | 19.27:1 ✓ | 4.63:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `size-xs` | `header` | 926 | 48 | ✓ | 19.27:1 ✓ | 4.63:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `solid-danger` | `header` | 926 | 64 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (bottom) | — (not-focusable-in-state) |
-| `solid-info` | `header` | 926 | 64 | ✓ | 5.28:1 ✓ | 5.05:1 ✓ (bottom) | — (not-focusable-in-state) |
+| `solid-info` | `header` | 926 | 64 | ✓ | 7.22:1 ✓ | 6.91:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `solid-neutral` | `header` | 926 | 64 | ✓ | 19.27:1 ✓ | 4.63:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `solid-primary` | `header` | 926 | 64 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `solid-secondary` | `header` | 926 | 64 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (bottom) | — (not-focusable-in-state) |
