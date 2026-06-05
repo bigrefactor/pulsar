@@ -83,6 +83,7 @@ defmodule Pulsar.DevApp.Router do
     live "/keyboard/modal", Keyboard.ModalLive, :index
     live "/keyboard/popover", Keyboard.PopoverLive, :index
     live "/keyboard/radio_group", Keyboard.RadioGroupLive, :index
+    live "/keyboard/tabs", Keyboard.TabsLive, :index
     live "/keyboard/tooltip", Keyboard.TooltipLive, :index
   end
 end
