@@ -128,6 +128,7 @@ if Code.ensure_loaded?(Igniter) do
       skeleton: [],
       switch: [],
       table: [],
+      tabs: [:icon],
       textarea: [],
       tooltip: [:popover]
     }
@@ -183,6 +184,7 @@ if Code.ensure_loaded?(Igniter) do
           "pulsar.gen.skeleton",
           "pulsar.gen.switch",
           "pulsar.gen.table",
+          "pulsar.gen.tabs",
           "pulsar.gen.textarea",
           "pulsar.gen.tooltip",
           "pulsar.gen.core_components",
