@@ -248,6 +248,23 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
       |> A11y.assert_focused("kbd-v-two")
       |> assert_has(~s|#kbd-v-two[aria-selected="true"]|)
     end
+
+    # Pointer activation: clicking a tab must flip aria-selected (which drives
+    # the active-indicator styling via the `aria-selected:` CSS variants) AND
+    # swap the visible panel. Panel visibility is asserted by visible text, not
+    # `[hidden]`, because Playwright locators don't match hidden elements.
+    test "clicking a tab activates it and swaps the visible panel", %{conn: conn} do
+      conn
+      |> visit("/keyboard/tabs")
+      |> A11y.await_live_connected()
+      |> assert_has(~s|#kbd-h-one[aria-selected="true"]|)
+      |> assert_has("#kbd-h-one-panel", text: "One panel")
+      |> click("#kbd-h-two")
+      |> assert_has(~s|#kbd-h-two[aria-selected="true"]|)
+      |> assert_has(~s|#kbd-h-one[aria-selected="false"]|)
+      |> assert_has("#kbd-h-two-panel", text: "Two panel")
+      |> refute_has("#kbd-h-one-panel", text: "One panel")
+    end
   end
 
   describe "DropdownMenu keyboard navigation" do

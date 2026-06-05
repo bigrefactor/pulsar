@@ -104,7 +104,9 @@ defmodule Pulsar.Components.TabsTest do
         """)
 
       assert html =~ "border-b-2"
-      assert html =~ "border-foreground"
+      # Active styling is gated on aria-selected so the hook can move the indicator.
+      assert html =~ "aria-selected:border-foreground"
+      assert html =~ "aria-selected:text-foreground"
     end
 
     test "solid uses a filled pill on the active tab" do
@@ -118,8 +120,8 @@ defmodule Pulsar.Components.TabsTest do
         """)
 
       assert html =~ "bg-muted"
-      assert html =~ "bg-primary"
-      assert html =~ "text-primary-foreground"
+      assert html =~ "aria-selected:bg-primary"
+      assert html =~ "aria-selected:text-primary-foreground"
     end
 
     test "elevated adds shadow-card to the active pill" do
@@ -132,7 +134,7 @@ defmodule Pulsar.Components.TabsTest do
         </Tabs.tabs>
         """)
 
-      assert html =~ "shadow-card"
+      assert html =~ "aria-selected:shadow-card"
     end
 
     test "outline uses border-border-strong on the active tab" do
@@ -145,7 +147,7 @@ defmodule Pulsar.Components.TabsTest do
         </Tabs.tabs>
         """)
 
-      assert html =~ "border-border-strong"
+      assert html =~ "aria-selected:border-border-strong"
     end
   end
 
@@ -160,7 +162,7 @@ defmodule Pulsar.Components.TabsTest do
         </Tabs.tabs>
         """)
 
-      assert html =~ "text-success"
+      assert html =~ "aria-selected:text-success"
     end
 
     test "size scales tab padding/text" do
@@ -188,10 +190,10 @@ defmodule Pulsar.Components.TabsTest do
         </Tabs.tabs>
         """)
 
-      assert html =~ "text-danger"
+      assert html =~ "aria-selected:text-danger"
     end
 
-    test "an inactive tab's color override is not applied (muted only)" do
+    test "the override is gated to active state — never an always-on color class" do
       assigns = %{}
 
       html =
@@ -202,8 +204,10 @@ defmodule Pulsar.Components.TabsTest do
         </Tabs.tabs>
         """)
 
-      # inactive tab does not receive its color override
-      refute html =~ "text-danger"
+      # The override exists, but only as an aria-selected-gated class — so it
+      # applies when the tab is selected, never unconditionally.
+      assert html =~ "aria-selected:text-danger"
+      refute html =~ ~r/[^:]text-danger/
     end
   end
 

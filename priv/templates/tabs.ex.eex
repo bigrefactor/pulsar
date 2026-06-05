@@ -231,7 +231,7 @@ def tabs(assigns) do
         aria-disabled={(tab.disabled && "true") || "false"}
         tabindex={(tab.active && "0") || "-1"}
         disabled={tab.disabled}
-        class={tab_classes(@variant, @orientation, @size, tab.active, tab.color)}
+        class={tab_classes(@variant, @orientation, @size, tab.color)}
       >
         <Icon.icon :if={tab.icon} name={tab.icon} size={icon_size(@size)} />
         {tab.label}
@@ -393,13 +393,13 @@ defp tablist_variant("outline", _), do: "gap-1 border-b border-border"
 defp tablist_variant(_segmented, _), do: "gap-1 rounded-box bg-muted p-1"
 
 # Per-tab classes: base + size + variant shape + active/inactive state.
-@spec tab_classes(String.t(), String.t(), String.t(), boolean(), String.t()) :: String.t()
-defp tab_classes(variant, orientation, size, active, color) do
+@spec tab_classes(String.t(), String.t(), String.t(), String.t()) :: String.t()
+defp tab_classes(variant, orientation, size, color) do
   merge([
     @tab_base,
     @size_tab[size],
     tab_shape(variant, orientation),
-    tab_state(variant, active, color)
+    tab_state(variant, color)
   ])
 end
 
@@ -410,11 +410,36 @@ defp tab_shape("outline", "vertical"), do: "rounded-l-field border border-r-0 -m
 defp tab_shape("outline", _), do: "rounded-t-field border border-b-0 -mb-px"
 defp tab_shape(_segmented, _), do: "rounded-field"
 
-@spec tab_state(String.t(), boolean(), String.t()) :: String.t()
-defp tab_state("ghost", true, color), do: "#{@active_text[color]} #{@indicator_border[color]}"
-defp tab_state("ghost", false, _color), do: "text-muted-foreground border-transparent hover:text-foreground"
-defp tab_state("outline", true, color), do: "bg-background border-border-strong #{@active_text[color]}"
-defp tab_state("outline", false, _color), do: "border-transparent text-muted-foreground hover:text-foreground"
-defp tab_state("elevated", true, color), do: "#{@pill_fill[color]} shadow-card"
-defp tab_state(_segmented, true, color), do: @pill_fill[color]
-defp tab_state(_segmented, false, _color), do: "text-muted-foreground hover:text-foreground"
+# Active styling is gated on the `aria-selected` attribute the hook toggles, so
+# switching a tab moves the indicator with no class recompute.
+@spec tab_state(String.t(), String.t()) :: String.t()
+defp tab_state("ghost", color) do
+  "text-muted-foreground border-transparent #{inactive_hover()} " <>
+    aria_selected("#{@active_text[color]} #{@indicator_border[color]}")
+end
+
+defp tab_state("outline", color) do
+  "border-transparent text-muted-foreground #{inactive_hover()} " <>
+    aria_selected("bg-background border-border-strong #{@active_text[color]}")
+end
+
+defp tab_state("elevated", color) do
+  "text-muted-foreground #{inactive_hover()} " <>
+    aria_selected("#{@pill_fill[color]} shadow-card")
+end
+
+defp tab_state(_segmented, color) do
+  "text-muted-foreground #{inactive_hover()} " <> aria_selected(@pill_fill[color])
+end
+
+# Hover affordance for inactive tabs only — never overrides the active tab's color.
+@spec inactive_hover() :: String.t()
+defp inactive_hover, do: "aria-[selected=false]:hover:text-foreground"
+
+# Prefix each class in a space-separated string with the `aria-selected:` variant.
+@spec aria_selected(String.t()) :: String.t()
+defp aria_selected(classes) do
+  classes
+  |> String.split()
+  |> Enum.map_join(" ", &("aria-selected:" <> &1))
+end
