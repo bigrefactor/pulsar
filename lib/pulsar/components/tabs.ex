@@ -427,7 +427,7 @@ defmodule Pulsar.Components.Tabs do
   end
 
   defp tab_state("elevated", color) do
-    "text-muted-foreground #{inactive_hover()} #{@pill_active[color]} aria-selected:shadow-card"
+    "text-muted-foreground #{inactive_hover()} #{@pill_active[color]} aria-selected:shadow-dropdown"
   end
 
   defp tab_state(_segmented, color) do

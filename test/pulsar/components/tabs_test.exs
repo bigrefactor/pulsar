@@ -124,7 +124,7 @@ defmodule Pulsar.Components.TabsTest do
       assert html =~ "aria-selected:text-primary-foreground"
     end
 
-    test "elevated adds shadow-card to the active pill" do
+    test "elevated lifts the active pill with shadow-dropdown" do
       assigns = %{}
 
       html =
@@ -134,7 +134,7 @@ defmodule Pulsar.Components.TabsTest do
         </Tabs.tabs>
         """)
 
-      assert html =~ "aria-selected:shadow-card"
+      assert html =~ "aria-selected:shadow-dropdown"
     end
 
     test "outline uses border-border-strong on the active tab" do
