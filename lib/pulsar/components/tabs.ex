@@ -36,7 +36,8 @@ defmodule Pulsar.Components.Tabs do
   ## Callbacks
 
   `on_change` is a `%JS{}` command run each time a tab is activated — pair it with
-  `JS.push(...)` to sync the active section to the server.
+  `JS.push(...)` to sync the active section to the server. The activated tab's id
+  is sent as `phx-value-active`, so the pushed params include `%{"active" => id}`.
   """
 
   use Phoenix.Component
@@ -180,6 +181,7 @@ defmodule Pulsar.Components.Tabs do
     attr(:icon, :string, doc: "Heroicon name shown before the label")
 
     attr(:color, :string,
+      values: ~w(neutral primary secondary success danger warning info),
       doc:
         "Override the group color on this tab's active state (one of neutral primary secondary success danger warning info)"
     )
@@ -206,7 +208,7 @@ defmodule Pulsar.Components.Tabs do
     assigns =
       assigns
       |> assign(:prepared, prepared)
-      |> assign(:wrapper_class, merge([@wrapper[assigns.orientation], assigns.class]))
+      |> assign(:wrapper_class, merge([@wrapper[assigns.orientation] || "", assigns.class]))
       |> assign(:tablist_class, tablist_classes(assigns.variant, assigns.orientation))
       |> assign(:panels_wrapper_class, @panels_wrapper[assigns.orientation])
 
@@ -259,7 +261,10 @@ defmodule Pulsar.Components.Tabs do
     <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarTabs">
       export default {
         mounted() { this.setup() },
-        updated() { this.setup() },
+        updated() {
+          this.setup()
+          this.restoreSelection()
+        },
         setup() {
           this.tablist = this.el.querySelector('[role="tablist"]')
           if (!this.tablist || this._bound) return
@@ -315,6 +320,17 @@ defmodule Pulsar.Components.Tabs do
           this.activate(tab)
         },
         activate(tab) {
+          this.selected = tab.id
+          this.applySelection(tab)
+          const encoded = this.el.dataset.onChange
+          if (encoded && encoded !== "[]" && this.liveSocket) {
+            // Expose which tab became active so the caller's JS.push payload can
+            // carry it (phx-value-active -> "active" in the pushed params).
+            this.el.setAttribute("phx-value-active", tab.id)
+            this.liveSocket.execJS(this.el, encoded)
+          }
+        },
+        applySelection(tab) {
           this.allTabs().forEach((t) => {
             const selected = t === tab
             t.setAttribute("aria-selected", selected ? "true" : "false")
@@ -325,10 +341,14 @@ defmodule Pulsar.Components.Tabs do
               else panel.setAttribute("hidden", "")
             }
           })
-          const encoded = this.el.dataset.onChange
-          if (encoded && encoded !== "[]" && this.liveSocket) {
-            this.liveSocket.execJS(this.el, encoded)
-          }
+        },
+        // A LiveView re-render reconciles aria-selected / tabindex / panel hidden
+        // back to the server-rendered `active`, discarding the user's click.
+        // Re-apply the tab the user selected on the client so it stays active.
+        restoreSelection() {
+          if (!this.selected || !this.tablist) return
+          const tab = this.allTabs().find((t) => t.id === this.selected)
+          if (tab) this.applySelection(tab)
         }
       }
     </script>
@@ -405,7 +425,7 @@ defmodule Pulsar.Components.Tabs do
   defp tab_classes(variant, orientation, size, color) do
     merge([
       @tab_base,
-      @size_tab[size],
+      @size_tab[size] || "",
       tab_shape(variant, orientation),
       tab_state(variant, color)
     ])

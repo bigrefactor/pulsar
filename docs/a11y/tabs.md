@@ -22,18 +22,18 @@ ring.
 
 **Evidence:** The only non-text content is an optional leading icon, which is
 caller-supplied and decorative alongside the visible tab `label` —
-`lib/pulsar/components/tabs.ex:238–239`. No icon-only tabs are produced by the
-component (the `label` is required) — `lib/pulsar/components/tabs.ex:175`.
+`lib/pulsar/components/tabs.ex:243–244`. No icon-only tabs are produced by the
+component (the `label` is required) — `lib/pulsar/components/tabs.ex:179`.
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:**
 - Tablist container has `role="tablist"` —
-  `lib/pulsar/components/tabs.ex:220`
+  `lib/pulsar/components/tabs.ex:225`
 - Each trigger has `role="tab"` and `aria-controls` pointing at its panel —
-  `lib/pulsar/components/tabs.ex:229, 231`
+  `lib/pulsar/components/tabs.ex:234, 236`
 - Each panel has `role="tabpanel"` and `aria-labelledby` pointing back at its
-  tab — `lib/pulsar/components/tabs.ex:245, 247`
+  tab — `lib/pulsar/components/tabs.ex:250, 252`
 - Test `renders tablist, tabs and panels with roles` and
   `tabs reference their panels via aria-controls / aria-labelledby` —
   `test/pulsar/components/tabs_test.exs:20, 39`
@@ -42,23 +42,23 @@ component (the `label` is required) — `lib/pulsar/components/tabs.ex:175`.
 
 **Evidence:** Tabs and panels both render in slot order from the same prepared
 list (`Enum.with_index`), so DOM order matches the authored order and the visual
-order — `lib/pulsar/components/tabs.ex:227, 244, 342–345`.
+order — `lib/pulsar/components/tabs.ex:232, 249, 364–367`.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** The active tab is signaled programmatically via `aria-selected`,
-not by shape/position alone — `lib/pulsar/components/tabs.ex:232`. Disabled tabs
+not by shape/position alone — `lib/pulsar/components/tabs.ex:237`. Disabled tabs
 combine `aria-disabled`, the native `disabled` attribute, and reduced opacity —
-`lib/pulsar/components/tabs.ex:233, 235, 114`.
+`lib/pulsar/components/tabs.ex:238, 240, 118`.
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** Active state is not color-only: ghost/outline variants add a
 border indicator (`border-b-2` / `border` with `border-border-strong`) and the
-solid/elevated variants change the tab to a filled pill shape (plus `shadow-card`
-on elevated) — `lib/pulsar/components/tabs.ex:409–413, 416–421`. The selected
-tab is also exposed via `aria-selected="true"` independent of any color cue —
-`lib/pulsar/components/tabs.ex:232`.
+solid/elevated variants change the tab to a filled pill shape (plus
+`shadow-dropdown` on elevated) — `lib/pulsar/components/tabs.ex:435–439, 452–453`.
+The selected tab is also exposed via `aria-selected="true"` independent of any
+color cue — `lib/pulsar/components/tabs.ex:237`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
@@ -66,13 +66,13 @@ tab is also exposed via `aria-selected="true"` independent of any color cue —
 (`bg-{color} text-{color}-foreground`, the browser-verified Button palette), or
 use `text-{color}` on the page background; inactive tabs use
 `text-muted-foreground` (measured 6.0–7.23:1 on all surfaces) —
-`lib/pulsar/components/tabs.ex:63–93, 416–422`. The axe gate scans the
+`lib/pulsar/components/tabs.ex:67–96, 444–456`. The axe gate scans the
 `/components/tabs` fixture in light and dark with no violations.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** Tab sizes use rem-based Tailwind text utilities (`text-xs`–
-`text-lg`) and `rem`-based padding — `lib/pulsar/components/tabs.ex:104–110`.
+`text-lg`) and `rem`-based padding — `lib/pulsar/components/tabs.ex:108–113`.
 Text scales with the user's font size; `whitespace-nowrap` applies only to the
 short tab labels, not panel content.
 
@@ -80,22 +80,22 @@ short tab labels, not panel content.
 
 **Evidence:** The tablist is a `flex` row/column with no fixed width, and the
 panel wrapper uses `min-w-0` in vertical orientation so panels shrink rather than
-force horizontal scrolling — `lib/pulsar/components/tabs.ex:116–124, 386`. No
+force horizontal scrolling — `lib/pulsar/components/tabs.ex:120–127, 408–409`. No
 min-width floor is imposed on the container.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** The active indicator borders route through `border-foreground` /
 the semantic `border-{color}` (ghost) and `border-border-strong` (outline), all
-meeting 3:1 — `lib/pulsar/components/tabs.ex:74–82, 416, 418`. The focus ring on
+meeting 3:1 — `lib/pulsar/components/tabs.ex:67–74, 90–96`. The focus ring on
 both tabs and panels uses `ring-ring` (the `--color-ring` token measured 5.02:1
-light / 6.72:1 dark) — `lib/pulsar/components/tabs.ex:114, 126`.
+light / 6.72:1 dark) — `lib/pulsar/components/tabs.ex:118, 130`.
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
 **Evidence:** The `.PulsarTabs` hook handles Arrow (Left/Right horizontal,
 Up/Down vertical), Home, and End with automatic activation, skipping disabled
-tabs — `lib/pulsar/components/tabs.ex:287–313`. Native `<button>` triggers
+tabs — `lib/pulsar/components/tabs.ex:295–313`. Native `<button>` triggers
 activate on click/Enter/Space. The dedicated keyboard fixture exercises
 roving focus and arrow/Home/End navigation —
 `test/integration/a11y/keyboard_test.exs:201–245`.
@@ -104,15 +104,15 @@ roving focus and arrow/Home/End navigation —
 
 **Evidence:** Arrow navigation moves focus among tabs without trapping; Tab from
 the selected tab moves into its panel (`tabindex="0"` on the panel) and onward
-out of the component — `lib/pulsar/components/tabs.ex:234, 248`. No custom
+out of the component — `lib/pulsar/components/tabs.ex:253`. No custom
 Tab/Shift+Tab handling is registered (the keydown handler only consumes
-Arrow/Home/End) — `lib/pulsar/components/tabs.ex:287–309`.
+Arrow/Home/End) — `lib/pulsar/components/tabs.ex:295–313`.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
 **Evidence:** Roving tabindex: the active tab is `tabindex="0"` and the rest are
 `tabindex="-1"`, so Tab lands once on the tablist; the hook keeps exactly one tab
-at `0` on activation — `lib/pulsar/components/tabs.ex:234, 316–318`. No positive
+at `0` on activation — `lib/pulsar/components/tabs.ex:239, 336–337`. No positive
 tabindex is used. Test `first tab is selected and its panel visible; others
 hidden` asserts the `0` / `-1` split —
 `test/pulsar/components/tabs_test.exs:55`.
@@ -121,58 +121,58 @@ hidden` asserts the `0` / `-1` split —
 
 **Evidence:** Tabs apply `focus-visible:ring-2 focus-visible:ring-ring
 focus-visible:ring-offset-2` and panels apply the same ring —
-`lib/pulsar/components/tabs.ex:114, 126`. The `--color-ring` token measures
+`lib/pulsar/components/tabs.ex:118, 130`. The `--color-ring` token measures
 5.02:1 (light) / 6.72:1 (dark), above the 3:1 non-text minimum.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Linear in-flow render; the component creates no sticky or
 overlapping content that could cover a focused tab or panel —
-`lib/pulsar/components/tabs.ex:211–255`.
+`lib/pulsar/components/tabs.ex:216–260`.
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 
 **Evidence:** Activation is driven by the tablist `click` listener (fires on
-mouseup), not pointer-down — `lib/pulsar/components/tabs.ex:266, 281–286`.
+mouseup), not pointer-down — `lib/pulsar/components/tabs.ex:274, 289–294`.
 
 ### 2.5.3 Label in Name (A) — ✓ PASS
 
 **Evidence:** Each tab's accessible name is its visible `label` text (no
-contradicting `aria-label` on the trigger) — `lib/pulsar/components/tabs.ex:239`.
+contradicting `aria-label` on the trigger) — `lib/pulsar/components/tabs.ex:244`.
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Tab padding starts at `px-2 py-1` on `text-xs` (xs) and grows from
 there, keeping every tab's clickable box at or above 24×24 CSS px —
-`lib/pulsar/components/tabs.ex:104–110, 114`. Tabs are separated by `gap` in the
+`lib/pulsar/components/tabs.ex:108–113, 118`. Tabs are separated by `gap` in the
 tablist so adjacent targets don't overlap —
-`lib/pulsar/components/tabs.ex:391–395`.
+`lib/pulsar/components/tabs.ex:414–421`.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 
 **Evidence:** Focusing a tab does not change context; activation happens through
 the hook's keydown/click handlers, and arrow-key activation only follows an
 explicit keystroke (automatic-activation pattern), not bare focus —
-`lib/pulsar/components/tabs.ex:287–313`.
+`lib/pulsar/components/tabs.ex:295–313`.
 
 ### 3.2.2 On Input (A) — ✓ PASS
 
 **Evidence:** Activating a tab toggles panel visibility and runs the optional
 `on_change` `%JS{}` callback the caller supplies; the component itself triggers no
-navigation or form submission — `lib/pulsar/components/tabs.ex:314–329`.
+navigation or form submission — `lib/pulsar/components/tabs.ex:322–332`.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
 **Evidence:**
 - Role: `role="tablist"`, `role="tab"`, `role="tabpanel"` —
-  `lib/pulsar/components/tabs.ex:220, 229, 245`
+  `lib/pulsar/components/tabs.ex:225, 234, 250`
 - Name: tab name from visible `label`; tablist labeled via `aria-label` /
-  `aria-labelledby` — `lib/pulsar/components/tabs.ex:222–223, 239`
+  `aria-labelledby` — `lib/pulsar/components/tabs.ex:227–228, 244`
 - State/Value: `aria-selected`, roving `tabindex`, `aria-controls`,
   `aria-orientation`, and `aria-disabled` + native `disabled` —
-  `lib/pulsar/components/tabs.ex:221, 231–235`. The hook keeps `aria-selected`,
+  `lib/pulsar/components/tabs.ex:226, 236–240`. The hook keeps `aria-selected`,
   `tabindex`, and panel `hidden` in sync on activation —
-  `lib/pulsar/components/tabs.ex:315–323`.
+  `lib/pulsar/components/tabs.ex:336–341`.
 - Test `tabs reference their panels via aria-controls / aria-labelledby` and
   `vertical orientation sets aria-orientation and data-orientation` —
   `test/pulsar/components/tabs_test.exs:39, 89`
@@ -219,7 +219,7 @@ navigation or form submission — `lib/pulsar/components/tabs.ex:314–329`.
 
 - **2.4.13 Focus Appearance (AAA, new in 2.2)** — `ring-2` (2px) meets the AAA
   minimum thickness, and the `--color-ring` token clears AAA contrast (5.02:1 /
-  6.72:1) — `lib/pulsar/components/tabs.ex:114, 126`.
+  6.72:1) — `lib/pulsar/components/tabs.ex:118, 130`.
 
 ## Browser a11y findings
 
