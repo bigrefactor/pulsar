@@ -114,7 +114,7 @@ defmodule Pulsar.Components.Tabs do
 
   @icon_size %{"xs" => "xs", "sm" => "xs", "md" => "sm", "lg" => "sm", "xl" => "md"}
 
-  @tab_base "inline-flex items-center justify-center font-medium whitespace-nowrap cursor-pointer select-none transition-colors duration-normal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-disabled aria-disabled:pointer-events-none aria-disabled:opacity-disabled"
+  @tab_base "inline-flex items-center justify-center font-medium whitespace-nowrap cursor-pointer select-none transition-[transform,box-shadow,background-color,border-color,color,opacity] duration-normal ease-standard hover:scale-[1.02] active:scale-[0.98] motion-reduce:hover:scale-100 motion-reduce:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-disabled aria-disabled:pointer-events-none aria-disabled:opacity-disabled"
 
   @wrapper %{
     "horizontal" => "flex flex-col",
@@ -395,7 +395,10 @@ defmodule Pulsar.Components.Tabs do
   defp tablist_variant("ghost", _), do: "gap-6 border-b border-border"
   defp tablist_variant("outline", "vertical"), do: "gap-1 border-r border-border"
   defp tablist_variant("outline", _), do: "gap-1 border-b border-border"
-  defp tablist_variant(_segmented, _), do: "gap-1 rounded-box bg-muted p-1"
+  # elevated: no recessed track — the active pill floats on the page so its
+  # shadow-dropdown lift reads clearly (including on colored pills).
+  defp tablist_variant("elevated", _), do: "gap-2"
+  defp tablist_variant(_solid, _), do: "gap-1 rounded-box bg-muted p-1"
 
   # Per-tab classes: base + size + variant shape + active/inactive state.
   @spec tab_classes(String.t(), String.t(), String.t(), String.t()) :: String.t()

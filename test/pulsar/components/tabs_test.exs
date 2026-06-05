@@ -135,6 +135,8 @@ defmodule Pulsar.Components.TabsTest do
         """)
 
       assert html =~ "aria-selected:shadow-dropdown"
+      # elevated floats the pill on the page — no recessed muted track (that's solid).
+      refute html =~ "bg-muted"
     end
 
     test "outline uses border-border-strong on the active tab" do
