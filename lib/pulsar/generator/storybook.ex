@@ -42,6 +42,7 @@ defmodule Pulsar.Generator.Storybook do
     :skeleton,
     :switch,
     :table,
+    :tabs,
     :textarea,
     :tooltip
   ]

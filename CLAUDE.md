@@ -32,6 +32,7 @@ lib/pulsar/
     ├── radio_group.ex    # Radio button groups
     ├── select.ex         # Select dropdowns
     ├── switch.ex         # Toggle switches
+    ├── tabs.ex           # Tabs (tablist + panels, horizontal/vertical, APG keyboard)
     └── textarea.ex       # Multi-line text input
 ```
 
