@@ -1,0 +1,418 @@
+defmodule Pulsar.Components.Tabs do
+  @moduledoc """
+  Tabbed sections — a tablist with associated panels.
+
+  Each `:tab` slot declares a trigger (`label`, optional `icon`) and holds its
+  panel content as the slot body. The selected tab's panel is shown and the rest
+  are hidden; arrow keys move between tabs and switch panels.
+
+  ## Examples
+
+      <.tabs id="settings" aria_label="Settings sections">
+        <:tab id="profile" label="Profile" icon="hero-user">
+          <p>Profile settings…</p>
+        </:tab>
+        <:tab id="billing" label="Billing" icon="hero-credit-card">
+          <p>Billing settings…</p>
+        </:tab>
+      </.tabs>
+
+      # Segmented (filled) tabs, vertical, with a server sync callback
+      <.tabs id="views" variant="solid" color="primary" orientation="vertical"
+             active="overview" on_change={JS.push("tab_changed")}>
+        <:tab id="overview" label="Overview">…</:tab>
+        <:tab id="activity" label="Activity">…</:tab>
+        <:tab id="reports" label="Reports" disabled>…</:tab>
+      </.tabs>
+
+  ## Variants
+
+  `variant` controls the tablist's look: `ghost` (underline), `solid` (filled
+  segmented control), `outline` (bordered), `elevated` (segmented with a raised
+  active tab). `color` tints the active tab; a `:tab` may set its own `color` to
+  override the group color on that tab's active state. `size` scales padding and
+  text (`xs`–`xl`).
+
+  ## Callbacks
+
+  `on_change` is a `%JS{}` command run each time a tab is activated — pair it with
+  `JS.push(...)` to sync the active section to the server.
+  """
+
+  use Phoenix.Component
+
+  import Twm, only: [merge: 1]
+
+  alias Phoenix.LiveView.JS
+  alias Phoenix.LiveView.Rendered
+  alias Pulsar.Components.Icon
+
+  # Inline ID generator
+  defp generate_id(prefix \\ "tabs") do
+    "#{prefix}-#{System.unique_integer([:positive])}"
+  end
+
+  # ============================================================================
+  # CONFIGURATION & CONSTANTS
+  # ============================================================================
+
+  @valid_colors ~w(neutral primary secondary success danger warning info)
+
+  # Active tab text color per color key.
+  @active_text %{
+    "neutral" => "text-foreground",
+    "primary" => "text-primary",
+    "secondary" => "text-secondary",
+    "success" => "text-success",
+    "danger" => "text-danger",
+    "warning" => "text-warning",
+    "info" => "text-info"
+  }
+
+  # Underline/edge indicator color (ghost variant).
+  @indicator_border %{
+    "neutral" => "border-foreground",
+    "primary" => "border-primary",
+    "secondary" => "border-secondary",
+    "success" => "border-success",
+    "danger" => "border-danger",
+    "warning" => "border-warning",
+    "info" => "border-info"
+  }
+
+  # Filled active pill (solid/elevated variants), base + readable foreground.
+  @pill_fill %{
+    "neutral" => "bg-background text-foreground",
+    "primary" => "bg-primary text-primary-foreground",
+    "secondary" => "bg-secondary text-secondary-foreground",
+    "success" => "bg-success text-success-foreground",
+    "danger" => "bg-danger text-danger-foreground",
+    "warning" => "bg-warning text-warning-foreground",
+    "info" => "bg-info text-info-foreground"
+  }
+
+  # Compile-time check that every color is fully configured.
+  for color <- @valid_colors do
+    for {name, map} <- [active_text: @active_text, indicator_border: @indicator_border, pill_fill: @pill_fill] do
+      if !map[color] do
+        raise CompileError, description: "Missing tabs #{name} for color=#{color}"
+      end
+    end
+  end
+
+  @size_tab %{
+    "xs" => "text-xs px-2 py-1 gap-1",
+    "sm" => "text-sm px-2.5 py-1.5 gap-1.5",
+    "md" => "text-sm px-3 py-2 gap-2",
+    "lg" => "text-base px-4 py-2.5 gap-2",
+    "xl" => "text-lg px-5 py-3 gap-2.5"
+  }
+
+  @icon_size %{"xs" => "xs", "sm" => "xs", "md" => "sm", "lg" => "sm", "xl" => "md"}
+
+  @tab_base "inline-flex items-center justify-center font-medium whitespace-nowrap cursor-pointer select-none transition-colors duration-normal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-disabled aria-disabled:pointer-events-none aria-disabled:opacity-disabled"
+
+  @wrapper %{
+    "horizontal" => "flex flex-col",
+    "vertical" => "flex flex-row gap-6"
+  }
+
+  @panels_wrapper %{
+    "horizontal" => "mt-4",
+    "vertical" => "flex-1 min-w-0"
+  }
+
+  @panel_base "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-field"
+
+  # ============================================================================
+  # COMPONENT
+  # ============================================================================
+
+  attr(:id, :string, doc: "Tabs container ID (auto-generated if omitted)")
+
+  attr(:variant, :string,
+    default: "ghost",
+    values: ~w(solid outline ghost elevated),
+    doc: "Visual style of the tablist"
+  )
+
+  attr(:color, :string,
+    default: "neutral",
+    values: ~w(neutral primary secondary success danger warning info),
+    doc: "Color of the active tab indicator"
+  )
+
+  attr(:size, :string,
+    default: "md",
+    values: ~w(xs sm md lg xl),
+    doc: "Tab padding and text size"
+  )
+
+  attr(:orientation, :string,
+    default: "horizontal",
+    values: ~w(horizontal vertical),
+    doc: "Layout and arrow-key navigation direction"
+  )
+
+  attr(:active, :string,
+    default: nil,
+    doc: "id of the initially-active tab (defaults to the first enabled tab)"
+  )
+
+  attr(:on_change, JS,
+    default: %JS{},
+    doc: ~s{JS commands run when a tab is activated. Use with the server: JS.push("event")}
+  )
+
+  attr(:aria_label, :string, default: nil, doc: "Accessible label for the tablist")
+  attr(:aria_labelledby, :string, default: nil, doc: "ID of an element labeling the tablist")
+
+  attr(:class, :string, default: "", doc: "Additional CSS classes for the container")
+  attr(:rest, :global, doc: "Additional container attributes")
+
+  slot :tab, required: true, doc: "A tab and its panel" do
+    attr(:label, :string, required: true, doc: "Trigger text")
+    attr(:id, :string, doc: "Stable id for the tab (used by `active`; auto-generated if omitted)")
+    attr(:icon, :string, doc: "Heroicon name shown before the label")
+
+    attr(:color, :string,
+      doc:
+        "Override the group color on this tab's active state (one of neutral primary secondary success danger warning info)"
+    )
+
+    attr(:disabled, :boolean, doc: "Disable this tab (skipped by keyboard navigation)")
+  end
+
+  @doc """
+  Renders a set of tabs with associated panels.
+
+  ## Examples
+
+      <.tabs id="settings" aria_label="Settings">
+        <:tab id="profile" label="Profile">Profile content</:tab>
+        <:tab id="billing" label="Billing">Billing content</:tab>
+      </.tabs>
+  """
+  @spec tabs(map()) :: Rendered.t()
+  def tabs(assigns) do
+    assigns = assign_new(assigns, :id, fn -> generate_id() end)
+
+    prepared = prepare_tabs(assigns.tab, assigns.id, assigns.active, assigns.color)
+
+    assigns =
+      assigns
+      |> assign(:prepared, prepared)
+      |> assign(:hook_name, ".PulsarTabs")
+      |> assign(:wrapper_class, merge([@wrapper[assigns.orientation], assigns.class]))
+      |> assign(:tablist_class, tablist_classes(assigns.variant, assigns.orientation))
+      |> assign(:panels_wrapper_class, @panels_wrapper[assigns.orientation])
+
+    ~H"""
+    <div
+      id={@id}
+      phx-hook={@hook_name}
+      data-orientation={@orientation}
+      data-on-change={@on_change}
+      class={@wrapper_class}
+      {@rest}
+    >
+      <div
+        role="tablist"
+        aria-orientation={@orientation}
+        aria-label={@aria_label}
+        aria-labelledby={@aria_labelledby}
+        class={@tablist_class}
+      >
+        <button
+          :for={tab <- @prepared}
+          type="button"
+          role="tab"
+          id={tab.tab_id}
+          aria-controls={tab.panel_id}
+          aria-selected={(tab.active && "true") || "false"}
+          aria-disabled={(tab.disabled && "true") || "false"}
+          tabindex={(tab.active && "0") || "-1"}
+          disabled={tab.disabled}
+          class={tab_classes(@variant, @orientation, @size, tab.active, tab.color)}
+        >
+          <Icon.icon :if={tab.icon} name={tab.icon} size={icon_size(@size)} />
+          {tab.label}
+        </button>
+      </div>
+      <div class={@panels_wrapper_class}>
+        <div
+          :for={tab <- @prepared}
+          role="tabpanel"
+          id={tab.panel_id}
+          aria-labelledby={tab.tab_id}
+          tabindex="0"
+          hidden={!tab.active}
+          class={panel_base()}
+        >
+          {render_slot(tab.slot)}
+        </div>
+      </div>
+    </div>
+    <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarTabs">
+      export default {
+        mounted() { this.setup() },
+        updated() { this.setup() },
+        setup() {
+          this.tablist = this.el.querySelector('[role="tablist"]')
+          if (!this.tablist || this._bound) return
+          this._onKeydown = (e) => this.onKeydown(e)
+          this._onClick = (e) => this.onClick(e)
+          this.tablist.addEventListener("keydown", this._onKeydown)
+          this.tablist.addEventListener("click", this._onClick)
+          this._bound = true
+        },
+        destroyed() {
+          if (this._bound && this.tablist) {
+            this.tablist.removeEventListener("keydown", this._onKeydown)
+            this.tablist.removeEventListener("click", this._onClick)
+          }
+        },
+        allTabs() {
+          return Array.from(this.tablist.querySelectorAll('[role="tab"]'))
+        },
+        enabledTabs() {
+          return this.allTabs().filter((t) => !t.disabled && t.getAttribute("aria-disabled") !== "true")
+        },
+        onClick(e) {
+          const tab = e.target.closest('[role="tab"]')
+          if (!tab || !this.tablist.contains(tab)) return
+          if (tab.disabled || tab.getAttribute("aria-disabled") === "true") return
+          this.activate(tab)
+        },
+        onKeydown(e) {
+          const vertical = (this.el.dataset.orientation || "horizontal") === "vertical"
+          const nextKey = vertical ? "ArrowDown" : "ArrowRight"
+          const prevKey = vertical ? "ArrowUp" : "ArrowLeft"
+          const tabs = this.enabledTabs()
+          if (tabs.length === 0) return
+          let idx = tabs.indexOf(document.activeElement)
+          if (e.key === nextKey) {
+            e.preventDefault()
+            idx = idx < 0 ? 0 : (idx + 1) % tabs.length
+            this.focusActivate(tabs[idx])
+          } else if (e.key === prevKey) {
+            e.preventDefault()
+            idx = idx < 0 ? 0 : (idx - 1 + tabs.length) % tabs.length
+            this.focusActivate(tabs[idx])
+          } else if (e.key === "Home") {
+            e.preventDefault()
+            this.focusActivate(tabs[0])
+          } else if (e.key === "End") {
+            e.preventDefault()
+            this.focusActivate(tabs[tabs.length - 1])
+          }
+        },
+        focusActivate(tab) {
+          tab.focus()
+          this.activate(tab)
+        },
+        activate(tab) {
+          this.allTabs().forEach((t) => {
+            const selected = t === tab
+            t.setAttribute("aria-selected", selected ? "true" : "false")
+            t.setAttribute("tabindex", selected ? "0" : "-1")
+            const panel = document.getElementById(t.getAttribute("aria-controls"))
+            if (panel) {
+              if (selected) panel.removeAttribute("hidden")
+              else panel.setAttribute("hidden", "")
+            }
+          })
+          const encoded = this.el.dataset.onChange
+          if (encoded && encoded !== "[]" && this.liveSocket) {
+            this.liveSocket.execJS(this.el, encoded)
+          }
+        }
+      }
+    </script>
+    """
+  end
+
+  # ============================================================================
+  # HELPER FUNCTIONS
+  # ============================================================================
+
+  # Resolve ids, active flag and effective color for each tab slot.
+  defp prepare_tabs(tabs, group_id, active, group_color) do
+    prepared =
+      tabs
+      |> Enum.with_index()
+      |> Enum.map(fn {tab, index} ->
+        raw_id = Map.get(tab, :id)
+        tab_id = raw_id || "#{group_id}-tab-#{index}"
+
+        %{
+          slot: tab,
+          raw_id: raw_id,
+          tab_id: tab_id,
+          panel_id: "#{tab_id}-panel",
+          label: Map.fetch!(tab, :label),
+          icon: Map.get(tab, :icon),
+          disabled: Map.get(tab, :disabled, false),
+          color: Map.get(tab, :color) || group_color
+        }
+      end)
+
+    active_id = resolve_active(prepared, active)
+    Enum.map(prepared, fn tab -> Map.put(tab, :active, tab.tab_id == active_id) end)
+  end
+
+  defp resolve_active(prepared, active) do
+    by_attr = active && Enum.find(prepared, fn t -> t.raw_id == active and not t.disabled end)
+    first_enabled = Enum.find(prepared, fn t -> not t.disabled end)
+
+    cond do
+      by_attr -> by_attr.tab_id
+      first_enabled -> first_enabled.tab_id
+      true -> hd(prepared).tab_id
+    end
+  end
+
+  @spec icon_size(String.t()) :: String.t()
+  defp icon_size(size), do: @icon_size[size]
+
+  @spec panel_base() :: String.t()
+  defp panel_base, do: @panel_base
+
+  # Tablist container chrome per variant + orientation.
+  @spec tablist_classes(String.t(), String.t()) :: String.t()
+  defp tablist_classes(variant, orientation) do
+    base = if orientation == "vertical", do: "flex flex-col", else: "flex flex-row"
+    merge([base, tablist_variant(variant, orientation)])
+  end
+
+  defp tablist_variant("ghost", "vertical"), do: "gap-1 border-r border-border"
+  defp tablist_variant("ghost", _), do: "gap-6 border-b border-border"
+  defp tablist_variant("outline", "vertical"), do: "gap-1 border-r border-border"
+  defp tablist_variant("outline", _), do: "gap-1 border-b border-border"
+  defp tablist_variant(_segmented, _), do: "gap-1 rounded-box bg-muted p-1"
+
+  # Per-tab classes: base + size + variant shape + active/inactive state.
+  @spec tab_classes(String.t(), String.t(), String.t(), boolean(), String.t()) :: String.t()
+  defp tab_classes(variant, orientation, size, active, color) do
+    merge([
+      @tab_base,
+      @size_tab[size],
+      tab_shape(variant, orientation),
+      tab_state(variant, active, color)
+    ])
+  end
+
+  defp tab_shape("ghost", "vertical"), do: "rounded-none border-r-2 -mr-px"
+  defp tab_shape("ghost", _), do: "rounded-none border-b-2 -mb-px"
+  defp tab_shape("outline", "vertical"), do: "rounded-l-field border border-r-0 -mr-px"
+  defp tab_shape("outline", _), do: "rounded-t-field border border-b-0 -mb-px"
+  defp tab_shape(_segmented, _), do: "rounded-field"
+
+  defp tab_state("ghost", true, color), do: "#{@active_text[color]} #{@indicator_border[color]}"
+  defp tab_state("ghost", false, _color), do: "text-muted-foreground border-transparent hover:text-foreground"
+  defp tab_state("outline", true, color), do: "bg-background border-border-strong #{@active_text[color]}"
+  defp tab_state("outline", false, _color), do: "border-transparent text-muted-foreground hover:text-foreground"
+  defp tab_state("elevated", true, color), do: "#{@pill_fill[color]} shadow-card"
+  defp tab_state(_segmented, true, color), do: @pill_fill[color]
+  defp tab_state(_segmented, false, _color), do: "text-muted-foreground hover:text-foreground"
+end
