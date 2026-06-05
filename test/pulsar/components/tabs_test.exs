@@ -7,15 +7,6 @@ defmodule Pulsar.Components.TabsTest do
   alias Phoenix.LiveView.JS
   alias Pulsar.Components.Tabs
 
-  defp basic(assigns) do
-    ~H"""
-    <Tabs.tabs id="t" aria_label="Sections" {assigns}>
-      <:tab id="one" label="One">Panel one</:tab>
-      <:tab id="two" label="Two">Panel two</:tab>
-    </Tabs.tabs>
-    """
-  end
-
   describe "tabs/1 structure & ARIA" do
     test "renders tablist, tabs and panels with roles" do
       assigns = %{}
