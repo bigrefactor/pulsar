@@ -34,6 +34,7 @@ defmodule Pulsar.TemplateSync do
   @type pair :: {atom(), String.t(), String.t(), String.t()}
 
   @pairs [
+    {:alert, "lib/pulsar/components/alert.ex", "Pulsar.Components", "Pulsar.Components.Alert"},
     {:alert_dialog, "lib/pulsar/components/alert_dialog.ex", "Pulsar.Components", "Pulsar.Components.AlertDialog"},
     {:avatar, "lib/pulsar/components/avatar.ex", "Pulsar.Components", "Pulsar.Components.Avatar"},
     {:badge, "lib/pulsar/components/badge.ex", "Pulsar.Components", "Pulsar.Components.Badge"},
