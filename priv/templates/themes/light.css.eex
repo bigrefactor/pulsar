@@ -49,7 +49,7 @@
   --color-warning-foreground: var(--color-white);
   --color-danger: var(--color-danger-700);
   --color-danger-foreground: var(--color-white);
-  --color-info: var(--color-info-700);
+  --color-info: var(--color-info-800);
   --color-info-foreground: var(--color-white);
 }
 
@@ -87,6 +87,6 @@
   --color-warning-foreground: var(--color-white);
   --color-danger: var(--color-danger-700);
   --color-danger-foreground: var(--color-white);
-  --color-info: var(--color-info-700);
+  --color-info: var(--color-info-800);
   --color-info-foreground: var(--color-white);
 }

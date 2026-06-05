@@ -31,6 +31,7 @@ defmodule Pulsar.DevApp.Router do
     pipe_through :browser
 
     live "/", IndexLive, :index
+    live "/components/alert", AlertLive, :index
     live "/components/alert_dialog", AlertDialogLive, :index
     live "/components/avatar", AvatarLive, :index
     live "/components/badge", BadgeLive, :index

@@ -47,6 +47,7 @@ defmodule Pulsar.DevApp.Components do
      ]},
     {"Feedback",
      [
+       {"Alert", "/components/alert"},
        {"Flash", "/components/flash"},
        {"Flash (trigger)", "/components/flash/trigger"},
        {"FlashGroup", "/components/flash_group"}

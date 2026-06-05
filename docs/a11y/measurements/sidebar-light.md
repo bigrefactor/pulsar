@@ -42,7 +42,7 @@ Columns:
 | `ghost-success` | `nav` | 160 | 176 | ✓ | 19.27:1 ✓ | — (no-border) | — (no-focus-ring) |
 | `ghost-warning` | `nav` | 160 | 176 | ✓ | 19.27:1 ✓ | — (no-border) | — (no-focus-ring) |
 | `outline-danger` | `nav` | 160 | 176 | ✓ | 19.27:1 ✓ | 6.14:1 ✓ (right) | — (no-focus-ring) |
-| `outline-info` | `nav` | 160 | 176 | ✓ | 19.27:1 ✓ | 5.05:1 ✓ (right) | — (no-focus-ring) |
+| `outline-info` | `nav` | 160 | 176 | ✓ | 19.27:1 ✓ | 6.91:1 ✓ (right) | — (no-focus-ring) |
 | `outline-neutral` | `nav` | 160 | 176 | ✓ | 19.27:1 ✓ | 4.63:1 ✓ (right) | — (no-focus-ring) |
 | `outline-primary` | `nav` | 160 | 176 | ✓ | 19.27:1 ✓ | 6.54:1 ✓ (right) | — (no-focus-ring) |
 | `outline-secondary` | `nav` | 160 | 176 | ✓ | 19.27:1 ✓ | 5.64:1 ✓ (right) | — (no-focus-ring) |
@@ -56,7 +56,7 @@ Columns:
 | `size-xl` | `nav` | 160 | 176 | ✓ | 19.27:1 ✓ | 4.63:1 ✓ (right) | — (no-focus-ring) |
 | `size-xs` | `nav` | 160 | 176 | ✓ | 19.27:1 ✓ | 4.63:1 ✓ (right) | — (no-focus-ring) |
 | `solid-danger` | `nav` | 160 | 176 | ✓ | 6.42:1 ✓ | 6.14:1 ✓ (right) | — (no-focus-ring) |
-| `solid-info` | `nav` | 160 | 176 | ✓ | 5.28:1 ✓ | 5.05:1 ✓ (right) | — (no-focus-ring) |
+| `solid-info` | `nav` | 160 | 176 | ✓ | 7.22:1 ✓ | 6.91:1 ✓ (right) | — (no-focus-ring) |
 | `solid-neutral` | `nav` | 160 | 176 | ✓ | 19.27:1 ✓ | 4.63:1 ✓ (right) | — (no-focus-ring) |
 | `solid-primary` | `nav` | 160 | 176 | ✓ | 6.83:1 ✓ | 6.54:1 ✓ (right) | — (no-focus-ring) |
 | `solid-secondary` | `nav` | 160 | 176 | ✓ | 5.89:1 ✓ | 5.64:1 ✓ (right) | — (no-focus-ring) |
