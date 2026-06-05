@@ -17,6 +17,12 @@ defmodule Pulsar.Components.AlertTest do
       assert html =~ "text-info"
       assert html =~ ~s(aria-hidden="true")
     end
+
+    test "is full-width by default" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Alert.alert description="Saved." />])
+      assert html =~ "w-full"
+    end
   end
 
   describe "alert/1 variants" do

@@ -55,7 +55,7 @@ defmodule Pulsar.Components.Alert do
     "lg" => %{container: "gap-3 rounded-box p-4 text-base", icon: "lg", title: "text-lg", close: "h-6 w-6 p-0.5"}
   }
 
-  @alert_base_classes "flex items-center"
+  @alert_base_classes "flex w-full items-center"
 
   # Color classes per variant. Mirrors the Flash palette so text-on-tint clears
   # WCAG AA; ghost neutral uses the surface token rather than a neutral tint.
