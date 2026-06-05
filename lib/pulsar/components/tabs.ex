@@ -59,42 +59,45 @@ defmodule Pulsar.Components.Tabs do
 
   @valid_colors ~w(neutral primary secondary success danger warning info)
 
-  # Active tab text color per color key.
-  @active_text %{
-    "neutral" => "text-foreground",
-    "primary" => "text-primary",
-    "secondary" => "text-secondary",
-    "success" => "text-success",
-    "danger" => "text-danger",
-    "warning" => "text-warning",
-    "info" => "text-info"
+  # Active-state classes are written as full `aria-selected:` literals (not
+  # composed at runtime) so Tailwind's scanner emits them for every color.
+
+  # ghost: colored text + underline/edge indicator.
+  @ghost_active %{
+    "neutral" => "aria-selected:text-foreground aria-selected:border-foreground",
+    "primary" => "aria-selected:text-primary aria-selected:border-primary",
+    "secondary" => "aria-selected:text-secondary aria-selected:border-secondary",
+    "success" => "aria-selected:text-success aria-selected:border-success",
+    "danger" => "aria-selected:text-danger aria-selected:border-danger",
+    "warning" => "aria-selected:text-warning aria-selected:border-warning",
+    "info" => "aria-selected:text-info aria-selected:border-info"
   }
 
-  # Underline/edge indicator color (ghost variant).
-  @indicator_border %{
-    "neutral" => "border-foreground",
-    "primary" => "border-primary",
-    "secondary" => "border-secondary",
-    "success" => "border-success",
-    "danger" => "border-danger",
-    "warning" => "border-warning",
-    "info" => "border-info"
+  # solid/elevated: filled pill, base + readable foreground.
+  @pill_active %{
+    "neutral" => "aria-selected:bg-background aria-selected:text-foreground",
+    "primary" => "aria-selected:bg-primary aria-selected:text-primary-foreground",
+    "secondary" => "aria-selected:bg-secondary aria-selected:text-secondary-foreground",
+    "success" => "aria-selected:bg-success aria-selected:text-success-foreground",
+    "danger" => "aria-selected:bg-danger aria-selected:text-danger-foreground",
+    "warning" => "aria-selected:bg-warning aria-selected:text-warning-foreground",
+    "info" => "aria-selected:bg-info aria-selected:text-info-foreground"
   }
 
-  # Filled active pill (solid/elevated variants), base + readable foreground.
-  @pill_fill %{
-    "neutral" => "bg-background text-foreground",
-    "primary" => "bg-primary text-primary-foreground",
-    "secondary" => "bg-secondary text-secondary-foreground",
-    "success" => "bg-success text-success-foreground",
-    "danger" => "bg-danger text-danger-foreground",
-    "warning" => "bg-warning text-warning-foreground",
-    "info" => "bg-info text-info-foreground"
+  # outline: connected panel surface + strong border + colored text.
+  @outline_active %{
+    "neutral" => "aria-selected:bg-background aria-selected:border-border-strong aria-selected:text-foreground",
+    "primary" => "aria-selected:bg-background aria-selected:border-border-strong aria-selected:text-primary",
+    "secondary" => "aria-selected:bg-background aria-selected:border-border-strong aria-selected:text-secondary",
+    "success" => "aria-selected:bg-background aria-selected:border-border-strong aria-selected:text-success",
+    "danger" => "aria-selected:bg-background aria-selected:border-border-strong aria-selected:text-danger",
+    "warning" => "aria-selected:bg-background aria-selected:border-border-strong aria-selected:text-warning",
+    "info" => "aria-selected:bg-background aria-selected:border-border-strong aria-selected:text-info"
   }
 
   # Compile-time check that every color is fully configured.
   for color <- @valid_colors do
-    for {name, map} <- [active_text: @active_text, indicator_border: @indicator_border, pill_fill: @pill_fill] do
+    for {name, map} <- [ghost_active: @ghost_active, pill_active: @pill_active, outline_active: @outline_active] do
       if !map[color] do
         raise CompileError, description: "Missing tabs #{name} for color=#{color}"
       end
@@ -416,33 +419,22 @@ defmodule Pulsar.Components.Tabs do
   # switching a tab moves the indicator with no class recompute.
   @spec tab_state(String.t(), String.t()) :: String.t()
   defp tab_state("ghost", color) do
-    "text-muted-foreground border-transparent #{inactive_hover()} " <>
-      aria_selected("#{@active_text[color]} #{@indicator_border[color]}")
+    "text-muted-foreground border-transparent #{inactive_hover()} #{@ghost_active[color]}"
   end
 
   defp tab_state("outline", color) do
-    "border-transparent text-muted-foreground #{inactive_hover()} " <>
-      aria_selected("bg-background border-border-strong #{@active_text[color]}")
+    "border-transparent text-muted-foreground #{inactive_hover()} #{@outline_active[color]}"
   end
 
   defp tab_state("elevated", color) do
-    "text-muted-foreground #{inactive_hover()} " <>
-      aria_selected("#{@pill_fill[color]} shadow-card")
+    "text-muted-foreground #{inactive_hover()} #{@pill_active[color]} aria-selected:shadow-card"
   end
 
   defp tab_state(_segmented, color) do
-    "text-muted-foreground #{inactive_hover()} " <> aria_selected(@pill_fill[color])
+    "text-muted-foreground #{inactive_hover()} #{@pill_active[color]}"
   end
 
   # Hover affordance for inactive tabs only — never overrides the active tab's color.
   @spec inactive_hover() :: String.t()
   defp inactive_hover, do: "aria-[selected=false]:hover:text-foreground"
-
-  # Prefix each class in a space-separated string with the `aria-selected:` variant.
-  @spec aria_selected(String.t()) :: String.t()
-  defp aria_selected(classes) do
-    classes
-    |> String.split()
-    |> Enum.map_join(" ", &("aria-selected:" <> &1))
-  end
 end
