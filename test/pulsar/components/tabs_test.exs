@@ -199,6 +199,21 @@ defmodule Pulsar.Components.TabsTest do
 
       assert html =~ "text-danger"
     end
+
+    test "an inactive tab's color override is not applied (muted only)" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Tabs.tabs id="t" color="neutral" active="one">
+          <:tab id="one" label="One">P</:tab>
+          <:tab id="two" label="Two" color="danger">P</:tab>
+        </Tabs.tabs>
+        """)
+
+      # inactive tab does not receive its color override
+      refute html =~ "text-danger"
+    end
   end
 
   describe "tab features" do
@@ -236,6 +251,20 @@ defmodule Pulsar.Components.TabsTest do
       html =
         rendered_to_string(~H"""
         <Tabs.tabs id="t">
+          <:tab id="one" label="One" disabled>P</:tab>
+          <:tab id="two" label="Two">P</:tab>
+        </Tabs.tabs>
+        """)
+
+      assert html =~ ~r/id="two"[^>]*aria-selected="true"/s
+    end
+
+    test "active pointing at a disabled tab falls back to the first enabled tab" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Tabs.tabs id="t" active="one">
           <:tab id="one" label="One" disabled>P</:tab>
           <:tab id="two" label="Two">P</:tab>
         </Tabs.tabs>

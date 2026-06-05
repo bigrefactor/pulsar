@@ -48,6 +48,7 @@ defmodule Pulsar.Components.Tabs do
   alias Pulsar.Components.Icon
 
   # Inline ID generator
+  @spec generate_id(String.t()) :: String.t()
   defp generate_id(prefix \\ "tabs") do
     "#{prefix}-#{System.unique_integer([:positive])}"
   end
@@ -336,6 +337,7 @@ defmodule Pulsar.Components.Tabs do
   # ============================================================================
 
   # Resolve ids, active flag and effective color for each tab slot.
+  @spec prepare_tabs(list(map()), String.t(), String.t() | nil, String.t()) :: list(map())
   defp prepare_tabs(tabs, group_id, active, group_color) do
     prepared =
       tabs
@@ -360,6 +362,7 @@ defmodule Pulsar.Components.Tabs do
     Enum.map(prepared, fn tab -> Map.put(tab, :active, tab.tab_id == active_id) end)
   end
 
+  @spec resolve_active(list(map()), String.t() | nil) :: String.t()
   defp resolve_active(prepared, active) do
     by_attr = active && Enum.find(prepared, fn t -> t.raw_id == active and not t.disabled end)
     first_enabled = Enum.find(prepared, fn t -> not t.disabled end)
@@ -384,6 +387,7 @@ defmodule Pulsar.Components.Tabs do
     merge([base, tablist_variant(variant, orientation)])
   end
 
+  @spec tablist_variant(String.t(), String.t()) :: String.t()
   defp tablist_variant("ghost", "vertical"), do: "gap-1 border-r border-border"
   defp tablist_variant("ghost", _), do: "gap-6 border-b border-border"
   defp tablist_variant("outline", "vertical"), do: "gap-1 border-r border-border"
@@ -401,12 +405,14 @@ defmodule Pulsar.Components.Tabs do
     ])
   end
 
+  @spec tab_shape(String.t(), String.t()) :: String.t()
   defp tab_shape("ghost", "vertical"), do: "rounded-none border-r-2 -mr-px"
   defp tab_shape("ghost", _), do: "rounded-none border-b-2 -mb-px"
   defp tab_shape("outline", "vertical"), do: "rounded-l-field border border-r-0 -mr-px"
   defp tab_shape("outline", _), do: "rounded-t-field border border-b-0 -mb-px"
   defp tab_shape(_segmented, _), do: "rounded-field"
 
+  @spec tab_state(String.t(), boolean(), String.t()) :: String.t()
   defp tab_state("ghost", true, color), do: "#{@active_text[color]} #{@indicator_border[color]}"
   defp tab_state("ghost", false, _color), do: "text-muted-foreground border-transparent hover:text-foreground"
   defp tab_state("outline", true, color), do: "bg-background border-border-strong #{@active_text[color]}"
