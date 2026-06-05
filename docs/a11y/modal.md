@@ -26,10 +26,12 @@ dismissal, and the `dismissable={false}` lock. `title` is wired as the dialog's
 **Evidence:** Surfaces use the same semantic-token matrix as Card/Popover:
 `elevated` pairs `bg-surface-1` with the inherited foreground; `outline`/`solid`
 add a `border-{color}` / soft `bg-{color}/10` tint — `lib/pulsar/components/modal.ex:92–127`.
-Title and body inherit `text-foreground`; the description uses `text-foreground`
-(not `text-muted-foreground`) so it clears 4.5:1 on every variant×color surface,
-including the colored solid tints. The axe gate scans the `/components/modal`
-fixture cells in light and dark with zero violations.
+Title and body inherit `text-foreground`; the description uses
+`text-muted-foreground`, which measures 6.0–7.23:1 across every variant×color
+surface — including the colored solid `bg-{color}/10` tints (the tint composites
+over the light surface, keeping the effective background pale) — comfortably
+clearing the 4.5:1 minimum. The axe gate scans the `/components/modal` fixture
+cells in light and dark with zero violations.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
