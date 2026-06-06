@@ -195,7 +195,18 @@ defmodule Pulsar.Components.Pagination do
   @spec pagination(map()) :: Rendered.t()
   def pagination(assigns) do
     page? = assigns.mode == "page"
-    if page?, do: validate_page_mode!(assigns)
+
+    assigns =
+      if page? do
+        validate_page_mode!(assigns)
+        # Clamp a possibly out-of-range page (e.g. a stale URL param like
+        # page=999, total_pages=10) into [1, total_pages] so prev/next point at
+        # real pages and the active page always carries aria-current. total_pages
+        # is floored at 1 so a degenerate total_pages=0 can't push page to 0.
+        assign(assigns, :page, assigns.page |> max(1) |> min(max(assigns.total_pages, 1)))
+      else
+        assigns
+      end
 
     items =
       if page?,
@@ -258,7 +269,9 @@ defmodule Pulsar.Components.Pagination do
             patch={(@link_type == "patch" && @page_href.(item)) || nil}
             href={(@link_type == "href" && @page_href.(item)) || nil}
             aria-current={(item == @page && "page") || nil}
-            aria-label={"#{@go_to_label_prefix} #{@format_page_number.(item)}"}
+            aria-label={
+              (item == @page && @format_page_number.(item)) || "#{@go_to_label_prefix} #{@format_page_number.(item)}"
+            }
             class={item_classes(@variant, @color, @size, item == @page)}
           >
             {@format_page_number.(item)}
@@ -313,7 +326,7 @@ defmodule Pulsar.Components.Pagination do
   end
 
   # Windowed page list. Returns integers and `:ellipsis` markers.
-  @spec page_items(pos_integer(), pos_integer(), non_neg_integer(), pos_integer()) :: [pos_integer() | :ellipsis]
+  @spec page_items(pos_integer(), pos_integer(), non_neg_integer(), non_neg_integer()) :: [pos_integer() | :ellipsis]
   defp page_items(page, count, sibling_count, boundary_count) do
     start_pages = inclusive_range(1, min(boundary_count, count))
     end_pages = inclusive_range(max(count - boundary_count + 1, boundary_count + 1), count)
@@ -362,12 +375,18 @@ defmodule Pulsar.Components.Pagination do
     formatter = assigns.format_summary || (&default_summary/1)
 
     {from, to} =
-      if is_integer(assigns.page_size) and is_integer(assigns.total_count) do
-        from = (assigns.page - 1) * assigns.page_size + 1
-        to = min(assigns.page * assigns.page_size, assigns.total_count)
-        {from, to}
-      else
-        {nil, nil}
+      cond do
+        not (is_integer(assigns.page_size) and is_integer(assigns.total_count)) ->
+          {nil, nil}
+
+        # Empty result set: render "0–0 of 0" rather than a nonsensical "1–0 of 0".
+        assigns.total_count <= 0 ->
+          {0, 0}
+
+        true ->
+          from = (assigns.page - 1) * assigns.page_size + 1
+          to = min(assigns.page * assigns.page_size, assigns.total_count)
+          {from, to}
       end
 
     formatter.(%{

@@ -43,6 +43,19 @@ defmodule Pulsar.Components.PaginationTest do
       assert html =~ ~s(aria-current="page")
     end
 
+    test "current page label omits the Go-to verb (aria-current conveys state)" do
+      assigns = %{f: href_fun()}
+
+      html =
+        rendered_to_string(~H[<Pagination.pagination page={3} total_pages={10} page_href={@f} />])
+
+      # The current page reads as "3", not "Go to page 3".
+      assert html =~ ~s(aria-label="3")
+      refute html =~ ~s(aria-label="Go to page 3")
+      # Other pages still get the full "Go to page N" label.
+      assert html =~ ~s(aria-label="Go to page 1")
+    end
+
     test "builds hrefs with the page_href function" do
       assigns = %{f: href_fun()}
 
@@ -173,6 +186,45 @@ defmodule Pulsar.Components.PaginationTest do
     end
   end
 
+  describe "page mode · out-of-range page (clamping)" do
+    test "page above total_pages clamps to the last page" do
+      assigns = %{f: href_fun()}
+
+      html =
+        rendered_to_string(~H[<Pagination.pagination page={999} total_pages={10} page_href={@f} />])
+
+      # Clamped to 10: the active page exists, prev points at 9, next is disabled,
+      # and no link targets the non-existent page 998/1000.
+      assert html =~ ~s(aria-current="page")
+      assert html =~ ~s(/users?page=9)
+      refute html =~ ~s(/users?page=998)
+      refute html =~ ~s(/users?page=1000)
+    end
+
+    test "page below 1 clamps to the first page" do
+      assigns = %{f: href_fun()}
+
+      html =
+        rendered_to_string(~H[<Pagination.pagination page={0} total_pages={10} page_href={@f} />])
+
+      # Clamped to 1: prev is disabled, the active page exists.
+      assert html =~ ~s(aria-current="page")
+      assert html =~ ~s(aria-disabled="true")
+      refute html =~ ~s(/users?page=-1)
+    end
+
+    test "total_pages=0 floors page to 1 (never 0)" do
+      assigns = %{f: href_fun()}
+
+      html =
+        rendered_to_string(~H[<Pagination.pagination page={5} total_pages={0} page_href={@f} />])
+
+      # Degenerate empty page set: page must not collapse to 0.
+      refute html =~ ~s(/users?page=0)
+      refute html =~ ~s(aria-label="Go to page 0")
+    end
+  end
+
   describe "summary" do
     test "show_summary renders Page N of M in page mode" do
       assigns = %{f: href_fun()}
@@ -192,6 +244,18 @@ defmodule Pulsar.Components.PaginationTest do
         )
 
       assert html =~ "21–30 of 117"
+    end
+
+    test "renders 0–0 of 0 for an empty result set" do
+      assigns = %{f: href_fun()}
+
+      html =
+        rendered_to_string(
+          ~H[<Pagination.pagination page={1} total_pages={1} page_size={10} total_count={0} page_href={@f} show_summary />]
+        )
+
+      assert html =~ "0–0 of 0"
+      refute html =~ "1–0 of 0"
     end
 
     test "format_summary overrides the default text" do

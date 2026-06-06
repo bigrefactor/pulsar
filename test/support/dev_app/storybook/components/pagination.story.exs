@@ -8,8 +8,20 @@ defmodule Pulsar.DevApp.Storybook.Components.Pagination do
 
   def attributes do
     [
-      %Attr{id: :mode, type: :string, values: ~w(page cursor), default: "page", doc: "page = numbered; cursor = prev/next only"},
-      %Attr{id: :variant, type: :string, values: ~w(solid outline ghost), default: "ghost", doc: "How the current page is emphasized"},
+      %Attr{
+        id: :mode,
+        type: :string,
+        values: ~w(page cursor),
+        default: "page",
+        doc: "page = numbered; cursor = prev/next only"
+      },
+      %Attr{
+        id: :variant,
+        type: :string,
+        values: ~w(solid outline ghost),
+        default: "ghost",
+        doc: "How the current page is emphasized"
+      },
       %Attr{
         id: :color,
         type: :string,
@@ -64,7 +76,12 @@ defmodule Pulsar.DevApp.Storybook.Components.Pagination do
       %Variation{
         id: :cursor,
         description: "Cursor mode (prev/next only)",
-        attributes: %{mode: "cursor", prev_href: "/storybook-demo?before=abc", next_href: "/storybook-demo?after=xyz", link_type: "href"}
+        attributes: %{
+          mode: "cursor",
+          prev_href: "/storybook-demo?before=abc",
+          next_href: "/storybook-demo?after=xyz",
+          link_type: "href"
+        }
       }
     ]
   end
