@@ -4,42 +4,45 @@ defmodule Pulsar.DevApp.PaginationLive do
 
   alias Pulsar.Components.Pagination
 
-  @variants ~w(ghost solid outline)
   @colors ~w(neutral primary secondary success danger warning info)
   @sizes ~w(xs sm md lg xl)
 
   def render(assigns) do
+    variant = Atom.to_string(assigns.live_action)
+
     assigns =
       assign(assigns,
-        variants: @variants,
+        variant: variant,
         colors: @colors,
         sizes: @sizes,
-        href: fn p -> "/components/pagination?page=#{p}" end
+        href: fn p -> "/components/pagination/#{variant}?page=#{p}" end
       )
 
     ~H"""
-    <.fixture_page name="pagination" title="Pagination">
+    <.fixture_page name={"pagination-#{@variant}"} title={"Pagination (#{@variant})"}>
       <.fixture_section
-        :for={variant <- @variants}
-        name={"variant-#{variant}"}
-        title={"variant: #{variant}"}
+        :for={color <- @colors}
+        name={"#{@variant}-#{color}"}
+        title={"#{@variant} · #{color}"}
       >
-        <%= for color <- @colors, size <- @sizes do %>
-          <Pagination.pagination
-            page={6}
-            total_pages={20}
-            page_href={@href}
-            link_type="href"
-            variant={variant}
-            color={color}
-            size={size}
-            aria_label={"Pagination #{variant} #{color} #{size}"}
-            data-fixture-cell={"#{variant}-#{color}-#{size}"}
-          />
-        <% end %>
+        <Pagination.pagination
+          :for={size <- @sizes}
+          page={6}
+          total_pages={20}
+          page_href={@href}
+          link_type="href"
+          variant={@variant}
+          color={color}
+          size={size}
+          aria_label={"Pagination #{@variant} #{color} #{size}"}
+          data-fixture-cell={"#{@variant}-#{color}-#{size}"}
+        />
       </.fixture_section>
 
-      <.fixture_section name="boundaries" title="disabled boundaries">
+      <%!-- Variant-agnostic behaviors are rendered once (on the ghost route) to
+            keep each per-variant fixture light enough to connect within the
+            browser-a11y mount budget. --%>
+      <.fixture_section :if={@variant == "ghost"} name="boundaries" title="disabled boundaries">
         <Pagination.pagination
           page={1}
           total_pages={5}
@@ -58,7 +61,7 @@ defmodule Pulsar.DevApp.PaginationLive do
         />
       </.fixture_section>
 
-      <.fixture_section name="summary" title="with summary">
+      <.fixture_section :if={@variant == "ghost"} name="summary" title="with summary">
         <Pagination.pagination
           page={3}
           total_pages={12}
@@ -72,11 +75,11 @@ defmodule Pulsar.DevApp.PaginationLive do
         />
       </.fixture_section>
 
-      <.fixture_section name="cursor" title="cursor mode">
+      <.fixture_section :if={@variant == "ghost"} name="cursor" title="cursor mode">
         <Pagination.pagination
           mode="cursor"
-          prev_href="/components/pagination?before=abc"
-          next_href="/components/pagination?after=xyz"
+          prev_href="/components/pagination/ghost?before=abc"
+          next_href="/components/pagination/ghost?after=xyz"
           link_type="href"
           aria_label="Pagination cursor both"
           data-fixture-cell="cursor-both"
@@ -84,7 +87,7 @@ defmodule Pulsar.DevApp.PaginationLive do
         <Pagination.pagination
           mode="cursor"
           prev_href={false}
-          next_href="/components/pagination?after=xyz"
+          next_href="/components/pagination/ghost?after=xyz"
           link_type="href"
           aria_label="Pagination cursor start"
           data-fixture-cell="cursor-start"

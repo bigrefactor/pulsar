@@ -35,7 +35,9 @@ defmodule Pulsar.DevApp.Components do
      [
        {"Menu", "/components/menu"},
        {"Navbar", "/components/navbar"},
-       {"Pagination", "/components/pagination"},
+       {"Pagination (ghost)", "/components/pagination/ghost"},
+       {"Pagination (solid)", "/components/pagination/solid"},
+       {"Pagination (outline)", "/components/pagination/outline"},
        {"Sidebar", "/components/sidebar"},
        {"Tabs (ghost)", "/components/tabs/ghost"},
        {"Tabs (solid)", "/components/tabs/solid"},

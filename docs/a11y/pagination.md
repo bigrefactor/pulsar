@@ -47,7 +47,7 @@ or border ring (outline) — `lib/pulsar/components/pagination.ex:260, 400`.
 (`bg-{color} text-{color}-foreground`) or `text-{color}` on the background;
 inactive controls use `text-muted-foreground` (measured 6.0–7.23:1 on all
 surfaces) — `lib/pulsar/components/pagination.ex:400–408`. The axe gate scans the
-`/components/pagination` fixture in light and dark with no violations.
+`/components/pagination/{ghost,solid,outline}` fixtures in light and dark with no violations.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
@@ -79,8 +79,9 @@ keyboard (Tab + Enter); disabled boundaries are non-focusable spans —
 
 ### 2.4.4 Link Purpose (In Context) (A) — ✓ PASS
 
-**Evidence:** Each page link has `aria-label="{go_to_label_prefix} {n}"`; prev/next
-carry visible label text — `lib/pulsar/components/pagination.ex:261, 245`. Test
+**Evidence:** Each non-current page link has `aria-label="{go_to_label_prefix} {n}"`;
+the current page's label is just its number (`aria-current="page"` conveys state);
+prev/next carry visible label text — `lib/pulsar/components/pagination.ex:261, 245`. Test
 `previous_label / next_label / go_to_label_prefix override…` —
 `test/pulsar/components/pagination_test.exs:254`.
 
@@ -102,7 +103,8 @@ control — `lib/pulsar/components/pagination.ex:233`.
 ### 2.5.3 Label in Name (A) — ✓ PASS
 
 **Evidence:** Page link visible text is its number; its `aria-label` contains that
-number (`Go to page 3` over visible `3`) — `lib/pulsar/components/pagination.ex:261`.
+number (`Go to page 4` over visible `4`; the current page reads as just `3`) —
+`lib/pulsar/components/pagination.ex:261`.
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
@@ -168,5 +170,5 @@ region so page changes are announced — `lib/pulsar/components/pagination.ex:28
 
 ## Browser a11y findings
 
-None. The axe gate is clean across the `/components/pagination` fixture cells in
-light and dark themes.
+None. The axe gate is clean across the `/components/pagination/{ghost,solid,outline}`
+fixture cells in light and dark themes.
