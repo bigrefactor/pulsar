@@ -248,6 +248,17 @@ defmodule Pulsar.Components.PaginationTest do
 
       assert html =~ "mt-8"
     end
+
+    test "controls have the hover/press scale motion (parity with button/tabs)" do
+      assigns = %{f: href_fun()}
+
+      html =
+        rendered_to_string(~H[<Pagination.pagination page={2} total_pages={5} page_href={@f} />])
+
+      assert html =~ "hover:scale-[1.02]"
+      assert html =~ "active:scale-[0.98]"
+      assert html =~ "motion-reduce:hover:scale-100"
+    end
   end
 
   describe "localization" do

@@ -98,7 +98,7 @@ defmodule Pulsar.Components.Pagination do
 
   @icon_size %{"xs" => "xs", "sm" => "xs", "md" => "sm", "lg" => "sm", "xl" => "md"}
 
-  @item_base "inline-flex items-center justify-center font-medium rounded-field select-none whitespace-nowrap transition-colors duration-fast ease-standard focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 aria-disabled:pointer-events-none aria-disabled:opacity-disabled"
+  @item_base "inline-flex items-center justify-center font-medium rounded-field select-none whitespace-nowrap transition-[transform,box-shadow,background-color,border-color,color,opacity] duration-normal ease-standard hover:scale-[1.02] active:scale-[0.98] motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 aria-disabled:pointer-events-none aria-disabled:opacity-disabled"
 
   @list_base "flex flex-row flex-wrap items-center gap-1"
 
