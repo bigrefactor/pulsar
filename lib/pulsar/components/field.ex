@@ -99,6 +99,7 @@ defmodule Pulsar.Components.Field do
   - **Checkbox**: Renders Pulsar.Components.Checkbox with optional card styling
   - **Switch**: Renders Pulsar.Components.Switch with iOS-style toggle
   - **Radio**: Renders Pulsar.Components.RadioGroup with grouped options
+  - **OTP**: Renders Pulsar.Components.InputOtp for one-time codes (2FA / MFA)
 
   ## Layout Customization
 
