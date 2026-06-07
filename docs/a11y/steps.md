@@ -60,7 +60,7 @@ status line plus, for the active step, `aria-current="step"` —
 foreground (`bg-{color} text-{color}-foreground`) or accent text on the
 background (outline/ghost); upcoming and disabled markers and labels use
 `text-muted-foreground` (measured 6.0–7.23:1 on all surfaces) —
-`lib/pulsar/components/steps.ex:345–366`. Per-cell measurements record
+`lib/pulsar/components/steps.ex:345–370`. Per-cell measurements record
 the rendered text at ~19:1 (light) / ~17:1 (dark) across every variant × color ×
 size cell plus the state-vocabulary and vertical cells —
 [`measurements/steps-light.md`](measurements/steps-light.md),
@@ -82,10 +82,13 @@ scales with the user's font size.
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** The list is a `flex` row (or `flex flex-col` when vertical) with no
-fixed width, and the label column uses `min-w-0` so content shrinks rather than
-forcing horizontal scrolling — `lib/pulsar/components/steps.ex:369–374, 284`. The
-reflow measurement at 320 CSS px reports no overflowing cells —
-[`measurements/steps-light.md`](measurements/steps-light.md).
+fixed width. Each horizontal step is `min-w-0 flex-1` and its label is
+`wrap-anywhere` (`overflow-wrap: anywhere`), which both wraps a long single-word
+label and reduces its intrinsic min-content, so the step shrinks to its marker
+instead of forcing the row wider than 320 px — even a dense six-step row
+reflows — `lib/pulsar/components/steps.ex:373–378, 284, 370`. The reflow gate at
+320 CSS px reports no overflowing cells across the `solid`/`outline`/`ghost`
+fixtures in light and dark — `test/integration/a11y/reflow_test.exs`.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 

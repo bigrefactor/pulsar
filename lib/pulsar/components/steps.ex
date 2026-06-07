@@ -360,10 +360,14 @@ defmodule Pulsar.Components.Steps do
 
   @spec label_classes(atom(), String.t()) :: String.t()
   # Upcoming/disabled steps are de-emphasized; everyone else gets the strong label.
+  # `wrap-anywhere` (overflow-wrap: anywhere) both wraps a long single-word label
+  # AND reduces its intrinsic min-content, so the flex step can shrink to its
+  # marker and dense horizontal steppers reflow at 320px (plain `break-words`
+  # wraps visually but keeps the wide min-content, so the row won't collapse).
   defp label_classes(state, size) when state in [:upcoming, :disabled],
-    do: merge(["font-medium text-muted-foreground", @label_size[size] || ""])
+    do: merge(["font-medium text-muted-foreground wrap-anywhere", @label_size[size] || ""])
 
-  defp label_classes(_state, size), do: merge(["font-semibold text-foreground", @label_size[size] || ""])
+  defp label_classes(_state, size), do: merge(["font-semibold text-foreground wrap-anywhere", @label_size[size] || ""])
 
   @spec list_classes(String.t(), String.t()) :: String.t()
   defp list_classes("vertical", extra), do: merge(["flex flex-col", extra])
@@ -371,7 +375,7 @@ defmodule Pulsar.Components.Steps do
 
   @spec item_classes(String.t()) :: String.t()
   defp item_classes("vertical"), do: "relative flex flex-row gap-3 pb-6 last:pb-0"
-  defp item_classes(_horizontal), do: "relative flex flex-1 flex-col items-center gap-2 text-center"
+  defp item_classes(_horizontal), do: "relative flex min-w-0 flex-1 flex-col items-center gap-2 text-center"
 
   # Connector to the NEXT step; accent when this step is complete.
   @spec connector_classes(String.t(), String.t(), atom(), String.t(), String.t()) :: String.t()
