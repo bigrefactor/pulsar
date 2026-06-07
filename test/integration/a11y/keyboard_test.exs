@@ -111,6 +111,22 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
       |> assert_has(~s|#kbd-otp-otp [data-slot="0"][data-filled="true"]|, text: "1")
     end
 
+    # Regression: the active-slot indicator tracks the caret, not value length.
+    # After moving the caret into the middle of a partial code, the active ring
+    # must mark the caret's slot (the real overwrite target). The old code keyed
+    # off `v.length`, so it would have left slot 2 active here.
+    test "moving the caret marks the caret's slot active, not next-empty", %{conn: conn} do
+      conn
+      |> visit("/keyboard/input_otp")
+      |> A11y.await_live_connected()
+      |> press("#kbd-otp", "1")
+      |> press("#kbd-otp", "2")
+      |> assert_has(~s|#kbd-otp-otp [data-slot="2"][data-active="true"]|)
+      |> press("#kbd-otp", "ArrowLeft")
+      |> assert_has(~s|#kbd-otp-otp [data-slot="1"][data-active="true"]|)
+      |> refute_has(~s|#kbd-otp-otp [data-slot="2"][data-active="true"]|)
+    end
+
     test "entering all six digits fires on_complete", %{conn: conn} do
       conn
       |> visit("/keyboard/input_otp")

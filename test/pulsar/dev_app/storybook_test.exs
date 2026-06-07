@@ -27,6 +27,7 @@ defmodule Pulsar.DevApp.StorybookTest do
     /components/header
     /components/icon
     /components/input
+    /components/input_otp
     /components/label
     /components/link
     /components/list

@@ -36,6 +36,11 @@ defmodule <%= @web_module %>.Storybook.Components.InputOtp do
         doc: "Number of code characters"
       },
       %Attr{
+        id: :groups,
+        type: :list,
+        doc: "Split the slots into groups with a separator, e.g. [3, 3]"
+      },
+      %Attr{
         id: :mode,
         type: :string,
         values: ~w(numeric alphanumeric),

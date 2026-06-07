@@ -9,8 +9,8 @@ labels, errors, and ARIA wiring.
 
     <.input_otp field={@form[:otp]} length={6} />
 
-    # Auto-submit when the last digit is entered
-    <.input_otp field={@form[:otp]} on_complete={JS.push("verify")} />
+    # Trigger the surrounding form's submit once the code is complete
+    <.input_otp field={@form[:otp]} on_complete={JS.dispatch("submit", to: "#otp-form")} />
 
     # Grouped, masked, alphanumeric
     <.input_otp field={@form[:code]} length={6} groups={[3, 3]} mask mode="alphanumeric" />
@@ -23,8 +23,13 @@ labels, errors, and ARIA wiring.
 
 ## Callbacks
 
-`on_complete` is a `%JS{}` command run once every character is entered — pair it
-with `JS.push(...)` to auto-submit a verification form.
+`on_complete` is a `%JS{}` command run once every character is entered. Use it to
+submit the surrounding form, e.g. `JS.dispatch("submit", to: "#otp-form")`.
+
+Keep `input_otp` inside a form (directly or via `Pulsar.Components.Field`) so the
+typed value reaches the server through the form's `phx-change`/`phx-submit`.
+`JS.push("verify")` sends the event but not the field value, so it can't carry the
+code on its own — pair it with a form when the handler needs to read the code.
 """
 
 use Phoenix.Component
@@ -102,12 +107,14 @@ attr(:autofocus, :boolean, default: false, doc: "Focus the input on mount")
 attr(:on_complete, JS, default: %JS{}, doc: ~s{JS run when all characters are entered. Use with the server: JS.push("event")})
 
 attr(:class, :string, default: "", doc: "Additional CSS classes for the container")
+attr(:"aria-describedby", :string, default: nil, doc: "Id(s) of elements that describe the input")
 attr(:rest, :global, doc: "Additional attributes for the input")
 
 def input_otp(assigns) do
+  assigns = normalize_field_props(assigns)
+
   assigns =
     assigns
-    |> normalize_field_props()
     |> assign(:cells, build_cells(assigns.length, assigns[:groups]))
     |> assign(:slot_class, slot_classes(assigns.variant, assigns.color, assigns.size))
     |> assign(:gap_class, @gap[assigns.size] || @gap["md"])
@@ -120,7 +127,7 @@ def input_otp(assigns) do
     data-length={@length}
     data-mode={@mode}
     data-mask={to_string(@mask)}
-    class={merge(["relative inline-flex items-center", @gap_class, @class])}
+    class={merge(["relative inline-flex items-center", @class])}
   >
     <input
       type="text"
@@ -136,6 +143,7 @@ def input_otp(assigns) do
       disabled={@disabled}
       autofocus={@autofocus}
       aria-invalid={(@invalid && "true") || "false"}
+      aria-describedby={assigns[:"aria-describedby"]}
       data-otp-input
       class="absolute inset-0 h-full w-full cursor-text bg-transparent text-center text-transparent caret-transparent outline-none disabled:cursor-not-allowed"
       {@rest}
@@ -149,7 +157,11 @@ def input_otp(assigns) do
         updated() { this.boot(); this.paint(); },
         boot() {
           this.input = this.el.querySelector("[data-otp-input]");
-          this.slots = Array.from(this.el.querySelectorAll("[data-slot]"));
+          this.slots = Array.from(this.el.querySelectorAll("[data-slot]")).map((slot) => ({
+            el: slot,
+            char: slot.querySelector("[data-otp-char]"),
+            caret: slot.querySelector("[data-otp-caret]")
+          }));
           this.length = parseInt(this.el.dataset.length, 10);
           this.mode = this.el.dataset.mode;
           this.mask = this.el.dataset.mask === "true";
@@ -182,16 +194,15 @@ def input_otp(assigns) do
         paint() {
           const v = this.input.value;
           const focused = document.activeElement === this.input;
-          const activeIndex = focused ? Math.min(v.length, this.length - 1) : -1;
+          const caret = this.input.selectionStart;
+          const activeIndex = focused ? Math.min(caret, this.length - 1) : -1;
           this.slots.forEach((slot, i) => {
             const ch = v[i] || "";
-            const charEl = slot.querySelector("[data-otp-char]");
-            const caretEl = slot.querySelector("[data-otp-caret]");
-            if (charEl) charEl.textContent = ch ? (this.mask ? "•" : ch) : "";
-            slot.setAttribute("data-filled", ch ? "true" : "false");
+            if (slot.char) slot.char.textContent = ch ? (this.mask ? "•" : ch) : "";
+            slot.el.setAttribute("data-filled", ch ? "true" : "false");
             const active = i === activeIndex;
-            slot.setAttribute("data-active", active ? "true" : "false");
-            if (caretEl) caretEl.classList.toggle("hidden", !(active && !ch));
+            slot.el.setAttribute("data-active", active ? "true" : "false");
+            if (slot.caret) slot.caret.classList.toggle("hidden", !(active && !ch));
           });
         },
         maybeComplete(v) {
@@ -241,7 +252,7 @@ end
 defp input_mode("numeric"), do: "numeric"
 defp input_mode(_), do: "text"
 
-defp build_cells(length, nil), do: for(i <- 0..(length - 1), do: {:slot, i})
+defp build_cells(length, nil), do: for(i <- 0..(length - 1)//1, do: {:slot, i})
 
 defp build_cells(length, groups) when is_list(groups) do
   total = Enum.sum(groups)
@@ -271,7 +282,7 @@ end
 
 defp normalize_field_props(assigns) do
   field = assigns[:field]
-  id = assigns[:id] || (field && field.id) || "otp-#{System.unique_integer([:positive])}"
+  id = assigns[:id] || (field && field.id) || assigns[:name] || "otp-#{System.unique_integer([:positive])}"
 
   assigns
   |> assign(:id, id)
