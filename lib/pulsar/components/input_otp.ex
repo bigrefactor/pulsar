@@ -144,7 +144,7 @@ defmodule Pulsar.Components.InputOtp do
         class="absolute inset-0 h-full w-full cursor-text bg-transparent text-center text-transparent caret-transparent outline-none disabled:cursor-not-allowed"
         {@rest}
       />
-      <div aria-hidden="true" class={merge(["flex items-center", @gap_class])}>
+      <div aria-hidden="true" class={merge(["pointer-events-none flex items-center", @gap_class])}>
         <.otp_cell :for={cell <- @cells} cell={cell} slot_class={@slot_class} size={@size} disabled={@disabled} />
       </div>
       <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarInputOtp">

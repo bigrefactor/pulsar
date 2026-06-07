@@ -123,6 +123,35 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
       |> press("#kbd-otp", "6")
       |> assert_has("#kbd-otp-completes", text: "1")
     end
+
+    # Regression: the painted slot boxes are an aria-hidden, pointer-transparent
+    # overlay — clicking a box must fall through and focus the real input. (A
+    # missing pointer-events-none made the boxes eat the click, so only Tab
+    # focused the input, not a mouse click.)
+    test "clicking a slot box focuses the real input", %{conn: conn} do
+      session =
+        conn
+        |> visit("/keyboard/input_otp")
+        |> A11y.await_live_connected()
+
+      hit_test = """
+      (() => {
+        const slot = document.querySelector('#kbd-otp-otp [data-slot="0"]');
+        const r = slot.getBoundingClientRect();
+        const el = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+        return el && el.hasAttribute('data-otp-input') ? 'input' : 'blocked';
+      })()
+      """
+
+      PhoenixTest.Playwright.evaluate(session, hit_test, fn hit ->
+        assert hit == "input",
+               "expected a click over a slot box to reach the real input, but the slot layer intercepted it (#{inspect(hit)}); the slot overlay must be pointer-events-none"
+      end)
+
+      session
+      |> PhoenixTest.Playwright.click("#kbd-otp")
+      |> A11y.assert_focused("kbd-otp")
+    end
   end
 
   describe "Menu keyboard navigation" do
