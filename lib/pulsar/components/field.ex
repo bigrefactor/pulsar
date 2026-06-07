@@ -147,12 +147,14 @@ defmodule Pulsar.Components.Field do
 
   alias Phoenix.HTML.Form
   alias Phoenix.HTML.FormField
+  alias Phoenix.LiveView.JS
   alias Phoenix.LiveView.Rendered
 
   # Import all the Pulsar components we'll be rendering
   alias Pulsar.Components.Checkbox
   alias Pulsar.Components.Icon
   alias Pulsar.Components.Input
+  alias Pulsar.Components.InputOtp
   alias Pulsar.Components.Label
   alias Pulsar.Components.RadioGroup
   alias Pulsar.Components.Select
@@ -223,7 +225,7 @@ defmodule Pulsar.Components.Field do
 
   attr(:type, :string,
     default: "text",
-    values: ~w(text email password number tel url search date time datetime-local month week color file range
+    values: ~w(text email password number tel url search date time datetime-local month week color file range otp
                 select textarea checkbox radio switch),
     doc: "Input type - determines which component to render"
   )
@@ -260,6 +262,13 @@ defmodule Pulsar.Components.Field do
   attr(:pattern, :string, default: nil, doc: "Validation pattern")
   attr(:autocomplete, :string, default: nil, doc: "Autocomplete hint")
   attr(:checked, :boolean, default: nil, doc: "Checked state (checkbox/switch)")
+
+  # OTP-specific attributes
+  attr(:length, :integer, default: 6, doc: "Number of OTP characters")
+  attr(:groups, :list, default: nil, doc: "Group the OTP slots with a separator, e.g. [3, 3]")
+  attr(:mode, :string, default: "numeric", doc: "OTP character set (numeric or alphanumeric)")
+  attr(:mask, :boolean, default: false, doc: "Mask entered OTP characters")
+  attr(:on_complete, JS, default: %JS{}, doc: "JS run when the OTP is fully entered")
 
   # Global attributes passed through to inputs
   attr(:rest, :global, doc: "Additional HTML attributes passed to the input")
@@ -320,10 +329,10 @@ defmodule Pulsar.Components.Field do
           {render_slot(@description)}
         </div>
       </div>
-      
+
     <!-- Input Section -->
       {render_input(assigns)}
-      
+
     <!-- Error Section -->
       <div :if={@has_errors} class="flex flex-col gap-1" aria-live="polite">
         <p
@@ -382,6 +391,30 @@ defmodule Pulsar.Components.Field do
       disabled={@disabled}
       readonly={@readonly}
       invalid={@has_errors}
+      aria-describedby={@aria_describedby}
+      {@rest}
+    />
+    """
+  end
+
+  defp render_input(%{type: "otp"} = assigns) do
+    ~H"""
+    <InputOtp.input_otp
+      field={@field}
+      id={@field_id}
+      name={@field_name}
+      value={@field_value}
+      length={@length}
+      groups={@groups}
+      mode={@mode}
+      mask={@mask}
+      variant={@variant}
+      color={@color}
+      size={@size}
+      required={@required}
+      disabled={@disabled}
+      invalid={@has_errors}
+      on_complete={@on_complete}
       aria-describedby={@aria_describedby}
       {@rest}
     />
