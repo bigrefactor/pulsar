@@ -330,10 +330,10 @@ defmodule Pulsar.Components.Field do
           {render_slot(@description)}
         </div>
       </div>
-
+      
     <!-- Input Section -->
       {render_input(assigns)}
-
+      
     <!-- Error Section -->
       <div :if={@has_errors} class="flex flex-col gap-1" aria-live="polite">
         <p
