@@ -52,15 +52,18 @@ alias <%= @component_namespace %>.Icon
   "info" => "bg-info text-info-foreground border-info"
 }
 
-# Soft tinted marker (ghost variant).
+# Soft tinted marker (ghost variant). The tint is an OPAQUE color-mix of the
+# accent over the page background (not a translucent `/10` alpha) so the `z-0`
+# connector behind the marker can't show through; it re-resolves per theme
+# because `--color-background` swaps in the cascade.
 @tint_fill %{
   "neutral" => "bg-muted text-foreground border-transparent",
-  "primary" => "bg-primary/10 text-primary border-transparent",
-  "secondary" => "bg-secondary/10 text-secondary border-transparent",
-  "success" => "bg-success/10 text-success border-transparent",
-  "danger" => "bg-danger/10 text-danger border-transparent",
-  "warning" => "bg-warning/10 text-warning border-transparent",
-  "info" => "bg-info/10 text-info border-transparent"
+  "primary" => "bg-[color-mix(in_oklab,var(--color-primary)_10%,var(--color-background))] text-primary border-transparent",
+  "secondary" => "bg-[color-mix(in_oklab,var(--color-secondary)_10%,var(--color-background))] text-secondary border-transparent",
+  "success" => "bg-[color-mix(in_oklab,var(--color-success)_10%,var(--color-background))] text-success border-transparent",
+  "danger" => "bg-[color-mix(in_oklab,var(--color-danger)_10%,var(--color-background))] text-danger border-transparent",
+  "warning" => "bg-[color-mix(in_oklab,var(--color-warning)_10%,var(--color-background))] text-warning border-transparent",
+  "info" => "bg-[color-mix(in_oklab,var(--color-info)_10%,var(--color-background))] text-info border-transparent"
 }
 
 # Ringed marker (outline variant / current). Accent border + accent text.
@@ -74,7 +77,7 @@ alias <%= @component_namespace %>.Icon
   "info" => "bg-background border-info text-info"
 }
 
-# Accent color used to paint completed connectors and the current ring.
+# Accent color used to paint completed connectors.
 @accent %{
   "neutral" => "border-neutral",
   "primary" => "border-primary",
@@ -85,12 +88,31 @@ alias <%= @component_namespace %>.Icon
   "info" => "border-info"
 }
 
+# Emphasis halo for the current/loading marker, keyed to the accent color so it
+# stays visible on the solid variant (whose text is the foreground, not the
+# accent — a `ring-current` halo would be near-white and vanish in light mode).
+@ring %{
+  "neutral" => "ring-4 ring-neutral/30",
+  "primary" => "ring-4 ring-primary/30",
+  "secondary" => "ring-4 ring-secondary/30",
+  "success" => "ring-4 ring-success/30",
+  "danger" => "ring-4 ring-danger/30",
+  "warning" => "ring-4 ring-warning/30",
+  "info" => "ring-4 ring-info/30"
+}
+
 # Compile-time check that every color is configured for every map.
-for color <- @valid_colors do
-  for {name, map} <- [solid_fill: @solid_fill, tint_fill: @tint_fill, ringed: @ringed, accent: @accent] do
-    if !map[color] do
-      raise CompileError, description: "Missing steps #{name} for color=#{color}"
-    end
+color_maps = [
+  solid_fill: @solid_fill,
+  tint_fill: @tint_fill,
+  ringed: @ringed,
+  accent: @accent,
+  ring: @ring
+]
+
+for color <- @valid_colors, {name, map} <- color_maps do
+  if !map[color] do
+    raise CompileError, description: "Missing steps #{name} for color=#{color}"
   end
 end
 
@@ -213,8 +235,7 @@ def steps(assigns) do
         label: step.label,
         description: Map.get(step, :description),
         icon: Map.get(step, :icon),
-        state: state,
-        current?: idx == current,
+        current?: state == :current,
         last?: idx == count,
         glyph: glyph(state, step, assigns.marker),
         status: status_label(state, assigns),
@@ -237,7 +258,7 @@ def steps(assigns) do
   <ol aria-label={@aria_label} class={@list_class} {@rest}>
     <li :for={item <- @items} aria-current={(item.current? && "step") || nil} class={@item_class}>
       <span :if={!item.last?} aria-hidden="true" class={item.connector_class}></span>
-      <span class={item.marker_class}>
+      <span aria-hidden="true" class={item.marker_class}>
         <Icon.icon :if={item.glyph == :check} name="hero-check" size={@icon} />
         <Icon.icon :if={item.glyph == :error} name="hero-x-mark" size={@icon} />
         <span :if={item.glyph == :spinner} aria-hidden="true" class="h-1/2 w-1/2 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none"></span>
@@ -307,30 +328,28 @@ end
 
 @spec marker_state(String.t(), String.t(), atom()) :: String.t()
 defp marker_state(variant, color, :done), do: done_fill(variant, color)
-defp marker_state(_v, _color, :error), do: @solid_fill["danger"]
-defp marker_state(variant, color, :current), do: current_fill(variant, color)
-defp marker_state(variant, color, :loading), do: current_fill(variant, color)
+defp marker_state(_v, _color, :error), do: @solid_fill["danger"] || ""
+defp marker_state(variant, color, state) when state in [:current, :loading], do: current_fill(variant, color)
 defp marker_state(_v, _color, :disabled), do: "bg-muted border-border text-muted-foreground"
 defp marker_state(_v, _color, _upcoming), do: "bg-background border-border text-muted-foreground"
 
 # `done` fill follows the variant: solid fills, ghost tints, outline rings.
 @spec done_fill(String.t(), String.t()) :: String.t()
-defp done_fill("ghost", color), do: @tint_fill[color]
-defp done_fill("outline", color), do: @ringed[color]
-defp done_fill(_solid, color), do: @solid_fill[color]
+defp done_fill("ghost", color), do: @tint_fill[color] || ""
+defp done_fill("outline", color), do: @ringed[color] || ""
+defp done_fill(_solid, color), do: @solid_fill[color] || ""
 
-# `current`/`loading` emphasis follows the variant: solid fills, others ring.
+# `current`/`loading` emphasis = the `done` fill plus an accent halo ring.
 @spec current_fill(String.t(), String.t()) :: String.t()
-defp current_fill("solid", color), do: "#{@solid_fill[color]} ring-4 ring-current/15"
-defp current_fill("ghost", color), do: "#{@tint_fill[color]} ring-4 ring-current/15"
-defp current_fill(_outline, color), do: "#{@ringed[color]} ring-4 ring-current/15"
+defp current_fill(variant, color), do: "#{done_fill(variant, color)} #{@ring[color] || ""}"
 
 @spec label_classes(atom(), String.t()) :: String.t()
-defp label_classes(:current, size), do: merge(["font-semibold text-foreground", @label_size[size] || ""])
-defp label_classes(:disabled, size), do: merge(["font-medium text-muted-foreground", @label_size[size] || ""])
-defp label_classes(:upcoming, size), do: merge(["font-medium text-muted-foreground", @label_size[size] || ""])
-# Catch-all (done/error/loading): emphasized label.
-defp label_classes(_state, size), do: merge(["font-semibold text-foreground", @label_size[size] || ""])
+# Upcoming/disabled steps are de-emphasized; everyone else gets the strong label.
+defp label_classes(state, size) when state in [:upcoming, :disabled],
+  do: merge(["font-medium text-muted-foreground", @label_size[size] || ""])
+
+defp label_classes(_state, size),
+  do: merge(["font-semibold text-foreground", @label_size[size] || ""])
 
 @spec list_classes(String.t(), String.t()) :: String.t()
 defp list_classes("vertical", extra), do: merge(["flex flex-col", extra])
@@ -347,7 +366,7 @@ defp connector_classes(orientation, style, state, color, size) do
   dash = if style == "dashed", do: "border-dashed", else: "border-solid"
 
   case orientation do
-    "vertical" -> merge(["absolute -z-0 border-l-2", dash, edge, @connector_v[size] || ""])
-    _ -> merge(["absolute -z-0 border-t-2", dash, edge, @connector_h[size] || ""])
+    "vertical" -> merge(["absolute z-0 border-l-2", dash, edge, @connector_v[size] || ""])
+    _ -> merge(["absolute z-0 border-t-2", dash, edge, @connector_h[size] || ""])
   end
 end

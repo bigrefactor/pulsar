@@ -130,6 +130,24 @@ defmodule Pulsar.Components.StepsTest do
       # muted-foreground passes AA per project measurement; never below the floor
       assert html =~ "text-muted-foreground"
     end
+
+    test "a state override on the current index moves aria-current off it" do
+      assigns = %{}
+
+      # current={2} but step 2 is overridden to disabled, so no step resolves to
+      # :current — aria-current must follow the resolved state, not the index.
+      html =
+        rendered_to_string(~H"""
+        <Steps.steps current={2}>
+          <:step label="A" />
+          <:step label="B" state="disabled" />
+          <:step label="C" />
+        </Steps.steps>
+        """)
+
+      refute html =~ ~s(aria-current="step")
+      assert html =~ "Disabled"
+    end
   end
 
   describe "current clamping" do

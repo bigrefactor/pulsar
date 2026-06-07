@@ -24,10 +24,10 @@ no JavaScript.
 **Evidence:** Every marker glyph is non-text and explicitly decorative: the
 check/x-mark icons render through the Icon component (`aria-hidden` by default),
 the loading spinner is an `aria-hidden="true"` span, and the connector line
-between steps is an `aria-hidden="true"` span —
-`lib/pulsar/components/steps.ex:244, 246–256`. Meaning is carried by the visible
-`label` and a per-state `sr-only` status line, not by the glyph —
-`lib/pulsar/components/steps.ex:259–260`. Test
+between steps is an `aria-hidden="true"` span, all inside an `aria-hidden="true"`
+marker wrapper — `lib/pulsar/components/steps.ex:270–283`. Meaning is carried by
+the visible `label` and a per-state `sr-only` status line, not by the glyph —
+`lib/pulsar/components/steps.ex:285–286`. Test
 `sr-only status text is present for screen readers` —
 `test/pulsar/components/steps_test.exs:72`.
 
@@ -35,7 +35,7 @@ between steps is an `aria-hidden="true"` span —
 
 **Evidence:** The steps are an ordered `<ol>` list with an accessible name via
 `aria-label`, each step an `<li>`; the current step is marked with
-`aria-current="step"` — `lib/pulsar/components/steps.ex:242–243`. Tests
+`aria-current="step"` — `lib/pulsar/components/steps.ex:268–269`. Tests
 `renders an ordered list labeled by aria_label` and
 `marks the current step with aria-current=step` —
 `test/pulsar/components/steps_test.exs:10, 36`.
@@ -44,7 +44,7 @@ between steps is an `aria-hidden="true"` span —
 
 **Evidence:** Items render in authored slot order (`Enum.with_index(1)`), so DOM
 order matches both the numbered visual order and the progress sequence —
-`lib/pulsar/components/steps.ex:210–212, 243`.
+`lib/pulsar/components/steps.ex:238, 269`.
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
@@ -52,7 +52,7 @@ order matches both the numbered visual order and the progress sequence —
 glyph/shape — a checkmark for done, an x-mark for error, a spinner for loading,
 the step number (or a dot) for upcoming — and the `<li>` carries an `sr-only`
 status line plus, for the active step, `aria-current="step"` —
-`lib/pulsar/components/steps.ex:243, 246–260`.
+`lib/pulsar/components/steps.ex:269–286`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
@@ -60,7 +60,7 @@ status line plus, for the active step, `aria-current="step"` —
 foreground (`bg-{color} text-{color}-foreground`) or accent text on the
 background (outline/ghost); upcoming and disabled markers and labels use
 `text-muted-foreground` (measured 6.0–7.23:1 on all surfaces) —
-`lib/pulsar/components/steps.ex:319–324, 339–343`. Per-cell measurements record
+`lib/pulsar/components/steps.ex:345–366`. Per-cell measurements record
 the rendered text at ~19:1 (light) / ~17:1 (dark) across every variant × color ×
 size cell plus the state-vocabulary and vertical cells —
 [`measurements/steps-light.md`](measurements/steps-light.md),
@@ -76,14 +76,14 @@ violations.
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** Marker and label sizes use rem-based Tailwind text utilities
-(`text-xs`–`text-lg`) — `lib/pulsar/components/steps.ex:99–105, 128–134`. Text
+(`text-xs`–`text-lg`) — `lib/pulsar/components/steps.ex:126–132, 155–161`. Text
 scales with the user's font size.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** The list is a `flex` row (or `flex flex-col` when vertical) with no
 fixed width, and the label column uses `min-w-0` so content shrinks rather than
-forcing horizontal scrolling — `lib/pulsar/components/steps.ex:345–347, 258`. The
+forcing horizontal scrolling — `lib/pulsar/components/steps.ex:369–374, 284`. The
 reflow measurement at 320 CSS px reports no overflowing cells —
 [`measurements/steps-light.md`](measurements/steps-light.md).
 
@@ -91,10 +91,17 @@ reflow measurement at 320 CSS px reports no overflowing cells —
 
 **Evidence:** Marker glyphs that carry state (the check ✓ and x-mark ✗) render on
 their filled marker at the same ≥4.5:1 contrast as the marker foreground, well
-above the 3:1 non-text minimum; connector and inactive marker borders route
-through `border-border` / the semantic accent `border-{color}` (≥3:1) —
-`lib/pulsar/components/steps.ex:323–324, 356`. The axe gate finds no non-text
-contrast violations across the fixtures in light and dark.
+above the 3:1 non-text minimum. The accent connector/border on completed and
+current steps uses the saturated semantic `border-{color}`, which is ≥3:1.
+
+The low-contrast `border-border` edges (the connector ahead of progress and the
+inactive/disabled marker outline) measure ~1.2:1 in light and ~1.4:1 in dark and
+do **not** meet 3:1 — but they are exempt under 1.4.11 as **decorative/redundant**
+graphics: step identity and state are carried entirely by the step number, the
+`sr-only` status text, and the ordered-list structure, so the faint border
+communicates no information of its own. `lib/pulsar/components/steps.ex` markers
+and connectors. The axe gate finds no non-text contrast violations across the
+fixtures in light and dark.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -157,7 +164,7 @@ contrast violations across the fixtures in light and dark.
 The only animation is the loading spinner, which carries
 `motion-reduce:animate-none` so it freezes to a static ring for users who request
 reduced motion; the marker transitions also carry `motion-reduce:transition-none`
-— `lib/pulsar/components/steps.ex:139, 251`.
+— `lib/pulsar/components/steps.ex:166, 277`.
 
 ## Browser a11y findings
 
