@@ -67,3 +67,6 @@ pulsar-*.tar
 /test/support/dev_app/assets/css/themes/
 /test/support/dev_app/assets/node_modules/
 /docs/superpowers/
+
+# Visual brainstorming companion (superpowers)
+.superpowers/

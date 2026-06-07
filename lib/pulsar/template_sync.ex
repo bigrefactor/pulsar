@@ -50,6 +50,7 @@ defmodule Pulsar.TemplateSync do
     {:header, "lib/pulsar/components/header.ex", "Pulsar.Components", "Pulsar.Components.Header"},
     {:icon, "lib/pulsar/components/icon.ex", "Pulsar.Components", "Pulsar.Components.Icon"},
     {:input, "lib/pulsar/components/input.ex", "Pulsar.Components", "Pulsar.Components.Input"},
+    {:input_otp, "lib/pulsar/components/input_otp.ex", "Pulsar.Components", "Pulsar.Components.InputOtp"},
     {:label, "lib/pulsar/components/label.ex", "Pulsar.Components", "Pulsar.Components.Label"},
     {:link, "lib/pulsar/components/link.ex", "Pulsar.Components", "Pulsar.Components.Link"},
     {:list, "lib/pulsar/components/list.ex", "Pulsar.Components", "Pulsar.Components.List"},

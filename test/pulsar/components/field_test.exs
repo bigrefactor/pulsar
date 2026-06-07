@@ -783,6 +783,42 @@ defmodule Pulsar.Components.FieldTest do
     end
   end
 
+  describe "field/1 type=otp" do
+    test "renders an InputOtp wired to the field with a label" do
+      form = to_form(%{"otp" => "12"}, as: :user)
+      assigns = %{form: form}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@form[:otp]} type="otp" length={6}>
+          <:label>Verification code</:label>
+        </Field.field>
+        """)
+
+      assert html =~ ~s(phx-hook="Pulsar.Components.InputOtp.PulsarInputOtp")
+      assert html =~ ~s(maxlength="6")
+      assert html =~ ~s(name="user[otp]")
+      # label points at the single real input
+      assert html =~ ~s(for="user_otp")
+      assert html =~ "Verification code"
+    end
+
+    test "forwards otp options and marks invalid on errors" do
+      form = to_form(%{"otp" => ""}, as: :user, errors: [otp: {"is invalid", []}])
+      assigns = %{form: form}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@form[:otp]} type="otp" length={4} groups={[2, 2]} mask show_errors={:always} />
+        """)
+
+      assert html =~ ~s(data-length="4")
+      assert html =~ ~s(data-mask="true")
+      assert html =~ ~s(aria-invalid="true")
+      assert html =~ "is invalid"
+    end
+  end
+
   describe "show_errors attribute" do
     test "show_errors=:never hides errors" do
       field = create_field(:email, "", [{"is required", []}])

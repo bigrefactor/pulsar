@@ -99,6 +99,7 @@ defmodule Pulsar.Components.Field do
   - **Checkbox**: Renders Pulsar.Components.Checkbox with optional card styling
   - **Switch**: Renders Pulsar.Components.Switch with iOS-style toggle
   - **Radio**: Renders Pulsar.Components.RadioGroup with grouped options
+  - **OTP**: Renders Pulsar.Components.InputOtp for one-time codes (2FA / MFA)
 
   ## Layout Customization
 
@@ -147,12 +148,14 @@ defmodule Pulsar.Components.Field do
 
   alias Phoenix.HTML.Form
   alias Phoenix.HTML.FormField
+  alias Phoenix.LiveView.JS
   alias Phoenix.LiveView.Rendered
 
   # Import all the Pulsar components we'll be rendering
   alias Pulsar.Components.Checkbox
   alias Pulsar.Components.Icon
   alias Pulsar.Components.Input
+  alias Pulsar.Components.InputOtp
   alias Pulsar.Components.Label
   alias Pulsar.Components.RadioGroup
   alias Pulsar.Components.Select
@@ -223,7 +226,7 @@ defmodule Pulsar.Components.Field do
 
   attr(:type, :string,
     default: "text",
-    values: ~w(text email password number tel url search date time datetime-local month week color file range
+    values: ~w(text email password number tel url search date time datetime-local month week color file range otp
                 select textarea checkbox radio switch),
     doc: "Input type - determines which component to render"
   )
@@ -260,6 +263,13 @@ defmodule Pulsar.Components.Field do
   attr(:pattern, :string, default: nil, doc: "Validation pattern")
   attr(:autocomplete, :string, default: nil, doc: "Autocomplete hint")
   attr(:checked, :boolean, default: nil, doc: "Checked state (checkbox/switch)")
+
+  # OTP-specific attributes
+  attr(:length, :integer, default: 6, doc: "Number of OTP characters")
+  attr(:groups, :list, default: nil, doc: "Group the OTP slots with a separator, e.g. [3, 3]")
+  attr(:mode, :string, default: "numeric", doc: "OTP character set (numeric or alphanumeric)")
+  attr(:mask, :boolean, default: false, doc: "Mask entered OTP characters")
+  attr(:on_complete, JS, default: %JS{}, doc: "JS run when the OTP is fully entered")
 
   # Global attributes passed through to inputs
   attr(:rest, :global, doc: "Additional HTML attributes passed to the input")
@@ -382,6 +392,30 @@ defmodule Pulsar.Components.Field do
       disabled={@disabled}
       readonly={@readonly}
       invalid={@has_errors}
+      aria-describedby={@aria_describedby}
+      {@rest}
+    />
+    """
+  end
+
+  defp render_input(%{type: "otp"} = assigns) do
+    ~H"""
+    <InputOtp.input_otp
+      field={@field}
+      id={@field_id}
+      name={@field_name}
+      value={@field_value}
+      length={@length}
+      groups={@groups}
+      mode={@mode}
+      mask={@mask}
+      variant={@variant}
+      color={@color}
+      size={@size}
+      required={@required}
+      disabled={@disabled}
+      invalid={@has_errors}
+      on_complete={@on_complete}
       aria-describedby={@aria_describedby}
       {@rest}
     />

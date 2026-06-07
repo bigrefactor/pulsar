@@ -1,0 +1,297 @@
+defmodule Pulsar.Components.InputOtp do
+  @moduledoc """
+  A one-time-code input for 2FA / MFA flows.
+
+  Renders a row of single-character slots backed by one form value, with
+  auto-advance and paste handling. Plugs into `Pulsar.Components.Field` for
+  labels, errors, and ARIA wiring.
+
+  ## Examples
+
+      <.input_otp field={@form[:otp]} length={6} />
+
+      # Trigger the surrounding form's submit once the code is complete
+      <.input_otp field={@form[:otp]} on_complete={JS.dispatch("submit", to: "#otp-form")} />
+
+      # Grouped, masked, alphanumeric
+      <.input_otp field={@form[:code]} length={6} groups={[3, 3]} mask mode="alphanumeric" />
+
+  ## Variants
+
+  `variant` controls the slot look: `outline` (bordered boxes, default), `solid`
+  (filled boxes), `ghost` (underline). `color` tints the active slot's focus ring;
+  `size` scales the slot box and text (`xs`–`xl`).
+
+  ## Callbacks
+
+  `on_complete` is a `%JS{}` command run once every character is entered. Use it to
+  submit the surrounding form, e.g. `JS.dispatch("submit", to: "#otp-form")`.
+
+  Keep `input_otp` inside a form (directly or via `Pulsar.Components.Field`) so the
+  typed value reaches the server through the form's `phx-change`/`phx-submit`.
+  `JS.push("verify")` sends the event but not the field value, so it can't carry the
+  code on its own — pair it with a form when the handler needs to read the code.
+  """
+
+  use Phoenix.Component
+
+  import Twm, only: [merge: 1]
+
+  alias Phoenix.HTML.FormField
+  alias Phoenix.LiveView.JS
+  alias Phoenix.LiveView.Rendered
+
+  @slot_size %{
+    "xs" => "h-8 w-8 text-sm",
+    "sm" => "h-9 w-9 text-base",
+    "md" => "h-12 w-11 text-xl",
+    "lg" => "h-14 w-12 text-2xl",
+    "xl" => "h-16 w-14 text-3xl"
+  }
+
+  @gap %{
+    "xs" => "gap-1",
+    "sm" => "gap-1.5",
+    "md" => "gap-2",
+    "lg" => "gap-2",
+    "xl" => "gap-3"
+  }
+
+  @slot_base "relative flex items-center justify-center font-medium tabular-nums text-foreground transition-[box-shadow,border-color,background-color] duration-150 data-[active=true]:z-10"
+
+  @slot_variant %{
+    "outline" => "border border-border-strong rounded-box bg-background",
+    "solid" => "rounded-box bg-neutral/10 data-[filled=true]:bg-neutral/20",
+    "ghost" => "border-b-2 border-border-strong"
+  }
+
+  @slot_active %{
+    "neutral" => "data-[active=true]:ring-2 data-[active=true]:ring-ring data-[active=true]:border-primary/50",
+    "primary" => "data-[active=true]:ring-2 data-[active=true]:ring-primary/60 data-[active=true]:border-primary",
+    "secondary" => "data-[active=true]:ring-2 data-[active=true]:ring-secondary/60 data-[active=true]:border-secondary",
+    "success" => "data-[active=true]:ring-2 data-[active=true]:ring-success/60 data-[active=true]:border-success",
+    "danger" => "data-[active=true]:ring-2 data-[active=true]:ring-danger/60 data-[active=true]:border-danger",
+    "warning" => "data-[active=true]:ring-2 data-[active=true]:ring-warning/60 data-[active=true]:border-warning",
+    "info" => "data-[active=true]:ring-2 data-[active=true]:ring-info/60 data-[active=true]:border-info"
+  }
+
+  @doc """
+  Renders a one-time-code input.
+  """
+  @spec input_otp(map()) :: Rendered.t()
+
+  attr(:field, FormField, default: nil, doc: "Phoenix form field")
+  attr(:id, :string, default: nil, doc: "Input ID (auto-generated if omitted)")
+  attr(:name, :string, default: nil, doc: "Input name (from field if not provided)")
+  attr(:value, :any, default: nil, doc: "Input value (from field if not provided)")
+
+  attr(:length, :integer, default: 6, doc: "Number of code characters")
+  attr(:groups, :list, default: nil, doc: "Split the slots into groups with a separator, e.g. [3, 3]")
+  attr(:mode, :string, default: "numeric", values: ~w(numeric alphanumeric), doc: "Allowed character set")
+  attr(:mask, :boolean, default: false, doc: "Render entered characters as dots")
+
+  attr(:variant, :string, default: "outline", values: ~w(outline solid ghost), doc: "Visual style of the slots")
+
+  attr(:color, :string,
+    default: "neutral",
+    values: ~w(neutral primary secondary success danger warning info),
+    doc: "Active-slot focus accent"
+  )
+
+  attr(:size, :string, default: "md", values: ~w(xs sm md lg xl), doc: "Slot size")
+
+  attr(:required, :boolean, default: false, doc: "Mark input as required")
+  attr(:disabled, :boolean, default: false, doc: "Disable the input")
+  attr(:invalid, :boolean, default: false, doc: "Force invalid state")
+  attr(:autofocus, :boolean, default: false, doc: "Focus the input on mount")
+
+  attr(:on_complete, JS,
+    default: %JS{},
+    doc: ~s{JS run when all characters are entered. Use with the server: JS.push("event")}
+  )
+
+  attr(:class, :string, default: "", doc: "Additional CSS classes for the container")
+  attr(:"aria-describedby", :string, default: nil, doc: "Id(s) of elements that describe the input")
+  attr(:rest, :global, doc: "Additional attributes for the input")
+
+  def input_otp(assigns) do
+    assigns = normalize_field_props(assigns)
+
+    assigns =
+      assigns
+      |> assign(:cells, build_cells(assigns.length, assigns[:groups]))
+      |> assign(:slot_class, slot_classes(assigns.variant, assigns.color, assigns.size))
+      |> assign(:gap_class, @gap[assigns.size] || @gap["md"])
+
+    ~H"""
+    <div
+      id={@wrapper_id}
+      phx-hook=".PulsarInputOtp"
+      data-on-complete={@on_complete}
+      data-length={@length}
+      data-mode={@mode}
+      data-mask={to_string(@mask)}
+      class={merge(["relative inline-flex items-center", @class])}
+    >
+      <input
+        type="text"
+        id={@id}
+        name={@name}
+        value={@value}
+        maxlength={@length}
+        inputmode={input_mode(@mode)}
+        autocomplete="one-time-code"
+        autocorrect="off"
+        spellcheck="false"
+        required={@required}
+        disabled={@disabled}
+        autofocus={@autofocus}
+        aria-invalid={(@invalid && "true") || "false"}
+        aria-describedby={assigns[:"aria-describedby"]}
+        data-otp-input
+        class="absolute inset-0 h-full w-full cursor-text bg-transparent text-center text-transparent caret-transparent outline-none disabled:cursor-not-allowed"
+        {@rest}
+      />
+      <div aria-hidden="true" class={merge(["pointer-events-none flex items-center", @gap_class])}>
+        <.otp_cell :for={cell <- @cells} cell={cell} slot_class={@slot_class} size={@size} disabled={@disabled} />
+      </div>
+      <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarInputOtp">
+        export default {
+          mounted() { this.boot(); this.paint(); },
+          updated() { this.boot(); this.paint(); },
+          boot() {
+            this.input = this.el.querySelector("[data-otp-input]");
+            this.slots = Array.from(this.el.querySelectorAll("[data-slot]")).map((slot) => ({
+              el: slot,
+              char: slot.querySelector("[data-otp-char]"),
+              caret: slot.querySelector("[data-otp-caret]")
+            }));
+            this.length = parseInt(this.el.dataset.length, 10);
+            this.mode = this.el.dataset.mode;
+            this.mask = this.el.dataset.mask === "true";
+            if (this.bound) return;
+            this.bound = true;
+            this.completed = false;
+            this._onInput = () => this.onInput();
+            this._onPaint = () => this.paint();
+            this.input.addEventListener("input", this._onInput);
+            ["focus", "blur", "keyup", "click", "select"].forEach((evt) =>
+              this.input.addEventListener(evt, this._onPaint)
+            );
+          },
+          destroyed() {
+            if (!this.input) return;
+            this.input.removeEventListener("input", this._onInput);
+            ["focus", "blur", "keyup", "click", "select"].forEach((evt) =>
+              this.input.removeEventListener(evt, this._onPaint)
+            );
+          },
+          onInput() {
+            const re = this.mode === "alphanumeric" ? /[^a-z0-9]/gi : /[^0-9]/g;
+            let v = this.input.value.replace(re, "");
+            if (this.mode === "alphanumeric") v = v.toUpperCase();
+            v = v.slice(0, this.length);
+            if (v !== this.input.value) this.input.value = v;
+            this.paint();
+            this.maybeComplete(v);
+          },
+          paint() {
+            const v = this.input.value;
+            const focused = document.activeElement === this.input;
+            const caret = this.input.selectionStart;
+            const activeIndex = focused ? Math.min(caret, this.length - 1) : -1;
+            this.slots.forEach((slot, i) => {
+              const ch = v[i] || "";
+              if (slot.char) slot.char.textContent = ch ? (this.mask ? "•" : ch) : "";
+              slot.el.setAttribute("data-filled", ch ? "true" : "false");
+              const active = i === activeIndex;
+              slot.el.setAttribute("data-active", active ? "true" : "false");
+              if (slot.caret) slot.caret.classList.toggle("hidden", !(active && !ch));
+            });
+          },
+          maybeComplete(v) {
+            if (v.length === this.length && !this.completed) {
+              this.completed = true;
+              const encoded = this.el.dataset.onComplete;
+              if (encoded && encoded !== "[]" && this.liveSocket) {
+                this.liveSocket.execJS(this.el, encoded);
+              }
+            } else if (v.length < this.length) {
+              this.completed = false;
+            }
+          }
+        }
+      </script>
+    </div>
+    """
+  end
+
+  attr(:cell, :any, required: true)
+  attr(:slot_class, :string, required: true)
+  attr(:size, :string, required: true)
+  attr(:disabled, :boolean, required: true)
+
+  defp otp_cell(%{cell: :separator} = assigns) do
+    ~H"""
+    <span aria-hidden="true" class="select-none px-1 text-muted-foreground">-</span>
+    """
+  end
+
+  defp otp_cell(assigns) do
+    assigns = assign(assigns, :index, elem(assigns.cell, 1))
+
+    ~H"""
+    <div
+      data-slot={@index}
+      data-active="false"
+      data-filled="false"
+      class={merge([@slot_class, (@disabled && "opacity-disabled") || ""])}
+    >
+      <span data-otp-char></span>
+      <span data-otp-caret class="hidden h-1/2 w-px animate-pulse bg-foreground motion-reduce:animate-none"></span>
+    </div>
+    """
+  end
+
+  defp input_mode("numeric"), do: "numeric"
+  defp input_mode(_), do: "text"
+
+  defp build_cells(length, nil), do: for(i <- 0..(length - 1)//1, do: {:slot, i})
+
+  defp build_cells(length, groups) when is_list(groups) do
+    total = Enum.sum(groups)
+    groups = if total < length, do: groups ++ [length - total], else: groups
+
+    {chunks, _} =
+      Enum.reduce(groups, {[], 0}, fn size, {acc, start} ->
+        stop = min(start + size, length) - 1
+        slots = if stop >= start, do: for(i <- start..stop, do: {:slot, i}), else: []
+        {acc ++ [slots], start + size}
+      end)
+
+    chunks
+    |> Enum.reject(&(&1 == []))
+    |> Enum.intersperse([:separator])
+    |> List.flatten()
+  end
+
+  defp slot_classes(variant, color, size) do
+    merge([
+      @slot_base,
+      @slot_size[size] || @slot_size["md"],
+      @slot_variant[variant] || @slot_variant["outline"],
+      @slot_active[color] || @slot_active["neutral"]
+    ])
+  end
+
+  defp normalize_field_props(assigns) do
+    field = assigns[:field]
+    id = assigns[:id] || (field && field.id) || assigns[:name] || "otp-#{System.unique_integer([:positive])}"
+
+    assigns
+    |> assign(:id, id)
+    |> assign(:wrapper_id, "#{id}-otp")
+    |> assign(:name, assigns[:name] || (field && field.name))
+    |> assign(:value, assigns[:value] || (field && field.value))
+  end
+end
