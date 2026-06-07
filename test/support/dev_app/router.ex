@@ -71,6 +71,9 @@ defmodule Pulsar.DevApp.Router do
     live "/components/select/removable", SelectRemoveLive, :index
     live "/components/sidebar", SidebarLive, :index
     live "/components/skeleton", SkeletonLive, :index
+    live "/components/steps/solid", StepsLive, :solid
+    live "/components/steps/outline", StepsLive, :outline
+    live "/components/steps/ghost", StepsLive, :ghost
     live "/components/switch", SwitchLive, :index
     live "/components/table/outline", TableLive, :outline
     live "/components/table/ghost", TableLive, :ghost
