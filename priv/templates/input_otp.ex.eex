@@ -156,9 +156,18 @@ def input_otp(assigns) do
           if (this.bound) return;
           this.bound = true;
           this.completed = false;
-          this.input.addEventListener("input", () => this.onInput());
+          this._onInput = () => this.onInput();
+          this._onPaint = () => this.paint();
+          this.input.addEventListener("input", this._onInput);
           ["focus", "blur", "keyup", "click", "select"].forEach((evt) =>
-            this.input.addEventListener(evt, () => this.paint())
+            this.input.addEventListener(evt, this._onPaint)
+          );
+        },
+        destroyed() {
+          if (!this.input) return;
+          this.input.removeEventListener("input", this._onInput);
+          ["focus", "blur", "keyup", "click", "select"].forEach((evt) =>
+            this.input.removeEventListener(evt, this._onPaint)
           );
         },
         onInput() {
@@ -176,11 +185,13 @@ def input_otp(assigns) do
           const activeIndex = focused ? Math.min(v.length, this.length - 1) : -1;
           this.slots.forEach((slot, i) => {
             const ch = v[i] || "";
-            slot.querySelector("[data-otp-char]").textContent = ch ? (this.mask ? "•" : ch) : "";
+            const charEl = slot.querySelector("[data-otp-char]");
+            const caretEl = slot.querySelector("[data-otp-caret]");
+            if (charEl) charEl.textContent = ch ? (this.mask ? "•" : ch) : "";
             slot.setAttribute("data-filled", ch ? "true" : "false");
             const active = i === activeIndex;
             slot.setAttribute("data-active", active ? "true" : "false");
-            slot.querySelector("[data-otp-caret]").classList.toggle("hidden", !(active && !ch));
+            if (caretEl) caretEl.classList.toggle("hidden", !(active && !ch));
           });
         },
         maybeComplete(v) {

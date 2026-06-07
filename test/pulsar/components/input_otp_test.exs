@@ -42,9 +42,15 @@ defmodule Pulsar.Components.InputOtpTest do
       solid = rendered_to_string(~H|<InputOtp.input_otp id="s" variant="solid" />|)
       ghost = rendered_to_string(~H|<InputOtp.input_otp id="g" variant="ghost" />|)
 
-      assert outline =~ "border"
-      assert solid =~ "bg-"
-      assert ghost =~ "border-b"
+      assert outline =~ "border-border-strong"
+      assert solid =~ "bg-neutral/10"
+      assert ghost =~ "border-b-2"
+    end
+
+    test "disabled dims the slots" do
+      assigns = %{}
+      html = rendered_to_string(~H|<InputOtp.input_otp id="d" disabled />|)
+      assert html =~ "opacity-disabled"
     end
 
     test "sets aria-invalid from invalid" do
