@@ -13,42 +13,49 @@ defmodule Pulsar.DevApp.InputOtpLive do
     ~H"""
     <.fixture_page name={"input-otp-#{@variant}"} title={"Input OTP (#{@variant})"}>
       <.fixture_section name={"#{@variant}-sizes"} title={"#{@variant} · sizes"}>
-        <InputOtp.input_otp
-          :for={size <- @sizes}
-          id={"otp-#{@variant}-#{size}"}
-          variant={@variant}
-          size={size}
-          length={6}
-          aria-label={"#{@variant} #{size} one-time code"}
-          data-fixture-cell={"#{@variant}-#{size}"}
-        />
+        <div :for={size <- @sizes} class="min-w-0 max-w-full overflow-x-auto py-1">
+          <InputOtp.input_otp
+            id={"otp-#{@variant}-#{size}"}
+            variant={@variant}
+            size={size}
+            length={6}
+            aria-label={"#{@variant} #{size} one-time code"}
+            data-fixture-cell={"#{@variant}-#{size}"}
+          />
+        </div>
       </.fixture_section>
 
       <.fixture_section name={"#{@variant}-options"} title={"#{@variant} · options"}>
-        <InputOtp.input_otp
-          id={"otp-#{@variant}-grouped"}
-          variant={@variant}
-          length={6}
-          groups={[3, 3]}
-          aria-label={"#{@variant} grouped one-time code"}
-          data-fixture-cell={"#{@variant}-grouped"}
-        />
-        <InputOtp.input_otp
-          id={"otp-#{@variant}-masked"}
-          variant={@variant}
-          length={4}
-          mask
-          aria-label={"#{@variant} masked one-time code"}
-          data-fixture-cell={"#{@variant}-masked"}
-        />
-        <InputOtp.input_otp
-          id={"otp-#{@variant}-invalid"}
-          variant={@variant}
-          length={6}
-          invalid
-          aria-label={"#{@variant} invalid one-time code"}
-          data-fixture-cell={"#{@variant}-invalid"}
-        />
+        <div class="min-w-0 max-w-full overflow-x-auto py-1">
+          <InputOtp.input_otp
+            id={"otp-#{@variant}-grouped"}
+            variant={@variant}
+            length={6}
+            groups={[3, 3]}
+            aria-label={"#{@variant} grouped one-time code"}
+            data-fixture-cell={"#{@variant}-grouped"}
+          />
+        </div>
+        <div class="min-w-0 max-w-full overflow-x-auto py-1">
+          <InputOtp.input_otp
+            id={"otp-#{@variant}-masked"}
+            variant={@variant}
+            length={4}
+            mask
+            aria-label={"#{@variant} masked one-time code"}
+            data-fixture-cell={"#{@variant}-masked"}
+          />
+        </div>
+        <div class="min-w-0 max-w-full overflow-x-auto py-1">
+          <InputOtp.input_otp
+            id={"otp-#{@variant}-invalid"}
+            variant={@variant}
+            length={6}
+            invalid
+            aria-label={"#{@variant} invalid one-time code"}
+            data-fixture-cell={"#{@variant}-invalid"}
+          />
+        </div>
       </.fixture_section>
     </.fixture_page>
     """
