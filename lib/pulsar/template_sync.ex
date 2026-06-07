@@ -63,6 +63,7 @@ defmodule Pulsar.TemplateSync do
     {:select, "lib/pulsar/components/select.ex", "Pulsar.Components", "Pulsar.Components.Select"},
     {:sidebar, "lib/pulsar/components/sidebar.ex", "Pulsar.Components", "Pulsar.Components.Sidebar"},
     {:skeleton, "lib/pulsar/components/skeleton.ex", "Pulsar.Components", "Pulsar.Components.Skeleton"},
+    {:steps, "lib/pulsar/components/steps.ex", "Pulsar.Components", "Pulsar.Components.Steps"},
     {:switch, "lib/pulsar/components/switch.ex", "Pulsar.Components", "Pulsar.Components.Switch"},
     {:table, "lib/pulsar/components/table.ex", "Pulsar.Components", "Pulsar.Components.Table"},
     {:tabs, "lib/pulsar/components/tabs.ex", "Pulsar.Components", "Pulsar.Components.Tabs"},

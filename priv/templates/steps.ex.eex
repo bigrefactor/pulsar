@@ -1,0 +1,346 @@
+@moduledoc """
+Progress indicator for multi-step flows — onboarding, wizards, and checkout.
+
+Renders an ordered list of steps showing which are complete, which is current,
+and which are still ahead. The host owns the flow and passes `current`, the
+1-based index of the active step; each step's state is derived from it. A step
+may override its state directly (for example a failed payment).
+
+## Examples
+
+    <.steps current={3} aria_label="Checkout progress">
+      <:step label="Cart" description="3 items" />
+      <:step label="Shipping" icon="hero-truck" />
+      <:step label="Payment" state="error" />
+      <:step label="Review" />
+    </.steps>
+
+## Orientation
+
+The default horizontal layout places each marker above its label. Pass
+`orientation="vertical"` to stack the steps with the marker on the left and the
+label and description to the right.
+
+## Variants
+
+`variant` sets how markers are drawn: `solid` (filled), `outline` (ringed), or
+`ghost` (soft tint). `color` is the accent for completed and current steps,
+`size` scales the markers and text, and `marker="dot"` swaps numbers for dots.
+"""
+
+use Phoenix.Component
+
+import Twm, only: [merge: 1]
+
+alias Phoenix.LiveView.Rendered
+alias <%= @component_namespace %>.Icon
+
+# ============================================================================
+# CONFIGURATION & CONSTANTS
+# ============================================================================
+
+@valid_colors ~w(neutral primary secondary success danger warning info)
+
+# Filled marker (done/solid, and the fixed error look uses danger).
+@solid_fill %{
+  "neutral" => "bg-neutral text-neutral-foreground border-neutral",
+  "primary" => "bg-primary text-primary-foreground border-primary",
+  "secondary" => "bg-secondary text-secondary-foreground border-secondary",
+  "success" => "bg-success text-success-foreground border-success",
+  "danger" => "bg-danger text-danger-foreground border-danger",
+  "warning" => "bg-warning text-warning-foreground border-warning",
+  "info" => "bg-info text-info-foreground border-info"
+}
+
+# Soft tinted marker (ghost variant).
+@tint_fill %{
+  "neutral" => "bg-muted text-foreground border-transparent",
+  "primary" => "bg-primary/10 text-primary border-transparent",
+  "secondary" => "bg-secondary/10 text-secondary border-transparent",
+  "success" => "bg-success/10 text-success border-transparent",
+  "danger" => "bg-danger/10 text-danger border-transparent",
+  "warning" => "bg-warning/10 text-warning border-transparent",
+  "info" => "bg-info/10 text-info border-transparent"
+}
+
+# Ringed marker (outline variant / current). Accent border + accent text.
+@ringed %{
+  "neutral" => "bg-background border-neutral text-neutral",
+  "primary" => "bg-background border-primary text-primary",
+  "secondary" => "bg-background border-secondary text-secondary",
+  "success" => "bg-background border-success text-success",
+  "danger" => "bg-background border-danger text-danger",
+  "warning" => "bg-background border-warning text-warning",
+  "info" => "bg-background border-info text-info"
+}
+
+# Accent color used to paint completed connectors and the current ring.
+@accent %{
+  "neutral" => "border-neutral",
+  "primary" => "border-primary",
+  "secondary" => "border-secondary",
+  "success" => "border-success",
+  "danger" => "border-danger",
+  "warning" => "border-warning",
+  "info" => "border-info"
+}
+
+# Compile-time check that every color is configured for every map.
+for color <- @valid_colors do
+  for {name, map} <- [solid_fill: @solid_fill, tint_fill: @tint_fill, ringed: @ringed, accent: @accent] do
+    if !map[color] do
+      raise CompileError, description: "Missing steps #{name} for color=#{color}"
+    end
+  end
+end
+
+# Marker box dimensions + glyph text size per size token.
+@marker_size %{
+  "xs" => "h-6 w-6 text-xs",
+  "sm" => "h-7 w-7 text-xs",
+  "md" => "h-9 w-9 text-sm",
+  "lg" => "h-10 w-10 text-base",
+  "xl" => "h-12 w-12 text-lg"
+}
+
+# Connector position classes, written as LITERAL strings (never interpolate the
+# px value into `top-[#{x}]` — Tailwind's build scanner only sees literals in
+# source, so a runtime-built arbitrary value emits no CSS). Offsets ≈ half the
+# marker height, minus 1px for the 2px line.
+@connector_h %{
+  "xs" => "left-1/2 top-[11px] w-full",
+  "sm" => "left-1/2 top-[13px] w-full",
+  "md" => "left-1/2 top-[17px] w-full",
+  "lg" => "left-1/2 top-[19px] w-full",
+  "xl" => "left-1/2 top-[23px] w-full"
+}
+
+@connector_v %{
+  "xs" => "left-[11px] top-[11px] bottom-0",
+  "sm" => "left-[13px] top-[13px] bottom-0",
+  "md" => "left-[17px] top-[17px] bottom-0",
+  "lg" => "left-[19px] top-[19px] bottom-0",
+  "xl" => "left-[23px] top-[23px] bottom-0"
+}
+
+# Label text size per size token.
+@label_size %{
+  "xs" => "text-xs",
+  "sm" => "text-sm",
+  "md" => "text-sm",
+  "lg" => "text-base",
+  "xl" => "text-lg"
+}
+
+# Inner icon size token (Icon component) per size.
+@icon_size %{"xs" => "xs", "sm" => "xs", "md" => "sm", "lg" => "sm", "xl" => "md"}
+
+@marker_base "relative z-10 flex shrink-0 items-center justify-center rounded-full border-2 font-semibold bg-background transition-[background-color,border-color,color] duration-normal ease-standard motion-reduce:transition-none"
+
+# ============================================================================
+# COMPONENT
+# ============================================================================
+
+attr(:current, :integer, default: 1, doc: "1-based index of the current step; clamped to the step count")
+
+attr(:variant, :string,
+  default: "solid",
+  values: ~w(solid outline ghost),
+  doc: "How completed/current markers are drawn"
+)
+
+attr(:color, :string,
+  default: "primary",
+  values: ~w(neutral primary secondary success danger warning info),
+  doc: "Accent for completed/current steps and connectors"
+)
+
+attr(:size, :string, default: "md", values: ~w(xs sm md lg xl), doc: "Marker and text scale")
+
+attr(:orientation, :string,
+  default: "horizontal",
+  values: ~w(horizontal vertical),
+  doc: "horizontal = marker above label; vertical = marker left of label"
+)
+
+attr(:marker, :string, default: "number", values: ~w(number dot), doc: "Marker glyph style")
+
+attr(:connector, :string, default: "solid", values: ~w(solid dashed), doc: "Connector line style")
+
+attr(:aria_label, :string, default: "Progress", doc: ~s{Accessible name for the list. Use with i18n: gettext("Progress")})
+attr(:done_label, :string, default: "Completed", doc: "sr-only status for completed steps")
+attr(:current_label, :string, default: "Current step", doc: "sr-only status for the current step")
+attr(:upcoming_label, :string, default: "Upcoming", doc: "sr-only status for upcoming steps")
+attr(:error_label, :string, default: "Error", doc: "sr-only status for errored steps")
+attr(:loading_label, :string, default: "Loading", doc: "sr-only status for loading steps")
+attr(:disabled_label, :string, default: "Disabled", doc: "sr-only status for disabled steps")
+
+attr(:class, :string, default: "", doc: "Additional CSS classes for the list")
+attr(:rest, :global, doc: "Additional list attributes")
+
+slot :step, required: true, doc: "A single step" do
+  attr :label, :string, required: true, doc: "Step title"
+  attr :description, :string, doc: "Secondary line under the label"
+  attr :icon, :string, doc: "Per-step icon override (shown while current/upcoming)"
+  attr :color, :string, doc: "Per-step accent override"
+  attr :state, :string, doc: "Explicit state: done|current|upcoming|error|loading|disabled"
+end
+
+@doc """
+Renders a step indicator.
+
+## Examples
+
+    <.steps current={2}>
+      <:step label="One" />
+      <:step label="Two" />
+    </.steps>
+"""
+@spec steps(map()) :: Rendered.t()
+def steps(assigns) do
+  count = length(assigns.step)
+  current = assigns.current |> max(1) |> min(max(count, 1))
+
+  items =
+    assigns.step
+    |> Enum.with_index(1)
+    |> Enum.map(fn {step, idx} ->
+      state = step_state(step, idx, current)
+      color = step_color(step, state, assigns.color)
+
+      %{
+        number: Integer.to_string(idx),
+        label: step.label,
+        description: Map.get(step, :description),
+        icon: Map.get(step, :icon),
+        state: state,
+        current?: idx == current,
+        last?: idx == count,
+        glyph: glyph(state, step, assigns.marker),
+        status: status_label(state, assigns),
+        marker_class: marker_classes(assigns.variant, color, state, assigns.size),
+        label_class: label_classes(state, assigns.size),
+        connector_class: connector_classes(assigns.orientation, assigns.connector, state, color, assigns.size),
+        body?: !is_nil(Map.get(step, :inner_block)),
+        slot: step
+      }
+    end)
+
+  assigns =
+    assigns
+    |> assign(:items, items)
+    |> assign(:icon, @icon_size[assigns.size])
+    |> assign(:list_class, list_classes(assigns.orientation, assigns.class))
+    |> assign(:item_class, item_classes(assigns.orientation))
+
+  ~H"""
+  <ol aria-label={@aria_label} class={@list_class} {@rest}>
+    <li :for={item <- @items} aria-current={(item.current? && "step") || nil} class={@item_class}>
+      <span :if={!item.last?} aria-hidden="true" class={item.connector_class}></span>
+      <span class={item.marker_class}>
+        <Icon.icon :if={item.glyph == :check} name="hero-check" size={@icon} />
+        <Icon.icon :if={item.glyph == :error} name="hero-x-mark" size={@icon} />
+        <span :if={item.glyph == :spinner} aria-hidden="true" class="h-1/2 w-1/2 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none"></span>
+        <Icon.icon :if={item.glyph == :icon} name={item.icon} size={@icon} />
+        <span :if={item.glyph == :number}>{item.number}</span>
+        <span :if={item.glyph == :dot} class="h-1/3 w-1/3 rounded-full bg-current"></span>
+      </span>
+      <div class="min-w-0">
+        <span class="sr-only">{item.status}</span>
+        <span class={item.label_class}>{item.label}</span>
+        <p :if={item.description} class="mt-0.5 text-xs text-muted-foreground">{item.description}</p>
+        <div :if={item.body?}>{render_slot(item.slot)}</div>
+      </div>
+    </li>
+  </ol>
+  """
+end
+
+# ============================================================================
+# HELPER FUNCTIONS
+# ============================================================================
+
+@valid_states ~w(done current upcoming error loading disabled)
+
+# Explicit per-step state wins; otherwise derive from the index vs current.
+@spec step_state(map(), pos_integer(), pos_integer()) :: atom()
+defp step_state(step, idx, current) do
+  case Map.get(step, :state) do
+    s when s in @valid_states -> String.to_atom(s)
+    _ when idx < current -> :done
+    _ when idx == current -> :current
+    _ -> :upcoming
+  end
+end
+
+# Error always paints danger; otherwise per-step color overrides the default.
+@spec step_color(map(), atom(), String.t()) :: String.t()
+defp step_color(_step, :error, _default), do: "danger"
+defp step_color(step, _state, default), do: Map.get(step, :color) || default
+
+@spec glyph(atom(), map(), String.t()) :: atom()
+defp glyph(:done, _step, _marker), do: :check
+defp glyph(:error, _step, _marker), do: :error
+defp glyph(:loading, _step, _marker), do: :spinner
+defp glyph(_state, _step, "dot"), do: :dot
+defp glyph(_state, %{icon: icon}, _marker) when is_binary(icon), do: :icon
+defp glyph(_state, _step, _marker), do: :number
+
+@spec status_label(atom(), map()) :: String.t()
+defp status_label(:done, a), do: a.done_label
+defp status_label(:current, a), do: a.current_label
+defp status_label(:error, a), do: a.error_label
+defp status_label(:loading, a), do: a.loading_label
+defp status_label(:disabled, a), do: a.disabled_label
+defp status_label(_upcoming, a), do: a.upcoming_label
+
+@spec marker_classes(String.t(), String.t(), atom(), String.t()) :: String.t()
+defp marker_classes(variant, color, state, size) do
+  merge([@marker_base, @marker_size[size] || "", marker_state(variant, color, state)])
+end
+
+@spec marker_state(String.t(), String.t(), atom()) :: String.t()
+defp marker_state(variant, color, :done), do: done_fill(variant, color)
+defp marker_state(_v, _color, :error), do: @solid_fill["danger"]
+defp marker_state(variant, color, :current), do: current_fill(variant, color)
+defp marker_state(variant, color, :loading), do: current_fill(variant, color)
+defp marker_state(_v, _color, :disabled), do: "bg-muted border-border text-muted-foreground"
+defp marker_state(_v, _color, _upcoming), do: "bg-background border-border text-muted-foreground"
+
+# `done` fill follows the variant: solid fills, ghost tints, outline rings.
+@spec done_fill(String.t(), String.t()) :: String.t()
+defp done_fill("ghost", color), do: @tint_fill[color]
+defp done_fill("outline", color), do: @ringed[color]
+defp done_fill(_solid, color), do: @solid_fill[color]
+
+# `current`/`loading` emphasis follows the variant: solid fills, others ring.
+@spec current_fill(String.t(), String.t()) :: String.t()
+defp current_fill("solid", color), do: "#{@solid_fill[color]} ring-4 ring-current/15"
+defp current_fill("ghost", color), do: "#{@tint_fill[color]} ring-4 ring-current/15"
+defp current_fill(_outline, color), do: "#{@ringed[color]} ring-4 ring-current/15"
+
+@spec label_classes(atom(), String.t()) :: String.t()
+defp label_classes(:current, size), do: merge(["font-semibold text-foreground", @label_size[size] || ""])
+defp label_classes(:disabled, size), do: merge(["font-medium text-muted-foreground", @label_size[size] || ""])
+defp label_classes(state, size) when state in [:upcoming], do: merge(["font-medium text-muted-foreground", @label_size[size] || ""])
+defp label_classes(_state, size), do: merge(["font-semibold text-foreground", @label_size[size] || ""])
+
+@spec list_classes(String.t(), String.t()) :: String.t()
+defp list_classes("vertical", extra), do: merge(["flex flex-col", extra])
+defp list_classes(_horizontal, extra), do: merge(["flex flex-row", extra])
+
+@spec item_classes(String.t()) :: String.t()
+defp item_classes("vertical"), do: "relative flex flex-row gap-3 pb-6 last:pb-0"
+defp item_classes(_horizontal), do: "relative flex flex-1 flex-col items-center gap-2 text-center"
+
+# Connector to the NEXT step; accent when this step is complete.
+@spec connector_classes(String.t(), String.t(), atom(), String.t(), String.t()) :: String.t()
+defp connector_classes(orientation, style, state, color, size) do
+  edge = if state == :done, do: @accent[color], else: "border-border"
+  dash = if style == "dashed", do: "border-dashed", else: "border-solid"
+
+  case orientation do
+    "vertical" -> merge(["absolute -z-0 border-l-2", dash, edge, @connector_v[size] || ""])
+    _ -> merge(["absolute -z-0 border-t-2", dash, edge, @connector_h[size] || ""])
+  end
+end
