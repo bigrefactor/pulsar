@@ -73,4 +73,58 @@ defmodule Pulsar.Components.InputOtpTest do
       assert html =~ ~s(value="12")
     end
   end
+
+  describe "input_otp/1 options" do
+    test "groups insert a separator and keep length slots" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <InputOtp.input_otp id="otp" length={6} groups={[3, 3]} />
+        """)
+
+      # still 6 slots
+      assert html |> String.split(~s(data-slot=)) |> length() == 7
+      # one separator between the two groups
+      assert html |> String.split(~s(px-1 text-muted-foreground)) |> length() == 2
+    end
+
+    test "numeric mode sets inputmode numeric; alphanumeric sets text" do
+      assigns = %{}
+      num = rendered_to_string(~H|<InputOtp.input_otp id="n" mode="numeric" />|)
+      alpha = rendered_to_string(~H|<InputOtp.input_otp id="a" mode="alphanumeric" />|)
+
+      assert num =~ ~s(inputmode="numeric")
+      assert alpha =~ ~s(inputmode="text")
+    end
+
+    test "mask is exposed to the hook via data-mask" do
+      assigns = %{}
+      html = rendered_to_string(~H|<InputOtp.input_otp id="m" mask />|)
+      assert html =~ ~s(data-mask="true")
+    end
+
+    test "mode and length are exposed to the hook" do
+      assigns = %{}
+      html = rendered_to_string(~H|<InputOtp.input_otp id="d" length={4} mode="alphanumeric" />|)
+      assert html =~ ~s(data-length="4")
+      assert html =~ ~s(data-mode="alphanumeric")
+    end
+
+    test "on_complete is encoded into data-on-complete; default is empty" do
+      assigns = %{}
+
+      with_cb =
+        rendered_to_string(~H"""
+        <InputOtp.input_otp id="c" on_complete={Phoenix.LiveView.JS.push("verify")} />
+        """)
+
+      default = rendered_to_string(~H|<InputOtp.input_otp id="d" />|)
+
+      assert with_cb =~ "verify"
+      assert with_cb =~ "data-on-complete"
+      # default %JS{} encodes to the empty "[]" the hook guards against
+      assert default =~ ~s(data-on-complete="[]")
+    end
+  end
 end
