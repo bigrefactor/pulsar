@@ -73,6 +73,58 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     end
   end
 
+  describe "InputOTP keyboard entry" do
+    # The real input is `#kbd-otp`; the painted slots live in the wrapper
+    # `#kbd-otp-otp` ("{id}-otp"). The `.PulsarInputOtp` hook paints each
+    # `[data-slot]` (char + data-filled) and marks the next empty slot active
+    # on every keystroke — so these assertions only pass if the hook actually
+    # received the keys.
+    test "typing digits paints slots and auto-advances", %{conn: conn} do
+      conn
+      |> visit("/keyboard/input_otp")
+      |> A11y.await_live_connected()
+      |> press("#kbd-otp", "1")
+      |> assert_has(~s|#kbd-otp-otp [data-slot="0"][data-filled="true"]|, text: "1")
+      |> assert_has(~s|#kbd-otp-otp [data-slot="1"][data-active="true"]|)
+      |> press("#kbd-otp", "2")
+      |> assert_has(~s|#kbd-otp-otp [data-slot="1"][data-filled="true"]|, text: "2")
+      |> assert_has(~s|#kbd-otp-otp [data-slot="2"][data-active="true"]|)
+    end
+
+    test "non-digits are ignored in numeric mode", %{conn: conn} do
+      conn
+      |> visit("/keyboard/input_otp")
+      |> A11y.await_live_connected()
+      |> press("#kbd-otp", "a")
+      |> refute_has(~s|#kbd-otp-otp [data-slot="0"][data-filled="true"]|)
+    end
+
+    test "backspace clears the last digit", %{conn: conn} do
+      conn
+      |> visit("/keyboard/input_otp")
+      |> A11y.await_live_connected()
+      |> press("#kbd-otp", "1")
+      |> press("#kbd-otp", "2")
+      |> assert_has(~s|#kbd-otp-otp [data-slot="1"][data-filled="true"]|, text: "2")
+      |> press("#kbd-otp", "Backspace")
+      |> refute_has(~s|#kbd-otp-otp [data-slot="1"][data-filled="true"]|)
+      |> assert_has(~s|#kbd-otp-otp [data-slot="0"][data-filled="true"]|, text: "1")
+    end
+
+    test "entering all six digits fires on_complete", %{conn: conn} do
+      conn
+      |> visit("/keyboard/input_otp")
+      |> A11y.await_live_connected()
+      |> press("#kbd-otp", "1")
+      |> press("#kbd-otp", "2")
+      |> press("#kbd-otp", "3")
+      |> press("#kbd-otp", "4")
+      |> press("#kbd-otp", "5")
+      |> press("#kbd-otp", "6")
+      |> assert_has("#kbd-otp-completes", text: "1")
+    end
+  end
+
   describe "Menu keyboard navigation" do
     # The fixture at `/keyboard/menu` renders a vertical menu (items
     # kbd-v-home / kbd-v-inbox + a collapsed group kbd-v-grp) and a
