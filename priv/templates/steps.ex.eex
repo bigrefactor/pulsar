@@ -276,7 +276,13 @@ end
 # Error always paints danger; otherwise per-step color overrides the default.
 @spec step_color(map(), atom(), String.t()) :: String.t()
 defp step_color(_step, :error, _default), do: "danger"
-defp step_color(step, _state, default), do: Map.get(step, :color) || default
+
+defp step_color(step, _state, default) do
+  case Map.get(step, :color) do
+    c when c in @valid_colors -> c
+    _ -> default
+  end
+end
 
 @spec glyph(atom(), map(), String.t()) :: atom()
 defp glyph(:done, _step, _marker), do: :check
@@ -322,7 +328,8 @@ defp current_fill(_outline, color), do: "#{@ringed[color]} ring-4 ring-current/1
 @spec label_classes(atom(), String.t()) :: String.t()
 defp label_classes(:current, size), do: merge(["font-semibold text-foreground", @label_size[size] || ""])
 defp label_classes(:disabled, size), do: merge(["font-medium text-muted-foreground", @label_size[size] || ""])
-defp label_classes(state, size) when state in [:upcoming], do: merge(["font-medium text-muted-foreground", @label_size[size] || ""])
+defp label_classes(:upcoming, size), do: merge(["font-medium text-muted-foreground", @label_size[size] || ""])
+# Catch-all (done/error/loading): emphasized label.
 defp label_classes(_state, size), do: merge(["font-semibold text-foreground", @label_size[size] || ""])
 
 @spec list_classes(String.t(), String.t()) :: String.t()

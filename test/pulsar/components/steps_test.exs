@@ -236,6 +236,70 @@ defmodule Pulsar.Components.StepsTest do
     end
   end
 
+  describe "connectors" do
+    test "horizontal orientation emits a horizontal connector" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Steps.steps current={1} orientation="horizontal">
+          <:step label="A" />
+          <:step label="B" />
+        </Steps.steps>
+        """)
+
+      assert html =~ "border-t-2"
+      refute html =~ "border-l-2"
+    end
+
+    test "vertical orientation emits a vertical connector" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Steps.steps current={1} orientation="vertical">
+          <:step label="A" />
+          <:step label="B" />
+        </Steps.steps>
+        """)
+
+      assert html =~ "border-l-2"
+      refute html =~ "border-t-2"
+    end
+
+    test "a completed step's connector uses the accent color" do
+      assigns = %{}
+
+      # current={2} of 3 → step 1 is done, so its connector is accent-colored.
+      html =
+        rendered_to_string(~H"""
+        <Steps.steps current={2} color="success">
+          <:step label="A" />
+          <:step label="B" />
+          <:step label="C" />
+        </Steps.steps>
+        """)
+
+      assert html =~ "border-success"
+    end
+
+    test "an upcoming step's connector stays border-border" do
+      assigns = %{}
+
+      # all steps upcoming → no accent on any connector.
+      html =
+        rendered_to_string(~H"""
+        <Steps.steps current={1} color="success">
+          <:step label="A" state="upcoming" />
+          <:step label="B" state="upcoming" />
+        </Steps.steps>
+        """)
+
+      assert html =~ "border-border"
+      refute html =~ "border-success"
+    end
+  end
+
   describe "content" do
     test "renders label, description, and rich slot body" do
       assigns = %{}
