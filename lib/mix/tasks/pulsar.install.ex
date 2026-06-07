@@ -108,7 +108,7 @@ if Code.ensure_loaded?(Igniter) do
       checkbox: [],
       divider: [],
       dropdown_menu: [:icon, :popover],
-      field: [:checkbox, :icon, :input, :label, :radio_group, :select, :switch, :textarea],
+      field: [:checkbox, :icon, :input, :input_otp, :label, :radio_group, :select, :switch, :textarea],
       flash: [],
       flash_group: [:flash, :icon],
       form: [],
