@@ -104,8 +104,8 @@ defmodule Pulsar.DevApp.StorybookTest do
   end
 
   describe "leaves/0" do
-    test "returns exactly 41 leaves" do
-      assert length(Storybook.leaves()) == 41
+    test "returns exactly 42 leaves" do
+      assert length(Storybook.leaves()) == 42
     end
 
     test "all leaves are StoryEntry structs" do
