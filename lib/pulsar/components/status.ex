@@ -71,6 +71,22 @@ defmodule Pulsar.Components.Status do
     "xl" => "h-4 w-4"
   }
 
+  # Absolute-position utilities per placement (a 3x3 grid). The item is nudged
+  # half its size beyond the corner so it straddles the content edge.
+  @placement_config %{
+    "top-left" => "top-0 left-0 -translate-x-1/2 -translate-y-1/2",
+    "top" => "top-0 left-1/2 -translate-x-1/2 -translate-y-1/2",
+    "top-right" => "top-0 right-0 translate-x-1/2 -translate-y-1/2",
+    "left" => "top-1/2 left-0 -translate-x-1/2 -translate-y-1/2",
+    "center" => "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
+    "right" => "top-1/2 right-0 translate-x-1/2 -translate-y-1/2",
+    "bottom-left" => "bottom-0 left-0 -translate-x-1/2 translate-y-1/2",
+    "bottom" => "bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2",
+    "bottom-right" => "bottom-0 right-0 translate-x-1/2 translate-y-1/2"
+  }
+
+  @indicator_ring_classes "[&>*]:ring-2 [&>*]:ring-background"
+
   # ============================================================================
   # STATUS COMPONENT
   # ============================================================================
@@ -137,6 +153,51 @@ defmodule Pulsar.Components.Status do
   end
 
   # ============================================================================
+  # INDICATOR COMPONENT
+  # ============================================================================
+
+  attr :placement, :string,
+    default: "top-right",
+    values: ~w(top-left top top-right left center right bottom-left bottom bottom-right),
+    doc: "Corner/edge of the decorated content to place the item on"
+
+  attr :ring, :boolean,
+    default: true,
+    doc:
+      "Draw a background-colored separation ring around the placed item so it reads " <>
+        "against busy content (e.g. an avatar image). Set false to disable."
+
+  attr :class, :string, default: "", doc: "Additional CSS classes"
+
+  attr :rest, :global, doc: "Additional HTML attributes"
+
+  slot :item, required: true, doc: "The element placed on the corner (a status dot, a badge, a count)"
+
+  slot :inner_block, required: true, doc: "The content being decorated"
+
+  @doc """
+  Places a slotted `:item` on the corner of its content.
+
+  Generic: it positions any content (a `status/1` dot, a badge, a count) on any
+  element. The item is a sibling of the content, so a parent's `overflow-hidden`
+  (e.g. on an avatar) never clips it.
+  """
+  @spec indicator(map()) :: Rendered.t()
+  def indicator(assigns) do
+    assigns =
+      assigns
+      |> assign(:wrapper_class, merge(["relative inline-flex", assigns.class]))
+      |> assign(:item_class, item_classes(assigns.placement, assigns.ring))
+
+    ~H"""
+    <div class={@wrapper_class} {@rest}>
+      {render_slot(@inner_block)}
+      <span class={@item_class}>{render_slot(@item)}</span>
+    </div>
+    """
+  end
+
+  # ============================================================================
   # HELPER FUNCTIONS
   # ============================================================================
 
@@ -153,6 +214,17 @@ defmodule Pulsar.Components.Status do
 
   @spec size_classes(String.t()) :: String.t()
   defp size_classes(size), do: @size_config[size] || @size_config["md"]
+
+  defp item_classes(placement, ring) do
+    merge([
+      "absolute z-10",
+      if(ring, do: @indicator_ring_classes, else: ""),
+      placement_classes(placement)
+    ])
+  end
+
+  @spec placement_classes(String.t()) :: String.t()
+  defp placement_classes(placement), do: @placement_config[placement] || @placement_config["top-right"]
 
   defp status_role(nil), do: nil
   defp status_role(_label), do: "img"

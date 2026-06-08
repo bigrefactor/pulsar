@@ -106,4 +106,76 @@ defmodule Pulsar.Components.StatusTest do
       assert html =~ ~s(data-testid="dot")
     end
   end
+
+  describe "indicator/1" do
+    test "renders decorated content and the placed item" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Status.indicator>
+          <:item><Status.status color="success" label="Online" /></:item>
+          <span>Avatar</span>
+        </Status.indicator>
+        """)
+
+      assert html =~ "Avatar"
+      assert html =~ ~s(aria-label="Online")
+      assert html =~ "absolute"
+    end
+
+    test "default placement is top-right" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Status.indicator>
+          <:item><Status.status color="success" /></:item>
+          <span>X</span>
+        </Status.indicator>
+        """)
+
+      assert html =~ "top-0"
+      assert html =~ "right-0"
+    end
+
+    test "bottom-left placement applies its position utilities" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Status.indicator placement="bottom-left">
+          <:item><Status.status color="success" /></:item>
+          <span>X</span>
+        </Status.indicator>
+        """)
+
+      assert html =~ "bottom-0"
+      assert html =~ "left-0"
+    end
+
+    test "separation ring is on by default and removable with ring={false}" do
+      assigns = %{}
+
+      with_ring =
+        rendered_to_string(~H"""
+        <Status.indicator>
+          <:item><Status.status color="success" /></:item>
+          <span>X</span>
+        </Status.indicator>
+        """)
+
+      assert with_ring =~ "ring-background"
+
+      without_ring =
+        rendered_to_string(~H"""
+        <Status.indicator ring={false}>
+          <:item><Status.status color="success" /></:item>
+          <span>X</span>
+        </Status.indicator>
+        """)
+
+      refute without_ring =~ "ring-background"
+    end
+  end
 end
