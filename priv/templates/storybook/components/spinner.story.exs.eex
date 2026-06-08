@@ -9,13 +9,6 @@ defmodule <%= @web_module %>.Storybook.Components.Spinner do
   def attributes do
     [
       %Attr{
-        id: :variant,
-        type: :string,
-        values: ~w(ring dots bars),
-        default: "ring",
-        doc: "Animation style of the spinner"
-      },
-      %Attr{
         id: :size,
         type: :string,
         values: ~w(xs sm md lg xl),
@@ -53,39 +46,29 @@ defmodule <%= @web_module %>.Storybook.Components.Spinner do
   def variations do
     [
       %Variation{
-        id: :ring,
-        description: "Ring spinner (default)",
-        attributes: %{variant: "ring", color: "primary"}
-      },
-      %Variation{
-        id: :dots,
-        description: "Dots spinner",
-        attributes: %{variant: "dots", color: "primary"}
-      },
-      %Variation{
-        id: :bars,
-        description: "Bars spinner",
-        attributes: %{variant: "bars", color: "primary"}
+        id: :default,
+        description: "Spinner",
+        attributes: %{color: "primary"}
       },
       %Variation{
         id: :size_xs,
-        description: "Extra-small ring",
-        attributes: %{variant: "ring", size: "xs", color: "primary"}
+        description: "Extra-small",
+        attributes: %{size: "xs", color: "primary"}
       },
       %Variation{
         id: :size_xl,
-        description: "Extra-large ring",
-        attributes: %{variant: "ring", size: "xl", color: "primary"}
+        description: "Extra-large",
+        attributes: %{size: "xl", color: "primary"}
       },
       %Variation{
         id: :success,
-        description: "Success-colored dots",
-        attributes: %{variant: "dots", color: "success"}
+        description: "Success-colored",
+        attributes: %{color: "success"}
       },
       %Variation{
         id: :decorative,
         description: "Decorative (silenced for assistive tech)",
-        attributes: %{variant: "ring", decorative: true}
+        attributes: %{decorative: true}
       }
     ]
   end

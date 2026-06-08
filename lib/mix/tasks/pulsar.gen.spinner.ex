@@ -5,9 +5,9 @@ defmodule Mix.Tasks.Pulsar.Gen.Spinner do
     long_doc: """
     Generates a spinner component for loading and async states.
 
-    The spinner is an accessible, animated loading indicator in three styles
-    (ring, dots, bars). By default it announces itself to assistive
-    technologies via a status role and a visually-hidden label.
+    The spinner is an accessible, animated loading indicator. By default it
+    announces itself to assistive technologies via a status role and a
+    visually-hidden label.
 
     ## Examples
 
@@ -16,7 +16,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Spinner do
     ## Usage
 
         <.spinner />
-        <.spinner variant="dots" size="lg" color="primary" />
+        <.spinner size="lg" color="primary" />
         <.spinner label="Saving changes" />
         <.spinner decorative />
     """

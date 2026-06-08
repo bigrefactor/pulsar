@@ -7,7 +7,7 @@
 
 Non-interactive loading indicator. By default it exposes a `role="status"`
 live region with a visually-hidden label so assistive technologies announce
-loading; the animated graphic itself (ring, dots, or bars) is `aria-hidden`. A
+loading; the animated graphic itself (an SVG ring) is `aria-hidden`. A
 `decorative` mode removes the element from the accessibility tree entirely, for
 cases where a surrounding control or region already conveys the loading state.
 
@@ -15,13 +15,13 @@ cases where a surrounding control or region already conveys the loading state.
 
 ### 1.1.1 Non-text Content (A) — ✓ PASS
 
-**Evidence:** The animated graphic carries `aria-hidden="true"` on every variant
-— `lib/pulsar/components/spinner.ex:163, 176, 179` — so it is exposed to
+**Evidence:** The animated graphic (the SVG ring) carries `aria-hidden="true"`
+— `lib/pulsar/components/spinner.ex:110` — so it is exposed to
 assistive tech as nothing rather than as a meaningless image. The loading state
 is instead conveyed as text via the visually-hidden (`sr-only`) label inside the
-status region — `lib/pulsar/components/spinner.ex:182`. In `decorative` mode the
+status region — `lib/pulsar/components/spinner.ex:123`. In `decorative` mode the
 whole element is hidden (`aria-hidden="true"` on the wrapper, no status role,
-no label) — `lib/pulsar/components/spinner.ex:151–152, 160, 182`.
+no label) — `lib/pulsar/components/spinner.ex:103–104, 108, 123`.
 
 **Notes:** Hiding the entire element in `decorative` mode is the correct
 treatment for a redundant indicator whose meaning ("loading") is already carried
@@ -30,15 +30,15 @@ by a surrounding region the caller controls.
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:** The default wrapper carries `role="status"`, which programmatically
-marks the announcement as a live region — `lib/pulsar/components/spinner.ex:160`,
-role resolved at `lib/pulsar/components/spinner.ex:151, 200–202`. The graphic and
+marks the announcement as a live region — `lib/pulsar/components/spinner.ex:108`,
+role resolved at `lib/pulsar/components/spinner.ex:103, 142–143`. The graphic and
 its hidden label sit in a single flat `<span>` flow with no implied structure to
 expose.
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** DOM order is graphic → visually-hidden label —
-`lib/pulsar/components/spinner.ex:160–182`. No reordering CSS; the hidden label
+`lib/pulsar/components/spinner.ex:108–123`. No reordering CSS; the hidden label
 order has no visual effect.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
@@ -46,35 +46,35 @@ order has no visual effect.
 **Evidence:** No instruction depends on the shape, size, or position of the
 spinner; it carries no operable meaning, and the loading state reaches AT through
 the status-region text rather than the animation —
-`lib/pulsar/components/spinner.ex:182`.
+`lib/pulsar/components/spinner.ex:123`.
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** "Loading" is conveyed by the `role="status"` announcement and its
-text label — `lib/pulsar/components/spinner.ex:160, 182` — never by color alone.
+text label — `lib/pulsar/components/spinner.ex:108, 123` — never by color alone.
 The color palette (`current` plus seven semantic colors) is decorative on top of
-the announced text — `lib/pulsar/components/spinner.ex:45–54, 209`.
+the announced text — `lib/pulsar/components/spinner.ex:44–54, 150`.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** All dimensions use `rem`-based Tailwind tokens (ring `h-3 w-3`…`h-8
-w-8`, dot `h-1 w-1`…`h-3 w-3`, bar height `h-3`…`h-8` and width `w-0.5`…`w-1.5`)
-— `lib/pulsar/components/spinner.ex:56–104`. No fixed `px`; the visually-hidden
-label is real text in normal flow — `lib/pulsar/components/spinner.ex:182`.
+w-8`) — `lib/pulsar/components/spinner.ex:56–62`. No fixed `px`; the
+visually-hidden label is real text in normal flow —
+`lib/pulsar/components/spinner.ex:123`.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** The wrapper is a plain inline `<span>` carrying only the caller's
 `@class`, with no fixed-`px` width or min-width —
-`lib/pulsar/components/spinner.ex:160`. The graphic dimensions are small,
-class-driven rem tokens — `lib/pulsar/components/spinner.ex:56–104` — so the
+`lib/pulsar/components/spinner.ex:108`. The graphic dimensions are small,
+class-driven rem tokens — `lib/pulsar/components/spinner.ex:56–62` — so the
 spinner reflows at 320 CSS px.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
-**Evidence:** The graphic uses `currentColor` / `bg-current`, with color resolved
+**Evidence:** The graphic uses `currentColor`, with color resolved
 from semantic text tokens (`text-foreground`, `text-primary`, …) —
-`lib/pulsar/components/spinner.ex:45–54, 169–173, 219, 231`. `current` (the
+`lib/pulsar/components/spinner.ex:44–54, 116–117, 150, 153`. `current` (the
 default) inherits the surrounding text color. Those semantic values map to tokens
 meeting the ≥3:1 non-text minimum against the page background. Verified axe-clean
 in light + dark via the fixture (no `color-contrast` violation).
@@ -87,46 +87,43 @@ the semantic tokens clear 3:1 regardless.
 
 **Evidence:** No fixed line-height or letter/word-spacing overrides; the only
 text node is the visually-hidden (`sr-only`) label, which inherits page
-text-spacing — `lib/pulsar/components/spinner.ex:182`.
+text-spacing — `lib/pulsar/components/spinner.ex:123`.
 
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
 **Evidence:** The motion is essential — it *is* the loading indicator — so the
 requirement is met by the WCAG essential-animation exception. Additionally, the
-library-wide `prefers-reduced-motion: reduce` rule near-stops the animation, and
-the dots/bars resting state is reset to a legible static form under reduced
-motion (`pulsar-spinner-dots` / `pulsar-spinner-bars` —
-`lib/pulsar/components/spinner.ex:216, 225`).
+library-wide `prefers-reduced-motion: reduce` rule near-stops the `animate-spin`
+ring rotation — `lib/pulsar/components/spinner.ex:153`.
 
-**Notes:** Reduced-motion users see a static, still-legible indicator rather than
-the running animation.
+**Notes:** Reduced-motion users see a static, still-legible ring rather than the
+running animation.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
 **Evidence:** The ring rotation (`animate-spin` —
-`lib/pulsar/components/spinner.ex:212`) and the dots/bars pulses are smooth,
-sub-second-cycle animations, not flashes; nothing flashes more than three times
-per second.
+`lib/pulsar/components/spinner.ex:153`) is a smooth, sub-second-cycle animation,
+not a flash; nothing flashes more than three times per second.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
 **Evidence:** Default mode exposes `role="status"` on the wrapper —
-`lib/pulsar/components/spinner.ex:160`, role resolved at
-`lib/pulsar/components/spinner.ex:151, 200–202` — with an accessible name from the
-visually-hidden label — `lib/pulsar/components/spinner.ex:182`. `decorative` mode
+`lib/pulsar/components/spinner.ex:108`, role resolved at
+`lib/pulsar/components/spinner.ex:103, 142–143` — with an accessible name from the
+visually-hidden label — `lib/pulsar/components/spinner.ex:123`. `decorative` mode
 drops the role and label and sets `aria-hidden="true"`, removing the element from
-the tree — `lib/pulsar/components/spinner.ex:151–152, 204–206`. `@rest` forwards
-`id`/`data-*`/ARIA — `lib/pulsar/components/spinner.ex:138, 160`. The spinner has
+the tree — `lib/pulsar/components/spinner.ex:103–104, 146–147`. `@rest` forwards
+`id`/`data-*`/ARIA — `lib/pulsar/components/spinner.ex:90, 108`. The spinner has
 no settable value or interactive state.
 
 ### 4.1.3 Status Messages (AA) — ✓ PASS
 
 **Evidence:** The default `role="status"` region lets the loading state be
 announced politely without moving focus —
-`lib/pulsar/components/spinner.ex:160, 182`. `decorative` mode intentionally
+`lib/pulsar/components/spinner.ex:108, 123`. `decorative` mode intentionally
 suppresses the announcement when a surrounding region already carries it.
 
-**Notes:** Documented in the moduledoc — `lib/pulsar/components/spinner.ex:5–8`.
+**Notes:** Documented in the moduledoc — `lib/pulsar/components/spinner.ex:2`.
 
 ## Not applicable
 

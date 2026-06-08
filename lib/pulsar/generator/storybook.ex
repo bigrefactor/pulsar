@@ -41,6 +41,7 @@ defmodule Pulsar.Generator.Storybook do
     :select,
     :sidebar,
     :skeleton,
+    :spinner,
     :switch,
     :table,
     :tabs,

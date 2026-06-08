@@ -27,24 +27,6 @@ defmodule Pulsar.Components.SpinnerTest do
     end
   end
 
-  describe "spinner/1 variants" do
-    test "dots variant renders three dot elements" do
-      assigns = %{}
-      html = rendered_to_string(~H[<Spinner.spinner variant="dots" />])
-
-      assert html =~ "pulsar-spinner-dots"
-      assert length(Regex.scan(~r/bg-current/, html)) == 3
-    end
-
-    test "bars variant renders four bar elements" do
-      assigns = %{}
-      html = rendered_to_string(~H[<Spinner.spinner variant="bars" />])
-
-      assert html =~ "pulsar-spinner-bars"
-      assert length(Regex.scan(~r/bg-current/, html)) == 4
-    end
-  end
-
   describe "spinner/1 sizes" do
     test "ring md size (default)" do
       assigns = %{}

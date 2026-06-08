@@ -1,7 +1,7 @@
 # Pulsar accessibility audit — WCAG 2.2 Level AA
 
 This directory holds Pulsar's first formal accessibility audit. It covers
-every applicable WCAG 2.2 Level A and AA success criterion across all 35
+every applicable WCAG 2.2 Level A and AA success criterion across all 36
 components in `lib/pulsar/components/`. Original audit method was
 **code-only**; the browser-verification follow-up has
 since populated measured contrast, focus-ring, target-size, text-spacing,
