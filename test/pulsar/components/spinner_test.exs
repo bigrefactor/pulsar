@@ -22,7 +22,8 @@ defmodule Pulsar.Components.SpinnerTest do
       assigns = %{}
       html = rendered_to_string(~H[<Spinner.spinner />])
 
-      assert html =~ ~s(aria-hidden="true")
+      # only the inner SVG is hidden by default; the wrapper is not
+      assert length(Regex.scan(~r/aria-hidden="true"/, html)) == 1
     end
   end
 
@@ -96,7 +97,8 @@ defmodule Pulsar.Components.SpinnerTest do
       assigns = %{}
       html = rendered_to_string(~H[<Spinner.spinner decorative />])
 
-      assert html =~ ~s(aria-hidden="true")
+      # wrapper + inner SVG are both hidden → two occurrences (default ring has only one)
+      assert length(Regex.scan(~r/aria-hidden="true"/, html)) == 2
       refute html =~ ~s(role="status")
       refute html =~ ~s(class="sr-only")
     end
