@@ -1,7 +1,7 @@
 # Pulsar accessibility audit — WCAG 2.2 Level AA
 
 This directory holds Pulsar's first formal accessibility audit. It covers
-every applicable WCAG 2.2 Level A and AA success criterion across all 36
+every applicable WCAG 2.2 Level A and AA success criterion across all 37
 components in `lib/pulsar/components/`. Original audit method was
 **code-only**; the browser-verification follow-up has
 since populated measured contrast, focus-ring, target-size, text-spacing,
@@ -154,6 +154,7 @@ not-applicable). Detailed per-criterion grids follow.
 | [icon](icon.md) | 9/0/11 | 1/0/19 | 0/0/13 | 1/0/1 |
 | [skeleton](skeleton.md) | 10/0/10 | 2/0/18 | 0/0/13 | 2/0/0 |
 | [spinner](spinner.md) | 9/0/11 | 2/0/18 | 0/0/13 | 2/0/0 |
+| [status](status.md) | 7/0/13 | 2/0/18 | 0/0/13 | 1/0/1 |
 
 ### Perceivable (1.x)
 
@@ -193,6 +194,7 @@ not-applicable). Detailed per-criterion grids follow.
 | icon | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | — | ✓ | — | ✓ | ✓ | ✓ | — |
 | skeleton | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | spinner | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | — | ✓ | — | ✓ | ✓ | ✓ | — |
+| status | ✓ | — | — | — | — | — | ✓ | — | ✓ | — | — | ✓ | — | — | ✓ | — | ✓ | ✓ | — | — |
 
 ### Operable (2.x)
 
@@ -232,6 +234,7 @@ not-applicable). Detailed per-criterion grids follow.
 | icon | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | — | — | — | — | — | — |
 | skeleton | — | — | — | — | ✓ | ✓ | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
 | spinner | — | — | — | — | ✓ | ✓ | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| status | — | — | — | — | ✓ | ✓ | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
 
 ### Understandable (3.x) and Robust (4.x)
 
@@ -271,6 +274,7 @@ not-applicable). Detailed per-criterion grids follow.
 | icon | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | — |
 | skeleton | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
 | spinner | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
+| status | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | — |
 
 ---
 
