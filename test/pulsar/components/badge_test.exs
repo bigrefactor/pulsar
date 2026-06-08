@@ -23,6 +23,16 @@ defmodule Pulsar.Components.BadgeTest do
 
       assert html =~ "Phoenix Framework"
     end
+
+    test "badge base uses the fast color-transition motion tokens" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge>Motion</Badge.badge>])
+
+      assert html =~ ~s(transition-colors)
+      assert html =~ ~s(duration-fast)
+      assert html =~ ~s(ease-standard)
+      refute html =~ ~s(duration-normal)
+    end
   end
 
   describe "badge variants" do
