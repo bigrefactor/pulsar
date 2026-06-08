@@ -1,5 +1,9 @@
 defmodule Pulsar.Components.AvatarTest do
-  use ExUnit.Case, async: true
+  # Not async: the accessible-name tests refute on a warning string (avatar.ex
+  # "without an accessible name") that capture_log captures globally. Run
+  # concurrently, an unnamed linked avatar rendered by another module could bleed
+  # that string into this module's capture window and flake the refute.
+  use ExUnit.Case, async: false
 
   import ExUnit.CaptureLog
   import Phoenix.Component
