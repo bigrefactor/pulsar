@@ -1,0 +1,92 @@
+defmodule Pulsar.DevApp.Storybook.Components.Spinner do
+  use PhoenixStorybook.Story, :component
+
+  alias Pulsar.Components.Spinner
+
+  def function, do: &Spinner.spinner/1
+  def render_source, do: :function
+
+  def attributes do
+    [
+      %Attr{
+        id: :variant,
+        type: :string,
+        values: ~w(ring dots bars),
+        default: "ring",
+        doc: "Animation style of the spinner"
+      },
+      %Attr{
+        id: :size,
+        type: :string,
+        values: ~w(xs sm md lg xl),
+        default: "md",
+        doc: "Size of the spinner"
+      },
+      %Attr{
+        id: :color,
+        type: :string,
+        values: ~w(current neutral primary secondary success danger warning info),
+        default: "current",
+        doc: "Color of the spinner; \"current\" inherits the surrounding text color"
+      },
+      %Attr{
+        id: :label,
+        type: :string,
+        default: "Loading",
+        doc: "Accessible label announced by screen readers"
+      },
+      %Attr{
+        id: :decorative,
+        type: :boolean,
+        default: false,
+        doc: "Hide from assistive technologies and omit the status role and label"
+      },
+      %Attr{
+        id: :class,
+        type: :string,
+        default: "",
+        doc: "Additional CSS classes"
+      }
+    ]
+  end
+
+  def variations do
+    [
+      %Variation{
+        id: :ring,
+        description: "Ring spinner (default)",
+        attributes: %{variant: "ring", color: "primary"}
+      },
+      %Variation{
+        id: :dots,
+        description: "Dots spinner",
+        attributes: %{variant: "dots", color: "primary"}
+      },
+      %Variation{
+        id: :bars,
+        description: "Bars spinner",
+        attributes: %{variant: "bars", color: "primary"}
+      },
+      %Variation{
+        id: :size_xs,
+        description: "Extra-small ring",
+        attributes: %{variant: "ring", size: "xs", color: "primary"}
+      },
+      %Variation{
+        id: :size_xl,
+        description: "Extra-large ring",
+        attributes: %{variant: "ring", size: "xl", color: "primary"}
+      },
+      %Variation{
+        id: :success,
+        description: "Success-colored dots",
+        attributes: %{variant: "dots", color: "success"}
+      },
+      %Variation{
+        id: :decorative,
+        description: "Decorative (silenced for assistive tech)",
+        attributes: %{variant: "ring", decorative: true}
+      }
+    ]
+  end
+end
