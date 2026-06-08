@@ -77,6 +77,7 @@ defmodule Pulsar.Components.TableTest do
       assert html =~ ~s(transition-colors)
       assert html =~ ~s(duration-fast)
       assert html =~ ~s(ease-standard)
+      refute html =~ ~s(duration-normal)
     end
   end
 

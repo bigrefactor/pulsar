@@ -20,6 +20,7 @@ defmodule Pulsar.Components.ListTest do
       assert html =~ ~s(transition-colors)
       assert html =~ ~s(duration-fast)
       assert html =~ ~s(ease-standard)
+      refute html =~ ~s(duration-normal)
     end
 
     test "renders basic list with defaults" do
