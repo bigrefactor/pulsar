@@ -124,34 +124,36 @@ defmodule Pulsar.Components.StatusTest do
       assert html =~ "absolute"
     end
 
-    test "default placement is top-right" do
-      assigns = %{}
+    test "each placement applies its position utilities" do
+      placements = [
+        {"top-left", ["top-0", "left-0"]},
+        {"top", ["top-0", "left-1/2"]},
+        {"top-right", ["top-0", "right-0"]},
+        {"left", ["top-1/2", "left-0"]},
+        {"center", ["top-1/2", "left-1/2"]},
+        {"right", ["top-1/2", "right-0"]},
+        {"bottom-left", ["bottom-0", "left-0"]},
+        {"bottom", ["bottom-0", "left-1/2"]},
+        {"bottom-right", ["bottom-0", "right-0"]}
+      ]
 
-      html =
-        rendered_to_string(~H"""
-        <Status.indicator>
-          <:item><Status.status color="success" /></:item>
-          <span>X</span>
-        </Status.indicator>
-        """)
+      for {placement, tokens} <- placements do
+        assigns = %{placement: placement}
 
-      assert html =~ "top-0"
-      assert html =~ "right-0"
-    end
+        html =
+          rendered_to_string(~H"""
+          <Status.indicator placement={@placement}>
+            <:item><Status.status color="success" /></:item>
+            <span>X</span>
+          </Status.indicator>
+          """)
 
-    test "bottom-left placement applies its position utilities" do
-      assigns = %{}
+        for token <- tokens do
+          assert html =~ token, "placement #{placement} should render #{token}"
+        end
 
-      html =
-        rendered_to_string(~H"""
-        <Status.indicator placement="bottom-left">
-          <:item><Status.status color="success" /></:item>
-          <span>X</span>
-        </Status.indicator>
-        """)
-
-      assert html =~ "bottom-0"
-      assert html =~ "left-0"
+        assert html =~ "z-10", "placement #{placement} should render z-10"
+      end
     end
 
     test "separation ring is on by default and removable with ring={false}" do

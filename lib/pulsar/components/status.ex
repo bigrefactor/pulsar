@@ -171,7 +171,10 @@ defmodule Pulsar.Components.Status do
 
   attr :rest, :global, doc: "Additional HTML attributes"
 
-  slot :item, required: true, doc: "The element placed on the corner (a status dot, a badge, a count)"
+  slot :item,
+    required: true,
+    doc:
+      "The element placed on the corner (a status dot, a badge, a count). Use a single element root so the separation ring traces it."
 
   slot :inner_block, required: true, doc: "The content being decorated"
 
