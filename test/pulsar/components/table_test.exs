@@ -63,6 +63,24 @@ defmodule Pulsar.Components.TableTest do
     end
   end
 
+  describe "row motion tokens" do
+    test "rows use the fast color-transition motion tokens" do
+      assigns = %{users: [%{name: "Alice"}]}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="users" rows={@users}>
+          <:col :let={user} label="Name">{user.name}</:col>
+        </Table.table>
+        """)
+
+      assert html =~ ~s(transition-colors)
+      assert html =~ ~s(duration-fast)
+      assert html =~ ~s(ease-standard)
+      refute html =~ ~s(duration-normal)
+    end
+  end
+
   describe "table variants" do
     test "renders solid variant (default)" do
       assigns = %{users: []}
@@ -339,7 +357,7 @@ defmodule Pulsar.Components.TableTest do
         </Table.table>
         """)
 
-      assert html =~ ~s(animate-pulse)
+      assert html =~ ~s(animate-pulse-subtle)
       assert html =~ ~s(bg-surface-1)
       refute html =~ ~s(No data available)
     end
@@ -355,7 +373,7 @@ defmodule Pulsar.Components.TableTest do
         """)
 
       refute html =~ ~s(Alice)
-      assert html =~ ~s(animate-pulse)
+      assert html =~ ~s(animate-pulse-subtle)
     end
   end
 

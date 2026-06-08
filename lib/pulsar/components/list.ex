@@ -133,7 +133,7 @@ defmodule Pulsar.Components.List do
   @container_base_classes ""
 
   # Base classes for list items
-  @item_base_classes "flex"
+  @item_base_classes "flex transition-colors duration-fast ease-standard"
 
   # Variant-specific classes for container
   @variant_container_classes %{
