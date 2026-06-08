@@ -7,6 +7,21 @@ defmodule Pulsar.Components.ListTest do
   alias Pulsar.Components.List
 
   describe "list/1 basic functionality" do
+    test "list items use the fast color-transition motion tokens" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <List.list>
+          <:item title="Name">John Doe</:item>
+        </List.list>
+        """)
+
+      assert html =~ ~s(transition-colors)
+      assert html =~ ~s(duration-fast)
+      assert html =~ ~s(ease-standard)
+    end
+
     test "renders basic list with defaults" do
       assigns = %{}
 
