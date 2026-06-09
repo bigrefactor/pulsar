@@ -16,9 +16,9 @@ the first panel flexes to fill the rest of the space.
       </:panel>
     </.resizable>
 
-    # Stacked, collapsible second panel
+    # Stacked; either panel collapsible
     <.resizable id="logs" orientation="vertical" default_size={40}>
-      <:panel>…</:panel>
+      <:panel collapsible>…</:panel>
       <:panel label="Resize log panel" collapsible>…</:panel>
     </.resizable>
 
@@ -32,8 +32,9 @@ is ephemeral and resets on reload.
 
 Focus the handle, then: arrow keys resize by 1%, Page Up/Down by 10%, and
 Home/End jump to the minimum/maximum. Double-click the handle to reset to
-`default_size`. When a panel is `collapsible`, press Enter on the focused handle to collapse or expand the
-second panel.
+`default_size`. A collapsible panel adds a focusable toggle button to the handle — Tab to it and
+press Enter or Space to collapse or expand that panel. Dragging the handle to a
+panel's edge also collapses it.
 """
 
 use Phoenix.Component
@@ -333,6 +334,9 @@ def resizable(assigns) do
           this.size = pct
           this.el.style.setProperty("--pulsar-resizable-size", pct + "%")
           const rounded = Math.round(pct)
+          // aria-valuenow tracks the end panel's %. When a panel is collapsed it
+          // may fall outside [min,max] (0 end-collapsed, up to 100 start-collapsed)
+          // — the APG window-splitter pattern permits this in the collapsed state.
           this.separator.setAttribute("aria-valuenow", String(rounded))
           this.separator.setAttribute("aria-valuetext", rounded + "%")
           this.animate(animate && changed)
