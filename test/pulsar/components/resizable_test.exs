@@ -86,6 +86,32 @@ defmodule Pulsar.Components.ResizableTest do
     end
   end
 
+  describe "resizable/1 collapse (opt-in)" do
+    test "renders no toggle by default" do
+      refute basic() =~ "data-resizable-toggle"
+    end
+
+    test "renders an accessible chevron toggle when collapsible" do
+      html = basic(%{extra: [collapsible: true]})
+      assert html =~ "data-resizable-toggle"
+      assert html =~ ~s(aria-expanded="true")
+      assert html =~ ~s(aria-controls="rz-panel-2")
+      # The toggle is named for the panel it controls.
+      assert html =~ ~r/data-resizable-toggle[^>]*aria-label="Resize side panel"/s
+    end
+
+    test "exposes collapse config to the hook when collapsible" do
+      html = basic(%{extra: [collapsible: true, collapsed_size: 0]})
+      assert html =~ ~s(data-collapsible="true")
+      assert html =~ ~s(data-collapsed-size="0")
+    end
+
+    test "toggle is not a tab stop (the separator already is)" do
+      html = basic(%{extra: [collapsible: true]})
+      assert html =~ ~r/data-resizable-toggle[^>]*tabindex="-1"/s
+    end
+  end
+
   describe "resizable/1 hook wiring" do
     test "attaches the colocated hook via a static literal" do
       assert basic() =~ "PulsarResizable"

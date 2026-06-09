@@ -111,6 +111,18 @@ def resizable(assigns) do
       class={handle_classes(@orientation)}
     >
       <span aria-hidden="true" class={line_classes(@orientation)}></span>
+      <button
+        :if={@collapsible}
+        type="button"
+        data-resizable-toggle
+        tabindex="-1"
+        aria-expanded="true"
+        aria-controls={@panel_two_id}
+        aria-label={@panel_label}
+        class={toggle_classes(@orientation)}
+      >
+        <Icon.icon name="hero-chevron-right" class="size-3" />
+      </button>
     </div>
 
     <div
@@ -133,6 +145,10 @@ def resizable(assigns) do
           this.max = Number(this.el.dataset.max)
           this.default = Number(this.el.dataset.default)
           this.size = this.default
+          this.collapsedSize = Number(this.el.dataset.collapsedSize)
+          this.collapsible = this.el.dataset.collapsible === "true"
+          this.collapsed = false
+          this.toggle = this.el.querySelector('[data-resizable-toggle]')
           this.bind()
         },
         updated() {
@@ -158,11 +174,16 @@ def resizable(assigns) do
           this.handle.addEventListener("pointerdown", this._down)
           this.handle.addEventListener("keydown", this._key)
           this.handle.addEventListener("dblclick", this._dbl)
+          if (this.toggle) {
+            this._toggleClick = (e) => { e.stopPropagation(); this.toggleCollapse() }
+            this.toggle.addEventListener("click", this._toggleClick)
+          }
         },
         unbind() {
           this.handle.removeEventListener("pointerdown", this._down)
           this.handle.removeEventListener("keydown", this._key)
           this.handle.removeEventListener("dblclick", this._dbl)
+          if (this.toggle) this.toggle.removeEventListener("click", this._toggleClick)
         },
         isVertical() { return this.el.dataset.orientation === "vertical" },
         groupSize() {
@@ -170,6 +191,7 @@ def resizable(assigns) do
         },
         clamp(pct) { return Math.min(this.max, Math.max(this.min, pct)) },
         onPointerDown(e) {
+          if (e.target.closest('[data-resizable-toggle]')) return
           if (e.pointerType !== "mouse") e.preventDefault()
           this.handle.setPointerCapture(e.pointerId)
           this.dragging = true
@@ -188,6 +210,11 @@ def resizable(assigns) do
           // Panel two is the trailing panel: its size is the distance from the
           // pointer to the far edge of the group.
           const pct = ((total - pos) / total) * 100
+          if (this.collapsible && pct < this.min - this.min / 2) {
+            this.collapse()
+            return
+          }
+          if (this.collapsed) this.setCollapsed(false)
           this.applySize(this.clamp(pct), false)
         },
         onPointerUp(e) {
@@ -213,9 +240,35 @@ def resizable(assigns) do
             default: return
           }
           e.preventDefault()
+          if (this.collapsed) this.setCollapsed(false)
           this.applySize(this.clamp(next), false)
         },
-        reset() { this.applySize(this.default, true) },
+        reset() {
+          if (this.collapsed) this.setCollapsed(false)
+          this.applySize(this.default, true)
+        },
+        collapse() {
+          this.setCollapsed(true)
+          this.applySize(this.collapsedSize, false)
+        },
+        toggleCollapse() {
+          if (this.collapsed) {
+            this.setCollapsed(false)
+            this.applySize(this.default, true)
+          } else {
+            this.setCollapsed(true)
+            this.applySize(this.collapsedSize, true)
+          }
+        },
+        setCollapsed(state) {
+          this.collapsed = state
+          if (this.toggle) this.toggle.setAttribute("aria-expanded", state ? "false" : "true")
+          // Per the APG window-splitter pattern, a collapsed splitter reports its
+          // collapsed value in aria-valuenow / aria-valuetext.
+          const shown = Math.round(state ? this.collapsedSize : this.size)
+          this.separator.setAttribute("aria-valuenow", String(shown))
+          this.separator.setAttribute("aria-valuetext", shown + "%")
+        },
         setAnimating(on) {
           this.panelTwo.dataset.animating = on ? "true" : "false"
         },
@@ -293,4 +346,23 @@ end
 defp line_classes(_) do
   "w-px h-full bg-border transition-colors duration-fast ease-standard " <>
     "group-hover/handle:bg-border-strong group-focus-visible/handle:bg-primary"
+end
+
+# Small round affordance centered on the handle. The chevron flips when the
+# panel is collapsed (aria-expanded="false") and points the right way per
+# orientation.
+@spec toggle_classes(String.t()) :: String.t()
+defp toggle_classes(orientation) do
+  rotate =
+    if orientation == "vertical",
+      do: "rotate-90 aria-[expanded=false]:-rotate-90",
+      else: "aria-[expanded=false]:rotate-180"
+
+  merge([
+    "absolute z-10 inline-flex size-5 items-center justify-center rounded-full",
+    "border border-border bg-background text-muted-foreground shadow-sm",
+    "transition-colors duration-fast ease-standard hover:text-foreground",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+    rotate
+  ])
 end
