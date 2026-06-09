@@ -1,0 +1,266 @@
+defmodule Pulsar.Components.Drawer do
+  @moduledoc """
+  Edge-anchored, focus-trapped overlay panel that slides in from a side.
+
+  Built on `modal/1`: it traps focus, dims the page, locks background scroll, and
+  closes on Escape or a backdrop click, but anchors the panel to a viewport edge
+  (right, left, top, or bottom) and slides it in instead of centering it. Use it
+  for detail panes, mobile navigation, and filter panels.
+
+  ## Examples
+
+      <.button phx-click={Drawer.open("filters")}>Filters</.button>
+
+      <.drawer id="filters" side="right" title="Filters">
+        <:description>Narrow the results.</:description>
+
+        <.input field={@form[:query]} />
+
+        <:footer>
+          <.button variant="ghost" phx-click={Drawer.close("filters")}>Close</.button>
+        </:footer>
+      </.drawer>
+
+  A left-anchored mobile nav with no visible title takes its accessible name from
+  `aria-label`:
+
+      <.drawer id="nav" side="left" aria-label="Main navigation">
+        ...
+      </.drawer>
+
+  ## Opening and closing
+
+  The drawer has no trigger of its own — drive it from anywhere with `open/2` and
+  `close/2`, passing the drawer `id`. Both return a `Phoenix.LiveView.JS` command,
+  so they compose with `JS.push/2` and friends.
+
+  ## Sizing
+
+  `side` picks the edge; `size` controls the variable axis. For `left`/`right`
+  drawers `size` sets the width (full viewport height); for `top`/`bottom` drawers
+  it sets the height (full viewport width).
+
+  ## Accessibility
+
+  - Renders a native `<dialog>` through the modal primitive: the browser provides
+    the dialog role, the focus trap, and Escape handling.
+  - `title` is the accessible name; pass `aria-label` instead when there is no
+    visible title.
+  - Focus returns to the element that opened the drawer when it closes.
+  """
+
+  use Phoenix.Component
+
+  import Twm, only: [merge: 1]
+
+  alias Phoenix.LiveView.JS
+  alias Phoenix.LiveView.Rendered
+  alias Pulsar.Components.Modal
+
+  # Inline ID generator
+  defp generate_id(prefix \\ "drawer") do
+    "#{prefix}-#{System.unique_integer([:positive])}"
+  end
+
+  # ============================================================================
+  # CONFIGURATION & CONSTANTS
+  # ============================================================================
+
+  # Per-side anchor + fill geometry and the inward-rounded edge. Merged after the
+  # modal panel base so these win over its centering defaults. Logical properties
+  # (ms/me, rounded-s/e) keep right/left correct under RTL.
+  @side_config %{
+    "right" => "m-0 ms-auto h-dvh max-h-dvh w-full rounded-none rounded-s-box",
+    "left" => "m-0 me-auto h-dvh max-h-dvh w-full rounded-none rounded-e-box",
+    "top" => "m-0 mb-auto w-full max-w-none h-auto rounded-none rounded-b-box",
+    "bottom" => "m-0 mt-auto w-full max-w-none h-auto rounded-none rounded-t-box"
+  }
+
+  # Directional slide-in utility per side (defined in theme.css).
+  @side_animation %{
+    "right" => "animate-drawer-from-right",
+    "left" => "animate-drawer-from-left",
+    "top" => "animate-drawer-from-top",
+    "bottom" => "animate-drawer-from-bottom"
+  }
+
+  # Height scale for top/bottom drawers — the variable axis on those sides. Left
+  # and right drawers take their width from the modal `size` (max-w-*) instead.
+  @height_config %{
+    "sm" => "max-h-[30vh]",
+    "md" => "max-h-[45vh]",
+    "lg" => "max-h-[60vh]",
+    "xl" => "max-h-[85vh]"
+  }
+
+  # ============================================================================
+  # COMPONENT
+  # ============================================================================
+
+  attr(:id, :string, doc: "Drawer ID (auto-generated if omitted). Targeted by the open/close helpers.")
+
+  attr(:side, :string,
+    default: "right",
+    values: ~w(right left top bottom),
+    doc: "Viewport edge the panel anchors to and slides in from"
+  )
+
+  attr(:size, :string,
+    default: "md",
+    values: ~w(sm md lg xl),
+    doc: "Variable axis: width for left/right drawers, height for top/bottom drawers"
+  )
+
+  attr(:variant, :string,
+    default: "elevated",
+    values: ~w(solid outline ghost elevated),
+    doc: "Visual style of the panel surface"
+  )
+
+  attr(:color, :string,
+    default: "neutral",
+    values: ~w(neutral primary secondary success danger warning info),
+    doc: "Color scheme of the panel surface"
+  )
+
+  attr(:title, :string, default: nil, doc: "Heading text; wired as the panel's accessible name")
+
+  attr(:dismissable, :boolean,
+    default: true,
+    doc: "When true, Escape closes the drawer; backdrop and close button gate on backdrop_close/show_close_button"
+  )
+
+  attr(:backdrop_close, :boolean,
+    default: true,
+    doc: "When true (and dismissable), a backdrop click closes the drawer"
+  )
+
+  attr(:show_close_button, :boolean,
+    default: true,
+    doc: "When true (and dismissable), the corner close (X) button is shown"
+  )
+
+  attr(:close_label, :string,
+    default: "Close",
+    doc: ~s{Accessible label for the close button. Use with i18n: gettext("Close")}
+  )
+
+  attr(:on_open, JS, default: %JS{}, doc: "JS commands to run when the drawer opens")
+
+  attr(:on_close, JS,
+    default: %JS{},
+    doc: "JS commands to run when the drawer closes (including Escape/backdrop dismissal)"
+  )
+
+  attr(:class, :string, default: "", doc: "Additional CSS classes for the panel (merged last)")
+
+  attr(:rest, :global,
+    include: ~w(open),
+    doc: "Additional dialog attributes (e.g. aria-label)"
+  )
+
+  slot(:description, doc: "Supporting text below the heading; wired as aria-describedby")
+  slot(:inner_block, required: true, doc: "Drawer body")
+  slot(:footer, doc: "Action row pinned below the body")
+
+  @doc """
+  Renders a side-anchored, focus-trapped drawer.
+
+  Open and close it with the `open/2` and `close/2` helpers from a control
+  elsewhere on the page.
+
+  ## Examples
+
+      <.drawer id="filters" side="right" title="Filters">
+        ...
+        <:footer>
+          <.button phx-click={Drawer.close("filters")}>Close</.button>
+        </:footer>
+      </.drawer>
+  """
+  @spec drawer(map()) :: Rendered.t()
+  def drawer(assigns) do
+    assigns = assign_new(assigns, :id, fn -> generate_id() end)
+
+    assigns =
+      assign(
+        assigns,
+        :panel_class,
+        merge([
+          side_classes(assigns.side),
+          height_classes(assigns.side, assigns.size),
+          assigns.class
+        ])
+      )
+
+    ~H"""
+    <Modal.modal
+      id={@id}
+      title={@title}
+      variant={@variant}
+      color={@color}
+      size={@size}
+      dismissable={@dismissable}
+      backdrop_close={@backdrop_close}
+      show_close_button={@show_close_button}
+      close_label={@close_label}
+      on_open={@on_open}
+      on_close={@on_close}
+      panel_animation={panel_animation(@side)}
+      class={@panel_class}
+      {@rest}
+    >
+      <:description :if={@description != []}>{render_slot(@description)}</:description>
+      {render_slot(@inner_block)}
+      <:footer :if={@footer != []}>{render_slot(@footer)}</:footer>
+    </Modal.modal>
+    """
+  end
+
+  # Each helper is two explicit arities (not `js \\ %JS{}`) so the one-arg form
+  # never constructs an opaque `JS.t()` here, mirroring the modal helpers.
+
+  @doc """
+  Opens the drawer. Pass the drawer `id`.
+
+      <button phx-click={Drawer.open("filters")}>Filters</button>
+  """
+  @spec open(String.t()) :: JS.t()
+  def open(id), do: Modal.open(id)
+
+  @doc """
+  Opens the drawer, composing onto an existing `Phoenix.LiveView.JS` pipeline.
+  """
+  @spec open(JS.t(), String.t()) :: JS.t()
+  def open(js, id), do: Modal.open(js, id)
+
+  @doc """
+  Closes the drawer. Pass the drawer `id`.
+  """
+  @spec close(String.t()) :: JS.t()
+  def close(id), do: Modal.close(id)
+
+  @doc """
+  Closes the drawer, composing onto an existing `Phoenix.LiveView.JS` pipeline.
+  """
+  @spec close(JS.t(), String.t()) :: JS.t()
+  def close(js, id), do: Modal.close(js, id)
+
+  # ============================================================================
+  # HELPER FUNCTIONS
+  # ============================================================================
+
+  # `|| ""` makes each return provably `String.t()` so the values passed to
+  # `Twm.merge/1` type-check (the `attr :values` guarantee means the fallback is
+  # never hit at runtime).
+  @spec side_classes(String.t()) :: String.t()
+  defp side_classes(side), do: @side_config[side] || ""
+
+  # Height only applies to top/bottom; left/right take width from the modal size.
+  @spec height_classes(String.t(), String.t()) :: String.t()
+  defp height_classes(side, size) when side in ~w(top bottom), do: @height_config[size] || ""
+  defp height_classes(_side, _size), do: ""
+
+  @spec panel_animation(String.t()) :: String.t()
+  defp panel_animation(side), do: @side_animation[side] || ""
+end
