@@ -109,6 +109,23 @@ defmodule Pulsar.Components.ResizableTest do
       assert html =~ ~s(data-resizable-toggle="end")
       refute html =~ ~s(data-resizable-toggle="start")
       assert html =~ ~r/data-resizable-toggle="end"[^>]*aria-controls="rz-panel-2"/s
+      assert html =~ ~r/data-resizable-toggle="end"[^>]*aria-label="Resize side panel"/s
+    end
+
+    test "panels without a collapsible attr default to non-collapsible" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Resizable.resizable id="rz">
+          <:panel>A</:panel>
+          <:panel label="B">B</:panel>
+        </Resizable.resizable>
+        """)
+
+      refute html =~ "data-resizable-toggle"
+      assert html =~ ~s(data-collapsible-start="false")
+      assert html =~ ~s(data-collapsible-end="false")
     end
 
     test "marking both panels collapsible renders two toggles, one per side" do

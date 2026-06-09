@@ -409,7 +409,7 @@ end
 defp toggle_button_classes(orientation, side) do
   merge([
     "inline-flex size-6 items-center justify-center text-muted-foreground",
-    "transition-[color,transform] duration-fast ease-standard hover:text-foreground",
+    "transition-[color,rotate] duration-fast ease-standard hover:text-foreground",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
     chevron_rotation(orientation, side)
   ])
