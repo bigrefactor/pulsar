@@ -20,6 +20,12 @@ defmodule <%= @web_module %>.Storybook.Components.Resizable do
       %Attr{id: :min_size, type: :integer, default: 15, doc: "Minimum second-panel size (%)."},
       %Attr{id: :max_size, type: :integer, default: 60, doc: "Maximum second-panel size (%)."},
       %Attr{id: :collapsible, type: :boolean, default: false, doc: "Enable the collapse toggle."},
+      %Attr{
+        id: :collapsed_size,
+        type: :integer,
+        default: 0,
+        doc: "Size the second panel collapses to (%)."
+      },
       %Attr{id: :class, type: :string, default: "", doc: "Additional CSS classes for the group element."}
     ]
   end
