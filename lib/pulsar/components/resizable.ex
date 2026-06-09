@@ -414,12 +414,12 @@ defmodule Pulsar.Components.Resizable do
   # re-introduce the nested-interactive axe violation.
   @spec pill_classes(String.t()) :: String.t()
   defp pill_classes("vertical") do
-    "absolute left-1/2 top-1/2 z-10 inline-flex -translate-x-1/2 -translate-y-1/2 flex-col " <>
+    "absolute left-2 top-1/2 z-10 inline-flex -translate-y-1/2 flex-col " <>
       "divide-y divide-border overflow-hidden rounded-full border border-border bg-background shadow-sm"
   end
 
   defp pill_classes(_) do
-    "absolute left-1/2 top-1/2 z-10 inline-flex -translate-x-1/2 -translate-y-1/2 flex-row " <>
+    "absolute left-1/2 top-2 z-10 inline-flex -translate-x-1/2 flex-row " <>
       "divide-x divide-border overflow-hidden rounded-full border border-border bg-background shadow-sm"
   end
 

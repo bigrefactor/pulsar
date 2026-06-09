@@ -52,6 +52,15 @@ defmodule <%= @web_module %>.Storybook.Components.Resizable do
         ]
       },
       %Variation{
+        id: :collapsible_end,
+        description: "Only the second panel collapsible",
+        attributes: %{id: "sb-resizable-collapsible-end", class: "h-64 border border-border rounded-lg"},
+        slots: [
+          "<:panel><div class=\"p-4\">Primary</div></:panel>",
+          ~s(<:panel label="Resize side panel" collapsible><div class="p-4">Side</div></:panel>)
+        ]
+      },
+      %Variation{
         id: :collapsible_both,
         description: "Either panel collapsible (drag to an edge or use the toggle)",
         attributes: %{id: "sb-resizable-collapsible", class: "h-64 border border-border rounded-lg"},
