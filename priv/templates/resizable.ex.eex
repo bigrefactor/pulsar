@@ -56,11 +56,11 @@ attr :max_size, :integer, default: 60, doc: "Largest size of the second panel, a
 attr :class, :string, default: "", doc: "Additional classes for the group element."
 attr :rest, :global, doc: "Additional HTML attributes for the group element."
 
-slot :panel, required: true, doc: "Exactly two panels, in source order. `label` on the second names the separator." do
-  attr :label, :string
-  attr :class, :string
-  attr :collapsible, :boolean
-  attr :collapsed_size, :integer
+slot :panel, required: true, doc: "Exactly two panels, in source order. The second panel's `label` names the resize separator." do
+  attr :label, :string, doc: "Names this panel's resize separator (second panel) and its collapse toggle button."
+  attr :class, :string, doc: "Additional classes for this panel's container."
+  attr :collapsible, :boolean, doc: "Allow this panel to collapse — drag the handle to this panel's edge or use its toggle button."
+  attr :collapsed_size, :integer, doc: "This panel's residual size when collapsed, as a percent of the group. Default 0."
 end
 
 def resizable(assigns) do

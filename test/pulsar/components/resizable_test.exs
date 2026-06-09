@@ -154,6 +154,21 @@ defmodule Pulsar.Components.ResizableTest do
       assert html =~ ~s(data-collapsed-start="0")
       assert html =~ ~s(data-collapsed-end="0")
     end
+
+    test "per-panel collapsed_size is exposed to the hook" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Resizable.resizable id="rz">
+          <:panel collapsible collapsed_size={5}>A</:panel>
+          <:panel label="B" collapsible collapsed_size={8}>B</:panel>
+        </Resizable.resizable>
+        """)
+
+      assert html =~ ~s(data-collapsed-start="5")
+      assert html =~ ~s(data-collapsed-end="8")
+    end
   end
 
   describe "resizable/1 hook wiring" do
