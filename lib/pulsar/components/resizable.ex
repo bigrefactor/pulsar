@@ -170,10 +170,13 @@ defmodule Pulsar.Components.Resizable do
             this.max = Number(this.el.dataset.max)
             this.default = Number(this.el.dataset.default)
             this.size = this.default
-            this.collapsedSize = Number(this.el.dataset.collapsedSize)
-            this.collapsible = this.el.dataset.collapsible === "true"
-            this.collapsed = false
-            this.toggle = this.el.querySelector('[data-resizable-toggle]')
+            this.startCollapsible = this.el.dataset.collapsibleStart === "true"
+            this.endCollapsible = this.el.dataset.collapsibleEnd === "true"
+            this.startCollapsedSize = Number(this.el.dataset.collapsedStart)
+            this.endCollapsedSize = Number(this.el.dataset.collapsedEnd)
+            this.collapsed = null // null | "start" | "end"
+            this.startBtn = this.el.querySelector('[data-resizable-toggle="start"]')
+            this.endBtn = this.el.querySelector('[data-resizable-toggle="end"]')
             this.bind()
           },
           updated() {
@@ -183,9 +186,9 @@ defmodule Pulsar.Components.Resizable do
             if (!this.separator) return
             if (this.collapsed) {
               // Re-assert collapsed state: a LiveView patch reverts the JS-set
-              // aria-expanded and would otherwise clamp the size back up to min.
-              this.setCollapsed(true)
-              this.applySize(this.collapsedSize, false)
+              // aria-expanded / button visibility and would otherwise restore size.
+              this.setCollapsed(this.collapsed)
+              this.applySize(this.collapsedTarget(this.collapsed), false)
             } else {
               this.applySize(this.clamp(this.size), false)
             }
@@ -206,22 +209,28 @@ defmodule Pulsar.Components.Resizable do
             this.handle.addEventListener("pointerdown", this._down)
             this.handle.addEventListener("keydown", this._key)
             this.handle.addEventListener("dblclick", this._dbl)
-            if (this.toggle) {
-              this._toggleClick = (e) => { e.stopPropagation(); this.toggleCollapse() }
-              this.toggle.addEventListener("click", this._toggleClick)
+            this._toggleClick = (e) => {
+              const btn = e.target.closest('[data-resizable-toggle]')
+              if (!btn) return
+              e.stopPropagation()
+              this.toggleCollapse(btn.dataset.resizableToggle)
             }
+            if (this.startBtn) this.startBtn.addEventListener("click", this._toggleClick)
+            if (this.endBtn) this.endBtn.addEventListener("click", this._toggleClick)
           },
           unbind() {
             this.handle.removeEventListener("pointerdown", this._down)
             this.handle.removeEventListener("keydown", this._key)
             this.handle.removeEventListener("dblclick", this._dbl)
-            if (this.toggle) this.toggle.removeEventListener("click", this._toggleClick)
+            if (this.startBtn) this.startBtn.removeEventListener("click", this._toggleClick)
+            if (this.endBtn) this.endBtn.removeEventListener("click", this._toggleClick)
           },
           isVertical() { return this.el.dataset.orientation === "vertical" },
-          groupSize() {
-            return this.isVertical() ? this.el.clientHeight : this.el.clientWidth
-          },
+          groupSize() { return this.isVertical() ? this.el.clientHeight : this.el.clientWidth },
           clamp(pct) { return Math.min(this.max, Math.max(this.min, pct)) },
+          collapsedTarget(side) {
+            return side === "end" ? this.endCollapsedSize : 100 - this.startCollapsedSize
+          },
           onPointerDown(e) {
             if (e.target.closest('[data-resizable-toggle]')) return
             if (e.pointerType !== "mouse") e.preventDefault()
@@ -239,14 +248,18 @@ defmodule Pulsar.Components.Resizable do
             if (!total) return
             const rect = this.el.getBoundingClientRect()
             const pos = this.isVertical() ? (e.clientY - rect.top) : (e.clientX - rect.left)
-            // Panel two is the trailing panel: its size is the distance from the
-            // pointer to the far edge of the group.
             const pct = ((total - pos) / total) * 100
-            if (this.collapsible && pct < this.min - this.min / 2) {
-              if (!this.collapsed) this.collapse()
+            // Drag the end panel below half its min -> collapse the end panel.
+            if (this.endCollapsible && pct < this.min / 2) {
+              if (this.collapsed !== "end") this.collapse("end")
               return
             }
-            if (this.collapsed) this.setCollapsed(false)
+            // Drag the start panel below half its available space -> collapse start.
+            if (this.startCollapsible && pct > (100 + this.max) / 2) {
+              if (this.collapsed !== "start") this.collapse("start")
+              return
+            }
+            if (this.collapsed) this.setCollapsed(null)
             this.applySize(this.clamp(pct), false)
           },
           onPointerUp(e) {
@@ -258,12 +271,6 @@ defmodule Pulsar.Components.Resizable do
           },
           onKeydown(e) {
             if (e.target.closest('[data-resizable-toggle]')) return
-            if (e.key === "Enter") {
-              if (this.collapsible) { e.preventDefault(); this.toggleCollapse() }
-              return
-            }
-            // Left/Up grow panel two (drag the handle toward the start);
-            // Right/Down shrink it. Keyboard never goes below min_size.
             const growKey = this.isVertical() ? "ArrowUp" : "ArrowLeft"
             const shrinkKey = this.isVertical() ? "ArrowDown" : "ArrowRight"
             let next = this.size
@@ -277,38 +284,39 @@ defmodule Pulsar.Components.Resizable do
               default: return
             }
             e.preventDefault()
-            if (this.collapsed) this.setCollapsed(false)
+            if (this.collapsed) this.setCollapsed(null)
             this.applySize(this.clamp(next), false)
           },
           reset() {
-            if (this.collapsed) this.setCollapsed(false)
+            if (this.collapsed) this.setCollapsed(null)
             this.applySize(this.default, true)
           },
-          collapse() {
-            this.setCollapsed(true)
-            this.applySize(this.collapsedSize, false)
+          collapse(side) {
+            this.setCollapsed(side)
+            this.applySize(this.collapsedTarget(side), false)
           },
-          toggleCollapse() {
-            if (this.collapsed) {
-              this.setCollapsed(false)
+          toggleCollapse(side) {
+            if (this.collapsed === side) {
+              this.setCollapsed(null)
               this.applySize(this.default, true)
             } else {
-              this.setCollapsed(true)
-              this.applySize(this.collapsedSize, true)
+              this.setCollapsed(side)
+              this.applySize(this.collapsedTarget(side), true)
             }
           },
-          setCollapsed(state) {
-            this.collapsed = state
-            if (this.toggle) this.toggle.setAttribute("aria-expanded", state ? "false" : "true")
-            // Per the APG window-splitter pattern, a collapsed splitter reports its
-            // collapsed value in aria-valuenow / aria-valuetext.
-            const shown = Math.round(state ? this.collapsedSize : this.size)
-            this.separator.setAttribute("aria-valuenow", String(shown))
-            this.separator.setAttribute("aria-valuetext", shown + "%")
+          setCollapsed(side) {
+            this.collapsed = side
+            this.updateToggle(this.startBtn, "start")
+            this.updateToggle(this.endBtn, "end")
           },
-          setAnimating(on) {
-            this.panelTwo.dataset.animating = on ? "true" : "false"
+          updateToggle(btn, side) {
+            if (!btn) return
+            const expanded = this.collapsed !== side
+            btn.setAttribute("aria-expanded", expanded ? "true" : "false")
+            // While one side is collapsed, show only its (expand) toggle.
+            btn.hidden = this.collapsed !== null && this.collapsed !== side
           },
+          setAnimating(on) { this.panelTwo.dataset.animating = on ? "true" : "false" },
           animate(on) {
             this.setAnimating(on)
             if (this._animTimer) {
@@ -317,8 +325,7 @@ defmodule Pulsar.Components.Resizable do
             }
             if (on) {
               // Guarantee the flag clears even if no transition runs
-              // (prefers-reduced-motion, or flex-basis unchanged) so it cannot
-              // leave the panel permanently animating.
+              // (prefers-reduced-motion, or unchanged flex-basis).
               this._animTimer = setTimeout(() => {
                 this.setAnimating(false)
                 this._animTimer = null
