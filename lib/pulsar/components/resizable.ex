@@ -33,7 +33,8 @@ defmodule Pulsar.Components.Resizable do
 
   Focus the handle, then: arrow keys resize by 1%, Page Up/Down by 10%, and
   Home/End jump to the minimum/maximum. Double-click the handle to reset to
-  `default_size`.
+  `default_size`. When `collapsible`, press Enter on the focused handle to collapse or expand the
+  second panel.
   """
 
   use Phoenix.Component
@@ -156,14 +157,18 @@ defmodule Pulsar.Components.Resizable do
             this.bind()
           },
           updated() {
-            // Re-read bounds (the server may have changed them) and re-apply the
-            // user's current size; a LiveView re-render would otherwise snap the
-            // panel back to the server-rendered default.
             this.min = Number(this.el.dataset.min)
             this.max = Number(this.el.dataset.max)
             this.default = Number(this.el.dataset.default)
             if (!this.separator) return
-            this.applySize(this.clamp(this.size), false)
+            if (this.collapsed) {
+              // Re-assert collapsed state: a LiveView patch reverts the JS-set
+              // aria-expanded and would otherwise clamp the size back up to min.
+              this.setCollapsed(true)
+              this.applySize(this.collapsedSize, false)
+            } else {
+              this.applySize(this.clamp(this.size), false)
+            }
           },
           destroyed() {
             if (this.handle) this.unbind()
@@ -174,7 +179,10 @@ defmodule Pulsar.Components.Resizable do
             this._move = (e) => this.onPointerMove(e)
             this._up = (e) => this.onPointerUp(e)
             this._key = (e) => this.onKeydown(e)
-            this._dbl = () => this.reset()
+            this._dbl = (e) => {
+              if (e.target.closest('[data-resizable-toggle]')) return
+              this.reset()
+            }
             this.handle.addEventListener("pointerdown", this._down)
             this.handle.addEventListener("keydown", this._key)
             this.handle.addEventListener("dblclick", this._dbl)
@@ -215,7 +223,7 @@ defmodule Pulsar.Components.Resizable do
             // pointer to the far edge of the group.
             const pct = ((total - pos) / total) * 100
             if (this.collapsible && pct < this.min - this.min / 2) {
-              this.collapse()
+              if (!this.collapsed) this.collapse()
               return
             }
             if (this.collapsed) this.setCollapsed(false)
@@ -229,6 +237,11 @@ defmodule Pulsar.Components.Resizable do
             this.handle.removeEventListener("lostpointercapture", this._up)
           },
           onKeydown(e) {
+            if (e.target.closest('[data-resizable-toggle]')) return
+            if (e.key === "Enter") {
+              if (this.collapsible) { e.preventDefault(); this.toggleCollapse() }
+              return
+            }
             // Left/Up grow panel two (drag the handle toward the start);
             // Right/Down shrink it. Keyboard never goes below min_size.
             const growKey = this.isVertical() ? "ArrowUp" : "ArrowLeft"
@@ -365,7 +378,7 @@ defmodule Pulsar.Components.Resizable do
     merge([
       "absolute z-10 inline-flex size-5 items-center justify-center rounded-full",
       "border border-border bg-background text-muted-foreground shadow-sm",
-      "transition-colors duration-fast ease-standard hover:text-foreground",
+      "transition-[color,transform] duration-fast ease-standard hover:text-foreground",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
       rotate
     ])
