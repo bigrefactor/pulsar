@@ -308,4 +308,24 @@ defmodule Pulsar.Components.ModalTest do
       refute html =~ "bg-surface-1"
     end
   end
+
+  describe "modal/1 panel_animation" do
+    test "defaults to the scale-in entrance" do
+      assigns = %{}
+      html = rendered_to_string(~H|<Modal.modal id="m" title="T">body</Modal.modal>|)
+      assert html =~ "animate-scale-in"
+    end
+
+    test "overriding panel_animation replaces the entrance utility" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(
+          ~H|<Modal.modal id="m" title="T" panel_animation="animate-drawer-from-right">body</Modal.modal>|
+        )
+
+      assert html =~ "animate-drawer-from-right"
+      refute html =~ "animate-scale-in"
+    end
+  end
 end
