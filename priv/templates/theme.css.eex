@@ -291,19 +291,19 @@
 }
 
 .animate-drawer-from-right {
-  animation: drawer-from-right var(--duration-normal, 200ms) var(--ease-decelerate);
+  animation: drawer-from-right var(--duration-slow, 320ms) var(--ease-emphasized);
 }
 
 .animate-drawer-from-left {
-  animation: drawer-from-left var(--duration-normal, 200ms) var(--ease-decelerate);
+  animation: drawer-from-left var(--duration-slow, 320ms) var(--ease-emphasized);
 }
 
 .animate-drawer-from-top {
-  animation: drawer-from-top var(--duration-normal, 200ms) var(--ease-decelerate);
+  animation: drawer-from-top var(--duration-slow, 320ms) var(--ease-emphasized);
 }
 
 .animate-drawer-from-bottom {
-  animation: drawer-from-bottom var(--duration-normal, 200ms) var(--ease-decelerate);
+  animation: drawer-from-bottom var(--duration-slow, 320ms) var(--ease-emphasized);
 }
 
 /* Named duration utilities (token-backed; v4 has no --duration-* utility namespace) */

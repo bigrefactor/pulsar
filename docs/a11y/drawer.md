@@ -145,7 +145,7 @@ with `aria-label`). See [`modal.md`](modal.md) §4.1.2.
 - **2.1.4 Character Key Shortcuts (A)** — only Escape (native), no single-character shortcuts.
 - **2.2.1 Timing Adjustable (A)** — no time limit.
 - **2.2.2 Pause, Stop, Hide (A)** — the only motion is a sub-second directional slide-in on open (`@side_animation`, transform-only), near-zeroed by the global reduced-motion rule; there is no close animation and no continuous or auto-updating content — `lib/pulsar/components/drawer.ex:80–85`.
-- **2.3.1 Three Flashes or Below Threshold (A)** — no flashing; the entrance is a single transform/opacity transition.
+- **2.3.1 Three Flashes or Below Threshold (A)** — no flashing; the entrance is a single transform-only transition.
 - **2.4.1 Bypass Blocks (A)** — page-level concern.
 - **2.4.2 Page Titled (A)** — page-level concern.
 - **2.4.4 Link Purpose (In Context) (A)** — content is caller-supplied.
