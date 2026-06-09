@@ -22,6 +22,8 @@ defmodule Pulsar.DevApp.Components do
        {"InputOTP (solid)", "/components/input_otp/solid"},
        {"Label", "/components/label"},
        {"RadioGroup", "/components/radio_group"},
+       {"Resizable (horizontal)", "/components/resizable/horizontal"},
+       {"Resizable (vertical)", "/components/resizable/vertical"},
        {"Select (outline)", "/components/select/outline"},
        {"Select (ghost)", "/components/select/ghost"},
        {"Select (solid)", "/components/select/solid"},
