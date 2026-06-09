@@ -17,7 +17,9 @@ defmodule Pulsar.DevApp.ResizableLive do
           class="h-64 border border-border rounded-lg"
           data-fixture-cell={"#{@orientation}-basic"}
         >
-          <:panel><div class="p-4">Primary content</div></:panel>
+          <:panel>
+            <div class="p-4">Primary content</div>
+          </:panel>
           <:panel label={"Resize #{@orientation} basic panel"}>
             <div class="p-4">Side content</div>
           </:panel>
@@ -32,7 +34,9 @@ defmodule Pulsar.DevApp.ResizableLive do
           class="h-64 border border-border rounded-lg"
           data-fixture-cell={"#{@orientation}-collapsible"}
         >
-          <:panel><div class="p-4">Primary content</div></:panel>
+          <:panel>
+            <div class="p-4">Primary content</div>
+          </:panel>
           <:panel label={"Resize #{@orientation} collapsible panel"}>
             <div class="p-4">Side content</div>
           </:panel>
