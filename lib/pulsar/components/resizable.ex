@@ -125,6 +125,112 @@ defmodule Pulsar.Components.Resizable do
       >
         {render_slot(@panel_two)}
       </div>
+
+      <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarResizable">
+        export default {
+          mounted() {
+            this.handle = this.el.querySelector('[data-resizable-handle]')
+            this.separator = this.el.querySelector('[role="separator"]')
+            this.panelTwo = this.el.querySelector('#' + CSS.escape(this.el.id + '-panel-2'))
+            this.min = Number(this.el.dataset.min)
+            this.max = Number(this.el.dataset.max)
+            this.default = Number(this.el.dataset.default)
+            this.size = this.default
+            this.bind()
+          },
+          updated() {
+            // A LiveView re-render resets the inline CSS var + aria-valuenow to the
+            // server-rendered default; re-apply the user's current size.
+            this.applySize(this.size, false)
+          },
+          destroyed() { this.unbind() },
+          bind() {
+            this._down = (e) => this.onPointerDown(e)
+            this._move = (e) => this.onPointerMove(e)
+            this._up = (e) => this.onPointerUp(e)
+            this._key = (e) => this.onKeydown(e)
+            this._dbl = () => this.reset()
+            this.handle.addEventListener("pointerdown", this._down)
+            this.handle.addEventListener("keydown", this._key)
+            this.handle.addEventListener("dblclick", this._dbl)
+          },
+          unbind() {
+            this.handle.removeEventListener("pointerdown", this._down)
+            this.handle.removeEventListener("keydown", this._key)
+            this.handle.removeEventListener("dblclick", this._dbl)
+          },
+          isVertical() { return this.el.dataset.orientation === "vertical" },
+          groupSize() {
+            return this.isVertical() ? this.el.clientHeight : this.el.clientWidth
+          },
+          clamp(pct) { return Math.min(this.max, Math.max(this.min, pct)) },
+          onPointerDown(e) {
+            e.preventDefault()
+            this.handle.setPointerCapture(e.pointerId)
+            this.dragging = true
+            this.setAnimating(false)
+            this.handle.addEventListener("pointermove", this._move)
+            this.handle.addEventListener("pointerup", this._up)
+            this.handle.addEventListener("lostpointercapture", this._up)
+            this.handle.focus()
+          },
+          onPointerMove(e) {
+            if (!this.dragging) return
+            const total = this.groupSize()
+            if (!total) return
+            const rect = this.el.getBoundingClientRect()
+            const pos = this.isVertical() ? (e.clientY - rect.top) : (e.clientX - rect.left)
+            // Panel two is the trailing panel: its size is the distance from the
+            // pointer to the far edge of the group.
+            const pct = ((total - pos) / total) * 100
+            this.applySize(this.clamp(pct), false)
+          },
+          onPointerUp(e) {
+            this.dragging = false
+            try { this.handle.releasePointerCapture(e.pointerId) } catch (_) {}
+            this.handle.removeEventListener("pointermove", this._move)
+            this.handle.removeEventListener("pointerup", this._up)
+            this.handle.removeEventListener("lostpointercapture", this._up)
+          },
+          onKeydown(e) {
+            // Left/Up grow panel two (drag the handle toward the start);
+            // Right/Down shrink it. Keyboard never goes below min_size.
+            const growKey = this.isVertical() ? "ArrowUp" : "ArrowLeft"
+            const shrinkKey = this.isVertical() ? "ArrowDown" : "ArrowRight"
+            let next = this.size
+            switch (e.key) {
+              case growKey: next = this.size + 1; break
+              case shrinkKey: next = this.size - 1; break
+              case "PageUp": next = this.size + 10; break
+              case "PageDown": next = this.size - 10; break
+              case "Home": next = this.min; break
+              case "End": next = this.max; break
+              default: return
+            }
+            e.preventDefault()
+            this.applySize(this.clamp(next), false)
+          },
+          reset() { this.applySize(this.default, true) },
+          setAnimating(on) {
+            this.panelTwo.dataset.animating = on ? "true" : "false"
+          },
+          applySize(pct, animate) {
+            this.size = pct
+            this.setAnimating(animate)
+            this.el.style.setProperty("--pulsar-resizable-size", pct + "%")
+            const rounded = Math.round(pct)
+            this.separator.setAttribute("aria-valuenow", String(rounded))
+            this.separator.setAttribute("aria-valuetext", rounded + "%")
+            if (animate) {
+              const clear = () => {
+                this.setAnimating(false)
+                this.panelTwo.removeEventListener("transitionend", clear)
+              }
+              this.panelTwo.addEventListener("transitionend", clear)
+            }
+          }
+        }
+      </script>
     </div>
     """
   end

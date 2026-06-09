@@ -85,4 +85,26 @@ defmodule Pulsar.Components.ResizableTest do
       assert basic(%{extra: [default_size: 30]}) =~ ~s(aria-valuetext="30%")
     end
   end
+
+  describe "resizable/1 hook wiring" do
+    test "attaches the colocated hook via a static literal" do
+      assert basic() =~ "PulsarResizable"
+    end
+
+    test "exposes drag config to the hook as data attributes" do
+      html = basic(%{extra: [min_size: 10, max_size: 70, default_size: 25]})
+      assert html =~ ~s(data-min="10")
+      assert html =~ ~s(data-max="70")
+      assert html =~ ~s(data-default="25")
+      assert html =~ ~s(data-orientation="horizontal")
+    end
+
+    test "handle disables native touch gestures so touch-drag resizes" do
+      assert basic() =~ "touch-none"
+    end
+
+    test "controlled panel starts un-animated (instant drag)" do
+      assert basic() =~ ~s(data-animating="false")
+    end
+  end
 end
