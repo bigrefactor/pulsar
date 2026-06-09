@@ -86,6 +86,48 @@ defmodule Pulsar.Components.ResizableTest do
     end
   end
 
+  describe "resizable/1 sizing validation" do
+    test "raises when min_size exceeds max_size" do
+      assert_raise ArgumentError, ~r/min_size <= max_size/, fn ->
+        basic(%{extra: [min_size: 60, max_size: 15]})
+      end
+    end
+
+    test "raises when a size falls outside 0..100" do
+      assert_raise ArgumentError, ~r/0 <= min_size/, fn ->
+        basic(%{extra: [min_size: -5, max_size: 60]})
+      end
+
+      assert_raise ArgumentError, ~r/0 <= min_size/, fn ->
+        basic(%{extra: [min_size: 15, max_size: 120]})
+      end
+    end
+
+    test "raises when default_size is outside [min_size, max_size]" do
+      assert_raise ArgumentError, ~r/default_size/, fn ->
+        basic(%{extra: [min_size: 20, max_size: 60, default_size: 10]})
+      end
+    end
+
+    test "raises when a panel's collapsed_size is outside 0..100" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/collapsed_size/, fn ->
+        rendered_to_string(~H"""
+        <Resizable.resizable id="rz">
+          <:panel>A</:panel>
+          <:panel label="B" collapsible collapsed_size={-1}>B</:panel>
+        </Resizable.resizable>
+        """)
+      end
+    end
+
+    test "accepts a valid sizing configuration" do
+      html = basic(%{extra: [min_size: 10, max_size: 90, default_size: 50]})
+      assert html =~ ~s(aria-valuenow="50")
+    end
+  end
+
   defp with_panels(opts) do
     p1 = Keyword.get(opts, :p1, [])
     p2 = Keyword.get(opts, :p2, [])

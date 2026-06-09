@@ -5,8 +5,8 @@ defmodule Mix.Tasks.Pulsar.Gen.Resizable do
     long_doc: """
     Generates the Resizable split-pane primitive: two panels divided by a
     draggable, keyboard-operable handle that resizes the second panel while the
-    first flexes to fill the rest. With `collapsible`, the second panel can
-    collapse to an edge and restore via the handle's toggle button.
+    first flexes to fill the rest. Mark either `<:panel>` (or both) `collapsible`
+    to let it collapse to an edge and restore via the handle's toggle button.
 
     ## Example
 

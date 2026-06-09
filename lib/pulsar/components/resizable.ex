@@ -77,6 +77,17 @@ defmodule Pulsar.Components.Resizable do
         _ -> raise ArgumentError, "resizable/1 requires exactly two <:panel> slots"
       end
 
+    start_collapsed_size = Map.get(panel_one, :collapsed_size) || 0
+    end_collapsed_size = Map.get(panel_two, :collapsed_size) || 0
+
+    validate_sizing!(
+      assigns.min_size,
+      assigns.max_size,
+      assigns.default_size,
+      start_collapsed_size,
+      end_collapsed_size
+    )
+
     assigns =
       assigns
       |> assign(:panel_one, panel_one)
@@ -86,8 +97,8 @@ defmodule Pulsar.Components.Resizable do
       |> assign(:panel_label, Map.get(panel_two, :label) || "Resize panel")
       |> assign(:start_collapsible, Map.get(panel_one, :collapsible, false))
       |> assign(:end_collapsible, Map.get(panel_two, :collapsible, false))
-      |> assign(:start_collapsed_size, Map.get(panel_one, :collapsed_size) || 0)
-      |> assign(:end_collapsed_size, Map.get(panel_two, :collapsed_size) || 0)
+      |> assign(:start_collapsed_size, start_collapsed_size)
+      |> assign(:end_collapsed_size, end_collapsed_size)
       |> assign(:start_label, Map.get(panel_one, :label) || "Start panel")
       |> assign(:end_label, Map.get(panel_two, :label) || "End panel")
 
@@ -187,6 +198,9 @@ defmodule Pulsar.Components.Resizable do
             this.bind()
           },
           updated() {
+            // A server patch mid-drag must not re-assert size under the pointer —
+            // it can re-fire the animation flag inside a collapse-threshold zone.
+            if (this.dragging) return
             this.min = Number(this.el.dataset.min)
             this.max = Number(this.el.dataset.max)
             this.default = Number(this.el.dataset.default)
@@ -209,10 +223,7 @@ defmodule Pulsar.Components.Resizable do
             this._move = (e) => this.onPointerMove(e)
             this._up = (e) => this.onPointerUp(e)
             this._key = (e) => this.onKeydown(e)
-            this._dbl = (e) => {
-              if (e.target.closest('[data-resizable-toggle]')) return
-              this.reset()
-            }
+            this._dbl = () => this.reset()
             this.handle.addEventListener("pointerdown", this._down)
             this.handle.addEventListener("keydown", this._key)
             this.handle.addEventListener("dblclick", this._dbl)
@@ -233,16 +244,17 @@ defmodule Pulsar.Components.Resizable do
             if (this.endBtn) this.endBtn.removeEventListener("click", this._toggleClick)
           },
           isVertical() { return this.el.dataset.orientation === "vertical" },
-          groupSize() { return this.isVertical() ? this.el.clientHeight : this.el.clientWidth },
           clamp(pct) { return Math.min(this.max, Math.max(this.min, pct)) },
           collapsedTarget(side) {
             return side === "end" ? this.endCollapsedSize : 100 - this.startCollapsedSize
           },
           onPointerDown(e) {
-            if (e.target.closest('[data-resizable-toggle]')) return
             if (e.pointerType !== "mouse") e.preventDefault()
             this.handle.setPointerCapture(e.pointerId)
             this.dragging = true
+            // Pointer capture pins the group's geometry for the drag; read it once
+            // here instead of forcing layout on every pointermove.
+            this.dragRect = this.el.getBoundingClientRect()
             this.animate(false)
             this.handle.addEventListener("pointermove", this._move)
             this.handle.addEventListener("pointerup", this._up)
@@ -251,9 +263,10 @@ defmodule Pulsar.Components.Resizable do
           },
           onPointerMove(e) {
             if (!this.dragging) return
-            const total = this.groupSize()
+            const rect = this.dragRect
+            if (!rect) return
+            const total = this.isVertical() ? rect.height : rect.width
             if (!total) return
-            const rect = this.el.getBoundingClientRect()
             const pos = this.isVertical() ? (e.clientY - rect.top) : (e.clientX - rect.left)
             const pct = ((total - pos) / total) * 100
             // Drag the end panel below half its min -> collapse the end panel.
@@ -277,15 +290,18 @@ defmodule Pulsar.Components.Resizable do
             this.handle.removeEventListener("lostpointercapture", this._up)
           },
           onKeydown(e) {
-            if (e.target.closest('[data-resizable-toggle]')) return
             const growKey = this.isVertical() ? "ArrowUp" : "ArrowLeft"
             const shrinkKey = this.isVertical() ? "ArrowDown" : "ArrowRight"
-            let next = this.size
+            // While collapsed `this.size` holds the collapsed sentinel (0 or 100),
+            // so size ± step would clamp both directions to the same edge. Resume
+            // from the remembered pre-collapse size (or default) on the first key out.
+            const base = this.collapsed !== null ? (this.preCollapseSize ?? this.default) : this.size
+            let next = base
             switch (e.key) {
-              case growKey: next = this.size + 1; break
-              case shrinkKey: next = this.size - 1; break
-              case "PageUp": next = this.size + 10; break
-              case "PageDown": next = this.size - 10; break
+              case growKey: next = base + 1; break
+              case shrinkKey: next = base - 1; break
+              case "PageUp": next = base + 10; break
+              case "PageDown": next = base - 10; break
               case "Home": next = this.min; break
               case "End": next = this.max; break
               default: return
@@ -299,6 +315,7 @@ defmodule Pulsar.Components.Resizable do
             this.applySize(this.default, true)
           },
           collapse(side) {
+            if (this.collapsed === null) this.preCollapseSize = this.size
             this.setCollapsed(side)
             this.applySize(this.collapsedTarget(side), false)
           },
@@ -307,6 +324,7 @@ defmodule Pulsar.Components.Resizable do
               this.setCollapsed(null)
               this.applySize(this.default, true)
             } else {
+              if (this.collapsed === null) this.preCollapseSize = this.size
               this.setCollapsed(side)
               this.applySize(this.collapsedTarget(side), true)
             }
@@ -361,6 +379,33 @@ defmodule Pulsar.Components.Resizable do
   # HELPER FUNCTIONS
   # ============================================================================
 
+  # Sizing is developer-supplied at render time; reject ranges that would emit
+  # invalid ARIA (aria-valuemin > aria-valuemax) or drive the hook to negative /
+  # over-100 percentages. Fail fast at the call site rather than render broken.
+  @spec validate_sizing!(integer(), integer(), integer(), integer(), integer()) :: :ok
+  defp validate_sizing!(min, max, default, start_collapsed, end_collapsed) do
+    cond do
+      not (min >= 0 and max <= 100 and min <= max) ->
+        raise ArgumentError,
+              "resizable/1 requires 0 <= min_size <= max_size <= 100, got min_size=#{min}, max_size=#{max}"
+
+      not (default >= min and default <= max) ->
+        raise ArgumentError,
+              "resizable/1 requires min_size <= default_size <= max_size, got default_size=#{default} for [#{min}, #{max}]"
+
+      not (start_collapsed >= 0 and start_collapsed <= 100) ->
+        raise ArgumentError,
+              "resizable/1 requires 0 <= collapsed_size <= 100, got #{start_collapsed} on the first panel"
+
+      not (end_collapsed >= 0 and end_collapsed <= 100) ->
+        raise ArgumentError,
+              "resizable/1 requires 0 <= collapsed_size <= 100, got #{end_collapsed} on the second panel"
+
+      true ->
+        :ok
+    end
+  end
+
   # A horizontal split (side-by-side) needs a VERTICAL separator, and vice-versa.
   @spec separator_orientation(String.t()) :: String.t()
   defp separator_orientation("vertical"), do: "horizontal"
@@ -400,13 +445,13 @@ defmodule Pulsar.Components.Resizable do
 
   @spec line_classes(String.t()) :: String.t()
   defp line_classes("vertical") do
-    "h-px w-full bg-border transition-colors duration-fast ease-standard " <>
-      "group-hover/handle:bg-border-strong group-focus-visible/handle:bg-primary"
+    "h-px w-full bg-border-strong transition-colors duration-fast ease-standard " <>
+      "group-hover/handle:bg-foreground group-focus-visible/handle:bg-primary"
   end
 
   defp line_classes(_) do
-    "w-px h-full bg-border transition-colors duration-fast ease-standard " <>
-      "group-hover/handle:bg-border-strong group-focus-visible/handle:bg-primary"
+    "w-px h-full bg-border-strong transition-colors duration-fast ease-standard " <>
+      "group-hover/handle:bg-foreground group-focus-visible/handle:bg-primary"
   end
 
   # Non-interactive pill centered on the handle holding one chevron button per
