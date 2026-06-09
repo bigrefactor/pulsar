@@ -132,6 +132,7 @@ defmodule Pulsar.Components.Resizable do
             this.handle = this.el.querySelector('[data-resizable-handle]')
             this.separator = this.el.querySelector('[role="separator"]')
             this.panelTwo = this.el.querySelector('#' + CSS.escape(this.el.id + '-panel-2'))
+            if (!this.handle || !this.separator || !this.panelTwo) return
             this.min = Number(this.el.dataset.min)
             this.max = Number(this.el.dataset.max)
             this.default = Number(this.el.dataset.default)
@@ -139,11 +140,19 @@ defmodule Pulsar.Components.Resizable do
             this.bind()
           },
           updated() {
-            // A LiveView re-render resets the inline CSS var + aria-valuenow to the
-            // server-rendered default; re-apply the user's current size.
-            this.applySize(this.size, false)
+            // Re-read bounds (the server may have changed them) and re-apply the
+            // user's current size; a LiveView re-render would otherwise snap the
+            // panel back to the server-rendered default.
+            this.min = Number(this.el.dataset.min)
+            this.max = Number(this.el.dataset.max)
+            this.default = Number(this.el.dataset.default)
+            if (!this.separator) return
+            this.applySize(this.clamp(this.size), false)
           },
-          destroyed() { this.unbind() },
+          destroyed() {
+            if (this.handle) this.unbind()
+            if (this._animTimer) clearTimeout(this._animTimer)
+          },
           bind() {
             this._down = (e) => this.onPointerDown(e)
             this._move = (e) => this.onPointerMove(e)
@@ -165,10 +174,10 @@ defmodule Pulsar.Components.Resizable do
           },
           clamp(pct) { return Math.min(this.max, Math.max(this.min, pct)) },
           onPointerDown(e) {
-            e.preventDefault()
+            if (e.pointerType !== "mouse") e.preventDefault()
             this.handle.setPointerCapture(e.pointerId)
             this.dragging = true
-            this.setAnimating(false)
+            this.animate(false)
             this.handle.addEventListener("pointermove", this._move)
             this.handle.addEventListener("pointerup", this._up)
             this.handle.addEventListener("lostpointercapture", this._up)
@@ -214,20 +223,30 @@ defmodule Pulsar.Components.Resizable do
           setAnimating(on) {
             this.panelTwo.dataset.animating = on ? "true" : "false"
           },
+          animate(on) {
+            this.setAnimating(on)
+            if (this._animTimer) {
+              clearTimeout(this._animTimer)
+              this._animTimer = null
+            }
+            if (on) {
+              // Guarantee the flag clears even if no transition runs
+              // (prefers-reduced-motion, or flex-basis unchanged) so it cannot
+              // leave the panel permanently animating.
+              this._animTimer = setTimeout(() => {
+                this.setAnimating(false)
+                this._animTimer = null
+              }, 400)
+            }
+          },
           applySize(pct, animate) {
+            const changed = Math.round(pct) !== Math.round(this.size)
             this.size = pct
-            this.setAnimating(animate)
             this.el.style.setProperty("--pulsar-resizable-size", pct + "%")
             const rounded = Math.round(pct)
             this.separator.setAttribute("aria-valuenow", String(rounded))
             this.separator.setAttribute("aria-valuetext", rounded + "%")
-            if (animate) {
-              const clear = () => {
-                this.setAnimating(false)
-                this.panelTwo.removeEventListener("transitionend", clear)
-              }
-              this.panelTwo.addEventListener("transitionend", clear)
-            }
+            this.animate(animate && changed)
           }
         }
       </script>
@@ -259,13 +278,13 @@ defmodule Pulsar.Components.Resizable do
   @spec handle_classes(String.t()) :: String.t()
   defp handle_classes("vertical") do
     "group/handle relative flex h-6 shrink-0 grow-0 cursor-row-resize items-center " <>
-      "justify-center touch-none outline-none focus-visible:ring-2 focus-visible:ring-ring " <>
+      "justify-center touch-none select-none outline-none focus-visible:ring-2 focus-visible:ring-ring " <>
       "focus-visible:ring-offset-1 focus-visible:ring-offset-background"
   end
 
   defp handle_classes(_) do
     "group/handle relative flex w-6 shrink-0 grow-0 cursor-col-resize items-center " <>
-      "justify-center touch-none outline-none focus-visible:ring-2 focus-visible:ring-ring " <>
+      "justify-center touch-none select-none outline-none focus-visible:ring-2 focus-visible:ring-ring " <>
       "focus-visible:ring-offset-1 focus-visible:ring-offset-background"
   end
 
