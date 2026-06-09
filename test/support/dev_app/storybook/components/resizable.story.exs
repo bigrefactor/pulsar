@@ -19,13 +19,6 @@ defmodule Pulsar.DevApp.Storybook.Components.Resizable do
       %Attr{id: :default_size, type: :integer, default: 30, doc: "Initial second-panel size (%)."},
       %Attr{id: :min_size, type: :integer, default: 15, doc: "Minimum second-panel size (%)."},
       %Attr{id: :max_size, type: :integer, default: 60, doc: "Maximum second-panel size (%)."},
-      %Attr{id: :collapsible, type: :boolean, default: false, doc: "Enable the collapse toggle."},
-      %Attr{
-        id: :collapsed_size,
-        type: :integer,
-        default: 0,
-        doc: "Size the second panel collapses to (%)."
-      },
       %Attr{id: :class, type: :string, default: "", doc: "Additional CSS classes for the group element."}
     ]
   end
@@ -59,16 +52,25 @@ defmodule Pulsar.DevApp.Storybook.Components.Resizable do
         ]
       },
       %Variation{
-        id: :collapsible,
-        description: "Collapsible second panel",
+        id: :collapsible_both,
+        description: "Either panel collapsible (drag to an edge or use the toggle)",
+        attributes: %{id: "sb-resizable-collapsible", class: "h-64 border border-border rounded-lg"},
+        slots: [
+          "<:panel collapsible><div class=\"p-4\">Primary</div></:panel>",
+          ~s(<:panel label="Resize side panel" collapsible><div class="p-4">Side</div></:panel>)
+        ]
+      },
+      %Variation{
+        id: :stacked_collapsible,
+        description: "Stacked, both panels collapsible",
         attributes: %{
-          id: "sb-resizable-collapsible",
-          collapsible: true,
-          class: "h-64 border border-border rounded-lg"
+          id: "sb-resizable-stacked-collapsible",
+          orientation: "vertical",
+          class: "h-80 border border-border rounded-lg"
         },
         slots: [
-          "<:panel><div class=\"p-4\">Primary</div></:panel>",
-          ~s(<:panel label="Resize side panel"><div class="p-4">Side</div></:panel>)
+          "<:panel collapsible><div class=\"p-4\">Top</div></:panel>",
+          ~s(<:panel label="Resize bottom panel" collapsible><div class="p-4">Bottom</div></:panel>)
         ]
       }
     ]
