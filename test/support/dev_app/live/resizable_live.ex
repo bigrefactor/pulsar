@@ -30,14 +30,13 @@ defmodule Pulsar.DevApp.ResizableLive do
         <Resizable.resizable
           id={"rz-#{@orientation}-collapsible"}
           orientation={@orientation}
-          collapsible
           class="h-64 border border-border rounded-lg"
           data-fixture-cell={"#{@orientation}-collapsible"}
         >
           <:panel>
             <div class="p-4">Primary content</div>
           </:panel>
-          <:panel label={"Resize #{@orientation} collapsible panel"}>
+          <:panel label={"Resize #{@orientation} collapsible panel"} collapsible>
             <div class="p-4">Side content</div>
           </:panel>
         </Resizable.resizable>

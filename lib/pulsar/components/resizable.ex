@@ -17,10 +17,10 @@ defmodule Pulsar.Components.Resizable do
         </:panel>
       </.resizable>
 
-      # Stacked, collapsible
-      <.resizable id="logs" orientation="vertical" collapsible default_size={40}>
+      # Stacked, collapsible second panel
+      <.resizable id="logs" orientation="vertical" default_size={40}>
         <:panel>…</:panel>
-        <:panel label="Resize log panel">…</:panel>
+        <:panel label="Resize log panel" collapsible>…</:panel>
       </.resizable>
 
   ## Sizing
@@ -33,7 +33,7 @@ defmodule Pulsar.Components.Resizable do
 
   Focus the handle, then: arrow keys resize by 1%, Page Up/Down by 10%, and
   Home/End jump to the minimum/maximum. Double-click the handle to reset to
-  `default_size`. When `collapsible`, press Enter on the focused handle to collapse or expand the
+  `default_size`. When a panel is `collapsible`, press Enter on the focused handle to collapse or expand the
   second panel.
   """
 
@@ -53,14 +53,14 @@ defmodule Pulsar.Components.Resizable do
   attr :default_size, :integer, default: 30, doc: "Initial size of the second panel, as a percent of the group."
   attr :min_size, :integer, default: 15, doc: "Smallest size of the second panel, as a percent."
   attr :max_size, :integer, default: 60, doc: "Largest size of the second panel, as a percent."
-  attr :collapsible, :boolean, default: false, doc: "Allow the second panel to collapse to `collapsed_size`."
-  attr :collapsed_size, :integer, default: 0, doc: "Size the second panel snaps to when collapsed, as a percent."
   attr :class, :string, default: "", doc: "Additional classes for the group element."
   attr :rest, :global, doc: "Additional HTML attributes for the group element."
 
   slot :panel, required: true, doc: "Exactly two panels, in source order. `label` on the second names the separator." do
     attr :label, :string
     attr :class, :string
+    attr :collapsible, :boolean
+    attr :collapsed_size, :integer
   end
 
   def resizable(assigns) do
@@ -70,15 +70,19 @@ defmodule Pulsar.Components.Resizable do
         _ -> raise ArgumentError, "resizable/1 requires exactly two <:panel> slots"
       end
 
-    label = Map.get(panel_two, :label) || "Resize panel"
-
     assigns =
       assigns
       |> assign(:panel_one, panel_one)
       |> assign(:panel_two, panel_two)
       |> assign(:panel_one_id, "#{assigns.id}-panel-1")
       |> assign(:panel_two_id, "#{assigns.id}-panel-2")
-      |> assign(:panel_label, label)
+      |> assign(:panel_label, Map.get(panel_two, :label) || "Resize panel")
+      |> assign(:start_collapsible, Map.get(panel_one, :collapsible, false))
+      |> assign(:end_collapsible, Map.get(panel_two, :collapsible, false))
+      |> assign(:start_collapsed_size, Map.get(panel_one, :collapsed_size) || 0)
+      |> assign(:end_collapsed_size, Map.get(panel_two, :collapsed_size) || 0)
+      |> assign(:start_label, Map.get(panel_one, :label) || "Start panel")
+      |> assign(:end_label, Map.get(panel_two, :label) || "End panel")
 
     ~H"""
     <div
@@ -88,8 +92,10 @@ defmodule Pulsar.Components.Resizable do
       data-min={@min_size}
       data-max={@max_size}
       data-default={@default_size}
-      data-collapsed-size={@collapsed_size}
-      data-collapsible={to_string(@collapsible)}
+      data-collapsible-start={to_string(@start_collapsible)}
+      data-collapsible-end={to_string(@end_collapsible)}
+      data-collapsed-start={@start_collapsed_size}
+      data-collapsed-end={@end_collapsed_size}
       style={"--pulsar-resizable-size: #{@default_size}%"}
       class={merge([group_classes(@orientation), @class])}
       {@rest}
@@ -118,18 +124,30 @@ defmodule Pulsar.Components.Resizable do
         >
           <span aria-hidden="true" class={line_classes(@orientation)}></span>
         </div>
-        <button
-          :if={@collapsible}
-          type="button"
-          data-resizable-toggle
-          tabindex="-1"
-          aria-expanded="true"
-          aria-controls={@panel_two_id}
-          aria-label={@panel_label}
-          class={toggle_classes(@orientation)}
-        >
-          <Icon.icon name="hero-chevron-right" class="size-3" />
-        </button>
+        <div :if={@start_collapsible or @end_collapsible} class={pill_classes(@orientation)}>
+          <button
+            :if={@start_collapsible}
+            type="button"
+            data-resizable-toggle="start"
+            aria-expanded="true"
+            aria-controls={@panel_one_id}
+            aria-label={@start_label}
+            class={toggle_button_classes(@orientation, "start")}
+          >
+            <Icon.icon name="hero-chevron-right" class="size-3" />
+          </button>
+          <button
+            :if={@end_collapsible}
+            type="button"
+            data-resizable-toggle="end"
+            aria-expanded="true"
+            aria-controls={@panel_two_id}
+            aria-label={@end_label}
+            class={toggle_button_classes(@orientation, "end")}
+          >
+            <Icon.icon name="hero-chevron-right" class="size-3" />
+          </button>
+        </div>
       </div>
 
       <div
@@ -374,22 +392,36 @@ defmodule Pulsar.Components.Resizable do
       "group-hover/handle:bg-border-strong group-focus-visible/handle:bg-primary"
   end
 
-  # Small round affordance centered on the handle. The chevron flips when the
-  # panel is collapsed (aria-expanded="false") and points the right way per
-  # orientation.
-  @spec toggle_classes(String.t()) :: String.t()
-  defp toggle_classes(orientation) do
-    rotate =
-      if orientation == "vertical",
-        do: "rotate-90 aria-[expanded=false]:-rotate-90",
-        else: "aria-[expanded=false]:rotate-180"
+  # Non-interactive pill centered on the handle holding one chevron button per
+  # collapsible panel. A sibling of the separator (never nested) so it cannot
+  # re-introduce the nested-interactive axe violation.
+  @spec pill_classes(String.t()) :: String.t()
+  defp pill_classes("vertical") do
+    "absolute left-1/2 top-1/2 z-10 inline-flex -translate-x-1/2 -translate-y-1/2 flex-col " <>
+      "divide-y divide-border overflow-hidden rounded-full border border-border bg-background shadow-sm"
+  end
 
+  defp pill_classes(_) do
+    "absolute left-1/2 top-1/2 z-10 inline-flex -translate-x-1/2 -translate-y-1/2 flex-row " <>
+      "divide-x divide-border overflow-hidden rounded-full border border-border bg-background shadow-sm"
+  end
+
+  # Each toggle is ≥24px (size-6) for WCAG 2.5.8. The chevron points toward the
+  # panel it collapses and flips (via the button's own aria-expanded) to an expand
+  # affordance once that panel is collapsed.
+  @spec toggle_button_classes(String.t(), String.t()) :: String.t()
+  defp toggle_button_classes(orientation, side) do
     merge([
-      "absolute left-1/2 top-1/2 z-10 inline-flex size-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full",
-      "border border-border bg-background text-muted-foreground shadow-sm",
+      "inline-flex size-6 items-center justify-center text-muted-foreground",
       "transition-[color,transform] duration-fast ease-standard hover:text-foreground",
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-      rotate
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
+      chevron_rotation(orientation, side)
     ])
   end
+
+  @spec chevron_rotation(String.t(), String.t()) :: String.t()
+  defp chevron_rotation("vertical", "start"), do: "-rotate-90 aria-[expanded=false]:rotate-90"
+  defp chevron_rotation("vertical", _end), do: "rotate-90 aria-[expanded=false]:-rotate-90"
+  defp chevron_rotation(_horizontal, "start"), do: "rotate-180 aria-[expanded=false]:rotate-0"
+  defp chevron_rotation(_horizontal, _end), do: "aria-[expanded=false]:rotate-180"
 end

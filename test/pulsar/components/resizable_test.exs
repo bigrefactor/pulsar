@@ -86,29 +86,56 @@ defmodule Pulsar.Components.ResizableTest do
     end
   end
 
-  describe "resizable/1 collapse (opt-in)" do
-    test "renders no toggle by default" do
-      refute basic() =~ "data-resizable-toggle"
+  defp with_panels(opts) do
+    p1 = Keyword.get(opts, :p1, [])
+    p2 = Keyword.get(opts, :p2, [])
+    assigns = %{p1: p1, p2: p2}
+
+    rendered_to_string(~H"""
+    <Resizable.resizable id="rz">
+      <:panel collapsible={@p1[:collapsible] || false}>A</:panel>
+      <:panel label="Resize side panel" collapsible={@p2[:collapsible] || false}>B</:panel>
+    </Resizable.resizable>
+    """)
+  end
+
+  describe "resizable/1 collapse (per-panel, opt-in)" do
+    test "renders no toggle when neither panel is collapsible" do
+      refute with_panels([]) =~ "data-resizable-toggle"
     end
 
-    test "renders an accessible chevron toggle when collapsible" do
-      html = basic(%{extra: [collapsible: true]})
-      assert html =~ "data-resizable-toggle"
-      assert html =~ ~s(aria-expanded="true")
-      assert html =~ ~s(aria-controls="rz-panel-2")
-      # The toggle is named for the panel it controls.
-      assert html =~ ~r/data-resizable-toggle[^>]*aria-label="Resize side panel"/s
+    test "marking the end panel collapsible renders one end toggle" do
+      html = with_panels(p2: [collapsible: true])
+      assert html =~ ~s(data-resizable-toggle="end")
+      refute html =~ ~s(data-resizable-toggle="start")
+      assert html =~ ~r/data-resizable-toggle="end"[^>]*aria-controls="rz-panel-2"/s
     end
 
-    test "exposes collapse config to the hook when collapsible" do
-      html = basic(%{extra: [collapsible: true, collapsed_size: 0]})
-      assert html =~ ~s(data-collapsible="true")
-      assert html =~ ~s(data-collapsed-size="0")
+    test "marking both panels collapsible renders two toggles, one per side" do
+      html = with_panels(p1: [collapsible: true], p2: [collapsible: true])
+      assert html =~ ~s(data-resizable-toggle="start")
+      assert html =~ ~s(data-resizable-toggle="end")
+      assert html =~ ~r/data-resizable-toggle="start"[^>]*aria-controls="rz-panel-1"/s
+      assert html =~ ~r/data-resizable-toggle="end"[^>]*aria-controls="rz-panel-2"/s
     end
 
-    test "toggle is not a tab stop (the separator already is)" do
-      html = basic(%{extra: [collapsible: true]})
-      assert html =~ ~r/data-resizable-toggle[^>]*tabindex="-1"/s
+    test "toggles are real focusable buttons (no negative tabindex)" do
+      html = with_panels(p1: [collapsible: true], p2: [collapsible: true])
+      refute html =~ ~r/data-resizable-toggle="start"[^>]*tabindex="-1"/s
+      assert html =~ ~r/<button[^>]*data-resizable-toggle="start"/s
+    end
+
+    test "toggles start expanded" do
+      html = with_panels(p2: [collapsible: true])
+      assert html =~ ~r/data-resizable-toggle="end"[^>]*aria-expanded="true"/s
+    end
+
+    test "exposes per-panel collapse config to the hook" do
+      html = with_panels(p1: [collapsible: true], p2: [collapsible: true])
+      assert html =~ ~s(data-collapsible-start="true")
+      assert html =~ ~s(data-collapsible-end="true")
+      assert html =~ ~s(data-collapsed-start="0")
+      assert html =~ ~s(data-collapsed-end="0")
     end
   end
 
