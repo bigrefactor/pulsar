@@ -29,7 +29,7 @@ defmodule Pulsar.Components.ResizableTest do
       html = basic()
       assert html =~ ~s(role="separator")
       assert html =~ ~s(tabindex="0")
-      assert html =~ ~s(aria-controls="rz-panel-2")
+      assert html =~ ~s(aria-controls="rz-panel-1 rz-panel-2")
       assert html =~ ~s(aria-label="Resize side panel")
     end
 
@@ -49,14 +49,40 @@ defmodule Pulsar.Components.ResizableTest do
       assert basic(%{extra: [default_size: 40]}) =~ "--pulsar-resizable-size: 40%"
     end
 
-    test "panels can shrink: min-w-0 present so content does not block the clamp" do
-      assert basic() =~ "min-w-0"
+    test "panel one flexes to fill and can shrink" do
+      html = basic()
+      assert html =~ "flex-1"
+      assert html =~ "basis-0"
+      assert html =~ "min-w-0"
     end
 
     test "controlled panel id carries the seeded flex-basis" do
       html = basic()
       assert html =~ ~s(id="rz-panel-2")
       assert html =~ "flex-basis: var(--pulsar-resizable-size)"
+    end
+
+    test "falls back to a default separator label when none is given" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Resizable.resizable id="nolabel">
+          <:panel>A</:panel>
+          <:panel>B</:panel>
+        </Resizable.resizable>
+        """)
+
+      assert html =~ ~s(aria-label="Resize panel")
+    end
+
+    test "exposes orientation on the group for the hook" do
+      assert basic() =~ ~s(data-orientation="horizontal")
+      assert basic(%{extra: [orientation: "vertical"]}) =~ ~s(data-orientation="vertical")
+    end
+
+    test "announces the size as a percentage via aria-valuetext" do
+      assert basic(%{extra: [default_size: 30]}) =~ ~s(aria-valuetext="30%")
     end
   end
 end

@@ -62,15 +62,20 @@ slot :panel, required: true, doc: "Exactly two panels, in source order. `label` 
 end
 
 def resizable(assigns) do
-  [panel_one, panel_two] = Enum.take(assigns.panel, 2)
+  {panel_one, panel_two} =
+    case assigns.panel do
+      [one, two] -> {one, two}
+      _ -> raise ArgumentError, "resizable/1 requires exactly two <:panel> slots"
+    end
+
   label = Map.get(panel_two, :label) || "Resize panel"
 
   assigns =
     assigns
     |> assign(:panel_one, panel_one)
     |> assign(:panel_two, panel_two)
+    |> assign(:panel_one_id, "#{assigns.id}-panel-1")
     |> assign(:panel_two_id, "#{assigns.id}-panel-2")
-    |> assign(:separator_id, "#{assigns.id}-separator")
     |> assign(:panel_label, label)
 
   ~H"""
@@ -87,19 +92,20 @@ def resizable(assigns) do
     class={merge([group_classes(@orientation), @class])}
     {@rest}
   >
-    <div class={merge(["min-w-0 min-h-0 flex-1 basis-0 overflow-auto", Map.get(@panel_one, :class) || ""])}>
+    <div id={@panel_one_id} class={merge(["min-w-0 min-h-0 flex-1 basis-0 overflow-auto", Map.get(@panel_one, :class) || ""])}>
       {render_slot(@panel_one)}
     </div>
 
     <div
       role="separator"
-      id={@separator_id}
+      id={"#{@id}-separator"}
       tabindex="0"
       aria-orientation={separator_orientation(@orientation)}
-      aria-controls={@panel_two_id}
+      aria-controls={"#{@panel_one_id} #{@panel_two_id}"}
       aria-label={@panel_label}
       aria-valuemin={@min_size}
       aria-valuenow={@default_size}
+      aria-valuetext={"#{@default_size}%"}
       aria-valuemax={@max_size}
       data-resizable-handle
       class={handle_classes(@orientation)}
