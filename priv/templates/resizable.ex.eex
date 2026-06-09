@@ -97,21 +97,23 @@ def resizable(assigns) do
       {render_slot(@panel_one)}
     </div>
 
-    <div
-      role="separator"
-      id={"#{@id}-separator"}
-      tabindex="0"
-      aria-orientation={separator_orientation(@orientation)}
-      aria-controls={"#{@panel_one_id} #{@panel_two_id}"}
-      aria-label={@panel_label}
-      aria-valuemin={@min_size}
-      aria-valuenow={@default_size}
-      aria-valuetext={"#{@default_size}%"}
-      aria-valuemax={@max_size}
-      data-resizable-handle
-      class={handle_classes(@orientation)}
-    >
-      <span aria-hidden="true" class={line_classes(@orientation)}></span>
+    <div class={handle_wrapper_classes(@orientation)}>
+      <div
+        role="separator"
+        id={"#{@id}-separator"}
+        tabindex="0"
+        aria-orientation={separator_orientation(@orientation)}
+        aria-controls={"#{@panel_one_id} #{@panel_two_id}"}
+        aria-label={@panel_label}
+        aria-valuemin={@min_size}
+        aria-valuenow={@default_size}
+        aria-valuetext={"#{@default_size}%"}
+        aria-valuemax={@max_size}
+        data-resizable-handle
+        class={handle_classes(@orientation)}
+      >
+        <span aria-hidden="true" class={line_classes(@orientation)}></span>
+      </div>
       <button
         :if={@collapsible}
         type="button"
@@ -336,16 +338,23 @@ defp panel_two_classes do
     "data-[animating=true]:ease-standard motion-reduce:transition-none"
 end
 
-# ≥24px grab zone (WCAG 2.5.8 Target Size) with the visual line centered inside.
+# The flex divider slot. Holds the separator and (when collapsible) the toggle
+# as SIBLINGS — the toggle must not nest inside the interactive separator.
+@spec handle_wrapper_classes(String.t()) :: String.t()
+defp handle_wrapper_classes("vertical"), do: "relative flex h-6 shrink-0 grow-0 items-center justify-center"
+defp handle_wrapper_classes(_), do: "relative flex w-6 shrink-0 grow-0 items-center justify-center"
+
+# ≥24px grab zone (WCAG 2.5.8 Target Size); fills the relative wrapper so the
+# focus ring frames the whole handle and the centered toggle overlays it.
 @spec handle_classes(String.t()) :: String.t()
 defp handle_classes("vertical") do
-  "group/handle relative flex h-6 shrink-0 grow-0 cursor-row-resize items-center " <>
+  "group/handle absolute inset-0 flex cursor-row-resize items-center " <>
     "justify-center touch-none select-none outline-none focus-visible:ring-2 focus-visible:ring-ring " <>
     "focus-visible:ring-offset-1 focus-visible:ring-offset-background"
 end
 
 defp handle_classes(_) do
-  "group/handle relative flex w-6 shrink-0 grow-0 cursor-col-resize items-center " <>
+  "group/handle absolute inset-0 flex cursor-col-resize items-center " <>
     "justify-center touch-none select-none outline-none focus-visible:ring-2 focus-visible:ring-ring " <>
     "focus-visible:ring-offset-1 focus-visible:ring-offset-background"
 end
@@ -372,7 +381,7 @@ defp toggle_classes(orientation) do
       else: "aria-[expanded=false]:rotate-180"
 
   merge([
-    "absolute z-10 inline-flex size-5 items-center justify-center rounded-full",
+    "absolute left-1/2 top-1/2 z-10 inline-flex size-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full",
     "border border-border bg-background text-muted-foreground shadow-sm",
     "transition-[color,transform] duration-fast ease-standard hover:text-foreground",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
