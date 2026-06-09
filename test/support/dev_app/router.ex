@@ -90,6 +90,7 @@ defmodule Pulsar.DevApp.Router do
 
     live "/keyboard/button", Keyboard.ButtonLive, :index
     live "/keyboard/card", Keyboard.CardLive, :index
+    live "/keyboard/drawer", Keyboard.DrawerLive, :index
     live "/keyboard/dropdown_menu", Keyboard.DropdownMenuLive, :index
     live "/keyboard/input_otp", Keyboard.InputOtpLive, :index
     live "/keyboard/menu", Keyboard.MenuLive, :index

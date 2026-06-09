@@ -360,7 +360,14 @@ defmodule Pulsar.Components.Modal do
             const r = this.el.getBoundingClientRect()
             const outside =
               e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom
-            if (e.target === this.el && this.downTarget === this.el && outside) this.el.close()
+            if (e.target === this.el && this.downTarget === this.el && outside) {
+              // Stop the dismissing click from bubbling to ancestors: when the
+              // dialog is nested inside an element with its own click handler
+              // (e.g. the open-trigger wrapper), an un-stopped backdrop click
+              // would re-trigger that handler and instantly re-open the dialog.
+              e.stopPropagation()
+              this.el.close()
+            }
           },
 
           lockScroll() {
