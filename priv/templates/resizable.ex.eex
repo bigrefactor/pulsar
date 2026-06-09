@@ -1,0 +1,165 @@
+@moduledoc """
+Two panels split by a draggable handle.
+
+The region stays in normal document flow — it does not overlay or trap focus.
+Drag the handle (or focus it and use the keyboard) to resize the second panel;
+the first panel flexes to fill the rest of the space.
+
+## Examples
+
+    <.resizable id="dock" default_size={30} min_size={15} max_size={60}>
+      <:panel>
+        <main>Primary content…</main>
+      </:panel>
+      <:panel label="Resize side panel">
+        <section>Side content…</section>
+      </:panel>
+    </.resizable>
+
+    # Stacked, collapsible
+    <.resizable id="logs" orientation="vertical" collapsible default_size={40}>
+      <:panel>…</:panel>
+      <:panel label="Resize log panel">…</:panel>
+    </.resizable>
+
+## Sizing
+
+`default_size`, `min_size` and `max_size` are percentages of the group that
+control the second panel; the first panel flexes to fill the remainder. Sizing
+is ephemeral and resets on reload.
+
+## Keyboard
+
+Focus the handle, then: arrow keys resize by 1%, Page Up/Down by 10%, and
+Home/End jump to the minimum/maximum. Double-click the handle to reset to
+`default_size`.
+"""
+
+use Phoenix.Component
+
+import Twm, only: [merge: 1]
+
+alias <%= @component_namespace %>.Icon
+
+attr :id, :string, required: true, doc: "Required. Roots the panel and separator ids and the hook."
+
+attr :orientation, :string,
+  default: "horizontal",
+  values: ~w(horizontal vertical),
+  doc: "`horizontal` splits side-by-side (drag ←→); `vertical` stacks (drag ↕)."
+
+attr :default_size, :integer, default: 30, doc: "Initial size of the second panel, as a percent of the group."
+attr :min_size, :integer, default: 15, doc: "Smallest size of the second panel, as a percent."
+attr :max_size, :integer, default: 60, doc: "Largest size of the second panel, as a percent."
+attr :collapsible, :boolean, default: false, doc: "Allow the second panel to collapse to `collapsed_size`."
+attr :collapsed_size, :integer, default: 0, doc: "Size the second panel snaps to when collapsed, as a percent."
+attr :class, :string, default: "", doc: "Additional classes for the group element."
+attr :rest, :global, doc: "Additional HTML attributes for the group element."
+
+slot :panel, required: true, doc: "Exactly two panels, in source order. `label` on the second names the separator." do
+  attr :label, :string
+  attr :class, :string
+end
+
+def resizable(assigns) do
+  [panel_one, panel_two] = Enum.take(assigns.panel, 2)
+  label = Map.get(panel_two, :label) || "Resize panel"
+
+  assigns =
+    assigns
+    |> assign(:panel_one, panel_one)
+    |> assign(:panel_two, panel_two)
+    |> assign(:panel_two_id, "#{assigns.id}-panel-2")
+    |> assign(:separator_id, "#{assigns.id}-separator")
+    |> assign(:panel_label, label)
+
+  ~H"""
+  <div
+    id={@id}
+    phx-hook=".PulsarResizable"
+    data-orientation={@orientation}
+    data-min={@min_size}
+    data-max={@max_size}
+    data-default={@default_size}
+    data-collapsed-size={@collapsed_size}
+    data-collapsible={to_string(@collapsible)}
+    style={"--pulsar-resizable-size: #{@default_size}%"}
+    class={merge([group_classes(@orientation), @class])}
+    {@rest}
+  >
+    <div class={merge(["min-w-0 min-h-0 flex-1 basis-0 overflow-auto", Map.get(@panel_one, :class) || ""])}>
+      {render_slot(@panel_one)}
+    </div>
+
+    <div
+      role="separator"
+      id={@separator_id}
+      tabindex="0"
+      aria-orientation={separator_orientation(@orientation)}
+      aria-controls={@panel_two_id}
+      aria-label={@panel_label}
+      aria-valuemin={@min_size}
+      aria-valuenow={@default_size}
+      aria-valuemax={@max_size}
+      data-resizable-handle
+      class={handle_classes(@orientation)}
+    >
+      <span aria-hidden="true" class={line_classes(@orientation)}></span>
+    </div>
+
+    <div
+      id={@panel_two_id}
+      data-animating="false"
+      style="flex-basis: var(--pulsar-resizable-size)"
+      class={merge([panel_two_classes(), Map.get(@panel_two, :class) || ""])}
+    >
+      {render_slot(@panel_two)}
+    </div>
+  </div>
+  """
+end
+
+# ============================================================================
+# HELPER FUNCTIONS
+# ============================================================================
+
+# A horizontal split (side-by-side) needs a VERTICAL separator, and vice-versa.
+@spec separator_orientation(String.t()) :: String.t()
+defp separator_orientation("vertical"), do: "horizontal"
+defp separator_orientation(_), do: "vertical"
+
+@spec group_classes(String.t()) :: String.t()
+defp group_classes("vertical"), do: "flex flex-col w-full h-full min-h-0"
+defp group_classes(_), do: "flex flex-row w-full h-full min-w-0"
+
+@spec panel_two_classes() :: String.t()
+defp panel_two_classes do
+  "min-w-0 min-h-0 grow-0 shrink-0 overflow-auto " <>
+    "data-[animating=true]:transition-[flex-basis] data-[animating=true]:duration-normal " <>
+    "data-[animating=true]:ease-standard motion-reduce:transition-none"
+end
+
+# ≥24px grab zone (WCAG 2.5.8 Target Size) with the visual line centered inside.
+@spec handle_classes(String.t()) :: String.t()
+defp handle_classes("vertical") do
+  "group/handle relative flex h-6 shrink-0 grow-0 cursor-row-resize items-center " <>
+    "justify-center touch-none outline-none focus-visible:ring-2 focus-visible:ring-ring " <>
+    "focus-visible:ring-offset-1 focus-visible:ring-offset-background"
+end
+
+defp handle_classes(_) do
+  "group/handle relative flex w-6 shrink-0 grow-0 cursor-col-resize items-center " <>
+    "justify-center touch-none outline-none focus-visible:ring-2 focus-visible:ring-ring " <>
+    "focus-visible:ring-offset-1 focus-visible:ring-offset-background"
+end
+
+@spec line_classes(String.t()) :: String.t()
+defp line_classes("vertical") do
+  "h-px w-full bg-border transition-colors duration-fast ease-standard " <>
+    "group-hover/handle:bg-border-strong group-focus-visible/handle:bg-primary"
+end
+
+defp line_classes(_) do
+  "w-px h-full bg-border transition-colors duration-fast ease-standard " <>
+    "group-hover/handle:bg-border-strong group-focus-visible/handle:bg-primary"
+end

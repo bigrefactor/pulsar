@@ -61,6 +61,7 @@ defmodule Pulsar.TemplateSync do
     {:pagination, "lib/pulsar/components/pagination.ex", "Pulsar.Components", "Pulsar.Components.Pagination"},
     {:popover, "lib/pulsar/components/popover.ex", "Pulsar.Components", "Pulsar.Components.Popover"},
     {:radio_group, "lib/pulsar/components/radio_group.ex", "Pulsar.Components", "Pulsar.Components.RadioGroup"},
+    {:resizable, "lib/pulsar/components/resizable.ex", "Pulsar.Components", "Pulsar.Components.Resizable"},
     {:select, "lib/pulsar/components/select.ex", "Pulsar.Components", "Pulsar.Components.Select"},
     {:sidebar, "lib/pulsar/components/sidebar.ex", "Pulsar.Components", "Pulsar.Components.Sidebar"},
     {:skeleton, "lib/pulsar/components/skeleton.ex", "Pulsar.Components", "Pulsar.Components.Skeleton"},
