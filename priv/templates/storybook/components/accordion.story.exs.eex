@@ -8,7 +8,7 @@ defmodule <%= @web_module %>.Storybook.Components.Accordion do
 
   def attributes do
     [
-      %Attr{id: :id, type: :string, required: true, doc: "Accordion container id."},
+      %Attr{id: :id, type: :string, doc: "Accordion container id (auto-generated if omitted)."},
       %Attr{id: :type, type: :string, values: ~w(single multiple), default: "single", doc: "single = one open at a time."},
       %Attr{id: :collapsible, type: :boolean, default: true, doc: "When single, allow closing the open section."},
       %Attr{id: :variant, type: :string, values: ~w(solid outline ghost elevated), default: "outline", doc: "Visual chrome."},
