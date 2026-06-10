@@ -153,6 +153,7 @@ defmodule Pulsar.Components.Field do
 
   # Import all the Pulsar components we'll be rendering
   alias Pulsar.Components.Checkbox
+  alias Pulsar.Components.DatePicker
   alias Pulsar.Components.Icon
   alias Pulsar.Components.Input
   alias Pulsar.Components.InputOtp
@@ -226,7 +227,8 @@ defmodule Pulsar.Components.Field do
 
   attr(:type, :string,
     default: "text",
-    values: ~w(text email password number tel url search date time datetime-local month week color file range otp
+    values:
+      ~w(text email password number tel url search date daterange time datetime-local month week color file range otp
                 select textarea checkbox radio switch),
     doc: "Input type - determines which component to render"
   )
@@ -270,6 +272,14 @@ defmodule Pulsar.Components.Field do
   attr(:mode, :string, default: "numeric", doc: "OTP character set (numeric or alphanumeric)")
   attr(:mask, :boolean, default: false, doc: "Mask entered OTP characters")
   attr(:on_complete, JS, default: %JS{}, doc: "JS run when the OTP is fully entered")
+
+  # Date-picker attributes
+  attr(:end_field, FormField, default: nil, doc: "Range end field for type=daterange")
+  attr(:months, :integer, default: nil, doc: "Calendar month count (date types)")
+  attr(:disabled_dates, :list, default: [], doc: "Un-selectable dates (date types)")
+  attr(:disable_weekends, :boolean, default: false, doc: "Disable weekend days (date types)")
+  attr(:locale, :string, default: nil, doc: "BCP-47 locale for date display")
+  attr(:on_change, JS, default: %JS{}, doc: "JS run when a date changes")
 
   # Global attributes passed through to inputs
   attr(:rest, :global, doc: "Additional HTML attributes passed to the input")
@@ -501,6 +511,55 @@ defmodule Pulsar.Components.Field do
     >
       <:option :for={{label, value} <- @options || []} value={value}>{label}</:option>
     </RadioGroup.radio_group>
+    """
+  end
+
+  defp render_input(%{type: "date"} = assigns) do
+    ~H"""
+    <DatePicker.date_picker
+      field={@field}
+      id={@field_id}
+      mode="single"
+      months={@months}
+      min={@min}
+      max={@max}
+      disabled_dates={@disabled_dates}
+      disable_weekends={@disable_weekends}
+      locale={@locale}
+      variant={@variant}
+      color={@color}
+      size={@size}
+      disabled={@disabled}
+      invalid={@has_errors}
+      on_change={@on_change}
+      aria-describedby={@aria_describedby}
+      {@rest}
+    />
+    """
+  end
+
+  defp render_input(%{type: "daterange"} = assigns) do
+    ~H"""
+    <DatePicker.date_picker
+      start_field={@field}
+      end_field={@end_field}
+      id={@field_id}
+      mode="range"
+      months={@months}
+      min={@min}
+      max={@max}
+      disabled_dates={@disabled_dates}
+      disable_weekends={@disable_weekends}
+      locale={@locale}
+      variant={@variant}
+      color={@color}
+      size={@size}
+      disabled={@disabled}
+      invalid={@has_errors}
+      on_change={@on_change}
+      aria-describedby={@aria_describedby}
+      {@rest}
+    />
     """
   end
 

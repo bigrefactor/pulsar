@@ -819,6 +819,40 @@ defmodule Pulsar.Components.FieldTest do
     end
   end
 
+  describe "field/1 date types" do
+    test "type=date dispatches to date_picker with the field" do
+      form = to_form(%{"starts_on" => "2026-06-10"}, as: :ev)
+      assigns = %{field: form[:starts_on]}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="date">
+          <:label>Start</:label>
+        </Field.field>
+        """)
+
+      assert html =~ ~s(phx-hook="Pulsar.Components.DatePicker.PulsarDatePicker")
+      assert html =~ ~s(data-mode="single")
+      assert html =~ ~s(name="ev[starts_on]")
+    end
+
+    test "type=daterange dispatches with start and end fields" do
+      form = to_form(%{"from" => "2026-06-10", "to" => "2026-06-20"}, as: :trip)
+      assigns = %{form: form}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@form[:from]} type="daterange" end_field={@form[:to]}>
+          <:label>Dates</:label>
+        </Field.field>
+        """)
+
+      assert html =~ ~s(data-mode="range")
+      assert html =~ ~s(name="trip[from]")
+      assert html =~ ~s(name="trip[to]")
+    end
+  end
+
   describe "show_errors attribute" do
     test "show_errors=:never hides errors" do
       field = create_field(:email, "", [{"is required", []}])
