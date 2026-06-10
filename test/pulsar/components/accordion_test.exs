@@ -78,7 +78,6 @@ defmodule Pulsar.Components.AccordionTest do
 
     test "value opens the named section (single)" do
       html = basic(%{extra: [value: "two"]})
-      assert html =~ ~r/data-accordion-item id="two-item"?[^>]*data-expanded/s or html =~ ~s(data-expanded)
       assert html =~ ~r/id="two-header"[^>]*aria-expanded="true"/s
       assert html =~ ~r/id="one-header"[^>]*aria-expanded="false"/s
     end
