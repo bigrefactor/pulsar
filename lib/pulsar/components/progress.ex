@@ -1,0 +1,298 @@
+defmodule Pulsar.Components.Progress do
+  @moduledoc """
+  Progress component — determinate or indeterminate progress indicator.
+
+  Renders a horizontal bar (default) or a circular ring showing how far along a
+  task is, such as an upload, import, or onboarding flow. The value is
+  server-driven: pass `value` for determinate progress, or omit it for an
+  indeterminate linear bar.
+
+  ## Features
+
+  - **Two shapes**: a linear bar (default) or a radial ring (`shape="radial"`)
+  - **Determinate or indeterminate**: pass `value` for a known percentage, or omit
+    it for an indeterminate linear bar
+  - **House colors and sizes**: the standard semantic palette and xs–xl sizing
+  - **Optional label and value**: a leading `label` and/or the computed percentage
+
+  ## Examples
+
+      # Determinate bar with a label and percentage
+      <.progress value={62} label="Uploading…" show_value />
+
+      # Scaled to a custom max
+      <.progress value={3} max={10} color="success" />
+
+      # Indeterminate bar (unknown duration)
+      <.progress />
+
+      # Radial ring
+      <.progress shape="radial" value={62} show_value size="lg" />
+
+  ## Accessible name
+
+  The root carries `role="progressbar"` with `aria-valuemin`, `aria-valuemax`, and
+  — when determinate — `aria-valuenow`; an indeterminate bar omits `aria-valuenow`.
+  Provide a name with `label` (rendered and used as the accessible name), or pass an
+  `aria-label` when no visible label is used. The radial shape is determinate; for an
+  indeterminate circular indicator use `spinner/1`.
+  """
+
+  use Phoenix.Component
+
+  import Twm, only: [merge: 1]
+
+  alias Phoenix.LiveView.Rendered
+
+  # ============================================================================
+  # CONFIGURATION & CONSTANTS
+  # ============================================================================
+
+  # Track thickness per size (linear shape).
+  @linear_size_config %{
+    "xs" => "h-1",
+    "sm" => "h-1.5",
+    "md" => "h-2",
+    "lg" => "h-3",
+    "xl" => "h-4"
+  }
+
+  # Rendered ring diameter per size (radial shape).
+  @radial_size_config %{
+    "xs" => "h-8 w-8",
+    "sm" => "h-10 w-10",
+    "md" => "h-12 w-12",
+    "lg" => "h-16 w-16",
+    "xl" => "h-20 w-20"
+  }
+
+  # Fill background per house color (linear shape).
+  @fill_color_config %{
+    "neutral" => "bg-neutral",
+    "primary" => "bg-primary",
+    "secondary" => "bg-secondary",
+    "success" => "bg-success",
+    "danger" => "bg-danger",
+    "warning" => "bg-warning",
+    "info" => "bg-info"
+  }
+
+  # Ring stroke color per house color (radial shape); the ring uses currentColor,
+  # so this sets the text color the stroke inherits.
+  @ring_color_config %{
+    "neutral" => "text-foreground",
+    "primary" => "text-primary",
+    "secondary" => "text-secondary",
+    "success" => "text-success",
+    "danger" => "text-danger",
+    "warning" => "text-warning",
+    "info" => "text-info"
+  }
+
+  # Root wrapper per shape.
+  @root_config %{
+    "linear" => "w-full",
+    "radial" => "inline-flex items-center gap-3"
+  }
+
+  # Geometry for the radial ring. @ring_radius is the single source of truth: the
+  # center leaves room for half the stroke on each side, the viewBox spans the full
+  # diameter, and the circumference drives the dash math. The template binds all of
+  # these, so changing the radius reshapes the ring consistently.
+  @ring_radius 16
+  @ring_stroke_width 4
+  @ring_center @ring_radius + div(@ring_stroke_width, 2)
+  @ring_viewbox 2 * @ring_center
+  @ring_circumference Float.round(2 * :math.pi() * @ring_radius, 2)
+
+  # ============================================================================
+  # PROGRESS COMPONENT
+  # ============================================================================
+
+  attr :shape, :string,
+    default: "linear",
+    values: ~w(linear radial),
+    doc: "Progress shape: a linear bar or a radial ring"
+
+  attr :value, :any,
+    default: nil,
+    doc: "Current value. Omit for an indeterminate linear bar; required for radial."
+
+  attr :max, :any,
+    default: 100,
+    doc: "Value representing 100% complete"
+
+  attr :color, :string,
+    default: "primary",
+    values: ~w(neutral primary secondary success danger warning info),
+    doc: "Semantic color of the fill/ring"
+
+  attr :size, :string,
+    default: "md",
+    values: ~w(xs sm md lg xl),
+    doc: "Size of the bar/ring"
+
+  attr :label, :string,
+    default: nil,
+    doc: "Visible label and accessible name for the progressbar"
+
+  attr :show_value, :boolean,
+    default: false,
+    doc: "Render the computed percentage (determinate only)"
+
+  attr :class, :string,
+    default: "",
+    doc: "Additional CSS classes"
+
+  attr :rest, :global, doc: "Additional HTML attributes"
+
+  @doc """
+  Renders a determinate or indeterminate progress indicator.
+
+  Pass `value` for determinate progress (a number out of `max`), or omit it for an
+  indeterminate linear bar. Use `shape="radial"` for a circular ring.
+  """
+  @spec progress(map()) :: Rendered.t()
+  def progress(assigns) do
+    assigns = assign_computed(assigns)
+
+    ~H"""
+    <div
+      role="progressbar"
+      aria-valuemin="0"
+      aria-valuemax={@aria_valuemax}
+      aria-valuenow={@aria_valuenow}
+      aria-label={@label}
+      class={@root_class}
+      {@rest}
+    >
+      <div
+        :if={@shape == "linear" and (@label != nil or (@show_value and @determinate))}
+        class="mb-1 flex items-center justify-between gap-2 text-sm"
+      >
+        <span :if={@label} class="text-foreground">{@label}</span>
+        <span
+          :if={@show_value and @determinate}
+          aria-hidden="true"
+          class="text-muted-foreground tabular-nums"
+        >
+          {@pct}%
+        </span>
+      </div>
+
+      <div
+        :if={@shape == "linear"}
+        class={["w-full overflow-hidden rounded-full bg-muted", @linear_size_class]}
+      >
+        <div
+          :if={@determinate}
+          class={["h-full rounded-full transition-[width] duration-normal ease-standard", @fill_color_class]}
+          style={"width: #{@pct}%"}
+        >
+        </div>
+        <div
+          :if={not @determinate}
+          class={["h-full w-full rounded-full animate-pulse", @fill_color_class]}
+        >
+        </div>
+      </div>
+
+      <div :if={@shape == "radial"} class="relative inline-flex">
+        <svg
+          class={["block", @radial_size_class, @ring_color_class]}
+          viewBox={"0 0 #{@ring_viewbox} #{@ring_viewbox}"}
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx={@ring_center}
+            cy={@ring_center}
+            r={@ring_radius}
+            stroke="currentColor"
+            stroke-width={@ring_stroke_width}
+            class="opacity-20"
+          />
+          <circle
+            cx={@ring_center}
+            cy={@ring_center}
+            r={@ring_radius}
+            stroke="currentColor"
+            stroke-width={@ring_stroke_width}
+            stroke-linecap="round"
+            transform={"rotate(-90 #{@ring_center} #{@ring_center})"}
+            stroke-dasharray={@circumference}
+            stroke-dashoffset={@dashoffset}
+          />
+        </svg>
+        <span
+          :if={@show_value and @determinate}
+          aria-hidden="true"
+          class="absolute inset-0 flex items-center justify-center text-xs font-semibold text-foreground tabular-nums"
+        >
+          {@pct}%
+        </span>
+      </div>
+
+      <span :if={@shape == "radial" and @label} class="text-sm text-foreground">{@label}</span>
+    </div>
+    """
+  end
+
+  # ============================================================================
+  # PROGRESS HELPER FUNCTIONS
+  # ============================================================================
+
+  defp assign_computed(assigns) do
+    determinate? = is_number(assigns.value)
+
+    if assigns.shape == "radial" and not determinate? do
+      raise ArgumentError,
+            "progress shape=\"radial\" requires a numeric value, got: #{inspect(assigns.value)}. " <>
+              "Radial progress is determinate-only; use shape=\"linear\" for an indeterminate bar " <>
+              "or spinner/1 for an indeterminate ring."
+    end
+
+    {pct, aria_valuenow, aria_valuemax, dashoffset} =
+      progress_values(assigns.value, assigns.max)
+
+    assigns
+    |> assign(:determinate, determinate?)
+    |> assign(:pct, pct)
+    |> assign(:aria_valuenow, aria_valuenow)
+    |> assign(:aria_valuemax, aria_valuemax)
+    |> assign(:root_class, merge([@root_config[assigns.shape] || "", assigns.class]))
+    |> assign(:linear_size_class, @linear_size_config[assigns.size] || "")
+    |> assign(:radial_size_class, @radial_size_config[assigns.size] || "")
+    |> assign(:fill_color_class, @fill_color_config[assigns.color] || "")
+    |> assign(:ring_color_class, @ring_color_config[assigns.color] || "")
+    |> assign(:ring_radius, @ring_radius)
+    |> assign(:ring_center, @ring_center)
+    |> assign(:ring_viewbox, @ring_viewbox)
+    |> assign(:ring_stroke_width, @ring_stroke_width)
+    |> assign(:circumference, @ring_circumference)
+    |> assign(:dashoffset, dashoffset)
+  end
+
+  # Derives `{pct, aria_valuenow, aria_valuemax, dashoffset}` from the raw
+  # value/max. A non-number value (including nil) is indeterminate: no percent or
+  # `aria-valuenow`, and the ring is left empty (full dash offset). `aria-valuemax`
+  # is always the sanitized max, and `pct`/`aria-valuenow` derive from one rounded
+  # basis so the announced value matches the rendered fill.
+  defp progress_values(value, max) when not is_number(value), do: {nil, nil, safe_max(max), @ring_circumference}
+
+  defp progress_values(value, max) do
+    safe_max = safe_max(max)
+    value_now = round(clamp(value, 0, safe_max))
+    fraction = value_now / safe_max
+
+    {round(fraction * 100), value_now, safe_max, Float.round(@ring_circumference * (1 - fraction), 2)}
+  end
+
+  # A non-positive or non-number max falls back to 100 so the percentage math and
+  # `aria-valuemax` stay valid.
+  defp safe_max(max) when is_number(max) and max > 0, do: max
+  defp safe_max(_max), do: 100
+
+  @spec clamp(number(), number(), number()) :: number()
+  defp clamp(value, lo, hi), do: value |> Kernel.max(lo) |> Kernel.min(hi)
+end

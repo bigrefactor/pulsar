@@ -70,6 +70,7 @@ defmodule Pulsar.DevApp.Router do
     live "/components/pagination/solid", PaginationLive, :solid
     live "/components/pagination/outline", PaginationLive, :outline
     live "/components/popover", PopoverLive, :index
+    live "/components/progress", ProgressLive, :index
     live "/components/radio_group", RadioGroupLive, :index
     live "/components/resizable/horizontal", ResizableLive, :horizontal
     live "/components/resizable/vertical", ResizableLive, :vertical
