@@ -34,6 +34,7 @@ defmodule Pulsar.TemplateSync do
   @type pair :: {atom(), String.t(), String.t(), String.t()}
 
   @pairs [
+    {:accordion, "lib/pulsar/components/accordion.ex", "Pulsar.Components", "Pulsar.Components.Accordion"},
     {:alert, "lib/pulsar/components/alert.ex", "Pulsar.Components", "Pulsar.Components.Alert"},
     {:alert_dialog, "lib/pulsar/components/alert_dialog.ex", "Pulsar.Components", "Pulsar.Components.AlertDialog"},
     {:avatar, "lib/pulsar/components/avatar.ex", "Pulsar.Components", "Pulsar.Components.Avatar"},
@@ -41,6 +42,7 @@ defmodule Pulsar.TemplateSync do
     {:button, "lib/pulsar/components/button.ex", "Pulsar.Components", "Pulsar.Components.Button"},
     {:card, "lib/pulsar/components/card.ex", "Pulsar.Components", "Pulsar.Components.Card"},
     {:checkbox, "lib/pulsar/components/checkbox.ex", "Pulsar.Components", "Pulsar.Components.Checkbox"},
+    {:collapsible, "lib/pulsar/components/collapsible.ex", "Pulsar.Components", "Pulsar.Components.Collapsible"},
     {:divider, "lib/pulsar/components/divider.ex", "Pulsar.Components", "Pulsar.Components.Divider"},
     {:drawer, "lib/pulsar/components/drawer.ex", "Pulsar.Components", "Pulsar.Components.Drawer"},
     {:dropdown_menu, "lib/pulsar/components/dropdown_menu.ex", "Pulsar.Components", "Pulsar.Components.DropdownMenu"},

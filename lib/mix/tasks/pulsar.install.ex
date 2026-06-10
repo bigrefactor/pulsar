@@ -71,7 +71,7 @@ defmodule Mix.Tasks.Pulsar.Install.Docs do
 
     Form components: badge, button, checkbox, field, input, label, radio_group, select, switch, textarea
 
-    UI components: alert, alert_dialog, avatar, card, divider, drawer, dropdown_menu, flash, flash_group, header, icon, link, list, menu, modal, navbar, popover, sidebar, skeleton, spinner, status, steps, table, tabs, tooltip
+    UI components: accordion, alert, alert_dialog, avatar, card, collapsible, divider, drawer, dropdown_menu, flash, flash_group, header, icon, link, list, menu, modal, navbar, popover, sidebar, skeleton, spinner, status, steps, table, tabs, tooltip
 
     ## Component Dependencies
 
@@ -99,6 +99,7 @@ if Code.ensure_loaded?(Igniter) do
     alias Igniter.Project.Deps
 
     @components %{
+      accordion: [:icon],
       alert: [:icon],
       alert_dialog: [:modal, :button],
       avatar: [:icon, :link],
@@ -106,6 +107,7 @@ if Code.ensure_loaded?(Igniter) do
       button: [:link],
       card: [],
       checkbox: [],
+      collapsible: [:icon],
       divider: [],
       drawer: [:modal, :button],
       dropdown_menu: [:icon, :popover],
@@ -162,6 +164,7 @@ if Code.ensure_loaded?(Igniter) do
         # This ensures your option schema includes options from nested tasks
         composes: [
           "pulsar.gen.theme",
+          "pulsar.gen.accordion",
           "pulsar.gen.alert",
           "pulsar.gen.alert_dialog",
           "pulsar.gen.avatar",
@@ -169,6 +172,7 @@ if Code.ensure_loaded?(Igniter) do
           "pulsar.gen.button",
           "pulsar.gen.card",
           "pulsar.gen.checkbox",
+          "pulsar.gen.collapsible",
           "pulsar.gen.divider",
           "pulsar.gen.drawer",
           "pulsar.gen.dropdown_menu",

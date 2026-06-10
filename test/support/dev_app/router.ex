@@ -33,11 +33,16 @@ defmodule Pulsar.DevApp.Router do
     live "/", IndexLive, :index
     live "/components/alert", AlertLive, :index
     live "/components/alert_dialog", AlertDialogLive, :index
+    live "/components/accordion/outline", AccordionLive, :outline
+    live "/components/accordion/solid", AccordionLive, :solid
+    live "/components/accordion/ghost", AccordionLive, :ghost
+    live "/components/accordion/elevated", AccordionLive, :elevated
     live "/components/avatar", AvatarLive, :index
     live "/components/badge", BadgeLive, :index
     live "/components/button", ButtonLive, :index
     live "/components/card", CardLive, :index
     live "/components/checkbox", CheckboxLive, :index
+    live "/components/collapsible", CollapsibleLive, :index
     live "/components/divider", DividerLive, :index
     live "/components/drawer", DrawerLive, :index
     live "/components/dropdown_menu", DropdownMenuLive, :index
@@ -90,8 +95,10 @@ defmodule Pulsar.DevApp.Router do
     live "/components/textarea", TextareaLive, :index
     live "/components/tooltip", TooltipLive, :index
 
+    live "/keyboard/accordion", Keyboard.AccordionLive, :index
     live "/keyboard/button", Keyboard.ButtonLive, :index
     live "/keyboard/card", Keyboard.CardLive, :index
+    live "/keyboard/collapsible", Keyboard.CollapsibleLive, :index
     live "/keyboard/drawer", Keyboard.DrawerLive, :index
     live "/keyboard/dropdown_menu", Keyboard.DropdownMenuLive, :index
     live "/keyboard/input_otp", Keyboard.InputOtpLive, :index
