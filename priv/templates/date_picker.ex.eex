@@ -1,0 +1,209 @@
+@moduledoc """
+A date input with a locale-aware calendar popover.
+
+The visible input(s) accept typed dates in the visitor's locale format and the
+chosen value is mirrored into hidden ISO-8601 inputs — those are what the form
+submits. A calendar button opens a `popover` containing a `calendar` for
+point-and-click selection. Single mode binds one field; range mode binds a
+start and end field. Plugs into `Pulsar.Components.Field` as `type="date"` and
+`type="daterange"`.
+
+## Examples
+
+    <.date_picker field={@form[:starts_on]} />
+
+    <.date_picker mode="range" start_field={@form[:from]} end_field={@form[:to]} />
+
+    # via the field wrapper
+    <.field field={@form[:starts_on]} type="date"><:label>Start</:label></.field>
+"""
+
+use Phoenix.Component
+
+import Twm, only: [merge: 1]
+
+alias Phoenix.HTML.FormField
+alias Phoenix.LiveView.JS
+alias Phoenix.LiveView.Rendered
+
+alias <%= @component_namespace %>.Calendar
+alias <%= @component_namespace %>.Icon
+alias <%= @component_namespace %>.Popover
+
+@input_size %{
+  "xs" => "h-7 text-xs",
+  "sm" => "h-8 text-sm",
+  "md" => "h-9 text-sm",
+  "lg" => "h-10 text-base",
+  "xl" => "h-11 text-base"
+}
+
+# Surface treatment of the input wrapper per variant.
+@wrapper_variant %{
+  "outline" => "border border-border bg-background",
+  "solid" => "border border-transparent bg-surface-2",
+  "ghost" => "border border-transparent bg-transparent"
+}
+
+@doc """
+Renders a date picker.
+"""
+@spec date_picker(map()) :: Rendered.t()
+
+attr(:id, :string, default: nil)
+attr(:mode, :string, default: "single", values: ~w(single range))
+attr(:field, FormField, default: nil, doc: "Single-mode form field")
+attr(:start_field, FormField, default: nil, doc: "Range start field")
+attr(:end_field, FormField, default: nil, doc: "Range end field")
+attr(:months, :integer, default: nil)
+attr(:min, :any, default: nil)
+attr(:max, :any, default: nil)
+attr(:disabled_dates, :list, default: [])
+attr(:disable_weekends, :boolean, default: false)
+attr(:locale, :string, default: nil)
+attr(:placeholder, :string, default: nil)
+attr(:variant, :string, default: "outline", values: ~w(outline solid ghost))
+attr(:color, :string, default: "primary", values: ~w(neutral primary secondary success danger warning info))
+attr(:size, :string, default: "md", values: ~w(xs sm md lg xl))
+attr(:disabled, :boolean, default: false)
+attr(:invalid, :boolean, default: false)
+attr(:on_change, JS, default: %JS{})
+attr(:"aria-describedby", :string, default: nil)
+attr(:class, :string, default: "")
+attr(:rest, :global)
+
+def date_picker(assigns) do
+  assigns =
+    assigns
+    |> assign_new(:id, fn -> "date-picker-#{System.unique_integer([:positive])}" end)
+    |> normalize_fields()
+    |> assign(:input_class, input_classes(assigns.size))
+    |> assign(:wrapper_class, wrapper_classes(assigns.variant, assigns.invalid))
+
+  ~H"""
+  <div
+    id={@id}
+    phx-hook=".PulsarDatePicker"
+    data-mode={@mode}
+    data-locale={@locale}
+    data-on-change={@on_change}
+    class={merge(["inline-flex items-center gap-2", @class])}
+    {@rest}
+  >
+    <div class={@wrapper_class}>
+      <input
+        :if={@mode == "single"}
+        type="text"
+        data-dp-display="single"
+        value={@single_display}
+        placeholder={@placeholder}
+        disabled={@disabled}
+        aria-invalid={(@invalid && "true") || "false"}
+        aria-describedby={assigns[:"aria-describedby"]}
+        class={@input_class}
+        autocomplete="off"
+      />
+      <input
+        :if={@mode == "range"}
+        type="text"
+        data-dp-display="start"
+        value={@start_display}
+        placeholder={@placeholder}
+        disabled={@disabled}
+        class={@input_class}
+        autocomplete="off"
+      />
+      <span :if={@mode == "range"} aria-hidden="true" class="text-muted-foreground">–</span>
+      <input
+        :if={@mode == "range"}
+        type="text"
+        data-dp-display="end"
+        value={@end_display}
+        placeholder={@placeholder}
+        disabled={@disabled}
+        class={@input_class}
+        autocomplete="off"
+      />
+
+      <Popover.popover id={@id <> "-pop"} placement="bottom-start" variant="elevated" size="sm">
+        <:trigger>
+          <button
+            type="button"
+            aria-label="Open calendar"
+            disabled={@disabled}
+            class="flex items-center text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-field"
+          >
+            <Icon.icon name="hero-calendar" size="sm" />
+          </button>
+        </:trigger>
+
+        <Calendar.calendar
+          id={@id <> "-cal"}
+          mode={@mode}
+          months={@months}
+          min={@min}
+          max={@max}
+          disabled_dates={@disabled_dates}
+          disable_weekends={@disable_weekends}
+          locale={@locale}
+          color={@color}
+        />
+      </Popover.popover>
+    </div>
+
+    <input :if={@single_name} type="hidden" name={@single_name} value={@single_value} data-dp-value="single" />
+    <input :if={@start_name} type="hidden" name={@start_name} value={@start_value} data-dp-value="start" />
+    <input :if={@end_name} type="hidden" name={@end_name} value={@end_value} data-dp-value="end" />
+
+    <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarDatePicker">
+      export default {
+        mounted() { /* Task 13 */ },
+        updated() {},
+        destroyed() {}
+      }
+    </script>
+  </div>
+  """
+end
+
+# ============================================================================
+# HELPERS
+# ============================================================================
+
+defp normalize_fields(assigns) do
+  single = assigns.field
+  start_f = assigns.start_field
+  end_f = assigns.end_field
+
+  assigns
+  |> assign(:single_name, single && single.name)
+  |> assign(:single_value, single && iso_or_nil(single.value))
+  |> assign(:single_display, single && iso_or_nil(single.value))
+  |> assign(:start_name, start_f && start_f.name)
+  |> assign(:start_value, start_f && iso_or_nil(start_f.value))
+  |> assign(:start_display, start_f && iso_or_nil(start_f.value))
+  |> assign(:end_name, end_f && end_f.name)
+  |> assign(:end_value, end_f && iso_or_nil(end_f.value))
+  |> assign(:end_display, end_f && iso_or_nil(end_f.value))
+end
+
+defp iso_or_nil(%Date{} = d), do: Date.to_iso8601(d)
+defp iso_or_nil(s) when is_binary(s) and s != "", do: s
+defp iso_or_nil(_), do: nil
+
+@spec input_classes(String.t()) :: String.t()
+defp input_classes(size) do
+  merge([
+    "w-28 border-0 bg-transparent py-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0",
+    @input_size[size] || @input_size["md"]
+  ])
+end
+
+@spec wrapper_classes(String.t(), boolean()) :: String.t()
+defp wrapper_classes(variant, invalid) do
+  merge([
+    "inline-flex items-center gap-1.5 rounded-field px-2 focus-within:ring-2 focus-within:ring-ring",
+    @wrapper_variant[variant] || @wrapper_variant["outline"],
+    (invalid && "border-danger") || ""
+  ])
+end
