@@ -116,7 +116,7 @@ if Code.ensure_loaded?(Igniter) do
       flash: [],
       flash_group: [:flash, :icon],
       form: [],
-      header: [:link, :icon],
+      header: [:link, :icon, :breadcrumb],
       icon: [],
       input: [],
       input_otp: [],

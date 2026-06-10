@@ -114,11 +114,10 @@ defmodule Pulsar.Components.Header do
 
   use Phoenix.Component
 
-  import Pulsar.Components.Icon, only: [icon: 1]
   import Twm, only: [merge: 1]
 
   alias Phoenix.LiveView.Rendered
-  alias Pulsar.Components.Link
+  alias Pulsar.Components.Breadcrumb
 
   # ============================================================================
   # CONFIGURATION & CONSTANTS
@@ -249,8 +248,6 @@ defmodule Pulsar.Components.Header do
   """
   @spec header(map()) :: Rendered.t()
   def header(assigns) do
-    validate_breadcrumbs!(assigns.breadcrumb)
-
     assigns =
       assigns
       |> assign(:size_classes, @size_config[assigns.size])
@@ -258,63 +255,11 @@ defmodule Pulsar.Components.Header do
 
     ~H"""
     <header class={@merged_classes} data-component="header" {@rest}>
-      <nav :if={length(@breadcrumb) > 0} aria-label="Breadcrumb" data-role="breadcrumb">
-        <ol class="flex items-center flex-wrap gap-1 text-sm text-muted-foreground">
-          <li :for={{breadcrumb, index} <- Enum.with_index(@breadcrumb)} class="flex items-center">
-            <.icon
-              :if={index > 0}
-              name="hero-chevron-right-micro"
-              size="xs"
-              color="neutral"
-              class="mx-1"
-              aria-hidden="true"
-            />
-            <span
-              :if={index == length(@breadcrumb) - 1}
-              aria-current="page"
-              class="font-medium text-foreground"
-            >
-              {render_slot(breadcrumb)}
-            </span>
-            <Link.a
-              :if={index != length(@breadcrumb) - 1 && Map.get(breadcrumb, :navigate)}
-              navigate={Map.get(breadcrumb, :navigate)}
-              variant="ghost"
-              color="muted"
-              size="inherit"
-            >
-              {render_slot(breadcrumb)}
-            </Link.a>
-            <Link.a
-              :if={index != length(@breadcrumb) - 1 && Map.get(breadcrumb, :patch)}
-              patch={Map.get(breadcrumb, :patch)}
-              variant="ghost"
-              color="muted"
-              size="inherit"
-            >
-              {render_slot(breadcrumb)}
-            </Link.a>
-            <Link.a
-              :if={index != length(@breadcrumb) - 1 && Map.get(breadcrumb, :href)}
-              href={Map.get(breadcrumb, :href)}
-              variant="ghost"
-              color="muted"
-              size="inherit"
-            >
-              {render_slot(breadcrumb)}
-            </Link.a>
-            <span
-              :if={
-                index != length(@breadcrumb) - 1 && !Map.get(breadcrumb, :navigate) && !Map.get(breadcrumb, :patch) &&
-                  !Map.get(breadcrumb, :href)
-              }
-              class="text-muted-foreground"
-            >
-              {render_slot(breadcrumb)}
-            </span>
-          </li>
-        </ol>
-      </nav>
+      <Breadcrumb.breadcrumb :if={@breadcrumb != []}>
+        <:item :for={bc <- @breadcrumb} navigate={bc[:navigate]} patch={bc[:patch]} href={bc[:href]}>
+          {render_slot(bc)}
+        </:item>
+      </Breadcrumb.breadcrumb>
 
       <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4" data-role="content">
         <div class="flex-1 min-w-0" data-role="title">
@@ -378,27 +323,4 @@ defmodule Pulsar.Components.Header do
   }
 
   defp sticky_scroll_margin(size), do: @sticky_scroll_margin[size] || @sticky_scroll_margin["md"]
-
-  # Validate breadcrumb slots don't have multiple navigation props
-  defp validate_breadcrumbs!(breadcrumbs) do
-    Enum.each(breadcrumbs, fn breadcrumb ->
-      nav_props = [
-        {Map.get(breadcrumb, :navigate), :navigate},
-        {Map.get(breadcrumb, :patch), :patch},
-        {Map.get(breadcrumb, :href), :href}
-      ]
-
-      provided_props =
-        nav_props
-        |> Enum.filter(fn {value, _key} -> value != nil end)
-        |> Enum.map(fn {_value, key} -> key end)
-
-      if length(provided_props) > 1 do
-        props_string = Enum.map_join(provided_props, ", ", &inspect/1)
-
-        raise ArgumentError,
-              "Breadcrumb can only have one navigation prop. Found: #{props_string}"
-      end
-    end)
-  end
 end
