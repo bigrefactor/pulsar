@@ -21,6 +21,7 @@ defmodule Pulsar.Generator.Storybook do
     :badge,
     :breadcrumb,
     :button,
+    :calendar,
     :card,
     :checkbox,
     :collapsible,
