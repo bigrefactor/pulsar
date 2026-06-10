@@ -79,7 +79,7 @@ defmodule Pulsar.Components.Badge do
 
   # Base badge styling classes
   @badge_base_classes "inline-flex items-center font-medium rounded-field " <>
-                        "transition-colors duration-normal " <>
+                        "transition-colors duration-fast ease-standard " <>
                         "focus-within:outline-none focus-within:ring-2 " <>
                         "focus-within:ring-current focus-within:ring-offset-2"
 

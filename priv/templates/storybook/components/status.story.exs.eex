@@ -1,0 +1,75 @@
+defmodule <%= @web_module %>.Storybook.Components.Status do
+  use PhoenixStorybook.Story, :component
+
+  alias <%= @components_module %>.Status
+
+  def function, do: &Status.status/1
+  def render_source, do: :function
+
+  def attributes do
+    [
+      %Attr{
+        id: :color,
+        type: :string,
+        values: ~w(neutral primary secondary success danger warning info),
+        default: "neutral",
+        doc: "Dot color from the house palette"
+      },
+      %Attr{
+        id: :size,
+        type: :string,
+        values: ~w(xs sm md lg xl),
+        default: "md",
+        doc: "Dot size"
+      },
+      %Attr{
+        id: :ping,
+        type: :boolean,
+        default: false,
+        doc: "Expanding-halo animation for live/active states"
+      },
+      %Attr{
+        id: :label,
+        type: :string,
+        default: nil,
+        doc: "Accessible label; when set the dot is announced (role=\"img\")"
+      },
+      %Attr{
+        id: :class,
+        type: :string,
+        default: "",
+        doc: "Additional CSS classes"
+      }
+    ]
+  end
+
+  def variations do
+    [
+      %Variation{
+        id: :default,
+        description: "Status dot",
+        attributes: %{color: "success", label: "Online"}
+      },
+      %Variation{
+        id: :offline,
+        description: "Offline",
+        attributes: %{color: "neutral", label: "Offline"}
+      },
+      %Variation{
+        id: :busy,
+        description: "Busy",
+        attributes: %{color: "danger", label: "Busy"}
+      },
+      %Variation{
+        id: :live,
+        description: "Live (ping)",
+        attributes: %{color: "danger", ping: true, label: "Live"}
+      },
+      %Variation{
+        id: :large,
+        description: "Large",
+        attributes: %{size: "xl", color: "success", label: "Online"}
+      }
+    ]
+  end
+end

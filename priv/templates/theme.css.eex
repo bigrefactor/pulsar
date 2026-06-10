@@ -251,6 +251,61 @@
   animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/* Drawer/Sheet directional slide-ins (transform-only; the global
+   prefers-reduced-motion rule near-zeroes them). Replays on showModal() via the
+   top layer, same as scale-in. */
+@keyframes drawer-from-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes drawer-from-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes drawer-from-top {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes drawer-from-bottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-drawer-from-right {
+  animation: drawer-from-right var(--duration-slow, 320ms) var(--ease-emphasized);
+}
+
+.animate-drawer-from-left {
+  animation: drawer-from-left var(--duration-slow, 320ms) var(--ease-emphasized);
+}
+
+.animate-drawer-from-top {
+  animation: drawer-from-top var(--duration-slow, 320ms) var(--ease-emphasized);
+}
+
+.animate-drawer-from-bottom {
+  animation: drawer-from-bottom var(--duration-slow, 320ms) var(--ease-emphasized);
+}
+
 /* Named duration utilities (token-backed; v4 has no --duration-* utility namespace) */
 @utility duration-fast {
   transition-duration: var(--duration-fast);

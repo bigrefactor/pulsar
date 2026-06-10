@@ -77,11 +77,11 @@ defmodule Pulsar.Components.Modal do
   }
 
   # Layout + the overlay contract shared by every modal. The dialog is the panel:
-  # it centers itself in the viewport, dims the page through its `::backdrop`, and
-  # scales in on open. `animate-scale-in` replays each time the dialog moves to the
-  # top layer; the global reduced-motion rule near-zeroes it.
+  # it centers itself in the viewport and dims the page through its `::backdrop`.
+  # The entrance animation is extracted to `panel_animation` so wrappers such as
+  # Drawer can substitute a directional slide.
   @panel_base_classes "z-modal m-auto w-[calc(100%-2rem)] max-h-[85vh] overflow-y-auto " <>
-                        "rounded-box text-foreground focus:outline-none animate-scale-in " <>
+                        "rounded-box text-foreground focus:outline-none " <>
                         "backdrop:bg-foreground/50"
 
   @valid_variants ~w(solid outline ghost elevated)
@@ -194,6 +194,12 @@ defmodule Pulsar.Components.Modal do
 
   attr(:class, :string, default: "", doc: "Additional CSS classes for the dialog")
 
+  attr(:panel_animation, :string,
+    default: "animate-scale-in",
+    doc:
+      ~s{CSS animation utility applied to the panel on open. Override for a different entrance, e.g. "animate-drawer-from-right".}
+  )
+
   attr(:rest, :global,
     include: ~w(open),
     doc: "Additional dialog attributes (e.g. aria-label)"
@@ -232,6 +238,7 @@ defmodule Pulsar.Components.Modal do
           color_classes(assigns.variant, assigns.color),
           width_classes(assigns.size),
           padding_classes(assigns.size),
+          assigns.panel_animation,
           assigns.class
         ])
       )
@@ -353,7 +360,14 @@ defmodule Pulsar.Components.Modal do
             const r = this.el.getBoundingClientRect()
             const outside =
               e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom
-            if (e.target === this.el && this.downTarget === this.el && outside) this.el.close()
+            if (e.target === this.el && this.downTarget === this.el && outside) {
+              // Stop the dismissing click from bubbling to ancestors: when the
+              // dialog is nested inside an element with its own click handler
+              // (e.g. the open-trigger wrapper), an un-stopped backdrop click
+              // would re-trigger that handler and instantly re-open the dialog.
+              e.stopPropagation()
+              this.el.close()
+            }
           },
 
           lockScroll() {

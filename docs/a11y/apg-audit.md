@@ -16,12 +16,14 @@ to the first / last radio.
 audit confirms the APG keyboard interactions and ARIA roles / states /
 properties against the Pulsar source.
 
-**Scope (7 patterns):**
+**Scope (8 patterns):**
 
 | Pulsar component | APG pattern |
 |------------------|-------------|
 | `button.ex` (native + pseudo-button) | [Button](https://www.w3.org/WAI/ARIA/apg/patterns/button/) |
 | `button.ex` with `expanded` + `controls` | [Disclosure](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/) |
+| `collapsible.ex` | [Disclosure](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/) |
+| `accordion.ex` | [Accordion](https://www.w3.org/WAI/ARIA/apg/patterns/accordion/) |
 | `link.ex` | [Link](https://www.w3.org/WAI/ARIA/apg/patterns/link/) |
 | `checkbox.ex` (two-state + tri-state) | [Checkbox](https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/) |
 | `switch.ex` | [Switch](https://www.w3.org/WAI/ARIA/apg/patterns/switch/) |
@@ -51,6 +53,8 @@ properties against the Pulsar source.
 |-----------|-------------|:--------:|:----:|--------|
 | button (native + pseudo) | Button | ✓ | ✓ | ✓ Compliant |
 | button (with expanded+controls) | Disclosure | ✓ | ✓ | ✓ Compliant |
+| collapsible | Disclosure | ✓ | ✓ | ✓ Compliant |
+| accordion | Accordion | ✓ | ✓ | ✓ Compliant |
 | link | Link | ✓ | ✓ | ✓ Compliant |
 | checkbox (two-state) | Checkbox · two-state | ✓ | ✓ | ✓ Compliant |
 | checkbox (tri-state) | Checkbox · tri-state | ✓ | ✓ | ✓ Compliant |
@@ -126,6 +130,74 @@ required). Setting `:controls` without `:expanded` does not raise — but
 that combination is APG-incorrect for the disclosure pattern (a
 disclosure trigger must announce its state via `aria-expanded`).
 Callers must opt in by setting `:expanded`. Not a component-level gap.
+
+---
+
+## Disclosure — `collapsible.ex`
+
+**Source:** [`lib/pulsar/components/collapsible.ex`](../../lib/pulsar/components/collapsible.ex)
+**APG pattern:** <https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/>
+
+Single show/hide region driven by a native `<button>` trigger and the
+colocated `.PulsarCollapsible` hook.
+
+### Keyboard interactions
+
+| APG key | Action | Status | Evidence |
+|---------|--------|:------:|----------|
+| Space | Toggle visibility | ✓ | Native `<button>` trigger (`collapsible.ex:169`): browser default; click handler toggles (`collapsible.ex:194`). |
+| Enter | Toggle visibility | ✓ | Native `<button>`: browser default. |
+
+### WAI-ARIA roles, states, properties
+
+| APG requirement | Status | Evidence |
+|-----------------|:------:|----------|
+| Role: `button` | ✓ | Native `<button>` trigger (`collapsible.ex:169`). |
+| `aria-expanded` (true/false) | ✓ | `collapsible.ex:173` on render; hook keeps it in sync (`collapsible.ex:213`). |
+| `aria-controls` references the controlled panel | ✓ | `collapsible.ex:172` — points at `@panel_id`. |
+
+### Divergences
+
+None. ✓ Compliant.
+
+---
+
+## Accordion — `accordion.ex`
+
+**Source:** [`lib/pulsar/components/accordion.ex`](../../lib/pulsar/components/accordion.ex)
+**APG pattern:** <https://www.w3.org/WAI/ARIA/apg/patterns/accordion/>
+
+Grouped disclosure: each section is a heading-wrapped native `<button>`
+header controlling a `role="region"` panel, with roving header focus via
+the colocated `.PulsarAccordion` hook. `type="single"` keeps at most one
+section open.
+
+### Keyboard interactions
+
+| APG key | Action | Status | Evidence |
+|---------|--------|:------:|----------|
+| Enter | Toggle the focused section | ✓ | Native `<button>` header (`accordion.ex:233`); click handler toggles (`accordion.ex:286–288`). |
+| Space | Toggle the focused section | ✓ | Native `<button>`: browser default. |
+| Down Arrow | Move focus to the next header (wraps) | ✓ | `accordion.ex:297`. |
+| Up Arrow | Move focus to the previous header (wraps) | ✓ | `accordion.ex:298`. |
+| Home | Move focus to the first header | ✓ | `accordion.ex:299`. |
+| End | Move focus to the last header | ✓ | `accordion.ex:300`. |
+
+### WAI-ARIA roles, states, properties
+
+| APG requirement | Status | Evidence |
+|-----------------|:------:|----------|
+| Header is a `<button>` wrapped in a heading element | ✓ | `<.dynamic_tag tag_name={@heading_level}>` wraps the button (`accordion.ex:232–247`); `heading_level` defaults to `h3`. |
+| `aria-expanded` on the header | ✓ | `accordion.ex:238`; hook keeps it in sync (`accordion.ex:306–307`). |
+| `aria-controls` references the panel | ✓ | `accordion.ex:237`. |
+| Panel `role="region"` labelled by its header | ✓ | `accordion.ex:249` — `role="region"` + `aria-labelledby` to the header id. |
+| `aria-disabled` on disabled headers | ✓ | `accordion.ex:239`; disabled headers are skipped by roving focus (`accordion.ex:281`). |
+
+### Divergences
+
+PageUp/PageDown (move focus between headers) are **optional** in the APG
+Accordion pattern and are not implemented; Up/Down Arrow + Home/End cover
+required header navigation. Minor, not a gap.
 
 ---
 

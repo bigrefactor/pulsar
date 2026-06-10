@@ -1,0 +1,258 @@
+defmodule Pulsar.Components.Breadcrumb do
+  @moduledoc """
+  Breadcrumb navigation showing the path to the current page.
+
+  Renders a `<nav>` landmark containing an ordered list of links, with the final
+  crumb marked as the current page. Separators between crumbs are decorative.
+
+  Each `<:item>` may navigate via `navigate`, `patch`, or `href`; an item with no
+  navigation prop renders as plain text. The last item is always rendered as the
+  current page (not a link). When more items are supplied than `max_items`, the
+  middle is collapsed behind a static ellipsis.
+
+  ## Examples
+
+      <.breadcrumb>
+        <:item navigate={~p"/"}>Home</:item>
+        <:item navigate={~p"/products"}>Products</:item>
+        <:item>Edit Product</:item>
+      </.breadcrumb>
+
+      # Collapse a long trail to: Home … Settings Profile
+      <.breadcrumb max_items={4}>
+        <:item navigate={~p"/"}>Home</:item>
+        <:item navigate={~p"/workspace"}>Workspace</:item>
+        <:item navigate={~p"/billing"}>Billing</:item>
+        <:item navigate={~p"/settings"}>Settings</:item>
+        <:item>Profile</:item>
+      </.breadcrumb>
+
+      # Custom separator
+      <.breadcrumb>
+        <:separator>/</:separator>
+        <:item navigate={~p"/"}>Home</:item>
+        <:item>Docs</:item>
+      </.breadcrumb>
+
+  ## Sizing & color
+
+  `size` (`xs`–`xl`) scales the text; `color` accents the links (`muted`, the
+  default, matches surrounding secondary text).
+  """
+
+  use Phoenix.Component
+
+  import Twm, only: [merge: 1]
+
+  alias Phoenix.LiveView.Rendered
+  alias Pulsar.Components.Icon
+  alias Pulsar.Components.Link
+
+  # ============================================================================
+  # CONFIGURATION & CONSTANTS
+  # ============================================================================
+
+  @list_base "flex flex-row flex-wrap items-center gap-1 text-muted-foreground"
+
+  @size_text %{
+    "xs" => "text-xs",
+    "sm" => "text-sm",
+    "md" => "text-sm",
+    "lg" => "text-base",
+    "xl" => "text-lg"
+  }
+
+  @icon_size %{"xs" => "xs", "sm" => "xs", "md" => "xs", "lg" => "sm", "xl" => "sm"}
+
+  # ============================================================================
+  # COMPONENT
+  # ============================================================================
+
+  attr :max_items, :integer,
+    default: nil,
+    doc: "Collapse the middle when the item count exceeds this. nil = never collapse."
+
+  attr :items_before_collapse, :integer,
+    default: 1,
+    doc: "Crumbs kept at the start when collapsed"
+
+  attr :items_after_collapse, :integer,
+    default: 1,
+    doc: "Crumbs kept at the end (excluding the current page) when collapsed"
+
+  attr :size, :string, default: "md", values: ~w(xs sm md lg xl)
+
+  attr :color, :string,
+    default: "muted",
+    values: ~w(muted primary secondary success danger warning info),
+    doc: "Accent color for the crumb links"
+
+  attr :aria_label, :string, default: "Breadcrumb", doc: "Accessible name for the nav landmark"
+  attr :class, :string, default: nil
+  attr :rest, :global
+
+  slot :item, required: true do
+    attr :navigate, :any, doc: "Phoenix LiveView navigation path"
+    attr :patch, :any, doc: "Phoenix LiveView patch path"
+    attr :href, :string, doc: "Direct href for external links"
+  end
+
+  slot :separator, doc: "Optional custom separator content (default: chevron icon)"
+
+  @doc """
+  Renders a breadcrumb trail.
+  """
+  @spec breadcrumb(map()) :: Rendered.t()
+  def breadcrumb(assigns) do
+    validate_items!(assigns.item)
+    validate_overflow!(assigns.max_items, assigns.items_before_collapse, assigns.items_after_collapse)
+
+    total = length(assigns.item)
+    collapse? = collapse?(assigns.max_items, total, assigns.items_before_collapse, assigns.items_after_collapse)
+
+    assigns =
+      assigns
+      |> assign(:list_classes, merge([@list_base, @size_text[assigns.size] || "", assigns.class || ""]))
+      |> assign(:sep_icon_size, @icon_size[assigns.size] || "xs")
+      |> assign(
+        :crumbs,
+        build_crumbs(assigns.item, total, collapse?, assigns.items_before_collapse, assigns.items_after_collapse)
+      )
+
+    ~H"""
+    <nav aria-label={@aria_label} data-component="breadcrumb" {@rest}>
+      <ol class={@list_classes}>
+        <li :for={{crumb, index} <- Enum.with_index(@crumbs)} class="flex items-center">
+          <.crumb_separator :if={index > 0} sep={@separator} icon_size={@sep_icon_size} />
+          <.crumb_body crumb={crumb} color={@color} />
+        </li>
+      </ol>
+    </nav>
+    """
+  end
+
+  # ============================================================================
+  # PRIVATE HELPERS
+  # ============================================================================
+
+  attr :sep, :any, required: true
+  attr :icon_size, :string, required: true
+
+  defp crumb_separator(assigns) do
+    ~H"""
+    <span class="mx-1 inline-flex items-center text-muted-foreground" aria-hidden="true">
+      <span :if={@sep != []}>{render_slot(@sep)}</span>
+      <Icon.icon :if={@sep == []} name="hero-chevron-right-micro" size={@icon_size} color="neutral" />
+    </span>
+    """
+  end
+
+  attr :crumb, :map, required: true
+  attr :color, :string, required: true
+
+  defp crumb_body(assigns) do
+    ~H"""
+    <span :if={@crumb.kind == :ellipsis} class="px-1 select-none" aria-hidden="true">…</span>
+    <span
+      :if={@crumb.kind == :crumb and @crumb.current?}
+      aria-current="page"
+      class="font-medium text-foreground"
+    >
+      {render_slot(@crumb.item)}
+    </span>
+    <Link.a
+      :if={@crumb.kind == :crumb and not @crumb.current? and has_nav?(@crumb.item)}
+      navigate={@crumb.item[:navigate]}
+      patch={@crumb.item[:patch]}
+      href={@crumb.item[:href]}
+      variant="ghost"
+      color={@color}
+      size="inherit"
+    >
+      {render_slot(@crumb.item)}
+    </Link.a>
+    <span
+      :if={@crumb.kind == :crumb and not @crumb.current? and not has_nav?(@crumb.item)}
+      class="text-muted-foreground"
+    >
+      {render_slot(@crumb.item)}
+    </span>
+    """
+  end
+
+  @spec has_nav?(map()) :: boolean()
+  defp has_nav?(item), do: item[:navigate] != nil or item[:patch] != nil or item[:href] != nil
+
+  # Collapse only when a max is set, the trail exceeds it, AND there is at least
+  # one crumb that would actually be hidden by the first/last split.
+  @spec collapse?(integer() | nil, non_neg_integer(), non_neg_integer(), non_neg_integer()) :: boolean()
+  defp collapse?(max_items, total, before_n, after_n) when is_integer(max_items),
+    do: total > max_items and total > before_n + after_n + 1
+
+  defp collapse?(_max_items, _total, _before_n, _after_n), do: false
+
+  @spec build_crumbs(list(), non_neg_integer(), boolean(), non_neg_integer(), non_neg_integer()) :: [map()]
+  defp build_crumbs(items, total, false, _before_n, _after_n) do
+    items
+    |> Enum.with_index()
+    |> Enum.map(fn {item, index} -> %{kind: :crumb, item: item, current?: index == total - 1} end)
+  end
+
+  defp build_crumbs(items, total, true, before_n, after_n) do
+    head =
+      items
+      |> Enum.take(before_n)
+      |> Enum.map(fn item -> %{kind: :crumb, item: item, current?: false} end)
+
+    # The tail's last element is always the current page.
+    tail_items = Enum.drop(items, total - (after_n + 1))
+    last_tail = length(tail_items) - 1
+
+    tail =
+      tail_items
+      |> Enum.with_index()
+      |> Enum.map(fn {item, index} -> %{kind: :crumb, item: item, current?: index == last_tail} end)
+
+    head ++ [%{kind: :ellipsis}] ++ tail
+  end
+
+  @spec validate_items!(list()) :: :ok
+  defp validate_items!(items) do
+    Enum.each(items, fn item ->
+      provided =
+        [{item[:navigate], :navigate}, {item[:patch], :patch}, {item[:href], :href}]
+        |> Enum.filter(fn {value, _key} -> value != nil end)
+        |> Enum.map(fn {_value, key} -> key end)
+
+      if length(provided) > 1 do
+        raise ArgumentError,
+              "Breadcrumb can only have one navigation prop. Found: #{Enum.map_join(provided, ", ", &inspect/1)}"
+      end
+    end)
+  end
+
+  # A collapsed trail renders `before_n + after_n + 2` crumbs (head + ellipsis +
+  # tail, the tail including the current page). max_items is the cap on that
+  # output, so the keep counts must fit inside it and stay non-negative.
+  @spec validate_overflow!(integer() | nil, integer(), integer()) :: :ok
+  defp validate_overflow!(nil, _before_n, _after_n), do: :ok
+
+  defp validate_overflow!(max_items, before_n, after_n) do
+    cond do
+      before_n < 0 or after_n < 0 ->
+        raise ArgumentError,
+              "Breadcrumb items_before_collapse and items_after_collapse must be non-negative, " <>
+                "got #{inspect(before_n)} and #{inspect(after_n)}."
+
+      before_n + after_n + 2 > max_items ->
+        raise ArgumentError,
+              "Breadcrumb max_items=#{max_items} cannot honor items_before_collapse=#{before_n} and " <>
+                "items_after_collapse=#{after_n}: a collapsed trail renders #{before_n + after_n + 2} " <>
+                "crumbs (head + ellipsis + tail incl. current page). Raise max_items to at least " <>
+                "#{before_n + after_n + 2} or lower the keep counts."
+
+      true ->
+        :ok
+    end
+  end
+end

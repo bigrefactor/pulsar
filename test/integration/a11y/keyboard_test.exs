@@ -491,6 +491,179 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     end
   end
 
+  describe "Drawer backdrop dismissal" do
+    # The fixture at `/keyboard/drawer` mirrors the storybook drawer template:
+    # the trigger and the drawer share one wrapper carrying the open dispatcher
+    # (`phx-click={Drawer.open("kbd-drawer")}`). A backdrop click on the open
+    # dialog bubbles up to that wrapper, so unless the `.PulsarModal` hook stops
+    # the click after dismissing, the drawer closes and the bubbled click
+    # immediately re-opens it — the reported "clicking outside does nothing" bug.
+    #
+    # Verification: drop the `e.stopPropagation()` line from `handleClick` in
+    # `priv/templates/modal.ex.eex` (and the synced lib file), run
+    # `MIX_ENV=test mix assets.build`, re-run — the dialog re-opens after the
+    # backdrop click and the assertion fails.
+
+    test "a backdrop click closes the drawer and does not re-open it", %{conn: conn} do
+      conn
+      |> visit("/keyboard/drawer")
+      |> A11y.await_live_connected()
+      |> click("#kbd-drawer-open")
+      |> assert_has(~s|#kbd-drawer[data-state="open"]|)
+      |> A11y.assert_modal("kbd-drawer")
+      |> dispatch_backdrop_click("kbd-drawer")
+      |> assert_dialog_closed("kbd-drawer")
+    end
+  end
+
+  describe "Accordion interaction" do
+    # The fixture at `/keyboard/accordion` renders a single-mode accordion
+    # (`kbd-acc`) with headers kbd-acc-{one,two,three}-header, item two disabled,
+    # and unique panel bodies kbd-acc-{one,three}-body. Behavior comes from the
+    # `.PulsarAccordion` colocated hook.
+    #
+    # These assert the panel actually OPENS (visible body), not just that
+    # `aria-expanded` flips — the hook can toggle `data-expanded` while the panel
+    # stays collapsed/hidden if the `group/item` disclosure root is missing.
+    #
+    # Verification: remove `"group/item"` from the item wrapper class in
+    # `priv/templates/accordion.ex.eex` (and re-sync + `MIX_ENV=test mix
+    # assets.build`), re-run — `aria-expanded` still flips but `assert_visible`
+    # fails because the panel never expands.
+
+    test "clicking a header opens its panel (visible, not just aria)", %{conn: conn} do
+      conn
+      |> visit("/keyboard/accordion")
+      |> A11y.await_live_connected()
+      |> A11y.refute_visible("kbd-acc-one-body")
+      |> click("#kbd-acc-one-header")
+      |> assert_has(~s|#kbd-acc-one-header[aria-expanded="true"]|)
+      |> A11y.await_animations("kbd-acc")
+      |> A11y.assert_visible("kbd-acc-one-body")
+    end
+
+    test "clicking an open header closes it again (collapsible single)", %{conn: conn} do
+      conn
+      |> visit("/keyboard/accordion")
+      |> A11y.await_live_connected()
+      |> click("#kbd-acc-one-header")
+      |> assert_has(~s|#kbd-acc-one-header[aria-expanded="true"]|)
+      |> click("#kbd-acc-one-header")
+      |> assert_has(~s|#kbd-acc-one-header[aria-expanded="false"]|)
+      |> A11y.await_animations("kbd-acc")
+      |> A11y.refute_visible("kbd-acc-one-body")
+    end
+
+    test "single mode: opening a second panel closes the first", %{conn: conn} do
+      conn
+      |> visit("/keyboard/accordion")
+      |> A11y.await_live_connected()
+      |> click("#kbd-acc-one-header")
+      |> assert_has(~s|#kbd-acc-one-header[aria-expanded="true"]|)
+      |> click("#kbd-acc-three-header")
+      |> assert_has(~s|#kbd-acc-three-header[aria-expanded="true"]|)
+      |> assert_has(~s|#kbd-acc-one-header[aria-expanded="false"]|)
+      |> A11y.await_animations("kbd-acc")
+      |> A11y.assert_visible("kbd-acc-three-body")
+      |> A11y.refute_visible("kbd-acc-one-body")
+    end
+
+    test "the disabled header renders disabled and its panel stays closed", %{conn: conn} do
+      # A real <button disabled> can't be clicked (the browser blocks it), so the
+      # closed state is asserted directly; keyboard-skip of the disabled header is
+      # covered by the ArrowDown test below.
+      conn
+      |> visit("/keyboard/accordion")
+      |> A11y.await_live_connected()
+      |> assert_has(~s|#kbd-acc-two-header[disabled][aria-expanded="false"]|)
+      |> A11y.refute_visible("kbd-acc-two-body")
+    end
+
+    test "ArrowDown moves focus to the next enabled header (skips disabled)", %{conn: conn} do
+      conn
+      |> visit("/keyboard/accordion")
+      |> A11y.await_live_connected()
+      |> press("#kbd-acc-one-header", "ArrowDown")
+      |> A11y.assert_focused("kbd-acc-three-header")
+    end
+  end
+
+  describe "Collapsible interaction" do
+    # The fixture at `/keyboard/collapsible` renders a single collapsible
+    # (`kbd-col`), closed by default, with trigger `[data-collapsible-trigger]`
+    # and a unique panel body `kbd-col-body`. Behavior comes from the
+    # `.PulsarCollapsible` colocated hook.
+    #
+    # These assert the panel actually OPENS (visible body), not just that
+    # `aria-expanded` flips — the hook can toggle `data-expanded` while the panel
+    # stays collapsed/hidden if the `group/collapsible` disclosure root is missing.
+    #
+    # Verification: remove `"group/collapsible"` from the container class in
+    # `priv/templates/collapsible.ex.eex` (and re-sync + `MIX_ENV=test mix
+    # assets.build`), re-run — `aria-expanded` still flips but `assert_visible`
+    # fails because the panel never expands.
+
+    test "clicking the trigger opens the panel (visible, not just aria)", %{conn: conn} do
+      conn
+      |> visit("/keyboard/collapsible")
+      |> A11y.await_live_connected()
+      |> A11y.refute_visible("kbd-col-body")
+      |> click("#kbd-col [data-collapsible-trigger]")
+      |> assert_has(~s|[data-collapsible-trigger][aria-expanded="true"]|)
+      |> A11y.await_animations("kbd-col")
+      |> A11y.assert_visible("kbd-col-body")
+    end
+
+    test "clicking again closes it", %{conn: conn} do
+      conn
+      |> visit("/keyboard/collapsible")
+      |> A11y.await_live_connected()
+      |> click("#kbd-col [data-collapsible-trigger]")
+      |> assert_has(~s|[data-collapsible-trigger][aria-expanded="true"]|)
+      |> click("#kbd-col [data-collapsible-trigger]")
+      |> assert_has(~s|[data-collapsible-trigger][aria-expanded="false"]|)
+      |> A11y.await_animations("kbd-col")
+      |> A11y.refute_visible("kbd-col-body")
+    end
+  end
+
+  # Dispatches a realistic backdrop click on the open dialog `id`: a
+  # mousedown + click whose pointer lands outside the panel box (the modal hook
+  # requires both the down and the click to target the dialog itself, which is
+  # how the browser reports a `::backdrop` click). The coordinates are derived
+  # from the live panel rect, so this works regardless of which edge the drawer
+  # is anchored to or whether the slide-in animation has settled.
+  defp dispatch_backdrop_click(conn, id) do
+    expr = """
+    (() => {
+      const dlg = document.getElementById(#{Jason.encode!(id)});
+      const r = dlg.getBoundingClientRect();
+      const x = Math.max(2, Math.round(r.left / 2));
+      const y = Math.round((r.top + r.bottom) / 2);
+      const init = {bubbles: true, cancelable: true, view: window, clientX: x, clientY: y, button: 0};
+      dlg.dispatchEvent(new MouseEvent("mousedown", init));
+      dlg.dispatchEvent(new MouseEvent("click", init));
+    })()
+    """
+
+    PhoenixTest.Playwright.evaluate(conn, expr)
+  end
+
+  # Asserts the dialog `id` is closed (`HTMLDialogElement.open === false`).
+  # Reads `.open` directly rather than `data-state`, because the bug's
+  # fingerprint is `open === true` while `data-state` has already flipped to
+  # "closed" (the close event fires after the bubbled re-open).
+  defp assert_dialog_closed(conn, id) do
+    expr = "Boolean(document.getElementById(#{Jason.encode!(id)}).open)"
+
+    PhoenixTest.Playwright.evaluate(conn, expr, fn open? ->
+      if open? do
+        raise ExUnit.AssertionError,
+          message: "expected ##{id} to be closed after a backdrop click, but it re-opened"
+      end
+    end)
+  end
+
   describe "RadioGroup keyboard navigation" do
     # First group on the page: rg-neutral-xs (colors and sizes from
     # radio_group_live.ex are neutral-first, xs-first). Options have ids

@@ -1,0 +1,87 @@
+defmodule <%= @web_module %>.Storybook.Components.Resizable do
+  use PhoenixStorybook.Story, :component
+
+  alias <%= @components_module %>.Resizable
+
+  def function, do: &Resizable.resizable/1
+  def render_source, do: :function
+
+  def attributes do
+    [
+      %Attr{id: :id, type: :string, required: true, doc: "Roots panel/separator ids and the hook."},
+      %Attr{
+        id: :orientation,
+        type: :string,
+        values: ~w(horizontal vertical),
+        default: "horizontal",
+        doc: "Side-by-side (horizontal) or stacked (vertical)."
+      },
+      %Attr{id: :default_size, type: :integer, default: 30, doc: "Initial second-panel size (%)."},
+      %Attr{id: :min_size, type: :integer, default: 15, doc: "Minimum second-panel size (%)."},
+      %Attr{id: :max_size, type: :integer, default: 60, doc: "Maximum second-panel size (%)."},
+      %Attr{id: :class, type: :string, default: "", doc: "Additional CSS classes for the group element."}
+    ]
+  end
+
+  def slots do
+    [%Slot{id: :panel, required: true, doc: "Exactly two panels, in source order."}]
+  end
+
+  def variations do
+    [
+      %Variation{
+        id: :horizontal,
+        description: "Side-by-side, drag ←→",
+        attributes: %{id: "sb-resizable-horizontal", class: "h-64 border border-border rounded-lg"},
+        slots: [
+          "<:panel><div class=\"p-4\">Primary</div></:panel>",
+          ~s(<:panel label="Resize side panel"><div class="p-4">Side</div></:panel>)
+        ]
+      },
+      %Variation{
+        id: :vertical,
+        description: "Stacked, drag ↕",
+        attributes: %{
+          id: "sb-resizable-vertical",
+          orientation: "vertical",
+          class: "h-80 border border-border rounded-lg"
+        },
+        slots: [
+          "<:panel><div class=\"p-4\">Top</div></:panel>",
+          ~s(<:panel label="Resize bottom panel"><div class="p-4">Bottom</div></:panel>)
+        ]
+      },
+      %Variation{
+        id: :collapsible_end,
+        description: "Only the second panel collapsible",
+        attributes: %{id: "sb-resizable-collapsible-end", class: "h-64 border border-border rounded-lg"},
+        slots: [
+          "<:panel><div class=\"p-4\">Primary</div></:panel>",
+          ~s(<:panel label="Resize side panel" collapsible><div class="p-4">Side</div></:panel>)
+        ]
+      },
+      %Variation{
+        id: :collapsible_both,
+        description: "Either panel collapsible (drag to an edge or use the toggle)",
+        attributes: %{id: "sb-resizable-collapsible", class: "h-64 border border-border rounded-lg"},
+        slots: [
+          "<:panel collapsible><div class=\"p-4\">Primary</div></:panel>",
+          ~s(<:panel label="Resize side panel" collapsible><div class="p-4">Side</div></:panel>)
+        ]
+      },
+      %Variation{
+        id: :stacked_collapsible,
+        description: "Stacked, both panels collapsible",
+        attributes: %{
+          id: "sb-resizable-stacked-collapsible",
+          orientation: "vertical",
+          class: "h-80 border border-border rounded-lg"
+        },
+        slots: [
+          "<:panel collapsible><div class=\"p-4\">Top</div></:panel>",
+          ~s(<:panel label="Resize bottom panel" collapsible><div class="p-4">Bottom</div></:panel>)
+        ]
+      }
+    ]
+  end
+end

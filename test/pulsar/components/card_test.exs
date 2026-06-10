@@ -45,6 +45,16 @@ defmodule Pulsar.Components.CardTest do
       assert html =~ ~s(<h3>Title</h3>)
       assert html =~ ~s(<p>Description</p>)
     end
+
+    test "card base uses the fast color-transition motion tokens" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Card.card>Motion</Card.card>])
+
+      assert html =~ ~s(transition-colors)
+      assert html =~ ~s(duration-fast)
+      assert html =~ ~s(ease-standard)
+      refute html =~ ~s(duration-normal)
+    end
   end
 
   describe "card variants" do
