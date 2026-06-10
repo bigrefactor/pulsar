@@ -145,5 +145,12 @@ defmodule Pulsar.Components.AccordionTest do
       assert html =~ "group-data-[expanded]/item:grid-rows-[1fr]"
       assert html =~ "transition-[grid-template-rows]"
     end
+
+    test "item wrapper carries the group/item root the disclosure variants key off" do
+      # Every `group-data-[expanded]/item:*` utility (panel expand, chevron
+      # rotate, header tint, panel visibility) is inert without a `group/item`
+      # root on the same element that carries `data-accordion-item`/`data-expanded`.
+      assert basic() =~ ~r/data-accordion-item[^>]*class="[^"]*group\/item/s
+    end
   end
 end

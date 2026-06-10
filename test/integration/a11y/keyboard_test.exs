@@ -516,6 +516,78 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     end
   end
 
+  describe "Accordion interaction" do
+    # The fixture at `/keyboard/accordion` renders a single-mode accordion
+    # (`kbd-acc`) with headers kbd-acc-{one,two,three}-header, item two disabled,
+    # and unique panel bodies kbd-acc-{one,three}-body. Behavior comes from the
+    # `.PulsarAccordion` colocated hook.
+    #
+    # These assert the panel actually OPENS (visible body), not just that
+    # `aria-expanded` flips — the hook can toggle `data-expanded` while the panel
+    # stays collapsed/hidden if the `group/item` disclosure root is missing.
+    #
+    # Verification: remove `"group/item"` from the item wrapper class in
+    # `priv/templates/accordion.ex.eex` (and re-sync + `MIX_ENV=test mix
+    # assets.build`), re-run — `aria-expanded` still flips but `assert_visible`
+    # fails because the panel never expands.
+
+    test "clicking a header opens its panel (visible, not just aria)", %{conn: conn} do
+      conn
+      |> visit("/keyboard/accordion")
+      |> A11y.await_live_connected()
+      |> A11y.refute_visible("kbd-acc-one-body")
+      |> click("#kbd-acc-one-header")
+      |> assert_has(~s|#kbd-acc-one-header[aria-expanded="true"]|)
+      |> A11y.await_animations("kbd-acc")
+      |> A11y.assert_visible("kbd-acc-one-body")
+    end
+
+    test "clicking an open header closes it again (collapsible single)", %{conn: conn} do
+      conn
+      |> visit("/keyboard/accordion")
+      |> A11y.await_live_connected()
+      |> click("#kbd-acc-one-header")
+      |> assert_has(~s|#kbd-acc-one-header[aria-expanded="true"]|)
+      |> click("#kbd-acc-one-header")
+      |> assert_has(~s|#kbd-acc-one-header[aria-expanded="false"]|)
+      |> A11y.await_animations("kbd-acc")
+      |> A11y.refute_visible("kbd-acc-one-body")
+    end
+
+    test "single mode: opening a second panel closes the first", %{conn: conn} do
+      conn
+      |> visit("/keyboard/accordion")
+      |> A11y.await_live_connected()
+      |> click("#kbd-acc-one-header")
+      |> assert_has(~s|#kbd-acc-one-header[aria-expanded="true"]|)
+      |> click("#kbd-acc-three-header")
+      |> assert_has(~s|#kbd-acc-three-header[aria-expanded="true"]|)
+      |> assert_has(~s|#kbd-acc-one-header[aria-expanded="false"]|)
+      |> A11y.await_animations("kbd-acc")
+      |> A11y.assert_visible("kbd-acc-three-body")
+      |> A11y.refute_visible("kbd-acc-one-body")
+    end
+
+    test "the disabled header renders disabled and its panel stays closed", %{conn: conn} do
+      # A real <button disabled> can't be clicked (the browser blocks it), so the
+      # closed state is asserted directly; keyboard-skip of the disabled header is
+      # covered by the ArrowDown test below.
+      conn
+      |> visit("/keyboard/accordion")
+      |> A11y.await_live_connected()
+      |> assert_has(~s|#kbd-acc-two-header[disabled][aria-expanded="false"]|)
+      |> A11y.refute_visible("kbd-acc-two-body")
+    end
+
+    test "ArrowDown moves focus to the next enabled header (skips disabled)", %{conn: conn} do
+      conn
+      |> visit("/keyboard/accordion")
+      |> A11y.await_live_connected()
+      |> press("#kbd-acc-one-header", "ArrowDown")
+      |> A11y.assert_focused("kbd-acc-three-header")
+    end
+  end
+
   # Dispatches a realistic backdrop click on the open dialog `id`: a
   # mousedown + click whose pointer lands outside the panel box (the modal hook
   # requires both the down and the click to target the dialog itself, which is

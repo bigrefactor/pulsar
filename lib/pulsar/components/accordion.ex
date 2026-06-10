@@ -227,7 +227,7 @@ defmodule Pulsar.Components.Accordion do
         data-accordion-item
         id={item.item_id}
         data-expanded={(item.open && "") || nil}
-        class={item_classes(@variant)}
+        class={["group/item", item_classes(@variant)]}
       >
         <.dynamic_tag tag_name={@heading_level} class="m-0">
           <button
