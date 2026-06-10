@@ -41,6 +41,7 @@ defmodule Pulsar.TemplateSync do
     {:badge, "lib/pulsar/components/badge.ex", "Pulsar.Components", "Pulsar.Components.Badge"},
     {:breadcrumb, "lib/pulsar/components/breadcrumb.ex", "Pulsar.Components", "Pulsar.Components.Breadcrumb"},
     {:button, "lib/pulsar/components/button.ex", "Pulsar.Components", "Pulsar.Components.Button"},
+    {:calendar, "lib/pulsar/components/calendar.ex", "Pulsar.Components", "Pulsar.Components.Calendar"},
     {:card, "lib/pulsar/components/card.ex", "Pulsar.Components", "Pulsar.Components.Card"},
     {:checkbox, "lib/pulsar/components/checkbox.ex", "Pulsar.Components", "Pulsar.Components.Checkbox"},
     {:collapsible, "lib/pulsar/components/collapsible.ex", "Pulsar.Components", "Pulsar.Components.Collapsible"},
