@@ -22,6 +22,8 @@ defmodule Pulsar.DevApp.Components do
        {"InputOTP (solid)", "/components/input_otp/solid"},
        {"Label", "/components/label"},
        {"RadioGroup", "/components/radio_group"},
+       {"Resizable (horizontal)", "/components/resizable/horizontal"},
+       {"Resizable (vertical)", "/components/resizable/vertical"},
        {"Select (outline)", "/components/select/outline"},
        {"Select (ghost)", "/components/select/ghost"},
        {"Select (solid)", "/components/select/solid"},
@@ -36,12 +38,21 @@ defmodule Pulsar.DevApp.Components do
      ]},
     {"Navigation",
      [
+       {"Accordion (outline)", "/components/accordion/outline"},
+       {"Accordion (solid)", "/components/accordion/solid"},
+       {"Accordion (ghost)", "/components/accordion/ghost"},
+       {"Accordion (elevated)", "/components/accordion/elevated"},
+       {"Breadcrumb", "/components/breadcrumb"},
+       {"Collapsible", "/components/collapsible"},
        {"Menu", "/components/menu"},
        {"Navbar", "/components/navbar"},
        {"Pagination (ghost)", "/components/pagination/ghost"},
        {"Pagination (solid)", "/components/pagination/solid"},
        {"Pagination (outline)", "/components/pagination/outline"},
        {"Sidebar", "/components/sidebar"},
+       {"Steps (solid)", "/components/steps/solid"},
+       {"Steps (outline)", "/components/steps/outline"},
+       {"Steps (ghost)", "/components/steps/ghost"},
        {"Tabs (ghost)", "/components/tabs/ghost"},
        {"Tabs (solid)", "/components/tabs/solid"},
        {"Tabs (outline)", "/components/tabs/outline"},
@@ -50,6 +61,7 @@ defmodule Pulsar.DevApp.Components do
     {"Overlays",
      [
        {"AlertDialog", "/components/alert_dialog"},
+       {"Drawer", "/components/drawer"},
        {"DropdownMenu", "/components/dropdown_menu"},
        {"Modal", "/components/modal"},
        {"Popover", "/components/popover"},
@@ -77,7 +89,10 @@ defmodule Pulsar.DevApp.Components do
        {"Avatar", "/components/avatar"},
        {"Badge", "/components/badge"},
        {"Icon", "/components/icon"},
-       {"Skeleton", "/components/skeleton"}
+       {"Progress", "/components/progress"},
+       {"Skeleton", "/components/skeleton"},
+       {"Spinner", "/components/spinner"},
+       {"Status", "/components/status"}
      ]}
   ]
 

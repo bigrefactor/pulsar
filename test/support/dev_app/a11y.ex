@@ -150,4 +150,41 @@ defmodule Pulsar.DevApp.A11y do
       end
     )
   end
+
+  @doc """
+  Asserts the element with `id` is actually rendered visible — not merely present
+  in the DOM. Checks computed `visibility`/`display` and a non-zero layout box.
+
+  This is the assertion that catches a broken disclosure: a hook can flip
+  `aria-expanded`/`data-expanded` while the panel stays `visibility: hidden` or
+  collapsed to `grid-rows: 0fr` (e.g. a missing `group/*` root), so an
+  attribute-only check passes while nothing opens on screen.
+  """
+  def assert_visible(conn, id) when is_binary(id), do: check_visible(conn, id, true)
+
+  @doc """
+  The inverse of `assert_visible/2`: asserts the element with `id` is present but
+  not visible (collapsed/hidden).
+  """
+  def refute_visible(conn, id) when is_binary(id), do: check_visible(conn, id, false)
+
+  defp check_visible(conn, id, expected) do
+    # Tri-state so `refute_visible/2` distinguishes "present but hidden" from
+    # "missing entirely" — a vanished element must fail, not silently pass as
+    # "hidden". (Can't lean on Playwright's `assert_has`: it waits for the
+    # element to be *visible*, which never settles for a collapsed panel.)
+    expr =
+      "(function(){var el=document.getElementById(#{Jason.encode!(id)});if(!el)return 'missing';" <>
+        "var s=getComputedStyle(el);var r=el.getBoundingClientRect();" <>
+        "return (s.visibility!=='hidden'&&s.display!=='none'&&r.height>0)?'visible':'hidden';})()"
+
+    want = if expected, do: "visible", else: "hidden"
+
+    PhoenixTest.Playwright.evaluate(conn, expr, fn actual ->
+      if actual != want do
+        raise ExUnit.AssertionError,
+          message: "expected ##{id} to be #{want}, was #{actual}"
+      end
+    end)
+  end
 end

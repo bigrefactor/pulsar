@@ -1,0 +1,153 @@
+@moduledoc """
+Spinner component for loading and async states.
+
+Provides an accessible, animated loading indicator. By default the spinner
+announces itself to assistive technologies via a status role and a
+visually-hidden label; mark it `decorative` to silence it when a surrounding
+control or region already conveys the loading state.
+
+## Features
+
+- **Multiple sizes**: xs, sm, md, lg, xl matching other Pulsar components
+- **Full color palette**: inherits the current text color by default, or pick a
+  semantic color
+- **Announce by default**: a status role plus a visually-hidden label, with a
+  `decorative` escape hatch
+
+## Examples
+
+    # Spinner that announces "Loading"
+    <.spinner />
+
+    # Sized and colored
+    <.spinner size="lg" color="primary" />
+
+    # Custom announced label
+    <.spinner label="Saving changes" />
+
+    # Decorative — silenced for assistive tech (e.g. inside a labeled region)
+    <.spinner decorative />
+"""
+
+use Phoenix.Component
+
+import Twm, only: [merge: 1]
+
+# ============================================================================
+# CONFIGURATION & CONSTANTS
+# ============================================================================
+
+alias Phoenix.LiveView.Rendered
+
+# Text color tokens; "current" inherits the surrounding text color.
+@color_config %{
+  "current" => "",
+  "neutral" => "text-foreground",
+  "primary" => "text-primary",
+  "secondary" => "text-secondary",
+  "success" => "text-success",
+  "danger" => "text-danger",
+  "warning" => "text-warning",
+  "info" => "text-info"
+}
+
+# Ring (SVG) dimensions per size.
+@ring_size_config %{
+  "xs" => "h-3 w-3",
+  "sm" => "h-4 w-4",
+  "md" => "h-5 w-5",
+  "lg" => "h-6 w-6",
+  "xl" => "h-8 w-8"
+}
+
+# ============================================================================
+# SPINNER COMPONENT
+# ============================================================================
+
+attr :size, :string,
+  default: "md",
+  values: ~w(xs sm md lg xl),
+  doc: "Size of the spinner"
+
+attr :color, :string,
+  default: "current",
+  values: ~w(current neutral primary secondary success danger warning info),
+  doc: "Color of the spinner; \"current\" inherits the surrounding text color"
+
+attr :label, :string,
+  default: "Loading",
+  doc: "Accessible label announced by screen readers. Ignored when decorative."
+
+attr :decorative, :boolean,
+  default: false,
+  doc:
+    "When true, hides the spinner from assistive technologies and omits the status role and label."
+
+attr :class, :string,
+  default: "",
+  doc: "Additional CSS classes"
+
+attr :rest, :global, doc: "Additional HTML attributes"
+
+@doc """
+Renders an accessible, animated loading spinner.
+
+By default the wrapper carries `role="status"` with a visually-hidden label so
+screen readers announce loading. Pass `decorative` to silence it.
+"""
+@spec spinner(map()) :: Rendered.t()
+def spinner(assigns) do
+  assigns =
+    assigns
+    |> assign(:class, build_spinner_classes(assigns))
+    |> assign(:role, status_role(assigns.decorative))
+    |> assign(:aria_hidden, aria_hidden(assigns.decorative))
+    |> assign(:ring_class, ring_classes(assigns.size))
+
+  ~H"""
+  <span class={@class} role={@role} aria-hidden={@aria_hidden} {@rest}>
+    <svg
+      aria-hidden="true"
+      class={@ring_class}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25" />
+      <path
+        fill="currentColor"
+        class="opacity-75"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+      />
+    </svg>
+    <span :if={not @decorative} class="sr-only">{@label}</span>
+  </span>
+  """
+end
+
+# ============================================================================
+# SPINNER HELPER FUNCTIONS
+# ============================================================================
+
+# Builds the merged class string for the wrapper.
+defp build_spinner_classes(assigns) do
+  merge([
+    "inline-flex items-center justify-center",
+    color_classes(assigns.color),
+    assigns.class
+  ])
+end
+
+@spec status_role(boolean()) :: String.t() | nil
+defp status_role(true), do: nil
+defp status_role(false), do: "status"
+
+@spec aria_hidden(boolean()) :: String.t() | nil
+defp aria_hidden(true), do: "true"
+defp aria_hidden(false), do: nil
+
+@spec color_classes(String.t()) :: String.t()
+defp color_classes(color), do: @color_config[color] || ""
+
+@spec ring_classes(String.t()) :: String.t()
+defp ring_classes(size), do: merge(["animate-spin", @ring_size_config[size] || ""])

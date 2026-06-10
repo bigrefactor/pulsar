@@ -1,0 +1,235 @@
+@moduledoc """
+Status indicator: a small colored dot for signalling state.
+
+Renders a colored dot for states such as online/offline/busy, unread, or live.
+Use it standalone next to a text label, or place it on the corner of another
+element (avatar, button, icon) with `indicator/1`.
+
+This is a *status* marker, distinct from `spinner/1` (a busy/activity
+animation). The optional `ping` animation gives a "live/active" treatment: an
+expanding halo behind the dot.
+
+## Features
+
+- **House colors**: neutral, primary, secondary, success, danger, warning, info
+- **Sizes**: xs, sm, md, lg, xl
+- **Ping**: an optional expanding-halo animation for live/active states
+- **Corner placement**: `indicator/1` overlays the dot on any element
+
+## Examples
+
+    # Standalone dot (decorative — pair it with visible text)
+    <.status color="success" /> Online
+
+    # Meaningful dot — announced to screen readers
+    <.status color="success" label="Online" />
+
+    # Live / active treatment
+    <.status color="danger" ping label="Live" />
+
+    # On the corner of an avatar
+    <.indicator placement="bottom-right">
+      <:item><.status color="success" label="Online" /></:item>
+      <.avatar name="Jane Doe" />
+    </.indicator>
+
+## Accessible name
+
+A dot with no `label` is decorative (`aria-hidden`), on the assumption that
+adjacent text carries the meaning. Pass `label` when the dot is the only signal
+of state; it is then exposed via `role="img"` and `aria-label`.
+"""
+
+use Phoenix.Component
+
+import Twm, only: [merge: 1]
+
+alias Phoenix.LiveView.Rendered
+
+# ============================================================================
+# CONFIGURATION & CONSTANTS
+# ============================================================================
+
+# Dot background color per house color token.
+@color_config %{
+  "neutral" => "bg-neutral",
+  "primary" => "bg-primary",
+  "secondary" => "bg-secondary",
+  "success" => "bg-success",
+  "danger" => "bg-danger",
+  "warning" => "bg-warning",
+  "info" => "bg-info"
+}
+
+# Dot dimensions per size.
+@size_config %{
+  "xs" => "h-1.5 w-1.5",
+  "sm" => "h-2 w-2",
+  "md" => "h-2.5 w-2.5",
+  "lg" => "h-3 w-3",
+  "xl" => "h-4 w-4"
+}
+
+# Absolute-position utilities per placement (a 3x3 grid). The item is nudged
+# half its size beyond the corner so it straddles the content edge.
+@placement_config %{
+  "top-left" => "top-0 left-0 -translate-x-1/2 -translate-y-1/2",
+  "top" => "top-0 left-1/2 -translate-x-1/2 -translate-y-1/2",
+  "top-right" => "top-0 right-0 translate-x-1/2 -translate-y-1/2",
+  "left" => "top-1/2 left-0 -translate-x-1/2 -translate-y-1/2",
+  "center" => "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
+  "right" => "top-1/2 right-0 translate-x-1/2 -translate-y-1/2",
+  "bottom-left" => "bottom-0 left-0 -translate-x-1/2 translate-y-1/2",
+  "bottom" => "bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2",
+  "bottom-right" => "bottom-0 right-0 translate-x-1/2 translate-y-1/2"
+}
+
+@indicator_ring_classes "[&>*]:ring-2 [&>*]:ring-background"
+
+# ============================================================================
+# STATUS COMPONENT
+# ============================================================================
+
+attr :color, :string,
+  default: "neutral",
+  values: ~w(neutral primary secondary success danger warning info),
+  doc: "Dot color from the house palette"
+
+attr :size, :string,
+  default: "md",
+  values: ~w(xs sm md lg xl),
+  doc: "Dot size"
+
+attr :ping, :boolean,
+  default: false,
+  doc: "When true, renders an expanding-halo animation behind the dot for live/active states"
+
+attr :label, :string,
+  default: nil,
+  doc:
+    "Accessible label. When set the dot is exposed via role=\"img\" and aria-label; " <>
+      "when omitted the dot is decorative (aria-hidden), assuming adjacent text conveys the state."
+
+attr :class, :string, default: "", doc: "Additional CSS classes"
+
+attr :rest, :global, doc: "Additional HTML attributes"
+
+@doc """
+Renders a colored status dot.
+"""
+@spec status(map()) :: Rendered.t()
+def status(assigns) do
+  label = present_or_nil(assigns.label)
+
+  assigns =
+    assigns
+    |> assign(:label, label)
+    |> assign(:wrapper_class, build_wrapper_classes(assigns))
+    |> assign(:color_class, color_classes(assigns.color))
+    |> assign(:role, status_role(label))
+    |> assign(:aria_hidden, aria_hidden(label))
+
+  ~H"""
+  <span
+    class={@wrapper_class}
+    role={@role}
+    aria-label={@label}
+    aria-hidden={@aria_hidden}
+    {@rest}
+  >
+    <span
+      :if={@ping}
+      aria-hidden="true"
+      class={["absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping motion-reduce:hidden", @color_class]}
+    >
+    </span>
+    <span class={["relative inline-flex h-full w-full rounded-full", @color_class]}></span>
+  </span>
+  """
+end
+
+# ============================================================================
+# INDICATOR COMPONENT
+# ============================================================================
+
+attr :placement, :string,
+  default: "top-right",
+  values: ~w(top-left top top-right left center right bottom-left bottom bottom-right),
+  doc: "Corner/edge of the decorated content to place the item on"
+
+attr :ring, :boolean,
+  default: true,
+  doc:
+    "Draw a background-colored separation ring around the placed item so it reads " <>
+      "against busy content (e.g. an avatar image). Set false to disable."
+
+attr :class, :string, default: "", doc: "Additional CSS classes"
+
+attr :rest, :global, doc: "Additional HTML attributes"
+
+slot :item, required: true, doc: "The element placed on the corner (a status dot, a badge, a count). Use a single element root so the separation ring traces it."
+
+slot :inner_block, required: true, doc: "The content being decorated"
+
+@doc """
+Places a slotted `:item` on the corner of its content.
+
+Generic: it positions any content (a `status/1` dot, a badge, a count) on any
+element. The item is a sibling of the content, so a parent's `overflow-hidden`
+(e.g. on an avatar) never clips it.
+"""
+@spec indicator(map()) :: Rendered.t()
+def indicator(assigns) do
+  assigns =
+    assigns
+    |> assign(:wrapper_class, merge(["relative inline-flex", assigns.class]))
+    |> assign(:item_class, item_classes(assigns.placement, assigns.ring))
+
+  ~H"""
+  <div class={@wrapper_class} {@rest}>
+    {render_slot(@inner_block)}
+    <span class={@item_class}>{render_slot(@item)}</span>
+  </div>
+  """
+end
+
+# ============================================================================
+# HELPER FUNCTIONS
+# ============================================================================
+
+defp build_wrapper_classes(assigns) do
+  merge([
+    "relative inline-flex shrink-0 rounded-full",
+    size_classes(assigns.size),
+    assigns.class
+  ])
+end
+
+@spec color_classes(String.t()) :: String.t()
+defp color_classes(color), do: @color_config[color] || @color_config["neutral"]
+
+@spec size_classes(String.t()) :: String.t()
+defp size_classes(size), do: @size_config[size] || @size_config["md"]
+
+defp item_classes(placement, ring) do
+  merge([
+    "absolute z-10",
+    if(ring, do: @indicator_ring_classes, else: ""),
+    placement_classes(placement)
+  ])
+end
+
+@spec placement_classes(String.t()) :: String.t()
+defp placement_classes(placement), do: @placement_config[placement] || @placement_config["top-right"]
+
+defp status_role(nil), do: nil
+defp status_role(_label), do: "img"
+
+defp aria_hidden(nil), do: "true"
+defp aria_hidden(_label), do: nil
+
+defp present_or_nil(value) when is_binary(value) do
+  if String.trim(value) == "", do: nil, else: value
+end
+
+defp present_or_nil(_value), do: nil

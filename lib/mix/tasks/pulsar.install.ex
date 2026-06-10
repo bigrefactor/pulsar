@@ -71,7 +71,7 @@ defmodule Mix.Tasks.Pulsar.Install.Docs do
 
     Form components: badge, button, checkbox, field, input, label, radio_group, select, switch, textarea
 
-    UI components: alert, alert_dialog, avatar, card, divider, dropdown_menu, flash, flash_group, header, icon, link, list, menu, modal, navbar, popover, sidebar, skeleton, table, tabs, tooltip
+    UI components: accordion, alert, alert_dialog, avatar, breadcrumb, card, collapsible, divider, drawer, dropdown_menu, flash, flash_group, header, icon, link, list, menu, modal, navbar, popover, progress, sidebar, skeleton, spinner, status, steps, table, tabs, tooltip
 
     ## Component Dependencies
 
@@ -99,20 +99,24 @@ if Code.ensure_loaded?(Igniter) do
     alias Igniter.Project.Deps
 
     @components %{
+      accordion: [:icon],
       alert: [:icon],
       alert_dialog: [:modal, :button],
       avatar: [:icon, :link],
       badge: [],
+      breadcrumb: [:icon, :link],
       button: [:link],
       card: [],
       checkbox: [],
+      collapsible: [:icon],
       divider: [],
+      drawer: [:modal, :button],
       dropdown_menu: [:icon, :popover],
       field: [:checkbox, :icon, :input, :input_otp, :label, :radio_group, :select, :switch, :textarea],
       flash: [],
       flash_group: [:flash, :icon],
       form: [],
-      header: [:link, :icon],
+      header: [:link, :icon, :breadcrumb],
       icon: [],
       input: [],
       input_otp: [],
@@ -124,10 +128,15 @@ if Code.ensure_loaded?(Igniter) do
       navbar: [:icon],
       pagination: [:icon],
       popover: [],
+      progress: [],
       radio_group: [],
+      resizable: [:icon],
       select: [:badge],
       sidebar: [],
       skeleton: [],
+      spinner: [],
+      status: [],
+      steps: [:icon],
       switch: [],
       table: [],
       tabs: [:icon],
@@ -157,14 +166,18 @@ if Code.ensure_loaded?(Igniter) do
         # This ensures your option schema includes options from nested tasks
         composes: [
           "pulsar.gen.theme",
+          "pulsar.gen.accordion",
           "pulsar.gen.alert",
           "pulsar.gen.alert_dialog",
           "pulsar.gen.avatar",
           "pulsar.gen.badge",
           "pulsar.gen.button",
+          "pulsar.gen.breadcrumb",
           "pulsar.gen.card",
           "pulsar.gen.checkbox",
+          "pulsar.gen.collapsible",
           "pulsar.gen.divider",
+          "pulsar.gen.drawer",
           "pulsar.gen.dropdown_menu",
           "pulsar.gen.field",
           "pulsar.gen.flash",
@@ -182,10 +195,15 @@ if Code.ensure_loaded?(Igniter) do
           "pulsar.gen.navbar",
           "pulsar.gen.pagination",
           "pulsar.gen.popover",
+          "pulsar.gen.progress",
           "pulsar.gen.radio_group",
+          "pulsar.gen.resizable",
           "pulsar.gen.select",
           "pulsar.gen.sidebar",
           "pulsar.gen.skeleton",
+          "pulsar.gen.spinner",
+          "pulsar.gen.status",
+          "pulsar.gen.steps",
           "pulsar.gen.switch",
           "pulsar.gen.table",
           "pulsar.gen.tabs",

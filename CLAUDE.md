@@ -420,6 +420,17 @@ mix test --cover
 3. Use Playwright-MCP to capture visual validation screenshots
 4. Test generator functionality in a sample Phoenix app
 
+**Components with a colocated JS hook MUST have a real-browser interaction test.**
+Static `rendered_to_string` assertions (and even the axe gate) pass while a hook
+is completely broken — they only check that attributes/classes are present, not
+that the interaction works. Add a `/keyboard/<component>` fixture
+(`test/support/dev_app/live/keyboard/<component>_live.ex`) and a test in
+`test/integration/a11y/keyboard_test.exs` that drives the real DOM (`click`/`press`
+via PhoenixTest.Playwright) and asserts the resulting **visible** state change with
+`A11y.assert_visible/2` / `refute_visible/2` — not just an `aria-*`/`data-*` flip.
+A hook can toggle `aria-expanded` while the panel stays hidden (e.g. a missing
+`group/*` CSS-state root), so attribute-only assertions miss the bug.
+
 **Visual Test Maintenance:**
 - Screenshots are gitignored but can be regenerated for validation
 - Use consistent naming: `{component}-{feature}.png`

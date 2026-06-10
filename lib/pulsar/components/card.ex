@@ -187,7 +187,7 @@ defmodule Pulsar.Components.Card do
 
   # Base card styling classes
   @card_base_classes "block w-full overflow-hidden " <>
-                       "transition-colors duration-normal ease-standard"
+                       "transition-colors duration-fast ease-standard"
 
   # Valid variants and colors for compile-time validation
   @valid_variants ~w(solid outline ghost elevated)

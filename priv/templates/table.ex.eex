@@ -229,7 +229,7 @@ end
 
 # Row base classes
 @row_base_classes [
-  "transition-colors duration-fast",
+  "transition-colors duration-fast ease-standard",
   "border-b border-border/50 last:border-b-0"
 ]
 
@@ -499,10 +499,10 @@ def table(assigns) do
       <tbody :if={@loading} class={@tbody_classes}>
         <tr :for={_ <- 1..5} class={@row_classes}>
           <td :for={_col <- @col} class={build_data_cell_classes(@size, "left", "")}>
-            <div class="animate-pulse bg-surface-1 h-4 rounded"></div>
+            <div class="animate-pulse-subtle bg-surface-1 h-4 rounded"></div>
           </td>
           <td :if={@action != []} class={build_data_cell_classes(@size, "right", "w-0")}>
-            <div class="animate-pulse bg-surface-1 h-6 w-16 rounded"></div>
+            <div class="animate-pulse-subtle bg-surface-1 h-6 w-16 rounded"></div>
           </td>
         </tr>
       </tbody>
