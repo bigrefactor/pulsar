@@ -92,7 +92,8 @@ When no `:label` slot is provided, labels are automatically generated from field
 
 All input types support the full range of styling attributes including `variant`, `color`, and `size`:
 
-- **Text Inputs**: text, email, password, number, tel, url, search, date, time, datetime-local, file, range (via <%= @component_namespace %>.Input)
+- **Text Inputs**: text, email, password, number, tel, url, search, time, datetime-local, file, range (via <%= @component_namespace %>.Input)
+- **Date**: date and daterange render <%= @component_namespace %>.DatePicker (typeable input with a locale-aware calendar popover)
 - **Select**: Renders <%= @component_namespace %>.Select with dropdown options
 - **Textarea**: Renders <%= @component_namespace %>.Textarea for multi-line text
 - **Checkbox**: Renders <%= @component_namespace %>.Checkbox with optional card styling

@@ -93,7 +93,8 @@ defmodule Pulsar.Components.Field do
 
   All input types support the full range of styling attributes including `variant`, `color`, and `size`:
 
-  - **Text Inputs**: text, email, password, number, tel, url, search, date, time, datetime-local, file, range (via Pulsar.Components.Input)
+  - **Text Inputs**: text, email, password, number, tel, url, search, time, datetime-local, file, range (via Pulsar.Components.Input)
+  - **Date**: date and daterange render Pulsar.Components.DatePicker (typeable input with a locale-aware calendar popover)
   - **Select**: Renders Pulsar.Components.Select with dropdown options
   - **Textarea**: Renders Pulsar.Components.Textarea for multi-line text
   - **Checkbox**: Renders Pulsar.Components.Checkbox with optional card styling

@@ -110,6 +110,8 @@ def date_picker(assigns) do
         value={@start_display}
         placeholder={@placeholder}
         disabled={@disabled}
+        aria-invalid={(@invalid && "true") || "false"}
+        aria-describedby={assigns[:"aria-describedby"]}
         class={@input_class}
         autocomplete="off"
       />
@@ -121,6 +123,7 @@ def date_picker(assigns) do
         value={@end_display}
         placeholder={@placeholder}
         disabled={@disabled}
+        aria-invalid={(@invalid && "true") || "false"}
         class={@input_class}
         autocomplete="off"
       />
@@ -160,7 +163,9 @@ def date_picker(assigns) do
         mounted() {
           this.mode = this.el.dataset.mode || "single"
           this.locale = this.el.dataset.locale || undefined
-          this.fmt = new Intl.DateTimeFormat(this.locale, { dateStyle: "medium" })
+          // Numeric, locale-ordered display (e.g. 06/22/2026, 22/06/2026) so the
+          // shown value round-trips through parse() when the user edits it.
+          this.fmt = new Intl.DateTimeFormat(this.locale, { year: "numeric", month: "2-digit", day: "2-digit" })
           this.order = this.fieldOrder(this.locale) // e.g. ["month","day","year"]
 
           // the composed Calendar element (its id is `${this.el.id}-cal`)
@@ -229,10 +234,12 @@ def date_picker(assigns) do
             const [a, b] = seed.split("/")
             this.setPair("start", a)
             this.setPair("end", b)
+            // Fire only once the range is complete, matching Calendar's on_select.
+            if (a && b) this.runChange()
           } else {
             this.setPair("single", seed)
+            if (seed) this.runChange()
           }
-          this.runChange()
         },
 
         setPair(kind, iso) {
