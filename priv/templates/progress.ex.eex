@@ -226,17 +226,12 @@ end
 # ============================================================================
 
 defp assign_computed(assigns) do
-  determinate = assigns.value != nil
-  safe_max = if is_number(assigns.max) and assigns.max > 0, do: assigns.max, else: 100
-  clamped = if determinate, do: clamp(assigns.value, 0, safe_max)
-  fraction = if determinate, do: clamped / safe_max, else: 0.0
-  pct = if determinate, do: round(fraction * 100)
-  dashoffset = if determinate, do: Float.round(@ring_circumference * (1 - fraction), 2), else: @ring_circumference
+  {pct, aria_valuenow, dashoffset} = progress_values(assigns.value, assigns.max)
 
   assigns
-  |> assign(:determinate, determinate)
+  |> assign(:determinate, assigns.value != nil)
   |> assign(:pct, pct)
-  |> assign(:aria_valuenow, if(determinate, do: clamped))
+  |> assign(:aria_valuenow, aria_valuenow)
   |> assign(:root_class, merge([@root_config[assigns.shape] || "", assigns.class]))
   |> assign(:linear_size_class, @linear_size_config[assigns.size] || "")
   |> assign(:radial_size_class, @radial_size_config[assigns.size] || "")
@@ -244,6 +239,19 @@ defp assign_computed(assigns) do
   |> assign(:ring_color_class, @ring_color_config[assigns.color] || "")
   |> assign(:circumference, @ring_circumference)
   |> assign(:dashoffset, dashoffset)
+end
+
+# Derives `{pct, aria_valuenow, dashoffset}` from the raw value/max. An
+# indeterminate bar (no value) has no percent or aria value and leaves the ring
+# empty (full dash offset).
+defp progress_values(nil, _max), do: {nil, nil, @ring_circumference}
+
+defp progress_values(value, max) do
+  safe_max = if is_number(max) and max > 0, do: max, else: 100
+  clamped = clamp(value, 0, safe_max)
+  fraction = clamped / safe_max
+
+  {round(fraction * 100), clamped, Float.round(@ring_circumference * (1 - fraction), 2)}
 end
 
 @spec clamp(number(), number(), number()) :: number()
