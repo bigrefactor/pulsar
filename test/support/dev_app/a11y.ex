@@ -169,16 +169,21 @@ defmodule Pulsar.DevApp.A11y do
   def refute_visible(conn, id) when is_binary(id), do: check_visible(conn, id, false)
 
   defp check_visible(conn, id, expected) do
+    # Tri-state so `refute_visible/2` distinguishes "present but hidden" from
+    # "missing entirely" — a vanished element must fail, not silently pass as
+    # "hidden". (Can't lean on Playwright's `assert_has`: it waits for the
+    # element to be *visible*, which never settles for a collapsed panel.)
     expr =
-      "(function(){var el=document.getElementById(#{Jason.encode!(id)});if(!el)return false;" <>
+      "(function(){var el=document.getElementById(#{Jason.encode!(id)});if(!el)return 'missing';" <>
         "var s=getComputedStyle(el);var r=el.getBoundingClientRect();" <>
-        "return s.visibility!=='hidden'&&s.display!=='none'&&r.height>0;})()"
+        "return (s.visibility!=='hidden'&&s.display!=='none'&&r.height>0)?'visible':'hidden';})()"
+
+    want = if expected, do: "visible", else: "hidden"
 
     PhoenixTest.Playwright.evaluate(conn, expr, fn actual ->
-      if actual != expected do
+      if actual != want do
         raise ExUnit.AssertionError,
-          message:
-            "expected ##{id} to be #{if(expected, do: "visible", else: "hidden")}, was #{if(actual, do: "visible", else: "hidden")}"
+          message: "expected ##{id} to be #{want}, was #{actual}"
       end
     end)
   end

@@ -70,6 +70,15 @@ defmodule Pulsar.Components.Collapsible do
     "elevated" => "rounded-box border border-border shadow-card overflow-hidden bg-background"
   }
 
+  # `solid` is the filled-trigger variant: the trigger sits on a muted fill while
+  # the panel stays on the page background. Other variants leave the trigger bare.
+  @trigger_fill %{
+    "outline" => "",
+    "ghost" => "",
+    "solid" => "bg-muted",
+    "elevated" => ""
+  }
+
   @size_trigger %{
     "xs" => "text-xs px-3 py-2 gap-2",
     "sm" => "text-sm px-3.5 py-2.5 gap-2",
@@ -162,7 +171,7 @@ defmodule Pulsar.Components.Collapsible do
         data-collapsible-trigger
         aria-controls={@panel_id}
         aria-expanded={to_string(@open)}
-        class={trigger_classes(@size, @color)}
+        class={trigger_classes(@variant, @size, @color)}
       >
         <span>{render_slot(@trigger)}</span>
         <Icon.icon name="hero-chevron-down" size={icon_size(@size)} class={chevron_class()} />
@@ -213,7 +222,7 @@ defmodule Pulsar.Components.Collapsible do
   end
 
   @spec icon_size(String.t()) :: String.t()
-  defp icon_size(size), do: @icon_size[size]
+  defp icon_size(size), do: @icon_size[size] || "sm"
 
   @spec chevron_class() :: String.t()
   defp chevron_class, do: @chevron_base
@@ -227,8 +236,13 @@ defmodule Pulsar.Components.Collapsible do
   @spec panel_body_class(String.t()) :: String.t()
   defp panel_body_class(size), do: @size_panel[size] || ""
 
-  @spec trigger_classes(String.t(), String.t()) :: String.t()
-  defp trigger_classes(size, color) do
-    merge([@trigger_base, @size_trigger[size] || "", @trigger_open[color]])
+  @spec trigger_classes(String.t(), String.t(), String.t()) :: String.t()
+  defp trigger_classes(variant, size, color) do
+    merge([
+      @trigger_base,
+      @trigger_fill[variant] || "",
+      @size_trigger[size] || "",
+      @trigger_open[color] || ""
+    ])
   end
 end

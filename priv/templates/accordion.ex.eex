@@ -305,20 +305,29 @@ def accordion(assigns) do
         if (open) { item.setAttribute("data-expanded", ""); if (header) header.setAttribute("aria-expanded", "true"); this.openIds.add(item.id) }
         else { item.removeAttribute("data-expanded"); if (header) header.setAttribute("aria-expanded", "false"); this.openIds.delete(item.id) }
       },
+      // Fire the `on_change` command for one section, snapshotting its id/state
+      // into phx-value-* so each emission carries its own payload.
+      emitChange(id, open) {
+        const encoded = this.el.dataset.onChange
+        if (!encoded || encoded === "[]" || !this.liveSocket) return
+        this.el.setAttribute("phx-value-id", id)
+        this.el.setAttribute("phx-value-expanded", open ? "true" : "false")
+        this.liveSocket.execJS(this.el, encoded)
+      },
       toggle(header) {
         const item = this.itemFor(header)
         const willOpen = !item.hasAttribute("data-expanded")
         if (!willOpen && this.single && !this.collapsibleSingle) return
         if (willOpen && this.single) {
-          this.items().forEach((other) => { if (other !== item && other.hasAttribute("data-expanded")) this.applyState(other, false) })
+          this.items().forEach((other) => {
+            if (other !== item && other.hasAttribute("data-expanded")) {
+              this.applyState(other, false)
+              this.emitChange(other.id, false)
+            }
+          })
         }
         this.applyState(item, willOpen)
-        const encoded = this.el.dataset.onChange
-        if (encoded && encoded !== "[]" && this.liveSocket) {
-          this.el.setAttribute("phx-value-id", item.id)
-          this.el.setAttribute("phx-value-expanded", willOpen ? "true" : "false")
-          this.liveSocket.execJS(this.el, encoded)
-        }
+        this.emitChange(item.id, willOpen)
       },
       // A LiveView re-render reconciles data-expanded/aria-expanded to the server
       // markup; re-apply the client's open set so toggles survive.
@@ -359,7 +368,7 @@ defp prepare_items(items, group_id, value, type, group_color) do
       icon: Map.get(item, :icon),
       disabled: disabled,
       color: group_color,
-      open: not disabled and raw_id in open_ids
+      open: not disabled and item_id in open_ids
     }
   end)
 end
@@ -378,7 +387,7 @@ end
 defp resolve_open_ids(value, _multiple), do: List.wrap(value)
 
 @spec icon_size(String.t()) :: String.t()
-defp icon_size(size), do: @icon_size[size]
+defp icon_size(size), do: @icon_size[size] || "sm"
 
 @spec chevron_class() :: String.t()
 defp chevron_class, do: @chevron_base
@@ -397,5 +406,5 @@ defp item_classes(variant), do: @item_surface[variant] || ""
 
 @spec header_classes(String.t(), String.t()) :: String.t()
 defp header_classes(size, color) do
-  merge([@header_base, @size_header[size] || "", @header_open[color]])
+  merge([@header_base, @size_header[size] || "", @header_open[color] || ""])
 end

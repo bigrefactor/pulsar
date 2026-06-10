@@ -15,12 +15,14 @@ defmodule Pulsar.Generator.Storybook do
   alias Igniter.Libs.Phoenix
 
   @components [
+    :accordion,
     :alert_dialog,
     :avatar,
     :badge,
     :button,
     :card,
     :checkbox,
+    :collapsible,
     :divider,
     :drawer,
     :dropdown_menu,

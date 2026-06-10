@@ -76,6 +76,12 @@ defmodule Pulsar.Components.CollapsibleTest do
       assert basic(%{extra: [class: "mt-8"]}) =~ "mt-8"
     end
 
+    test "solid variant fills the trigger; other variants leave it bare" do
+      assert basic(%{extra: [variant: "solid"]}) =~ "bg-muted"
+      refute basic(%{extra: [variant: "outline"]}) =~ "bg-muted"
+      refute basic(%{extra: [variant: "ghost"]}) =~ "bg-muted"
+    end
+
     test "container carries the group/collapsible root the disclosure variants key off" do
       # Every `group-data-[expanded]/collapsible:*` utility (panel expand, chevron
       # rotate, trigger tint, panel visibility) is inert without a `group/collapsible`
