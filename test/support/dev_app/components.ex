@@ -38,6 +38,10 @@ defmodule Pulsar.DevApp.Components do
      ]},
     {"Navigation",
      [
+       {"Accordion (outline)", "/components/accordion/outline"},
+       {"Accordion (solid)", "/components/accordion/solid"},
+       {"Accordion (ghost)", "/components/accordion/ghost"},
+       {"Accordion (elevated)", "/components/accordion/elevated"},
        {"Menu", "/components/menu"},
        {"Navbar", "/components/navbar"},
        {"Pagination (ghost)", "/components/pagination/ghost"},
