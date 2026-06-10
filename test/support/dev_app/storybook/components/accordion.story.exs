@@ -9,10 +9,28 @@ defmodule Pulsar.DevApp.Storybook.Components.Accordion do
   def attributes do
     [
       %Attr{id: :id, type: :string, doc: "Accordion container id (auto-generated if omitted)."},
-      %Attr{id: :type, type: :string, values: ~w(single multiple), default: "single", doc: "single = one open at a time."},
+      %Attr{
+        id: :type,
+        type: :string,
+        values: ~w(single multiple),
+        default: "single",
+        doc: "single = one open at a time."
+      },
       %Attr{id: :collapsible, type: :boolean, default: true, doc: "When single, allow closing the open section."},
-      %Attr{id: :variant, type: :string, values: ~w(solid outline ghost elevated), default: "outline", doc: "Visual chrome."},
-      %Attr{id: :color, type: :string, values: ~w(neutral primary secondary success danger warning info), default: "neutral", doc: "Open-header tint."},
+      %Attr{
+        id: :variant,
+        type: :string,
+        values: ~w(solid outline ghost elevated),
+        default: "outline",
+        doc: "Visual chrome."
+      },
+      %Attr{
+        id: :color,
+        type: :string,
+        values: ~w(neutral primary secondary success danger warning info),
+        default: "neutral",
+        doc: "Open-header tint."
+      },
       %Attr{id: :size, type: :string, values: ~w(xs sm md lg xl), default: "md", doc: "Header/panel size."},
       %Attr{id: :class, type: :string, default: "", doc: "Additional CSS classes."}
     ]
@@ -39,8 +57,8 @@ defmodule Pulsar.DevApp.Storybook.Components.Accordion do
         description: "Several sections open independently",
         attributes: %{id: "sb-accordion-multiple", type: "multiple", color: "primary", class: "max-w-lg"},
         slots: [
-          "<:item id=\"a\" title=\"Profile\" icon=\"hero-user\">Profile settings.</:item>",
-          "<:item id=\"b\" title=\"Billing\" icon=\"hero-credit-card\">Billing settings.</:item>"
+          ~s(<:item id="a" title="Profile" icon="hero-user">Profile settings.</:item>),
+          ~s(<:item id="b" title="Billing" icon="hero-credit-card">Billing settings.</:item>)
         ]
       },
       %Variation{
