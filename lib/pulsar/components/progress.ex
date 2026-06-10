@@ -95,9 +95,14 @@ defmodule Pulsar.Components.Progress do
     "radial" => "inline-flex items-center gap-3"
   }
 
-  # Geometry for the radial ring (viewBox 0 0 36 36). If @ring_radius changes, the
-  # r="16" on both <circle> elements in the radial branch must change to match.
+  # Geometry for the radial ring. @ring_radius is the single source of truth: the
+  # center leaves room for half the stroke on each side, the viewBox spans the full
+  # diameter, and the circumference drives the dash math. The template binds all of
+  # these, so changing the radius reshapes the ring consistently.
   @ring_radius 16
+  @ring_stroke_width 4
+  @ring_center @ring_radius + div(@ring_stroke_width, 2)
+  @ring_viewbox 2 * @ring_center
   @ring_circumference Float.round(2 * :math.pi() * @ring_radius, 2)
 
   # ============================================================================
@@ -155,7 +160,7 @@ defmodule Pulsar.Components.Progress do
     <div
       role="progressbar"
       aria-valuemin="0"
-      aria-valuemax={@max}
+      aria-valuemax={@aria_valuemax}
       aria-valuenow={@aria_valuenow}
       aria-label={@label}
       class={@root_class}
@@ -195,19 +200,26 @@ defmodule Pulsar.Components.Progress do
       <div :if={@shape == "radial"} class="relative inline-flex">
         <svg
           class={["block", @radial_size_class, @ring_color_class]}
-          viewBox="0 0 36 36"
+          viewBox={"0 0 #{@ring_viewbox} #{@ring_viewbox}"}
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <circle cx="18" cy="18" r="16" stroke="currentColor" stroke-width="4" class="opacity-20" />
           <circle
-            cx="18"
-            cy="18"
-            r="16"
+            cx={@ring_center}
+            cy={@ring_center}
+            r={@ring_radius}
             stroke="currentColor"
-            stroke-width="4"
+            stroke-width={@ring_stroke_width}
+            class="opacity-20"
+          />
+          <circle
+            cx={@ring_center}
+            cy={@ring_center}
+            r={@ring_radius}
+            stroke="currentColor"
+            stroke-width={@ring_stroke_width}
             stroke-linecap="round"
-            transform="rotate(-90 18 18)"
+            transform={"rotate(-90 #{@ring_center} #{@ring_center})"}
             stroke-dasharray={@circumference}
             stroke-dashoffset={@dashoffset}
           />
@@ -231,33 +243,55 @@ defmodule Pulsar.Components.Progress do
   # ============================================================================
 
   defp assign_computed(assigns) do
-    {pct, aria_valuenow, dashoffset} = progress_values(assigns.value, assigns.max)
+    determinate? = is_number(assigns.value)
+
+    if assigns.shape == "radial" and not determinate? do
+      raise ArgumentError,
+            "progress shape=\"radial\" requires a numeric value, got: #{inspect(assigns.value)}. " <>
+              "Radial progress is determinate-only; use shape=\"linear\" for an indeterminate bar " <>
+              "or spinner/1 for an indeterminate ring."
+    end
+
+    {pct, aria_valuenow, aria_valuemax, dashoffset} =
+      progress_values(assigns.value, assigns.max)
 
     assigns
-    |> assign(:determinate, assigns.value != nil)
+    |> assign(:determinate, determinate?)
     |> assign(:pct, pct)
     |> assign(:aria_valuenow, aria_valuenow)
+    |> assign(:aria_valuemax, aria_valuemax)
     |> assign(:root_class, merge([@root_config[assigns.shape] || "", assigns.class]))
     |> assign(:linear_size_class, @linear_size_config[assigns.size] || "")
     |> assign(:radial_size_class, @radial_size_config[assigns.size] || "")
     |> assign(:fill_color_class, @fill_color_config[assigns.color] || "")
     |> assign(:ring_color_class, @ring_color_config[assigns.color] || "")
+    |> assign(:ring_radius, @ring_radius)
+    |> assign(:ring_center, @ring_center)
+    |> assign(:ring_viewbox, @ring_viewbox)
+    |> assign(:ring_stroke_width, @ring_stroke_width)
     |> assign(:circumference, @ring_circumference)
     |> assign(:dashoffset, dashoffset)
   end
 
-  # Derives `{pct, aria_valuenow, dashoffset}` from the raw value/max. An
-  # indeterminate bar (no value) has no percent or aria value and leaves the ring
-  # empty (full dash offset).
-  defp progress_values(nil, _max), do: {nil, nil, @ring_circumference}
+  # Derives `{pct, aria_valuenow, aria_valuemax, dashoffset}` from the raw
+  # value/max. A non-number value (including nil) is indeterminate: no percent or
+  # `aria-valuenow`, and the ring is left empty (full dash offset). `aria-valuemax`
+  # is always the sanitized max, and `pct`/`aria-valuenow` derive from one rounded
+  # basis so the announced value matches the rendered fill.
+  defp progress_values(value, max) when not is_number(value), do: {nil, nil, safe_max(max), @ring_circumference}
 
   defp progress_values(value, max) do
-    safe_max = if is_number(max) and max > 0, do: max, else: 100
-    clamped = clamp(value, 0, safe_max)
-    fraction = clamped / safe_max
+    safe_max = safe_max(max)
+    value_now = round(clamp(value, 0, safe_max))
+    fraction = value_now / safe_max
 
-    {round(fraction * 100), clamped, Float.round(@ring_circumference * (1 - fraction), 2)}
+    {round(fraction * 100), value_now, safe_max, Float.round(@ring_circumference * (1 - fraction), 2)}
   end
+
+  # A non-positive or non-number max falls back to 100 so the percentage math and
+  # `aria-valuemax` stay valid.
+  defp safe_max(max) when is_number(max) and max > 0, do: max
+  defp safe_max(_max), do: 100
 
   @spec clamp(number(), number(), number()) :: number()
   defp clamp(value, lo, hi), do: value |> Kernel.max(lo) |> Kernel.min(hi)

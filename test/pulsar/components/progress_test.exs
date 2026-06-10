@@ -74,6 +74,46 @@ defmodule Pulsar.Components.ProgressTest do
     end
   end
 
+  describe "progress/1 input sanitization" do
+    test "renders the sanitized max in aria-valuemax for a non-positive max" do
+      assigns = %{}
+      # max={0} before data loads must not announce valuenow > valuemax
+      html = rendered_to_string(~H[<Progress.progress value={3} max={0} />])
+
+      assert html =~ ~s(aria-valuemax="100")
+      assert html =~ ~s(aria-valuenow="3")
+      assert html =~ "width: 3%"
+    end
+
+    test "falls back to max 100 when max is not a number" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Progress.progress value={3} max="10" />])
+
+      # the announced scale matches the rendered fill rather than the raw string max
+      assert html =~ ~s(aria-valuemax="100")
+      assert html =~ "width: 3%"
+    end
+
+    test "treats a non-number value as indeterminate (linear) rather than full" do
+      assigns = %{}
+      # an unparsed form field / string assign must not silently render 100%
+      html = rendered_to_string(~H[<Progress.progress value="50" />])
+
+      refute html =~ "aria-valuenow"
+      refute html =~ "width:"
+      assert html =~ "animate-pulse"
+    end
+
+    test "keeps the displayed percentage and aria-valuenow consistent for floats" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Progress.progress value={33.7} show_value />])
+
+      assert html =~ ~s(aria-valuenow="34")
+      assert html =~ ~r/aria-hidden="true"[^>]*>\s*34%\s*</
+      refute html =~ "33.7"
+    end
+  end
+
   describe "progress/1 radial" do
     test "renders an svg ring with a dasharray and dashoffset for the arc" do
       assigns = %{}
@@ -93,6 +133,29 @@ defmodule Pulsar.Components.ProgressTest do
       assert html =~ "62%"
       # the centered value overlay carries text-foreground for readable contrast
       assert html =~ ~r/absolute inset-0[^"]*text-foreground/
+    end
+
+    test "raises when radial is used without a numeric value (determinate-only)" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/shape="radial" requires a numeric value/, fn ->
+        rendered_to_string(~H[<Progress.progress shape="radial" />])
+      end
+
+      assert_raise ArgumentError, ~r/shape="radial" requires a numeric value/, fn ->
+        rendered_to_string(~H[<Progress.progress shape="radial" value="62" />])
+      end
+    end
+
+    test "derives the SVG geometry from a single source (radius drives center/viewBox)" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Progress.progress shape="radial" value={62} />])
+
+      assert html =~ ~s(viewBox="0 0 36 36")
+      assert html =~ ~s(r="16")
+      assert html =~ ~s(cx="18")
+      assert html =~ ~s(cy="18")
+      assert html =~ ~s(stroke-width="4")
     end
   end
 

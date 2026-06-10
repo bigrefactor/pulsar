@@ -77,12 +77,12 @@ defmodule Pulsar.DevApp.Storybook.Components.Progress do
       %Variation{
         id: :success,
         description: "Success-colored",
-        attributes: %{value: 100, color: "success", show_value: true}
+        attributes: %{value: 100, color: "success", show_value: true, label: "Complete"}
       },
       %Variation{
         id: :radial,
         description: "Radial ring",
-        attributes: %{shape: "radial", value: 62, show_value: true, size: "lg"}
+        attributes: %{shape: "radial", value: 62, show_value: true, size: "lg", label: "Uploading"}
       }
     ]
   end

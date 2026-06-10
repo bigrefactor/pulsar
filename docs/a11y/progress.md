@@ -17,20 +17,20 @@ or `aria-label`) and the value attributes, never by color or animation alone.
 
 **Evidence:** The bar/ring graphics convey their meaning programmatically through
 the `progressbar` role and its value attributes
-(`lib/pulsar/components/progress.ex:156–159`),
+(`lib/pulsar/components/progress.ex:161–164`),
 not as images. The radial SVG is presentational inside the named progressbar; the
-visible percentage text is `aria-hidden` (`lib/pulsar/components/progress.ex:171`
-for the linear bar, `lib/pulsar/components/progress.ex:217` for the radial ring)
+visible percentage text is `aria-hidden` (`lib/pulsar/components/progress.ex:176`
+for the linear bar, `lib/pulsar/components/progress.ex:229` for the radial ring)
 so it is not announced twice.
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:** `role="progressbar"` plus `aria-valuemin="0"`,
-`aria-valuemax={max}`, and (determinate) `aria-valuenow`
-(`lib/pulsar/components/progress.ex:156–159`) expose the progress relationship to
+`aria-valuemax` (the sanitized max), and (determinate) `aria-valuenow`
+(`lib/pulsar/components/progress.ex:161–164`) expose the progress relationship to
 assistive tech. Indeterminate omits `aria-valuenow`
-(`lib/pulsar/components/progress.ex:159`, resolved to `nil` at
-`lib/pulsar/components/progress.ex:252`).
+(`lib/pulsar/components/progress.ex:164`, resolved to `nil` at
+`lib/pulsar/components/progress.ex:281`).
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
@@ -41,7 +41,7 @@ accessible name, not the bar's appearance.
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** Progress is conveyed by the `progressbar` value and the accessible
-name (`lib/pulsar/components/progress.ex:156–160`); the semantic color palette
+name (`lib/pulsar/components/progress.ex:161–165`); the semantic color palette
 (`lib/pulsar/components/progress.ex:70–78` fill colors,
 `lib/pulsar/components/progress.ex:82–90` ring colors) is decorative on top of
 that role/value.
@@ -50,33 +50,39 @@ that role/value.
 
 **Evidence:** Fill colors are the semantic tokens used across the library; the
 optional value text uses `text-muted-foreground` (measured 6.0–7.23:1 on all
-surfaces) at `lib/pulsar/components/progress.ex:172`, and the radial center value
-uses `text-foreground` at `lib/pulsar/components/progress.ex:218`. Verified by
+surfaces) at `lib/pulsar/components/progress.ex:177`, and the radial center value
+uses `text-foreground` at `lib/pulsar/components/progress.ex:230`. Verified by
 the axe gate against the `/components/progress` fixture.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** The fill uses full-strength semantic colors against a `bg-muted`
-track (`lib/pulsar/components/progress.ex:180`); the radial ring uses
+track (`lib/pulsar/components/progress.ex:185`); the radial ring uses
 full-strength semantic stroke color against an `opacity-20` track ring
-(`lib/pulsar/components/progress.ex:202`), giving a discernible boundary between
+(`lib/pulsar/components/progress.ex:213`), giving a discernible boundary between
 filled and unfilled regions.
 
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
 **Evidence:** The indeterminate animation is a decorative `animate-pulse` opacity
-loop (`lib/pulsar/components/progress.ex:190`) on an element whose meaning is
+loop (`lib/pulsar/components/progress.ex:195`) on an element whose meaning is
 carried by the (animation-independent) `progressbar` role. Under
 `prefers-reduced-motion: reduce` the global theme rule stops it; because it
 animates opacity (not transform/position) it settles fully visible, so the
 indicator never disappears.
 
-### 4.1.2 Name, Role, Value (A) — ✓ PASS
+### 4.1.2 Name, Role, Value (A) — ✓ PASS (accessible name is caller-supplied)
 
-**Evidence:** Role `progressbar` at `lib/pulsar/components/progress.ex:156`, name
-from `label`/`aria-label` at `lib/pulsar/components/progress.ex:160`, and value
-from `aria-valuenow` (or absent for indeterminate) at
-`lib/pulsar/components/progress.ex:159`.
+**Evidence:** Role `progressbar` at `lib/pulsar/components/progress.ex:161` and
+value from `aria-valuenow` (or absent for indeterminate) at
+`lib/pulsar/components/progress.ex:164`. The accessible name is a **caller
+responsibility**: it derives from `label` (rendered and mirrored to `aria-label`)
+or an explicit `aria-label` at `lib/pulsar/components/progress.ex:165`. With
+neither supplied the progressbar has no accessible name — the component documents
+this contract in its `@moduledoc` (`lib/pulsar/components/progress.ex:32–38`), and
+every shipped fixture and Storybook example provides a name, so the axe gate runs
+only named instances. Callers embedding `<.progress>` must pass `label` or
+`aria-label`.
 
 ## Non-applicable criteria
 
