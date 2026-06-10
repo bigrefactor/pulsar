@@ -10,8 +10,20 @@ defmodule Pulsar.DevApp.Storybook.Components.Collapsible do
     [
       %Attr{id: :id, type: :string, doc: "Collapsible container id (auto-generated if omitted)."},
       %Attr{id: :open, type: :boolean, default: false, doc: "Open on first render."},
-      %Attr{id: :variant, type: :string, values: ~w(solid outline ghost elevated), default: "outline", doc: "Visual chrome."},
-      %Attr{id: :color, type: :string, values: ~w(neutral primary secondary success danger warning info), default: "neutral", doc: "Open-trigger tint."},
+      %Attr{
+        id: :variant,
+        type: :string,
+        values: ~w(solid outline ghost elevated),
+        default: "outline",
+        doc: "Visual chrome."
+      },
+      %Attr{
+        id: :color,
+        type: :string,
+        values: ~w(neutral primary secondary success danger warning info),
+        default: "neutral",
+        doc: "Open-trigger tint."
+      },
       %Attr{id: :size, type: :string, values: ~w(xs sm md lg xl), default: "md", doc: "Trigger/panel size."},
       %Attr{id: :class, type: :string, default: "", doc: "Additional CSS classes."}
     ]
