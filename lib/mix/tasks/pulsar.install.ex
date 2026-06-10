@@ -99,6 +99,7 @@ if Code.ensure_loaded?(Igniter) do
     alias Igniter.Project.Deps
 
     @components %{
+      accordion: [:icon],
       alert: [:icon],
       alert_dialog: [:modal, :button],
       avatar: [:icon, :link],
@@ -162,6 +163,7 @@ if Code.ensure_loaded?(Igniter) do
         # This ensures your option schema includes options from nested tasks
         composes: [
           "pulsar.gen.theme",
+          "pulsar.gen.accordion",
           "pulsar.gen.alert",
           "pulsar.gen.alert_dialog",
           "pulsar.gen.avatar",
