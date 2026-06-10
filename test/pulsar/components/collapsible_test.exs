@@ -75,5 +75,12 @@ defmodule Pulsar.Components.CollapsibleTest do
     test "custom class merges onto the container" do
       assert basic(%{extra: [class: "mt-8"]}) =~ "mt-8"
     end
+
+    test "container carries the group/collapsible root the disclosure variants key off" do
+      # Every `group-data-[expanded]/collapsible:*` utility (panel expand, chevron
+      # rotate, trigger tint, panel visibility) is inert without a `group/collapsible`
+      # root on the same element that carries `data-expanded` (the hook's `this.el`).
+      assert basic() =~ ~r/phx-hook="\.PulsarCollapsible"[^>]*class="[^"]*group\/collapsible/s
+    end
   end
 end

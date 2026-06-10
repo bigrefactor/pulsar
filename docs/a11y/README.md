@@ -84,8 +84,10 @@ behavior coverage to the same `:integration` suite. Axe-clean catches
 static a11y problems (missing labels, contrast, ARIA shape) but does not
 exercise behavior — a button could fail to activate on Enter and axe
 would happily report it clean. This suite closes that gap with
-real-keystroke coverage across the six interactive components (Button,
-Card, RadioGroup, Select, Checkbox, Switch).
+real keystroke and click coverage across the library's interactive
+components — buttons, disclosures (Accordion, Collapsible), menus,
+overlays, and form widgets — asserting the resulting visible state,
+not just ARIA attributes.
 
 The acceptance signal is concrete and reproducible: temporarily comment
 out the Space/Enter branches in `lib/pulsar/components/button.ex`'s
