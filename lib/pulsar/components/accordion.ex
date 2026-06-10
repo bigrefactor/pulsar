@@ -360,23 +360,23 @@ defmodule Pulsar.Components.Accordion do
         icon: Map.get(item, :icon),
         disabled: disabled,
         color: group_color,
-        open: not disabled and MapSet.member?(open_ids, raw_id)
+        open: not disabled and raw_id in open_ids
       }
     end)
   end
 
   # `value` may be a single id or a list; "single" honors only the first.
-  @spec resolve_open_ids(term(), String.t()) :: MapSet.t()
-  defp resolve_open_ids(nil, _type), do: MapSet.new()
+  @spec resolve_open_ids(term(), String.t()) :: [String.t()]
+  defp resolve_open_ids(nil, _type), do: []
 
   defp resolve_open_ids(value, "single") do
     case List.wrap(value) do
-      [first | _] -> MapSet.new([first])
-      [] -> MapSet.new()
+      [first | _] -> [first]
+      [] -> []
     end
   end
 
-  defp resolve_open_ids(value, _multiple), do: MapSet.new(List.wrap(value))
+  defp resolve_open_ids(value, _multiple), do: List.wrap(value)
 
   @spec icon_size(String.t()) :: String.t()
   defp icon_size(size), do: @icon_size[size]
