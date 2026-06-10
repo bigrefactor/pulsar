@@ -30,7 +30,7 @@ so it is not announced twice.
 (`lib/pulsar/components/progress.ex:156–159`) expose the progress relationship to
 assistive tech. Indeterminate omits `aria-valuenow`
 (`lib/pulsar/components/progress.ex:159`, resolved to `nil` at
-`lib/pulsar/components/progress.ex:244`).
+`lib/pulsar/components/progress.ex:252`).
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
@@ -50,7 +50,7 @@ that role/value.
 
 **Evidence:** Fill colors are the semantic tokens used across the library; the
 optional value text uses `text-muted-foreground` (measured 6.0–7.23:1 on all
-surfaces) at `lib/pulsar/components/progress.ex:173`, and the radial center value
+surfaces) at `lib/pulsar/components/progress.ex:172`, and the radial center value
 uses `text-foreground` at `lib/pulsar/components/progress.ex:218`. Verified by
 the axe gate against the `/components/progress` fixture.
 
