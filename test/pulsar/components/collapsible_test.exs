@@ -80,7 +80,7 @@ defmodule Pulsar.Components.CollapsibleTest do
       # Every `group-data-[expanded]/collapsible:*` utility (panel expand, chevron
       # rotate, trigger tint, panel visibility) is inert without a `group/collapsible`
       # root on the same element that carries `data-expanded` (the hook's `this.el`).
-      assert basic() =~ ~r/phx-hook="\.PulsarCollapsible"[^>]*class="[^"]*group\/collapsible/s
+      assert basic() =~ ~r/id="col"[^>]*class="[^"]*group\/collapsible/s
     end
   end
 end
