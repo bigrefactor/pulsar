@@ -75,6 +75,18 @@ set. All interactions have a keyboard path — there is no pointer-only affordan
 aria-expanded, default closed` and `disabled item is a disabled button with
 aria-disabled and never open` — `test/pulsar/components/accordion_test.exs`.
 
+### 2.4.3 Focus Order (A) — ✓ PASS
+
+**Evidence:** Each header is a native `<button>` rendered in slot order, so Tab
+visits the headers in document order with no positive `tabindex` reordering. The
+hook's roving navigation moves focus among headers with Up/Down/Home/End but
+never alters the natural Tab sequence.
+
+**Evidence line numbers:** `lib/pulsar/components/accordion.ex:233–246`
+(header `<button>` rendered in slot order, no positive tabindex),
+`lib/pulsar/components/accordion.ex:291–301` (`onKeydown` roving — moves focus
+without rewriting tab order).
+
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
 **Evidence:** Each header button shows a `focus-visible:ring-2
@@ -84,6 +96,46 @@ focus-visible:ring-ring focus-visible:ring-inset` indicator and
 **Evidence line numbers:** `lib/pulsar/components/accordion.ex:124`
 (`@header_base` — `focus-visible:outline-none focus-visible:ring-2
 focus-visible:ring-ring focus-visible:ring-inset`).
+
+### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
+
+**Evidence:** The accordion renders linearly in document flow and creates no
+sticky, fixed, or overlapping content that could cover a focused header or its
+panel — the markup is a plain `<div>` of heading/button/region rows.
+
+**Evidence line numbers:** `lib/pulsar/components/accordion.ex:216–253`
+(in-flow container → item → header/region render tree; no sticky/overlay layer).
+
+### 2.5.2 Pointer Cancellation (A) — ✓ PASS
+
+**Evidence:** Toggling is driven by a `click` listener (fires on mouseup, after
+the up-event so a pointer-down can be cancelled by dragging off), not by
+`pointerdown`/`mousedown`.
+
+**Evidence line numbers:** `lib/pulsar/components/accordion.ex:268`
+(`addEventListener("click", …)`), `lib/pulsar/components/accordion.ex:285–290`
+(`onClick` — resolves the header and toggles on click).
+
+### 2.5.3 Label in Name (A) — ✓ PASS
+
+**Evidence:** Each header button's accessible name is its visible `title` text;
+there is no `aria-label` on the button to contradict the visible label, and the
+leading icon and chevron are decorative.
+
+**Evidence line numbers:** `lib/pulsar/components/accordion.ex:244`
+(`<span>{item.title}</span>` — visible text is the accessible name),
+`lib/pulsar/components/accordion.ex:233–246` (button has no overriding
+`aria-label`).
+
+### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
+
+**Evidence:** Header padding starts at `px-3 py-2` on `text-xs` (xs) and grows
+through the size scale, keeping every header's clickable box at or above 24×24
+CSS px; headers are full-width rows with no overlapping adjacent targets.
+
+**Evidence line numbers:** `lib/pulsar/components/accordion.ex:87–93`
+(`@size_header` padding scale — `px-3 py-2` floor at xs up to `px-6 py-5` at xl),
+`lib/pulsar/components/accordion.ex:233–246` (full-width header button).
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
@@ -151,12 +203,17 @@ landmark budget.
 - **2.2.x Timing / Pause** — only a sub-second open transition; no time limit or
   auto-updating content.
 - **2.3.1 Three Flashes (A)** — no flashing.
-- **2.4.1–2.4.6 / 2.4.11 (page-level or N/A)** — page-level concerns; the header
-  `aria-label`/name is the caller's `title`, faithfully rendered, and focus order
-  is natural document order with no obscuring overlay.
-- **2.5.x Pointer / Motion** — toggle commits on click (no path gesture, no
-  drag, no motion actuation); the chevron `aria-label`-free icon never contradicts
-  the header's visible name.
+- **2.4.1 Bypass Blocks (A)** — page-level concern.
+- **2.4.2 Page Titled (A)** — page-level concern.
+- **2.4.4 Link Purpose (In Context) (A)** — headers are buttons, not links.
+- **2.4.5 Multiple Ways (AA)** — page-level concern.
+- **2.4.6 Headings and Labels (AA)** — the header `title` and `heading_level` are
+  caller-supplied; the component renders them faithfully.
+- **2.5.1 Pointer Gestures (A)** — no path or multipoint gestures; a single click
+  toggles.
+- **2.5.4 Motion Actuation (A)** — no motion-triggered functionality.
+- **2.5.7 Dragging Movements (AA, new in 2.2)** — no drag (sections are not
+  reorderable).
 - **3.1.x Language** — page-level concern.
 - **3.2.1 On Focus (A)** — focusing a header does not toggle it; only Enter/Space
   or click do.
