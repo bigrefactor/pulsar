@@ -11,6 +11,8 @@ defmodule Pulsar.DevApp.Components do
   @fixture_groups [
     {"Forms",
      [
+       {"Calendar (primary)", "/components/calendar/primary"},
+       {"Calendar (neutral)", "/components/calendar/neutral"},
        {"Checkbox", "/components/checkbox"},
        {"Field", "/components/field"},
        {"Form", "/components/form"},

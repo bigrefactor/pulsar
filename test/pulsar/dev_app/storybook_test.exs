@@ -89,7 +89,7 @@ defmodule Pulsar.DevApp.StorybookTest do
       assert "/welcome" in paths
     end
 
-    test "includes all 42 component stories" do
+    test "includes all 43 component stories" do
       paths = leaf_paths()
 
       for expected <- @expected_component_paths do

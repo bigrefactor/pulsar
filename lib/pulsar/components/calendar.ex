@@ -419,6 +419,7 @@ defmodule Pulsar.Components.Calendar do
           setInput(input, value) {
             if (input.value === value) return
             input.value = value
+            input.setAttribute("value", value)
             input.dispatchEvent(new Event("input", { bubbles: true }))
           },
 
