@@ -976,6 +976,72 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     end
   end
 
+  describe "DatePicker interaction" do
+    # The fixture at `/keyboard/date_picker` renders a single-mode DatePicker
+    # (kbd-dp) with a fixed June 2026 window. The DatePicker composes a
+    # Popover (kbd-dp-pop) wrapping a Calendar (kbd-dp-cal). Clicking the
+    # calendar-icon button opens the popover; clicking a day writes the ISO
+    # value into the hidden input; typing a date in the display input and
+    # blurring parses it back to ISO. Behavior comes from `.PulsarDatePicker`
+    # (type-in + calendar sync) and `.PulsarCalendar` (day selection).
+    #
+    # Verification: comment out the `syncFromCalendar` call in `_onCalClick`
+    # in `.PulsarDatePicker` (priv/templates/date_picker.ex.eex and synced lib),
+    # run `MIX_ENV=test mix assets.build`, re-run — the calendar-click test
+    # fails because the hidden ISO input stays empty after clicking a day.
+
+    test "picking a day in the popover fills the hidden ISO input", %{conn: conn} do
+      # Hidden inputs are display:none — Playwright's assert_has checks visibility,
+      # so read the hidden input value via JS (same pattern as Calendar tests).
+      session =
+        conn
+        |> visit("/keyboard/date_picker")
+        |> A11y.await_live_connected()
+        |> click(~s|#kbd-dp [aria-label="Open calendar"]|)
+        |> assert_has(~s|#kbd-dp-pop[data-state="open"]|)
+        |> A11y.await_animations("kbd-dp-pop")
+        |> click(~s|#kbd-dp-cal [data-cal-day="2026-06-15"]|)
+
+      PhoenixTest.Playwright.evaluate(
+        session,
+        "document.querySelector('#kbd-dp input[data-dp-value=\"single\"]').value",
+        fn value ->
+          assert value == "2026-06-15",
+                 "expected hidden ISO input to have value '2026-06-15', got '#{value}'"
+        end
+      )
+    end
+
+    test "typing a date writes the hidden ISO value", %{conn: conn} do
+      # The hook parses on the 'change' event (not 'input'), and fill_in may not
+      # fire change on blur, so set the value and dispatch 'change' via JS so the
+      # hook's _onChange handler parses the typed date into ISO. en-US: MM/DD/YYYY.
+      type_script = """
+      (() => {
+        const el = document.querySelector('#kbd-dp [data-dp-display="single"]');
+        el.value = '06/22/2026';
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      })()
+      """
+
+      session =
+        conn
+        |> visit("/keyboard/date_picker")
+        |> A11y.await_live_connected()
+
+      PhoenixTest.Playwright.evaluate(session, type_script)
+
+      PhoenixTest.Playwright.evaluate(
+        session,
+        "document.querySelector('#kbd-dp input[data-dp-value=\"single\"]').value",
+        fn value ->
+          assert value == "2026-06-22",
+                 "expected hidden ISO input to have value '2026-06-22', got '#{value}'"
+        end
+      )
+    end
+  end
+
   describe "tabindex=-1 sweep on fixture cells" do
     # A fast, broad sweep that catches accidental `tabindex="-1"` on any
     # element marked as a fixture interactive cell. Uses one

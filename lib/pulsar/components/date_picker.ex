@@ -69,6 +69,13 @@ defmodule Pulsar.Components.DatePicker do
   attr(:invalid, :boolean, default: false)
   attr(:on_change, JS, default: %JS{})
   attr(:"aria-describedby", :string, default: nil)
+
+  attr(:display_label, :string,
+    default: nil,
+    doc:
+      ~s{Accessible label for the single-mode date input (defaults to "Date"). Range mode always labels its two inputs "Start date" and "End date".}
+  )
+
   attr(:class, :string, default: "")
   attr(:rest, :global)
 
@@ -98,6 +105,7 @@ defmodule Pulsar.Components.DatePicker do
           value={@single_display}
           placeholder={@placeholder}
           disabled={@disabled}
+          aria-label={@display_label || "Date"}
           aria-invalid={(@invalid && "true") || "false"}
           aria-describedby={assigns[:"aria-describedby"]}
           class={@input_class}
@@ -110,6 +118,7 @@ defmodule Pulsar.Components.DatePicker do
           value={@start_display}
           placeholder={@placeholder}
           disabled={@disabled}
+          aria-label="Start date"
           aria-invalid={(@invalid && "true") || "false"}
           aria-describedby={assigns[:"aria-describedby"]}
           class={@input_class}
@@ -123,6 +132,7 @@ defmodule Pulsar.Components.DatePicker do
           value={@end_display}
           placeholder={@placeholder}
           disabled={@disabled}
+          aria-label="End date"
           aria-invalid={(@invalid && "true") || "false"}
           class={@input_class}
           autocomplete="off"

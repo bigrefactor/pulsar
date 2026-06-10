@@ -25,6 +25,7 @@ defmodule Pulsar.Generator.Storybook do
     :card,
     :checkbox,
     :collapsible,
+    :date_picker,
     :divider,
     :drawer,
     :dropdown_menu,

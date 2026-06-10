@@ -44,6 +44,8 @@ defmodule Pulsar.DevApp.Router do
     live "/components/calendar/primary", CalendarLive, :primary
     live "/components/calendar/neutral", CalendarLive, :neutral
     live "/components/card", CardLive, :index
+    live "/components/date_picker/single", DatePickerLive, :single
+    live "/components/date_picker/range", DatePickerLive, :range
     live "/components/checkbox", CheckboxLive, :index
     live "/components/collapsible", CollapsibleLive, :index
     live "/components/divider", DividerLive, :index
@@ -102,6 +104,7 @@ defmodule Pulsar.DevApp.Router do
     live "/keyboard/accordion", Keyboard.AccordionLive, :index
     live "/keyboard/button", Keyboard.ButtonLive, :index
     live "/keyboard/calendar", Keyboard.CalendarLive, :index
+    live "/keyboard/date_picker", Keyboard.DatePickerLive, :index
     live "/keyboard/card", Keyboard.CardLive, :index
     live "/keyboard/collapsible", Keyboard.CollapsibleLive, :index
     live "/keyboard/drawer", Keyboard.DrawerLive, :index
