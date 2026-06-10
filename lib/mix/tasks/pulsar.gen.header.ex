@@ -31,7 +31,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Header do
 
     ## Dependencies
 
-    This component requires: link, icon
+    This component requires: link, icon, breadcrumb
 
     ## Usage Examples
 

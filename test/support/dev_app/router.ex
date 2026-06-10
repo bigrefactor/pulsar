@@ -39,6 +39,7 @@ defmodule Pulsar.DevApp.Router do
     live "/components/accordion/elevated", AccordionLive, :elevated
     live "/components/avatar", AvatarLive, :index
     live "/components/badge", BadgeLive, :index
+    live "/components/breadcrumb", BreadcrumbLive, :index
     live "/components/button", ButtonLive, :index
     live "/components/card", CardLive, :index
     live "/components/checkbox", CheckboxLive, :index

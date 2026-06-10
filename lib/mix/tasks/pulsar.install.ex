@@ -71,7 +71,7 @@ defmodule Mix.Tasks.Pulsar.Install.Docs do
 
     Form components: badge, button, checkbox, field, input, label, radio_group, select, switch, textarea
 
-    UI components: accordion, alert, alert_dialog, avatar, card, collapsible, divider, drawer, dropdown_menu, flash, flash_group, header, icon, link, list, menu, modal, navbar, popover, progress, sidebar, skeleton, spinner, status, steps, table, tabs, tooltip
+    UI components: accordion, alert, alert_dialog, avatar, breadcrumb, card, collapsible, divider, drawer, dropdown_menu, flash, flash_group, header, icon, link, list, menu, modal, navbar, popover, progress, sidebar, skeleton, spinner, status, steps, table, tabs, tooltip
 
     ## Component Dependencies
 
@@ -104,6 +104,7 @@ if Code.ensure_loaded?(Igniter) do
       alert_dialog: [:modal, :button],
       avatar: [:icon, :link],
       badge: [],
+      breadcrumb: [:icon, :link],
       button: [:link],
       card: [],
       checkbox: [],
@@ -115,7 +116,7 @@ if Code.ensure_loaded?(Igniter) do
       flash: [],
       flash_group: [:flash, :icon],
       form: [],
-      header: [:link, :icon],
+      header: [:link, :icon, :breadcrumb],
       icon: [],
       input: [],
       input_otp: [],
@@ -171,6 +172,7 @@ if Code.ensure_loaded?(Igniter) do
           "pulsar.gen.avatar",
           "pulsar.gen.badge",
           "pulsar.gen.button",
+          "pulsar.gen.breadcrumb",
           "pulsar.gen.card",
           "pulsar.gen.checkbox",
           "pulsar.gen.collapsible",
