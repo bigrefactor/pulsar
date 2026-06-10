@@ -157,9 +157,142 @@ defmodule Pulsar.Components.DatePicker do
 
       <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarDatePicker">
         export default {
-          mounted() { /* Task 13 */ },
-          updated() {},
-          destroyed() {}
+          mounted() {
+            this.mode = this.el.dataset.mode || "single"
+            this.locale = this.el.dataset.locale || undefined
+            this.fmt = new Intl.DateTimeFormat(this.locale, { dateStyle: "medium" })
+            this.order = this.fieldOrder(this.locale) // e.g. ["month","day","year"]
+
+            // the composed Calendar element (its id is `${this.el.id}-cal`)
+            this.cal = document.getElementById(`${this.el.id}-cal`)
+
+            // format any server-seeded ISO into the locale display
+            this.eachPair((kind) => {
+              const display = this.el.querySelector(`[data-dp-display="${kind}"]`)
+              const hidden = this.el.querySelector(`[data-dp-value="${kind}"]`)
+              if (display && hidden && hidden.value) display.value = this.format(hidden.value)
+            })
+
+            // type-in: parse on blur/change, write ISO + reformat display
+            this._onChange = (e) => {
+              const input = e.target.closest("[data-dp-display]")
+              if (!input) return
+              const kind = input.dataset.dpDisplay
+              const iso = this.parse(input.value)
+              const hidden = this.el.querySelector(`[data-dp-value="${kind}"]`)
+              if (iso) {
+                if (hidden) this.setInput(hidden, iso)
+                input.value = this.format(iso)
+                input.setAttribute("aria-invalid", "false")
+                this.runChange()
+              } else if (input.value.trim() === "") {
+                if (hidden) this.setInput(hidden, "")
+                input.setAttribute("aria-invalid", "false")
+              } else {
+                input.setAttribute("aria-invalid", "true")
+              }
+            }
+            this.el.addEventListener("change", this._onChange)
+
+            // calendar → inputs: the Calendar writes its own hidden inputs and fires
+            // on_select; we also read its data-value after any click inside it.
+            this._onCalClick = () => {
+              // microtask so the calendar hook updates its data-value first
+              Promise.resolve().then(() => this.syncFromCalendar())
+            }
+            if (this.cal) this.cal.addEventListener("click", this._onCalClick)
+          },
+
+          updated() {
+            this.eachPair((kind) => {
+              const display = this.el.querySelector(`[data-dp-display="${kind}"]`)
+              const hidden = this.el.querySelector(`[data-dp-value="${kind}"]`)
+              if (display && hidden && document.activeElement !== display) {
+                display.value = hidden.value ? this.format(hidden.value) : ""
+              }
+            })
+          },
+
+          destroyed() {
+            this.el.removeEventListener("change", this._onChange)
+            if (this.cal) this.cal.removeEventListener("click", this._onCalClick)
+          },
+
+          eachPair(fn) {
+            (this.mode === "range" ? ["start", "end"] : ["single"]).forEach(fn)
+          },
+
+          syncFromCalendar() {
+            if (!this.cal) return
+            const seed = this.cal.dataset.value || ""
+            if (this.mode === "range") {
+              const [a, b] = seed.split("/")
+              this.setPair("start", a)
+              this.setPair("end", b)
+            } else {
+              this.setPair("single", seed)
+            }
+            this.runChange()
+          },
+
+          setPair(kind, iso) {
+            const display = this.el.querySelector(`[data-dp-display="${kind}"]`)
+            const hidden = this.el.querySelector(`[data-dp-value="${kind}"]`)
+            if (hidden) this.setInput(hidden, iso || "")
+            if (display) display.value = iso ? this.format(iso) : ""
+          },
+
+          // Set a hidden input's value AND notify LiveView. A bare `.value =` does not
+          // fire input/change, so phx-change/form recovery never sees it — dispatch a
+          // bubbling "input" event so the enclosing form picks up the new value.
+          // Also set the attribute so morphdom does not revert the value on re-render.
+          setInput(input, value) {
+            if (input.value === value) return
+            input.value = value
+            input.setAttribute("value", value)
+            input.dispatchEvent(new Event("input", { bubbles: true }))
+          },
+
+          // --- locale helpers ---------------------------------------------------
+
+          format(iso) {
+            const [y, m, d] = iso.split("-").map(Number)
+            return this.fmt.format(new Date(y, m - 1, d))
+          },
+
+          // Determine day/month/year order for the locale from a reference date.
+          fieldOrder(locale) {
+            const ref = new Date(2026, 11, 31) // Dec 31 2026 — unambiguous (31/12)
+            const parts = new Intl.DateTimeFormat(locale, { year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(ref)
+            return parts.filter((p) => ["day", "month", "year"].includes(p.type)).map((p) => p.type)
+          },
+
+          // Parse typed input into ISO using the locale field order. Accepts the digit
+          // groups in the locale's order; also accepts a raw ISO string.
+          parse(text) {
+            const t = (text || "").trim()
+            if (/^\d{4}-\d{2}-\d{2}$/.test(t)) return this.validISO(t) ? t : null
+            const nums = t.match(/\d+/g)
+            if (!nums || nums.length < 3) return null
+            const vals = {}
+            this.order.forEach((field, i) => { vals[field] = parseInt(nums[i], 10) })
+            let { year, month, day } = vals
+            if (year < 100) year += 2000
+            const iso = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+            return this.validISO(iso) ? iso : null
+          },
+
+          validISO(iso) {
+            const [y, m, d] = iso.split("-").map(Number)
+            if (m < 1 || m > 12 || d < 1 || d > 31) return false
+            const date = new Date(y, m - 1, d)
+            return date.getFullYear() === y && date.getMonth() === m - 1 && date.getDate() === d
+          },
+
+          runChange() {
+            const encoded = this.el.dataset.onChange
+            if (encoded && encoded !== "[]" && this.liveSocket) this.liveSocket.execJS(this.el, encoded)
+          }
         }
       </script>
     </div>
