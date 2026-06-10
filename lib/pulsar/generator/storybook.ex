@@ -19,6 +19,7 @@ defmodule Pulsar.Generator.Storybook do
     :alert_dialog,
     :avatar,
     :badge,
+    :breadcrumb,
     :button,
     :card,
     :checkbox,
