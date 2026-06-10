@@ -1,0 +1,232 @@
+@moduledoc """
+A single expand/collapse disclosure — a trigger over one collapsible panel.
+
+Put the clickable label in the `:trigger` slot; the default slot holds the
+content that shows and hides. Click or press Enter/Space on the trigger to
+toggle.
+
+## Examples
+
+    <.collapsible id="more">
+      <:trigger>Show details</:trigger>
+      <p>The hidden details go here.</p>
+    </.collapsible>
+
+    # Open initially, synced to the server
+    <.collapsible id="filters" open color="primary" on_change={JS.push("filters_toggled")}>
+      <:trigger>Filters</:trigger>
+      <.filter_form />
+    </.collapsible>
+
+## Variants
+
+`variant` controls the chrome: `outline` (bordered), `solid` (filled trigger),
+`ghost` (borderless), `elevated` (raised). `color` tints the trigger when open;
+`size` scales padding and text (`xs`–`xl`).
+
+## Callbacks
+
+`on_change` is a `%JS{}` command run whenever the panel toggles — pair it with
+`JS.push(...)` to sync state to the server. The new state is sent as
+`phx-value-expanded` ("true"/"false").
+"""
+
+use Phoenix.Component
+
+import Twm, only: [merge: 1]
+
+alias Phoenix.LiveView.JS
+alias Phoenix.LiveView.Rendered
+alias <%= @component_namespace %>.Icon
+
+@spec generate_id(String.t()) :: String.t()
+defp generate_id(prefix \\ "collapsible") do
+  "#{prefix}-#{System.unique_integer([:positive])}"
+end
+
+@valid_colors ~w(neutral primary secondary success danger warning info)
+
+@trigger_open %{
+  "neutral" => "group-data-[expanded]/collapsible:text-foreground",
+  "primary" => "group-data-[expanded]/collapsible:text-primary",
+  "secondary" => "group-data-[expanded]/collapsible:text-secondary",
+  "success" => "group-data-[expanded]/collapsible:text-success",
+  "danger" => "group-data-[expanded]/collapsible:text-danger",
+  "warning" => "group-data-[expanded]/collapsible:text-warning",
+  "info" => "group-data-[expanded]/collapsible:text-info"
+}
+
+for color <- @valid_colors do
+  if !@trigger_open[color] do
+    raise CompileError, description: "Missing collapsible trigger_open for color=#{color}"
+  end
+end
+
+@container %{
+  "outline" => "rounded-box border border-border overflow-hidden",
+  "ghost" => "",
+  "solid" => "rounded-box overflow-hidden",
+  "elevated" => "rounded-box border border-border shadow-card overflow-hidden bg-background"
+}
+
+@size_trigger %{
+  "xs" => "text-xs px-3 py-2 gap-2",
+  "sm" => "text-sm px-3.5 py-2.5 gap-2",
+  "md" => "text-sm px-4 py-3 gap-2.5",
+  "lg" => "text-base px-5 py-4 gap-3",
+  "xl" => "text-lg px-6 py-5 gap-3"
+}
+
+@size_panel %{
+  "xs" => "px-3 pb-2 text-xs",
+  "sm" => "px-3.5 pb-2.5 text-sm",
+  "md" => "px-4 pb-3 text-sm",
+  "lg" => "px-5 pb-4 text-base",
+  "xl" => "px-6 pb-5 text-lg"
+}
+
+@icon_size %{"xs" => "xs", "sm" => "xs", "md" => "sm", "lg" => "sm", "xl" => "md"}
+
+@trigger_base "group/trigger flex w-full items-center text-left font-medium cursor-pointer select-none text-muted-foreground transition-[color] duration-normal ease-standard hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+
+@chevron_base "ml-auto shrink-0 transition-transform duration-fast ease-standard group-data-[expanded]/collapsible:rotate-180"
+
+@panel_wrapper "grid grid-rows-[0fr] group-data-[expanded]/collapsible:grid-rows-[1fr] transition-[grid-template-rows] duration-normal ease-emphasized motion-reduce:transition-none"
+
+@panel_inner "overflow-hidden invisible group-data-[expanded]/collapsible:visible"
+
+attr(:id, :string, doc: "Collapsible container id (auto-generated if omitted)")
+
+attr(:open, :boolean, default: false, doc: "Whether the panel is open on first render")
+
+attr(:variant, :string,
+  default: "outline",
+  values: ~w(solid outline ghost elevated),
+  doc: "Visual chrome"
+)
+
+attr(:color, :string,
+  default: "neutral",
+  values: ~w(neutral primary secondary success danger warning info),
+  doc: "Color tint applied to the open trigger"
+)
+
+attr(:size, :string,
+  default: "md",
+  values: ~w(xs sm md lg xl),
+  doc: "Trigger and panel padding/text size"
+)
+
+attr(:on_change, JS,
+  default: %JS{},
+  doc: ~s{JS commands run when the panel toggles. Use with the server: JS.push("event")}
+)
+
+attr(:class, :string, default: "", doc: "Additional CSS classes for the container")
+attr(:rest, :global, doc: "Additional container attributes")
+
+slot(:trigger, required: true, doc: "Clickable label content (rendered inside the trigger button)")
+slot(:inner_block, required: true, doc: "The collapsible panel content")
+
+@doc """
+Renders a single expand/collapse disclosure.
+
+## Examples
+
+    <.collapsible id="more">
+      <:trigger>Show details</:trigger>
+      <p>Hidden details.</p>
+    </.collapsible>
+"""
+@spec collapsible(map()) :: Rendered.t()
+def collapsible(assigns) do
+  assigns = assign_new(assigns, :id, fn -> generate_id() end)
+
+  assigns =
+    assigns
+    |> assign(:panel_id, "#{assigns.id}-panel")
+    |> assign(:container_class, merge([@container[assigns.variant] || "", assigns.class]))
+
+  ~H"""
+  <div
+    id={@id}
+    phx-hook=".PulsarCollapsible"
+    class={["group/collapsible", @container_class]}
+    data-expanded={(@open && "") || nil}
+    data-on-change={@on_change}
+    {@rest}
+  >
+    <button
+      type="button"
+      data-collapsible-trigger
+      aria-controls={@panel_id}
+      aria-expanded={to_string(@open)}
+      class={trigger_classes(@size, @color)}
+    >
+      <span>{render_slot(@trigger)}</span>
+      <Icon.icon name="hero-chevron-down" size={icon_size(@size)} class={chevron_class()} />
+    </button>
+    <div class={panel_wrapper_class()}>
+      <div id={@panel_id} class={panel_inner_class()}>
+        <div class={panel_body_class(@size)}>{render_slot(@inner_block)}</div>
+      </div>
+    </div>
+  </div>
+  <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarCollapsible">
+    export default {
+      mounted() { this.setup(); this.restore() },
+      updated() { this.setup(); this.restore() },
+      setup() {
+        this.trigger = this.el.querySelector("[data-collapsible-trigger]")
+        if (this.open === undefined) this.open = this.el.hasAttribute("data-expanded")
+        if (this._bound || !this.trigger) return
+        this._onClick = () => this.toggle()
+        this.trigger.addEventListener("click", this._onClick)
+        this._bound = true
+      },
+      destroyed() {
+        if (this._bound && this.trigger) this.trigger.removeEventListener("click", this._onClick)
+      },
+      toggle() {
+        const open = !this.el.hasAttribute("data-expanded")
+        this.setOpen(open)
+        const encoded = this.el.dataset.onChange
+        if (encoded && encoded !== "[]" && this.liveSocket) {
+          this.el.setAttribute("phx-value-expanded", open ? "true" : "false")
+          this.liveSocket.execJS(this.el, encoded)
+        }
+      },
+      setOpen(open) {
+        this.open = open
+        if (open) this.el.setAttribute("data-expanded", "")
+        else this.el.removeAttribute("data-expanded")
+        if (this.trigger) this.trigger.setAttribute("aria-expanded", open ? "true" : "false")
+      },
+      restore() {
+        if (this.open === undefined) return
+        if (this.open !== this.el.hasAttribute("data-expanded")) this.setOpen(this.open)
+      }
+    }
+  </script>
+  """
+end
+
+@spec icon_size(String.t()) :: String.t()
+defp icon_size(size), do: @icon_size[size]
+
+@spec chevron_class() :: String.t()
+defp chevron_class, do: @chevron_base
+
+@spec panel_wrapper_class() :: String.t()
+defp panel_wrapper_class, do: @panel_wrapper
+
+@spec panel_inner_class() :: String.t()
+defp panel_inner_class, do: @panel_inner
+
+@spec panel_body_class(String.t()) :: String.t()
+defp panel_body_class(size), do: @size_panel[size] || ""
+
+@spec trigger_classes(String.t(), String.t()) :: String.t()
+defp trigger_classes(size, color) do
+  merge([@trigger_base, @size_trigger[size] || "", @trigger_open[color]])
+end
