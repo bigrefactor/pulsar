@@ -197,6 +197,7 @@ defmodule Pulsar.Components.BreadcrumbTest do
       assert html =~ "B"
       assert html =~ "…"
       assert html =~ "Current"
+      assert html =~ ~s(aria-current="page")
       refute html =~ "Hidden"
     end
   end

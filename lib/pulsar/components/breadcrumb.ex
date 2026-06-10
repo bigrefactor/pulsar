@@ -179,15 +179,18 @@ defmodule Pulsar.Components.Breadcrumb do
     """
   end
 
+  @spec has_nav?(map()) :: boolean()
   defp has_nav?(item), do: item[:navigate] != nil or item[:patch] != nil or item[:href] != nil
 
   # Collapse only when a max is set, the trail exceeds it, AND there is at least
   # one crumb that would actually be hidden by the first/last split.
+  @spec collapse?(integer() | nil, non_neg_integer(), non_neg_integer(), non_neg_integer()) :: boolean()
   defp collapse?(max_items, total, before_n, after_n) when is_integer(max_items),
     do: total > max_items and total > before_n + after_n + 1
 
   defp collapse?(_max_items, _total, _before_n, _after_n), do: false
 
+  @spec build_crumbs(list(), non_neg_integer(), boolean(), non_neg_integer(), non_neg_integer()) :: [map()]
   defp build_crumbs(items, total, false, _before_n, _after_n) do
     items
     |> Enum.with_index()
@@ -200,6 +203,7 @@ defmodule Pulsar.Components.Breadcrumb do
       |> Enum.take(before_n)
       |> Enum.map(fn item -> %{kind: :crumb, item: item, current?: false} end)
 
+    # The tail's last element is always the current page.
     tail_items = Enum.drop(items, total - (after_n + 1))
     last_tail = length(tail_items) - 1
 
@@ -211,6 +215,7 @@ defmodule Pulsar.Components.Breadcrumb do
     head ++ [%{kind: :ellipsis}] ++ tail
   end
 
+  @spec validate_items!(list()) :: :ok
   defp validate_items!(items) do
     Enum.each(items, fn item ->
       provided =
