@@ -88,6 +88,7 @@ defmodule Pulsar.DevApp.Components do
        {"Avatar", "/components/avatar"},
        {"Badge", "/components/badge"},
        {"Icon", "/components/icon"},
+       {"Progress", "/components/progress"},
        {"Skeleton", "/components/skeleton"},
        {"Spinner", "/components/spinner"},
        {"Status", "/components/status"}
