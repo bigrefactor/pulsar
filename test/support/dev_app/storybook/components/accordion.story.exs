@@ -1,0 +1,66 @@
+defmodule Pulsar.DevApp.Storybook.Components.Accordion do
+  use PhoenixStorybook.Story, :component
+
+  alias Pulsar.Components.Accordion
+
+  def function, do: &Accordion.accordion/1
+  def render_source, do: :function
+
+  def attributes do
+    [
+      %Attr{id: :id, type: :string, required: true, doc: "Accordion container id."},
+      %Attr{id: :type, type: :string, values: ~w(single multiple), default: "single", doc: "single = one open at a time."},
+      %Attr{id: :collapsible, type: :boolean, default: true, doc: "When single, allow closing the open section."},
+      %Attr{id: :variant, type: :string, values: ~w(solid outline ghost elevated), default: "outline", doc: "Visual chrome."},
+      %Attr{id: :color, type: :string, values: ~w(neutral primary secondary success danger warning info), default: "neutral", doc: "Open-header tint."},
+      %Attr{id: :size, type: :string, values: ~w(xs sm md lg xl), default: "md", doc: "Header/panel size."},
+      %Attr{id: :class, type: :string, default: "", doc: "Additional CSS classes."}
+    ]
+  end
+
+  def slots do
+    [%Slot{id: :item, required: true, doc: "One per section; `title` is the header text."}]
+  end
+
+  def variations do
+    [
+      %Variation{
+        id: :default,
+        description: "Single open at a time (FAQ)",
+        attributes: %{id: "sb-accordion-default", class: "max-w-lg"},
+        slots: [
+          "<:item title=\"Shipping & delivery\">We ship worldwide within 3–5 business days.</:item>",
+          "<:item title=\"Returns\">Free returns within 30 days of delivery.</:item>",
+          "<:item title=\"Warranty\">Every order is covered by a 1-year warranty.</:item>"
+        ]
+      },
+      %Variation{
+        id: :multiple,
+        description: "Several sections open independently",
+        attributes: %{id: "sb-accordion-multiple", type: "multiple", color: "primary", class: "max-w-lg"},
+        slots: [
+          "<:item id=\"a\" title=\"Profile\" icon=\"hero-user\">Profile settings.</:item>",
+          "<:item id=\"b\" title=\"Billing\" icon=\"hero-credit-card\">Billing settings.</:item>"
+        ]
+      },
+      %Variation{
+        id: :ghost,
+        description: "Borderless, hairline dividers",
+        attributes: %{id: "sb-accordion-ghost", variant: "ghost", class: "max-w-lg"},
+        slots: [
+          "<:item title=\"One\">First.</:item>",
+          "<:item title=\"Two\">Second.</:item>"
+        ]
+      },
+      %Variation{
+        id: :elevated,
+        description: "Raised card",
+        attributes: %{id: "sb-accordion-elevated", variant: "elevated", class: "max-w-lg"},
+        slots: [
+          "<:item title=\"One\">First.</:item>",
+          "<:item title=\"Two\">Second.</:item>"
+        ]
+      }
+    ]
+  end
+end
