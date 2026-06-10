@@ -42,6 +42,7 @@ defmodule Pulsar.DevApp.Components do
        {"Accordion (solid)", "/components/accordion/solid"},
        {"Accordion (ghost)", "/components/accordion/ghost"},
        {"Accordion (elevated)", "/components/accordion/elevated"},
+       {"Breadcrumb", "/components/breadcrumb"},
        {"Collapsible", "/components/collapsible"},
        {"Menu", "/components/menu"},
        {"Navbar", "/components/navbar"},
