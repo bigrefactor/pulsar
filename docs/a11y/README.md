@@ -1,7 +1,7 @@
 # Pulsar accessibility audit — WCAG 2.2 Level AA
 
 This directory holds Pulsar's first formal accessibility audit. It covers
-every applicable WCAG 2.2 Level A and AA success criterion across all 38
+every applicable WCAG 2.2 Level A and AA success criterion across all 39
 components in `lib/pulsar/components/`. Original audit method was
 **code-only**; the browser-verification follow-up has
 since populated measured contrast, focus-ring, target-size, text-spacing,
@@ -141,6 +141,7 @@ not-applicable). Detailed per-criterion grids follow.
 | [flash_group](flash_group.md) | 9/0/11 | 9/1/10 | 1/0/12 | 2/0/0 |
 | **Structure / layout** | | | | |
 | [accordion](accordion.md) | 9/0/11 | 8/0/12 | 2/0/11 | 1/0/1 |
+| [breadcrumb](breadcrumb.md) | 8/0/12 | 8/0/12 | 0/0/13 | 1/0/1 |
 | [card](card.md) | 10/0/10 | 11/0/9 | 1/0/12 | 1/0/1 |
 | [collapsible](collapsible.md) | 2/0/18 | 7/0/13 | 2/0/11 | 1/0/1 |
 | [divider](divider.md) | 8/1/11 | 1/0/19 | 0/0/13 | 1/0/1 |
@@ -166,6 +167,7 @@ not-applicable). Detailed per-criterion grids follow.
 | Component | 1.1.1 | 1.2.1 | 1.2.2 | 1.2.3 | 1.2.4 | 1.2.5 | 1.3.1 | 1.3.2 | 1.3.3 | 1.3.4 | 1.3.5 | 1.4.1 | 1.4.2 | 1.4.3 | 1.4.4 | 1.4.5 | 1.4.10 | 1.4.11 | 1.4.12 | 1.4.13 |
 |-----------|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 | accordion | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | — | — |
+| breadcrumb | ✓ | — | — | — | — | — | ✓ | ✓ | — | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | — | — |
 | field | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | input | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | input_otp | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
@@ -209,6 +211,7 @@ not-applicable). Detailed per-criterion grids follow.
 | Component | 2.1.1 | 2.1.2 | 2.1.4 | 2.2.1 | 2.2.2 | 2.3.1 | 2.4.1 | 2.4.2 | 2.4.3 | 2.4.4 | 2.4.5 | 2.4.6 | 2.4.7 | 2.4.11 | 2.5.1 | 2.5.2 | 2.5.3 | 2.5.4 | 2.5.7 | 2.5.8 |
 |-----------|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 | accordion | ✓ | ✓ | — | — | — | — | — | — | ✓ | — | — | — | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
+| breadcrumb | ✓ | ✓ | — | — | — | — | — | — | — | ✓ | — | — | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | field | — | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | — | — | — | — |
 | input | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | input_otp | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
@@ -252,6 +255,7 @@ not-applicable). Detailed per-criterion grids follow.
 | Component | 3.1.1 | 3.1.2 | 3.2.1 | 3.2.2 | 3.2.3 | 3.2.4 | 3.2.6 | 3.3.1 | 3.3.2 | 3.3.3 | 3.3.4 | 3.3.7 | 3.3.8 | 4.1.2 | 4.1.3 |
 |-----------|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 | accordion | — | — | ✓ | ✓ | — | — | — | — | — | — | — | — | — | ✓ | — |
+| breadcrumb | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | — |
 | field | — | — | ✓ | ✓ | — | — | — | ✓ | ✓ | ✓ | — | — | — | ✓ | ✓ |
 | input | — | — | ✓ | ✓ | — | — | — | ✓ | ✓ | ✓ | — | — | — | ✓ | ✓ |
 | input_otp | — | — | ✓ | ✓ | — | — | — | ✓ | ✓ | ✓ | — | — | — | ✓ | ✓ |
