@@ -104,6 +104,7 @@ Renders a breadcrumb trail.
 @spec breadcrumb(map()) :: Rendered.t()
 def breadcrumb(assigns) do
   validate_items!(assigns.item)
+  validate_overflow!(assigns.max_items, assigns.items_before_collapse, assigns.items_after_collapse)
 
   total = length(assigns.item)
   collapse? = collapse?(assigns.max_items, total, assigns.items_before_collapse, assigns.items_after_collapse)
@@ -228,4 +229,29 @@ defp validate_items!(items) do
             "Breadcrumb can only have one navigation prop. Found: #{Enum.map_join(provided, ", ", &inspect/1)}"
     end
   end)
+end
+
+# A collapsed trail renders `before_n + after_n + 2` crumbs (head + ellipsis +
+# tail, the tail including the current page). max_items is the cap on that
+# output, so the keep counts must fit inside it and stay non-negative.
+@spec validate_overflow!(integer() | nil, integer(), integer()) :: :ok
+defp validate_overflow!(nil, _before_n, _after_n), do: :ok
+
+defp validate_overflow!(max_items, before_n, after_n) do
+  cond do
+    before_n < 0 or after_n < 0 ->
+      raise ArgumentError,
+            "Breadcrumb items_before_collapse and items_after_collapse must be non-negative, " <>
+              "got #{inspect(before_n)} and #{inspect(after_n)}."
+
+    before_n + after_n + 2 > max_items ->
+      raise ArgumentError,
+            "Breadcrumb max_items=#{max_items} cannot honor items_before_collapse=#{before_n} and " <>
+              "items_after_collapse=#{after_n}: a collapsed trail renders #{before_n + after_n + 2} " <>
+              "crumbs (head + ellipsis + tail incl. current page). Raise max_items to at least " <>
+              "#{before_n + after_n + 2} or lower the keep counts."
+
+    true ->
+      :ok
+  end
 end

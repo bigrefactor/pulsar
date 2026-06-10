@@ -200,6 +200,52 @@ defmodule Pulsar.Components.BreadcrumbTest do
       assert html =~ ~s(aria-current="page")
       refute html =~ "Hidden"
     end
+
+    test "raises when keep counts cannot fit inside max_items" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/cannot honor items_before_collapse/, fn ->
+        rendered_to_string(~H"""
+        <Breadcrumb.breadcrumb max_items={4} items_before_collapse={2} items_after_collapse={2}>
+          <:item navigate="/a">A</:item>
+          <:item navigate="/b">B</:item>
+          <:item navigate="/c">C</:item>
+          <:item navigate="/d">D</:item>
+          <:item navigate="/e">E</:item>
+          <:item>Current</:item>
+        </Breadcrumb.breadcrumb>
+        """)
+      end
+    end
+
+    test "raises on negative keep counts" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/must be non-negative/, fn ->
+        rendered_to_string(~H"""
+        <Breadcrumb.breadcrumb max_items={4} items_before_collapse={-1}>
+          <:item navigate="/a">A</:item>
+          <:item navigate="/b">B</:item>
+          <:item>Current</:item>
+        </Breadcrumb.breadcrumb>
+        """)
+      end
+    end
+
+    test "no validation when max_items is unset" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Breadcrumb.breadcrumb items_before_collapse={2} items_after_collapse={2}>
+          <:item navigate="/a">A</:item>
+          <:item>Current</:item>
+        </Breadcrumb.breadcrumb>
+        """)
+
+      assert html =~ "A"
+      refute html =~ "…"
+    end
   end
 
   describe "breadcrumb/1 styling" do
