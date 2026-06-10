@@ -34,6 +34,18 @@ defmodule Pulsar.DevApp.Keyboard.DatePickerLive do
           />
         </form>
       </.fixture_section>
+
+      <.fixture_section name="single-gb" title="Single en-GB locale (June 2026)">
+        <form id="kbd-dp-gb-form">
+          <DatePicker.date_picker
+            id="kbd-dp-gb"
+            field={@form[:on]}
+            locale="en-GB"
+            min="2026-06-01"
+            max="2026-06-30"
+          />
+        </form>
+      </.fixture_section>
     </.fixture_page>
     """
   end

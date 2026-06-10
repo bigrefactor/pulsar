@@ -84,22 +84,25 @@ defmodule Pulsar.Components.DatePicker do
       assigns
       |> assign_new(:id, fn -> "date-picker-#{System.unique_integer([:positive])}" end)
       |> normalize_fields()
+      |> assign_calendar_value()
       |> assign(:input_class, input_classes(assigns.size))
       |> assign(:wrapper_class, wrapper_classes(assigns.variant, assigns.invalid))
 
     ~H"""
     <div
-      id={@id}
+      id={@id <> "-dp"}
       phx-hook=".PulsarDatePicker"
       data-mode={@mode}
       data-locale={@locale}
       data-on-change={@on_change}
+      data-cal-id={@id <> "-cal"}
       class={merge(["inline-flex items-center gap-2", @class])}
       {@rest}
     >
       <div class={@wrapper_class}>
         <input
           :if={@mode == "single"}
+          id={@id}
           type="text"
           data-dp-display="single"
           value={@single_display}
@@ -113,6 +116,7 @@ defmodule Pulsar.Components.DatePicker do
         />
         <input
           :if={@mode == "range"}
+          id={@id}
           type="text"
           data-dp-display="start"
           value={@start_display}
@@ -134,6 +138,7 @@ defmodule Pulsar.Components.DatePicker do
           disabled={@disabled}
           aria-label="End date"
           aria-invalid={(@invalid && "true") || "false"}
+          aria-describedby={assigns[:"aria-describedby"]}
           class={@input_class}
           autocomplete="off"
         />
@@ -160,6 +165,7 @@ defmodule Pulsar.Components.DatePicker do
             disable_weekends={@disable_weekends}
             locale={@locale}
             color={@color}
+            value={@calendar_value}
           />
         </Popover.popover>
       </div>
@@ -178,8 +184,9 @@ defmodule Pulsar.Components.DatePicker do
             this.fmt = new Intl.DateTimeFormat(this.locale, { year: "numeric", month: "2-digit", day: "2-digit" })
             this.order = this.fieldOrder(this.locale) // e.g. ["month","day","year"]
 
-            // the composed Calendar element (its id is `${this.el.id}-cal`)
-            this.cal = document.getElementById(`${this.el.id}-cal`)
+            // the composed Calendar element (id stored in data-cal-id)
+            this.cal = document.getElementById(this.el.dataset.calId)
+            this._lastSeed = this.cal ? (this.cal.dataset.value || "") : ""
 
             // format any server-seeded ISO into the locale display
             this.eachPair((kind) => {
@@ -199,7 +206,13 @@ defmodule Pulsar.Components.DatePicker do
                 if (hidden) this.setInput(hidden, iso)
                 input.value = this.format(iso)
                 input.setAttribute("aria-invalid", "false")
-                this.runChange()
+                if (this.mode === "range") {
+                  const s = this.el.querySelector('[data-dp-value="start"]')
+                  const e2 = this.el.querySelector('[data-dp-value="end"]')
+                  if (s && e2 && s.value && e2.value) this.runChange()
+                } else {
+                  this.runChange()
+                }
               } else if (input.value.trim() === "") {
                 if (hidden) this.setInput(hidden, "")
                 input.setAttribute("aria-invalid", "false")
@@ -240,6 +253,8 @@ defmodule Pulsar.Components.DatePicker do
           syncFromCalendar() {
             if (!this.cal) return
             const seed = this.cal.dataset.value || ""
+            if (seed === this._lastSeed) return
+            this._lastSeed = seed
             if (this.mode === "range") {
               const [a, b] = seed.split("/")
               this.setPair("start", a)
@@ -319,6 +334,14 @@ defmodule Pulsar.Components.DatePicker do
   # ============================================================================
   # HELPERS
   # ============================================================================
+
+  defp assign_calendar_value(%{mode: "range"} = assigns) do
+    assign(assigns, :calendar_value, {assigns.start_value, assigns.end_value})
+  end
+
+  defp assign_calendar_value(assigns) do
+    assign(assigns, :calendar_value, assigns.single_value)
+  end
 
   defp normalize_fields(assigns) do
     single = assigns.field

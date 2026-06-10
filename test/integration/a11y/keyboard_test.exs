@@ -978,10 +978,11 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
 
   describe "DatePicker interaction" do
     # The fixture at `/keyboard/date_picker` renders a single-mode DatePicker
-    # (kbd-dp) with a fixed June 2026 window. The DatePicker composes a
-    # Popover (kbd-dp-pop) wrapping a Calendar (kbd-dp-cal). Clicking the
-    # calendar-icon button opens the popover; clicking a day writes the ISO
-    # value into the hidden input; typing a date in the display input and
+    # with id "kbd-dp". After Fix 3 the container div carries id="kbd-dp-dp"
+    # and the display input carries id="kbd-dp" (labelable). The DatePicker
+    # composes a Popover (kbd-dp-pop) wrapping a Calendar (kbd-dp-cal).
+    # Clicking the calendar-icon button opens the popover; clicking a day writes
+    # the ISO value into the hidden input; typing a date in the display input and
     # blurring parses it back to ISO. Behavior comes from `.PulsarDatePicker`
     # (type-in + calendar sync) and `.PulsarCalendar` (day selection).
     #
@@ -993,18 +994,19 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     test "picking a day in the popover fills the hidden ISO input", %{conn: conn} do
       # Hidden inputs are display:none — Playwright's assert_has checks visibility,
       # so read the hidden input value via JS (same pattern as Calendar tests).
+      # After Fix 3: container id is kbd-dp-dp; display input id is kbd-dp.
       session =
         conn
         |> visit("/keyboard/date_picker")
         |> A11y.await_live_connected()
-        |> click(~s|#kbd-dp [aria-label="Open calendar"]|)
+        |> click(~s|#kbd-dp-dp [aria-label="Open calendar"]|)
         |> assert_has(~s|#kbd-dp-pop[data-state="open"]|)
         |> A11y.await_animations("kbd-dp-pop")
         |> click(~s|#kbd-dp-cal [data-cal-day="2026-06-15"]|)
 
       PhoenixTest.Playwright.evaluate(
         session,
-        "document.querySelector('#kbd-dp input[data-dp-value=\"single\"]').value",
+        "document.querySelector('#kbd-dp-dp input[data-dp-value=\"single\"]').value",
         fn value ->
           assert value == "2026-06-15",
                  "expected hidden ISO input to have value '2026-06-15', got '#{value}'"
@@ -1016,9 +1018,10 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
       # The hook parses on the 'change' event (not 'input'), and fill_in may not
       # fire change on blur, so set the value and dispatch 'change' via JS so the
       # hook's _onChange handler parses the typed date into ISO. en-US: MM/DD/YYYY.
+      # After Fix 3: display input id is kbd-dp (it IS the display input).
       type_script = """
       (() => {
-        const el = document.querySelector('#kbd-dp [data-dp-display="single"]');
+        const el = document.getElementById('kbd-dp');
         el.value = '06/22/2026';
         el.dispatchEvent(new Event('change', { bubbles: true }));
       })()
@@ -1033,10 +1036,40 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
 
       PhoenixTest.Playwright.evaluate(
         session,
-        "document.querySelector('#kbd-dp input[data-dp-value=\"single\"]').value",
+        "document.querySelector('#kbd-dp-dp input[data-dp-value=\"single\"]').value",
         fn value ->
           assert value == "2026-06-22",
                  "expected hidden ISO input to have value '2026-06-22', got '#{value}'"
+        end
+      )
+    end
+
+    test "typing a date in en-GB locale writes the correct hidden ISO value", %{conn: conn} do
+      # en-GB field order is day/month/year (d/m/y). Input "22/06/2026" must
+      # parse to ISO "2026-06-22". Uses a separate fixture instance (kbd-dp-gb)
+      # with locale="en-GB" so the hook's fieldOrder() uses en-GB ordering.
+      # After Fix 3: container id is kbd-dp-gb-dp; display input id is kbd-dp-gb.
+      type_script = """
+      (() => {
+        const el = document.getElementById('kbd-dp-gb');
+        el.value = '22/06/2026';
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      })()
+      """
+
+      session =
+        conn
+        |> visit("/keyboard/date_picker")
+        |> A11y.await_live_connected()
+
+      PhoenixTest.Playwright.evaluate(session, type_script)
+
+      PhoenixTest.Playwright.evaluate(
+        session,
+        "document.querySelector('#kbd-dp-gb-dp input[data-dp-value=\"single\"]').value",
+        fn value ->
+          assert value == "2026-06-22",
+                 "expected en-GB typed '22/06/2026' to produce ISO '2026-06-22', got '#{value}'"
         end
       )
     end
