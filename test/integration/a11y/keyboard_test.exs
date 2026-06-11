@@ -854,7 +854,7 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     # flash's own action button so the keydown bubbles to the flash root — the
     # same mechanism the dismiss-button test above exercises.
     #
-    # A dismiss removes the node `EXIT_MS` (200ms) *after* it fires, so a plain
+    # A dismiss removes the node `EXIT_MS` (120ms) *after* it fires, so a plain
     # `assert_has` would still find the node mid-animation even if Escape did
     # dismiss it. `assert_flash_present_after_dismiss_window/2` waits past that
     # window before asserting, so the test fails iff a dismiss actually fired.
@@ -874,7 +874,7 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     end
   end
 
-  # Waits past the flash exit-animation window (EXIT_MS = 200ms) and asserts the
+  # Waits past the flash exit-animation window (EXIT_MS = 120ms) and asserts the
   # element with `id` is still in the DOM. Distinguishes "Escape was ignored"
   # from "Escape fired a dismiss" — the latter removes the node after the window.
   defp assert_flash_present_after_dismiss_window(conn, id) do
