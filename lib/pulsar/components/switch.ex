@@ -210,7 +210,7 @@ defmodule Pulsar.Components.Switch do
 
   # Base switch track classes
   @switch_base_classes "relative inline-flex rounded-full cursor-pointer " <>
-                         "transition-[background-color,box-shadow] duration-normal ease-standard " <>
+                         "transition-[background-color,border-color,box-shadow] duration-normal ease-standard " <>
                          "transform-gpu " <>
                          "peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 " <>
                          "peer-focus-visible:ring-ring " <>

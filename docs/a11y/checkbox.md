@@ -122,12 +122,14 @@ defaults.
 
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
-**Evidence:** Only smooth scale/opacity transitions on the checkmark —
-`lib/pulsar/components/checkbox.ex:121, 123`. No essential motion.
+**Evidence:** Only smooth transform/opacity transitions on the checkmark
+(`after:transition-[transform,opacity] after:duration-fast
+after:ease-standard`) — `lib/pulsar/components/checkbox.ex:122`. No essential
+motion.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
-**Evidence:** No flashing; smooth 200ms transitions only.
+**Evidence:** No flashing; smooth 120ms (`duration-fast`) transitions only.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 

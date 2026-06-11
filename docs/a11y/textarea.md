@@ -116,8 +116,9 @@ The textarea content uses native scrolling, so once content exceeds
 
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
-**Evidence:** Only `transition-all duration-200 ease-in-out` for color
-changes — `lib/pulsar/components/textarea.ex:139`. No essential motion.
+**Evidence:** Only `transition-[color,background-color,border-color,box-shadow,height]
+duration-fast ease-standard` for color/height changes —
+`lib/pulsar/components/textarea.ex:138`. No essential motion.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 

@@ -78,8 +78,8 @@ defmodule Pulsar.Components.SwitchTest do
 
       html = rendered_to_string(~H[<Switch.switch name="test_switch" />])
 
-      # Track: color + ring
-      assert html =~ "transition-[background-color,box-shadow]"
+      # Track: color + border (outline/ghost variants) + ring
+      assert html =~ "transition-[background-color,border-color,box-shadow]"
       # Thumb: slide + bg
       assert html =~ "transition-[transform,background-color]"
       # The signature toggle stays at 200ms

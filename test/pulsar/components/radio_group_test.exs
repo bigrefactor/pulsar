@@ -80,9 +80,9 @@ defmodule Pulsar.Components.RadioGroupTest do
       assert html =~ "before:transition-[transform,opacity]"
       assert html =~ "before:duration-fast"
       assert html =~ "before:ease-standard"
-      # Label: text color
-      assert html =~ "transition-colors"
-      assert html =~ "duration-fast"
+      # Label: text color. Anchor on select-none (label-only) so a label that
+      # drops ease-standard can't pass on the input/dot's ease-standard.
+      assert html =~ "select-none transition-colors duration-fast ease-standard"
       refute html =~ "transition-all"
       refute html =~ "duration-normal"
 

@@ -646,7 +646,7 @@ defmodule Pulsar.Components.RadioGroup do
   # Classes for radio labels (standard non-card)
   @spec radio_label_classes(String.t(), String.t(), String.t()) :: String.t()
   defp radio_label_classes(size, color, label_color) do
-    base_classes = "cursor-pointer select-none transition-colors duration-fast flex-1 min-w-0"
+    base_classes = "cursor-pointer select-none transition-colors duration-fast ease-standard flex-1 min-w-0"
     effective_label_color = if label_color == "inherit", do: color, else: "neutral"
 
     [
