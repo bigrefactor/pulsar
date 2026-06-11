@@ -606,7 +606,24 @@ defmodule Pulsar.Components.ButtonTest do
       assert html =~ "justify-center"
       assert html =~ "font-medium"
       assert html =~ "transition-[transform,box-shadow,background-color,border-color,color,opacity]"
+      assert html =~ "duration-fast"
+      refute html =~ "duration-normal"
       assert html =~ "cursor-pointer"
+    end
+
+    test "keeps transform reset under reduced motion but drops blanket transition-none" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Button.button variant="solid">Press</Button.button>
+        """)
+
+      assert html =~ "hover:scale-[1.02]"
+      assert html =~ "active:scale-[0.98]"
+      assert html =~ "motion-reduce:hover:scale-100"
+      assert html =~ "motion-reduce:active:scale-100"
+      refute html =~ "motion-reduce:transition-none"
     end
 
     test "includes simplified base classes for link variant" do
