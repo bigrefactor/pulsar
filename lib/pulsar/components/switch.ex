@@ -210,7 +210,7 @@ defmodule Pulsar.Components.Switch do
 
   # Base switch track classes
   @switch_base_classes "relative inline-flex rounded-full cursor-pointer " <>
-                         "transition-all duration-normal ease-standard " <>
+                         "transition-[background-color,box-shadow] duration-normal ease-standard " <>
                          "transform-gpu " <>
                          "peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 " <>
                          "peer-focus-visible:ring-ring " <>
@@ -222,7 +222,7 @@ defmodule Pulsar.Components.Switch do
 
   # Base thumb classes
   @thumb_base_classes "absolute rounded-full " <>
-                        "transition-all duration-normal ease-standard " <>
+                        "transition-[transform,background-color] duration-normal ease-standard " <>
                         "transform-gpu " <>
                         "flex items-center justify-center pointer-events-none " <>
                         "data-[loading=true]:bg-background " <>

@@ -72,6 +72,21 @@ defmodule Pulsar.Components.SwitchTest do
         rendered_to_string(~H[<Switch.switch />])
       end
     end
+
+    test "follows the motion contract (toggle stays at duration-normal)" do
+      assigns = %{}
+
+      html = rendered_to_string(~H[<Switch.switch name="test_switch" />])
+
+      # Track: color + ring
+      assert html =~ "transition-[background-color,box-shadow]"
+      # Thumb: slide + bg
+      assert html =~ "transition-[transform,background-color]"
+      # The signature toggle stays at 200ms
+      assert html =~ "duration-normal"
+      assert html =~ "ease-standard"
+      refute html =~ "transition-all"
+    end
   end
 
   describe "switch/1 variants and styling" do
