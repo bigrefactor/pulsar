@@ -181,8 +181,8 @@ pausable (hover/focus) and hideable (dismiss button).
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
 **Evidence:** Only animations are CSS transitions on opacity/transform
-during exit — `lib/pulsar/components/flash.ex:438–442` — and the
-container's `transition-all duration-200` — `lib/pulsar/components/flash.ex:99`.
+during exit — `lib/pulsar/components/flash.ex:452–455` — and the
+container's `transition-[opacity,transform] duration-normal` — `lib/pulsar/components/flash.ex:104`.
 No flashing/blinking.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS

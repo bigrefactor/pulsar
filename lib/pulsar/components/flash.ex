@@ -101,7 +101,7 @@ defmodule Pulsar.Components.Flash do
   # (Restores pointer events for individual flashes via pointer-events-auto.)
   @flash_base_classes "flex items-center justify-between " <>
                         "font-medium shadow-dropdown " <>
-                        "transition-[opacity,transform] duration-normal ease-standard " <>
+                        "transition-[opacity,transform] duration-normal " <>
                         "pointer-events-auto"
 
   # Color configuration for each variant
@@ -304,7 +304,7 @@ defmodule Pulsar.Components.Flash do
 
     <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarFlash">
       // Exit timing — mirrors the `fast` (120ms) duration token. The accelerate
-      // easing is referenced from the --ease-accelerate token below.
+      // easing uses the global `--ease-accelerate` theme token (applied in animateExit).
       const EXIT_MS = 120
 
       export default {
