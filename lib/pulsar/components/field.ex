@@ -521,6 +521,7 @@ defmodule Pulsar.Components.Field do
       field={@field}
       id={@field_id}
       mode="single"
+      labelled_externally
       months={@months}
       min={@min}
       max={@max}
@@ -546,6 +547,7 @@ defmodule Pulsar.Components.Field do
       end_field={@end_field}
       id={@field_id}
       mode="range"
+      labelled_externally
       months={@months}
       min={@min}
       max={@max}

@@ -73,7 +73,13 @@ defmodule Pulsar.Components.DatePicker do
   attr(:display_label, :string,
     default: nil,
     doc:
-      ~s{Accessible label for the single-mode date input (defaults to "Date"). Range mode always labels its two inputs "Start date" and "End date".}
+      "Accessible label for the single date input when used standalone (defaults to \"Date\"). When rendered via Field, the field's <label> supplies the name."
+  )
+
+  attr(:labelled_externally, :boolean,
+    default: false,
+    doc:
+      "Set by Field: the visible input is associated with an external <label>, so the default aria-label is suppressed to avoid shadowing the field label as the accessible name."
   )
 
   attr(:class, :string, default: "")
@@ -108,7 +114,7 @@ defmodule Pulsar.Components.DatePicker do
           value={@single_display}
           placeholder={@placeholder}
           disabled={@disabled}
-          aria-label={@display_label || "Date"}
+          aria-label={@display_label || (!@labelled_externally && "Date")}
           aria-invalid={(@invalid && "true") || "false"}
           aria-describedby={assigns[:"aria-describedby"]}
           class={@input_class}
@@ -122,7 +128,7 @@ defmodule Pulsar.Components.DatePicker do
           value={@start_display}
           placeholder={@placeholder}
           disabled={@disabled}
-          aria-label="Start date"
+          aria-label={!@labelled_externally && "Start date"}
           aria-invalid={(@invalid && "true") || "false"}
           aria-describedby={assigns[:"aria-describedby"]}
           class={[@input_class, "text-center"]}

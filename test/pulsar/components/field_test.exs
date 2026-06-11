@@ -851,6 +851,23 @@ defmodule Pulsar.Components.FieldTest do
       assert html =~ ~s(name="trip[from]")
       assert html =~ ~s(name="trip[to]")
     end
+
+    test "the picker input is named by the field <label>, not a shadowing aria-label" do
+      form = to_form(%{"starts_on" => ""}, as: :ev)
+      assigns = %{field: form[:starts_on]}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="date">
+          <:label>Start date</:label>
+        </Field.field>
+        """)
+
+      # Field renders a real <label for> tied to the picker input; the picker must
+      # not re-add a default aria-label that would override the visible label.
+      assert html =~ ~s(<label)
+      refute html =~ ~s(aria-label="Date")
+    end
   end
 
   describe "show_errors attribute" do

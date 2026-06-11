@@ -29,6 +29,30 @@ defmodule Pulsar.Components.DatePickerTest do
     end
   end
 
+  describe "date_picker/1 accessible labelling" do
+    test "standalone single picker labels its input \"Date\"" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DatePicker.date_picker id="dp" />
+        """)
+
+      assert html =~ ~s(aria-label="Date")
+    end
+
+    test "labelled_externally suppresses the default aria-label so an external <label> wins" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DatePicker.date_picker id="dp" labelled_externally />
+        """)
+
+      refute html =~ ~s(aria-label="Date")
+    end
+  end
+
   describe "date_picker/1 field wrapper and anchor" do
     test "wrapper div carries the -field id and popover panel carries the matching anchor" do
       assigns = %{}

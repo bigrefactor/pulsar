@@ -519,6 +519,7 @@ defp render_input(%{type: "date"} = assigns) do
     field={@field}
     id={@field_id}
     mode="single"
+    labelled_externally
     months={@months}
     min={@min}
     max={@max}
@@ -544,6 +545,7 @@ defp render_input(%{type: "daterange"} = assigns) do
     end_field={@end_field}
     id={@field_id}
     mode="range"
+    labelled_externally
     months={@months}
     min={@min}
     max={@max}
