@@ -10,6 +10,21 @@ defmodule Pulsar.Components.SelectTest do
   alias Pulsar.Components.Select
 
   describe "select/1 basic functionality" do
+    test "follows the motion contract" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select name="test" options={["Option 1", "Option 2"]} />
+        """)
+
+      assert html =~ "transition-[color,background-color,border-color,box-shadow]"
+      assert html =~ "duration-fast"
+      assert html =~ "ease-standard"
+      refute html =~ "transition-all"
+      refute html =~ "duration-normal"
+    end
+
     test "renders select with default props" do
       assigns = %{}
 

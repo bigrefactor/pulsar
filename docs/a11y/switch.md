@@ -132,9 +132,11 @@ preserved.
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
 **Evidence:** Loading spinner uses `animate-spin` (essential per WCAG
-exemption) — `lib/pulsar/components/switch.ex:526`. Thumb position
-transition is a smooth 200ms color/transform —
-`lib/pulsar/components/switch.ex:235, 249`.
+exemption) — `lib/pulsar/components/switch.ex:526`. Track
+(`transition-[background-color,border-color,box-shadow]`) and thumb
+(`transition-[transform,background-color]`) are smooth 200ms
+(`duration-normal`) transitions —
+`lib/pulsar/components/switch.ex:213, 225`.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 

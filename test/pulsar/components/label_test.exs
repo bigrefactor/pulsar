@@ -300,7 +300,9 @@ defmodule Pulsar.Components.LabelTest do
         """)
 
       assert html =~ "transition-colors"
-      assert html =~ "duration-normal"
+      assert html =~ "duration-fast"
+      assert html =~ "ease-standard"
+      refute html =~ "duration-normal"
     end
 
     test "uses Stellar label for accessibility features" do

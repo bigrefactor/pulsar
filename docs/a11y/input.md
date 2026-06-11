@@ -132,14 +132,15 @@ inputs absorb the larger line-height without clipping.
 
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
-**Evidence:** Only animations are smooth color/transform transitions
-(`transition-all duration-200`) — `lib/pulsar/components/input.ex:149, 452`.
-No essential motion.
+**Evidence:** Only animations are smooth color/border/shadow transitions
+(container `transition-[color,background-color,border-color,box-shadow]
+duration-fast ease-standard`; inner input `transition-colors duration-fast
+ease-standard`) — `lib/pulsar/components/input.ex:149, 433`. No essential motion.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
 **Evidence:** No flashing; only smooth transitions —
-`lib/pulsar/components/input.ex:149, 452`.
+`lib/pulsar/components/input.ex:149, 433`.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 

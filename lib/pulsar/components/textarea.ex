@@ -135,7 +135,7 @@ defmodule Pulsar.Components.Textarea do
   }
 
   # Base textarea classes
-  @textarea_base_classes "w-full transition-all duration-normal ease-standard " <>
+  @textarea_base_classes "w-full transition-[color,background-color,border-color,box-shadow,height] duration-fast ease-standard " <>
                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 resize-none"
 
   # Variant configuration

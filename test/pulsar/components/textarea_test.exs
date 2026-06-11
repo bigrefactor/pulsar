@@ -9,6 +9,21 @@ defmodule Pulsar.Components.TextareaTest do
   alias Pulsar.Components.Textarea
 
   describe "textarea/1 basic functionality" do
+    test "follows the motion contract and keeps height transitionable" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Textarea.textarea name="test" />
+        """)
+
+      assert html =~ "transition-[color,background-color,border-color,box-shadow,height]"
+      assert html =~ "duration-fast"
+      assert html =~ "ease-standard"
+      refute html =~ "transition-all"
+      refute html =~ "duration-normal"
+    end
+
     test "renders textarea with default props" do
       assigns = %{}
 

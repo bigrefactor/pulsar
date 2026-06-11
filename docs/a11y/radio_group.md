@@ -120,8 +120,9 @@ behavior preserved.
 
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
-**Evidence:** Only smooth transitions on the inner dot —
-`lib/pulsar/components/radio_group.ex:597–599`.
+**Evidence:** Only smooth transform/opacity transitions on the inner dot
+(`before:transition-[transform,opacity] before:duration-fast
+before:ease-standard`) — `lib/pulsar/components/radio_group.ex:640`.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 

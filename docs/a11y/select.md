@@ -122,9 +122,9 @@ native `<button type="button">` with Phoenix click handlers —
 
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
-**Evidence:** Only smooth color transitions
-(`transition-all duration-200 ease-in-out`) —
-`lib/pulsar/components/select.ex:117`.
+**Evidence:** Only smooth color/border/shadow transitions
+(`transition-[color,background-color,border-color,box-shadow] duration-fast
+ease-standard`) — `lib/pulsar/components/select.ex:117`.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
