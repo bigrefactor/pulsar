@@ -594,6 +594,21 @@ defmodule Pulsar.Components.LinkTest do
   end
 
   describe "Link.a/1 custom styling" do
+    test "uses token-driven color transition, not transition-all" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Link.a href="/test">Link</Link.a>
+        """)
+
+      assert html =~ "transition-colors"
+      assert html =~ "duration-fast"
+      assert html =~ "ease-standard"
+      refute html =~ "transition-all"
+      refute html =~ "duration-normal"
+    end
+
     test "merges custom classes correctly" do
       assigns = %{}
 

@@ -29,6 +29,18 @@ defmodule Pulsar.Components.FlashTest do
       assert html =~ ~s(aria-label="Dismiss")
     end
 
+    test "flash base uses explicit opacity/transform transition, not transition-all" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash>Saved</Flash.flash>
+        """)
+
+      assert html =~ "transition-[opacity,transform]"
+      refute html =~ "transition-all"
+    end
+
     test "renders with custom color" do
       assigns = %{}
 

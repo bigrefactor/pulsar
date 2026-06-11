@@ -110,7 +110,7 @@ defmodule Pulsar.Components.Button do
   }
 
   # Base button styling classes
-  @button_base_classes "font-medium cursor-pointer transition-[transform,box-shadow,background-color,border-color,color,opacity] duration-normal ease-standard " <>
+  @button_base_classes "font-medium cursor-pointer transition-[transform,box-shadow,background-color,border-color,color,opacity] duration-fast ease-standard " <>
                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 " <>
                          "focus-visible:ring-ring " <>
                          "disabled:pointer-events-none disabled:opacity-disabled disabled:cursor-not-allowed " <>
@@ -122,17 +122,17 @@ defmodule Pulsar.Components.Button do
     "ghost" =>
       "inline-flex items-center justify-center shadow-card hover:shadow-dropdown " <>
         "hover:scale-[1.02] active:scale-[0.98] " <>
-        "motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none",
+        "motion-reduce:hover:scale-100 motion-reduce:active:scale-100",
     "link" =>
       "inline underline-offset-4 hover:underline focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:underline",
     "outline" =>
       "inline-flex items-center justify-center shadow-card hover:shadow-dropdown " <>
         "hover:scale-[1.02] active:scale-[0.98] " <>
-        "motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none",
+        "motion-reduce:hover:scale-100 motion-reduce:active:scale-100",
     "solid" =>
       "inline-flex items-center justify-center shadow-card hover:shadow-dropdown " <>
         "hover:scale-[1.02] active:scale-[0.98] " <>
-        "motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:transition-none"
+        "motion-reduce:hover:scale-100 motion-reduce:active:scale-100"
   }
 
   # Color configuration for each variant and color combination

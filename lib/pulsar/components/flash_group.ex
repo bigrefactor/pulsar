@@ -450,7 +450,7 @@ defmodule Pulsar.Components.FlashGroup do
         phx-mounted={
           JS.show(
             transition: {
-              "ease-standard duration-normal",
+              "ease-decelerate duration-normal",
               "opacity-0 #{get_entry_from(@position)}",
               "opacity-100 #{get_entry_to(@position)}"
             }
