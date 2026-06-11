@@ -112,20 +112,20 @@ defmodule Pulsar.Components.Checkbox do
   }
 
   # Base checkbox styling classes
-  @checkbox_base_classes "appearance-none relative cursor-pointer transition-all duration-normal ease-standard " <>
+  @checkbox_base_classes "appearance-none relative cursor-pointer transition-[color,background-color,border-color,box-shadow] duration-fast ease-standard " <>
                            "focus-visible:outline-none focus-visible:before:ring-2 focus-visible:before:ring-offset-2 " <>
                            "focus-visible:before:ring-ring " <>
                            "disabled:cursor-not-allowed disabled:opacity-disabled " <>
                            "before:content-[''] before:absolute before:inset-0 before:rounded-[inherit] " <>
-                           "before:border-2 before:transition-all before:duration-normal before:ease-standard " <>
+                           "before:border-2 before:transition-[color,background-color,border-color,box-shadow] before:duration-fast before:ease-standard " <>
                            "after:content-['✓'] after:absolute after:inset-0 after:flex after:items-center after:justify-center " <>
-                           "after:text-current after:font-bold after:transition-all after:duration-normal after:ease-standard " <>
+                           "after:text-current after:font-bold after:transition-[transform,opacity] after:duration-fast after:ease-standard " <>
                            "after:scale-0 after:opacity-0 " <>
                            "data-[checked=true]:after:scale-100 data-[checked=true]:after:opacity-100 " <>
                            "data-[indeterminate=true]:after:content-['−'] data-[indeterminate=true]:after:scale-100 data-[indeterminate=true]:after:opacity-100"
 
   # Base card container styling classes
-  @card_base_classes "flex items-center gap-3 rounded-box cursor-pointer transition-all duration-normal ease-standard " <>
+  @card_base_classes "flex items-center gap-3 rounded-box cursor-pointer transition-[color,background-color,border-color,box-shadow] duration-fast ease-standard " <>
                        "focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-ring " <>
                        "has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-disabled"
 

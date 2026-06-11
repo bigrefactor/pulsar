@@ -46,7 +46,8 @@ defmodule Pulsar.Components.CheckboxTest do
       # Check for base styling
       assert html =~ "appearance-none"
       assert html =~ "cursor-pointer"
-      assert html =~ "transition-all"
+      assert html =~ "transition-[color,background-color,border-color,box-shadow]"
+      refute html =~ "transition-all"
 
       # Check for size classes (default is md): 24px hit box, 20px visible box
       assert html =~ "h-6"
@@ -66,6 +67,37 @@ defmodule Pulsar.Components.CheckboxTest do
         <.checkbox />
         """)
       end
+    end
+
+    test "follows the motion contract across box, indicator, and card" do
+      assigns = %{}
+
+      box =
+        rendered_to_string(~H"""
+        <.checkbox name="terms" />
+        """)
+
+      # Box + before: micro surfaces
+      assert box =~ "transition-[color,background-color,border-color,box-shadow]"
+      assert box =~ "before:transition-[color,background-color,border-color,box-shadow]"
+      assert box =~ "before:duration-fast"
+      # After: the ✓ indicator pop (transform + opacity)
+      assert box =~ "after:transition-[transform,opacity]"
+      assert box =~ "after:duration-fast"
+      assert box =~ "after:ease-standard"
+      assert box =~ "duration-fast"
+      refute box =~ "transition-all"
+      refute box =~ "duration-normal"
+
+      card =
+        rendered_to_string(~H"""
+        <.checkbox card name="plan" value="premium" />
+        """)
+
+      assert card =~ "transition-[color,background-color,border-color,box-shadow]"
+      assert card =~ "duration-fast"
+      refute card =~ "transition-all"
+      refute card =~ "duration-normal"
     end
   end
 
@@ -772,8 +804,9 @@ defmodule Pulsar.Components.CheckboxTest do
 
       assert html =~ "after:scale-0"
       assert html =~ "after:opacity-0"
-      assert html =~ "after:transition-all"
-      assert html =~ "after:duration-normal"
+      assert html =~ "after:transition-[transform,opacity]"
+      assert html =~ "after:duration-fast"
+      refute html =~ "after:transition-all"
     end
 
     test "includes rounded classes for pseudo elements" do
