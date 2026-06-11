@@ -110,7 +110,7 @@ alias Phoenix.LiveView.Rendered
 }
 
 # Base label styling classes
-@label_base_classes "font-medium transition-colors duration-normal cursor-pointer"
+@label_base_classes "font-medium transition-colors duration-fast ease-standard cursor-pointer"
 
 @doc """
 Renders a styled label component with typography variants and visual indicators.
