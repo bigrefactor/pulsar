@@ -99,5 +99,16 @@ defmodule Pulsar.Components.CalendarTest do
       assert html =~ "data-[selected=true]:bg-success"
       assert html =~ "h-10 w-10"
     end
+
+    test "day cell class list includes cursor-pointer" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Calendar.calendar id="cal" />
+        """)
+
+      assert html =~ "cursor-pointer"
+    end
   end
 end

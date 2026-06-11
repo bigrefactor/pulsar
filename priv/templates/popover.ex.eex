@@ -199,6 +199,12 @@ attr(:on_close, JS,
   doc: "JS commands to run when the panel closes (including outside-click/Escape dismissal)"
 )
 
+attr(:anchor, :string,
+  default: nil,
+  doc:
+    "CSS selector for the element the panel is positioned against. Defaults to the trigger. The trigger still toggles the panel."
+)
+
 attr(:class, :string, default: "", doc: "Additional CSS classes for the panel")
 
 attr(:rest, :global,
@@ -244,6 +250,7 @@ def popover(assigns) do
     data-placement={@placement}
     data-offset={@offset}
     data-trigger={@trigger_mode}
+    data-anchor={@anchor}
     data-state="closed"
     data-on-open={@on_open}
     data-on-close={@on_close}
@@ -259,6 +266,7 @@ def popover(assigns) do
         // The trigger is the element immediately before the panel (the
         // rendered :trigger slot). Wire it once the hook mounts.
         this.trigger = this.el.previousElementSibling
+        this.resolveAnchor()
         this.mode = this.el.dataset.trigger || "click"
         this._reposition = () => this.position()
 
@@ -267,6 +275,13 @@ def popover(assigns) do
         } else {
           this.setupClick()
         }
+      },
+
+      // Resolve the positioning anchor: if data-anchor is set, find the
+      // matching element; otherwise fall back to the trigger itself.
+      resolveAnchor() {
+        const sel = this.el.dataset.anchor
+        this.anchorEl = (sel && document.querySelector(sel)) || this.trigger
       },
 
       // Click mode: the native [popover="auto"] toggle wired through the
@@ -384,7 +399,7 @@ def popover(assigns) do
       position() {
         if (!this.el.matches(":popover-open")) return
         if (!this.trigger) return
-        const t = this.trigger.getBoundingClientRect()
+        const t = (this.anchorEl || this.trigger).getBoundingClientRect()
         const p = this.el.getBoundingClientRect()
         // A zero-size rect means the panel isn't laid out yet; retry next frame.
         if (p.width === 0 && p.height === 0) {
@@ -450,6 +465,7 @@ def popover(assigns) do
         // A server patch can revert client-applied attributes (data-state,
         // aria-expanded) and strip the inline position — re-derive them from
         // the live open state.
+        this.resolveAnchor()
         const open = this.el.matches(":popover-open")
         this.el.dataset.state = open ? "open" : "closed"
         if (this.trigger) {

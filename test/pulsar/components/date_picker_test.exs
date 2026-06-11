@@ -29,6 +29,20 @@ defmodule Pulsar.Components.DatePickerTest do
     end
   end
 
+  describe "date_picker/1 field wrapper and anchor" do
+    test "wrapper div carries the -field id and popover panel carries the matching anchor" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DatePicker.date_picker id="dp" />
+        """)
+
+      assert html =~ ~s(id="dp-field")
+      assert html =~ ~s(data-anchor="#dp-field")
+    end
+  end
+
   describe "date_picker/1 range mode" do
     test "renders two display inputs and two hidden ISO inputs" do
       form = to_form(%{"from" => "2026-06-10", "to" => "2026-06-20"}, as: :trip)

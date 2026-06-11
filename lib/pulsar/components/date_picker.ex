@@ -99,7 +99,7 @@ defmodule Pulsar.Components.DatePicker do
       class={merge(["inline-flex items-center gap-2", @class])}
       {@rest}
     >
-      <div class={@wrapper_class}>
+      <div id={@id <> "-field"} class={@wrapper_class}>
         <input
           :if={@mode == "single"}
           id={@id}
@@ -143,7 +143,13 @@ defmodule Pulsar.Components.DatePicker do
           autocomplete="off"
         />
 
-        <Popover.popover id={@id <> "-pop"} placement="bottom-start" variant="elevated" size="sm">
+        <Popover.popover
+          id={@id <> "-pop"}
+          placement="bottom-start"
+          anchor={"#" <> @id <> "-field"}
+          variant="elevated"
+          size="sm"
+        >
           <:trigger>
             <button
               type="button"
@@ -188,11 +194,14 @@ defmodule Pulsar.Components.DatePicker do
             this.cal = document.getElementById(this.el.dataset.calId)
             this._lastSeed = this.cal ? (this.cal.dataset.value || "") : ""
 
-            // format any server-seeded ISO into the locale display
+            // format any server-seeded ISO into the locale display; also
+            // apply a locale-format hint as the placeholder when none is set
+            const hint = this.placeholderHint()
             this.eachPair((kind) => {
               const display = this.el.querySelector(`[data-dp-display="${kind}"]`)
               const hidden = this.el.querySelector(`[data-dp-value="${kind}"]`)
               if (display && hidden && hidden.value) display.value = this.format(hidden.value)
+              if (display && !display.placeholder) display.placeholder = hint
             })
 
             // type-in: parse on blur/change, write ISO + reformat display
@@ -286,6 +295,21 @@ defmodule Pulsar.Components.DatePicker do
           },
 
           // --- locale helpers ---------------------------------------------------
+
+          // Build a format hint from the locale (e.g. "mm/dd/yyyy" for en-US,
+          // "dd/mm/yyyy" for en-GB). Used as the placeholder when no author
+          // placeholder is set.
+          placeholderHint() {
+            const ref = new Date(2026, 11, 22) // Dec 22 2026 — unambiguous (22/12)
+            const parts = new Intl.DateTimeFormat(this.locale, { year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(ref)
+            return parts.map((p) => {
+              if (p.type === "day") return "dd"
+              if (p.type === "month") return "mm"
+              if (p.type === "year") return "yyyy"
+              if (p.type === "literal") return p.value
+              return ""
+            }).join("")
+          },
 
           format(iso) {
             const [y, m, d] = iso.split("-").map(Number)

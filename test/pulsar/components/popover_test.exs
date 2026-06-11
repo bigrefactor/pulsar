@@ -42,6 +42,36 @@ defmodule Pulsar.Components.PopoverTest do
     end
   end
 
+  describe "popover/1 anchor attr" do
+    test "renders data-anchor on the panel when anchor is supplied" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Popover.popover id="pop" anchor="#foo">
+          <:trigger><button>Open</button></:trigger>
+          Body
+        </Popover.popover>
+        """)
+
+      assert html =~ ~s(data-anchor="#foo")
+    end
+
+    test "omitting anchor renders no data-anchor attribute" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Popover.popover id="pop">
+          <:trigger><button>Open</button></:trigger>
+          Body
+        </Popover.popover>
+        """)
+
+      refute html =~ "data-anchor="
+    end
+  end
+
   describe "popover/1 positioning contract (data-*)" do
     test "defaults placement and offset, exposes closed state" do
       assigns = %{}

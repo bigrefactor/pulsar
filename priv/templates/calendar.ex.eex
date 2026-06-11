@@ -310,7 +310,7 @@ def calendar(assigns) do
           b.type = "button"
           b.dataset.calNav = dir
           b.setAttribute("aria-label", `${dir === "prev" ? "Previous" : "Next"} month, ${ariaLabel}`)
-          b.className = "flex h-7 w-7 items-center justify-center rounded-field text-muted-foreground hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          b.className = "flex h-7 w-7 items-center justify-center rounded-field text-muted-foreground hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
           b.textContent = label
           b.style.visibility = visible ? "visible" : "hidden"
           return b
@@ -563,7 +563,7 @@ defp iso_or_nil(_), do: nil
 @spec cell_classes(String.t(), String.t()) :: String.t()
 defp cell_classes(color, size) do
   merge([
-    "flex items-center justify-center rounded-field tabular-nums transition-colors duration-fast ease-standard",
+    "flex items-center justify-center rounded-field tabular-nums transition-colors duration-fast ease-standard cursor-pointer",
     "data-[today=true]:font-semibold data-[today=true]:ring-1 data-[today=true]:ring-border-strong",
     "data-[disabled=true]:opacity-disabled data-[disabled=true]:pointer-events-none",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
