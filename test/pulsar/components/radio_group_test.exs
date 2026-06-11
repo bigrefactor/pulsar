@@ -62,6 +62,43 @@ defmodule Pulsar.Components.RadioGroupTest do
       assert html =~ "appearance-none"
       assert html =~ "rounded-full"
     end
+
+    test "follows the motion contract across input, dot, label, and card" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic">
+          <:option value="basic">Basic</:option>
+          <:option value="pro">Pro</:option>
+        </.radio_group>
+        """)
+
+      # Input: micro surface
+      assert html =~ "transition-[color,background-color,border-color,box-shadow]"
+      # Dot: indicator pop, now with ease-standard
+      assert html =~ "before:transition-[transform,opacity]"
+      assert html =~ "before:duration-fast"
+      assert html =~ "before:ease-standard"
+      # Label: text color
+      assert html =~ "transition-colors"
+      assert html =~ "duration-fast"
+      refute html =~ "transition-all"
+      refute html =~ "duration-normal"
+
+      card =
+        rendered_to_string(~H"""
+        <.radio_group name="plan" value="basic" card>
+          <:option value="basic">Basic</:option>
+          <:option value="pro">Pro</:option>
+        </.radio_group>
+        """)
+
+      assert card =~ "transition-[color,background-color,border-color,box-shadow]"
+      assert card =~ "duration-fast"
+      refute card =~ "transition-all"
+      refute card =~ "duration-normal"
+    end
   end
 
   describe "radio_group/1 card style" do

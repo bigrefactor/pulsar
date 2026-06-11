@@ -631,12 +631,12 @@ end
 @spec radio_input_base_classes() :: String.t()
 defp radio_input_base_classes do
   """
-  appearance-none relative cursor-pointer transition-all duration-normal ease-standard
+  appearance-none relative cursor-pointer transition-[color,background-color,border-color,box-shadow] duration-fast ease-standard
   rounded-full border-2
   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
   disabled:cursor-not-allowed disabled:opacity-disabled
   before:content-[''] before:absolute before:rounded-full
-  before:transition-all before:duration-normal
+  before:transition-[transform,opacity] before:duration-fast before:ease-standard
   before:scale-0 before:opacity-0
   checked:before:scale-100 checked:before:opacity-100
   """
@@ -645,7 +645,7 @@ end
 # Classes for radio labels (standard non-card)
 @spec radio_label_classes(String.t(), String.t(), String.t()) :: String.t()
 defp radio_label_classes(size, color, label_color) do
-  base_classes = "cursor-pointer select-none transition-all duration-normal flex-1 min-w-0"
+  base_classes = "cursor-pointer select-none transition-colors duration-fast flex-1 min-w-0"
   effective_label_color = if label_color == "inherit", do: color, else: "neutral"
 
   [
@@ -667,7 +667,7 @@ end
 defp card_base_classes(color, size) do
   [
     "relative flex items-start rounded-box border-2",
-    "cursor-pointer transition-all duration-normal ease-standard",
+    "cursor-pointer transition-[color,background-color,border-color,box-shadow] duration-fast ease-standard",
     "focus-within:ring-2 focus-within:ring-offset-2",
     @size_config[size][:card_padding],
     @size_config[size][:card_text],
