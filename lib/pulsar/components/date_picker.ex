@@ -125,7 +125,7 @@ defmodule Pulsar.Components.DatePicker do
           aria-label="Start date"
           aria-invalid={(@invalid && "true") || "false"}
           aria-describedby={assigns[:"aria-describedby"]}
-          class={@input_class}
+          class={[@input_class, "text-center"]}
           autocomplete="off"
         />
         <span :if={@mode == "range"} aria-hidden="true" class="text-muted-foreground">–</span>
@@ -139,7 +139,7 @@ defmodule Pulsar.Components.DatePicker do
           aria-label="End date"
           aria-invalid={(@invalid && "true") || "false"}
           aria-describedby={assigns[:"aria-describedby"]}
-          class={@input_class}
+          class={[@input_class, "text-center"]}
           autocomplete="off"
         />
 
