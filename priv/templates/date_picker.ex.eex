@@ -50,7 +50,7 @@ Renders a date picker.
 """
 @spec date_picker(map()) :: Rendered.t()
 
-attr(:id, :string, default: nil)
+attr(:id, :string, doc: "Derived from the bound field, or auto-generated, if omitted")
 attr(:mode, :string, default: "single", values: ~w(single range))
 attr(:field, FormField, default: nil, doc: "Single-mode form field")
 attr(:start_field, FormField, default: nil, doc: "Range start field")
@@ -75,9 +75,11 @@ attr(:class, :string, default: "")
 attr(:rest, :global)
 
 def date_picker(assigns) do
+  validate_fields!(assigns)
+
   assigns =
     assigns
-    |> assign_new(:id, fn -> "date-picker-#{System.unique_integer([:positive])}" end)
+    |> assign_new(:id, fn -> stable_id(assigns) end)
     |> normalize_fields()
     |> assign_calendar_value()
     |> assign(:input_class, input_classes(assigns.size))
@@ -255,32 +257,38 @@ def date_picker(assigns) do
           this._lastSeed = seed
           if (this.mode === "range") {
             const [a, b] = seed.split("/")
-            this.setPair("start", a)
-            this.setPair("end", b)
-            // Fire only once the range is complete, matching Calendar's on_select.
-            if (a && b) this.runChange()
+            // Mid-range (a new start picked, end not yet chosen) we write the
+            // values but stay silent: dispatching the bubbling input now would
+            // fire the form's phx-change with an incomplete range {start, ""}.
+            // Only notify the form once the range is complete.
+            const complete = !!(a && b)
+            this.setPair("start", a, !complete)
+            this.setPair("end", b, !complete)
+            if (complete) this.runChange()
           } else {
             this.setPair("single", seed)
             if (seed) this.runChange()
           }
         },
 
-        setPair(kind, iso) {
+        setPair(kind, iso, silent) {
           const display = this.el.querySelector(`[data-dp-display="${kind}"]`)
           const hidden = this.el.querySelector(`[data-dp-value="${kind}"]`)
-          if (hidden) this.setInput(hidden, iso || "")
+          if (hidden) this.setInput(hidden, iso || "", silent)
           if (display) display.value = iso ? this.format(iso) : ""
         },
 
-        // Set a hidden input's value AND notify LiveView. A bare `.value =` does not
-        // fire input/change, so phx-change/form recovery never sees it — dispatch a
-        // bubbling "input" event so the enclosing form picks up the new value.
-        // Also set the attribute so morphdom does not revert the value on re-render.
-        setInput(input, value) {
+        // Set a hidden input's value AND (unless silent) notify LiveView. A bare
+        // `.value =` does not fire input/change, so phx-change/form recovery never
+        // sees it — dispatch a bubbling "input" event so the enclosing form picks
+        // up the new value. Also set the attribute so morphdom does not revert the
+        // value on re-render. Pass silent=true to update the value without
+        // notifying the form (used to stage an incomplete range).
+        setInput(input, value, silent) {
           if (input.value === value) return
           input.value = value
           input.setAttribute("value", value)
-          input.dispatchEvent(new Event("input", { bubbles: true }))
+          if (!silent) input.dispatchEvent(new Event("input", { bubbles: true }))
         },
 
         // --- locale helpers ---------------------------------------------------
@@ -347,6 +355,44 @@ end
 # ============================================================================
 # HELPERS
 # ============================================================================
+
+# The colocated hook holds typed/selected state in JS, so the element id must be
+# stable across the form's re-renders — a changing id makes morphdom replace the
+# node and remount the hook, dropping client state. Derive it from the bound
+# field when present; otherwise fall back to a generated id for unbound use.
+defp stable_id(%{field: %FormField{} = field}), do: "date-picker-#{field.id}"
+defp stable_id(%{start_field: %FormField{} = field}), do: "date-picker-#{field.id}"
+defp stable_id(_assigns), do: generate_id()
+
+defp generate_id(prefix \\ "date-picker") do
+  "#{prefix}-#{System.unique_integer([:positive])}"
+end
+
+# Range mode binds both start_field and end_field; single mode binds field.
+# Partially binding renders display inputs with no matching hidden ISO input,
+# silently breaking form submission — fail fast instead.
+defp validate_fields!(%{mode: "range"} = assigns) do
+  case {assigns.start_field, assigns.end_field} do
+    {%FormField{}, nil} ->
+      raise ArgumentError, ~s(<.date_picker mode="range"> was given start_field but not end_field; range binding needs both)
+
+    {nil, %FormField{}} ->
+      raise ArgumentError, ~s(<.date_picker mode="range"> was given end_field but not start_field; range binding needs both)
+
+    _ ->
+      :ok
+  end
+
+  if assigns.field do
+    raise ArgumentError, ~s(<.date_picker mode="range"> binds start_field/end_field, not field)
+  end
+end
+
+defp validate_fields!(assigns) do
+  if assigns.start_field || assigns.end_field do
+    raise ArgumentError, ~s(<.date_picker mode="single"> binds field, not start_field/end_field)
+  end
+end
 
 defp assign_calendar_value(%{mode: "range"} = assigns) do
   assign(assigns, :calendar_value, {assigns.start_value, assigns.end_value})

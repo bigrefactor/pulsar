@@ -1002,6 +1002,9 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
         |> click(~s|#kbd-dp-dp [aria-label="Open calendar"]|)
         |> assert_has(~s|#kbd-dp-pop[data-state="open"]|)
         |> A11y.await_animations("kbd-dp-pop")
+        # The data-state flip alone can pass while the panel stays hidden (per
+        # CLAUDE.md); assert the popover is actually visible before selecting.
+        |> A11y.assert_visible("kbd-dp-pop")
         |> click(~s|#kbd-dp-cal [data-cal-day="2026-06-15"]|)
 
       PhoenixTest.Playwright.evaluate(

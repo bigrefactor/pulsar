@@ -278,10 +278,16 @@ def popover(assigns) do
       },
 
       // Resolve the positioning anchor: if data-anchor is set, find the
-      // matching element; otherwise fall back to the trigger itself.
+      // matching element; otherwise fall back to the trigger itself. An invalid
+      // selector throws a DOMException from querySelector, so guard it and fall
+      // back to the trigger rather than breaking positioning entirely.
       resolveAnchor() {
         const sel = this.el.dataset.anchor
-        this.anchorEl = (sel && document.querySelector(sel)) || this.trigger
+        let match = null
+        if (sel) {
+          try { match = document.querySelector(sel) } catch (_e) { match = null }
+        }
+        this.anchorEl = match || this.trigger
       },
 
       // Click mode: the native [popover="auto"] toggle wired through the

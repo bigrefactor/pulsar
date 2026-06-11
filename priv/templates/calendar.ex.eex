@@ -75,7 +75,7 @@ Renders a locale-aware calendar grid.
 """
 @spec calendar(map()) :: Rendered.t()
 
-attr(:id, :string, default: nil, doc: "Calendar id (auto-generated if omitted)")
+attr(:id, :string, doc: "Calendar id (derived from the bound field, or auto-generated, if omitted)")
 attr(:mode, :string, default: "single", values: ~w(single range), doc: "Single date or a start/end range")
 attr(:value, :any, default: nil, doc: "Selected Date/ISO (single) or {start, end} (range)")
 attr(:months, :integer, default: nil, doc: "Month grids shown at once (nil → 1 single / 2 range)")
@@ -94,9 +94,11 @@ attr(:class, :string, default: "", doc: "Additional CSS classes for the containe
 attr(:rest, :global, doc: "Additional container attributes")
 
 def calendar(assigns) do
+  validate_fields!(assigns)
+
   assigns =
     assigns
-    |> assign_new(:id, fn -> "calendar-#{System.unique_integer([:positive])}" end)
+    |> assign_new(:id, fn -> stable_id(assigns) end)
     |> normalize_months()
     |> normalize_hidden_inputs()
     |> assign(:cell_class, cell_classes(assigns.color, assigns.size))
@@ -355,7 +357,7 @@ def calendar(assigns) do
 
           this._onClick = (e) => {
             const nav = e.target.closest("[data-cal-nav]")
-            if (nav) { this.navigate(nav.dataset.calNav === "next" ? 1 : -1); return }
+            if (nav) { this.navigate(nav.dataset.calNav); return }
             const cell = e.target.closest("[data-cal-day]")
             if (cell && cell.dataset.disabled !== "true") this.select(cell.dataset.calDay)
           }
@@ -365,11 +367,15 @@ def calendar(assigns) do
           this.gridsEl.addEventListener("keydown", this._onKeydown)
         },
 
-        navigate(deltaMonths) {
-          this.view = this.addMonths(this.view, deltaMonths)
+        navigate(dir) {
+          this.view = this.addMonths(this.view, dir === "next" ? 1 : -1)
           this.render()
-          // The nav button keeps focus, so announce the new month for screen
-          // readers (day cells announce themselves on focus during keyboard nav).
+          // render() rebuilds the grids (and the nav buttons inside them), so the
+          // clicked button is gone and focus has dropped to <body>. Restore focus
+          // to the same-direction button in the freshly rendered grids, then
+          // announce the new month for screen readers.
+          const btn = this.gridsEl.querySelector(`[data-cal-nav="${dir}"]`)
+          if (btn) btn.focus()
           if (this.announceEl) this.announceEl.textContent = this.intl.month.format(this.view)
         },
 
@@ -481,7 +487,18 @@ def calendar(assigns) do
         moveToWeekEdge(edge) {
           const dow = (this.cldrDow(this.cursor) - this.week.firstDay + 7) % 7
           const delta = edge === "start" ? -dow : 6 - dow
-          this.setCursor(this.addDays(this.cursor, delta))
+          let target = this.addDays(this.cursor, delta)
+          // The edge cell may be disabled (min/max/disabled_dates cutting into the
+          // week). Walk inward toward the cursor, staying within the week, so we
+          // never land focus on a cell Enter/Space can't activate — matching the
+          // skip-disabled behavior of the arrow keys.
+          const step = edge === "start" ? 1 : -1
+          let guard = 0
+          while (guard++ < 7 && this.isDisabled(this.toISO(target), target)) {
+            target = this.addDays(target, step)
+          }
+          if (this.isDisabled(this.toISO(target), target)) return
+          this.setCursor(target)
         },
 
         pageBy(months) { this.setCursor(this.addMonthsKeepDay(this.cursor, months)) },
@@ -517,6 +534,45 @@ end
 # ============================================================================
 # HELPERS
 # ============================================================================
+
+# A colocated hook holds selection/cursor state in JS, so the element id must be
+# stable across re-renders — a changing id makes morphdom replace the node and
+# remount the hook, dropping client state. Derive it from the bound field when
+# present (stable across the form's re-renders); otherwise fall back to a
+# generated id for unbound, client-only use.
+defp stable_id(%{field: %FormField{} = field}), do: "calendar-#{field.id}"
+defp stable_id(%{start_field: %FormField{} = field}), do: "calendar-#{field.id}"
+defp stable_id(_assigns), do: generate_id()
+
+defp generate_id(prefix \\ "calendar") do
+  "#{prefix}-#{System.unique_integer([:positive])}"
+end
+
+# Range mode binds both a start and end field; single mode binds one. Partially
+# binding (one of the two, or mixing modes and fields) silently renders display
+# inputs with no matching hidden ISO input, breaking form submission — fail fast.
+defp validate_fields!(%{mode: "range"} = assigns) do
+  case {assigns.start_field, assigns.end_field} do
+    {%FormField{}, nil} ->
+      raise ArgumentError, ~s(<.calendar mode="range"> was given start_field but not end_field; range binding needs both)
+
+    {nil, %FormField{}} ->
+      raise ArgumentError, ~s(<.calendar mode="range"> was given end_field but not start_field; range binding needs both)
+
+    _ ->
+      :ok
+  end
+
+  if assigns.field do
+    raise ArgumentError, ~s(<.calendar mode="range"> binds start_field/end_field, not field)
+  end
+end
+
+defp validate_fields!(assigns) do
+  if assigns.start_field || assigns.end_field do
+    raise ArgumentError, ~s(<.calendar mode="single"> binds field, not start_field/end_field)
+  end
+end
 
 defp normalize_months(assigns) do
   months = assigns.months || if assigns.mode == "range", do: 2, else: 1
