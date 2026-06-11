@@ -113,7 +113,7 @@ alias <%= @component_namespace %>.Badge
 }
 
 # Base select styling classes
-@base_select_classes "block w-full appearance-none transition-all duration-normal ease-standard focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+@base_select_classes "block w-full appearance-none transition-[color,background-color,border-color,box-shadow] duration-fast ease-standard focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
 
 # Variant-specific layout classes
 @variant_config %{
@@ -351,7 +351,7 @@ def select(assigns) do
             type="button"
             phx-click={remove_badge_js(@on_remove_badge, @id, option.value)}
             phx-value-option={option.value}
-            class="ml-1 cursor-pointer hover:bg-foreground/10 rounded-full p-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current transition-colors"
+            class="ml-1 cursor-pointer hover:bg-foreground/10 rounded-full p-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current transition-colors duration-fast ease-standard"
             aria-label={"#{@remove_label} #{option.label}"}
           >
             <.icon name="hero-x-mark-micro" size="xs" color="current" aria-hidden="true" />
