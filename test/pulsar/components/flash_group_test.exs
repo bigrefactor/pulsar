@@ -343,6 +343,8 @@ defmodule Pulsar.Components.FlashGroupTest do
         """)
 
       assert html_top =~ "phx-mounted="
+      assert html_top =~ "ease-decelerate"
+      refute html_top =~ "ease-standard duration-normal"
       assert html_top =~ "-translate-y-full"
       assert html_top =~ "translate-y-0"
 
