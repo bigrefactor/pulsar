@@ -9,6 +9,24 @@ defmodule Pulsar.Components.InputTest do
   alias Pulsar.Components.Input
 
   describe "input/1 basic functionality" do
+    test "follows the motion contract" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Input.input name="test" />
+        """)
+
+      # Container: micro surface (colors + focus ring), snappy
+      assert html =~ "transition-[color,background-color,border-color,box-shadow]"
+      # Inner input: text color only
+      assert html =~ "transition-colors"
+      assert html =~ "duration-fast"
+      assert html =~ "ease-standard"
+      refute html =~ "transition-all"
+      refute html =~ "duration-normal"
+    end
+
     test "renders input with default props" do
       assigns = %{}
 

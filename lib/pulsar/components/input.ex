@@ -146,7 +146,7 @@ defmodule Pulsar.Components.Input do
 
   # Base input container classes
   @base_input_classes [
-    "flex group overflow-hidden transition-all duration-normal ease-standard",
+    "flex group overflow-hidden transition-[color,background-color,border-color,box-shadow] duration-fast ease-standard",
     "focus-within:ring-2 focus-within:ring-offset-2"
   ]
 
@@ -430,7 +430,7 @@ defmodule Pulsar.Components.Input do
       <input
         class={
           [
-            "w-full outline-0 transition-all duration-normal ease-standard",
+            "w-full outline-0 transition-colors duration-fast ease-standard",
             get_input_padding_classes(@size, @variant, @has_start_decorator, @has_end_decorator),
             (@disabled && "cursor-not-allowed") || (@readonly && "cursor-default") || nil
           ]
