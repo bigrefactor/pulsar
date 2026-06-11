@@ -92,7 +92,8 @@ When no `:label` slot is provided, labels are automatically generated from field
 
 All input types support the full range of styling attributes including `variant`, `color`, and `size`:
 
-- **Text Inputs**: text, email, password, number, tel, url, search, date, time, datetime-local, file, range (via <%= @component_namespace %>.Input)
+- **Text Inputs**: text, email, password, number, tel, url, search, time, datetime-local, file, range (via <%= @component_namespace %>.Input)
+- **Date**: date and daterange render <%= @component_namespace %>.DatePicker (typeable input with a locale-aware calendar popover)
 - **Select**: Renders <%= @component_namespace %>.Select with dropdown options
 - **Textarea**: Renders <%= @component_namespace %>.Textarea for multi-line text
 - **Checkbox**: Renders <%= @component_namespace %>.Checkbox with optional card styling
@@ -152,6 +153,7 @@ alias Phoenix.LiveView.Rendered
 
 # Import all the Pulsar components we'll be rendering
 alias <%= @component_namespace %>.Checkbox
+alias <%= @component_namespace %>.DatePicker
 alias <%= @component_namespace %>.Icon
 alias <%= @component_namespace %>.Input
 alias <%= @component_namespace %>.InputOtp
@@ -225,7 +227,7 @@ attr(:field, FormField, required: true, doc: "Phoenix form field")
 
 attr(:type, :string,
   default: "text",
-  values: ~w(text email password number tel url search date time datetime-local month week color file range otp
+  values: ~w(text email password number tel url search date daterange time datetime-local month week color file range otp
               select textarea checkbox radio switch),
   doc: "Input type - determines which component to render"
 )
@@ -269,6 +271,14 @@ attr(:groups, :list, default: nil, doc: "Group the OTP slots with a separator, e
 attr(:mode, :string, default: "numeric", doc: "OTP character set (numeric or alphanumeric)")
 attr(:mask, :boolean, default: false, doc: "Mask entered OTP characters")
 attr(:on_complete, JS, default: %JS{}, doc: "JS run when the OTP is fully entered")
+
+# Date-picker attributes
+attr(:end_field, FormField, default: nil, doc: "Range end field for type=daterange")
+attr(:months, :integer, default: nil, doc: "Calendar month count (date types)")
+attr(:disabled_dates, :list, default: [], doc: "Un-selectable dates (date types)")
+attr(:disable_weekends, :boolean, default: false, doc: "Disable weekend days (date types)")
+attr(:locale, :string, default: nil, doc: "BCP-47 locale for date display")
+attr(:on_change, JS, default: %JS{}, doc: "JS run when a date changes")
 
 # Global attributes passed through to inputs
 attr(:rest, :global, doc: "Additional HTML attributes passed to the input")
@@ -500,6 +510,57 @@ defp render_input(%{type: "radio"} = assigns) do
   >
     <:option :for={{label, value} <- @options || []} value={value}>{label}</:option>
   </RadioGroup.radio_group>
+  """
+end
+
+defp render_input(%{type: "date"} = assigns) do
+  ~H"""
+  <DatePicker.date_picker
+    field={@field}
+    id={@field_id}
+    mode="single"
+    labelled_externally
+    months={@months}
+    min={@min}
+    max={@max}
+    disabled_dates={@disabled_dates}
+    disable_weekends={@disable_weekends}
+    locale={@locale}
+    variant={@variant}
+    color={@color}
+    size={@size}
+    disabled={@disabled}
+    invalid={@has_errors}
+    on_change={@on_change}
+    aria-describedby={@aria_describedby}
+    {@rest}
+  />
+  """
+end
+
+defp render_input(%{type: "daterange"} = assigns) do
+  ~H"""
+  <DatePicker.date_picker
+    start_field={@field}
+    end_field={@end_field}
+    id={@field_id}
+    mode="range"
+    labelled_externally
+    months={@months}
+    min={@min}
+    max={@max}
+    disabled_dates={@disabled_dates}
+    disable_weekends={@disable_weekends}
+    locale={@locale}
+    variant={@variant}
+    color={@color}
+    size={@size}
+    disabled={@disabled}
+    invalid={@has_errors}
+    on_change={@on_change}
+    aria-describedby={@aria_describedby}
+    {@rest}
+  />
   """
 end
 

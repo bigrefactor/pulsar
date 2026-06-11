@@ -1,7 +1,25 @@
 defmodule Pulsar.CoreComponentsTest do
   use ExUnit.Case, async: true
 
+  import Phoenix.Component
+  import Phoenix.LiveViewTest
+
   alias Pulsar.CoreComponents
+
+  describe "input/1 date delegation" do
+    test "type=date delegates to the Pulsar DatePicker, not a native <input type=\"date\">" do
+      assigns = %{field: to_form(%{"d" => ""}, as: :ev)[:d]}
+
+      html =
+        rendered_to_string(~H"""
+        <CoreComponents.input field={@field} type="date" label="Start" />
+        """)
+
+      assert html =~ ~s(phx-hook="Pulsar.Components.DatePicker.PulsarDatePicker")
+      # The drop-in upgrades the native date control to the calendar picker.
+      refute html =~ ~s(type="date")
+    end
+  end
 
   describe "translate_error/1" do
     test "interpolates non-count bindings via Gettext.dgettext" do

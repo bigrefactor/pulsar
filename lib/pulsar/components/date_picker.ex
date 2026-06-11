@@ -1,0 +1,461 @@
+defmodule Pulsar.Components.DatePicker do
+  @moduledoc """
+  A date input with a locale-aware calendar popover.
+
+  The visible input(s) accept typed dates in the visitor's locale format and the
+  chosen value is mirrored into hidden ISO-8601 inputs — those are what the form
+  submits. A calendar button opens a `popover` containing a `calendar` for
+  point-and-click selection. Single mode binds one field; range mode binds a
+  start and end field. Plugs into `Pulsar.Components.Field` as `type="date"` and
+  `type="daterange"`.
+
+  ## Examples
+
+      <.date_picker field={@form[:starts_on]} />
+
+      <.date_picker mode="range" start_field={@form[:from]} end_field={@form[:to]} />
+
+      # via the field wrapper
+      <.field field={@form[:starts_on]} type="date"><:label>Start</:label></.field>
+  """
+
+  use Phoenix.Component
+
+  import Twm, only: [merge: 1]
+
+  alias Phoenix.HTML.FormField
+  alias Phoenix.LiveView.JS
+  alias Phoenix.LiveView.Rendered
+  alias Pulsar.Components.Calendar
+  alias Pulsar.Components.Icon
+  alias Pulsar.Components.Popover
+
+  @input_size %{
+    "xs" => "h-7 text-xs",
+    "sm" => "h-8 text-sm",
+    "md" => "h-9 text-sm",
+    "lg" => "h-10 text-base",
+    "xl" => "h-11 text-base"
+  }
+
+  # Surface treatment of the input wrapper per variant.
+  @wrapper_variant %{
+    "outline" => "border border-border bg-background",
+    "solid" => "border border-transparent bg-surface-2",
+    "ghost" => "border border-transparent bg-transparent"
+  }
+
+  @doc """
+  Renders a date picker.
+  """
+  @spec date_picker(map()) :: Rendered.t()
+
+  attr(:id, :string, doc: "Derived from the bound field, or auto-generated, if omitted")
+  attr(:mode, :string, default: "single", values: ~w(single range))
+  attr(:field, FormField, default: nil, doc: "Single-mode form field")
+  attr(:start_field, FormField, default: nil, doc: "Range start field")
+  attr(:end_field, FormField, default: nil, doc: "Range end field")
+  attr(:months, :integer, default: nil)
+  attr(:min, :any, default: nil)
+  attr(:max, :any, default: nil)
+  attr(:disabled_dates, :list, default: [])
+  attr(:disable_weekends, :boolean, default: false)
+  attr(:locale, :string, default: nil)
+  attr(:placeholder, :string, default: nil)
+  attr(:variant, :string, default: "outline", values: ~w(outline solid ghost))
+  attr(:color, :string, default: "primary", values: ~w(neutral primary secondary success danger warning info))
+  attr(:size, :string, default: "md", values: ~w(xs sm md lg xl))
+  attr(:disabled, :boolean, default: false)
+  attr(:invalid, :boolean, default: false)
+  attr(:on_change, JS, default: %JS{})
+  attr(:"aria-describedby", :string, default: nil)
+
+  attr(:display_label, :string,
+    default: nil,
+    doc:
+      "Accessible label for the single date input when used standalone (defaults to \"Date\"). When rendered via Field, the field's <label> supplies the name."
+  )
+
+  attr(:labelled_externally, :boolean,
+    default: false,
+    doc:
+      "Set by Field: the visible input is associated with an external <label>, so the default aria-label is suppressed to avoid shadowing the field label as the accessible name."
+  )
+
+  attr(:class, :string, default: "")
+  attr(:rest, :global)
+
+  def date_picker(assigns) do
+    validate_fields!(assigns)
+
+    assigns =
+      assigns
+      |> assign_new(:id, fn -> stable_id(assigns) end)
+      |> normalize_fields()
+      |> assign_calendar_value()
+      |> assign(:input_class, input_classes(assigns.size))
+      |> assign(:wrapper_class, wrapper_classes(assigns.variant, assigns.invalid))
+
+    ~H"""
+    <div
+      id={@id <> "-dp"}
+      phx-hook=".PulsarDatePicker"
+      data-mode={@mode}
+      data-locale={@locale}
+      data-on-change={@on_change}
+      data-cal-id={@id <> "-cal"}
+      class={merge(["inline-flex items-center gap-2", @class])}
+      {@rest}
+    >
+      <div id={@id <> "-field"} class={@wrapper_class}>
+        <input
+          :if={@mode == "single"}
+          id={@id}
+          type="text"
+          data-dp-display="single"
+          value={@single_display}
+          placeholder={@placeholder}
+          disabled={@disabled}
+          aria-label={@display_label || (!@labelled_externally && "Date")}
+          aria-invalid={(@invalid && "true") || "false"}
+          aria-describedby={assigns[:"aria-describedby"]}
+          class={@input_class}
+          autocomplete="off"
+        />
+        <input
+          :if={@mode == "range"}
+          id={@id}
+          type="text"
+          data-dp-display="start"
+          value={@start_display}
+          placeholder={@placeholder}
+          disabled={@disabled}
+          aria-label={!@labelled_externally && "Start date"}
+          aria-invalid={(@invalid && "true") || "false"}
+          aria-describedby={assigns[:"aria-describedby"]}
+          class={[@input_class, "text-center"]}
+          autocomplete="off"
+        />
+        <span :if={@mode == "range"} aria-hidden="true" class="text-muted-foreground">–</span>
+        <input
+          :if={@mode == "range"}
+          type="text"
+          data-dp-display="end"
+          value={@end_display}
+          placeholder={@placeholder}
+          disabled={@disabled}
+          aria-label="End date"
+          aria-invalid={(@invalid && "true") || "false"}
+          aria-describedby={assigns[:"aria-describedby"]}
+          class={[@input_class, "text-center"]}
+          autocomplete="off"
+        />
+
+        <Popover.popover
+          id={@id <> "-pop"}
+          placement="bottom-start"
+          anchor={"#" <> @id <> "-field"}
+          variant="elevated"
+          size="sm"
+        >
+          <:trigger>
+            <button
+              type="button"
+              aria-label="Open calendar"
+              disabled={@disabled}
+              class="flex items-center text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-field"
+            >
+              <Icon.icon name="hero-calendar" size="sm" />
+            </button>
+          </:trigger>
+
+          <Calendar.calendar
+            id={@id <> "-cal"}
+            mode={@mode}
+            months={@months}
+            min={@min}
+            max={@max}
+            disabled_dates={@disabled_dates}
+            disable_weekends={@disable_weekends}
+            locale={@locale}
+            color={@color}
+            value={@calendar_value}
+          />
+        </Popover.popover>
+      </div>
+
+      <input :if={@single_name} type="hidden" name={@single_name} value={@single_value} data-dp-value="single" />
+      <input :if={@start_name} type="hidden" name={@start_name} value={@start_value} data-dp-value="start" />
+      <input :if={@end_name} type="hidden" name={@end_name} value={@end_value} data-dp-value="end" />
+
+      <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarDatePicker">
+        export default {
+          mounted() {
+            this.mode = this.el.dataset.mode || "single"
+            this.locale = this.el.dataset.locale || undefined
+            // Numeric, locale-ordered display (e.g. 06/22/2026, 22/06/2026) so the
+            // shown value round-trips through parse() when the user edits it.
+            this.fmt = new Intl.DateTimeFormat(this.locale, { year: "numeric", month: "2-digit", day: "2-digit" })
+            this.order = this.fieldOrder(this.locale) // e.g. ["month","day","year"]
+
+            // the composed Calendar element (id stored in data-cal-id)
+            this.cal = document.getElementById(this.el.dataset.calId)
+            this._lastSeed = this.cal ? (this.cal.dataset.value || "") : ""
+
+            // format any server-seeded ISO into the locale display; also
+            // apply a locale-format hint as the placeholder when none is set
+            const hint = this.placeholderHint()
+            this.eachPair((kind) => {
+              const display = this.el.querySelector(`[data-dp-display="${kind}"]`)
+              const hidden = this.el.querySelector(`[data-dp-value="${kind}"]`)
+              if (display && hidden && hidden.value) display.value = this.format(hidden.value)
+              if (display && !display.placeholder) display.placeholder = hint
+            })
+
+            // type-in: parse on blur/change, write ISO + reformat display
+            this._onChange = (e) => {
+              const input = e.target.closest("[data-dp-display]")
+              if (!input) return
+              const kind = input.dataset.dpDisplay
+              const iso = this.parse(input.value)
+              const hidden = this.el.querySelector(`[data-dp-value="${kind}"]`)
+              if (iso) {
+                if (hidden) this.setInput(hidden, iso)
+                input.value = this.format(iso)
+                input.setAttribute("aria-invalid", "false")
+                if (this.mode === "range") {
+                  const s = this.el.querySelector('[data-dp-value="start"]')
+                  const e2 = this.el.querySelector('[data-dp-value="end"]')
+                  if (s && e2 && s.value && e2.value) this.runChange()
+                } else {
+                  this.runChange()
+                }
+              } else if (input.value.trim() === "") {
+                if (hidden) this.setInput(hidden, "")
+                input.setAttribute("aria-invalid", "false")
+              } else {
+                input.setAttribute("aria-invalid", "true")
+              }
+            }
+            this.el.addEventListener("change", this._onChange)
+
+            // calendar → inputs: the Calendar writes its own hidden inputs and fires
+            // on_select; we also read its data-value after any click inside it.
+            this._onCalClick = () => {
+              // microtask so the calendar hook updates its data-value first
+              Promise.resolve().then(() => this.syncFromCalendar())
+            }
+            if (this.cal) this.cal.addEventListener("click", this._onCalClick)
+          },
+
+          updated() {
+            this.eachPair((kind) => {
+              const display = this.el.querySelector(`[data-dp-display="${kind}"]`)
+              const hidden = this.el.querySelector(`[data-dp-value="${kind}"]`)
+              if (display && hidden && document.activeElement !== display) {
+                display.value = hidden.value ? this.format(hidden.value) : ""
+              }
+            })
+          },
+
+          destroyed() {
+            this.el.removeEventListener("change", this._onChange)
+            if (this.cal) this.cal.removeEventListener("click", this._onCalClick)
+          },
+
+          eachPair(fn) {
+            (this.mode === "range" ? ["start", "end"] : ["single"]).forEach(fn)
+          },
+
+          syncFromCalendar() {
+            if (!this.cal) return
+            const seed = this.cal.dataset.value || ""
+            if (seed === this._lastSeed) return
+            this._lastSeed = seed
+            if (this.mode === "range") {
+              const [a, b] = seed.split("/")
+              // Mid-range (a new start picked, end not yet chosen) we write the
+              // values but stay silent: dispatching the bubbling input now would
+              // fire the form's phx-change with an incomplete range {start, ""}.
+              // Only notify the form once the range is complete.
+              const complete = !!(a && b)
+              this.setPair("start", a, !complete)
+              this.setPair("end", b, !complete)
+              if (complete) this.runChange()
+            } else {
+              this.setPair("single", seed)
+              if (seed) this.runChange()
+            }
+          },
+
+          setPair(kind, iso, silent) {
+            const display = this.el.querySelector(`[data-dp-display="${kind}"]`)
+            const hidden = this.el.querySelector(`[data-dp-value="${kind}"]`)
+            if (hidden) this.setInput(hidden, iso || "", silent)
+            if (display) display.value = iso ? this.format(iso) : ""
+          },
+
+          // Set a hidden input's value AND (unless silent) notify LiveView. A bare
+          // `.value =` does not fire input/change, so phx-change/form recovery never
+          // sees it — dispatch a bubbling "input" event so the enclosing form picks
+          // up the new value. Also set the attribute so morphdom does not revert the
+          // value on re-render. Pass silent=true to update the value without
+          // notifying the form (used to stage an incomplete range).
+          setInput(input, value, silent) {
+            if (input.value === value) return
+            input.value = value
+            input.setAttribute("value", value)
+            if (!silent) input.dispatchEvent(new Event("input", { bubbles: true }))
+          },
+
+          // --- locale helpers ---------------------------------------------------
+
+          // Build a format hint from the locale (e.g. "mm/dd/yyyy" for en-US,
+          // "dd/mm/yyyy" for en-GB). Used as the placeholder when no author
+          // placeholder is set.
+          placeholderHint() {
+            const ref = new Date(2026, 11, 22) // Dec 22 2026 — unambiguous (22/12)
+            const parts = new Intl.DateTimeFormat(this.locale, { year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(ref)
+            return parts.map((p) => {
+              if (p.type === "day") return "dd"
+              if (p.type === "month") return "mm"
+              if (p.type === "year") return "yyyy"
+              if (p.type === "literal") return p.value
+              return ""
+            }).join("")
+          },
+
+          format(iso) {
+            const [y, m, d] = iso.split("-").map(Number)
+            return this.fmt.format(new Date(y, m - 1, d))
+          },
+
+          // Determine day/month/year order for the locale from a reference date.
+          fieldOrder(locale) {
+            const ref = new Date(2026, 11, 31) // Dec 31 2026 — unambiguous (31/12)
+            const parts = new Intl.DateTimeFormat(locale, { year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(ref)
+            return parts.filter((p) => ["day", "month", "year"].includes(p.type)).map((p) => p.type)
+          },
+
+          // Parse typed input into ISO using the locale field order. Accepts the digit
+          // groups in the locale's order; also accepts a raw ISO string.
+          parse(text) {
+            const t = (text || "").trim()
+            if (/^\d{4}-\d{2}-\d{2}$/.test(t)) return this.validISO(t) ? t : null
+            const nums = t.match(/\d+/g)
+            if (!nums || nums.length < 3) return null
+            const vals = {}
+            this.order.forEach((field, i) => { vals[field] = parseInt(nums[i], 10) })
+            let { year, month, day } = vals
+            if (year < 100) year += 2000
+            const iso = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+            return this.validISO(iso) ? iso : null
+          },
+
+          validISO(iso) {
+            const [y, m, d] = iso.split("-").map(Number)
+            if (m < 1 || m > 12 || d < 1 || d > 31) return false
+            const date = new Date(y, m - 1, d)
+            return date.getFullYear() === y && date.getMonth() === m - 1 && date.getDate() === d
+          },
+
+          runChange() {
+            const encoded = this.el.dataset.onChange
+            if (encoded && encoded !== "[]" && this.liveSocket) this.liveSocket.execJS(this.el, encoded)
+          }
+        }
+      </script>
+    </div>
+    """
+  end
+
+  # ============================================================================
+  # HELPERS
+  # ============================================================================
+
+  # The colocated hook holds typed/selected state in JS, so the element id must be
+  # stable across the form's re-renders — a changing id makes morphdom replace the
+  # node and remount the hook, dropping client state. Derive it from the bound
+  # field when present; otherwise fall back to a generated id for unbound use.
+  defp stable_id(%{field: %FormField{} = field}), do: "date-picker-#{field.id}"
+  defp stable_id(%{start_field: %FormField{} = field}), do: "date-picker-#{field.id}"
+  defp stable_id(_assigns), do: generate_id()
+
+  defp generate_id(prefix \\ "date-picker") do
+    "#{prefix}-#{System.unique_integer([:positive])}"
+  end
+
+  # Range mode binds both start_field and end_field; single mode binds field.
+  # Partially binding renders display inputs with no matching hidden ISO input,
+  # silently breaking form submission — fail fast instead.
+  defp validate_fields!(%{mode: "range"} = assigns) do
+    case {assigns.start_field, assigns.end_field} do
+      {%FormField{}, nil} ->
+        raise ArgumentError,
+              ~s(<.date_picker mode="range"> was given start_field but not end_field; range binding needs both)
+
+      {nil, %FormField{}} ->
+        raise ArgumentError,
+              ~s(<.date_picker mode="range"> was given end_field but not start_field; range binding needs both)
+
+      _ ->
+        :ok
+    end
+
+    if assigns.field do
+      raise ArgumentError, ~s(<.date_picker mode="range"> binds start_field/end_field, not field)
+    end
+  end
+
+  defp validate_fields!(assigns) do
+    if assigns.start_field || assigns.end_field do
+      raise ArgumentError, ~s(<.date_picker mode="single"> binds field, not start_field/end_field)
+    end
+  end
+
+  defp assign_calendar_value(%{mode: "range"} = assigns) do
+    assign(assigns, :calendar_value, {assigns.start_value, assigns.end_value})
+  end
+
+  defp assign_calendar_value(assigns) do
+    assign(assigns, :calendar_value, assigns.single_value)
+  end
+
+  defp normalize_fields(assigns) do
+    single = assigns.field
+    start_f = assigns.start_field
+    end_f = assigns.end_field
+
+    assigns
+    |> assign(:single_name, single && single.name)
+    |> assign(:single_value, single && iso_or_nil(single.value))
+    |> assign(:single_display, single && iso_or_nil(single.value))
+    |> assign(:start_name, start_f && start_f.name)
+    |> assign(:start_value, start_f && iso_or_nil(start_f.value))
+    |> assign(:start_display, start_f && iso_or_nil(start_f.value))
+    |> assign(:end_name, end_f && end_f.name)
+    |> assign(:end_value, end_f && iso_or_nil(end_f.value))
+    |> assign(:end_display, end_f && iso_or_nil(end_f.value))
+  end
+
+  defp iso_or_nil(%Date{} = d), do: Date.to_iso8601(d)
+  defp iso_or_nil(s) when is_binary(s) and s != "", do: s
+  defp iso_or_nil(_), do: nil
+
+  @spec input_classes(String.t()) :: String.t()
+  defp input_classes(size) do
+    merge([
+      "w-28 border-0 bg-transparent py-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0",
+      @input_size[size] || @input_size["md"]
+    ])
+  end
+
+  @spec wrapper_classes(String.t(), boolean()) :: String.t()
+  defp wrapper_classes(variant, invalid) do
+    merge([
+      "inline-flex items-center gap-1.5 rounded-field px-2 focus-within:ring-2 focus-within:ring-ring",
+      @wrapper_variant[variant] || @wrapper_variant["outline"],
+      (invalid && "border-danger") || ""
+    ])
+  end
+end

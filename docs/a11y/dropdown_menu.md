@@ -34,7 +34,7 @@ meaning is carried by its text label.
 `role="menuitemradio"` with `aria-checked` (`:611–614`); groups are `role="group"`
 with `aria-labelledby` to their heading (`:668–669`); separators are
 `role="separator"` (`:688`). The trigger exposes `aria-haspopup="menu"` and (via
-the popover hook) `aria-expanded` (`:216`, `lib/pulsar/components/popover.ex:366–367`).
+the popover hook) `aria-expanded` (`:216`, `lib/pulsar/components/popover.ex:387–388`).
 Unit tests assert each role/state — `test/pulsar/components/dropdown_menu_test.exs`.
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
@@ -77,7 +77,7 @@ wrap rather than clipping — `lib/pulsar/components/dropdown_menu.ex:95`.
 
 **Evidence:** The menu renders in the browser top layer and the popover hook shifts
 it into the viewport with an 8px margin on both axes, so it never forces horizontal
-scrolling at 320px — `lib/pulsar/components/popover.ex:426–431` (`position`).
+scrolling at 320px — `lib/pulsar/components/popover.ex:447–452` (`position`).
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
@@ -114,7 +114,7 @@ exercises these — `test/integration/a11y/keyboard_test.exs`.
 
 **Evidence:** The menu is non-modal; Escape closes it and returns focus to the
 trigger (native popover), and Tab is never trapped — focus leaves the menu
-normally. `lib/pulsar/components/popover.ex:240–254`.
+normally. `lib/pulsar/components/popover.ex:246–261`.
 
 ### 2.1.4 Character Key Shortcuts (A) — ✓ PASS
 
@@ -152,7 +152,7 @@ own ring — `lib/pulsar/components/dropdown_menu.ex:95–97`.
 
 **Evidence:** The menu renders in the browser top layer (native popover), so it is
 never clipped by `overflow:hidden` ancestors, and the hook flips it to the opposite
-side when the requested side lacks room — `lib/pulsar/components/popover.ex:401–411`.
+side when the requested side lacks room — `lib/pulsar/components/popover.ex:422–432`.
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 

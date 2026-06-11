@@ -32,6 +32,77 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
   # `attr :id` is ever added.
   @select_cell ~s|[data-fixture-cell="outline-neutral-xs-default"]|
 
+  describe "Calendar interaction" do
+    test "clicking a day selects it and writes the hidden ISO value", %{conn: conn} do
+      # Verify data-selected is flipped on the cell and the hidden input's value
+      # is written. Hidden inputs are display:none — Playwright's assert_has checks
+      # visibility, so we read the hidden input value via JS instead.
+      session =
+        conn
+        |> visit("/keyboard/calendar")
+        |> A11y.await_live_connected()
+        |> click(~s|#kbd-cal [data-cal-day="2026-06-12"]|)
+        |> assert_has(~s|#kbd-cal [data-cal-day="2026-06-12"][data-selected="true"]|)
+
+      PhoenixTest.Playwright.evaluate(
+        session,
+        "document.querySelector('#kbd-cal input[data-cal-value=\"single\"]').value",
+        fn value ->
+          assert value == "2026-06-12",
+                 "expected hidden ISO input to have value '2026-06-12', got '#{value}'"
+        end
+      )
+    end
+
+    test "selecting a day notifies LiveView via phx-change (the dispatched input event)", %{conn: conn} do
+      conn
+      |> visit("/keyboard/calendar")
+      |> A11y.await_live_connected()
+      |> click(~s|#kbd-cal [data-cal-day="2026-06-12"]|)
+      |> assert_has("#kbd-cal-received", text: "2026-06-12")
+    end
+
+    test "ArrowRight moves the focused cell and Enter selects it", %{conn: conn} do
+      conn
+      |> visit("/keyboard/calendar")
+      |> A11y.await_live_connected()
+      |> press(~s|#kbd-cal [data-cal-day="2026-06-10"]|, "ArrowRight")
+      |> assert_has(~s|#kbd-cal [data-cal-day="2026-06-11"][tabindex="0"]|)
+      |> press(~s|#kbd-cal [data-cal-day="2026-06-11"]|, "Enter")
+      |> assert_has(~s|#kbd-cal [data-cal-day="2026-06-11"][data-selected="true"]|)
+    end
+
+    test "the disabled date cannot be selected", %{conn: conn} do
+      # Disabled cells have aria-disabled="true" — Playwright's click will not
+      # interact with them (it checks aria-disabled). Use JS to dispatch a raw
+      # click event directly onto the cell, bypassing the actionability check, so
+      # we can prove the click handler ignores the cell (data-selected stays false).
+      session =
+        conn
+        |> visit("/keyboard/calendar")
+        |> A11y.await_live_connected()
+
+      assert_has(session, ~s|#kbd-cal [data-cal-day="2026-06-19"][data-disabled="true"]|)
+
+      PhoenixTest.Playwright.evaluate(
+        session,
+        "document.querySelector('#kbd-cal [data-cal-day=\"2026-06-19\"]').click()"
+      )
+      |> assert_has(~s|#kbd-cal [data-cal-day="2026-06-19"][data-selected="false"]|)
+    end
+
+    test "range mode: second click completes the range and marks in-between days", %{conn: conn} do
+      conn
+      |> visit("/keyboard/calendar")
+      |> A11y.await_live_connected()
+      |> click(~s|#kbd-cal-range [data-cal-day="2026-06-10"]|)
+      |> click(~s|#kbd-cal-range [data-cal-day="2026-06-14"]|)
+      |> assert_has(~s|#kbd-cal-range [data-cal-day="2026-06-10"][data-selected="true"]|)
+      |> assert_has(~s|#kbd-cal-range [data-cal-day="2026-06-14"][data-selected="true"]|)
+      |> assert_has(~s|#kbd-cal-range [data-cal-day="2026-06-12"][data-in-range="true"]|)
+    end
+  end
+
   describe "Button keyboard activation" do
     test "Space and Enter both activate pseudo-button", %{conn: conn} do
       conn
@@ -902,6 +973,108 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
       |> A11y.await_live_connected()
       |> press("#kbd-rg-horiz-0", "ArrowRight")
       |> assert_has("#kbd-rg-horiz-1:checked")
+    end
+  end
+
+  describe "DatePicker interaction" do
+    # The fixture at `/keyboard/date_picker` renders a single-mode DatePicker
+    # with id "kbd-dp". After Fix 3 the container div carries id="kbd-dp-dp"
+    # and the display input carries id="kbd-dp" (labelable). The DatePicker
+    # composes a Popover (kbd-dp-pop) wrapping a Calendar (kbd-dp-cal).
+    # Clicking the calendar-icon button opens the popover; clicking a day writes
+    # the ISO value into the hidden input; typing a date in the display input and
+    # blurring parses it back to ISO. Behavior comes from `.PulsarDatePicker`
+    # (type-in + calendar sync) and `.PulsarCalendar` (day selection).
+    #
+    # Verification: comment out the `syncFromCalendar` call in `_onCalClick`
+    # in `.PulsarDatePicker` (priv/templates/date_picker.ex.eex and synced lib),
+    # run `MIX_ENV=test mix assets.build`, re-run — the calendar-click test
+    # fails because the hidden ISO input stays empty after clicking a day.
+
+    test "picking a day in the popover fills the hidden ISO input", %{conn: conn} do
+      # Hidden inputs are display:none — Playwright's assert_has checks visibility,
+      # so read the hidden input value via JS (same pattern as Calendar tests).
+      # After Fix 3: container id is kbd-dp-dp; display input id is kbd-dp.
+      session =
+        conn
+        |> visit("/keyboard/date_picker")
+        |> A11y.await_live_connected()
+        |> click(~s|#kbd-dp-dp [aria-label="Open calendar"]|)
+        |> assert_has(~s|#kbd-dp-pop[data-state="open"]|)
+        |> A11y.await_animations("kbd-dp-pop")
+        # The data-state flip alone can pass while the panel stays hidden (per
+        # CLAUDE.md); assert the popover is actually visible before selecting.
+        |> A11y.assert_visible("kbd-dp-pop")
+        |> click(~s|#kbd-dp-cal [data-cal-day="2026-06-15"]|)
+
+      PhoenixTest.Playwright.evaluate(
+        session,
+        "document.querySelector('#kbd-dp-dp input[data-dp-value=\"single\"]').value",
+        fn value ->
+          assert value == "2026-06-15",
+                 "expected hidden ISO input to have value '2026-06-15', got '#{value}'"
+        end
+      )
+    end
+
+    test "typing a date writes the hidden ISO value", %{conn: conn} do
+      # The hook parses on the 'change' event (not 'input'), and fill_in may not
+      # fire change on blur, so set the value and dispatch 'change' via JS so the
+      # hook's _onChange handler parses the typed date into ISO. en-US: MM/DD/YYYY.
+      # After Fix 3: display input id is kbd-dp (it IS the display input).
+      type_script = """
+      (() => {
+        const el = document.getElementById('kbd-dp');
+        el.value = '06/22/2026';
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      })()
+      """
+
+      session =
+        conn
+        |> visit("/keyboard/date_picker")
+        |> A11y.await_live_connected()
+
+      PhoenixTest.Playwright.evaluate(session, type_script)
+
+      PhoenixTest.Playwright.evaluate(
+        session,
+        "document.querySelector('#kbd-dp-dp input[data-dp-value=\"single\"]').value",
+        fn value ->
+          assert value == "2026-06-22",
+                 "expected hidden ISO input to have value '2026-06-22', got '#{value}'"
+        end
+      )
+    end
+
+    test "typing a date in en-GB locale writes the correct hidden ISO value", %{conn: conn} do
+      # en-GB field order is day/month/year (d/m/y). Input "22/06/2026" must
+      # parse to ISO "2026-06-22". Uses a separate fixture instance (kbd-dp-gb)
+      # with locale="en-GB" so the hook's fieldOrder() uses en-GB ordering.
+      # After Fix 3: container id is kbd-dp-gb-dp; display input id is kbd-dp-gb.
+      type_script = """
+      (() => {
+        const el = document.getElementById('kbd-dp-gb');
+        el.value = '22/06/2026';
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      })()
+      """
+
+      session =
+        conn
+        |> visit("/keyboard/date_picker")
+        |> A11y.await_live_connected()
+
+      PhoenixTest.Playwright.evaluate(session, type_script)
+
+      PhoenixTest.Playwright.evaluate(
+        session,
+        "document.querySelector('#kbd-dp-gb-dp input[data-dp-value=\"single\"]').value",
+        fn value ->
+          assert value == "2026-06-22",
+                 "expected en-GB typed '22/06/2026' to produce ISO '2026-06-22', got '#{value}'"
+        end
+      )
     end
   end
 

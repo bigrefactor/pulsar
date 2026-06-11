@@ -11,7 +11,11 @@ defmodule Pulsar.DevApp.Components do
   @fixture_groups [
     {"Forms",
      [
+       {"Calendar (primary)", "/components/calendar/primary"},
+       {"Calendar (neutral)", "/components/calendar/neutral"},
        {"Checkbox", "/components/checkbox"},
+       {"DatePicker (single)", "/components/date_picker/single"},
+       {"DatePicker (range)", "/components/date_picker/range"},
        {"Field", "/components/field"},
        {"Form", "/components/form"},
        {"Input (outline)", "/components/input/outline"},
