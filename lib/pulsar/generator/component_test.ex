@@ -55,7 +55,7 @@ defmodule Pulsar.Generator.ComponentTest do
         render_describe(camel, fn_name, fn_info)
       end)
 
-    """
+    source = """
     defmodule #{namespace}.#{camel}Test do
       use ExUnit.Case, async: true
 
@@ -67,17 +67,23 @@ defmodule Pulsar.Generator.ComponentTest do
     #{indent(describes, 2)}
     end
     """
+
+    source
+    |> Code.format_string!()
+    |> IO.iodata_to_binary()
+    |> Kernel.<>("\n")
   end
 
   defp render_describe(camel, fn_name, fn_info) do
     attrs = fn_info.attrs
     enum_attrs = Enum.filter(attrs, &Keyword.has_key?(&1.opts, :values))
     bool_attrs = Enum.filter(attrs, &(&1.type == :boolean))
+    plan = slot_plan(fn_info.slots)
 
     tests =
-      [render_default_test(camel, fn_name)] ++
-        Enum.map(enum_attrs, &render_enum_test(camel, fn_name, &1)) ++
-        Enum.map(bool_attrs, &render_bool_test(camel, fn_name, &1))
+      [render_default_test(camel, fn_name, plan)] ++
+        Enum.map(enum_attrs, &render_enum_test(camel, fn_name, &1, plan)) ++
+        Enum.map(bool_attrs, &render_bool_test(camel, fn_name, &1, plan))
 
     """
     describe "#{fn_name}/1" do
@@ -86,46 +92,91 @@ defmodule Pulsar.Generator.ComponentTest do
     """
   end
 
-  defp render_default_test(camel, fn_name) do
-    content = @sample_slot_content
+  defp render_default_test(camel, fn_name, plan) do
+    tag = open_close(camel, fn_name, "", plan)
+    assertion = content_assertion(plan)
 
     """
     test "renders with default attributes" do
       assigns = %{}
-      html = rendered_to_string(~H"<#{camel}.#{fn_name}>#{content}</#{camel}.#{fn_name}>")
-      assert html =~ "#{content}"
+      html = rendered_to_string(~H"#{tag}")
+      #{assertion}
     end
     """
   end
 
-  defp render_enum_test(camel, fn_name, attr) do
+  defp render_enum_test(camel, fn_name, attr, plan) do
     values = Keyword.fetch!(attr.opts, :values)
     values_src = values_literal(values)
-    content = @sample_slot_content
+    attr_str = " #{attr.name}={@value}"
+    tag = open_close(camel, fn_name, attr_str, plan)
+    assertion = content_assertion(plan)
 
     """
     test "renders every value of #{attr.name}" do
       for value <- #{values_src} do
         assigns = %{value: value}
-        html = rendered_to_string(~H"<#{camel}.#{fn_name} #{attr.name}={@value}>#{content}</#{camel}.#{fn_name}>")
-        assert html =~ "#{content}"
+        html = rendered_to_string(~H"#{tag}")
+        #{assertion}
       end
     end
     """
   end
 
-  defp render_bool_test(camel, fn_name, attr) do
-    content = @sample_slot_content
+  defp render_bool_test(camel, fn_name, attr, plan) do
+    attr_str = " #{attr.name}={@value}"
+    tag = open_close(camel, fn_name, attr_str, plan)
+    assertion = content_assertion(plan)
 
     """
     test "renders #{attr.name} true and false" do
       for value <- [true, false] do
         assigns = %{value: value}
-        html = rendered_to_string(~H"<#{camel}.#{fn_name} #{attr.name}={@value}>#{content}</#{camel}.#{fn_name}>")
-        assert html =~ "#{content}"
+        html = rendered_to_string(~H"#{tag}")
+        #{assertion}
       end
     end
     """
+  end
+
+  defp slot_plan(slots) do
+    cond do
+      Enum.any?(slots, &(&1.name == :inner_block)) ->
+        :inner
+
+      Enum.any?(slots, & &1.required) ->
+        {:slots, Enum.filter(slots, & &1.required)}
+
+      true ->
+        :none
+    end
+  end
+
+  defp open_close(camel, fn_name, attr_str, plan) do
+    content = @sample_slot_content
+
+    case plan do
+      :inner ->
+        "<#{camel}.#{fn_name}#{attr_str}>#{content}</#{camel}.#{fn_name}>"
+
+      {:slots, required} ->
+        inner =
+          Enum.map_join(required, "", fn s ->
+            "<:#{s.name}>#{content}</:#{s.name}>"
+          end)
+
+        "<#{camel}.#{fn_name}#{attr_str}>#{inner}</#{camel}.#{fn_name}>"
+
+      :none ->
+        "<#{camel}.#{fn_name}#{attr_str} />"
+    end
+  end
+
+  defp content_assertion(plan) do
+    case plan do
+      :none -> ~s(assert html != "")
+      _ -> ~s(assert html =~ "#{@sample_slot_content}")
+    end
   end
 
   # All enum values seen so far are strings or atoms; render them as a ~w list

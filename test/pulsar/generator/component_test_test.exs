@@ -42,5 +42,15 @@ defmodule Pulsar.Generator.ComponentTestTest do
       refute src =~ "bg-primary"
       refute src =~ "rounded-field"
     end
+
+    test "renders atom-valued enum attr via inspect", %{src: src} do
+      assert src =~ ~s([:button, :a, :div])
+    end
+  end
+
+  describe "override_template_path/1" do
+    test "returns :none when no override template exists for button" do
+      assert ComponentTest.override_template_path(:button) == :none
+    end
   end
 end
