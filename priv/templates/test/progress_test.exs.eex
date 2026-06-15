@@ -1,0 +1,46 @@
+defmodule <%= @component_namespace %>.ProgressTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Progress
+
+  # `progress` shape="radial" raises unless a numeric `value` is supplied, so every
+  # render here passes `value={50}` rather than relying on introspection (which
+  # would render the indeterminate default and crash on the radial shape).
+
+  describe "progress/1" do
+    test "renders a determinate progressbar" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Progress.progress value={50} />])
+
+      assert html =~ ~s(role="progressbar")
+      assert html =~ ~s(aria-valuenow="50")
+    end
+
+    test "renders every shape" do
+      for shape <- ~w(linear radial) do
+        assigns = %{shape: shape}
+        html = rendered_to_string(~H[<Progress.progress shape={@shape} value={50} />])
+        assert html =~ ~s(role="progressbar")
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{color: color}
+        html = rendered_to_string(~H[<Progress.progress color={@color} value={50} />])
+        assert html =~ ~s(role="progressbar")
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{size: size}
+        html = rendered_to_string(~H[<Progress.progress size={@size} value={50} />])
+        assert html =~ ~s(role="progressbar")
+      end
+    end
+  end
+end

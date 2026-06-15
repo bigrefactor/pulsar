@@ -1,0 +1,94 @@
+defmodule <%= @component_namespace %>.RadioGroupTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.RadioGroup
+
+  # `radio_group` renders its name from a bound Phoenix form field and its options
+  # from required `:option` slots (each with a `value` attr), so the smoke test
+  # supplies both rather than relying on introspection.
+  defp form_field do
+    Phoenix.Component.to_form(%{"plan" => "pro"}, as: :user)[:plan]
+  end
+
+  describe "radio_group/1" do
+    test "renders radio inputs bound to a form field" do
+      assigns = %{field: form_field()}
+
+      html =
+        rendered_to_string(~H"""
+        <RadioGroup.radio_group field={@field}>
+          <:option value="basic">Basic</:option>
+          <:option value="pro">Pro</:option>
+        </RadioGroup.radio_group>
+        """)
+
+      assert html =~ ~s(type="radio")
+      assert html =~ ~s(name="user[plan]")
+      assert html =~ "Basic"
+      assert html =~ "Pro"
+    end
+
+    test "renders every variant in card mode" do
+      for variant <- ~w(solid outline ghost) do
+        assigns = %{field: form_field(), variant: variant}
+
+        html =
+          rendered_to_string(~H"""
+          <RadioGroup.radio_group field={@field} card variant={@variant}>
+            <:option value="basic">Basic</:option>
+          </RadioGroup.radio_group>
+          """)
+
+        assert html =~ ~s(type="radio")
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{field: form_field(), color: color}
+
+        html =
+          rendered_to_string(~H"""
+          <RadioGroup.radio_group field={@field} color={@color}>
+            <:option value="basic">Basic</:option>
+          </RadioGroup.radio_group>
+          """)
+
+        assert html =~ ~s(type="radio")
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{field: form_field(), size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <RadioGroup.radio_group field={@field} size={@size}>
+            <:option value="basic">Basic</:option>
+          </RadioGroup.radio_group>
+          """)
+
+        assert html =~ ~s(type="radio")
+      end
+    end
+
+    test "renders every orientation" do
+      for orientation <- ~w(horizontal vertical) do
+        assigns = %{field: form_field(), orientation: orientation}
+
+        html =
+          rendered_to_string(~H"""
+          <RadioGroup.radio_group field={@field} orientation={@orientation}>
+            <:option value="basic">Basic</:option>
+          </RadioGroup.radio_group>
+          """)
+
+        assert html =~ ~s(role="radiogroup")
+      end
+    end
+  end
+end

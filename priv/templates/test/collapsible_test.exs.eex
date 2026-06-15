@@ -1,0 +1,94 @@
+defmodule <%= @component_namespace %>.CollapsibleTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Collapsible
+
+  # `collapsible` requires a `:trigger` slot for the clickable label and the
+  # default slot for the panel body. It is closed by default, so the tests assert
+  # the server-rendered trigger and panel wiring, not open/visible state.
+
+  describe "collapsible/1" do
+    test "renders a trigger wired to a panel" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Collapsible.collapsible id="more">
+          <:trigger>Show details</:trigger>
+          <p>The hidden details.</p>
+        </Collapsible.collapsible>
+        """)
+
+      assert html =~ ~s(aria-expanded="false")
+      assert html =~ ~s(aria-controls="more-panel")
+      assert html =~ ~s(id="more-panel")
+      assert html =~ "Show details"
+      assert html =~ "The hidden details."
+    end
+
+    test "renders open when the open attr is set" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Collapsible.collapsible id="more" open>
+          <:trigger>Filters</:trigger>
+          <p>Body</p>
+        </Collapsible.collapsible>
+        """)
+
+      assert html =~ ~s(aria-expanded="true")
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(solid outline ghost elevated) do
+        assigns = %{variant: variant}
+
+        html =
+          rendered_to_string(~H"""
+          <Collapsible.collapsible id="c" variant={@variant}>
+            <:trigger>Toggle</:trigger>
+            <p>Body</p>
+          </Collapsible.collapsible>
+          """)
+
+        assert html =~ "Toggle"
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{color: color}
+
+        html =
+          rendered_to_string(~H"""
+          <Collapsible.collapsible id="c" color={@color}>
+            <:trigger>Toggle</:trigger>
+            <p>Body</p>
+          </Collapsible.collapsible>
+          """)
+
+        assert html =~ "Toggle"
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <Collapsible.collapsible id="c" size={@size}>
+            <:trigger>Toggle</:trigger>
+            <p>Body</p>
+          </Collapsible.collapsible>
+          """)
+
+        assert html =~ "Toggle"
+      end
+    end
+  end
+end

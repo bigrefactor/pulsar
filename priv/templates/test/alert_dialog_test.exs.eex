@@ -1,0 +1,94 @@
+defmodule <%= @component_namespace %>.AlertDialogTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.AlertDialog
+
+  # `alert_dialog` requires a `title` attr and a default slot (the message); it
+  # renders a focus-trapped `role="alertdialog"` with a fixed Cancel/Confirm
+  # footer. It is opened by the `open/2` helper, so the dialog renders closed; the
+  # tests assert the server-rendered title, role, and button labels, not open state.
+
+  describe "alert_dialog/1" do
+    test "renders an alertdialog with title, message, and Cancel/Confirm actions" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <AlertDialog.alert_dialog id="delete-account" title="Delete account?">
+          This permanently deletes your account.
+        </AlertDialog.alert_dialog>
+        """)
+
+      assert html =~ ~s(role="alertdialog")
+      assert html =~ ~s(id="delete-account-message")
+      assert html =~ ~s(aria-describedby="delete-account-message")
+      assert html =~ "Delete account?"
+      assert html =~ "This permanently deletes your account."
+      assert html =~ "Cancel"
+      assert html =~ "Confirm"
+    end
+
+    test "renders custom confirm and cancel labels" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <AlertDialog.alert_dialog id="publish" title="Publish now?" confirm_label="Publish" cancel_label="Keep editing">
+          The post becomes visible to everyone.
+        </AlertDialog.alert_dialog>
+        """)
+
+      assert html =~ "Publish"
+      assert html =~ "Keep editing"
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(solid outline ghost elevated) do
+        assigns = %{variant: variant}
+
+        html =
+          rendered_to_string(~H"""
+          <AlertDialog.alert_dialog id="d" title="Sure?" variant={@variant}>
+            Body
+          </AlertDialog.alert_dialog>
+          """)
+
+        assert html =~ ~s(role="alertdialog")
+        assert html =~ "Sure?"
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{color: color}
+
+        html =
+          rendered_to_string(~H"""
+          <AlertDialog.alert_dialog id="d" title="Sure?" color={@color}>
+            Body
+          </AlertDialog.alert_dialog>
+          """)
+
+        assert html =~ ~s(role="alertdialog")
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(sm md lg xl) do
+        assigns = %{size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <AlertDialog.alert_dialog id="d" title="Sure?" size={@size}>
+            Body
+          </AlertDialog.alert_dialog>
+          """)
+
+        assert html =~ ~s(role="alertdialog")
+      end
+    end
+  end
+end

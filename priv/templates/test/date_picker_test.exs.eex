@@ -1,0 +1,75 @@
+defmodule <%= @component_namespace %>.DatePickerTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.DatePicker
+
+  # `date_picker` mirrors the chosen value into a hidden ISO input from a bound
+  # form field and renders a visible text input plus a calendar trigger. A fixed
+  # date keeps the rendered value deterministic (no reliance on today's date).
+  defp single_field do
+    Phoenix.Component.to_form(%{"starts_on" => ~D[2026-06-15]}, as: :event)[:starts_on]
+  end
+
+  describe "date_picker/1" do
+    test "renders a text input, calendar trigger, and hidden ISO input" do
+      assigns = %{field: single_field()}
+      html = rendered_to_string(~H"<DatePicker.date_picker field={@field} />")
+
+      assert html =~ ~s(type="text")
+      assert html =~ ~s(data-dp-display="single")
+      assert html =~ ~s(aria-label="Open calendar")
+      assert html =~ ~s(name="event[starts_on]")
+      assert html =~ ~s(value="2026-06-15")
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(outline solid ghost) do
+        assigns = %{field: single_field(), variant: variant}
+        html = rendered_to_string(~H"<DatePicker.date_picker field={@field} variant={@variant} />")
+        assert html =~ ~s(data-dp-display="single")
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{field: single_field(), color: color}
+        html = rendered_to_string(~H"<DatePicker.date_picker field={@field} color={@color} />")
+        assert html =~ ~s(data-dp-display="single")
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{field: single_field(), size: size}
+        html = rendered_to_string(~H"<DatePicker.date_picker field={@field} size={@size} />")
+        assert html =~ ~s(data-dp-display="single")
+      end
+    end
+
+    test "renders range mode with start and end inputs" do
+      assigns = %{
+        start_field: Phoenix.Component.to_form(%{"from" => ~D[2026-06-15]}, as: :trip)[:from],
+        end_field: Phoenix.Component.to_form(%{"to" => ~D[2026-06-20]}, as: :trip)[:to]
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <DatePicker.date_picker mode="range" start_field={@start_field} end_field={@end_field} />
+        """)
+
+      assert html =~ ~s(data-dp-display="start")
+      assert html =~ ~s(data-dp-display="end")
+      assert html =~ ~s(name="trip[from]")
+      assert html =~ ~s(name="trip[to]")
+    end
+
+    test "renders the invalid state" do
+      assigns = %{field: single_field()}
+      html = rendered_to_string(~H"<DatePicker.date_picker field={@field} invalid />")
+      assert html =~ ~s(aria-invalid="true")
+    end
+  end
+end

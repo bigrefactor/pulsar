@@ -1,0 +1,116 @@
+defmodule <%= @component_namespace %>.StepsTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Steps
+
+  # `steps` requires one or more `:step` slots, each with a required `label` attr,
+  # and derives each step's state from the 1-based `current` index, so the smoke
+  # test supplies labelled steps rather than relying on introspection.
+
+  describe "steps/1" do
+    test "renders an ordered list of step labels with the current step marked" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Steps.steps current={2} aria_label="Checkout progress">
+          <:step label="Cart" />
+          <:step label="Shipping" />
+          <:step label="Payment" />
+        </Steps.steps>
+        """)
+
+      assert html =~ "<ol"
+      assert html =~ "<li"
+      assert html =~ ~s(aria-current="step")
+      assert html =~ "Cart"
+      assert html =~ "Shipping"
+      assert html =~ "Payment"
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(solid outline ghost) do
+        assigns = %{variant: variant}
+
+        html =
+          rendered_to_string(~H"""
+          <Steps.steps current={2} variant={@variant}>
+            <:step label="One" />
+            <:step label="Two" />
+          </Steps.steps>
+          """)
+
+        assert html =~ "<ol"
+        assert html =~ "One"
+        assert html =~ "Two"
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{color: color}
+
+        html =
+          rendered_to_string(~H"""
+          <Steps.steps current={1} color={@color}>
+            <:step label="One" />
+            <:step label="Two" />
+          </Steps.steps>
+          """)
+
+        assert html =~ "<ol"
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <Steps.steps current={1} size={@size}>
+            <:step label="One" />
+            <:step label="Two" />
+          </Steps.steps>
+          """)
+
+        assert html =~ "<ol"
+      end
+    end
+
+    test "renders every orientation" do
+      for orientation <- ~w(horizontal vertical) do
+        assigns = %{orientation: orientation}
+
+        html =
+          rendered_to_string(~H"""
+          <Steps.steps current={1} orientation={@orientation}>
+            <:step label="One" />
+            <:step label="Two" />
+          </Steps.steps>
+          """)
+
+        assert html =~ "<ol"
+        assert html =~ "One"
+      end
+    end
+
+    test "renders a step with a description and an explicit error state" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Steps.steps current={2}>
+          <:step label="Cart" description="3 items" />
+          <:step label="Payment" state="error" />
+        </Steps.steps>
+        """)
+
+      assert html =~ "3 items"
+      assert html =~ "Payment"
+    end
+  end
+end

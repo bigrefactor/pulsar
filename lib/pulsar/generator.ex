@@ -44,6 +44,7 @@ defmodule Pulsar.Generator do
   """
 
   alias Igniter.Libs.Phoenix
+  alias Pulsar.Generator.ComponentTest
   alias Pulsar.Generator.Storybook
 
   @doc """
@@ -108,7 +109,12 @@ defmodule Pulsar.Generator do
             example: unquote(example),
             positional: [],
             composes: [],
-            schema: [components_module: :string, storybook: :boolean, print_setup_notice: :boolean],
+            schema: [
+              components_module: :string,
+              storybook: :boolean,
+              print_setup_notice: :boolean,
+              tests: :boolean
+            ],
             defaults: [],
             aliases: [M: :components_module, s: :storybook],
             required: []
@@ -144,7 +150,7 @@ defmodule Pulsar.Generator do
 
   @doc false
   def install_component(igniter, component_name, assigns) do
-    namespace = parse_components_module(igniter.args.options[:components_module])
+    namespace = components_namespace(igniter)
     component = component_module(namespace, component_name)
     # Convert namespace to inspect format to avoid Elixir. prefix in templates
     namespace_inspected = inspect(namespace)
@@ -188,7 +194,17 @@ defmodule Pulsar.Generator do
         |> Igniter.Project.Module.create_module(component, contents)
       end
 
-    maybe_install_story(igniter, component_name)
+    igniter
+    |> maybe_install_story(component_name)
+    |> maybe_install_test(component_name)
+  end
+
+  # Test generation is ON by default; only `--no-tests` (tests: false) suppresses it.
+  defp maybe_install_test(igniter, component_name) do
+    case igniter.args.options[:tests] do
+      false -> igniter
+      _ -> ComponentTest.install_component_test(igniter, component_name)
+    end
   end
 
   defp maybe_install_story(igniter, component_name) do
@@ -266,7 +282,8 @@ defmodule Pulsar.Generator do
     |> Path.join("#{component_name}.ex.eex")
   end
 
-  defp parse_components_module(raw) do
+  @doc false
+  def parse_components_module(raw) do
     value = raw |> to_string() |> String.trim() |> String.trim_trailing(".")
 
     cond do
@@ -281,6 +298,18 @@ defmodule Pulsar.Generator do
 
       true ->
         Igniter.Project.Module.parse(value)
+    end
+  end
+
+  @doc false
+  # Resolves the components namespace module from `--components-module`, honoring
+  # its nil (default), pre-set atom, and user-supplied string forms. Shared by the
+  # component and component-test generators so both target the same namespace.
+  def components_namespace(igniter) do
+    case igniter.args.options[:components_module] do
+      nil -> Phoenix.web_module_name(igniter, "Components")
+      raw when is_atom(raw) -> raw
+      raw -> parse_components_module(raw)
     end
   end
 end

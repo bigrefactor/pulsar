@@ -1,0 +1,109 @@
+defmodule <%= @component_namespace %>.ListTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.List
+
+  # `list` renders definition-list markup from `:item` slots, each with a required
+  # `title` attr and value content, so the smoke test supplies items rather than
+  # relying on introspection (which would only render the empty state).
+
+  describe "list/1" do
+    test "renders a definition list of titled items" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <List.list>
+          <:item title="Name">Jane Doe</:item>
+          <:item title="Email">jane@example.com</:item>
+        </List.list>
+        """)
+
+      assert html =~ "<dl"
+      assert html =~ "<dt"
+      assert html =~ "<dd"
+      assert html =~ "Name"
+      assert html =~ "Jane Doe"
+      assert html =~ "Email"
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(solid outline ghost) do
+        assigns = %{variant: variant}
+
+        html =
+          rendered_to_string(~H"""
+          <List.list variant={@variant}>
+            <:item title="Name">Jane Doe</:item>
+          </List.list>
+          """)
+
+        assert html =~ "<dl"
+        assert html =~ "Jane Doe"
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{color: color}
+
+        html =
+          rendered_to_string(~H"""
+          <List.list color={@color}>
+            <:item title="Name">Jane Doe</:item>
+          </List.list>
+          """)
+
+        assert html =~ "<dl"
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <List.list size={@size}>
+            <:item title="Name">Jane Doe</:item>
+          </List.list>
+          """)
+
+        assert html =~ "<dl"
+      end
+    end
+
+    test "renders a title and description header" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <List.list variant="outline">
+          <:title>Applicant Information</:title>
+          <:description>Personal details.</:description>
+          <:item title="Name">Margot Foster</:item>
+        </List.list>
+        """)
+
+      assert html =~ "Applicant Information"
+      assert html =~ "Personal details."
+      assert html =~ "Margot Foster"
+    end
+
+    test "renders the empty state when there are no items" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <List.list>
+          <:empty>Nothing to display</:empty>
+        </List.list>
+        """)
+
+      assert html =~ "Nothing to display"
+    end
+  end
+end

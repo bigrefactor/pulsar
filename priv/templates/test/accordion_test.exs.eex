@@ -1,0 +1,124 @@
+defmodule <%= @component_namespace %>.AccordionTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Accordion
+
+  # `accordion` requires one or more `:item` slots, each with a required `title`
+  # attr and panel content as the slot body, so the smoke test supplies items
+  # rather than relying on introspection. Sections are closed by default; the
+  # tests assert the server-rendered headers and panels, not open/visible state.
+
+  describe "accordion/1" do
+    test "renders headers and panels for each item" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Accordion.accordion id="faq">
+          <:item title="Shipping">We ship worldwide.</:item>
+          <:item title="Returns">30-day returns.</:item>
+        </Accordion.accordion>
+        """)
+
+      assert html =~ ~s(aria-expanded="false")
+      assert html =~ ~s(role="region")
+      assert html =~ "Shipping"
+      assert html =~ "Returns"
+      assert html =~ "We ship worldwide."
+    end
+
+    test "renders every type" do
+      for type <- ~w(single multiple) do
+        assigns = %{type: type}
+
+        html =
+          rendered_to_string(~H"""
+          <Accordion.accordion id="acc" type={@type}>
+            <:item title="One">First</:item>
+          </Accordion.accordion>
+          """)
+
+        assert html =~ ~s(data-type=) <> inspect(type)
+        assert html =~ "One"
+      end
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(solid outline ghost elevated) do
+        assigns = %{variant: variant}
+
+        html =
+          rendered_to_string(~H"""
+          <Accordion.accordion id="acc" variant={@variant}>
+            <:item title="One">First</:item>
+          </Accordion.accordion>
+          """)
+
+        assert html =~ "One"
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{color: color}
+
+        html =
+          rendered_to_string(~H"""
+          <Accordion.accordion id="acc" color={@color}>
+            <:item title="One">First</:item>
+          </Accordion.accordion>
+          """)
+
+        assert html =~ "One"
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <Accordion.accordion id="acc" size={@size}>
+            <:item title="One">First</:item>
+          </Accordion.accordion>
+          """)
+
+        assert html =~ "One"
+      end
+    end
+
+    test "renders every heading_level" do
+      for level <- ~w(h2 h3 h4 h5 h6) do
+        assigns = %{level: level}
+
+        html =
+          rendered_to_string(~H"""
+          <Accordion.accordion id="acc" heading_level={@level}>
+            <:item title="One">First</:item>
+          </Accordion.accordion>
+          """)
+
+        assert html =~ "<" <> level
+      end
+    end
+
+    test "marks the item named by value as expanded" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Accordion.accordion id="acc" value="open-one">
+          <:item id="open-one" title="One">First</:item>
+          <:item id="two" title="Two">Second</:item>
+        </Accordion.accordion>
+        """)
+
+      assert html =~ ~s(aria-expanded="true")
+      assert html =~ ~s(aria-expanded="false")
+    end
+  end
+end

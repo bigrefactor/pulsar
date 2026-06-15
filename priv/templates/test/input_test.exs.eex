@@ -1,0 +1,31 @@
+defmodule <%= @component_namespace %>.InputTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Input
+
+  # `input` renders its name/value/errors from a bound Phoenix form field, so the
+  # smoke test supplies one rather than relying on introspection.
+  defp form_field do
+    Phoenix.Component.to_form(%{"name" => "Jane"}, as: :user)[:name]
+  end
+
+  describe "input/1" do
+    test "renders a text input bound to a form field" do
+      assigns = %{field: form_field()}
+      html = rendered_to_string(~H"<Input.input field={@field} />")
+      assert html =~ ~s(name="user[name]")
+    end
+
+    test "renders every input type" do
+      for type <-
+            ~w(text email password number tel url search date time datetime-local month week color range file hidden checkbox radio button submit reset image) do
+        assigns = %{field: form_field(), type: type}
+        html = rendered_to_string(~H"<Input.input field={@field} type={@type} />")
+        assert html =~ ~s(name="user[name]")
+      end
+    end
+  end
+end

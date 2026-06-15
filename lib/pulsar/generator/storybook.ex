@@ -253,17 +253,7 @@ defmodule Pulsar.Generator.Storybook do
   end
 
   defp get_components_module(igniter) do
-    case igniter.args.options[:components_module] do
-      nil ->
-        Phoenix.web_module_name(igniter, "Components")
-
-      raw when is_atom(raw) ->
-        # Already a module atom (set by set_default_component_module)
-        raw
-
-      raw ->
-        Igniter.Project.Module.parse(to_string(raw))
-    end
+    Pulsar.Generator.components_namespace(igniter)
   end
 
   defp app_name(igniter) do

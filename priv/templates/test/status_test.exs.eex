@@ -1,0 +1,80 @@
+defmodule <%= @component_namespace %>.StatusTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Status
+
+  # `status` renders a colored dot; `indicator` requires `:item` and inner_block
+  # slots, so the smoke test supplies them rather than relying on introspection
+  # (which would crash on the missing required `:item` slot).
+
+  describe "status/1" do
+    test "renders a decorative status dot" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Status.status color="success" />])
+
+      assert html =~ "<span"
+      assert html =~ ~s(aria-hidden="true")
+    end
+
+    test "renders a labelled status dot exposed to screen readers" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Status.status color="success" label="Online" />])
+
+      assert html =~ ~s(role="img")
+      assert html =~ ~s(aria-label="Online")
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{color: color}
+        html = rendered_to_string(~H[<Status.status color={@color} />])
+        assert html =~ "<span"
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{size: size}
+        html = rendered_to_string(~H[<Status.status size={@size} />])
+        assert html =~ "<span"
+      end
+    end
+  end
+
+  describe "indicator/1" do
+    test "places a slotted item on the corner of its content" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Status.indicator placement="bottom-right">
+          <:item><Status.status color="success" label="Online" /></:item>
+          <span>Avatar</span>
+        </Status.indicator>
+        """)
+
+      assert html =~ "<div"
+      assert html =~ "Avatar"
+      assert html =~ ~s(aria-label="Online")
+    end
+
+    test "renders every placement" do
+      for placement <- ~w(top-left top top-right left center right bottom-left bottom bottom-right) do
+        assigns = %{placement: placement}
+
+        html =
+          rendered_to_string(~H"""
+          <Status.indicator placement={@placement}>
+            <:item><Status.status color="success" /></:item>
+            <span>Avatar</span>
+          </Status.indicator>
+          """)
+
+        assert html =~ "Avatar"
+      end
+    end
+  end
+end

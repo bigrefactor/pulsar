@@ -1,0 +1,46 @@
+defmodule <%= @component_namespace %>.SkeletonTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Skeleton
+
+  # `skeleton` renders a decorative placeholder shape that ignores its slot
+  # content, so the smoke test asserts the structural `aria-hidden` anchor rather
+  # than slot text (which introspection would assert and fail on).
+
+  describe "skeleton/1" do
+    test "renders a decorative placeholder" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Skeleton.skeleton />])
+
+      assert html =~ "<div"
+      assert html =~ ~s(aria-hidden="true")
+    end
+
+    test "renders a labelled loading status region" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Skeleton.skeleton label="Loading profile" />])
+
+      assert html =~ ~s(role="status")
+      assert html =~ "Loading profile"
+    end
+
+    test "renders every kind" do
+      for kind <- ~w(text circle rect) do
+        assigns = %{kind: kind}
+        html = rendered_to_string(~H[<Skeleton.skeleton kind={@kind} />])
+        assert html =~ ~s(aria-hidden="true")
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl 2xl) do
+        assigns = %{size: size}
+        html = rendered_to_string(~H[<Skeleton.skeleton kind="circle" size={@size} />])
+        assert html =~ ~s(aria-hidden="true")
+      end
+    end
+  end
+end

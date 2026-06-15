@@ -1,0 +1,60 @@
+defmodule <%= @component_namespace %>.CalendarTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Calendar
+
+  # `calendar` writes the selected date into a hidden ISO input from a bound form
+  # field. A fixed date keeps the rendered value deterministic (no reliance on
+  # today's date).
+  defp single_field do
+    Phoenix.Component.to_form(%{"starts_on" => ~D[2026-06-15]}, as: :event)[:starts_on]
+  end
+
+  describe "calendar/1" do
+    test "renders the calendar container bound to a form field" do
+      assigns = %{field: single_field()}
+      html = rendered_to_string(~H"<Calendar.calendar field={@field} />")
+
+      assert html =~ ~s(role="application")
+      assert html =~ ~s(aria-roledescription="calendar")
+      assert html =~ ~s(name="event[starts_on]")
+      assert html =~ ~s(value="2026-06-15")
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{field: single_field(), color: color}
+        html = rendered_to_string(~H"<Calendar.calendar field={@field} color={@color} />")
+        assert html =~ ~s(role="application")
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{field: single_field(), size: size}
+        html = rendered_to_string(~H"<Calendar.calendar field={@field} size={@size} />")
+        assert html =~ ~s(role="application")
+      end
+    end
+
+    test "renders range mode with start and end fields" do
+      assigns = %{
+        start_field: Phoenix.Component.to_form(%{"from" => ~D[2026-06-15]}, as: :trip)[:from],
+        end_field: Phoenix.Component.to_form(%{"to" => ~D[2026-06-20]}, as: :trip)[:to]
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <Calendar.calendar mode="range" start_field={@start_field} end_field={@end_field} />
+        """)
+
+      assert html =~ ~s(name="trip[from]")
+      assert html =~ ~s(name="trip[to]")
+      assert html =~ ~s(value="2026-06-15")
+      assert html =~ ~s(value="2026-06-20")
+    end
+  end
+end

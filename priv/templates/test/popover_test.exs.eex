@@ -1,0 +1,130 @@
+defmodule <%= @component_namespace %>.PopoverTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Popover
+
+  # `popover` requires a `:trigger` slot (a single button) and the default slot
+  # for the panel content. The panel renders closed (`data-state="closed"`); the
+  # tests assert the server-rendered trigger and panel anchors, not open state.
+
+  describe "popover/1" do
+    test "renders a trigger and a closed panel" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Popover.popover id="filters" placement="bottom-start">
+          <:trigger>
+            <button type="button">Filters</button>
+          </:trigger>
+          <p>Filter options</p>
+        </Popover.popover>
+        """)
+
+      assert html =~ ~s(id="filters")
+      assert html =~ ~s(data-state="closed")
+      assert html =~ ~s(data-trigger="click")
+      assert html =~ ~s(data-placement="bottom-start")
+      assert html =~ "Filters"
+      assert html =~ "Filter options"
+    end
+
+    test "renders every trigger_mode" do
+      for trigger_mode <- ~w(click hover) do
+        assigns = %{trigger_mode: trigger_mode}
+
+        html =
+          rendered_to_string(~H"""
+          <Popover.popover id="p" trigger_mode={@trigger_mode}>
+            <:trigger><button type="button">Open</button></:trigger>
+            <p>Body</p>
+          </Popover.popover>
+          """)
+
+        assert html =~ ~s(data-trigger=) <> inspect(trigger_mode)
+      end
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(solid outline ghost elevated) do
+        assigns = %{variant: variant}
+
+        html =
+          rendered_to_string(~H"""
+          <Popover.popover id="p" variant={@variant}>
+            <:trigger><button type="button">Open</button></:trigger>
+            <p>Body</p>
+          </Popover.popover>
+          """)
+
+        assert html =~ ~s(data-state="closed")
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{color: color}
+
+        html =
+          rendered_to_string(~H"""
+          <Popover.popover id="p" color={@color}>
+            <:trigger><button type="button">Open</button></:trigger>
+            <p>Body</p>
+          </Popover.popover>
+          """)
+
+        assert html =~ ~s(data-state="closed")
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <Popover.popover id="p" size={@size}>
+            <:trigger><button type="button">Open</button></:trigger>
+            <p>Body</p>
+          </Popover.popover>
+          """)
+
+        assert html =~ ~s(data-state="closed")
+      end
+    end
+
+    test "renders every placement" do
+      for placement <- ~w(top bottom left right bottom-start bottom-end) do
+        assigns = %{placement: placement}
+
+        html =
+          rendered_to_string(~H"""
+          <Popover.popover id="p" placement={@placement}>
+            <:trigger><button type="button">Open</button></:trigger>
+            <p>Body</p>
+          </Popover.popover>
+          """)
+
+        assert html =~ ~s(data-placement=) <> inspect(placement)
+      end
+    end
+
+    test "forwards role and aria-label via rest attributes" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Popover.popover id="confirm" role="dialog" aria-label="Confirm delete">
+          <:trigger><button type="button">Delete</button></:trigger>
+          <p>This can't be undone.</p>
+        </Popover.popover>
+        """)
+
+      assert html =~ ~s(role="dialog")
+      assert html =~ ~s(aria-label="Confirm delete")
+    end
+  end
+end

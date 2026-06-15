@@ -1,0 +1,97 @@
+defmodule <%= @component_namespace %>.PaginationTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Pagination
+
+  # In page mode `pagination` requires `page`, `total_pages`, and a `page_href`
+  # function mapping a page number to a URL, so the smoke test supplies them
+  # rather than relying on introspection (the defaults would raise).
+  defp page_href, do: fn p -> "/list?page=#{p}" end
+
+  describe "pagination/1" do
+    test "renders a nav with numbered pages and the current page marked" do
+      assigns = %{page_href: page_href()}
+
+      html =
+        rendered_to_string(~H"""
+        <Pagination.pagination page={3} total_pages={10} page_href={@page_href} />
+        """)
+
+      assert html =~ "<nav"
+      assert html =~ ~s(aria-current="page")
+      assert html =~ ~s(aria-label="Go to page 4")
+      assert html =~ "/list?page="
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(solid outline ghost) do
+        assigns = %{page_href: page_href(), variant: variant}
+
+        html =
+          rendered_to_string(~H"""
+          <Pagination.pagination page={2} total_pages={5} page_href={@page_href} variant={@variant} />
+          """)
+
+        assert html =~ "<nav"
+        assert html =~ ~s(aria-current="page")
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{page_href: page_href(), color: color}
+
+        html =
+          rendered_to_string(~H"""
+          <Pagination.pagination page={2} total_pages={5} page_href={@page_href} color={@color} />
+          """)
+
+        assert html =~ "<nav"
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{page_href: page_href(), size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <Pagination.pagination page={2} total_pages={5} page_href={@page_href} size={@size} />
+          """)
+
+        assert html =~ "<nav"
+      end
+    end
+
+    test "renders cursor mode with previous/next controls only" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Pagination.pagination
+          mode="cursor"
+          prev_href="/list?before=abc"
+          next_href="/list?after=xyz"
+        />
+        """)
+
+      assert html =~ "<nav"
+      assert html =~ "Previous"
+      assert html =~ "Next"
+    end
+
+    test "renders the summary when enabled" do
+      assigns = %{page_href: page_href()}
+
+      html =
+        rendered_to_string(~H"""
+        <Pagination.pagination page={3} total_pages={10} page_href={@page_href} show_summary />
+        """)
+
+      assert html =~ "Page 3 of 10"
+    end
+  end
+end

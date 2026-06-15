@@ -1,0 +1,137 @@
+defmodule <%= @component_namespace %>.DropdownMenuTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.DropdownMenu
+
+  # `dropdown_menu` requires a `:trigger` slot (a button) and a default slot of
+  # menu items. The menu panel (role="menu") renders closed; the `aria-haspopup`
+  # wiring is applied by the hook at runtime, so the tests assert the
+  # server-rendered menu role and item markup, not open state.
+
+  describe "dropdown_menu/1" do
+    test "renders a trigger and a menu of items" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu id="account" label="Account">
+          <:trigger>
+            <button type="button">Account</button>
+          </:trigger>
+          <DropdownMenu.dropdown_menu_item href="/profile">Profile</DropdownMenu.dropdown_menu_item>
+          <DropdownMenu.dropdown_menu_item href="/settings">Settings</DropdownMenu.dropdown_menu_item>
+        </DropdownMenu.dropdown_menu>
+        """)
+
+      assert html =~ ~s(role="menu")
+      assert html =~ ~s(role="menuitem")
+      assert html =~ ~s(data-state="closed")
+      assert html =~ "Account"
+      assert html =~ "Profile"
+      assert html =~ "Settings"
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(solid outline ghost elevated) do
+        assigns = %{variant: variant}
+
+        html =
+          rendered_to_string(~H"""
+          <DropdownMenu.dropdown_menu id="m" label="Menu" variant={@variant}>
+            <:trigger><button type="button">Open</button></:trigger>
+            <DropdownMenu.dropdown_menu_item href="/a">Item</DropdownMenu.dropdown_menu_item>
+          </DropdownMenu.dropdown_menu>
+          """)
+
+        assert html =~ ~s(role="menu")
+        assert html =~ "Item"
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{color: color}
+
+        html =
+          rendered_to_string(~H"""
+          <DropdownMenu.dropdown_menu id="m" label="Menu" color={@color}>
+            <:trigger><button type="button">Open</button></:trigger>
+            <DropdownMenu.dropdown_menu_item href="/a">Item</DropdownMenu.dropdown_menu_item>
+          </DropdownMenu.dropdown_menu>
+          """)
+
+        assert html =~ ~s(role="menu")
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <DropdownMenu.dropdown_menu id="m" label="Menu" size={@size}>
+            <:trigger><button type="button">Open</button></:trigger>
+            <DropdownMenu.dropdown_menu_item href="/a">Item</DropdownMenu.dropdown_menu_item>
+          </DropdownMenu.dropdown_menu>
+          """)
+
+        assert html =~ ~s(role="menu")
+      end
+    end
+  end
+
+  describe "dropdown_menu_item/1" do
+    test "renders a link item when a target is given" do
+      assigns = %{}
+      html = rendered_to_string(~H|<DropdownMenu.dropdown_menu_item href="/x">Go</DropdownMenu.dropdown_menu_item>|)
+
+      assert html =~ ~s(role="menuitem")
+      assert html =~ ~s(data-menu-item)
+      assert html =~ "Go"
+    end
+
+    test "renders an action button item when no target is given" do
+      assigns = %{}
+      html = rendered_to_string(~H|<DropdownMenu.dropdown_menu_item phx-click="act">Act</DropdownMenu.dropdown_menu_item>|)
+
+      assert html =~ ~s(<button)
+      assert html =~ ~s(role="menuitem")
+      assert html =~ "Act"
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{color: color}
+        html = rendered_to_string(~H|<DropdownMenu.dropdown_menu_item href="/x" color={@color}>Item</DropdownMenu.dropdown_menu_item>|)
+        assert html =~ ~s(role="menuitem")
+      end
+    end
+  end
+
+  describe "dropdown_menu_checkbox_item/1" do
+    test "renders a menuitemcheckbox reflecting checked state" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(
+          ~H|<DropdownMenu.dropdown_menu_checkbox_item checked={true}>Pinned</DropdownMenu.dropdown_menu_checkbox_item>|
+        )
+
+      assert html =~ ~s(role="menuitemcheckbox")
+      assert html =~ ~s(aria-checked="true")
+      assert html =~ "Pinned"
+    end
+  end
+
+  describe "dropdown_menu_separator/1" do
+    test "renders a separator role" do
+      assigns = %{}
+      html = rendered_to_string(~H|<DropdownMenu.dropdown_menu_separator />|)
+      assert html =~ ~s(role="separator")
+    end
+  end
+end

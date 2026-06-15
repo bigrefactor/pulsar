@@ -1,0 +1,62 @@
+defmodule <%= @component_namespace %>.FlashGroupTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.FlashGroup
+
+  # `flash_group` requires a `flash` map (it reads messages from @flash) and only
+  # renders its container when there are messages, so the smoke test supplies a
+  # populated flash map rather than relying on introspection.
+
+  describe "flash_group/1" do
+    test "renders flash messages from the flash map" do
+      assigns = %{flash: %{"info" => "Saved successfully"}}
+      html = rendered_to_string(~H[<FlashGroup.flash_group flash={@flash} />])
+
+      assert html =~ "Saved successfully"
+      assert html =~ ~s(role="status")
+    end
+
+    test "renders an error flash as an alert" do
+      assigns = %{flash: %{"error" => "Something went wrong"}}
+      html = rendered_to_string(~H[<FlashGroup.flash_group flash={@flash} />])
+
+      assert html =~ "Something went wrong"
+      assert html =~ ~s(role="alert")
+    end
+
+    test "renders nothing for an empty flash map" do
+      assigns = %{flash: %{}}
+      html = rendered_to_string(~H[<FlashGroup.flash_group flash={@flash} />])
+
+      refute html =~ ~s(role="status")
+      refute html =~ ~s(role="alert")
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(solid outline ghost) do
+        assigns = %{flash: %{"info" => "Saved"}, variant: variant}
+        html = rendered_to_string(~H[<FlashGroup.flash_group flash={@flash} variant={@variant} />])
+        assert html =~ "Saved"
+      end
+    end
+
+    test "renders every position" do
+      for position <- ~w(top-right top-center top-left bottom-right bottom-center bottom-left) do
+        assigns = %{flash: %{"info" => "Saved"}, position: position}
+        html = rendered_to_string(~H[<FlashGroup.flash_group flash={@flash} position={@position} />])
+        assert html =~ "Saved"
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(sm md lg) do
+        assigns = %{flash: %{"info" => "Saved"}, size: size}
+        html = rendered_to_string(~H[<FlashGroup.flash_group flash={@flash} size={@size} />])
+        assert html =~ "Saved"
+      end
+    end
+  end
+end

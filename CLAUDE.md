@@ -75,6 +75,15 @@ defmodule Mix.Tasks.Pulsar.Gen.Button do
 end
 ```
 
+### Generated Component Tests
+
+`mix pulsar.gen.<component>` and `mix pulsar.install` generate an ExUnit smoke
+test alongside each component by default. Pass `--no-tests` to opt out. These
+tests are structural smoke tests — they assert the component renders and honors
+its attrs and slots, not JS-hook interaction behavior. Like the components
+themselves, the generated tests are owned by the host app: extend them freely
+with your own assertions.
+
 ### Component Templates
 Templates use EEx for dynamic generation:
 ```elixir

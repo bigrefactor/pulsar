@@ -32,6 +32,9 @@ pulsar-*.tar
 # Temporary files, for example, from tests.
 /tmp/
 
+# Scratch dir for `mix pulsar.gen.tests.check`
+/tmp/gen_test_check/
+
 # Claude Code configuration and cache
 /.claude/*
 # but do track shared project skills

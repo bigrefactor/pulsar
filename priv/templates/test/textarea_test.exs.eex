@@ -1,0 +1,47 @@
+defmodule <%= @component_namespace %>.TextareaTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Textarea
+
+  # `textarea` renders its name/value from a bound Phoenix form field, so the smoke
+  # test supplies one rather than relying on introspection.
+  defp form_field do
+    Phoenix.Component.to_form(%{"bio" => "Hello"}, as: :user)[:bio]
+  end
+
+  describe "textarea/1" do
+    test "renders a textarea bound to a form field" do
+      assigns = %{field: form_field()}
+      html = rendered_to_string(~H"<Textarea.textarea field={@field} />")
+      assert html =~ "<textarea"
+      assert html =~ ~s(name="user[bio]")
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(outline ghost solid) do
+        assigns = %{field: form_field(), variant: variant}
+        html = rendered_to_string(~H"<Textarea.textarea field={@field} variant={@variant} />")
+        assert html =~ "<textarea"
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{field: form_field(), color: color}
+        html = rendered_to_string(~H"<Textarea.textarea field={@field} color={@color} />")
+        assert html =~ "<textarea"
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{field: form_field(), size: size}
+        html = rendered_to_string(~H"<Textarea.textarea field={@field} size={@size} />")
+        assert html =~ "<textarea"
+      end
+    end
+  end
+end
