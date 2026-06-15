@@ -92,7 +92,7 @@
           {Credo.Check.Refactor.CondStatements, []},
           {Credo.Check.Refactor.CyclomaticComplexity,
            [
-             max_complexity: 12
+             max_complexity: 9
            ]},
           {Credo.Check.Refactor.FunctionArity,
            [
@@ -107,7 +107,7 @@
           {Credo.Check.Refactor.NegatedConditionsWithElse, []},
           {Credo.Check.Refactor.Nesting,
            [
-             max_nesting: 3
+             max_nesting: 2
            ]},
           {Credo.Check.Refactor.UnlessWithElse, []},
           {Credo.Check.Refactor.WithClauses, []},
