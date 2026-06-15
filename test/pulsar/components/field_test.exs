@@ -496,7 +496,14 @@ defmodule Pulsar.Components.FieldTest do
       assert html =~ ~s(step="1")
     end
 
-    test "passes placeholder attribute" do
+    # Regression: Field forwards `placeholder` to Input as a literal HEEx attribute.
+    # Under LiveView 1.2 (which dropped `placeholder` from the default globals) this
+    # only renders if Input opts `placeholder` back in via its `:rest` `include:` list;
+    # otherwise it raises an "undefined attribute" warning. The render assertion below
+    # passes even when that warning is present, so the authoritative guard is
+    # `mix compile --warnings-as-errors` against LiveView 1.2 (see the fresh-app
+    # integration check) — this test documents that the attribute reaches the `<input>`.
+    test "passes placeholder attribute through to the input element" do
       field = create_field(:search)
       assigns = %{field: field}
 
@@ -505,7 +512,7 @@ defmodule Pulsar.Components.FieldTest do
         <Field.field field={@field} placeholder="Search..." />
         """)
 
-      assert html =~ ~s(placeholder="Search...")
+      assert html =~ ~r/<input[^>]*placeholder="Search\.\.\."/
     end
   end
 
