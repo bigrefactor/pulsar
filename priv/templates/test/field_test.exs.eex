@@ -1,0 +1,51 @@
+defmodule <%= @component_namespace %>.FieldTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Field
+
+  # `field` is the canonical form-input wrapper: it requires a bound Phoenix form
+  # field and dispatches to the matching control by `type`, generating a label
+  # associated to the control. The smoke test supplies a real field and exercises
+  # every supported type rather than relying on introspection.
+  defp form_field do
+    Phoenix.Component.to_form(%{"email" => "a@b.com"}, as: :user)[:email]
+  end
+
+  describe "field/1" do
+    test "wraps a text input with a generated, associated label" do
+      assigns = %{field: form_field()}
+      html = rendered_to_string(~H|<Field.field field={@field} type="text" />|)
+      assert html =~ ~s(name="user[email]")
+      assert html =~ "<label"
+      # Auto-generated label from the humanized field name.
+      assert html =~ "Email"
+    end
+
+    test "renders a custom label slot associated to the control" do
+      assigns = %{field: form_field()}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="text">
+          <:label>Your email</:label>
+        </Field.field>
+        """)
+
+      assert html =~ "Your email"
+      assert html =~ ~s(for=)
+    end
+
+    test "renders every input type" do
+      for type <-
+            ~w(text email password number tel url search time datetime-local month week color file range
+               select textarea checkbox radio switch) do
+        assigns = %{field: form_field(), type: type}
+        html = rendered_to_string(~H"<Field.field field={@field} type={@type} />")
+        assert html =~ ~s(name="user[email]")
+      end
+    end
+  end
+end

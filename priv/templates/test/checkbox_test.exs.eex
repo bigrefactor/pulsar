@@ -1,0 +1,53 @@
+defmodule <%= @component_namespace %>.CheckboxTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Checkbox
+
+  # `checkbox` renders its name/checked state from a bound Phoenix form field, so the
+  # smoke test supplies one rather than relying on introspection.
+  defp form_field do
+    Phoenix.Component.to_form(%{"terms" => "true"}, as: :user)[:terms]
+  end
+
+  describe "checkbox/1" do
+    test "renders a checkbox input bound to a form field" do
+      assigns = %{field: form_field()}
+      html = rendered_to_string(~H"<Checkbox.checkbox field={@field} />")
+      assert html =~ ~s(type="checkbox")
+      assert html =~ ~s(name="user[terms]")
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{field: form_field(), color: color}
+        html = rendered_to_string(~H"<Checkbox.checkbox field={@field} color={@color} />")
+        assert html =~ ~s(type="checkbox")
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{field: form_field(), size: size}
+        html = rendered_to_string(~H"<Checkbox.checkbox field={@field} size={@size} />")
+        assert html =~ ~s(type="checkbox")
+      end
+    end
+
+    test "renders every variant in card mode" do
+      for variant <- ~w(solid outline ghost) do
+        assigns = %{field: form_field(), variant: variant}
+
+        html =
+          rendered_to_string(
+            ~H"<Checkbox.checkbox field={@field} card variant={@variant}>Pulsar</Checkbox.checkbox>"
+          )
+
+        assert html =~ ~s(name="user[terms]")
+        assert html =~ "Pulsar"
+      end
+    end
+  end
+end

@@ -1,0 +1,52 @@
+defmodule <%= @component_namespace %>.SelectTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Select
+
+  # `select` renders its name/value/options from a bound Phoenix form field plus a
+  # required `options` list, so the smoke test supplies both rather than relying on
+  # introspection.
+  defp form_field do
+    Phoenix.Component.to_form(%{"country" => "us"}, as: :user)[:country]
+  end
+
+  @options [{"United States", "us"}, {"Canada", "ca"}]
+
+  describe "select/1" do
+    test "renders a select bound to a form field with options" do
+      assigns = %{field: form_field(), options: @options}
+      html = rendered_to_string(~H"<Select.select field={@field} options={@options} />")
+      assert html =~ ~s(id="user_country")
+      assert html =~ "<select"
+      assert html =~ "<option"
+      assert html =~ "United States"
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(outline ghost solid) do
+        assigns = %{field: form_field(), options: @options, variant: variant}
+        html = rendered_to_string(~H"<Select.select field={@field} options={@options} variant={@variant} />")
+        assert html =~ "<select"
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{field: form_field(), options: @options, color: color}
+        html = rendered_to_string(~H"<Select.select field={@field} options={@options} color={@color} />")
+        assert html =~ "<select"
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{field: form_field(), options: @options, size: size}
+        html = rendered_to_string(~H"<Select.select field={@field} options={@options} size={@size} />")
+        assert html =~ "<select"
+      end
+    end
+  end
+end

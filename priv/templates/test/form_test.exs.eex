@@ -1,0 +1,43 @@
+defmodule <%= @component_namespace %>.FormTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Form
+
+  # `form` wraps `Phoenix.Component.form/1` and requires a `for` source plus an
+  # inner block; it derives a stable id from the form, so the smoke test supplies a
+  # built form rather than relying on introspection.
+  defp form_source do
+    Phoenix.Component.to_form(%{"email" => ""}, as: :user)
+  end
+
+  describe "form/1" do
+    test "renders a form element wrapping its inner block" do
+      assigns = %{for: form_source()}
+
+      html =
+        rendered_to_string(~H"""
+        <Form.form for={@for}>Pulsar</Form.form>
+        """)
+
+      assert html =~ "<form"
+      assert html =~ "Pulsar"
+    end
+
+    test "exposes the form struct via :let" do
+      assigns = %{for: form_source()}
+
+      html =
+        rendered_to_string(~H"""
+        <Form.form :let={f} for={@for}>
+          {f[:email].name}
+        </Form.form>
+        """)
+
+      assert html =~ "<form"
+      assert html =~ "user[email]"
+    end
+  end
+end

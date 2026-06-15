@@ -116,7 +116,13 @@ defmodule Pulsar.Generator.ComponentTestTest do
     # ships an override template (priv/templates/test/input_test.exs.eex) which
     # `render/2` prefers. The probe swap renames `defmodule Pulsar.Components.<Camel>Test`
     # and swaps the `use ExUnit.Case` line, so the same mechanism covers overrides.
-    @simple_components [:button, :badge, :avatar, :input]
+    # `:button`, `:badge`, `:avatar` go through the introspection engine; `:input`
+    # and the form-field components below ship override templates
+    # (priv/templates/test/<component>_test.exs.eex) which `render/2` prefers. The
+    # probe swap renames `defmodule Pulsar.Components.<Camel>Test` and swaps the
+    # `use ExUnit.Case` line, so the same mechanism covers both paths.
+    @form_components [:select, :checkbox, :switch, :textarea, :radio_group, :field, :form]
+    @simple_components [:button, :badge, :avatar, :input] ++ @form_components
 
     for component <- @simple_components do
       test "#{component} generated test compiles without error" do
