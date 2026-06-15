@@ -82,7 +82,9 @@ defmodule Pulsar.Components.InputTest do
       assert html =~ ~s(type="email")
       assert html =~ ~s(required)
       assert html =~ ~s(disabled)
-      assert html =~ ~s(placeholder="Enter email")
+      # `placeholder` is opted back into the `:rest` `include:` list because
+      # LiveView 1.2 dropped it from the default globals; assert it reaches the input.
+      assert html =~ ~r/<input[^>]*placeholder="Enter email"/
     end
 
     test "merges custom classes with component classes" do

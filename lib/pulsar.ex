@@ -44,7 +44,7 @@ defmodule Pulsar do
 
   Components can also be used directly from Pulsar without generation. For
   a Phoenix-style one-line on-ramp, `import Pulsar.CoreComponents` exposes
-  the same `flash/1`, `flash_group/1`, `header/1`, `button/1`, `input/1`,
+  the same `flash/1`, `header/1`, `button/1`, `input/1`,
   `icon/1`, `table/1`, and `list/1` functions that `mix pulsar.gen.core_components`
   would generate into your app. For granular control, import individual
   components (`import Pulsar.Components.Button`). Generation is recommended

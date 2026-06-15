@@ -13,7 +13,6 @@ defmodule Pulsar.CoreComponents do
   alias Pulsar.Components.Button
   alias Pulsar.Components.Field
   alias Pulsar.Components.Flash
-  alias Pulsar.Components.FlashGroup
   alias Pulsar.Components.Form
   alias Pulsar.Components.Header
   alias Pulsar.Components.Icon
@@ -74,7 +73,7 @@ defmodule Pulsar.CoreComponents do
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       id={@id}
       class="fixed top-4 right-4 z-toast max-w-sm w-full"
-      phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide_flash("##{@id}")}
+      phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role={map_kind_to_role(@kind)}
     >
       <Flash.flash
@@ -104,16 +103,6 @@ defmodule Pulsar.CoreComponents do
     </div>
     """
   end
-
-  @doc """
-  Renders a group of flash notifications.
-
-  ## Examples
-
-      <.flash_group flash={@flash} />
-      <.flash_group flash={@flash} variant="outline" position="bottom-right" />
-  """
-  defdelegate flash_group(assigns), to: FlashGroup
 
   @doc """
   Renders a button with navigation support and Pulsar styling.
@@ -778,14 +767,10 @@ defmodule Pulsar.CoreComponents do
   ## JS Commands
 
   @doc """
-  Shows a flash element at `selector` with the standard flash entry animation
-  (slide-in from below + fade-in over 300ms).
-
-  Exposed for callers that need to programmatically reveal a flash; the bundled
-  flash component animates itself in via the underlying `Flash` markup and does
-  not call this helper directly.
+  Shows the element at `selector` with a slide-in-from-below + fade-in transition
+  (300ms).
   """
-  def show_flash(js \\ %JS{}, selector) do
+  def show(js \\ %JS{}, selector) do
     JS.show(js,
       to: selector,
       time: 300,
@@ -796,13 +781,9 @@ defmodule Pulsar.CoreComponents do
   end
 
   @doc """
-  Hides a flash element at `selector` with the standard flash exit animation
-  (slide-out + fade-out over 200ms).
-
-  Used by the bundled flash component's phx-click handler to animate dismissal
-  after `lv:clear-flash` is pushed.
+  Hides the element at `selector` with a slide-out + fade-out transition (200ms).
   """
-  def hide_flash(js \\ %JS{}, selector) do
+  def hide(js \\ %JS{}, selector) do
     JS.hide(js,
       to: selector,
       time: 200,

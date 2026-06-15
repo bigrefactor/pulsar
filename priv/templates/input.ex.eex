@@ -356,7 +356,16 @@ attr(:class, :string,
 )
 
 # Global attributes (allows all Phoenix and HTML attributes)
-attr(:rest, :global, doc: "Additional HTML attributes including placeholder")
+#
+# LiveView 1.2 dropped form attributes (placeholder, list, pattern, etc.) from the
+# default global set, so they must be opted back in here or they raise
+# "undefined attribute" warnings at call sites. `required`, `disabled`, and
+# `readonly` are declared as explicit attrs above and are intentionally omitted.
+attr(:rest, :global,
+  include:
+    ~w(accept autocomplete capture form list max maxlength min minlength multiple pattern placeholder size step),
+  doc: "Additional HTML attributes including placeholder"
+)
 
 # Decorator slots
 slot(:start_decorator,
