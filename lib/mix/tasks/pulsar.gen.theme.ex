@@ -158,23 +158,27 @@ if Code.ensure_loaded?(Igniter) do
 
       case Map.fetch(igniter.rewrite.sources, theme_css_path) do
         {:ok, source} ->
-          content = Rewrite.Source.get(source, :content)
-
-          if String.contains?(content, import_line) do
-            igniter
-          else
-            new_content = insert_import(content, import_line)
-
-            Igniter.update_file(igniter, theme_css_path, fn source ->
-              Rewrite.Source.update(source, :content, new_content)
-            end)
-          end
+          ensure_import(igniter, theme_css_path, source, import_line)
 
         :error ->
           Igniter.add_warning(
             igniter,
             "assets/css/theme.css not found — generated #{dest} but did not register it. Run `mix pulsar.gen.theme` first, then add the import manually."
           )
+      end
+    end
+
+    defp ensure_import(igniter, theme_css_path, source, import_line) do
+      content = Rewrite.Source.get(source, :content)
+
+      if String.contains?(content, import_line) do
+        igniter
+      else
+        new_content = insert_import(content, import_line)
+
+        Igniter.update_file(igniter, theme_css_path, fn source ->
+          Rewrite.Source.update(source, :content, new_content)
+        end)
       end
     end
 
