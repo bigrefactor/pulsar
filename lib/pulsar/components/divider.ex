@@ -337,7 +337,7 @@ defmodule Pulsar.Components.Divider do
 
   # Build classes for simple hr divider
   defp build_simple_divider_classes(assigns) do
-    size_config = @size_config[assigns.size][String.to_atom(assigns.orientation)]
+    size_config = @size_config[assigns.size][String.to_existing_atom(assigns.orientation)]
 
     merge([
       size_config[:border],
@@ -351,7 +351,7 @@ defmodule Pulsar.Components.Divider do
 
   # Build container classes for labeled divider
   defp build_container_classes(assigns) do
-    size_config = @size_config[assigns.size][String.to_atom(assigns.orientation)]
+    size_config = @size_config[assigns.size][String.to_existing_atom(assigns.orientation)]
     spacing = size_config[:spacing]
 
     base_classes =
@@ -365,7 +365,7 @@ defmodule Pulsar.Components.Divider do
 
   # Build classes for divider lines in labeled divider
   defp build_line_classes(assigns) do
-    size_config = @size_config[assigns.size][String.to_atom(assigns.orientation)]
+    size_config = @size_config[assigns.size][String.to_existing_atom(assigns.orientation)]
     border = size_config[:border]
 
     flex_class =
