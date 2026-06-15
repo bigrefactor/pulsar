@@ -13,7 +13,61 @@ defmodule Pulsar.Generator.ComponentTest do
   `priv/templates/test/<component>_test.exs.eex`, which `render/2` prefers when present.
   """
 
+  alias Igniter.Libs.Phoenix
+
   @sample_slot_content "Pulsar"
+
+  @doc """
+  Renders and writes the component's test file into the project, unless one
+  already exists at the target path. Returns the igniter unchanged when test
+  generation is disabled (handled by the caller).
+  """
+  def install_component_test(igniter, component_name) do
+    web_module = Phoenix.web_module(igniter) |> inspect()
+    namespace = components_namespace(igniter)
+    path = test_file_path(web_module, component_name)
+
+    cond do
+      Map.has_key?(igniter.rewrite.sources, path) ->
+        igniter
+
+      not testable?(component_name) ->
+        igniter
+
+      true ->
+        contents = render(component_name, namespace)
+        Igniter.create_new_file(igniter, path, contents)
+    end
+  end
+
+  # A component gets a generated test when it ships an override template, or when
+  # its bundled module exposes the `__components__/0` introspection the default
+  # engine reads. Aggregate modules like `core_components` have neither and are
+  # skipped — mirroring how the storybook generator skips components with no story.
+  defp testable?(component_name) do
+    case override_template_path(component_name) do
+      {:ok, _path} ->
+        true
+
+      :none ->
+        module = component_module(component_name)
+        Code.ensure_loaded?(module) and function_exported?(module, :__components__, 0)
+    end
+  end
+
+  @doc false
+  def test_file_path(web_module, component_name) do
+    web_path = web_module |> Macro.underscore()
+    Path.join(["test", web_path, "components", "#{component_name}_test.exs"])
+  end
+
+  defp components_namespace(igniter) do
+    case igniter.args.options[:components_module] do
+      nil -> Phoenix.web_module_name(igniter, "Components") |> inspect()
+      raw when is_atom(raw) -> inspect(raw)
+      raw -> raw |> to_string() |> Igniter.Project.Module.parse() |> inspect()
+    end
+  end
 
   @doc """
   Renders the test module source for `component_name` targeting `namespace`

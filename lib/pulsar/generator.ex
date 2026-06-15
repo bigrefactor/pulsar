@@ -44,6 +44,7 @@ defmodule Pulsar.Generator do
   """
 
   alias Igniter.Libs.Phoenix
+  alias Pulsar.Generator.ComponentTest
   alias Pulsar.Generator.Storybook
 
   @doc """
@@ -108,7 +109,12 @@ defmodule Pulsar.Generator do
             example: unquote(example),
             positional: [],
             composes: [],
-            schema: [components_module: :string, storybook: :boolean, print_setup_notice: :boolean],
+            schema: [
+              components_module: :string,
+              storybook: :boolean,
+              print_setup_notice: :boolean,
+              tests: :boolean
+            ],
             defaults: [],
             aliases: [M: :components_module, s: :storybook],
             required: []
@@ -188,7 +194,17 @@ defmodule Pulsar.Generator do
         |> Igniter.Project.Module.create_module(component, contents)
       end
 
-    maybe_install_story(igniter, component_name)
+    igniter
+    |> maybe_install_story(component_name)
+    |> maybe_install_test(component_name)
+  end
+
+  # Test generation is ON by default; only `--no-tests` (tests: false) suppresses it.
+  defp maybe_install_test(igniter, component_name) do
+    case igniter.args.options[:tests] do
+      false -> igniter
+      _ -> ComponentTest.install_component_test(igniter, component_name)
+    end
   end
 
   defp maybe_install_story(igniter, component_name) do

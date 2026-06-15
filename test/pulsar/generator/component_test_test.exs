@@ -48,6 +48,13 @@ defmodule Pulsar.Generator.ComponentTestTest do
     end
   end
 
+  describe "test_file_path/2" do
+    test "places the test under the web app's components test dir" do
+      assert ComponentTest.test_file_path("MyAppWeb", :button) ==
+               "test/my_app_web/components/button_test.exs"
+    end
+  end
+
   describe "override_template_path/1" do
     test "returns :none when no override template exists for button" do
       assert ComponentTest.override_template_path(:button) == :none
