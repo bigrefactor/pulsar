@@ -1,0 +1,128 @@
+defmodule <%= @component_namespace %>.MenuTest do
+  use ExUnit.Case, async: true
+
+  # These are render/smoke tests: they verify attrs and slots produce markup.
+  # They do NOT exercise the JS hook — opening/keyboard behavior needs a browser test.
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Menu
+
+  # `menu` is a navigation landmark wrapping a list of items; it requires a default
+  # slot composed from `menu_item`, `menu_section`, and `menu_group`. Groups are
+  # disclosure widgets that are collapsed by default, so the tests assert the
+  # server-rendered nav/list/link markup and disclosure wiring, not open state.
+
+  describe "menu/1" do
+    test "renders a nav landmark wrapping navigation items" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Menu.menu label="Primary">
+          <Menu.menu_item navigate="/" active>Home</Menu.menu_item>
+          <Menu.menu_item navigate="/inbox">Inbox</Menu.menu_item>
+        </Menu.menu>
+        """)
+
+      assert html =~ ~s(<nav)
+      assert html =~ ~s(aria-label="Primary")
+      assert html =~ ~s(data-orientation="vertical")
+      assert html =~ ~s(aria-current="page")
+      assert html =~ "Home"
+      assert html =~ "Inbox"
+    end
+
+    test "renders every orientation" do
+      for orientation <- ~w(vertical horizontal) do
+        assigns = %{orientation: orientation}
+
+        html =
+          rendered_to_string(~H"""
+          <Menu.menu label="Primary" orientation={@orientation}>
+            <Menu.menu_item navigate="/">Home</Menu.menu_item>
+          </Menu.menu>
+          """)
+
+        assert html =~ ~s(data-orientation=) <> inspect(orientation)
+        assert html =~ "Home"
+      end
+    end
+
+    test "renders without a nav landmark when landmark is false" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Menu.menu label="Primary" landmark={false}>
+          <Menu.menu_item navigate="/">Home</Menu.menu_item>
+        </Menu.menu>
+        """)
+
+      refute html =~ ~s(<nav)
+      assert html =~ ~s(aria-label="Primary")
+    end
+  end
+
+  describe "menu_item/1" do
+    test "renders a navigation link" do
+      assigns = %{}
+      html = rendered_to_string(~H|<Menu.menu_item navigate="/docs">Docs</Menu.menu_item>|)
+
+      assert html =~ ~s(data-menu-item)
+      assert html =~ "Docs"
+    end
+
+    test "renders an action button when no target is given" do
+      assigns = %{}
+      html = rendered_to_string(~H|<Menu.menu_item phx-click="sign_out">Sign out</Menu.menu_item>|)
+
+      assert html =~ ~s(<button)
+      assert html =~ ~s(data-menu-item)
+      assert html =~ "Sign out"
+    end
+
+    test "marks the active item with aria-current" do
+      assigns = %{}
+      html = rendered_to_string(~H|<Menu.menu_item navigate="/" active>Home</Menu.menu_item>|)
+      assert html =~ ~s(aria-current="page")
+    end
+  end
+
+  describe "menu_section/1" do
+    test "renders a labelled section list" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Menu.menu_section label="Workspace">
+          <Menu.menu_item navigate="/projects">Projects</Menu.menu_item>
+        </Menu.menu_section>
+        """)
+
+      assert html =~ "Workspace"
+      assert html =~ "Projects"
+      assert html =~ ~s(role="list")
+    end
+  end
+
+  describe "menu_group/1" do
+    test "renders a collapsed disclosure group with a trigger" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Menu.menu_group label="Reports">
+          <Menu.menu_item navigate="/reports/sales">Sales</Menu.menu_item>
+        </Menu.menu_group>
+        """)
+
+      assert html =~ ~s(data-menu-group)
+      assert html =~ ~s(data-menu-trigger)
+      assert html =~ ~s(aria-expanded="false")
+      assert html =~ "Reports"
+      assert html =~ "Sales"
+    end
+  end
+end

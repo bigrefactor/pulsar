@@ -130,8 +130,22 @@ defmodule Pulsar.Generator.ComponentTestTest do
     # (required :item slot on indicator/1), flash_group (required flash map),
     # resizable (exactly two :panel slots).
     @override_components [:icon, :label, :link, :progress, :skeleton, :status, :flash_group, :resizable]
+    # Hook/overlay components whose engine-generated test fails because it can't
+    # synthesize their trigger/content slots; each ships a hand-authored override
+    # template (priv/templates/test/<component>_test.exs.eex).
+    @hook_components [
+      :accordion,
+      :alert_dialog,
+      :collapsible,
+      :dropdown_menu,
+      :menu,
+      :popover,
+      :tabs,
+      :tooltip
+    ]
     @simple_components [:button, :badge, :avatar, :input] ++
-                         @form_components ++ @data_components ++ @override_components
+                         @form_components ++
+                         @data_components ++ @override_components ++ @hook_components
 
     for component <- @simple_components do
       test "#{component} generated test compiles without error" do

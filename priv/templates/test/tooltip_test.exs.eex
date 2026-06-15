@@ -1,0 +1,110 @@
+defmodule <%= @component_namespace %>.TooltipTest do
+  use ExUnit.Case, async: true
+
+  # These are render/smoke tests: they verify attrs and slots produce markup.
+  # They do NOT exercise the JS hook — opening/keyboard behavior needs a browser test.
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Tooltip
+
+  # `tooltip` requires a `:trigger` slot (the focusable control it describes) and
+  # the default slot for the hint. It renders on the Popover hover engine, so the
+  # panel renders closed (`data-state="closed"`, `data-trigger="hover"`, role
+  # tooltip); the tests assert those server-rendered anchors, not open state.
+
+  describe "tooltip/1" do
+    test "renders a trigger and a closed tooltip panel" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Tooltip.tooltip id="save-tip">
+          <:trigger>
+            <button type="button" aria-label="Save">S</button>
+          </:trigger>
+          Save changes
+        </Tooltip.tooltip>
+        """)
+
+      assert html =~ ~s(id="save-tip")
+      assert html =~ ~s(role="tooltip")
+      assert html =~ ~s(data-state="closed")
+      assert html =~ ~s(data-trigger="hover")
+      assert html =~ "Save changes"
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{color: color}
+
+        html =
+          rendered_to_string(~H"""
+          <Tooltip.tooltip id="t" color={@color}>
+            <:trigger><button type="button">details</button></:trigger>
+            Extra context
+          </Tooltip.tooltip>
+          """)
+
+        assert html =~ ~s(role="tooltip")
+        assert html =~ "Extra context"
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <Tooltip.tooltip id="t" size={@size}>
+            <:trigger><button type="button">details</button></:trigger>
+            Hint
+          </Tooltip.tooltip>
+          """)
+
+        assert html =~ ~s(role="tooltip")
+      end
+    end
+
+    test "renders every placement" do
+      for placement <- ~w(top bottom left right top-start top-end) do
+        assigns = %{placement: placement}
+
+        html =
+          rendered_to_string(~H"""
+          <Tooltip.tooltip id="t" placement={@placement}>
+            <:trigger><button type="button">details</button></:trigger>
+            Hint
+          </Tooltip.tooltip>
+          """)
+
+        assert html =~ ~s(data-placement=) <> inspect(placement)
+      end
+    end
+
+    test "renders an arrow part by default and omits it when arrow is false" do
+      assigns = %{}
+
+      with_arrow =
+        rendered_to_string(~H"""
+        <Tooltip.tooltip id="t">
+          <:trigger><button type="button">details</button></:trigger>
+          Hint
+        </Tooltip.tooltip>
+        """)
+
+      without_arrow =
+        rendered_to_string(~H"""
+        <Tooltip.tooltip id="t" arrow={false}>
+          <:trigger><button type="button">details</button></:trigger>
+          Hint
+        </Tooltip.tooltip>
+        """)
+
+      assert with_arrow =~ ~s(data-part="arrow")
+      refute without_arrow =~ ~s(data-part="arrow")
+    end
+  end
+end

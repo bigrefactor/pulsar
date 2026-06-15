@@ -1,0 +1,115 @@
+defmodule <%= @component_namespace %>.TabsTest do
+  use ExUnit.Case, async: true
+
+  # These are render/smoke tests: they verify attrs and slots produce markup.
+  # They do NOT exercise the JS hook — opening/keyboard behavior needs a browser test.
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Tabs
+
+  # `tabs` requires one or more `:tab` slots, each with a required `label` attr and
+  # its panel content as the slot body. The first enabled tab is selected on
+  # render; the tests assert the tablist/tab/tabpanel roles and labels, not the
+  # client-driven selection that the hook manages.
+
+  describe "tabs/1" do
+    test "renders a tablist with tabs and panels" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Tabs.tabs id="settings" aria_label="Settings">
+          <:tab id="profile" label="Profile">Profile content</:tab>
+          <:tab id="billing" label="Billing">Billing content</:tab>
+        </Tabs.tabs>
+        """)
+
+      assert html =~ ~s(role="tablist")
+      assert html =~ ~s(role="tab")
+      assert html =~ ~s(role="tabpanel")
+      assert html =~ ~s(aria-selected="true")
+      assert html =~ ~s(aria-selected="false")
+      assert html =~ "Profile"
+      assert html =~ "Billing"
+      assert html =~ "Profile content"
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(solid outline ghost elevated) do
+        assigns = %{variant: variant}
+
+        html =
+          rendered_to_string(~H"""
+          <Tabs.tabs id="t" variant={@variant} aria_label="Tabs">
+            <:tab label="One">First</:tab>
+            <:tab label="Two">Second</:tab>
+          </Tabs.tabs>
+          """)
+
+        assert html =~ ~s(role="tablist")
+        assert html =~ "One"
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{color: color}
+
+        html =
+          rendered_to_string(~H"""
+          <Tabs.tabs id="t" color={@color} aria_label="Tabs">
+            <:tab label="One">First</:tab>
+          </Tabs.tabs>
+          """)
+
+        assert html =~ ~s(role="tab")
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <Tabs.tabs id="t" size={@size} aria_label="Tabs">
+            <:tab label="One">First</:tab>
+          </Tabs.tabs>
+          """)
+
+        assert html =~ ~s(role="tab")
+      end
+    end
+
+    test "renders every orientation" do
+      for orientation <- ~w(horizontal vertical) do
+        assigns = %{orientation: orientation}
+
+        html =
+          rendered_to_string(~H"""
+          <Tabs.tabs id="t" orientation={@orientation} aria_label="Tabs">
+            <:tab label="One">First</:tab>
+          </Tabs.tabs>
+          """)
+
+        assert html =~ ~s(aria-orientation=) <> inspect(orientation)
+      end
+    end
+
+    test "honors the active attr" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Tabs.tabs id="t" active="two" aria_label="Tabs">
+          <:tab id="one" label="One">First</:tab>
+          <:tab id="two" label="Two">Second</:tab>
+        </Tabs.tabs>
+        """)
+
+      assert html =~ ~s(id="two" aria-controls="two-panel" aria-selected="true")
+    end
+  end
+end
