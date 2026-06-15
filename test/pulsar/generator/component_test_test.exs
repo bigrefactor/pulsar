@@ -113,10 +113,6 @@ defmodule Pulsar.Generator.ComponentTestTest do
 
   describe "engine output compiles cleanly against the real components" do
     # `:button`, `:badge`, `:avatar` go through the introspection engine; `:input`
-    # ships an override template (priv/templates/test/input_test.exs.eex) which
-    # `render/2` prefers. The probe swap renames `defmodule Pulsar.Components.<Camel>Test`
-    # and swaps the `use ExUnit.Case` line, so the same mechanism covers overrides.
-    # `:button`, `:badge`, `:avatar` go through the introspection engine; `:input`
     # and the form-field components below ship override templates
     # (priv/templates/test/<component>_test.exs.eex) which `render/2` prefers. The
     # probe swap renames `defmodule Pulsar.Components.<Camel>Test` and swaps the

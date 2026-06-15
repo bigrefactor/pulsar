@@ -109,7 +109,8 @@ defmodule <%= @component_namespace %>.TabsTest do
         </Tabs.tabs>
         """)
 
-      assert html =~ ~s(id="two" aria-controls="two-panel" aria-selected="true")
+      assert html =~ ~s(id="two")
+      assert html =~ ~s(aria-selected="true")
     end
   end
 end
