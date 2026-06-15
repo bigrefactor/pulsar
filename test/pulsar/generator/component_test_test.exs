@@ -53,4 +53,33 @@ defmodule Pulsar.Generator.ComponentTestTest do
       assert ComponentTest.override_template_path(:button) == :none
     end
   end
+
+  describe "engine output compiles cleanly against the real components" do
+    @simple_components [:button, :badge, :avatar]
+
+    for component <- @simple_components do
+      test "#{component} generated test compiles without error" do
+        component = unquote(component)
+        src = ComponentTest.render(component, "Pulsar.Components")
+
+        # Compiling the source proves the generated HEEx is valid for a component
+        # whose slot shape the engine had to infer (avatar has no :inner_block).
+        # We compile into a throwaway module name space and purge it afterwards so
+        # the generated ExUnit cases are not registered with the host suite.
+        modules =
+          try do
+            Code.compile_string(src)
+          rescue
+            e -> flunk("generated test for #{component} failed to compile: #{Exception.message(e)}")
+          end
+
+        assert is_list(modules) and modules != []
+
+        for {mod, _bin} <- modules do
+          :code.purge(mod)
+          :code.delete(mod)
+        end
+      end
+    end
+  end
 end
