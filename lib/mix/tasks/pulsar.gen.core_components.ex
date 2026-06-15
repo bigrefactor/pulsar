@@ -45,7 +45,6 @@ defmodule Mix.Tasks.Pulsar.Gen.CoreComponents.Docs do
     ## Included Components
 
     - flash/1: Flash notification rendering with Pulsar styling
-    - flash_group/1: Container for multiple flash messages
     - header/1: Page headers with breadcrumbs and actions
     - list/1: Key-value data display lists
     - table/1: Data tables with LiveStream support
@@ -55,7 +54,7 @@ defmodule Mix.Tasks.Pulsar.Gen.CoreComponents.Docs do
 
     ```elixir
     # In your layout or LiveView
-    <.flash_group flash={@flash} />
+    <.flash kind={:info} flash={@flash} />
 
     # Page header
     <.header>
@@ -78,7 +77,7 @@ defmodule Mix.Tasks.Pulsar.Gen.CoreComponents.Docs do
 
     ## Dependencies
 
-    This component requires: button, field, flash, flash_group, header, icon, list, table
+    This component requires: button, field, flash, header, icon, list, table
 
     ## Options
 
