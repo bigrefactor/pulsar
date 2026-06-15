@@ -391,28 +391,28 @@ defmodule Pulsar.Components.Resizable do
     :ok
   end
 
-  @spec validate_range!(integer(), integer()) :: nil | no_return()
+  @spec validate_range!(integer(), integer()) :: :ok | no_return()
+  defp validate_range!(min, max) when min >= 0 and max <= 100 and min <= max, do: :ok
+
   defp validate_range!(min, max) do
-    if !(min >= 0 and max <= 100 and min <= max) do
-      raise ArgumentError,
-            "resizable/1 requires 0 <= min_size <= max_size <= 100, got min_size=#{min}, max_size=#{max}"
-    end
+    raise ArgumentError,
+          "resizable/1 requires 0 <= min_size <= max_size <= 100, got min_size=#{min}, max_size=#{max}"
   end
 
-  @spec validate_default!(integer(), integer(), integer()) :: nil | no_return()
+  @spec validate_default!(integer(), integer(), integer()) :: :ok | no_return()
+  defp validate_default!(min, max, default) when default >= min and default <= max, do: :ok
+
   defp validate_default!(min, max, default) do
-    if !(default >= min and default <= max) do
-      raise ArgumentError,
-            "resizable/1 requires min_size <= default_size <= max_size, got default_size=#{default} for [#{min}, #{max}]"
-    end
+    raise ArgumentError,
+          "resizable/1 requires min_size <= default_size <= max_size, got default_size=#{default} for [#{min}, #{max}]"
   end
 
-  @spec validate_collapsed!(integer(), String.t()) :: nil | no_return()
+  @spec validate_collapsed!(integer(), String.t()) :: :ok | no_return()
+  defp validate_collapsed!(value, _panel_label) when value >= 0 and value <= 100, do: :ok
+
   defp validate_collapsed!(value, panel_label) do
-    if !(value >= 0 and value <= 100) do
-      raise ArgumentError,
-            "resizable/1 requires 0 <= collapsed_size <= 100, got #{value} on #{panel_label}"
-    end
+    raise ArgumentError,
+          "resizable/1 requires 0 <= collapsed_size <= 100, got #{value} on #{panel_label}"
   end
 
   # A horizontal split (side-by-side) needs a VERTICAL separator, and vice-versa.
