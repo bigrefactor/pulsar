@@ -384,25 +384,34 @@ defmodule Pulsar.Components.Resizable do
   # over-100 percentages. Fail fast at the call site rather than render broken.
   @spec validate_sizing!(integer(), integer(), integer(), integer(), integer()) :: :ok
   defp validate_sizing!(min, max, default, start_collapsed, end_collapsed) do
-    cond do
-      not (min >= 0 and max <= 100 and min <= max) ->
-        raise ArgumentError,
-              "resizable/1 requires 0 <= min_size <= max_size <= 100, got min_size=#{min}, max_size=#{max}"
+    validate_range!(min, max)
+    validate_default!(min, max, default)
+    validate_collapsed!(start_collapsed, "the first panel")
+    validate_collapsed!(end_collapsed, "the second panel")
+    :ok
+  end
 
-      not (default >= min and default <= max) ->
-        raise ArgumentError,
-              "resizable/1 requires min_size <= default_size <= max_size, got default_size=#{default} for [#{min}, #{max}]"
+  @spec validate_range!(integer(), integer()) :: nil | no_return()
+  defp validate_range!(min, max) do
+    if !(min >= 0 and max <= 100 and min <= max) do
+      raise ArgumentError,
+            "resizable/1 requires 0 <= min_size <= max_size <= 100, got min_size=#{min}, max_size=#{max}"
+    end
+  end
 
-      not (start_collapsed >= 0 and start_collapsed <= 100) ->
-        raise ArgumentError,
-              "resizable/1 requires 0 <= collapsed_size <= 100, got #{start_collapsed} on the first panel"
+  @spec validate_default!(integer(), integer(), integer()) :: nil | no_return()
+  defp validate_default!(min, max, default) do
+    if !(default >= min and default <= max) do
+      raise ArgumentError,
+            "resizable/1 requires min_size <= default_size <= max_size, got default_size=#{default} for [#{min}, #{max}]"
+    end
+  end
 
-      not (end_collapsed >= 0 and end_collapsed <= 100) ->
-        raise ArgumentError,
-              "resizable/1 requires 0 <= collapsed_size <= 100, got #{end_collapsed} on the second panel"
-
-      true ->
-        :ok
+  @spec validate_collapsed!(integer(), String.t()) :: nil | no_return()
+  defp validate_collapsed!(value, panel_label) do
+    if !(value >= 0 and value <= 100) do
+      raise ArgumentError,
+            "resizable/1 requires 0 <= collapsed_size <= 100, got #{value} on #{panel_label}"
     end
   end
 
