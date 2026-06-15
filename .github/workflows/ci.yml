@@ -89,6 +89,12 @@ jobs:
       - name: Check generated components are in sync with templates
         run: mix pulsar.sync --check
 
+      - name: Generate component tests for all components
+        run: mix pulsar.gen.tests.check
+
+      - name: Run generated component tests
+        run: mix test tmp/gen_test_check
+
       - name: Run Credo
         run: mix credo --strict
 
