@@ -171,4 +171,16 @@ defmodule Pulsar.Generator.ComponentTestTest do
       end
     end
   end
+
+  describe "hook caveat comment" do
+    test "hook components get the render-not-interaction caveat" do
+      src = ComponentTest.render(:tabs, "MyAppWeb.Components")
+      assert src =~ "do NOT exercise the JS hook"
+    end
+
+    test "non-hook components do not get the caveat" do
+      src = ComponentTest.render(:badge, "MyAppWeb.Components")
+      refute src =~ "do NOT exercise the JS hook"
+    end
+  end
 end

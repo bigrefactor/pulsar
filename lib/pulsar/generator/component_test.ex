@@ -17,6 +17,12 @@ defmodule Pulsar.Generator.ComponentTest do
 
   @sample_slot_content "Pulsar"
 
+  # Components whose bundled module ships a colocated JS hook. Their generated
+  # smoke tests get a caveat clarifying that render assertions verify markup, not
+  # the hook's open/keyboard behavior (which needs a real browser test).
+  @hook_components ~w(accordion alert_dialog collapsible date_picker drawer
+                      dropdown_menu menu modal popover tabs tooltip)a
+
   @doc """
   Renders and writes the component's test file into the project, unless one
   already exists at the target path. Returns the igniter unchanged when test
@@ -110,7 +116,7 @@ defmodule Pulsar.Generator.ComponentTest do
       end)
 
     source = """
-    defmodule #{namespace}.#{camel}Test do
+    #{hook_caveat(component_name)}defmodule #{namespace}.#{camel}Test do
       use ExUnit.Case, async: true
 
       import Phoenix.LiveViewTest
@@ -126,6 +132,17 @@ defmodule Pulsar.Generator.ComponentTest do
     |> Code.format_string!()
     |> IO.iodata_to_binary()
     |> Kernel.<>("\n")
+  end
+
+  defp hook_caveat(component_name) do
+    if component_name in @hook_components do
+      """
+      # These are render/smoke tests: they verify attrs and slots produce markup.
+      # They do NOT exercise the JS hook — opening/keyboard behavior needs a browser test.
+      """
+    else
+      ""
+    end
   end
 
   defp render_describe(camel, fn_name, fn_info) do
