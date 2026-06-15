@@ -1,0 +1,52 @@
+defmodule <%= @component_namespace %>.ResizableTest do
+  use ExUnit.Case, async: true
+
+  # These are render/smoke tests: they verify attrs and slots produce markup.
+  # They do NOT exercise the JS hook — the drag-to-resize and keyboard resizing
+  # are built client-side and need a browser test.
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Resizable
+
+  # `resizable` requires exactly two `:panel` slots and an `id`, so the smoke test
+  # supplies both rather than relying on introspection (which raises on the missing
+  # panels).
+
+  describe "resizable/1" do
+    test "renders two panels split by a separator" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Resizable.resizable id="dock">
+          <:panel>Primary content</:panel>
+          <:panel label="Resize side panel">Side content</:panel>
+        </Resizable.resizable>
+        """)
+
+      assert html =~ "<div"
+      assert html =~ ~s(role="separator")
+      assert html =~ "Primary content"
+      assert html =~ "Side content"
+    end
+
+    test "renders every orientation" do
+      for orientation <- ~w(horizontal vertical) do
+        assigns = %{orientation: orientation}
+
+        html =
+          rendered_to_string(~H"""
+          <Resizable.resizable id="dock" orientation={@orientation}>
+            <:panel>Primary content</:panel>
+            <:panel label="Resize side panel">Side content</:panel>
+          </Resizable.resizable>
+          """)
+
+        assert html =~ ~s(role="separator")
+        assert html =~ "Primary content"
+      end
+    end
+  end
+end

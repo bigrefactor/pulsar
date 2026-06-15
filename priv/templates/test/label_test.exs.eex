@@ -1,0 +1,31 @@
+defmodule <%= @component_namespace %>.LabelTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Label
+
+  # `label` requires a `for` attr (the associated input id) with no default, so
+  # the smoke test supplies one rather than relying on introspection.
+
+  describe "label/1" do
+    test "renders a label associated with an input" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Label.label for="email">Email Address</Label.label>])
+
+      assert html =~ "<label"
+      assert html =~ ~s(for="email")
+      assert html =~ "Email Address"
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{size: size}
+        html = rendered_to_string(~H[<Label.label for="email" size={@size}>Email</Label.label>])
+        assert html =~ "<label"
+        assert html =~ "Email"
+      end
+    end
+  end
+end

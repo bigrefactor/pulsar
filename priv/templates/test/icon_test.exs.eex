@@ -1,0 +1,45 @@
+defmodule <%= @component_namespace %>.IconTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Icon
+
+  # `icon` requires a `name` (the full Heroicon class) with no default, so the
+  # smoke test supplies a valid name rather than relying on introspection.
+
+  describe "icon/1" do
+    test "renders a decorative icon span" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Icon.icon name="hero-star" />])
+
+      assert html =~ "<span"
+      assert html =~ ~s(aria-hidden="true")
+    end
+
+    test "renders an informative icon with an accessible label" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Icon.icon name="hero-exclamation-triangle" aria_label="Warning" />])
+
+      assert html =~ ~s(role="img")
+      assert html =~ ~s(aria-label="Warning")
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{size: size}
+        html = rendered_to_string(~H[<Icon.icon name="hero-star" size={@size} />])
+        assert html =~ "<span"
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(current neutral primary secondary success danger warning info) do
+        assigns = %{color: color}
+        html = rendered_to_string(~H[<Icon.icon name="hero-star" color={@color} />])
+        assert html =~ "<span"
+      end
+    end
+  end
+end

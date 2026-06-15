@@ -123,7 +123,15 @@ defmodule Pulsar.Generator.ComponentTestTest do
     # `use ExUnit.Case` line, so the same mechanism covers both paths.
     @form_components [:select, :checkbox, :switch, :textarea, :radio_group, :field, :form]
     @data_components [:table, :list, :pagination, :steps, :calendar, :date_picker]
-    @simple_components [:button, :badge, :avatar, :input] ++ @form_components ++ @data_components
+    # Override-template components that need a hand-authored test (a required attr
+    # or slot the introspection engine cannot satisfy): icon (required name),
+    # label (required for), link (one of href/navigate/patch), progress (radial
+    # needs a numeric value), skeleton (slot-ignoring placeholder), status
+    # (required :item slot on indicator/1), flash_group (required flash map),
+    # resizable (exactly two :panel slots).
+    @override_components [:icon, :label, :link, :progress, :skeleton, :status, :flash_group, :resizable]
+    @simple_components [:button, :badge, :avatar, :input] ++
+                         @form_components ++ @data_components ++ @override_components
 
     for component <- @simple_components do
       test "#{component} generated test compiles without error" do

@@ -1,0 +1,47 @@
+defmodule <%= @component_namespace %>.LinkTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Link
+
+  # `a` raises unless exactly one of :href/:navigate/:patch is provided, so the
+  # smoke test supplies a safe relative `href` rather than relying on introspection.
+
+  describe "a/1" do
+    test "renders an anchor with an href and content" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Link.a href="/">Home</Link.a>])
+
+      assert html =~ "<a"
+      assert html =~ ~s(href="/")
+      assert html =~ "Home"
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(solid ghost outline) do
+        assigns = %{variant: variant}
+        html = rendered_to_string(~H[<Link.a href="/" variant={@variant}>Home</Link.a>])
+        assert html =~ "<a"
+        assert html =~ "Home"
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(primary secondary muted danger success warning info inherit) do
+        assigns = %{color: color}
+        html = rendered_to_string(~H[<Link.a href="/" color={@color}>Home</Link.a>])
+        assert html =~ "<a"
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl inherit) do
+        assigns = %{size: size}
+        html = rendered_to_string(~H[<Link.a href="/" size={@size}>Home</Link.a>])
+        assert html =~ "<a"
+      end
+    end
+  end
+end
