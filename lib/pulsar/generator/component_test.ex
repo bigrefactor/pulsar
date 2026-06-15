@@ -108,8 +108,12 @@ defmodule Pulsar.Generator.ComponentTest do
     camel = Macro.camelize(to_string(component_name))
     info = module.__components__()
 
+    # `__components__/0` includes private (`defp`) helper function components, which
+    # are not publicly callable — generating a `<Camel.helper>` render for them would
+    # raise UndefinedFunctionError. Keep only publicly-exported function components.
     describes =
       info
+      |> Enum.filter(fn {fn_name, _} -> function_exported?(module, fn_name, 1) end)
       |> Enum.sort_by(fn {fn_name, _} -> fn_name end)
       |> Enum.map_join("\n\n", fn {fn_name, fn_info} ->
         render_describe(camel, fn_name, fn_info)

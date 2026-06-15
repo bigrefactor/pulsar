@@ -172,6 +172,25 @@ defmodule Pulsar.Generator.ComponentTestTest do
     end
   end
 
+  describe "private helper components are not tested" do
+    test "skeleton output covers skeleton/1 but not the private skeleton_body/1" do
+      src = ComponentTest.render(:skeleton, "MyAppWeb.Components")
+      assert src =~ ~s(describe "skeleton/1")
+      refute src =~ "skeleton_body"
+    end
+
+    test "breadcrumb output excludes the private crumb_separator/1" do
+      src = ComponentTest.render(:breadcrumb, "MyAppWeb.Components")
+      refute src =~ "crumb_separator"
+    end
+
+    test "public multi-function components are still covered (avatar_group)" do
+      src = ComponentTest.render(:avatar, "MyAppWeb.Components")
+      assert src =~ ~s(describe "avatar/1")
+      assert src =~ ~s(describe "avatar_group/1")
+    end
+  end
+
   describe "hook caveat comment" do
     test "hook components get the render-not-interaction caveat" do
       src = ComponentTest.render(:tabs, "MyAppWeb.Components")
