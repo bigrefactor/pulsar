@@ -1,3 +1,44 @@
+defmodule Pulsar.Generator.ComponentTestProbe do
+  @moduledoc false
+  # Stand-in for `use ExUnit.Case` used ONLY to compile generated test source so we
+  # can verify its HEEx is valid, without registering anything with the running
+  # ExUnit suite (which raises "cannot add module after the suite starts running").
+  defmacro __using__(_opts) do
+    quote do
+      import ExUnit.Assertions
+      import Phoenix.Component
+      import Phoenix.LiveViewTest
+      import unquote(__MODULE__), only: [describe: 2, test: 2, test: 3]
+    end
+  end
+
+  defmacro describe(_name, do: body) do
+    quote do
+      unquote(body)
+    end
+  end
+
+  defmacro test(_name, do: body) do
+    fname = :"probe_#{System.unique_integer([:positive])}"
+
+    quote do
+      def unquote(fname)() do
+        unquote(body)
+      end
+    end
+  end
+
+  defmacro test(_name, _context, do: body) do
+    fname = :"probe_#{System.unique_integer([:positive])}"
+
+    quote do
+      def unquote(fname)() do
+        unquote(body)
+      end
+    end
+  end
+end
+
 defmodule Pulsar.Generator.ComponentTestTest do
   use ExUnit.Case, async: true
 
@@ -67,15 +108,36 @@ defmodule Pulsar.Generator.ComponentTestTest do
     for component <- @simple_components do
       test "#{component} generated test compiles without error" do
         component = unquote(component)
-        src = ComponentTest.render(component, "Pulsar.Components")
 
-        # Compiling the source proves the generated HEEx is valid for a component
-        # whose slot shape the engine had to infer (avatar has no :inner_block).
-        # We compile into a throwaway module name space and purge it afterwards so
-        # the generated ExUnit cases are not registered with the host suite.
+        # Render against the real `Pulsar.Components` namespace so the emitted
+        # `alias Pulsar.Components.<Camel>` resolves to the bundled component and the
+        # `~H` markup actually compiles.
+        src = ComponentTest.render(component, "Pulsar.Components")
+        camel = Macro.camelize(to_string(component))
+
+        # Swap the ExUnit scaffolding for the compile probe (so the HEEx compiles
+        # without ExUnit registration) and rename the outer module to a unique name
+        # (so it does not collide with Pulsar's own `Pulsar.Components.<Camel>Test`).
+        probed =
+          src
+          |> String.replace(
+            "use ExUnit.Case, async: true",
+            "use Pulsar.Generator.ComponentTestProbe"
+          )
+          |> String.replace(
+            "defmodule Pulsar.Components.#{camel}Test do",
+            "defmodule PulsarGenCheckProbe.#{camel} do"
+          )
+
+        assert probed =~ "use Pulsar.Generator.ComponentTestProbe",
+               "expected the engine to emit `use ExUnit.Case, async: true` for swapping"
+
+        assert probed =~ "PulsarGenCheckProbe.",
+               "expected the engine to emit `defmodule Pulsar.Components.#{camel}Test` for renaming"
+
         modules =
           try do
-            Code.compile_string(src)
+            Code.compile_string(probed)
           rescue
             e -> flunk("generated test for #{component} failed to compile: #{Exception.message(e)}")
           end
