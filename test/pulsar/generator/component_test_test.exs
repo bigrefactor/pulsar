@@ -89,13 +89,6 @@ defmodule Pulsar.Generator.ComponentTestTest do
     end
   end
 
-  describe "test_file_path/2" do
-    test "places the test under the web app's components test dir" do
-      assert ComponentTest.test_file_path("MyAppWeb", :button) ==
-               "test/my_app_web/components/button_test.exs"
-    end
-  end
-
   describe "override_template_path/1" do
     test "returns :none when no override template exists for button" do
       assert ComponentTest.override_template_path(:button) == :none
@@ -206,18 +199,6 @@ defmodule Pulsar.Generator.ComponentTestTest do
       src = ComponentTest.render(:avatar, "MyAppWeb.Components")
       assert src =~ ~s(describe "avatar/1")
       assert src =~ ~s(describe "avatar_group/1")
-    end
-  end
-
-  describe "hook caveat comment" do
-    test "hook components get the render-not-interaction caveat" do
-      src = ComponentTest.render(:tabs, "MyAppWeb.Components")
-      assert src =~ "do NOT exercise the JS hook"
-    end
-
-    test "non-hook components do not get the caveat" do
-      src = ComponentTest.render(:badge, "MyAppWeb.Components")
-      refute src =~ "do NOT exercise the JS hook"
     end
   end
 end

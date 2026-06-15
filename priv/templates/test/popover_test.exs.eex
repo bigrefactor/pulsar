@@ -1,9 +1,6 @@
 defmodule <%= @component_namespace %>.PopoverTest do
   use ExUnit.Case, async: true
 
-  # These are render/smoke tests: they verify attrs and slots produce markup.
-  # They do NOT exercise the JS hook — opening/keyboard behavior needs a browser test.
-
   import Phoenix.LiveViewTest
   import Phoenix.Component
 

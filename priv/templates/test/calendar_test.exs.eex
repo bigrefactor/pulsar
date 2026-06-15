@@ -1,10 +1,6 @@
 defmodule <%= @component_namespace %>.CalendarTest do
   use ExUnit.Case, async: true
 
-  # These are render/smoke tests: they verify attrs and slots produce markup.
-  # They do NOT exercise the JS hook — the month grid, day cells, and keyboard
-  # navigation are built client-side and need a browser test.
-
   import Phoenix.LiveViewTest
   import Phoenix.Component
 

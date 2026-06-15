@@ -13,15 +13,7 @@ defmodule Pulsar.Generator.ComponentTest do
   `priv/templates/test/<component>_test.exs.eex`, which `render/2` prefers when present.
   """
 
-  alias Igniter.Libs.Phoenix
-
   @sample_slot_content "Pulsar"
-
-  # Components whose bundled module ships a colocated JS hook. Their generated
-  # smoke tests get a caveat clarifying that render assertions verify markup, not
-  # the hook's open/keyboard behavior (which needs a real browser test).
-  @hook_components ~w(accordion alert_dialog collapsible date_picker drawer
-                      dropdown_menu menu modal popover tabs tooltip)a
 
   @doc """
   Renders and writes the component's test file into the project, unless one
@@ -29,19 +21,21 @@ defmodule Pulsar.Generator.ComponentTest do
   generation is disabled (handled by the caller).
   """
   def install_component_test(igniter, component_name) do
-    web_module = Phoenix.web_module(igniter) |> inspect()
-    namespace = components_namespace(igniter)
-    path = test_file_path(web_module, component_name)
+    namespace = Pulsar.Generator.components_namespace(igniter)
+    camel = Macro.camelize(to_string(component_name))
+    test_module = Module.concat(namespace, "#{camel}Test")
+    path = Igniter.Project.Module.proper_location(igniter, test_module, :test)
+    override = override_template_path(component_name)
 
     cond do
-      Map.has_key?(igniter.rewrite.sources, path) ->
+      Igniter.exists?(igniter, path) ->
         igniter
 
-      not testable?(component_name) ->
+      not testable?(component_name, override) ->
         igniter
 
       true ->
-        contents = render(component_name, namespace)
+        contents = render(component_name, inspect(namespace), override)
         Igniter.create_new_file(igniter, path, contents)
     end
   end
@@ -50,29 +44,11 @@ defmodule Pulsar.Generator.ComponentTest do
   # its bundled module exposes the `__components__/0` introspection the default
   # engine reads. Aggregate modules like `core_components` have neither and are
   # skipped — mirroring how the storybook generator skips components with no story.
-  defp testable?(component_name) do
-    case override_template_path(component_name) do
-      {:ok, _path} ->
-        true
+  defp testable?(_component_name, {:ok, _path}), do: true
 
-      :none ->
-        module = component_module(component_name)
-        Code.ensure_loaded?(module) and function_exported?(module, :__components__, 0)
-    end
-  end
-
-  @doc false
-  def test_file_path(web_module, component_name) do
-    web_path = web_module |> Macro.underscore()
-    Path.join(["test", web_path, "components", "#{component_name}_test.exs"])
-  end
-
-  defp components_namespace(igniter) do
-    case igniter.args.options[:components_module] do
-      nil -> Phoenix.web_module_name(igniter, "Components") |> inspect()
-      raw when is_atom(raw) -> inspect(raw)
-      raw -> raw |> Pulsar.Generator.parse_components_module() |> inspect()
-    end
+  defp testable?(component_name, :none) do
+    module = component_module(component_name)
+    Code.ensure_loaded?(module) and function_exported?(module, :__components__, 0)
   end
 
   @doc """
@@ -80,8 +56,8 @@ defmodule Pulsar.Generator.ComponentTest do
   (e.g. `"MyAppWeb.Components"`). Uses the override template when one exists,
   otherwise the introspection engine.
   """
-  def render(component_name, namespace) do
-    case override_template_path(component_name) do
+  def render(component_name, namespace, override \\ nil) do
+    case override || override_template_path(component_name) do
       {:ok, path} ->
         EEx.eval_file(path,
           assigns: [component_namespace: namespace],
@@ -120,7 +96,7 @@ defmodule Pulsar.Generator.ComponentTest do
       end)
 
     source = """
-    #{hook_caveat(component_name)}defmodule #{namespace}.#{camel}Test do
+    defmodule #{namespace}.#{camel}Test do
       use ExUnit.Case, async: true
 
       import Phoenix.LiveViewTest
@@ -136,17 +112,6 @@ defmodule Pulsar.Generator.ComponentTest do
     |> Code.format_string!()
     |> IO.iodata_to_binary()
     |> Kernel.<>("\n")
-  end
-
-  defp hook_caveat(component_name) do
-    if component_name in @hook_components do
-      """
-      # These are render/smoke tests: they verify attrs and slots produce markup.
-      # They do NOT exercise the JS hook — opening/keyboard behavior needs a browser test.
-      """
-    else
-      ""
-    end
   end
 
   defp render_describe(camel, fn_name, fn_info) do

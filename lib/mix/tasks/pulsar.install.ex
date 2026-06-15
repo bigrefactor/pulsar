@@ -225,6 +225,7 @@ if Code.ensure_loaded?(Igniter) do
           theme: :boolean,
           components_module: :string,
           storybook: :boolean,
+          tests: :boolean,
           yes: :boolean
         ],
         # Default values for the options in the `schema`

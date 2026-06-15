@@ -150,7 +150,7 @@ defmodule Pulsar.Generator do
 
   @doc false
   def install_component(igniter, component_name, assigns) do
-    namespace = parse_components_module(igniter.args.options[:components_module])
+    namespace = components_namespace(igniter)
     component = component_module(namespace, component_name)
     # Convert namespace to inspect format to avoid Elixir. prefix in templates
     namespace_inspected = inspect(namespace)
@@ -298,6 +298,18 @@ defmodule Pulsar.Generator do
 
       true ->
         Igniter.Project.Module.parse(value)
+    end
+  end
+
+  @doc false
+  # Resolves the components namespace module from `--components-module`, honoring
+  # its nil (default), pre-set atom, and user-supplied string forms. Shared by the
+  # component and component-test generators so both target the same namespace.
+  def components_namespace(igniter) do
+    case igniter.args.options[:components_module] do
+      nil -> Phoenix.web_module_name(igniter, "Components")
+      raw when is_atom(raw) -> raw
+      raw -> parse_components_module(raw)
     end
   end
 end
