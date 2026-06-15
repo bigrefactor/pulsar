@@ -333,17 +333,18 @@ if Code.ensure_loaded?(Igniter) do
       end
 
       valid_keys = Map.keys(@components)
+      Enum.map(requested, &validate_component!(&1, valid_keys))
+    end
 
-      Enum.map(requested, fn c ->
-        case Enum.find(valid_keys, fn k -> Atom.to_string(k) == to_string(c) end) do
-          nil ->
-            valid = Enum.map(valid_keys, &Atom.to_string/1) |> Enum.sort() |> Enum.join(", ")
-            raise "Unknown component: #{inspect(c)}. Valid components: #{valid}"
+    defp validate_component!(c, valid_keys) do
+      case Enum.find(valid_keys, fn k -> Atom.to_string(k) == to_string(c) end) do
+        nil ->
+          valid = valid_keys |> Enum.map(&Atom.to_string/1) |> Enum.sort() |> Enum.join(", ")
+          raise "Unknown component: #{inspect(c)}. Valid components: #{valid}"
 
-          k ->
-            k
-        end
-      end)
+        k ->
+          k
+      end
     end
 
     defp resolve_all_dependencies(selected) do
@@ -380,26 +381,23 @@ if Code.ensure_loaded?(Igniter) do
       |> Enum.sort()
     end
 
-    defp prompt_to_include_missing(igniter, selected, missing) do
-      if missing == [] do
-        selected
-      else
-        # If --yes flag is set or no dependencies are missing, auto-include them
-        if igniter.args.options[:yes] || missing == [] do
-          selected ++ Enum.reject(missing, &(&1 in selected))
-        else
-          message =
-            "The following Pulsar component dependencies are required: " <>
-              (missing |> Enum.map_join(", ", &Atom.to_string/1)) <>
-              ". Install them as well?"
+    defp prompt_to_include_missing(_igniter, selected, []), do: selected
 
-          if Igniter.Util.IO.yes?(message) do
-            selected ++ Enum.reject(missing, &(&1 in selected))
-          else
-            selected
-          end
-        end
+    defp prompt_to_include_missing(igniter, selected, missing) do
+      if igniter.args.options[:yes] || confirm_missing?(missing) do
+        selected ++ Enum.reject(missing, &(&1 in selected))
+      else
+        selected
       end
+    end
+
+    defp confirm_missing?(missing) do
+      message =
+        "The following Pulsar component dependencies are required: " <>
+          Enum.map_join(missing, ", ", &Atom.to_string/1) <>
+          ". Install them as well?"
+
+      Igniter.Util.IO.yes?(message)
     end
 
     defp gather_components(igniter) do

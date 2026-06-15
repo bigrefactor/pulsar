@@ -422,20 +422,27 @@ defmodule Pulsar.Components.DatePicker do
   end
 
   defp normalize_fields(assigns) do
-    single = assigns.field
-    start_f = assigns.start_field
-    end_f = assigns.end_field
+    {single_name, single_value, single_display} = field_parts(assigns.field)
+    {start_name, start_value, start_display} = field_parts(assigns.start_field)
+    {end_name, end_value, end_display} = field_parts(assigns.end_field)
 
     assigns
-    |> assign(:single_name, single && single.name)
-    |> assign(:single_value, single && iso_or_nil(single.value))
-    |> assign(:single_display, single && iso_or_nil(single.value))
-    |> assign(:start_name, start_f && start_f.name)
-    |> assign(:start_value, start_f && iso_or_nil(start_f.value))
-    |> assign(:start_display, start_f && iso_or_nil(start_f.value))
-    |> assign(:end_name, end_f && end_f.name)
-    |> assign(:end_value, end_f && iso_or_nil(end_f.value))
-    |> assign(:end_display, end_f && iso_or_nil(end_f.value))
+    |> assign(:single_name, single_name)
+    |> assign(:single_value, single_value)
+    |> assign(:single_display, single_display)
+    |> assign(:start_name, start_name)
+    |> assign(:start_value, start_value)
+    |> assign(:start_display, start_display)
+    |> assign(:end_name, end_name)
+    |> assign(:end_value, end_value)
+    |> assign(:end_display, end_display)
+  end
+
+  defp field_parts(nil), do: {nil, nil, nil}
+
+  defp field_parts(field) do
+    iso = iso_or_nil(field.value)
+    {field.name, iso, iso}
   end
 
   defp iso_or_nil(%Date{} = d), do: Date.to_iso8601(d)
