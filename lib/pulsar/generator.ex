@@ -282,7 +282,8 @@ defmodule Pulsar.Generator do
     |> Path.join("#{component_name}.ex.eex")
   end
 
-  defp parse_components_module(raw) do
+  @doc false
+  def parse_components_module(raw) do
     value = raw |> to_string() |> String.trim() |> String.trim_trailing(".")
 
     cond do

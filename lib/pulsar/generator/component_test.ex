@@ -71,7 +71,7 @@ defmodule Pulsar.Generator.ComponentTest do
     case igniter.args.options[:components_module] do
       nil -> Phoenix.web_module_name(igniter, "Components") |> inspect()
       raw when is_atom(raw) -> inspect(raw)
-      raw -> raw |> to_string() |> Igniter.Project.Module.parse() |> inspect()
+      raw -> raw |> Pulsar.Generator.parse_components_module() |> inspect()
     end
   end
 
