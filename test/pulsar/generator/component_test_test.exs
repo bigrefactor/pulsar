@@ -100,10 +100,23 @@ defmodule Pulsar.Generator.ComponentTestTest do
     test "returns :none when no override template exists for button" do
       assert ComponentTest.override_template_path(:button) == :none
     end
+
+    test "returns {:ok, path} for input and render/2 routes through the override" do
+      assert {:ok, path} = ComponentTest.override_template_path(:input)
+      assert File.exists?(path)
+
+      src = ComponentTest.render(:input, "Pulsar.Components")
+      assert src =~ "defmodule Pulsar.Components.InputTest do"
+      assert src =~ ~s(name="user[name]")
+    end
   end
 
   describe "engine output compiles cleanly against the real components" do
-    @simple_components [:button, :badge, :avatar]
+    # `:button`, `:badge`, `:avatar` go through the introspection engine; `:input`
+    # ships an override template (priv/templates/test/input_test.exs.eex) which
+    # `render/2` prefers. The probe swap renames `defmodule Pulsar.Components.<Camel>Test`
+    # and swaps the `use ExUnit.Case` line, so the same mechanism covers overrides.
+    @simple_components [:button, :badge, :avatar, :input]
 
     for component <- @simple_components do
       test "#{component} generated test compiles without error" do
