@@ -265,8 +265,7 @@ defmodule Pulsar.Components.InputOtp do
     {chunks, _} =
       Enum.reduce(groups, {[], 0}, fn size, {acc, start} ->
         stop = min(start + size, length) - 1
-        slots = if stop >= start, do: for(i <- start..stop, do: {:slot, i}), else: []
-        {acc ++ [slots], start + size}
+        {acc ++ [slots_for(start, stop)], start + size}
       end)
 
     chunks
@@ -274,6 +273,9 @@ defmodule Pulsar.Components.InputOtp do
     |> Enum.intersperse([:separator])
     |> List.flatten()
   end
+
+  defp slots_for(start, stop) when stop >= start, do: for(i <- start..stop, do: {:slot, i})
+  defp slots_for(_start, _stop), do: []
 
   defp slot_classes(variant, color, size) do
     merge([
