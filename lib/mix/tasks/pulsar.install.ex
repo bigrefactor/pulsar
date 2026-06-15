@@ -333,17 +333,18 @@ if Code.ensure_loaded?(Igniter) do
       end
 
       valid_keys = Map.keys(@components)
+      Enum.map(requested, &validate_component!(&1, valid_keys))
+    end
 
-      Enum.map(requested, fn c ->
-        case Enum.find(valid_keys, fn k -> Atom.to_string(k) == to_string(c) end) do
-          nil ->
-            valid = Enum.map(valid_keys, &Atom.to_string/1) |> Enum.sort() |> Enum.join(", ")
-            raise "Unknown component: #{inspect(c)}. Valid components: #{valid}"
+    defp validate_component!(c, valid_keys) do
+      case Enum.find(valid_keys, fn k -> Atom.to_string(k) == to_string(c) end) do
+        nil ->
+          valid = valid_keys |> Enum.map(&Atom.to_string/1) |> Enum.sort() |> Enum.join(", ")
+          raise "Unknown component: #{inspect(c)}. Valid components: #{valid}"
 
-          k ->
-            k
-        end
-      end)
+        k ->
+          k
+      end
     end
 
     defp resolve_all_dependencies(selected) do
