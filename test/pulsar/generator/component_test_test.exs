@@ -122,7 +122,8 @@ defmodule Pulsar.Generator.ComponentTestTest do
     # probe swap renames `defmodule Pulsar.Components.<Camel>Test` and swaps the
     # `use ExUnit.Case` line, so the same mechanism covers both paths.
     @form_components [:select, :checkbox, :switch, :textarea, :radio_group, :field, :form]
-    @simple_components [:button, :badge, :avatar, :input] ++ @form_components
+    @data_components [:table, :list, :pagination, :steps, :calendar, :date_picker]
+    @simple_components [:button, :badge, :avatar, :input] ++ @form_components ++ @data_components
 
     for component <- @simple_components do
       test "#{component} generated test compiles without error" do

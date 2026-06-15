@@ -1,0 +1,113 @@
+defmodule <%= @component_namespace %>.TableTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Table
+
+  # `table` requires a `rows` list and one or more `:col` slots, each with a
+  # required `label` attr and `:let`-bound cell content, so the smoke test
+  # supplies sample rows and columns rather than relying on introspection.
+  defp rows do
+    [
+      %{id: 1, name: "Jane", email: "jane@example.com"},
+      %{id: 2, name: "John", email: "john@example.com"}
+    ]
+  end
+
+  describe "table/1" do
+    test "renders a table with headers and row cells" do
+      assigns = %{rows: rows()}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table rows={@rows} aria_label="People">
+          <:col :let={row} label="Name">{row.name}</:col>
+          <:col :let={row} label="Email">{row.email}</:col>
+        </Table.table>
+        """)
+
+      assert html =~ "<table"
+      assert html =~ "<th"
+      assert html =~ "Name"
+      assert html =~ "Email"
+      assert html =~ "Jane"
+      assert html =~ "jane@example.com"
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(solid outline ghost) do
+        assigns = %{rows: rows(), variant: variant}
+
+        html =
+          rendered_to_string(~H"""
+          <Table.table rows={@rows} variant={@variant} aria_label="People">
+            <:col :let={row} label="Name">{row.name}</:col>
+          </Table.table>
+          """)
+
+        assert html =~ "<table"
+        assert html =~ "Jane"
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{rows: rows(), color: color}
+
+        html =
+          rendered_to_string(~H"""
+          <Table.table rows={@rows} color={@color} aria_label="People">
+            <:col :let={row} label="Name">{row.name}</:col>
+          </Table.table>
+          """)
+
+        assert html =~ "<table"
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{rows: rows(), size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <Table.table rows={@rows} size={@size} aria_label="People">
+            <:col :let={row} label="Name">{row.name}</:col>
+          </Table.table>
+          """)
+
+        assert html =~ "<table"
+      end
+    end
+
+    test "renders an action column" do
+      assigns = %{rows: rows()}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table rows={@rows} aria_label="People">
+          <:col :let={row} label="Name">{row.name}</:col>
+          <:action :let={row}>Edit {row.name}</:action>
+        </Table.table>
+        """)
+
+      assert html =~ "Edit Jane"
+    end
+
+    test "renders the empty state when there are no rows" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table rows={[]} aria_label="People">
+          <:col :let={row} label="Name">{row.name}</:col>
+          <:empty>Nothing here yet</:empty>
+        </Table.table>
+        """)
+
+      assert html =~ "Nothing here yet"
+    end
+  end
+end
