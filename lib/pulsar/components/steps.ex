@@ -302,7 +302,7 @@ defmodule Pulsar.Components.Steps do
   @spec step_state(map(), pos_integer(), pos_integer()) :: atom()
   defp step_state(step, idx, current) do
     case Map.get(step, :state) do
-      s when s in @valid_states -> String.to_atom(s)
+      s when s in @valid_states -> String.to_existing_atom(s)
       _ when idx < current -> :done
       _ when idx == current -> :current
       _ -> :upcoming
