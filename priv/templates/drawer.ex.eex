@@ -224,25 +224,21 @@ Opens the drawer. Pass the drawer `id`.
 
     <button phx-click={Drawer.open("filters")}>Filters</button>
 """
-@spec open(String.t()) :: JS.t()
 def open(id), do: Modal.open(id)
 
 @doc """
 Opens the drawer, composing onto an existing `Phoenix.LiveView.JS` pipeline.
 """
-@spec open(JS.t(), String.t()) :: JS.t()
 def open(js, id), do: Modal.open(js, id)
 
 @doc """
 Closes the drawer. Pass the drawer `id`.
 """
-@spec close(String.t()) :: JS.t()
 def close(id), do: Modal.close(id)
 
 @doc """
 Closes the drawer, composing onto an existing `Phoenix.LiveView.JS` pipeline.
 """
-@spec close(JS.t(), String.t()) :: JS.t()
 def close(js, id), do: Modal.close(js, id)
 
 # ============================================================================

@@ -189,24 +189,20 @@ defmodule Pulsar.Components.AlertDialog do
 
       <button phx-click={AlertDialog.open("delete")}>Delete</button>
   """
-  @spec open(String.t()) :: JS.t()
   def open(id), do: Modal.open(id)
 
   @doc """
   Opens the alert dialog, composing onto an existing `Phoenix.LiveView.JS` pipeline.
   """
-  @spec open(JS.t(), String.t()) :: JS.t()
   def open(js, id), do: Modal.open(js, id)
 
   @doc """
   Closes the alert dialog. Pass the dialog `id`.
   """
-  @spec close(String.t()) :: JS.t()
   def close(id), do: Modal.close(id)
 
   @doc """
   Closes the alert dialog, composing onto an existing `Phoenix.LiveView.JS` pipeline.
   """
-  @spec close(JS.t(), String.t()) :: JS.t()
   def close(js, id), do: Modal.close(js, id)
 end

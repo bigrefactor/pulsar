@@ -419,25 +419,21 @@ Opens the modal. Pass the dialog `id`.
 
     <button phx-click={Modal.open("edit")}>Edit</button>
 """
-@spec open(String.t()) :: JS.t()
 def open(id), do: JS.dispatch("pulsar:modal-open", to: "##{id}")
 
 @doc """
 Opens the modal, composing onto an existing `Phoenix.LiveView.JS` pipeline.
 """
-@spec open(JS.t(), String.t()) :: JS.t()
 def open(js, id), do: JS.dispatch(js, "pulsar:modal-open", to: "##{id}")
 
 @doc """
 Closes the modal. Pass the dialog `id`.
 """
-@spec close(String.t()) :: JS.t()
 def close(id), do: JS.dispatch("pulsar:modal-close", to: "##{id}")
 
 @doc """
 Closes the modal, composing onto an existing `Phoenix.LiveView.JS` pipeline.
 """
-@spec close(JS.t(), String.t()) :: JS.t()
 def close(js, id), do: JS.dispatch(js, "pulsar:modal-close", to: "##{id}")
 
 # ============================================================================
