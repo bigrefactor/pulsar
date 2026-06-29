@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -33,7 +33,7 @@ jobs:
 
       - name: Cache deps
         id: cache-deps-docs-build
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: deps
           key: ${{ runner.os }}-deps-docs-build-dev-${{ hashFiles('mix.lock') }}
@@ -45,7 +45,7 @@ jobs:
 
       - name: Cache _build
         id: cache-build-docs-build
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: _build
           key: ${{ runner.os }}-build-docs-build-dev-${{ hashFiles('mix.lock') }}
@@ -98,7 +98,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -109,7 +109,7 @@ jobs:
 
       - name: Cache deps
         id: cache-deps-docs-validate
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: deps
           key: ${{ runner.os }}-deps-docs-validate-dev-${{ hashFiles('mix.lock') }}
@@ -121,7 +121,7 @@ jobs:
 
       - name: Cache _build
         id: cache-build-docs-validate
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: _build
           key: ${{ runner.os }}-build-docs-validate-dev-${{ hashFiles('mix.lock') }}
