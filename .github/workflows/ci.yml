@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -30,7 +30,7 @@ jobs:
 
       - name: Cache deps
         id: cache-deps
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: deps
           key: ${{ runner.os }}-deps-quality-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
@@ -42,7 +42,7 @@ jobs:
 
       - name: Cache _build
         id: cache-build
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: _build
           key: ${{ runner.os }}-build-quality-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
@@ -54,7 +54,7 @@ jobs:
 
       - name: Cache Dialyzer PLT
         id: cache-plt
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: priv/plts
           key: ${{ runner.os }}-plt-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-${{ hashFiles('mix.lock') }}
@@ -114,7 +114,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -125,7 +125,7 @@ jobs:
 
       - name: Cache deps
         id: cache-deps-security
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: deps
           key: ${{ runner.os }}-deps-security-test-${{ hashFiles('mix.lock') }}
@@ -136,7 +136,7 @@ jobs:
 
       - name: Cache _build
         id: cache-build-security
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: _build
           key: ${{ runner.os }}-build-security-test-${{ hashFiles('mix.lock') }}
@@ -165,7 +165,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -181,7 +181,7 @@ jobs:
 
       - name: Cache deps
         id: cache-deps-browser
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: deps
           key: ${{ runner.os }}-deps-browser-test-${{ hashFiles('mix.lock') }}
@@ -192,7 +192,7 @@ jobs:
 
       - name: Cache _build
         id: cache-build-browser
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: _build
           key: ${{ runner.os }}-build-browser-test-${{ hashFiles('mix.lock') }}
@@ -203,7 +203,7 @@ jobs:
 
       - name: Cache Playwright browsers
         id: cache-playwright
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('test/support/dev_app/assets/package-lock.json') }}
@@ -258,7 +258,7 @@ jobs:
   #   runs-on: ubuntu-22.04
   #   steps:
   #     - name: Checkout code
-  #       uses: actions/checkout@v6
+  #       uses: actions/checkout@v7
   #
   #     - name: Set up Elixir
   #       uses: erlef/setup-beam@v1
@@ -268,7 +268,7 @@ jobs:
   #         version-type: loose
   #
   #     - name: Cache deps
-  #       uses: actions/cache@v5
+  #       uses: actions/cache@v6
   #       with:
   #         path: deps
   #         key: ${{ runner.os }}-deps-package-${{ hashFiles('mix.lock') }}
