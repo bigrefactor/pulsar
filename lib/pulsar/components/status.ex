@@ -145,8 +145,7 @@ defmodule Pulsar.Components.Status do
           "absolute inline-flex h-full w-full rounded-full opacity-75 animate-ping motion-reduce:hidden",
           @color_class
         ]}
-      >
-      </span>
+      ></span>
       <span class={["relative inline-flex h-full w-full rounded-full", @color_class]}></span>
     </span>
     """

@@ -243,7 +243,8 @@ defmodule Pulsar.Components.Popover do
       )
 
     ~H"""
-    {render_slot(@trigger)}<div
+    {render_slot(@trigger)}
+    <div
       id={@id}
       popover={if @trigger_mode == "hover", do: "manual", else: "auto"}
       phx-hook=".PulsarPopover"

@@ -175,9 +175,7 @@ defmodule Pulsar.Components.Progress do
           :if={@show_value and @determinate}
           aria-hidden="true"
           class="text-muted-foreground tabular-nums"
-        >
-          {@pct}%
-        </span>
+        >{@pct}%</span>
       </div>
 
       <div
@@ -228,9 +226,7 @@ defmodule Pulsar.Components.Progress do
           :if={@show_value and @determinate}
           aria-hidden="true"
           class="absolute inset-0 flex items-center justify-center text-xs font-semibold text-foreground tabular-nums"
-        >
-          {@pct}%
-        </span>
+        >{@pct}%</span>
       </div>
 
       <span :if={@shape == "radial" and @label} class="text-sm text-foreground">{@label}</span>
