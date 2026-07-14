@@ -236,9 +236,32 @@ if Code.ensure_loaded?(Igniter) do
     # still splits into the same line count and indices as `content` — callers
     # that need to line up a stripped line with its position in the original can
     # rely on that.
-    defp strip_block_comments(content) do
-      Regex.replace(~r/\/\*.*?(?:\*\/|\z)/s, content, &String.replace(&1, ~r/[^\n]/, ""))
-    end
+    #
+    # `/*` inside a quoted string does not open a comment. Phoenix's own app.css
+    # ships `@source "../../_build/dev/phoenix-colocated/app/*/";`, whose glob
+    # contains `/*`.
+    defp strip_block_comments(content), do: strip_css(content, [])
+
+    defp strip_css(<<>>, acc), do: acc |> Enum.reverse() |> IO.iodata_to_binary()
+    defp strip_css(<<"/*", rest::binary>>, acc), do: strip_css_comment(rest, acc)
+
+    defp strip_css(<<quote, rest::binary>>, acc) when quote in [?", ?'],
+      do: strip_css_string(rest, quote, [quote | acc])
+
+    defp strip_css(<<char, rest::binary>>, acc), do: strip_css(rest, [char | acc])
+
+    defp strip_css_comment(<<>>, acc), do: strip_css(<<>>, acc)
+    defp strip_css_comment(<<"*/", rest::binary>>, acc), do: strip_css(rest, acc)
+    defp strip_css_comment(<<?\n, rest::binary>>, acc), do: strip_css_comment(rest, [?\n | acc])
+    defp strip_css_comment(<<_char, rest::binary>>, acc), do: strip_css_comment(rest, acc)
+
+    defp strip_css_string(<<>>, _quote, acc), do: strip_css(<<>>, acc)
+
+    defp strip_css_string(<<?\\, char, rest::binary>>, quote, acc), do: strip_css_string(rest, quote, [char, ?\\ | acc])
+
+    defp strip_css_string(<<quote, rest::binary>>, quote, acc), do: strip_css(rest, [quote | acc])
+
+    defp strip_css_string(<<char, rest::binary>>, quote, acc), do: strip_css_string(rest, quote, [char | acc])
 
     # Insert the new import after the last live (non-commented) `@import`/
     # `@source` line, falling back to the top of the file.

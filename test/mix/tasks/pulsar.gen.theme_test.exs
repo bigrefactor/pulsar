@@ -1,5 +1,5 @@
 defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   import Igniter.Test
 
@@ -168,6 +168,22 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
                "unclosed /* block, got:\n\n#{content}"
 
       apply_igniter!(igniter)
+    end
+
+    # Phoenix ships this @source glob in its generated app.css. The `/*` inside
+    # the quoted glob is not a comment opener; treating it as one hides every
+    # line after it, so the import reads as absent and a duplicate is appended
+    # on each run.
+    test "treats an import as present when a preceding @source glob contains /*" do
+      """
+      @import "tailwindcss" source(none);
+      @source "../../_build/dev/phoenix-colocated/test/*/";
+      @import "./theme.css";
+      """
+      |> project_with_app_css()
+      |> Igniter.compose_task("pulsar.gen.theme", [])
+      |> assert_unchanged("assets/css/app.css")
+      |> apply_igniter!()
     end
 
     test "overwrites a customized themes/dark.css" do
