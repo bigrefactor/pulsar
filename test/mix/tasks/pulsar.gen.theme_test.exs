@@ -131,6 +131,26 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
       |> apply_igniter!()
     end
 
+    test "inserts a real import when the only occurrence is inside a multi-line block comment" do
+      igniter =
+        """
+        @import "tailwindcss" source(none);
+        /*
+        @import "./theme.css";
+        */
+        """
+        |> project_with_app_css()
+        |> Igniter.compose_task("pulsar.gen.theme", [])
+
+      content = source_content(igniter, "assets/css/app.css")
+
+      assert has_live_import_line?(content, ~s(@import "./theme.css";)),
+             "expected a real, uncommented `@import \"./theme.css\";` line outside any " <>
+               "/* */ block, got:\n\n#{content}"
+
+      apply_igniter!(igniter)
+    end
+
     test "overwrites a customized themes/dark.css" do
       igniter =
         phx_test_project(
@@ -324,6 +344,14 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
     content
     |> String.split("\n")
     |> Enum.any?(&(String.trim(&1) == import_line))
+  end
+
+  # Unlike has_import_line?/2, strips /* ... */ blocks (including multi-line)
+  # first, so an import that only appears inside a comment does not count.
+  defp has_live_import_line?(content, import_line) do
+    content
+    |> String.replace(~r/\/\*.*?\*\//s, "")
+    |> has_import_line?(import_line)
   end
 
   # phx_test_project/1 discards a `files:` seed for assets/css/app.css: it runs

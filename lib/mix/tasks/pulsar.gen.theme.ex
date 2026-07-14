@@ -221,22 +221,32 @@ if Code.ensure_loaded?(Igniter) do
       end
     end
 
-    # A raw substring check would also match the import line inside a comment
-    # (e.g. `/* @import "./theme.css"; */`); require it to open its own line
-    # instead, so a trailing inline comment still counts as present.
+    # A commented-out import (single-line or spanning a multi-line /* */
+    # block) must not count as present; an import carrying a trailing inline
+    # comment must.
     defp import_line?(content, import_line) do
       content
+      |> strip_block_comments()
       |> String.split("\n")
       |> Enum.any?(&String.starts_with?(String.trim(&1), import_line))
     end
 
-    # Insert the new import after the last `@import`/`@source` line, falling back
-    # to the top of the file.
+    # Blanks out /* ... */ blocks (including multi-line ones) while preserving
+    # every newline, so the result still splits into the same line count and
+    # indices as `content` — callers that need to line up a stripped line with
+    # its position in the original can rely on that.
+    defp strip_block_comments(content) do
+      Regex.replace(~r/\/\*.*?\*\//s, content, &String.replace(&1, ~r/[^\n]/, ""))
+    end
+
+    # Insert the new import after the last live (non-commented) `@import`/
+    # `@source` line, falling back to the top of the file.
     defp insert_import(content, import_line) do
       lines = String.split(content, "\n")
+      live_lines = content |> strip_block_comments() |> String.split("\n")
 
       insertion_index =
-        case find_last_index(lines, &String.match?(&1, ~r/^@(import|source)\b/)) do
+        case find_last_index(live_lines, &String.match?(&1, ~r/^@(import|source)\b/)) do
           nil -> 0
           i -> i + 1
         end
