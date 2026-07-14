@@ -94,6 +94,29 @@ defmodule Mix.Tasks.Pulsar.Gen.StorybookTest do
       |> refute_creates("lib/test_web/storybook/components/button.story.exs")
       |> apply_igniter!()
     end
+
+    test "does not recreate a story file that exists on disk but is not yet loaded" do
+      story_path = "lib/test_web/storybook/components/button.story.exs"
+
+      # Simulates a re-install: the story file is already present on disk
+      # (test_files) but has not been read into this igniter's rewrite.
+      igniter = phx_test_project()
+
+      igniter =
+        Igniter.assign(
+          igniter,
+          :test_files,
+          Map.put(
+            igniter.assigns.test_files,
+            story_path,
+            "defmodule TestWeb.Storybook.Components.Button do\nend\n"
+          )
+        )
+
+      igniter
+      |> Igniter.compose_task("pulsar.gen.button", ["--storybook"])
+      |> assert_unchanged(story_path)
+    end
   end
 
   describe "pulsar.gen.badge --storybook" do

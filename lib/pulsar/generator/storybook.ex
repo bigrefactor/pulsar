@@ -327,9 +327,7 @@ defmodule Pulsar.Generator.Storybook do
   end
 
   defp create_story_file(igniter, path, contents) do
-    # Story files are plain .exs files — we write them as new files.
-    # We use create_new_file to avoid overwriting without notice.
-    if Map.has_key?(igniter.rewrite.sources, path) do
+    if Igniter.exists?(igniter, path) do
       igniter
     else
       Igniter.create_new_file(igniter, path, contents)
