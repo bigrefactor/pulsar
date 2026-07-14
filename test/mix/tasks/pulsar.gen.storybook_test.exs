@@ -117,6 +117,46 @@ defmodule Mix.Tasks.Pulsar.Gen.StorybookTest do
       |> Igniter.compose_task("pulsar.gen.button", ["--storybook"])
       |> assert_unchanged(story_path)
     end
+
+    test "story file survives Igniter's post-write module-location normalization" do
+      story_path = "lib/test_web/storybook/components/button.story.exs"
+      renamed_path = "lib/test_web/storybook/components/button.exs"
+
+      igniter =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.gen.button", ["--storybook"])
+        |> apply_igniter!()
+
+      assert Map.has_key?(igniter.assigns.test_files, story_path),
+             "expected #{story_path} to still exist after apply"
+
+      refute Map.has_key?(igniter.assigns.test_files, renamed_path),
+             "expected Igniter not to rename the story file to #{renamed_path}"
+    end
+
+    test "re-running pulsar.gen.button --storybook over an applied project is a no-op" do
+      phx_test_project()
+      |> Igniter.compose_task("pulsar.gen.button", ["--storybook"])
+      |> apply_igniter!()
+      |> Igniter.compose_task("pulsar.gen.button", ["--storybook"])
+      |> assert_unchanged()
+    end
+
+    test "running the generator twice does not duplicate the dont_move_files entry" do
+      igniter =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.gen.button", ["--storybook"])
+        |> apply_igniter!()
+        |> Igniter.compose_task("pulsar.gen.badge", ["--storybook"])
+        |> apply_igniter!()
+
+      content = Map.fetch!(igniter.assigns.test_files, ".igniter.exs")
+
+      occurrences = length(Regex.scan(~r/story/, content))
+
+      assert occurrences == 1,
+             "expected the story dont_move_files pattern to appear exactly once in .igniter.exs; got #{occurrences} occurrences of \"story\":\n\n#{content}"
+    end
   end
 
   describe "pulsar.gen.badge --storybook" do

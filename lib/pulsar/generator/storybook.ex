@@ -13,6 +13,7 @@ defmodule Pulsar.Generator.Storybook do
   """
 
   alias Igniter.Libs.Phoenix
+  alias Igniter.Project.IgniterConfig
 
   @components [
     :accordion,
@@ -327,10 +328,20 @@ defmodule Pulsar.Generator.Storybook do
   end
 
   defp create_story_file(igniter, path, contents) do
+    igniter = protect_story_files(igniter)
+
     if Igniter.exists?(igniter, path) do
       igniter
     else
       Igniter.create_new_file(igniter, path, contents)
     end
+  end
+
+  # phoenix_storybook discovers stories by globbing `**/*.story.exs`. Igniter's
+  # module-location normalization (Igniter.Project.Module.move_files/1, run on
+  # apply) would otherwise rename these files to match their `defmodule`,
+  # dropping the `.story` suffix and hiding them from that glob.
+  defp protect_story_files(igniter) do
+    IgniterConfig.dont_move_file_pattern(igniter, ~r/\.story\.exs$/)
   end
 end
