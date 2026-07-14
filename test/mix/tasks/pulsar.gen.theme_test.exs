@@ -172,6 +172,25 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
 
       apply_igniter!(igniter)
     end
+
+    test "re-running the default task re-registers a previously scaffolded custom theme" do
+      igniter =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.gen.theme", [])
+        |> apply_igniter!()
+        |> Igniter.compose_task("pulsar.gen.theme", ["cupcake"])
+        |> apply_igniter!()
+        |> Igniter.compose_task("pulsar.gen.theme", [])
+
+      {:ok, source} = Map.fetch(igniter.rewrite.sources, "assets/css/theme.css")
+      content = Rewrite.Source.get(source, :content)
+
+      assert has_import_line?(content, ~s(@import "./themes/cupcake.css";)),
+             "expected the cupcake theme, still present on disk at assets/css/themes/cupcake.css, " <>
+               "to still be registered in theme.css after re-running the default task, got:\n\n#{content}"
+
+      apply_igniter!(igniter)
+    end
   end
 
   describe "pulsar.gen.theme <name> — scaffolding" do

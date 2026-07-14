@@ -116,7 +116,8 @@ if Code.ensure_loaded?(Igniter) do
     end
 
     defp install_theme_files(igniter, web_dir) do
-      Enum.reduce(@theme_files, igniter, fn {template_rel, dest}, acc ->
+      @theme_files
+      |> Enum.reduce(igniter, fn {template_rel, dest}, acc ->
         Igniter.copy_template(
           acc,
           template_path(template_rel),
@@ -125,6 +126,28 @@ if Code.ensure_loaded?(Igniter) do
           on_exists: :overwrite
         )
       end)
+      |> reregister_custom_themes()
+    end
+
+    # install_theme_files/2 just overwrote theme.css from the template, which
+    # carries only the built-in light/dark imports. A theme scaffolded earlier
+    # via `mix pulsar.gen.theme <name>` still has its themes/<name>.css file on
+    # disk, so re-add its @import or it silently stops loading.
+    defp reregister_custom_themes(igniter) do
+      igniter = Igniter.include_glob(igniter, "assets/css/themes/*.css")
+
+      igniter.rewrite.sources
+      |> Map.keys()
+      |> Enum.filter(&custom_theme_file?/1)
+      |> Enum.reduce(igniter, fn dest, acc ->
+        name = Path.basename(dest, ".css")
+        add_theme_import(acc, "assets/css/theme.css", ~s(@import "./themes/#{name}.css";), dest)
+      end)
+    end
+
+    defp custom_theme_file?(path) do
+      String.starts_with?(path, "assets/css/themes/") and
+        path not in ["assets/css/themes/light.css", "assets/css/themes/dark.css"]
     end
 
     # app.css belongs to the host application; Pulsar needs exactly one line in it.
