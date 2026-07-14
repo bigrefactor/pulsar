@@ -231,12 +231,13 @@ if Code.ensure_loaded?(Igniter) do
       |> Enum.any?(&String.starts_with?(String.trim(&1), import_line))
     end
 
-    # Blanks out /* ... */ blocks (including multi-line ones) while preserving
-    # every newline, so the result still splits into the same line count and
-    # indices as `content` — callers that need to line up a stripped line with
-    # its position in the original can rely on that.
+    # Blanks out /* ... */ blocks (including multi-line ones, and an unterminated
+    # one running to end of file) while preserving every newline, so the result
+    # still splits into the same line count and indices as `content` — callers
+    # that need to line up a stripped line with its position in the original can
+    # rely on that.
     defp strip_block_comments(content) do
-      Regex.replace(~r/\/\*.*?\*\//s, content, &String.replace(&1, ~r/[^\n]/, ""))
+      Regex.replace(~r/\/\*.*?(?:\*\/|\z)/s, content, &String.replace(&1, ~r/[^\n]/, ""))
     end
 
     # Insert the new import after the last live (non-commented) `@import`/

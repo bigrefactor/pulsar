@@ -151,6 +151,25 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
       apply_igniter!(igniter)
     end
 
+    test "inserts a real import when the only occurrence follows an unterminated block comment" do
+      igniter =
+        """
+        @import "tailwindcss" source(none);
+        /* disabled for now
+        @import "./theme.css";
+        """
+        |> project_with_app_css()
+        |> Igniter.compose_task("pulsar.gen.theme", [])
+
+      content = source_content(igniter, "assets/css/app.css")
+
+      assert has_live_import_line?(content, ~s(@import "./theme.css";)),
+             "expected a real, uncommented `@import \"./theme.css\";` line outside the " <>
+               "unclosed /* block, got:\n\n#{content}"
+
+      apply_igniter!(igniter)
+    end
+
     test "overwrites a customized themes/dark.css" do
       igniter =
         phx_test_project(
@@ -350,7 +369,7 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
   # first, so an import that only appears inside a comment does not count.
   defp has_live_import_line?(content, import_line) do
     content
-    |> String.replace(~r/\/\*.*?\*\//s, "")
+    |> String.replace(~r/\/\*.*?(?:\*\/|\z)/s, "")
     |> has_import_line?(import_line)
   end
 

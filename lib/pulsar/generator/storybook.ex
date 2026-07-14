@@ -7,9 +7,11 @@ defmodule Pulsar.Generator.Storybook do
   - Bulk generation of foundations, examples, and welcome pages
   - Setup notice printing
 
-  Stories are written as plain `.story.exs` files (not wrapped in a module
-  declaration the way component `.ex` files are) because phoenix_storybook
-  loads them as scripts via `Code.eval_file/1`.
+  Stories are written as `.story.exs` script files, each declaring a module that
+  `use`s `PhoenixStorybook.Story`. phoenix_storybook discovers them by globbing
+  `**/*.story.exs`, so the `.story` suffix is part of their contract and the
+  files are kept where they are written rather than relocated to match their
+  module name.
   """
 
   alias Igniter.Libs.Phoenix
