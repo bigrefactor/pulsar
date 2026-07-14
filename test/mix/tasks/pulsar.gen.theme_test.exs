@@ -103,6 +103,23 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
       |> apply_igniter!()
     end
 
+    test "inserts a real import when the only occurrence is commented out" do
+      igniter =
+        """
+        @import "tailwindcss" source(none);
+        /* @import "./theme.css"; -- disabled for now */
+        """
+        |> project_with_app_css()
+        |> Igniter.compose_task("pulsar.gen.theme", [])
+
+      content = source_content(igniter, "assets/css/app.css")
+
+      assert has_import_line?(content, ~s(@import "./theme.css";)),
+             "expected a real, uncommented `@import \"./theme.css\";` line, got:\n\n#{content}"
+
+      apply_igniter!(igniter)
+    end
+
     test "overwrites a customized themes/dark.css" do
       igniter =
         phx_test_project(
@@ -200,6 +217,22 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
       apply_igniter!(igniter)
     end
 
+    test "inserts a real import when the only occurrence is commented out" do
+      seed_content = existing_theme_css() <> ~s(\n/* @import "./themes/cupcake.css"; -- disabled */\n)
+
+      igniter =
+        phx_test_project(files: %{"assets/css/theme.css" => seed_content})
+        |> Igniter.compose_task("pulsar.gen.theme", ["cupcake"])
+
+      {:ok, source} = Map.fetch(igniter.rewrite.sources, "assets/css/theme.css")
+      content = Rewrite.Source.get(source, :content)
+
+      assert has_import_line?(content, ~s(@import "./themes/cupcake.css";)),
+             "expected a real, uncommented `@import \"./themes/cupcake.css\";` line, got:\n\n#{content}"
+
+      apply_igniter!(igniter)
+    end
+
     test "refuses to overwrite an existing themes/<name>.css" do
       original = ~s([data-theme="cupcake"] { --color-primary: red; }\n)
 
@@ -255,6 +288,12 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
   defp source_content(igniter, path) do
     {:ok, source} = Map.fetch(igniter.rewrite.sources, path)
     Rewrite.Source.get(source, :content)
+  end
+
+  defp has_import_line?(content, import_line) do
+    content
+    |> String.split("\n")
+    |> Enum.any?(&(String.trim(&1) == import_line))
   end
 
   # phx_test_project/1 discards a `files:` seed for assets/css/app.css: it runs

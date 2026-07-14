@@ -187,7 +187,7 @@ if Code.ensure_loaded?(Igniter) do
     defp ensure_import(igniter, theme_css_path, source, import_line) do
       content = Rewrite.Source.get(source, :content)
 
-      if String.contains?(content, import_line) do
+      if import_line?(content, import_line) do
         igniter
       else
         new_content = insert_import(content, import_line)
@@ -196,6 +196,14 @@ if Code.ensure_loaded?(Igniter) do
           Rewrite.Source.update(source, :content, new_content)
         end)
       end
+    end
+
+    # A raw substring check would also match the import line inside a comment
+    # (e.g. `/* @import "./theme.css"; */`); require it as its own line instead.
+    defp import_line?(content, import_line) do
+      content
+      |> String.split("\n")
+      |> Enum.any?(&(String.trim(&1) == import_line))
     end
 
     # Insert the new import after the last `@import`/`@source` line, falling back
