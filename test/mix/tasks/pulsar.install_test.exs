@@ -120,6 +120,32 @@ defmodule Mix.Tasks.Pulsar.InstallTest do
       # Verify twm dependency was added
       assert Deps.has_dep?(igniter, :twm)
     end
+
+    test "re-running the installer over an installed project writes nothing" do
+      phx_test_project()
+      |> Igniter.compose_task("pulsar.install", ["--yes"])
+      |> apply_igniter!()
+      |> Igniter.compose_task("pulsar.install", ["--yes"])
+      |> assert_unchanged()
+    end
+
+    test "re-running the installer with --storybook writes nothing" do
+      phx_test_project()
+      |> Igniter.compose_task("pulsar.install", ["--yes", "--storybook"])
+      |> apply_igniter!()
+      |> Igniter.compose_task("pulsar.install", ["--yes", "--storybook"])
+      |> assert_unchanged()
+    end
+
+    test "re-running the installer creates no backup files" do
+      igniter =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.install", ["--yes"])
+        |> apply_igniter!()
+        |> Igniter.compose_task("pulsar.install", ["--yes"])
+
+      refute Enum.any?(igniter.rewrite.sources, fn {path, _} -> path =~ ".bak" end)
+    end
   end
 
   defp assert_changed(igniter, path_or_paths) do
