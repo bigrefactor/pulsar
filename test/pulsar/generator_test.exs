@@ -2,7 +2,6 @@ defmodule Pulsar.GeneratorTest do
   use ExUnit.Case, async: true
 
   import Igniter.Test
-  import Pulsar.BackupTestHelper
 
   describe "use Pulsar.Generator argument validation" do
     test ":component must be a non-nil atom" do

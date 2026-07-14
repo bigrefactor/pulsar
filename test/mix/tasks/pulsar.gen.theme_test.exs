@@ -2,7 +2,6 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
   use ExUnit.Case, async: true
 
   import Igniter.Test
-  import Pulsar.BackupTestHelper
 
   describe "pulsar.gen.theme" do
     test "creates theme.css with theme definitions" do
@@ -12,25 +11,7 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
       |> apply_igniter!()
     end
 
-    test "backs up existing app.css to timestamped backup file" do
-      igniter =
-        phx_test_project(
-          files: %{
-            "assets/css/app.css" => """
-            /* Original app.css content */
-            @import "tailwindcss";
-            """
-          }
-        )
-        |> Igniter.compose_task("pulsar.gen.theme", [])
-
-      # Verify a timestamped backup file was created
-      assert_backup_created(igniter, "assets/css/app.css")
-
-      apply_igniter!(igniter)
-    end
-
-    test "creates new app.css with theme import" do
+    test "changes app.css to carry the theme import" do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.theme", [])
       |> assert_changed("assets/css/app.css")
@@ -52,41 +33,93 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
       |> apply_igniter!()
     end
 
-    test "new app.css imports theme.css" do
-      # Read the actual app.css template
-      expected_app =
-        :pulsar
-        |> :code.priv_dir()
-        |> Path.join("templates")
-        |> Path.join("app.css.eex")
-        |> File.read!()
-        |> String.replace("<%= @web_directory %>", "test_web")
+    test "adds the theme import to the Phoenix app.css without dropping its defaults" do
+      igniter =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.gen.theme", [])
+        |> assert_changed("assets/css/app.css")
 
+      content = source_content(igniter, "assets/css/app.css")
+
+      assert content =~ ~s(@import "./theme.css";)
+      assert content =~ ~s|@import "tailwindcss" source(none);|
+      assert content =~ ~s(@source "../js";)
+      assert content =~ ~s(@plugin "../vendor/heroicons";)
+
+      apply_igniter!(igniter)
+    end
+
+    test "re-running the task writes nothing" do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.theme", [])
-      |> assert_changed("assets/css/app.css")
-      |> assert_content_equals("assets/css/app.css", expected_app)
+      |> apply_igniter!()
+      |> Igniter.compose_task("pulsar.gen.theme", [])
+      |> assert_unchanged()
+    end
+
+    test "creates no backup files" do
+      igniter =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.gen.theme", [])
+        |> apply_igniter!()
+        |> Igniter.compose_task("pulsar.gen.theme", [])
+
+      refute Enum.any?(igniter.rewrite.sources, fn {path, _} -> path =~ ".bak" end)
+    end
+
+    test "preserves an existing app.css and ensures the theme import" do
+      igniter =
+        """
+        @import "tailwindcss" source(none);
+        @source "../css";
+
+        @plugin "../vendor/heroicons";
+
+        .my-custom-class {
+          color: red;
+        }
+        """
+        |> project_with_app_css()
+        |> Igniter.compose_task("pulsar.gen.theme", [])
+
+      content = source_content(igniter, "assets/css/app.css")
+
+      assert content =~ ~s(@import "./theme.css";)
+      assert content =~ ".my-custom-class"
+      assert content =~ ~s(@plugin "../vendor/heroicons";)
+
+      apply_igniter!(igniter)
+    end
+
+    test "does not duplicate the theme import in an app.css that already has it" do
+      """
+      @import "tailwindcss" source(none);
+      @source "../css";
+      @import "./theme.css";
+      """
+      |> project_with_app_css()
+      |> Igniter.compose_task("pulsar.gen.theme", [])
+      |> assert_unchanged("assets/css/app.css")
       |> apply_igniter!()
     end
 
-    test "preserves original app.css content when backing up" do
+    test "overwrites a customized themes/dark.css" do
       igniter =
         phx_test_project(
           files: %{
-            "assets/css/app.css" => """
-            /* My custom CSS */
-            @import "tailwindcss";
-
-            .my-custom-class {
-              color: red;
+            "assets/css/themes/dark.css" => """
+            [data-theme="dark"] {
+              --color-primary: hotpink;
             }
             """
           }
         )
         |> Igniter.compose_task("pulsar.gen.theme", [])
 
-      # Verify the backup contains the original app.css import
-      assert_backup_contains(igniter, "assets/css/app.css", ~r/@import "tailwindcss"/)
+      content = source_content(igniter, "assets/css/themes/dark.css")
+
+      refute content =~ "hotpink"
+      assert content =~ ~s([data-theme="dark"])
 
       apply_igniter!(igniter)
     end
@@ -108,25 +141,6 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
       content = Rewrite.Source.get(source, :content)
       assert content =~ ~s(@import "./themes/light.css";)
       assert content =~ ~s(@import "./themes/dark.css";)
-
-      apply_igniter!(igniter)
-    end
-
-    test "backs up existing themes/dark.css before overwriting" do
-      igniter =
-        phx_test_project(
-          files: %{
-            "assets/css/themes/dark.css" => """
-            [data-theme="dark"] {
-              --color-primary: hotpink;
-            }
-            """
-          }
-        )
-        |> Igniter.compose_task("pulsar.gen.theme", [])
-
-      assert_backup_created(igniter, "assets/css/themes/dark.css")
-      assert_backup_contains(igniter, "assets/css/themes/dark.css", ~r/hotpink/)
 
       apply_igniter!(igniter)
     end
@@ -236,5 +250,19 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
     end
 
     igniter
+  end
+
+  defp source_content(igniter, path) do
+    {:ok, source} = Map.fetch(igniter.rewrite.sources, path)
+    Rewrite.Source.get(source, :content)
+  end
+
+  # phx_test_project/1 discards a `files:` seed for assets/css/app.css: it runs
+  # the Phoenix installer, which writes its own app.css over the seed. Write the
+  # customized file after the project exists instead.
+  defp project_with_app_css(css) do
+    phx_test_project()
+    |> Igniter.create_new_file("assets/css/app.css", css, on_exists: :overwrite)
+    |> apply_igniter!()
   end
 end

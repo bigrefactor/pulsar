@@ -30,8 +30,9 @@ defmodule Mix.Tasks.Pulsar.Gen.Theme.Docs do
     * `assets/css/themes/light.css` — the default theme; `@theme` block with
       the semantic tokens that Tailwind uses to generate utilities
     * `assets/css/themes/dark.css` — `[data-theme="dark"]` override block
-    * `assets/css/app.css` — Phoenix LiveView configuration importing the theme
-    * `*.bak.<timestamp>` backups of any files that already existed
+    * `assets/css/app.css` — created with the theme import when absent; an
+      existing app.css is left untouched apart from ensuring
+      `@import "./theme.css";`
 
     The semantic tokens swap at runtime via `[data-theme="<name>"]` attribute
     overrides — components reference tokens like `bg-primary` directly, no
@@ -79,6 +80,9 @@ if Code.ensure_loaded?(Igniter) do
       {"themes/dark.css.eex", "assets/css/themes/dark.css"}
     ]
 
+    @app_css_path "assets/css/app.css"
+    @theme_import ~s(@import "./theme.css";)
+
     @impl Igniter.Mix.Task
     def info(_argv, _composing_task) do
       %Info{
@@ -104,30 +108,42 @@ if Code.ensure_loaded?(Igniter) do
     end
 
     defp install_theme_system(igniter) do
-      web_dir = Phoenix.web_module(igniter) |> Macro.underscore()
+      web_dir = igniter |> Phoenix.web_module() |> Macro.underscore()
 
       igniter
       |> install_theme_files(web_dir)
-      |> backup_existing_file("assets/css/app.css")
-      |> Igniter.copy_template(
-        template_path("app.css.eex"),
-        "assets/css/app.css",
-        [web_directory: web_dir],
-        on_exists: :overwrite
-      )
+      |> install_app_css(web_dir)
     end
 
     defp install_theme_files(igniter, web_dir) do
       Enum.reduce(@theme_files, igniter, fn {template_rel, dest}, acc ->
-        acc
-        |> backup_existing_file(dest)
-        |> Igniter.copy_template(
+        Igniter.copy_template(
+          acc,
           template_path(template_rel),
           dest,
           [web_directory: web_dir],
           on_exists: :overwrite
         )
       end)
+    end
+
+    # app.css belongs to the host application; Pulsar needs exactly one line in it.
+    # Write the template only when there is no app.css to preserve.
+    defp install_app_css(igniter, web_dir) do
+      igniter = Igniter.include_existing_file(igniter, @app_css_path)
+
+      case Map.fetch(igniter.rewrite.sources, @app_css_path) do
+        {:ok, source} ->
+          ensure_import(igniter, @app_css_path, source, @theme_import)
+
+        :error ->
+          Igniter.copy_template(
+            igniter,
+            template_path("app.css.eex"),
+            @app_css_path,
+            web_directory: web_dir
+          )
+      end
     end
 
     defp scaffold_theme(igniter, name) do
@@ -182,22 +198,15 @@ if Code.ensure_loaded?(Igniter) do
       end
     end
 
-    # Insert the new import line after the last existing `@import "./themes/..."`
-    # line, falling back to after `@import "tailwindcss";` if no themes are
-    # imported yet, and finally to the top of the file.
+    # Insert the new import after the last `@import`/`@source` line, falling back
+    # to the top of the file.
     defp insert_import(content, import_line) do
       lines = String.split(content, "\n")
 
       insertion_index =
-        case find_last_index(lines, &String.match?(&1, ~r{^@import "\./themes/.*";})) do
-          nil ->
-            case find_last_index(lines, &String.match?(&1, ~r{^@import "tailwindcss";})) do
-              nil -> 0
-              i -> i + 1
-            end
-
-          i ->
-            i + 1
+        case find_last_index(lines, &String.match?(&1, ~r/^@(import|source)\b/)) do
+          nil -> 0
+          i -> i + 1
         end
 
       lines
@@ -231,22 +240,6 @@ if Code.ensure_loaded?(Igniter) do
       |> :code.priv_dir()
       |> Path.join("templates")
       |> Path.join(relative)
-    end
-
-    defp backup_existing_file(igniter, path) do
-      igniter = Igniter.include_existing_file(igniter, path)
-
-      case Map.fetch(igniter.rewrite.sources, path) do
-        {:ok, source} ->
-          ts = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second) |> NaiveDateTime.to_iso8601(:basic)
-          backup_path = "#{path}.bak.#{ts}"
-          content = Rewrite.Source.get(source, :content)
-
-          Igniter.create_new_file(igniter, backup_path, content)
-
-        :error ->
-          igniter
-      end
     end
   end
 else
