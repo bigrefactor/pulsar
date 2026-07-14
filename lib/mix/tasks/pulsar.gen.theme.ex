@@ -199,11 +199,12 @@ if Code.ensure_loaded?(Igniter) do
     end
 
     # A raw substring check would also match the import line inside a comment
-    # (e.g. `/* @import "./theme.css"; */`); require it as its own line instead.
+    # (e.g. `/* @import "./theme.css"; */`); require it to open its own line
+    # instead, so a trailing inline comment still counts as present.
     defp import_line?(content, import_line) do
       content
       |> String.split("\n")
-      |> Enum.any?(&(String.trim(&1) == import_line))
+      |> Enum.any?(&String.starts_with?(String.trim(&1), import_line))
     end
 
     # Insert the new import after the last `@import`/`@source` line, falling back

@@ -120,6 +120,17 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
       apply_igniter!(igniter)
     end
 
+    test "treats an import carrying a trailing comment as already present" do
+      """
+      @import "tailwindcss" source(none);
+      @import "./theme.css"; /* pulsar */
+      """
+      |> project_with_app_css()
+      |> Igniter.compose_task("pulsar.gen.theme", [])
+      |> assert_unchanged("assets/css/app.css")
+      |> apply_igniter!()
+    end
+
     test "overwrites a customized themes/dark.css" do
       igniter =
         phx_test_project(
