@@ -530,12 +530,7 @@ defmodule Pulsar.Components.TableTest do
 
   describe "LiveStream support" do
     test "adds phx-update stream when rows is a LiveStream" do
-      stream = %LiveStream{
-        deletes: [],
-        dom_id: fn {id, _} -> "users-#{id}" end,
-        inserts: [],
-        name: :users
-      }
+      stream = LiveStream.new(:users, 0, [], dom_id: &"users-#{&1.id}")
 
       assigns = %{users: stream}
 
@@ -551,12 +546,7 @@ defmodule Pulsar.Components.TableTest do
     end
 
     test "handles LiveStream tuple data with automatic row_id" do
-      stream = %LiveStream{
-        deletes: [],
-        dom_id: fn {id, _} -> "users-#{id}" end,
-        inserts: [{1, %{id: 1, name: "Alice"}}],
-        name: :users
-      }
+      stream = LiveStream.new(:users, 0, [%{id: 1, name: "Alice"}], dom_id: &"users-#{&1.id}")
 
       assigns = %{users: stream}
 

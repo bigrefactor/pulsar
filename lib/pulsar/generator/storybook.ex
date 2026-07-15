@@ -7,12 +7,15 @@ defmodule Pulsar.Generator.Storybook do
   - Bulk generation of foundations, examples, and welcome pages
   - Setup notice printing
 
-  Stories are written as plain `.story.exs` files (not wrapped in a module
-  declaration the way component `.ex` files are) because phoenix_storybook
-  loads them as scripts via `Code.eval_file/1`.
+  Stories are written as `.story.exs` script files, each declaring a module that
+  `use`s `PhoenixStorybook.Story`. phoenix_storybook discovers them by globbing
+  `**/*.story.exs`, so the `.story` suffix is part of their contract and the
+  files are kept where they are written rather than relocated to match their
+  module name.
   """
 
   alias Igniter.Libs.Phoenix
+  alias Igniter.Project.IgniterConfig
 
   @components [
     :accordion,
@@ -327,12 +330,20 @@ defmodule Pulsar.Generator.Storybook do
   end
 
   defp create_story_file(igniter, path, contents) do
-    # Story files are plain .exs files — we write them as new files.
-    # We use create_new_file to avoid overwriting without notice.
-    if Map.has_key?(igniter.rewrite.sources, path) do
+    igniter = protect_story_files(igniter)
+
+    if Igniter.exists?(igniter, path) do
       igniter
     else
       Igniter.create_new_file(igniter, path, contents)
     end
+  end
+
+  # phoenix_storybook discovers stories by globbing `**/*.story.exs`. Igniter's
+  # module-location normalization (Igniter.Project.Module.move_files/1, run on
+  # apply) would otherwise rename these files to match their `defmodule`,
+  # dropping the `.story` suffix and hiding them from that glob.
+  defp protect_story_files(igniter) do
+    IgniterConfig.dont_move_file_pattern(igniter, ~r/\.story\.exs$/)
   end
 end

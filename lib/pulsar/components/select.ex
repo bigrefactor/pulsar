@@ -340,8 +340,8 @@ defmodule Pulsar.Components.Select do
           </:end_addon>
         </Badge.badge>
       </div>
-      
-    <!-- Select wrapper with custom arrow -->
+
+      <!-- Select wrapper with custom arrow -->
       <div class="relative">
         <select
           id={@id}
@@ -364,8 +364,8 @@ defmodule Pulsar.Components.Select do
           </option>
           {Phoenix.HTML.raw(@option_html)}
         </select>
-        
-    <!-- Custom arrow icon (single-select only; native multi-select listboxes have no dropdown affordance) -->
+
+        <!-- Custom arrow icon (single-select only; native multi-select listboxes have no dropdown affordance) -->
         <div
           :if={!@multiple}
           class={[

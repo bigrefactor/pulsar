@@ -1,5 +1,5 @@
 defmodule Mix.Tasks.Pulsar.Gen.SkeletonTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   import Igniter.Test
 

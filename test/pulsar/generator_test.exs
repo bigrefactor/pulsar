@@ -1,8 +1,7 @@
 defmodule Pulsar.GeneratorTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   import Igniter.Test
-  import Pulsar.BackupTestHelper
 
   describe "use Pulsar.Generator argument validation" do
     test ":component must be a non-nil atom" do
@@ -89,57 +88,57 @@ defmodule Pulsar.GeneratorTest do
   describe "install_component (shared codepath)" do
     @describetag timeout: 180_000
 
-    test "backs up existing component before overwriting" do
+    test "re-running over an unchanged component writes nothing" do
+      phx_test_project()
+      |> Igniter.compose_task("pulsar.gen.button", [])
+      |> apply_igniter!()
+      |> Igniter.compose_task("pulsar.gen.button", [])
+      |> assert_unchanged()
+    end
+
+    test "re-running does not reformat the component it already wrote" do
+      first =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.gen.button", [])
+        |> apply_igniter!()
+
+      path = "lib/test_web/components/button.ex"
+      original = source_content(first, path)
+
+      second =
+        first
+        |> Igniter.compose_task("pulsar.gen.button", [])
+        |> apply_igniter!()
+
+      assert source_content(second, path) == original
+      assert original =~ "\n  def button(assigns) do"
+    end
+
+    test "re-running creates no backup files" do
       igniter =
         phx_test_project()
         |> Igniter.compose_task("pulsar.gen.button", [])
         |> apply_igniter!()
         |> Igniter.compose_task("pulsar.gen.button", [])
 
-      assert_backup_created(igniter, "lib/test_web/components/button.ex")
-
-      apply_igniter!(igniter)
+      refute Enum.any?(igniter.rewrite.sources, fn {path, _} -> path =~ ".bak" end)
     end
 
-    test "backup preserves original component content" do
+    test "an edited component is overwritten with the current Pulsar version" do
       igniter =
-        phx_test_project()
-        |> Igniter.compose_task("pulsar.gen.button", [])
-        |> apply_igniter!()
-        |> Igniter.compose_task("pulsar.gen.button", [])
-
-      assert_backup_contains(igniter, "lib/test_web/components/button.ex", ~r/defmodule.*Button/)
-      assert_backup_contains(igniter, "lib/test_web/components/button.ex", ~r/def button\(assigns\)/)
-
-      apply_igniter!(igniter)
-    end
-
-    test "does not create backup when component is new" do
-      igniter =
-        phx_test_project()
+        phx_test_project(
+          files: %{
+            "lib/test_web/components/button.ex" => """
+            defmodule TestWeb.Components.Button do
+              @moduledoc "hand-edited"
+            end
+            """
+          }
+        )
         |> Igniter.compose_task("pulsar.gen.button", [])
 
-      assert_no_backup_created(igniter, "lib/test_web/components/button.ex")
-
-      apply_igniter!(igniter)
-    end
-
-    test "multiple regenerations create timestamped backups" do
-      igniter =
-        phx_test_project()
-        |> Igniter.compose_task("pulsar.gen.button", [])
-        |> apply_igniter!()
-        |> Igniter.compose_task("pulsar.gen.button", [])
-
-      backups = get_backup_files(igniter, "lib/test_web/components/button.ex")
-
-      assert length(backups) == 1,
-             "Expected 1 backup file after one regeneration, found #{length(backups)}"
-
-      {backup_path, _source} = hd(backups)
-
-      assert backup_path =~ ~r/button\.ex\.bak\.\d{8}T\d{6}/,
-             "Backup filename should have timestamp pattern"
+      assert_changed(igniter, "lib/test_web/components/button.ex")
+      assert source_content(igniter, "lib/test_web/components/button.ex") =~ "def button(assigns) do"
 
       apply_igniter!(igniter)
     end
@@ -192,5 +191,20 @@ defmodule Pulsar.GeneratorTest do
         |> apply_igniter!()
       end
     end
+  end
+
+  defp source_content(igniter, path) do
+    {:ok, source} = Map.fetch(igniter.rewrite.sources, path)
+    Rewrite.Source.get(source, :content)
+  end
+
+  defp assert_changed(igniter, path_or_paths) do
+    for path <- List.wrap(path_or_paths) do
+      assert Igniter.changed?(igniter, path), """
+      Expected #{inspect(path)} to be changed, but it was unchanged.
+      """
+    end
+
+    igniter
   end
 end

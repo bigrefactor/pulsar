@@ -30,8 +30,9 @@ defmodule Mix.Tasks.Pulsar.Gen.Theme.Docs do
     * `assets/css/themes/light.css` — the default theme; `@theme` block with
       the semantic tokens that Tailwind uses to generate utilities
     * `assets/css/themes/dark.css` — `[data-theme="dark"]` override block
-    * `assets/css/app.css` — Phoenix LiveView configuration importing the theme
-    * `*.bak.<timestamp>` backups of any files that already existed
+    * `assets/css/app.css` — created with the theme import when absent; an
+      existing app.css is left untouched apart from ensuring
+      `@import "./theme.css";`
 
     The semantic tokens swap at runtime via `[data-theme="<name>"]` attribute
     overrides — components reference tokens like `bg-primary` directly, no
@@ -79,6 +80,9 @@ if Code.ensure_loaded?(Igniter) do
       {"themes/dark.css.eex", "assets/css/themes/dark.css"}
     ]
 
+    @app_css_path "assets/css/app.css"
+    @theme_import ~s(@import "./theme.css";)
+
     @impl Igniter.Mix.Task
     def info(_argv, _composing_task) do
       %Info{
@@ -104,30 +108,65 @@ if Code.ensure_loaded?(Igniter) do
     end
 
     defp install_theme_system(igniter) do
-      web_dir = Phoenix.web_module(igniter) |> Macro.underscore()
+      web_dir = igniter |> Phoenix.web_module() |> Macro.underscore()
 
       igniter
       |> install_theme_files(web_dir)
-      |> backup_existing_file("assets/css/app.css")
-      |> Igniter.copy_template(
-        template_path("app.css.eex"),
-        "assets/css/app.css",
-        [web_directory: web_dir],
-        on_exists: :overwrite
-      )
+      |> install_app_css(web_dir)
     end
 
     defp install_theme_files(igniter, web_dir) do
-      Enum.reduce(@theme_files, igniter, fn {template_rel, dest}, acc ->
-        acc
-        |> backup_existing_file(dest)
-        |> Igniter.copy_template(
+      @theme_files
+      |> Enum.reduce(igniter, fn {template_rel, dest}, acc ->
+        Igniter.copy_template(
+          acc,
           template_path(template_rel),
           dest,
           [web_directory: web_dir],
           on_exists: :overwrite
         )
       end)
+      |> reregister_custom_themes()
+    end
+
+    # install_theme_files/2 just overwrote theme.css from the template, which
+    # carries only the built-in light/dark imports. A theme scaffolded earlier
+    # via `mix pulsar.gen.theme <name>` still has its themes/<name>.css file on
+    # disk, so re-add its @import or it silently stops loading.
+    defp reregister_custom_themes(igniter) do
+      igniter = Igniter.include_glob(igniter, "assets/css/themes/*.css")
+
+      igniter.rewrite.sources
+      |> Map.keys()
+      |> Enum.filter(&custom_theme_file?/1)
+      |> Enum.reduce(igniter, fn dest, acc ->
+        name = Path.basename(dest, ".css")
+        add_theme_import(acc, "assets/css/theme.css", ~s(@import "./themes/#{name}.css";), dest)
+      end)
+    end
+
+    defp custom_theme_file?(path) do
+      String.starts_with?(path, "assets/css/themes/") and
+        path not in ["assets/css/themes/light.css", "assets/css/themes/dark.css"]
+    end
+
+    # app.css belongs to the host application; Pulsar needs exactly one line in it.
+    # Write the template only when there is no app.css to preserve.
+    defp install_app_css(igniter, web_dir) do
+      igniter = Igniter.include_existing_file(igniter, @app_css_path)
+
+      case Map.fetch(igniter.rewrite.sources, @app_css_path) do
+        {:ok, source} ->
+          ensure_import(igniter, @app_css_path, source, @theme_import)
+
+        :error ->
+          Igniter.copy_template(
+            igniter,
+            template_path("app.css.eex"),
+            @app_css_path,
+            web_directory: web_dir
+          )
+      end
     end
 
     defp scaffold_theme(igniter, name) do
@@ -171,7 +210,7 @@ if Code.ensure_loaded?(Igniter) do
     defp ensure_import(igniter, theme_css_path, source, import_line) do
       content = Rewrite.Source.get(source, :content)
 
-      if String.contains?(content, import_line) do
+      if import_line?(content, import_line) do
         igniter
       else
         new_content = insert_import(content, import_line)
@@ -182,22 +221,58 @@ if Code.ensure_loaded?(Igniter) do
       end
     end
 
-    # Insert the new import line after the last existing `@import "./themes/..."`
-    # line, falling back to after `@import "tailwindcss";` if no themes are
-    # imported yet, and finally to the top of the file.
+    # A commented-out import (single-line or spanning a multi-line /* */
+    # block) must not count as present; an import carrying a trailing inline
+    # comment must.
+    defp import_line?(content, import_line) do
+      content
+      |> strip_block_comments()
+      |> String.split("\n")
+      |> Enum.any?(&String.starts_with?(String.trim(&1), import_line))
+    end
+
+    # Blanks out /* ... */ blocks (including multi-line ones, and an unterminated
+    # one running to end of file) while preserving every newline, so the result
+    # still splits into the same line count and indices as `content` — callers
+    # that need to line up a stripped line with its position in the original can
+    # rely on that.
+    #
+    # `/*` inside a quoted string does not open a comment. Phoenix's own app.css
+    # ships `@source "../../_build/dev/phoenix-colocated/app/*/";`, whose glob
+    # contains `/*`.
+    defp strip_block_comments(content), do: strip_css(content, [])
+
+    defp strip_css(<<>>, acc), do: acc |> Enum.reverse() |> IO.iodata_to_binary()
+    defp strip_css(<<"/*", rest::binary>>, acc), do: strip_css_comment(rest, acc)
+
+    defp strip_css(<<quote, rest::binary>>, acc) when quote in [?", ?'],
+      do: strip_css_string(rest, quote, [quote | acc])
+
+    defp strip_css(<<char, rest::binary>>, acc), do: strip_css(rest, [char | acc])
+
+    defp strip_css_comment(<<>>, acc), do: strip_css(<<>>, acc)
+    defp strip_css_comment(<<"*/", rest::binary>>, acc), do: strip_css(rest, acc)
+    defp strip_css_comment(<<?\n, rest::binary>>, acc), do: strip_css_comment(rest, [?\n | acc])
+    defp strip_css_comment(<<_char, rest::binary>>, acc), do: strip_css_comment(rest, acc)
+
+    defp strip_css_string(<<>>, _quote, acc), do: strip_css(<<>>, acc)
+
+    defp strip_css_string(<<?\\, char, rest::binary>>, quote, acc), do: strip_css_string(rest, quote, [char, ?\\ | acc])
+
+    defp strip_css_string(<<quote, rest::binary>>, quote, acc), do: strip_css(rest, [quote | acc])
+
+    defp strip_css_string(<<char, rest::binary>>, quote, acc), do: strip_css_string(rest, quote, [char | acc])
+
+    # Insert the new import after the last live (non-commented) `@import`/
+    # `@source` line, falling back to the top of the file.
     defp insert_import(content, import_line) do
       lines = String.split(content, "\n")
+      live_lines = content |> strip_block_comments() |> String.split("\n")
 
       insertion_index =
-        case find_last_index(lines, &String.match?(&1, ~r{^@import "\./themes/.*";})) do
-          nil ->
-            case find_last_index(lines, &String.match?(&1, ~r{^@import "tailwindcss";})) do
-              nil -> 0
-              i -> i + 1
-            end
-
-          i ->
-            i + 1
+        case find_last_index(live_lines, &String.match?(&1, ~r/^@(import|source)\b/)) do
+          nil -> 0
+          i -> i + 1
         end
 
       lines
@@ -231,22 +306,6 @@ if Code.ensure_loaded?(Igniter) do
       |> :code.priv_dir()
       |> Path.join("templates")
       |> Path.join(relative)
-    end
-
-    defp backup_existing_file(igniter, path) do
-      igniter = Igniter.include_existing_file(igniter, path)
-
-      case Map.fetch(igniter.rewrite.sources, path) do
-        {:ok, source} ->
-          ts = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second) |> NaiveDateTime.to_iso8601(:basic)
-          backup_path = "#{path}.bak.#{ts}"
-          content = Rewrite.Source.get(source, :content)
-
-          Igniter.create_new_file(igniter, backup_path, content)
-
-        :error ->
-          igniter
-      end
     end
   end
 else

@@ -63,6 +63,13 @@ mix pulsar.install --components-module=MyAppWeb.UI
 mix pulsar.install --yes
 ```
 
+Re-running the installer regenerates your components and the three
+Pulsar-owned theme files (`theme.css`, `themes/light.css`,
+`themes/dark.css`), overwriting any changes you've made to them —
+commit your working tree first so you have a diff to review. Igniter
+normally shows that diff and prompts before writing; `--yes` skips
+the prompt (and the diff), so use it only after you've committed.
+
 Or generate components individually with `mix pulsar.gen.<component>`:
 
 ```bash

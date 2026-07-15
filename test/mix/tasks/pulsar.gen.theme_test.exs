@@ -1,8 +1,7 @@
 defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   import Igniter.Test
-  import Pulsar.BackupTestHelper
 
   describe "pulsar.gen.theme" do
     test "creates theme.css with theme definitions" do
@@ -12,25 +11,7 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
       |> apply_igniter!()
     end
 
-    test "backs up existing app.css to timestamped backup file" do
-      igniter =
-        phx_test_project(
-          files: %{
-            "assets/css/app.css" => """
-            /* Original app.css content */
-            @import "tailwindcss";
-            """
-          }
-        )
-        |> Igniter.compose_task("pulsar.gen.theme", [])
-
-      # Verify a timestamped backup file was created
-      assert_backup_created(igniter, "assets/css/app.css")
-
-      apply_igniter!(igniter)
-    end
-
-    test "creates new app.css with theme import" do
+    test "changes app.css to carry the theme import" do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.theme", [])
       |> assert_changed("assets/css/app.css")
@@ -52,41 +33,176 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
       |> apply_igniter!()
     end
 
-    test "new app.css imports theme.css" do
-      # Read the actual app.css template
-      expected_app =
-        :pulsar
-        |> :code.priv_dir()
-        |> Path.join("templates")
-        |> Path.join("app.css.eex")
-        |> File.read!()
-        |> String.replace("<%= @web_directory %>", "test_web")
+    test "adds the theme import to the Phoenix app.css without dropping its defaults" do
+      igniter =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.gen.theme", [])
+        |> assert_changed("assets/css/app.css")
 
+      content = source_content(igniter, "assets/css/app.css")
+
+      assert content =~ ~s(@import "./theme.css";)
+      assert content =~ ~s|@import "tailwindcss" source(none);|
+      assert content =~ ~s(@source "../js";)
+      assert content =~ ~s(@plugin "../vendor/heroicons";)
+
+      apply_igniter!(igniter)
+    end
+
+    test "re-running the task writes nothing" do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.theme", [])
-      |> assert_changed("assets/css/app.css")
-      |> assert_content_equals("assets/css/app.css", expected_app)
+      |> apply_igniter!()
+      |> Igniter.compose_task("pulsar.gen.theme", [])
+      |> assert_unchanged()
+    end
+
+    test "creates no backup files" do
+      igniter =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.gen.theme", [])
+        |> apply_igniter!()
+        |> Igniter.compose_task("pulsar.gen.theme", [])
+
+      refute Enum.any?(igniter.rewrite.sources, fn {path, _} -> path =~ ".bak" end)
+    end
+
+    test "preserves an existing app.css and ensures the theme import" do
+      igniter =
+        """
+        @import "tailwindcss" source(none);
+        @source "../css";
+
+        @plugin "../vendor/heroicons";
+
+        .my-custom-class {
+          color: red;
+        }
+        """
+        |> project_with_app_css()
+        |> Igniter.compose_task("pulsar.gen.theme", [])
+
+      content = source_content(igniter, "assets/css/app.css")
+
+      assert content =~ ~s(@import "./theme.css";)
+      assert content =~ ".my-custom-class"
+      assert content =~ ~s(@plugin "../vendor/heroicons";)
+
+      apply_igniter!(igniter)
+    end
+
+    test "does not duplicate the theme import in an app.css that already has it" do
+      """
+      @import "tailwindcss" source(none);
+      @source "../css";
+      @import "./theme.css";
+      """
+      |> project_with_app_css()
+      |> Igniter.compose_task("pulsar.gen.theme", [])
+      |> assert_unchanged("assets/css/app.css")
       |> apply_igniter!()
     end
 
-    test "preserves original app.css content when backing up" do
+    test "inserts a real import when the only occurrence is commented out" do
+      igniter =
+        """
+        @import "tailwindcss" source(none);
+        /* @import "./theme.css"; -- disabled for now */
+        """
+        |> project_with_app_css()
+        |> Igniter.compose_task("pulsar.gen.theme", [])
+
+      content = source_content(igniter, "assets/css/app.css")
+
+      assert has_import_line?(content, ~s(@import "./theme.css";)),
+             "expected a real, uncommented `@import \"./theme.css\";` line, got:\n\n#{content}"
+
+      apply_igniter!(igniter)
+    end
+
+    test "treats an import carrying a trailing comment as already present" do
+      """
+      @import "tailwindcss" source(none);
+      @import "./theme.css"; /* pulsar */
+      """
+      |> project_with_app_css()
+      |> Igniter.compose_task("pulsar.gen.theme", [])
+      |> assert_unchanged("assets/css/app.css")
+      |> apply_igniter!()
+    end
+
+    test "inserts a real import when the only occurrence is inside a multi-line block comment" do
+      igniter =
+        """
+        @import "tailwindcss" source(none);
+        /*
+        @import "./theme.css";
+        */
+        """
+        |> project_with_app_css()
+        |> Igniter.compose_task("pulsar.gen.theme", [])
+
+      content = source_content(igniter, "assets/css/app.css")
+
+      assert has_live_import_line?(content, ~s(@import "./theme.css";)),
+             "expected a real, uncommented `@import \"./theme.css\";` line outside any " <>
+               "/* */ block, got:\n\n#{content}"
+
+      apply_igniter!(igniter)
+    end
+
+    test "inserts a real import when the only occurrence follows an unterminated block comment" do
+      igniter =
+        """
+        @import "tailwindcss" source(none);
+        /* disabled for now
+        @import "./theme.css";
+        """
+        |> project_with_app_css()
+        |> Igniter.compose_task("pulsar.gen.theme", [])
+
+      content = source_content(igniter, "assets/css/app.css")
+
+      assert has_live_import_line?(content, ~s(@import "./theme.css";)),
+             "expected a real, uncommented `@import \"./theme.css\";` line outside the " <>
+               "unclosed /* block, got:\n\n#{content}"
+
+      apply_igniter!(igniter)
+    end
+
+    # Phoenix ships this @source glob in its generated app.css. The `/*` inside
+    # the quoted glob is not a comment opener; treating it as one hides every
+    # line after it, so the import reads as absent and a duplicate is appended
+    # on each run.
+    test "treats an import as present when a preceding @source glob contains /*" do
+      """
+      @import "tailwindcss" source(none);
+      @source "../../_build/dev/phoenix-colocated/test/*/";
+      @import "./theme.css";
+      """
+      |> project_with_app_css()
+      |> Igniter.compose_task("pulsar.gen.theme", [])
+      |> assert_unchanged("assets/css/app.css")
+      |> apply_igniter!()
+    end
+
+    test "overwrites a customized themes/dark.css" do
       igniter =
         phx_test_project(
           files: %{
-            "assets/css/app.css" => """
-            /* My custom CSS */
-            @import "tailwindcss";
-
-            .my-custom-class {
-              color: red;
+            "assets/css/themes/dark.css" => """
+            [data-theme="dark"] {
+              --color-primary: hotpink;
             }
             """
           }
         )
         |> Igniter.compose_task("pulsar.gen.theme", [])
 
-      # Verify the backup contains the original app.css import
-      assert_backup_contains(igniter, "assets/css/app.css", ~r/@import "tailwindcss"/)
+      content = source_content(igniter, "assets/css/themes/dark.css")
+
+      refute content =~ "hotpink"
+      assert content =~ ~s([data-theme="dark"])
 
       apply_igniter!(igniter)
     end
@@ -112,21 +228,21 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
       apply_igniter!(igniter)
     end
 
-    test "backs up existing themes/dark.css before overwriting" do
+    test "re-running the default task re-registers a previously scaffolded custom theme" do
       igniter =
-        phx_test_project(
-          files: %{
-            "assets/css/themes/dark.css" => """
-            [data-theme="dark"] {
-              --color-primary: hotpink;
-            }
-            """
-          }
-        )
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.gen.theme", [])
+        |> apply_igniter!()
+        |> Igniter.compose_task("pulsar.gen.theme", ["cupcake"])
+        |> apply_igniter!()
         |> Igniter.compose_task("pulsar.gen.theme", [])
 
-      assert_backup_created(igniter, "assets/css/themes/dark.css")
-      assert_backup_contains(igniter, "assets/css/themes/dark.css", ~r/hotpink/)
+      {:ok, source} = Map.fetch(igniter.rewrite.sources, "assets/css/theme.css")
+      content = Rewrite.Source.get(source, :content)
+
+      assert has_import_line?(content, ~s(@import "./themes/cupcake.css";)),
+             "expected the cupcake theme, still present on disk at assets/css/themes/cupcake.css, " <>
+               "to still be registered in theme.css after re-running the default task, got:\n\n#{content}"
 
       apply_igniter!(igniter)
     end
@@ -186,6 +302,22 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
       apply_igniter!(igniter)
     end
 
+    test "inserts a real import when the only occurrence is commented out" do
+      seed_content = existing_theme_css() <> ~s(\n/* @import "./themes/cupcake.css"; -- disabled */\n)
+
+      igniter =
+        phx_test_project(files: %{"assets/css/theme.css" => seed_content})
+        |> Igniter.compose_task("pulsar.gen.theme", ["cupcake"])
+
+      {:ok, source} = Map.fetch(igniter.rewrite.sources, "assets/css/theme.css")
+      content = Rewrite.Source.get(source, :content)
+
+      assert has_import_line?(content, ~s(@import "./themes/cupcake.css";)),
+             "expected a real, uncommented `@import \"./themes/cupcake.css\";` line, got:\n\n#{content}"
+
+      apply_igniter!(igniter)
+    end
+
     test "refuses to overwrite an existing themes/<name>.css" do
       original = ~s([data-theme="cupcake"] { --color-primary: red; }\n)
 
@@ -236,5 +368,33 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
     end
 
     igniter
+  end
+
+  defp source_content(igniter, path) do
+    {:ok, source} = Map.fetch(igniter.rewrite.sources, path)
+    Rewrite.Source.get(source, :content)
+  end
+
+  defp has_import_line?(content, import_line) do
+    content
+    |> String.split("\n")
+    |> Enum.any?(&(String.trim(&1) == import_line))
+  end
+
+  # Unlike has_import_line?/2, strips /* ... */ blocks (including multi-line)
+  # first, so an import that only appears inside a comment does not count.
+  defp has_live_import_line?(content, import_line) do
+    content
+    |> String.replace(~r/\/\*.*?(?:\*\/|\z)/s, "")
+    |> has_import_line?(import_line)
+  end
+
+  # phx_test_project/1 discards a `files:` seed for assets/css/app.css: it runs
+  # the Phoenix installer, which writes its own app.css over the seed. Write the
+  # customized file after the project exists instead.
+  defp project_with_app_css(css) do
+    phx_test_project()
+    |> Igniter.create_new_file("assets/css/app.css", css, on_exists: :overwrite)
+    |> apply_igniter!()
   end
 end

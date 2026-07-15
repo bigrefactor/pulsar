@@ -475,16 +475,16 @@ defmodule Pulsar.Components.Switch do
         aria-invalid={@invalid && "true"}
         {@rest}
       />
-      
-    <!-- Visual switch track (visual only; click target is the overlay below) -->
+
+      <!-- Visual switch track (visual only; click target is the overlay below) -->
       <div
         role="presentation"
         class={@switch_class}
         data-loading={@loading && "true"}
         data-disabled={@disabled && "true"}
       />
-      
-    <!-- Custom thumb with loading state -->
+
+      <!-- Custom thumb with loading state -->
       <div
         class={@thumb_class}
         data-loading={(@loading && "true") || "false"}
@@ -510,14 +510,14 @@ defmodule Pulsar.Components.Switch do
           >
           </path>
         </svg>
-        
-    <!-- Custom loading content -->
+
+        <!-- Custom loading content -->
         <div :if={@loading && @loading_content != []}>
           {render_slot(@loading_content)}
         </div>
       </div>
-      
-    <!-- 24px click target. A sibling of the input (not an ancestor) so the
+
+      <!-- 24px click target. A sibling of the input (not an ancestor) so the
          dispatched click does not bubble back into this handler and recurse. -->
       <div
         role="presentation"

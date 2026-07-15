@@ -275,8 +275,7 @@ defmodule Pulsar.Components.Steps do
             :if={item.glyph == :spinner}
             aria-hidden="true"
             class="h-1/2 w-1/2 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none"
-          >
-          </span>
+          ></span>
           <Icon.icon :if={item.glyph == :icon} name={item.icon} size={@icon} />
           <span :if={item.glyph == :number}>{item.number}</span>
           <span :if={item.glyph == :dot} class="h-1/3 w-1/3 rounded-full bg-current"></span>

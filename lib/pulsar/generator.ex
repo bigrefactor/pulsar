@@ -172,26 +172,19 @@ defmodule Pulsar.Generator do
     # eagerly load every project source, so `module_exists?/2` reports false
     # for an on-disk module it hasn't parsed, which would route an existing
     # file into the create path and fail with "File already exists".
+    igniter = Igniter.compose_task(igniter, "igniter.add_extension", ["phoenix"])
+
     igniter =
       if Igniter.exists?(igniter, path) do
-        # Wrap template contents in module definition for existing files
         wrapped_contents = """
         defmodule #{inspect(component)} do
           #{contents}
         end
         """
 
-        igniter
-        |> Igniter.include_existing_file(path)
-        |> backup_existing_component(path)
-        |> Igniter.compose_task("igniter.add_extension", ["phoenix"])
-        |> Igniter.update_file(path, fn source ->
-          Rewrite.Source.update(source, :content, wrapped_contents)
-        end)
+        Igniter.create_new_file(igniter, path, wrapped_contents, on_exists: :overwrite)
       else
-        igniter
-        |> Igniter.compose_task("igniter.add_extension", ["phoenix"])
-        |> Igniter.Project.Module.create_module(component, contents)
+        Igniter.Project.Module.create_module(igniter, component, contents)
       end
 
     igniter
@@ -225,20 +218,6 @@ defmodule Pulsar.Generator do
     case igniter.args.options[:print_setup_notice] do
       false -> igniter
       _ -> Storybook.print_setup_notice(igniter)
-    end
-  end
-
-  defp backup_existing_component(igniter, path) do
-    case Map.fetch(igniter.rewrite.sources, path) do
-      {:ok, source} ->
-        ts = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second) |> NaiveDateTime.to_iso8601(:basic)
-        backup_path = "#{path}.bak.#{ts}"
-        content = Rewrite.Source.get(source, :content)
-
-        Igniter.create_new_file(igniter, backup_path, content)
-
-      :error ->
-        igniter
     end
   end
 

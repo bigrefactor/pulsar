@@ -1,5 +1,5 @@
 defmodule Mix.Tasks.Pulsar.Gen.AlertTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   import Igniter.Test
 

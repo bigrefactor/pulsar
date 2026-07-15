@@ -1,5 +1,5 @@
 defmodule Mix.Tasks.Pulsar.Gen.DatePickerTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   import Igniter.Test
 

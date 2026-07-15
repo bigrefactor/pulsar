@@ -341,11 +341,11 @@ defmodule Pulsar.Components.Field do
           {render_slot(@description)}
         </div>
       </div>
-      
-    <!-- Input Section -->
+
+      <!-- Input Section -->
       {render_input(assigns)}
-      
-    <!-- Error Section -->
+
+      <!-- Error Section -->
       <div :if={@has_errors} class="flex flex-col gap-1" aria-live="polite">
         <p
           :for={{error, index} <- Enum.with_index(@field_errors)}
