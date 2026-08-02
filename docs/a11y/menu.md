@@ -20,7 +20,7 @@ links + disclosure — **not** the `menubar`/`menu` roles.
 
 **Evidence:** Leading icons and the disclosure chevron are decorative — `Icon`
 defaults to `aria-hidden="true"` — while every row's name comes from its text
-label — `lib/pulsar/components/menu.ex:432, 433, 546`. In the collapsed sidebar
+label — `lib/pulsar/components/menu.ex:436, 437, 550`. In the collapsed sidebar
 icon rail the label is hidden with `sr-only` (not `display:none`), so an
 icon-only row keeps its accessible name — `:103`. The supplementary `trailing`
 affordance (e.g. a count) is `display:none` in that rail: it is hidden from
@@ -32,11 +32,11 @@ and the count returns for everyone when the rail expands.
 
 **Evidence:**
 - Root is a `<nav>` landmark wrapping a `<ul role="list">`; items are `<li>` —
-  `lib/pulsar/components/menu.ex:380, 192–204, 421`
+  `lib/pulsar/components/menu.ex:380, 192–204, 425`
 - A section is a labelled grouping list (`<ul aria-labelledby>` pointing at the
-  section heading) — `:475–476`
+  section heading) — `:479–480`
 - A group exposes the disclosure relationship: the trigger's `aria-controls`
-  points at its panel `id` — vertical `:570, 579`; horizontal `:534, 542`
+  points at its panel `id` — vertical `:574, 583`; horizontal `:538, 546`
   (the panel is the Popover)
 - Tests assert the landmark, list, section labelling, and group wiring —
   `test/pulsar/components/menu_test.exs`
@@ -44,19 +44,19 @@ and the count returns for everyone when the rail expands.
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** Items render in DOM order; orientation flips the visual axis with
-`flex-row`/`flex-col`, never reordering source — `lib/pulsar/components/menu.ex:592–593`.
+`flex-row`/`flex-col`, never reordering source — `lib/pulsar/components/menu.ex:596–597`.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** The active item is conveyed by `aria-current="page"` plus a filled
 treatment and (typically) an icon, not by color or position alone —
-`lib/pulsar/components/menu.ex:99, 427`.
+`lib/pulsar/components/menu.ex:99, 431`.
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** The current page is marked programmatically with `aria-current`
 (not color alone); the expanded/collapsed state is exposed via `aria-expanded`
-and a rotating chevron — `lib/pulsar/components/menu.ex:427, 569, 112, 117`. A
+and a rotating chevron — `lib/pulsar/components/menu.ex:431, 573, 112, 117`. A
 group carrying `active` is styled with `font-medium` (a non-color cue) in
 addition to the fill; this trigger treatment is intentionally redundant — the
 authoritative current-page signal is the child item's `aria-current`, so no
@@ -82,9 +82,9 @@ padding throughout — `lib/pulsar/components/menu.ex:91, 109`.
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** A vertical menu is a flex column with no enforced width; a
-horizontal menu is a flex row — `lib/pulsar/components/menu.ex:592–593`. The
+horizontal menu is a flex row — `lib/pulsar/components/menu.ex:596–597`. The
 horizontal dropdown is the Popover primitive, which is `min-w-48` and flips/shifts
-to stay on screen rather than enforcing a viewport minimum — `:534`, see the
+to stay on screen rather than enforcing a viewport minimum — `:538`, see the
 [Popover audit](popover.md).
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
@@ -94,7 +94,7 @@ to stay on screen rather than enforcing a viewport minimum — `:534`, see the
   `lib/pulsar/components/menu.ex:94`
 - The horizontal dropdown delineates against the page with the Popover's
   `elevated` surface (`shadow-dropdown`) plus a `border-border` outline the menu
-  adds — `:534`, see the [Popover audit](popover.md)
+  adds — `:538`, see the [Popover audit](popover.md)
 - The active row's `bg-primary` fill provides its own boundary — `:99`
 
 The `--color-ring` token measures 5.02:1 (light) / 6.72:1 (dark) per the project
@@ -110,7 +110,7 @@ overrides; labels truncate rather than clip layout — `lib/pulsar/components/me
 **Evidence:** The horizontal group's dropdown opens on **click/Enter** (not
 hover) via the trigger's `popovertarget`, is dismissable via Escape and
 click-outside, and is persistent until dismissed — the Popover primitive supplies
-this behavior — `lib/pulsar/components/menu.ex:534`, see the
+this behavior — `lib/pulsar/components/menu.ex:538`, see the
 [Popover audit](popover.md). The vertical disclosure likewise toggles on
 click/Enter, never on hover — `:252`.
 
@@ -118,7 +118,7 @@ click/Enter, never on hover — `:252`.
 
 **Evidence:** Items are native `<a>`/`<button>` elements; group triggers are
 native `<button>`s — vertical toggles on Enter/Space through the hook, horizontal
-toggles via the native `popovertarget` — `lib/pulsar/components/menu.ex:422, 437, 536, 564`.
+toggles via the native `popovertarget` — `lib/pulsar/components/menu.ex:426, 441, 540, 568`.
 Arrow keys add roving focus (Up/Down vertical, Left/Right horizontal) and
 Home/End — `:289–313`. A keyboard fixture exercises ArrowDown, Enter-to-expand,
 and Escape — `test/integration/a11y/keyboard_test.exs`.
@@ -161,12 +161,12 @@ opened — `lib/pulsar/components/menu.ex:129`.
 ### 2.4.4 Link Purpose (In Context) (A) — ✓ PASS
 
 **Evidence:** Each item requires label content (`inner_block`, required), so link
-text is always present — `lib/pulsar/components/menu.ex:400`.
+text is always present — `lib/pulsar/components/menu.ex:404`.
 
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
 
 **Evidence:** The landmark takes a descriptive `label`; sections take a heading
-label; groups take a trigger `label` — `lib/pulsar/components/menu.ex:146, 454, 484`.
+label; groups take a trigger `label` — `lib/pulsar/components/menu.ex:146, 458, 488`.
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
@@ -178,7 +178,7 @@ focus-visible:ring-ring focus-visible:ring-offset-2` — `lib/pulsar/components/
 **Evidence:** The menu creates no sticky/overlapping chrome of its own. The
 horizontal dropdown is positioned by the Popover primitive, which anchors it
 beside the trigger (default below) and flips/shifts to stay on screen rather than
-covering the trigger — `lib/pulsar/components/menu.ex:534`, see the
+covering the trigger — `lib/pulsar/components/menu.ex:538`, see the
 [Popover audit](popover.md).
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
@@ -190,7 +190,7 @@ also pointer-up — `lib/pulsar/components/menu.ex:252`.
 ### 2.5.3 Label in Name (A) — ✓ PASS
 
 **Evidence:** Rows are named by their visible text, with no conflicting
-`aria-label` — `lib/pulsar/components/menu.ex:433, 546`.
+`aria-label` — `lib/pulsar/components/menu.ex:437, 550`.
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
@@ -206,13 +206,13 @@ on activation, links navigate on activation — `lib/pulsar/components/menu.ex:2
 
 **Evidence:**
 - Items are native links/buttons; the active item exposes `aria-current="page"`
-  — `lib/pulsar/components/menu.ex:427, 440`
+  — `lib/pulsar/components/menu.ex:431, 444`
 - Vertical group triggers are `<button>` with `aria-expanded` reflecting state
   and `aria-controls` naming the panel; the hook keeps `aria-expanded` in sync on
-  toggle — `:569–570`, hook `:271–287`
+  toggle — `:573–574`, hook `:271–287`
 - Horizontal group triggers carry server-rendered `aria-expanded` and
   `aria-controls`; the Popover keeps `aria-expanded` in sync as the dropdown
-  opens and closes — `:541–542`, see the [Popover audit](popover.md)
+  opens and closes — `:545–546`, see the [Popover audit](popover.md)
 - Tests assert the disclosure attributes and active state —
   `test/pulsar/components/menu_test.exs`
 
