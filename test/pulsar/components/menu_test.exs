@@ -414,4 +414,36 @@ defmodule Pulsar.Components.MenuTest do
       refute html =~ "grid-rows-[0fr]"
     end
   end
+
+  describe "menu_item/1 non-GET links" do
+    test "method= renders a phoenix_html non-GET link" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Menu.menu id="m" label="Primary">
+          <Menu.menu_item href="/sign-out" method="delete">Sign out</Menu.menu_item>
+        </Menu.menu>
+        """)
+
+      assert html =~ ~s(data-method="delete")
+      assert html =~ ~s(data-to="/sign-out")
+      assert html =~ "data-csrf="
+      assert html =~ "data-menu-item"
+    end
+
+    test "a plain link item carries no non-GET data attributes" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Menu.menu id="m" label="Primary">
+          <Menu.menu_item href="/docs">Docs</Menu.menu_item>
+        </Menu.menu>
+        """)
+
+      refute html =~ "data-method="
+      refute html =~ "data-csrf="
+    end
+  end
 end

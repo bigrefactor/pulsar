@@ -396,7 +396,10 @@ defmodule Pulsar.Components.Menu do
 
   attr(:class, :string, default: "", doc: "Additional CSS classes")
 
-  attr(:rest, :global, doc: "Additional HTML attributes (e.g. phx-click on an action item)")
+  attr(:rest, :global,
+    include: ~w(method csrf_token download target rel),
+    doc: "Additional HTML attributes (e.g. phx-click on an action item, method on a non-GET link)"
+  )
 
   slot(:inner_block, required: true, doc: "Item label")
   slot(:trailing, doc: "Trailing affordance (badge, count, chevron)")
@@ -409,6 +412,7 @@ defmodule Pulsar.Components.Menu do
       <.menu_item navigate={~p"/"} icon="hero-home" active>Home</.menu_item>
       <.menu_item href="/docs">Docs</.menu_item>
       <.menu_item phx-click="sign_out">Sign out</.menu_item>
+      <.menu_item href={~p"/sign-out"} method="delete">Sign out</.menu_item>
   """
   @spec menu_item(map()) :: Rendered.t()
   def menu_item(assigns) do
