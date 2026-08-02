@@ -176,6 +176,38 @@ defmodule Pulsar.Components.DropdownMenuTest do
     end
   end
 
+  describe "dropdown_menu_item/1 non-GET links" do
+    test "method= renders a phoenix_html non-GET link" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu_item href="/sign-out" method="delete">
+          Sign out
+        </DropdownMenu.dropdown_menu_item>
+        """)
+
+      assert html =~ ~s(data-method="delete")
+      assert html =~ ~s(data-to="/sign-out")
+      assert html =~ "data-csrf="
+      # Still a real menu item, so the hook's roving focus and typeahead reach it.
+      assert html =~ ~s(role="menuitem")
+      assert html =~ "data-menu-item"
+    end
+
+    test "a plain link item carries no non-GET data attributes" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu_item href="/profile">Profile</DropdownMenu.dropdown_menu_item>
+        """)
+
+      refute html =~ "data-method="
+      refute html =~ "data-csrf="
+    end
+  end
+
   describe "dropdown_menu_checkbox_item/1" do
     test "renders a checkbox menuitem reflecting its checked state" do
       assigns = %{}

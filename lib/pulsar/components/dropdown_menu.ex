@@ -454,7 +454,10 @@ defmodule Pulsar.Components.DropdownMenu do
 
   attr(:class, :string, default: "", doc: "Additional CSS classes")
 
-  attr(:rest, :global, doc: "Additional HTML attributes (e.g. phx-click on an action item)")
+  attr(:rest, :global,
+    include: ~w(method csrf_token download target rel),
+    doc: "Additional HTML attributes (e.g. phx-click on an action item, method on a non-GET link)"
+  )
 
   slot(:inner_block, required: true, doc: "Item label")
   slot(:trailing, doc: "Trailing affordance (keyboard shortcut hint, badge)")
@@ -466,6 +469,7 @@ defmodule Pulsar.Components.DropdownMenu do
 
       <.dropdown_menu_item navigate={~p"/profile"} icon="hero-user">Profile</.dropdown_menu_item>
       <.dropdown_menu_item phx-click="sign_out" color="danger">Sign out</.dropdown_menu_item>
+      <.dropdown_menu_item href={~p"/sign-out"} method="delete" color="danger">Sign out</.dropdown_menu_item>
   """
   @spec dropdown_menu_item(map()) :: Rendered.t()
   def dropdown_menu_item(assigns) do
