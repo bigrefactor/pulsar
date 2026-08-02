@@ -206,6 +206,44 @@ defmodule Pulsar.Components.DropdownMenuTest do
       refute html =~ "data-method="
       refute html =~ "data-csrf="
     end
+
+    test "method= with navigate= raises" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/:method cannot be used with :navigate or :patch/, fn ->
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu_item navigate="/sign-out" method="delete">
+          Sign out
+        </DropdownMenu.dropdown_menu_item>
+        """)
+      end
+    end
+
+    test "method= with patch= raises" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/:method cannot be used with :navigate or :patch/, fn ->
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu_item patch="/sign-out" method="delete">
+          Sign out
+        </DropdownMenu.dropdown_menu_item>
+        """)
+      end
+    end
+
+    test "method= on an action item does not reach the button" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu_item phx-click="sign_out" method="delete">
+          Sign out
+        </DropdownMenu.dropdown_menu_item>
+        """)
+
+      assert html =~ "<button"
+      refute html =~ ~s(method="delete")
+    end
   end
 
   describe "dropdown_menu_checkbox_item/1" do

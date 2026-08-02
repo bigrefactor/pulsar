@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed - Non-GET Menu Items
 
 - **`dropdown_menu_item/1` and `menu_item/1` accept `method`**: a menu row can now perform a POST/PUT/DELETE — `<.dropdown_menu_item href={~p"/sign-out"} method="delete">Sign out</.dropdown_menu_item>`. Previously `method` was rejected as an undefined attribute, which failed the build for apps compiling with `--warnings-as-errors`, so no menu item could sign a user out or otherwise mutate the session. `csrf_token`, `download`, `target`, and `rel` are accepted alongside it.
-- **`method` requires `href`**: as with `Phoenix.Component.link/1`, `method` has no effect when paired with `navigate` or `patch` — those always issue a GET.
+- **`method` requires `href`**: pairing it with `navigate` or `patch` raises `ArgumentError` rather than silently issuing a GET, matching `Pulsar.Components.Link.a/1`. `method` is also confined to the link branch, so it no longer lands on the `<button>` an item without a target renders.
 
 ### Fixed - Idempotent Generator Re-runs
 

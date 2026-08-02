@@ -396,9 +396,16 @@ defmodule Pulsar.Components.Menu do
 
   attr(:class, :string, default: "", doc: "Additional CSS classes")
 
+  attr(:method, :string,
+    default: nil,
+    doc: ~s{HTTP method for the link, e.g. "delete". Requires `href`; cannot be combined with `navigate` or `patch`.}
+  )
+
+  attr(:csrf_token, :any, default: true, doc: "CSRF token for links with non-GET methods")
+
   attr(:rest, :global,
-    include: ~w(method csrf_token download target rel),
-    doc: "Additional HTML attributes (e.g. phx-click on an action item, method on a non-GET link)"
+    include: ~w(download target rel),
+    doc: "Additional HTML attributes (e.g. phx-click on an action item)"
   )
 
   slot(:inner_block, required: true, doc: "Item label")
@@ -416,6 +423,11 @@ defmodule Pulsar.Components.Menu do
   """
   @spec menu_item(map()) :: Rendered.t()
   def menu_item(assigns) do
+    if assigns.method != nil and (assigns.navigate != nil or assigns.patch != nil) do
+      raise ArgumentError,
+            ":method cannot be used with :navigate or :patch. Use :method only with :href."
+    end
+
     assigns =
       assigns
       |> assign(:link?, assigns.navigate != nil or assigns.patch != nil or assigns.href != nil)
@@ -429,6 +441,8 @@ defmodule Pulsar.Components.Menu do
         navigate={@navigate}
         patch={@patch}
         href={@href}
+        method={@method || "get"}
+        csrf_token={@csrf_token}
         aria-current={@aria_current}
         data-menu-item
         class={@row_classes}

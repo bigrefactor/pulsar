@@ -23,17 +23,17 @@ separators (`role="separator"`), and submenus (a `menuitem` with
 **Evidence:** The leading icons, the checkbox check, the radio dot, and the
 submenu chevron are decorative. Icons render through `Icon.icon` with no
 `aria_label`, so they are `aria-hidden`; the radio dot is a bare `<span>` —
-`lib/pulsar/components/dropdown_menu.ex:495`, `:556–557`, `:624–625`. Each item's
+`lib/pulsar/components/dropdown_menu.ex:509`, `:570–571`, `:638–639`. Each item's
 meaning is carried by its text label.
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:** The structure is fully programmatic: the panel is `role="menu"`
-(`:198`); items are `role="menuitem"` (`:484`, `:503`),
-`role="menuitemcheckbox"` with `aria-checked` (`:547–550`), or
-`role="menuitemradio"` with `aria-checked` (`:615–618`); groups are `role="group"`
-with `aria-labelledby` to their heading (`:672–673`); separators are
-`role="separator"` (`:692`). The trigger exposes `aria-haspopup="menu"` and (via
+(`:198`); items are `role="menuitem"` (`:496`, `:517`),
+`role="menuitemcheckbox"` with `aria-checked` (`:561–564`), or
+`role="menuitemradio"` with `aria-checked` (`:629–632`); groups are `role="group"`
+with `aria-labelledby` to their heading (`:686–687`); separators are
+`role="separator"` (`:706`). The trigger exposes `aria-haspopup="menu"` and (via
 the popover hook) `aria-expanded` (`:216`, `lib/pulsar/components/popover.ex:387–388`).
 Unit tests assert each role/state — `test/pulsar/components/dropdown_menu_test.exs`.
 
@@ -50,15 +50,15 @@ identified by their text labels.
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** State is never color-only. A checked checkbox/radio shows a check
-glyph / filled dot, not just a tint — `lib/pulsar/components/dropdown_menu.ex:556–557`,
-`:624–625`. An item set to `color="danger"` pairs its danger color with the action's
-text label (and typically an icon) — `:817–818`.
+glyph / filled dot, not just a tint — `lib/pulsar/components/dropdown_menu.ex:570–571`,
+`:638–639`. An item set to `color="danger"` pairs its danger color with the action's
+text label (and typically an icon) — `:831–832`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Item text and headings use `text-foreground`
 (`lib/pulsar/components/dropdown_menu.ex:95`, `:110`); an item's optional `color`
-emphasis recolors the text to the matching semantic token (`item_color/1`, `:803–826`),
+emphasis recolors the text to the matching semantic token (`item_color/1`, `:817–840`),
 each of which clears 4.5:1 as text on the popover's `bg-surface-1`
 (`lib/pulsar/components/popover.ex:133–141`) in both themes — measured at the settled
 (post fade-in) state. The trailing shortcut hint is supplementary
@@ -99,7 +99,7 @@ it is **dismissable** (Escape closes the submenu via the native nested popover),
 **hoverable** (the nested `popover="auto"` panel stays open while the pointer is
 over it), and **persistent** (it stays until dismissed or focus/pointer leaves) —
 `lib/pulsar/components/dropdown_menu.ex:386–392` (hover-intent open), the nested
-`Popover.popover` at `:745–777`.
+`Popover.popover` at `:759–791`.
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
@@ -125,7 +125,7 @@ exception and registers no global shortcut — `lib/pulsar/components/dropdown_m
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
 **Evidence:** Items carry `tabindex="-1"` and are reached by roving focus, so only
-the trigger is in the page tab order (`:486`, `:505`, `:549`, `:617`, `:765`); a
+the trigger is in the page tab order (`:498`, `:519`, `:563`, `:631`, `:779`); a
 closed menu is `display:none` (native `[popover]`), keeping its items out of the
 tab order. No positive `tabindex` is used.
 
@@ -133,13 +133,13 @@ tab order. No positive `tabindex` is used.
 
 **Evidence:** Item links require `inner_block` content and derive their purpose
 from that visible text; the component renders no "click here" markup and adds no
-contradicting accessible name — `lib/pulsar/components/dropdown_menu.ex:475–518`.
+contradicting accessible name — `lib/pulsar/components/dropdown_menu.ex:482–530`.
 
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
 
 **Evidence:** The menu has an accessible name — the `label` attr becomes
 `aria-label`, or the hook labels it by the trigger (`:244–248`); groups name
-themselves via `aria-labelledby` to their heading (`:672–673`); non-interactive
+themselves via `aria-labelledby` to their heading (`:686–687`); non-interactive
 section headings render through `dropdown_menu_label` (`:110`).
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
@@ -158,7 +158,7 @@ side when the requested side lacks room — `lib/pulsar/components/popover.ex:42
 
 **Evidence:** Items are native `<button>`/`<a>` activated on `click` (fires on
 pointer-up), and the menu opens via the trigger's `click` — no action fires on
-pointer-down — `lib/pulsar/components/dropdown_menu.ex:482`, `:500`.
+pointer-down — `lib/pulsar/components/dropdown_menu.ex:494`, `:514`.
 
 ### 2.5.3 Label in Name (A) — ✓ PASS
 
@@ -182,7 +182,7 @@ Space / Arrow), not on focus — `lib/pulsar/components/dropdown_menu.ex:251–2
 **Evidence:** The trigger is a menu button (`aria-haspopup="menu"` +
 `aria-expanded`); the panel is `role="menu"`; items expose their roles and
 `aria-checked`/`aria-disabled` state — `lib/pulsar/components/dropdown_menu.ex:198`,
-`:216`, `:547–550`, `:615–618`. Unit tests assert the roles and states —
+`:216`, `:561–564`, `:629–632`. Unit tests assert the roles and states —
 `test/pulsar/components/dropdown_menu_test.exs`.
 
 ## Not applicable
