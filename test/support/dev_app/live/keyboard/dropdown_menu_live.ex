@@ -36,6 +36,19 @@ defmodule Pulsar.DevApp.Keyboard.DropdownMenuLive do
       </DropdownMenu.dropdown_menu>
 
       <button id="kbd-dm-after" type="button">after</button>
+
+      <DropdownMenu.dropdown_menu id="kbd-dm2" label="Account">
+        <:trigger>
+          <button id="kbd-dm2-trigger" type="button">Open account menu</button>
+        </:trigger>
+
+        <DropdownMenu.dropdown_menu_item id="kbd-dm2-nav" href="/keyboard/menu">
+          Go to menu fixture
+        </DropdownMenu.dropdown_menu_item>
+        <DropdownMenu.dropdown_menu_item id="kbd-dm2-signout" href="/sign-out" method="delete">
+          Sign out
+        </DropdownMenu.dropdown_menu_item>
+      </DropdownMenu.dropdown_menu>
     </main>
     """
   end

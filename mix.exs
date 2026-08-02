@@ -171,6 +171,7 @@ defmodule Pulsar.MixProject do
       "pulsar.test_app.theme": ["pulsar.dev_app.theme"],
       check: [
         "compile --warnings-as-errors",
+        "cmd env MIX_ENV=test mix compile --warnings-as-errors",
         "pulsar.sync --check",
         "format --check-formatted",
         "credo --strict",

@@ -395,7 +395,17 @@ attr(:icon, :string, default: nil, doc: ~s{Leading Heroicon name, e.g. "hero-hom
 
 attr(:class, :string, default: "", doc: "Additional CSS classes")
 
-attr(:rest, :global, doc: "Additional HTML attributes (e.g. phx-click on an action item)")
+attr(:method, :string,
+  default: nil,
+  doc: ~s{HTTP method for the link, e.g. "delete". Requires `href`; cannot be combined with `navigate` or `patch`.}
+)
+
+attr(:csrf_token, :any, default: true, doc: "CSRF token for links with non-GET methods")
+
+attr(:rest, :global,
+  include: ~w(download target rel),
+  doc: "Additional HTML attributes (e.g. phx-click on an action item)"
+)
 
 slot(:inner_block, required: true, doc: "Item label")
 slot(:trailing, doc: "Trailing affordance (badge, count, chevron)")
@@ -408,9 +418,15 @@ Renders a menu item — a navigation link, or an action button when no target is
     <.menu_item navigate={~p"/"} icon="hero-home" active>Home</.menu_item>
     <.menu_item href="/docs">Docs</.menu_item>
     <.menu_item phx-click="sign_out">Sign out</.menu_item>
+    <.menu_item href={~p"/sign-out"} method="delete">Sign out</.menu_item>
 """
 @spec menu_item(map()) :: Rendered.t()
 def menu_item(assigns) do
+  if assigns.method != nil and (assigns.navigate != nil or assigns.patch != nil) do
+    raise ArgumentError,
+          ":method cannot be used with :navigate or :patch. Use :method only with :href."
+  end
+
   assigns =
     assigns
     |> assign(:link?, assigns.navigate != nil or assigns.patch != nil or assigns.href != nil)
@@ -424,6 +440,8 @@ def menu_item(assigns) do
       navigate={@navigate}
       patch={@patch}
       href={@href}
+      method={@method || "get"}
+      csrf_token={@csrf_token}
       aria-current={@aria_current}
       data-menu-item
       class={@row_classes}

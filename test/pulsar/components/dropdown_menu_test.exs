@@ -176,6 +176,76 @@ defmodule Pulsar.Components.DropdownMenuTest do
     end
   end
 
+  describe "dropdown_menu_item/1 non-GET links" do
+    test "method= renders a phoenix_html non-GET link" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu_item href="/sign-out" method="delete">
+          Sign out
+        </DropdownMenu.dropdown_menu_item>
+        """)
+
+      assert html =~ ~s(data-method="delete")
+      assert html =~ ~s(data-to="/sign-out")
+      assert html =~ "data-csrf="
+      # Still a real menu item, so the hook's roving focus and typeahead reach it.
+      assert html =~ ~s(role="menuitem")
+      assert html =~ "data-menu-item"
+    end
+
+    test "a plain link item carries no non-GET data attributes" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu_item href="/profile">Profile</DropdownMenu.dropdown_menu_item>
+        """)
+
+      refute html =~ "data-method="
+      refute html =~ "data-csrf="
+    end
+
+    test "method= with navigate= raises" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/:method cannot be used with :navigate or :patch/, fn ->
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu_item navigate="/sign-out" method="delete">
+          Sign out
+        </DropdownMenu.dropdown_menu_item>
+        """)
+      end
+    end
+
+    test "method= with patch= raises" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/:method cannot be used with :navigate or :patch/, fn ->
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu_item patch="/sign-out" method="delete">
+          Sign out
+        </DropdownMenu.dropdown_menu_item>
+        """)
+      end
+    end
+
+    test "method= on an action item does not reach the button" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu_item phx-click="sign_out" method="delete">
+          Sign out
+        </DropdownMenu.dropdown_menu_item>
+        """)
+
+      assert html =~ "<button"
+      refute html =~ ~s(method="delete")
+    end
+  end
+
   describe "dropdown_menu_checkbox_item/1" do
     test "renders a checkbox menuitem reflecting its checked state" do
       assigns = %{}

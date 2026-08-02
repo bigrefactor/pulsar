@@ -515,6 +515,27 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
       |> press("#kbd-dm-sub-trigger", "ArrowRight")
       |> A11y.assert_focused("kbd-dm-email")
     end
+
+    # A link item must still navigate. The hook intercepts clicks on
+    # [data-menu-item] to close the menu; if it ever preventDefault'd ordinary
+    # activation, every link item — including a non-GET `method=` one — would
+    # silently stop working while aria-expanded and the item markup still
+    # looked correct.
+    #
+    # Verification: add `e.preventDefault()` to `handleClick` in
+    # `.PulsarDropdownMenu` (priv/templates/dropdown_menu.ex.eex and the synced
+    # lib file), run `MIX_ENV=test mix assets.build`, re-run — this fails
+    # because the browser never leaves /keyboard/dropdown_menu.
+    test "clicking a link item navigates to its href", %{conn: conn} do
+      conn
+      |> visit("/keyboard/dropdown_menu")
+      |> A11y.await_live_connected()
+      |> click("#kbd-dm2-trigger")
+      |> assert_has(~s|#kbd-dm2[data-state="open"]|)
+      |> click("#kbd-dm2-nav")
+      |> assert_path("/keyboard/menu")
+      |> assert_has("#kbd-vmenu")
+    end
   end
 
   describe "Modal keyboard behavior" do

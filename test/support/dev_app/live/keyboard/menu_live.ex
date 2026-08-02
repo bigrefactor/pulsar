@@ -15,6 +15,7 @@ defmodule Pulsar.DevApp.Keyboard.MenuLive do
         <Menu.menu_group id="kbd-v-grp" label="Reports">
           <Menu.menu_item id="kbd-v-sales" href="#">Sales</Menu.menu_item>
         </Menu.menu_group>
+        <Menu.menu_item id="kbd-v-signout" href="/sign-out" method="delete">Sign out</Menu.menu_item>
       </Menu.menu>
 
       <Menu.menu id="kbd-hmenu" orientation="horizontal" label="Horizontal">
