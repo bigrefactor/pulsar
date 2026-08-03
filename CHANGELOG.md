@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed - Dependencies
 
 - Upgraded `phoenix_storybook` to `~> 1.3` (dev/test only), which drops the retired, unpatched `earmark` dependency (GHSA-52mm-h59v-f3c7) and lifts the LiveView 1.1 cap, so the suite now runs against LiveView 1.2.
-- Upgraded `mint` to 1.9.2, resolving four advisories including two rated high.
+- Upgraded `mint` to 1.9.3, resolving four advisories including two rated high.
 - Routine upgrades within existing requirements: `phoenix_live_view` 1.2.8, `igniter` 0.8.3, `tailwind` 0.5.1, `bandit` 1.12.4, `ecto` 3.14.1, `lazy_html` 0.1.12. The Tailwind CLI stays pinned at 4.1.12, so generated CSS is unchanged.
 - Upgraded the accessibility test stack (test-only): `a11y_audit` to `~> 0.4`, which moves axe-core from 4.11 to 4.12.1, and `phoenix_test_playwright` to `~> 0.15` alongside Playwright 1.62.1.
 
