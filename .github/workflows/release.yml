@@ -18,7 +18,7 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -76,7 +76,7 @@ jobs:
           echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
       - name: Cache deps
         id: cache-deps-release-validate
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: deps
           key: ${{ runner.os }}-deps-release-validate-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
@@ -88,7 +88,7 @@ jobs:
 
       - name: Cache _build
         id: cache-build-release-validate
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: _build
           key: ${{ runner.os }}-build-release-validate-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
@@ -100,7 +100,7 @@ jobs:
 
       - name: Cache Dialyzer PLT
         id: cache-plt-release-validate
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: priv/plts
           key: ${{ runner.os }}-plt-1.19-28-${{ hashFiles('mix.lock') }}
@@ -134,7 +134,7 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -145,7 +145,7 @@ jobs:
 
       - name: Cache deps
         id: cache-deps-release-publish
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: deps
           key: ${{ runner.os }}-deps-release-publish-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
@@ -157,7 +157,7 @@ jobs:
 
       - name: Cache _build
         id: cache-build-release-publish
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: _build
           key: ${{ runner.os }}-build-release-publish-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
@@ -194,7 +194,7 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -205,7 +205,7 @@ jobs:
 
       - name: Cache deps
         id: cache-deps-release-docs
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: deps
           key: ${{ runner.os }}-deps-release-docs-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
@@ -217,7 +217,7 @@ jobs:
 
       - name: Cache _build
         id: cache-build-release-docs
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: _build
           key: ${{ runner.os }}-build-release-docs-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
@@ -253,7 +253,7 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
