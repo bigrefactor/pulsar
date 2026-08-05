@@ -79,6 +79,7 @@ defmodule Pulsar.DevApp.FormLive do
           phx-change="validate"
           phx-submit="submit"
           novalidate
+          required_legend
           class="grid w-full max-w-2xl grid-cols-1 gap-4"
         >
           <Field.field field={@form[:name]} type="text" required data-fixture-cell="name">
