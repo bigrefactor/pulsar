@@ -2,7 +2,7 @@
 
 **Source:** [`lib/pulsar/components/label.ex`](../../lib/pulsar/components/label.ex)
 **Tests:** [`test/pulsar/components/label_test.exs`](../../test/pulsar/components/label_test.exs)
-**Audited:** 2026-05-24 (code-only)
+**Audited:** 2026-08-05 (code-only)
 
 Typography component that renders a `<label>` with size variants, error
 state, a visual required indicator, and a required `for` attribute that
@@ -23,33 +23,28 @@ associates the label with an input.
 **Notes:** Label-to-input association is enforced by the API (required
 attr). The required *relationship* is carried programmatically by the
 associated control's `required` / `aria-required` attribute, which
-`field` sets for `input` (text/email/password/number/etc.), `textarea`,
-`select`, `checkbox`, `radio`, `switch`, and `otp` control types. **Known
-gap:** `date` and `daterange` route to `DatePicker`
-(`lib/pulsar/components/field.ex:518–567`), which has no `required`
-pass-through at all — required state does not reach the control for
-those two types, sighted or AT. This is a pre-existing product gap
-tracked separately, not a defect in Label itself. The asterisk is
-generated content — absent from the DOM, the accessibility tree, and the
-label's text content — so it is visual reinforcement only.
+`field` sets for every control type it renders: `input`
+(text/email/password/number/etc.), `textarea`, `select`, `checkbox`,
+`radio`, `switch`, `otp`, and — via `DatePicker`'s `aria-required` —
+`date` and `daterange`. The asterisk is generated content — absent from
+the DOM, the accessibility tree, and the label's text content — so it is
+visual reinforcement only.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** Required state is conveyed by the associated control's
 `required` attribute, not by "the red asterisk" —
-`lib/pulsar/components/field.ex:254` declares the attr; it is forwarded
+`lib/pulsar/components/field.ex:252` declares the attr; it is forwarded
 at `:381` (select), `:402` (textarea), `:426` (otp), `:448` (checkbox),
-`:478` (switch), `:506` (radio), and `:594` (input, the default case).
-**Known gap:** `date`/`daterange` route to `DatePicker`
-(`lib/pulsar/components/field.ex:518–567`), which accepts no `required`
-attr at all — those two control types receive no required signal,
-sighted or AT. Tracked separately as a product gap; not a Label defect.
+`:478` (switch), `:506` (radio), `:596` (input, the default case), and
+`:534`/`:561` (date/daterange, which pass it on to `DatePicker`'s
+`aria-required` — `lib/pulsar/components/date_picker.ex:122, 137, 152`).
 
-**Notes:** For the control types that do carry it, the asterisk is CSS
-generated content, so it never reaches AT at all, and AT users receive
-required state from the control itself — no instruction depends on
-recognising a shape or colour. `form`'s optional `required_legend`
-explains the asterisk for sighted users (see [form](form.md)).
+**Notes:** The asterisk is CSS generated content, so it never reaches AT
+at all, and AT users receive required state from the control itself —
+no instruction depends on recognising a shape or colour. `form`'s
+optional `required_legend` explains the asterisk for sighted users (see
+[form](form.md)).
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 

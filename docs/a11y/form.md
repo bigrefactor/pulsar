@@ -55,13 +55,11 @@ required field" at the start of the form, per technique H90 —
 field is required. The entire legend paragraph — asterisk and text — is
 marked `aria-hidden="true"` (`lib/pulsar/components/form.ex:101`), so AT
 users never hear it; they receive required state instead from each
-field's native `required` attribute, which `field` sets for `input`,
-`textarea`, `select`, `checkbox`, `radio`, `switch`, and `otp` control
-types (see [label](label.md) 1.3.1/1.3.3). **Known gap:** `date` and
-`daterange` fields route to `DatePicker`
-(`lib/pulsar/components/field.ex:518–567`), which has no `required`
-pass-through — a required date field gets no required signal at all,
-sighted or AT. Tracked separately as a product gap.
+field's `required` / `aria-required` attribute, which `field` sets for
+every control type it renders: `input`, `textarea`, `select`,
+`checkbox`, `radio`, `switch`, `otp`, and — via `DatePicker`'s
+`aria-required` — `date`/`daterange` (see [label](label.md)
+1.3.1/1.3.3).
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 

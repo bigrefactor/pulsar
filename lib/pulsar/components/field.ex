@@ -531,6 +531,7 @@ defmodule Pulsar.Components.Field do
       variant={@variant}
       color={@color}
       size={@size}
+      required={@required}
       disabled={@disabled}
       invalid={@has_errors}
       on_change={@on_change}
@@ -557,6 +558,7 @@ defmodule Pulsar.Components.Field do
       variant={@variant}
       color={@color}
       size={@size}
+      required={@required}
       disabled={@disabled}
       invalid={@has_errors}
       on_change={@on_change}
