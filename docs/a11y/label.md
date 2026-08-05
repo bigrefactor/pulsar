@@ -34,7 +34,7 @@ visual reinforcement only.
 
 **Evidence:** Required state is conveyed by the associated control's
 `required` attribute, not by "the red asterisk" —
-`lib/pulsar/components/field.ex:252` declares the attr; it is forwarded
+`lib/pulsar/components/field.ex:254` declares the attr; it is forwarded
 at `:381` (select), `:402` (textarea), `:426` (otp), `:448` (checkbox),
 `:478` (switch), `:506` (radio), `:596` (input, the default case), and
 `:534`/`:561` (date/daterange, which pass it on to `DatePicker`'s
