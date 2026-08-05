@@ -18,12 +18,12 @@ defmodule Pulsar.Components.ProgressTest do
       assert html =~ ~s(aria-label="Uploading")
     end
 
-    test "fill width reflects the percentage via inline style" do
+    test "fill width reflects the percentage via the svg rect" do
       assigns = %{}
       html = rendered_to_string(~H[<Progress.progress value={62} />])
 
-      assert html =~ "width: 62%"
-      assert html =~ "bg-primary"
+      assert html =~ ~s(width="62%")
+      assert html =~ "fill-primary"
     end
 
     test "scales value against a custom max" do
@@ -32,14 +32,14 @@ defmodule Pulsar.Components.ProgressTest do
 
       assert html =~ ~s(aria-valuemax="10")
       assert html =~ ~s(aria-valuenow="3")
-      assert html =~ "width: 30%"
+      assert html =~ ~s(width="30%")
     end
 
     test "clamps out-of-range values" do
       assigns = %{}
       html = rendered_to_string(~H[<Progress.progress value={250} max={100} />])
 
-      assert html =~ "width: 100%"
+      assert html =~ ~s(width="100%")
       assert html =~ ~s(aria-valuenow="100")
     end
   end
@@ -82,7 +82,7 @@ defmodule Pulsar.Components.ProgressTest do
 
       assert html =~ ~s(aria-valuemax="100")
       assert html =~ ~s(aria-valuenow="3")
-      assert html =~ "width: 3%"
+      assert html =~ ~s(width="3%")
     end
 
     test "falls back to max 100 when max is not a number" do
@@ -91,7 +91,7 @@ defmodule Pulsar.Components.ProgressTest do
 
       # the announced scale matches the rendered fill rather than the raw string max
       assert html =~ ~s(aria-valuemax="100")
-      assert html =~ "width: 3%"
+      assert html =~ ~s(width="3%")
     end
 
     test "treats a non-number value as indeterminate (linear) rather than full" do
@@ -100,7 +100,7 @@ defmodule Pulsar.Components.ProgressTest do
       html = rendered_to_string(~H[<Progress.progress value="50" />])
 
       refute html =~ "aria-valuenow"
-      refute html =~ "width:"
+      refute html =~ "<svg"
       assert html =~ "animate-pulse"
     end
 
@@ -164,7 +164,7 @@ defmodule Pulsar.Components.ProgressTest do
       assigns = %{}
       html = rendered_to_string(~H[<Progress.progress value={50} color="success" />])
 
-      assert html =~ "bg-success"
+      assert html =~ "fill-success"
     end
 
     test "applies the linear size class" do
@@ -189,6 +189,23 @@ defmodule Pulsar.Components.ProgressTest do
 
       assert html =~ ~s(id="up")
       assert html =~ ~s(data-testid="p")
+    end
+  end
+
+  describe "progress/1 CSP safety" do
+    test "renders no inline style attribute for a determinate linear bar" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Progress.progress value={62} />])
+
+      refute html =~ ~s( style=)
+    end
+
+    test "rounds the fill caps with rx and ry matching the track height" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Progress.progress value={62} size="md" />])
+
+      assert html =~ ~s(rx="4")
+      assert html =~ ~s(ry="4")
     end
   end
 end

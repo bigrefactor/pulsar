@@ -1157,6 +1157,48 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     end
   end
 
+  describe "Progress CSP-safe fill" do
+    test "the determinate fill renders at the right width and animates", %{conn: conn} do
+      session =
+        conn
+        |> visit("/components/progress")
+        |> A11y.await_live_connected()
+
+      # The fixture renders value={62} for each color; check the primary cell.
+      PhoenixTest.Playwright.evaluate(
+        session,
+        """
+        (() => {
+          const cell = document.querySelector('[data-fixture-cell="linear-primary"]');
+          const rect = cell.querySelector('rect');
+          const svg = cell.querySelector('svg');
+          return (rect.getBoundingClientRect().width / svg.getBoundingClientRect().width).toFixed(4);
+        })()
+        """,
+        fn ratio ->
+          assert_in_delta String.to_float(ratio),
+                          0.62,
+                          0.02,
+                          "expected the fill rect to span 62% of the track, got #{ratio}"
+        end
+      )
+
+      PhoenixTest.Playwright.evaluate(
+        session,
+        """
+        (() => {
+          const rect = document.querySelector('[data-fixture-cell="linear-primary"] rect');
+          return getComputedStyle(rect).transitionProperty;
+        })()
+        """,
+        fn property ->
+          assert property =~ "width",
+                 "expected the fill rect to declare a width transition, got '#{property}'"
+        end
+      )
+    end
+  end
+
   # Reads `[data-fixture-cell][tabindex="-1"]` from the current page and
   # asserts the result is empty. Surfaces offending ids/tags so a failure
   # points at the specific regressed element.
