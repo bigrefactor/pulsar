@@ -8,7 +8,7 @@ defmodule Pulsar.Components.Label do
 
   ## Features
 
-  - **Accessibility-First**: Proper label-input association and screen reader support
+  - **Accessibility-First**: Proper label-input association
   - **Typography Variants**: Multiple sizes (xs through xl) matching input components
   - **Required Indicators**: Clear visual cues for field requirements
   - **Error State Styling**: Automatic styling coordination with form validation
@@ -32,48 +32,25 @@ defmodule Pulsar.Components.Label do
         Document Title
       </.label>
 
-      # With internationalized required text
-      <.label for="email" required sr_required_text={gettext("(required)")}>
-        Email Address
-      </.label>
-
   ## Accessibility Features
 
   - **Proper Association**: Uses `for` attribute to associate with form inputs
-  - **Required Field Support**: Screen reader-only text for required fields
+  - **Required Field Support**: Visual indicator paired with the control's `required` attribute
   - **Data Attributes**: Exposes state via `data-required` and `data-error` for CSS targeting
   - **ARIA Compliance**: Follows WCAG 2.2 AA accessibility guidelines
 
   ## Required Indicator
 
   - **Visual**: Red asterisk (*) displayed after label text with proper size matching
-  - **Screen Reader**: Hidden screen reader text announces "(required)" separately
 
-  The required indicator uses semantic colors that automatically adapt to light/dark themes.
-  Screen readers will announce both the label text and required status appropriately.
+  Required state is announced from the associated control's `required`
+  attribute, which `field` sets for you.
 
   ## Data Attributes for Styling
 
   - `data-required="true|false"` - Required field state
   - `data-error="true|false"` - Error state
   - `data-size="xs|sm|md|lg|xl"` - Size variant
-
-  ## Screen Reader Support
-
-  Uses a `.sr-only` class for screen reader-only text. Ensure this class is available:
-  ```css
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-  }
-  ```
   """
 
   use Phoenix.Component
@@ -89,23 +66,23 @@ defmodule Pulsar.Components.Label do
   # Size configuration for label typography and required indicator margins
   @size_config %{
     "lg" => %{
-      margin: "ml-1",
+      margin: "after:ml-1",
       text: "text-lg"
     },
     "md" => %{
-      margin: "ml-1",
+      margin: "after:ml-1",
       text: "text-base"
     },
     "sm" => %{
-      margin: "ml-0.5",
+      margin: "after:ml-0.5",
       text: "text-sm"
     },
     "xl" => %{
-      margin: "ml-1",
+      margin: "after:ml-1",
       text: "text-xl"
     },
     "xs" => %{
-      margin: "ml-0.5",
+      margin: "after:ml-0.5",
       text: "text-xs"
     }
   }
@@ -127,11 +104,6 @@ defmodule Pulsar.Components.Label do
     doc: "Size of the label text"
   )
 
-  attr(:sr_required_text, :string,
-    default: "(required)",
-    doc: "Screen reader text for required fields. Use with i18n: gettext(\"(required)\")"
-  )
-
   attr(:class, :string, default: "", doc: "Additional CSS classes")
 
   attr(:rest, :global, doc: "Additional HTML attributes passed through to the underlying label element")
@@ -147,6 +119,7 @@ defmodule Pulsar.Components.Label do
           base_label_classes(),
           size_text_classes(@size),
           color_classes(@error),
+          required_indicator_classes(@required, @size),
           @class
         ])
       }
@@ -156,8 +129,6 @@ defmodule Pulsar.Components.Label do
       {@rest}
     >
       {render_slot(@inner_block)}
-      <span :if={@required} class="sr-only">{@sr_required_text}</span>
-      <span :if={@required} class={required_indicator_classes(@size)} aria-hidden="true">*</span>
     </label>
     """
   end
@@ -188,19 +159,18 @@ defmodule Pulsar.Components.Label do
     "text-foreground"
   end
 
-  # Required indicator classes with size-appropriate spacing and ARIA hidden
-  @spec required_indicator_classes(String.t()) :: String.t()
-  defp required_indicator_classes(size) do
-    merge([
-      "text-danger",
-      indicator_margin_classes(size),
-      size_text_classes(size)
-    ])
+  # Required indicator, rendered as a pseudo-element so it stays out of the
+  # label's accessible name and text content
+  @spec required_indicator_classes(boolean() | nil, String.t()) :: String.t()
+  defp required_indicator_classes(true, size) do
+    "after:content-['*'] after:text-danger " <> indicator_margin_classes(size)
   end
 
-  # Size-appropriate margin for required indicator
+  defp required_indicator_classes(_required, _size), do: ""
+
+  # Size-appropriate margin for the required indicator
   @spec indicator_margin_classes(String.t()) :: String.t()
   defp indicator_margin_classes(size) do
-    @size_config[size][:margin]
+    @size_config[size][:margin] || ""
   end
 end

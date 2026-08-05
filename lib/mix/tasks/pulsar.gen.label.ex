@@ -45,16 +45,12 @@ defmodule Mix.Tasks.Pulsar.Gen.Label do
       Document Title
     </.label>
 
-    # With internationalized required text
-    <.label for="email" required sr_required_text={gettext("(required)")}>
-      Email Address
-    </.label>
     ```
 
     ## Accessibility Features
 
     - Proper association with inputs via `for` attribute
-    - Screen reader text for required indicators
+    - Required indicator paired with the control's `required` attribute
     - ARIA-compatible error state styling
     - Semantic HTML with proper label elements
 

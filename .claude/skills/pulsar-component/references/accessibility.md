@@ -61,10 +61,10 @@ A new component must not bake untranslatable English into the DOM:
 - **Translatable strings are overridable attrs with English defaults.** Any string
   the component renders itself — visible text, `aria-label`, `title`, status/sr-only
   text — gets its own attr (e.g. `dismiss_label`, `remove_label`,
-  `sr_required_text`) defaulting to the English word. Apps pass `gettext("…")`.
+  `remaining_label`) defaulting to the English word. Apps pass `gettext("…")`.
   Components do **not** call `gettext` internally. Document the attr with
   `doc: ~s{… Use with i18n: gettext("…")}`. Examples: `flash.ex` `dismiss_label`,
-  `select.ex` `remove_label`, `label.ex` `sr_required_text`.
+  `select.ex` `remove_label`, `textarea.ex` `remaining_label`.
 - **Numbers run through a formatter attr.** If the component displays a number, add
   a `format_count`-style function attr defaulting to `&Integer.to_string/1`, and
   apply it to every integer rendered. Apps can pass `&MyAppWeb.Cldr.Number.to_string!/1`.
