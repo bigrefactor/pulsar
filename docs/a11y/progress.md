@@ -30,7 +30,7 @@ so it is not announced twice.
 (`lib/pulsar/components/progress.ex:181–184`) expose the progress relationship to
 assistive tech. Indeterminate omits `aria-valuenow`
 (`lib/pulsar/components/progress.ex:184`, resolved to `nil` at
-`lib/pulsar/components/progress.ex:302`).
+`lib/pulsar/components/progress.ex:307`).
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
@@ -42,7 +42,8 @@ accessible name, not the bar's appearance.
 
 **Evidence:** Progress is conveyed by the `progressbar` value and the accessible
 name (`lib/pulsar/components/progress.ex:181–185`); the semantic color palette
-(`lib/pulsar/components/progress.ex:79–87` fill colors,
+(`lib/pulsar/components/progress.ex:90–98` determinate bar fill,
+`lib/pulsar/components/progress.ex:79–87` indeterminate bar fill,
 `lib/pulsar/components/progress.ex:102–110` ring colors) is decorative on top of
 that role/value.
 
