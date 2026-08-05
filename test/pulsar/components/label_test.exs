@@ -42,7 +42,7 @@ defmodule Pulsar.Components.LabelTest do
       assert html =~ "Username"
     end
 
-    test "passes through data-required attribute from Stellar" do
+    test "passes through data-required attribute" do
       assigns = %{}
 
       html =
@@ -185,7 +185,7 @@ defmodule Pulsar.Components.LabelTest do
         <Label.label for="field">Email</Label.label>
         """)
 
-      refute html =~ "after:content-['*']"
+      refute html =~ "after:content-[&#39;*&#39;]"
     end
   end
 
@@ -362,7 +362,6 @@ defmodule Pulsar.Components.LabelTest do
       # Should have all data attributes for external CSS targeting
       assert html =~ ~s(data-error="true")
       assert html =~ ~s(data-size="lg")
-      # From Stellar
       assert html =~ ~s(data-required="true")
     end
   end

@@ -102,7 +102,7 @@ defmodule Pulsar.Components.FormTest do
         </Form.form>
         """)
 
-      assert html =~ ~s(aria-hidden="true")
+      assert html =~ ~s(<p class="mb-4 text-sm text-muted-foreground" aria-hidden="true">)
     end
 
     test "honors custom legend text for i18n" do
