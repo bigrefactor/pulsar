@@ -47,7 +47,11 @@ order.
 
 **Evidence:** Error state combines text message, icon, color change, and
 `aria-invalid` — `lib/pulsar/components/field.ex:312–321`. Required state
-is delegated to `Label` (asterisk + sr-only text).
+is programmatic, not sensory: `required` is forwarded to the leaf control —
+`lib/pulsar/components/field.ex:381, 402, 426, 448, 478, 506, 534, 561, 596` —
+so AT announces it from the control itself. The asterisk `Label` renders
+(`required={@required}` — `lib/pulsar/components/field.ex:319`) is a decorative
+CSS pseudo-element and carries no information of its own.
 
 ### 1.3.5 Identify Input Purpose (AA) — ✓ PASS
 
@@ -61,8 +65,10 @@ to the underlying input.
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** Error state combines red color + icon + text + `aria-invalid` —
-`lib/pulsar/components/field.ex:312–321`. Required indicator (delegated
-to Label) uses asterisk + sr-only text.
+`lib/pulsar/components/field.ex:312–321`. The required indicator is not
+color-alone: the asterisk `Label` draws is a glyph, and the state is also
+exposed programmatically through the leaf control's `required` /
+`aria-required` — `lib/pulsar/components/field.ex:319, 381`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 

@@ -21,12 +21,11 @@ defmodule Mix.Tasks.Pulsar.Gen.Label do
     ## Features
 
     - Typography sizes: xs, sm, md, lg, xl (matching input components)
-    - Required field indicators with screen reader support
+    - Required field indicator drawn as a decorative asterisk
     - Error state styling for validation feedback
     - Proper label-input association via `for` attribute
     - Data attributes for additional CSS targeting
     - Automatic dark mode support
-    - Internationalization support for required text
 
     ## Usage Examples
 
