@@ -279,6 +279,12 @@ defmodule Pulsar.Components.Progress do
     |> assign(:pct, pct)
     |> assign(:aria_valuenow, aria_valuenow)
     |> assign(:aria_valuemax, aria_valuemax)
+    |> assign(:dashoffset, dashoffset)
+    |> assign_classes()
+  end
+
+  defp assign_classes(assigns) do
+    assigns
     |> assign(:root_class, merge([@root_config[assigns.shape] || "", assigns.class]))
     |> assign(:linear_size_class, @linear_size_config[assigns.size] || "")
     |> assign(:linear_rx, @linear_rx_config[assigns.size] || 4)
@@ -291,7 +297,6 @@ defmodule Pulsar.Components.Progress do
     |> assign(:ring_viewbox, @ring_viewbox)
     |> assign(:ring_stroke_width, @ring_stroke_width)
     |> assign(:circumference, @ring_circumference)
-    |> assign(:dashoffset, dashoffset)
   end
 
   # Derives `{pct, aria_valuenow, aria_valuemax, dashoffset}` from the raw
