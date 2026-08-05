@@ -35,6 +35,12 @@ Home/End jump to the minimum/maximum. Double-click the handle to reset to
 `default_size`. A collapsible panel adds a focusable toggle button to the handle — Tab to it and
 press Enter or Space to collapse or expand that panel. Dragging the handle to a
 panel's edge also collapses it.
+
+## Without JavaScript
+
+The component's hook applies `default_size` on mount. In a render where the
+hook never runs (a static/dead render, or JavaScript blocked or failed), the
+second panel shows the fixed 30% fallback regardless of `default_size`.
 """
 
 use Phoenix.Component
@@ -107,7 +113,6 @@ def resizable(assigns) do
     data-collapsible-end={to_string(@end_collapsible)}
     data-collapsed-start={@start_collapsed_size}
     data-collapsed-end={@end_collapsed_size}
-    style={"--pulsar-resizable-size: #{@default_size}%"}
     class={merge([group_classes(@orientation), @class])}
     {@rest}
   >
@@ -161,7 +166,6 @@ def resizable(assigns) do
     <div
       id={@panel_two_id}
       data-animating="false"
-      style="flex-basis: var(--pulsar-resizable-size)"
       class={merge([panel_two_classes(), Map.get(@panel_two, :class) || ""])}
     >
       {render_slot(@panel_two)}
@@ -185,6 +189,7 @@ def resizable(assigns) do
           this.collapsed = null // null | "start" | "end"
           this.startBtn = this.el.querySelector('[data-resizable-toggle="start"]')
           this.endBtn = this.el.querySelector('[data-resizable-toggle="end"]')
+          this.applySize(this.default, false)
           this.bind()
         },
         updated() {
@@ -416,7 +421,7 @@ defp group_classes(_), do: "flex flex-row w-full h-full min-w-0"
 
 @spec panel_two_classes() :: String.t()
 defp panel_two_classes do
-  "min-w-0 min-h-0 grow-0 shrink-0 overflow-auto " <>
+  "min-w-0 min-h-0 grow-0 shrink-0 overflow-auto basis-[var(--pulsar-resizable-size,30%)] " <>
     "data-[animating=true]:transition-[flex-basis] data-[animating=true]:duration-normal " <>
     "data-[animating=true]:ease-standard motion-reduce:transition-none"
 end

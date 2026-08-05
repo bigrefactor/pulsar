@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - Content-Security-Policy
+
+- **No component renders an inline `style` attribute**: under a CSP whose `style-src` lacks `'unsafe-inline'`, browsers drop inline style declarations silently — no error, no fallback. Four sites were affected: resizable panels ignored `default_size` and collapsed to their flex default, progress bars rendered the track but never filled, and staggered flash animations lost their per-item delay. Dynamic values now reach CSS either as a static utility class or as an SVG presentation attribute, which CSP does not govern. A nonce would not have helped: nonces whitelist `<style>` and `<script>` *elements*, not style *attributes*. Pulsar now runs under `style-src 'self'` with no consumer configuration.
+- **The storybook theme-swatch template was affected too**: `mix pulsar.gen.storybook` shipped a swatch whose colour came from an inline style, so every swatch rendered as an empty bordered box under a strict CSP. It now uses an SVG `<rect>` with a `fill-*` class.
+- **Flashes 2 through 5 never animated**: `flash_group/1`'s per-item stagger was applied as an inline `transition-delay`, but LiveView strips a `JS.show` transition's classes after its `time` window, which defaults to 200ms. With the default `stagger_delay: 100`, the second flash had its transition cut in half and the third through fifth were skipped entirely. The delay is now a `delay-*` class inside the transition, and `time` is extended to cover it.
+
+### Changed - Progress and Resizable Rendering
+
+- **`progress/1`'s determinate linear fill is now an SVG `<rect>`**, not a `<div>`. The track is unchanged. Anyone targeting the fill element by structure or by its `bg-*` class should target the `<rect>` and its `fill-*` class instead. The radial shape is unchanged — it already drove its fill through SVG attributes.
+- **`flash_group/1`'s `stagger_delay` is snapped to a supported step**: `0, 75, 100, 150, 200, 300, 500, 700, 1000` ms. The attr keeps its type and default, but a value off that scale now renders as the nearest one, because only classes written literally in source exist at runtime.
+- **`resizable/1`'s initial size is applied by its hook**: a static render without JavaScript shows the fixed 30% fallback regardless of `default_size`. Dragging a separator already required JavaScript; this extends that to the initial size. There is no CSP-safe way to emit an arbitrary integer percentage as a class.
+
+### Added - CSP Documentation
+
+- **`docs/csp.md`** states which policy Pulsar supports: no `style-src 'unsafe-inline'` is required, but **`img-src 'self' data:` is** — Heroicons are applied as CSS masks whose source is a `data:` URI, and CSS-referenced images are governed by `img-src`. Confirmed in a browser: under `default-src 'self'` alone, Chrome blocks the mask and the icon renders with no visible content. A guard test (`Pulsar.NoInlineStyleTest`) now fails the build if an inline style attribute reappears in a component, template, or storybook source.
+
 ### Breaking - Required-Field Accessible Name
 
 - **`label/1` no longer accepts `sr_required_text`**: the screen-reader-only "(required)" `<span>` and the `aria-hidden` asterisk `<span>` have both been removed. The required asterisk is now a Tailwind `after:content-['*']` pseudo-element on the `<label>` element itself, and required state is announced from the associated control's `required` attribute (or, for the date-picker's typeable display inputs, `aria-required`) instead. This changes the accessible name of every required field from `"Label (required)"` to exactly `"Label"`, and it also means the label's visible text content is now exactly its label text — so a required field can be found by exact-label matching (`fill_in("Email", ...)`), which previously failed because the rendered text included the "(required)" suffix. Call sites passing `sr_required_text` will emit a compile-time undefined-attribute warning; remove the attr.

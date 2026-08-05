@@ -57,6 +57,15 @@ defmodule Pulsar.Components.Progress do
     "xl" => "h-4"
   }
 
+  # Fill corner radius in px per size — half of each @linear_size_config height.
+  @linear_rx_config %{
+    "xs" => 2,
+    "sm" => 3,
+    "md" => 4,
+    "lg" => 6,
+    "xl" => 8
+  }
+
   # Rendered ring diameter per size (radial shape).
   @radial_size_config %{
     "xs" => "h-8 w-8",
@@ -66,7 +75,7 @@ defmodule Pulsar.Components.Progress do
     "xl" => "h-20 w-20"
   }
 
-  # Fill background per house color (linear shape).
+  # Fill background per house color (indeterminate linear shape).
   @fill_color_config %{
     "neutral" => "bg-neutral",
     "primary" => "bg-primary",
@@ -75,6 +84,17 @@ defmodule Pulsar.Components.Progress do
     "danger" => "bg-danger",
     "warning" => "bg-warning",
     "info" => "bg-info"
+  }
+
+  # Fill color per house color (linear determinate shape).
+  @linear_fill_config %{
+    "neutral" => "fill-neutral",
+    "primary" => "fill-primary",
+    "secondary" => "fill-secondary",
+    "success" => "fill-success",
+    "danger" => "fill-danger",
+    "warning" => "fill-warning",
+    "info" => "fill-info"
   }
 
   # Ring stroke color per house color (radial shape); the ring uses currentColor,
@@ -182,12 +202,15 @@ defmodule Pulsar.Components.Progress do
         :if={@shape == "linear"}
         class={["w-full overflow-hidden rounded-full bg-muted", @linear_size_class]}
       >
-        <div
-          :if={@determinate}
-          class={["h-full rounded-full transition-[width] duration-normal ease-standard", @fill_color_class]}
-          style={"width: #{@pct}%"}
-        >
-        </div>
+        <svg :if={@determinate} class="block h-full w-full">
+          <rect
+            width={"#{@pct}%"}
+            height="100%"
+            rx={@linear_rx}
+            ry={@linear_rx}
+            class={["transition-[width] duration-normal ease-standard", @linear_fill_class]}
+          />
+        </svg>
         <div
           :if={not @determinate}
           class={["h-full w-full rounded-full animate-pulse", @fill_color_class]}
@@ -256,8 +279,16 @@ defmodule Pulsar.Components.Progress do
     |> assign(:pct, pct)
     |> assign(:aria_valuenow, aria_valuenow)
     |> assign(:aria_valuemax, aria_valuemax)
+    |> assign(:dashoffset, dashoffset)
+    |> assign_classes()
+  end
+
+  defp assign_classes(assigns) do
+    assigns
     |> assign(:root_class, merge([@root_config[assigns.shape] || "", assigns.class]))
     |> assign(:linear_size_class, @linear_size_config[assigns.size] || "")
+    |> assign(:linear_rx, @linear_rx_config[assigns.size] || 4)
+    |> assign(:linear_fill_class, @linear_fill_config[assigns.color] || "")
     |> assign(:radial_size_class, @radial_size_config[assigns.size] || "")
     |> assign(:fill_color_class, @fill_color_config[assigns.color] || "")
     |> assign(:ring_color_class, @ring_color_config[assigns.color] || "")
@@ -266,7 +297,6 @@ defmodule Pulsar.Components.Progress do
     |> assign(:ring_viewbox, @ring_viewbox)
     |> assign(:ring_stroke_width, @ring_stroke_width)
     |> assign(:circumference, @ring_circumference)
-    |> assign(:dashoffset, dashoffset)
   end
 
   # Derives `{pct, aria_valuenow, aria_valuemax, dashoffset}` from the raw

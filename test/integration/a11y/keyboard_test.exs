@@ -1130,6 +1130,120 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     end
   end
 
+  describe "Resizable CSP-safe sizing" do
+    test "the hook resolves a real flex-basis on the second panel", %{conn: conn} do
+      session =
+        conn
+        |> visit("/components/resizable/horizontal")
+        |> A11y.await_live_connected()
+
+      PhoenixTest.Playwright.evaluate(
+        session,
+        "getComputedStyle(document.querySelector('#rz-horizontal-basic')).getPropertyValue('--pulsar-resizable-size').trim()",
+        fn value ->
+          assert value == "30%",
+                 "expected the hook to set --pulsar-resizable-size to 30%, got '#{value}'"
+        end
+      )
+
+      PhoenixTest.Playwright.evaluate(
+        session,
+        "getComputedStyle(document.querySelector('#rz-horizontal-basic-panel-2')).flexBasis",
+        fn value ->
+          refute value == "auto",
+                 "expected the second panel to resolve a real flex-basis, got 'auto' — the custom property did not reach the class"
+        end
+      )
+    end
+  end
+
+  describe "Progress CSP-safe fill" do
+    test "the determinate fill renders at the right width and animates", %{conn: conn} do
+      session =
+        conn
+        |> visit("/components/progress")
+        |> A11y.await_live_connected()
+
+      # The fixture renders value={62} for each color; check the primary cell.
+      PhoenixTest.Playwright.evaluate(
+        session,
+        """
+        (() => {
+          const cell = document.querySelector('[data-fixture-cell="linear-primary"]');
+          const rect = cell.querySelector('rect');
+          const svg = cell.querySelector('svg');
+          return (rect.getBoundingClientRect().width / svg.getBoundingClientRect().width).toFixed(4);
+        })()
+        """,
+        fn ratio ->
+          assert_in_delta String.to_float(ratio),
+                          0.62,
+                          0.02,
+                          "expected the fill rect to span 62% of the track, got #{ratio}"
+        end
+      )
+
+      PhoenixTest.Playwright.evaluate(
+        session,
+        """
+        (() => {
+          const rect = document.querySelector('[data-fixture-cell="linear-primary"] rect');
+          return getComputedStyle(rect).transitionProperty;
+        })()
+        """,
+        fn property ->
+          assert property =~ "width",
+                 "expected the fill rect to declare a width transition, got '#{property}'"
+        end
+      )
+    end
+  end
+
+  describe "FlashGroup CSP-safe stagger" do
+    test "every staggered flash settles fully opaque", %{conn: conn} do
+      session =
+        conn
+        |> visit("/components/flash_group")
+        |> A11y.await_live_connected()
+
+      # The longest stagger in the fixture is index 3 (300ms) plus a 200ms
+      # entry, so poll past that rather than sampling once.
+      poll = """
+      async () => {
+        const cell = document.querySelector('[data-fixture-cell="position-top-right"]');
+        const read = () => Array.from(cell.querySelectorAll('[role="alert"], [role="status"]'));
+        const deadline = performance.now() + 1500;
+
+        while (performance.now() < deadline) {
+          const flashes = read();
+          if (flashes.length && flashes.every((f) => getComputedStyle(f).opacity === '1')) {
+            return String(flashes.length) + ':' + String(flashes.length);
+          }
+          await new Promise((r) => setTimeout(r, 50));
+        }
+
+        const flashes = read();
+        return String(flashes.length) + ':' +
+          String(flashes.filter((f) => getComputedStyle(f).opacity === '1').length);
+      }
+      """
+
+      PhoenixTest.Playwright.evaluate(
+        session,
+        poll,
+        [is_function: true, timeout: 3_000],
+        fn result ->
+          [total, opaque] = String.split(result, ":")
+
+          assert total == "4", "expected the fixture to render 4 flashes, got #{total}"
+
+          assert opaque == total,
+                 "expected all #{total} flashes to settle at opacity 1, only #{opaque} did"
+        end
+      )
+    end
+  end
+
   # Reads `[data-fixture-cell][tabindex="-1"]` from the current page and
   # asserts the result is empty. Surfaces offending ids/tags so a failure
   # points at the specific regressed element.

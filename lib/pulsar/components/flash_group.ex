@@ -275,6 +275,25 @@ defmodule Pulsar.Components.FlashGroup do
     }
   }
 
+  # Tailwind's transition-delay scale. Only these classes exist, so a requested
+  # delay is snapped to the nearest one.
+  @stagger_steps [0, 75, 100, 150, 200, 300, 500, 700, 1000]
+
+  @stagger_classes %{
+    0 => "delay-0",
+    75 => "delay-75",
+    100 => "delay-100",
+    150 => "delay-150",
+    200 => "delay-200",
+    300 => "delay-300",
+    500 => "delay-500",
+    700 => "delay-700",
+    1000 => "delay-1000"
+  }
+
+  # Matches the duration-normal token; keep in sync with --duration-normal.
+  @entry_duration_ms 200
+
   # FlashGroup attributes
   attr(:flash, :map,
     required: true,
@@ -322,7 +341,9 @@ defmodule Pulsar.Components.FlashGroup do
 
   attr(:stagger_delay, :integer,
     default: 100,
-    doc: "Milliseconds between staggered flash animations (0 to disable)"
+    doc:
+      "Milliseconds between staggered flash animations (0 to disable). " <>
+        "Snapped to the nearest supported step: 0, 75, 100, 150, 200, 300, 500, 700, 1000."
   )
 
   attr(:on_dismiss, :any,
@@ -417,8 +438,8 @@ defmodule Pulsar.Components.FlashGroup do
     position_config = get_position_config(assigns.position)
 
     assigns =
-      assign(
-        assigns,
+      assigns
+      |> assign(
         :container_classes,
         merge([
           position_config.container,
@@ -428,6 +449,7 @@ defmodule Pulsar.Components.FlashGroup do
           assigns.class
         ])
       )
+      |> assign(:entry_duration_ms, @entry_duration_ms)
 
     ~H"""
     <div
@@ -446,11 +468,11 @@ defmodule Pulsar.Components.FlashGroup do
         dismiss_after={@dismiss_after}
         dismissible={@dismissible}
         on_dismiss={dismiss_callback(@on_dismiss, normalize_flash_key(type))}
-        style={get_animation_style(index, @stagger_delay)}
         phx-mounted={
           JS.show(
+            time: @entry_duration_ms + stagger_ms(index, @stagger_delay),
             transition: {
-              "ease-decelerate duration-normal",
+              "ease-decelerate duration-normal #{stagger_class(index, @stagger_delay)}",
               "opacity-0 #{get_entry_from(@position)}",
               "opacity-100 #{get_entry_to(@position)}"
             }
@@ -552,13 +574,16 @@ defmodule Pulsar.Components.FlashGroup do
   defp dismiss_callback(%JS{} = js, _key), do: js
   defp dismiss_callback(fun, key) when is_function(fun, 1), do: fun.(key)
 
-  # Get animation style with stagger delay
-  defp get_animation_style(index, stagger_delay) when stagger_delay > 0 do
-    delay_ms = index * stagger_delay
-    "transition-delay: #{delay_ms}ms;"
+  defp stagger_ms(index, stagger_delay) when is_number(stagger_delay) and stagger_delay > 0 do
+    target = round(index * stagger_delay)
+    Enum.min_by(@stagger_steps, fn step -> abs(step - target) end)
   end
 
-  defp get_animation_style(_, _), do: nil
+  defp stagger_ms(_index, _stagger_delay), do: 0
+
+  defp stagger_class(index, stagger_delay) do
+    Map.fetch!(@stagger_classes, stagger_ms(index, stagger_delay))
+  end
 
   # Get z-index class
   defp get_z_index_class("auto"), do: "z-auto"

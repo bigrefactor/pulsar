@@ -234,6 +234,10 @@ Cross-cutting component conventions — notably that outgoing event callbacks ar
 `liveSocket.execJS`, with `JS.push(...)` for server events — are documented in
 [`docs/conventions.md`](docs/conventions.md). New interactive components follow it.
 
+Content-Security-Policy — which `style-src` and `img-src` policy Pulsar supports,
+and why components render no inline `style` attributes — is documented in
+[`docs/csp.md`](docs/csp.md).
+
 ## Quality Standards
 
 ### Code Generation
