@@ -1130,6 +1130,33 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     end
   end
 
+  describe "Resizable CSP-safe sizing" do
+    test "the hook resolves a real flex-basis on the second panel", %{conn: conn} do
+      session =
+        conn
+        |> visit("/components/resizable/horizontal")
+        |> A11y.await_live_connected()
+
+      PhoenixTest.Playwright.evaluate(
+        session,
+        "getComputedStyle(document.querySelector('#rz-horizontal-basic')).getPropertyValue('--pulsar-resizable-size').trim()",
+        fn value ->
+          assert value == "30%",
+                 "expected the hook to set --pulsar-resizable-size to 30%, got '#{value}'"
+        end
+      )
+
+      PhoenixTest.Playwright.evaluate(
+        session,
+        "getComputedStyle(document.querySelector('#rz-horizontal-basic-panel-2')).flexBasis",
+        fn value ->
+          refute value == "auto",
+                 "expected the second panel to resolve a real flex-basis, got 'auto' — the custom property did not reach the class"
+        end
+      )
+    end
+  end
+
   # Reads `[data-fixture-cell][tabindex="-1"]` from the current page and
   # asserts the result is empty. Surfaces offending ids/tags so a failure
   # points at the specific regressed element.

@@ -45,8 +45,8 @@ defmodule Pulsar.Components.ResizableTest do
       assert basic(%{extra: [orientation: "vertical"]}) =~ ~s(aria-orientation="horizontal")
     end
 
-    test "seeds the size CSS var on the group from default_size" do
-      assert basic(%{extra: [default_size: 40]}) =~ "--pulsar-resizable-size: 40%"
+    test "exposes default_size on the group for the hook to seed the size" do
+      assert basic(%{extra: [default_size: 40]}) =~ ~s(data-default="40")
     end
 
     test "panel one flexes to fill and can shrink" do
@@ -56,10 +56,10 @@ defmodule Pulsar.Components.ResizableTest do
       assert html =~ "min-w-0"
     end
 
-    test "controlled panel id carries the seeded flex-basis" do
+    test "controlled panel id carries the seeded flex-basis class" do
       html = basic()
       assert html =~ ~s(id="rz-panel-2")
-      assert html =~ "flex-basis: var(--pulsar-resizable-size)"
+      assert html =~ "basis-[var(--pulsar-resizable-size,30%)]"
     end
 
     test "falls back to a default separator label when none is given" do
@@ -232,6 +232,50 @@ defmodule Pulsar.Components.ResizableTest do
 
     test "controlled panel starts un-animated (instant drag)" do
       assert basic() =~ ~s(data-animating="false")
+    end
+  end
+
+  describe "resizable/1 CSP safety" do
+    test "renders no inline style attribute" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Resizable.resizable id="rz-csp" default_size={40}>
+          <:panel>Primary</:panel>
+          <:panel label="Side">Side</:panel>
+        </Resizable.resizable>
+        """)
+
+      refute html =~ ~s( style=)
+    end
+
+    test "sizes the second panel through a flex-basis class with a fallback" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Resizable.resizable id="rz-basis" default_size={40}>
+          <:panel>Primary</:panel>
+          <:panel label="Side">Side</:panel>
+        </Resizable.resizable>
+        """)
+
+      assert html =~ "basis-[var(--pulsar-resizable-size,30%)]"
+    end
+
+    test "keeps the default size available to the hook as a data attribute" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Resizable.resizable id="rz-data" default_size={40}>
+          <:panel>Primary</:panel>
+          <:panel label="Side">Side</:panel>
+        </Resizable.resizable>
+        """)
+
+      assert html =~ ~s(data-default="40")
     end
   end
 end

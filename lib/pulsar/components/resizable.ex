@@ -114,7 +114,6 @@ defmodule Pulsar.Components.Resizable do
       data-collapsible-end={to_string(@end_collapsible)}
       data-collapsed-start={@start_collapsed_size}
       data-collapsed-end={@end_collapsed_size}
-      style={"--pulsar-resizable-size: #{@default_size}%"}
       class={merge([group_classes(@orientation), @class])}
       {@rest}
     >
@@ -171,7 +170,6 @@ defmodule Pulsar.Components.Resizable do
       <div
         id={@panel_two_id}
         data-animating="false"
-        style="flex-basis: var(--pulsar-resizable-size)"
         class={merge([panel_two_classes(), Map.get(@panel_two, :class) || ""])}
       >
         {render_slot(@panel_two)}
@@ -195,6 +193,7 @@ defmodule Pulsar.Components.Resizable do
             this.collapsed = null // null | "start" | "end"
             this.startBtn = this.el.querySelector('[data-resizable-toggle="start"]')
             this.endBtn = this.el.querySelector('[data-resizable-toggle="end"]')
+            this.applySize(this.default, false)
             this.bind()
           },
           updated() {
@@ -426,7 +425,7 @@ defmodule Pulsar.Components.Resizable do
 
   @spec panel_two_classes() :: String.t()
   defp panel_two_classes do
-    "min-w-0 min-h-0 grow-0 shrink-0 overflow-auto " <>
+    "min-w-0 min-h-0 grow-0 shrink-0 overflow-auto basis-[var(--pulsar-resizable-size,30%)] " <>
       "data-[animating=true]:transition-[flex-basis] data-[animating=true]:duration-normal " <>
       "data-[animating=true]:ease-standard motion-reduce:transition-none"
   end
