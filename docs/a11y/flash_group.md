@@ -16,7 +16,7 @@ flashes.
 
 **Evidence:** Icons supplied per flash via the `start_icon` slot,
 sourced from Heroicons by type (`hero-x-circle`, `hero-check-circle`,
-etc.) — `lib/pulsar/components/flash_group.ex:236–242, 460–462`. The
+etc.) — `lib/pulsar/components/flash_group.ex:236–242, 482–484`. The
 `Pulsar.Components.Icon.icon` component handles its own
 `aria-hidden`/`aria-label`.
 
@@ -44,7 +44,7 @@ landmark would over-promise, and the live regions are on each child).
 
 **Evidence:**
 - Messages sorted by `flash_priority/1`: error → warning → info →
-  success → other — `lib/pulsar/components/flash_group.ex:480–491`
+  success → other — `lib/pulsar/components/flash_group.ex:502–513`
 - Top positions use `flex flex-col`; bottom positions use
   `flex flex-col-reverse` so the first-priority message visually appears
   closest to the screen edge — `lib/pulsar/components/flash_group.ex:246–275`
@@ -61,7 +61,7 @@ toast stack growing upward.
 
 **Evidence:** Type-to-icon mapping ensures every flash gets a
 semantic icon paired with text — `lib/pulsar/components/flash_group.ex:236–242,
-460–462`. Type-to-role mapping (`alert` vs `status`) provides a
+482–484`. Type-to-role mapping (`alert` vs `status`) provides a
 non-visual criticality signal — `lib/pulsar/components/flash_group.ex:229–233`.
 
 **Notes:** Status is conveyed via icon, text, role, and live region —
@@ -71,7 +71,7 @@ never by color alone or position alone.
 
 **Evidence:** Same as 1.3.3 — color is one of four redundant signals
 (color, icon, role, text content) —
-`lib/pulsar/components/flash_group.ex:220–242, 441–462`.
+`lib/pulsar/components/flash_group.ex:220–242, 463–484`.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
@@ -89,7 +89,7 @@ positions use `left-4`/`right-4` (1rem inset) and reflow gracefully.
 **Evidence:** No focus indicators on the container itself (no
 focusable element). Child flashes carry their own focus rings (see
 `flash.md` 1.4.11). Container has no visible borders or non-text UI of
-its own — `lib/pulsar/components/flash_group.ex:433–437`. Browser
+its own — `lib/pulsar/components/flash_group.ex:455–459`. Browser
 measurement: 6 cells, no borders, no focus rings to evaluate
 ([light](measurements/flash_group-light.md),
 [dark](measurements/flash_group-dark.md)).
@@ -104,26 +104,26 @@ spacing.
 ### 1.4.13 Content on Hover or Focus (AA) — ✓ PASS
 
 **Evidence:** Container is `pointer-events-none` so it doesn't intercept
-hover — `lib/pulsar/components/flash_group.ex:426–427`. Hover/focus
+hover — `lib/pulsar/components/flash_group.ex:447–448`. Hover/focus
 behavior on individual flashes is covered in `flash.md` 1.4.13.
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
 **Evidence:** Container has no interactive elements of its own —
-`lib/pulsar/components/flash_group.ex:433–465`. Each child flash's
+`lib/pulsar/components/flash_group.ex:455–487`. Each child flash's
 close button is keyboard-operable (covered in `flash.md` 2.1.1).
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
 **Evidence:** Container has no focus handlers; child flashes don't
-trap Tab — `lib/pulsar/components/flash_group.ex:433–465`,
+trap Tab — `lib/pulsar/components/flash_group.ex:455–487`,
 `lib/pulsar/components/flash.ex:383–390`.
 
 ### 2.2.1 Timing Adjustable (A) — ✓ PASS
 
 **Evidence:** Group-level controls expose all timing knobs to callers:
 `auto_dismiss` boolean, `dismiss_after` integer, `dismissible` boolean —
-`lib/pulsar/components/flash_group.ex:307–321`. Per-child behavior
+`lib/pulsar/components/flash_group.ex:326–340`. Per-child behavior
 covered in `flash.md` 2.2.1.
 
 **Notes:** Callers can disable auto-dismiss globally
@@ -132,23 +132,23 @@ covered in `flash.md` 2.2.1.
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
 **Evidence:** Stagger animation completes in `index * stagger_delay`
-ms then settles; no continuous motion — `lib/pulsar/components/flash_group.ex:556–561`.
+ms then settles; no continuous motion — `lib/pulsar/components/flash_group.ex:577–582`.
 Hide via dismiss covered in `flash.md` 2.2.2.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
 **Evidence:** Only animations are CSS `transition` on opacity/translate
-in `phx-mounted` JS hooks — `lib/pulsar/components/flash_group.ex:450–458`.
+in `phx-mounted` JS hooks — `lib/pulsar/components/flash_group.ex:471–480`.
 No flashing/blinking.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
 **Evidence:**
 - Messages render in deterministic priority order in the DOM —
-  `lib/pulsar/components/flash_group.ex:480–491`
+  `lib/pulsar/components/flash_group.ex:502–513`
 - No positive `tabindex` values used — only the close buttons inside
   child flashes are focusable, in DOM order —
-  `lib/pulsar/components/flash_group.ex:438–464`
+  `lib/pulsar/components/flash_group.ex:460–486`
 - Tests assert consistent DOM order across renders —
   `test/pulsar/components/flash_group_test.exs:598–640`
 
@@ -161,15 +161,15 @@ those positions. Documented stack behavior, not a bug.
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
 **Evidence:** Container has no focusable elements of its own —
-`lib/pulsar/components/flash_group.ex:433–465`. Focus visibility on
+`lib/pulsar/components/flash_group.ex:455–487`. Focus visibility on
 child close buttons covered in `flash.md` 2.4.7.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ⚠ GAP (minor) — caller responsibility
 
 **Evidence:** Container is `fixed` at one of six edge positions with
-`z-50` default — `lib/pulsar/components/flash_group.ex:335–339, 245–276,
-563–571`. `pointer-events-none` on the container —
-`lib/pulsar/components/flash_group.ex:426–427` — means clicks pass
+`z-50` default — `lib/pulsar/components/flash_group.ex:356–360, 245–276,
+588–596`. `pointer-events-none` on the container —
+`lib/pulsar/components/flash_group.ex:447–448` — means clicks pass
 through, but focus visibility under the flash stack is still a
 visual-overlap concern when focused page elements sit at the same edge.
 
@@ -197,23 +197,23 @@ focus" note covering the `auto_dismiss={false}` + edge-control case (pick a
 
 **Evidence:** Container has no click handlers; child flash dismiss is
 covered in `flash.md` 2.5.2 —
-`lib/pulsar/components/flash_group.ex:433–465`.
+`lib/pulsar/components/flash_group.ex:455–487`.
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Container has no interactive targets —
-`lib/pulsar/components/flash_group.ex:433–465`. Child close-button
+`lib/pulsar/components/flash_group.ex:455–487`. Child close-button
 target sizing is covered in `flash.md` 2.5.8.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 
 **Evidence:** No focus handlers on the container —
-`lib/pulsar/components/flash_group.ex:433–465`.
+`lib/pulsar/components/flash_group.ex:455–487`.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
 **Evidence:** Container is a plain `<div>` with no implicit interactive
-role — `lib/pulsar/components/flash_group.ex:433–437`. Each child flash
+role — `lib/pulsar/components/flash_group.ex:455–459`. Each child flash
 carries `role`, `aria-live`, `aria-atomic`, and the dismiss button
 carries `aria-label` and `aria-controls` (see `flash.md` 4.1.2).
 
@@ -221,8 +221,8 @@ carries `aria-label` and `aria-controls` (see `flash.md` 4.1.2).
 
 **Evidence:** Each rendered flash gets a `role` (`alert` or `status`)
 and matching `aria-live` from `get_flash_role/1` and the child Flash
-component — `lib/pulsar/components/flash_group.ex:229–233, 444,
-499–501`; tests assert alert vs status by type —
+component — `lib/pulsar/components/flash_group.ex:229–233, 466,
+521–523`; tests assert alert vs status by type —
 `test/pulsar/components/flash_group_test.exs:226–253`.
 
 **Notes:** New flashes appended via `phx-mounted` JS show transition
