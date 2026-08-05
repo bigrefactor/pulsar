@@ -1199,6 +1199,51 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     end
   end
 
+  describe "FlashGroup CSP-safe stagger" do
+    test "every staggered flash settles fully opaque", %{conn: conn} do
+      session =
+        conn
+        |> visit("/components/flash_group")
+        |> A11y.await_live_connected()
+
+      # The longest stagger in the fixture is index 3 (300ms) plus a 200ms
+      # entry, so poll past that rather than sampling once.
+      poll = """
+      async () => {
+        const cell = document.querySelector('[data-fixture-cell="position-top-right"]');
+        const read = () => Array.from(cell.querySelectorAll('[role="alert"], [role="status"]'));
+        const deadline = performance.now() + 1500;
+
+        while (performance.now() < deadline) {
+          const flashes = read();
+          if (flashes.length && flashes.every((f) => getComputedStyle(f).opacity === '1')) {
+            return String(flashes.length) + ':' + String(flashes.length);
+          }
+          await new Promise((r) => setTimeout(r, 50));
+        }
+
+        const flashes = read();
+        return String(flashes.length) + ':' +
+          String(flashes.filter((f) => getComputedStyle(f).opacity === '1').length);
+      }
+      """
+
+      PhoenixTest.Playwright.evaluate(
+        session,
+        poll,
+        [is_function: true, timeout: 3_000],
+        fn result ->
+          [total, opaque] = String.split(result, ":")
+
+          assert total == "4", "expected the fixture to render 4 flashes, got #{total}"
+
+          assert opaque == total,
+                 "expected all #{total} flashes to settle at opacity 1, only #{opaque} did"
+        end
+      )
+    end
+  end
+
   # Reads `[data-fixture-cell][tabindex="-1"]` from the current page and
   # asserts the result is empty. Surfaces offending ids/tags so a failure
   # points at the specific regressed element.
