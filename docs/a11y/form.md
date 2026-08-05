@@ -30,7 +30,7 @@ the text "indicates a required field" — colour is never the sole carrier
 **Evidence:** Legend text uses `text-muted-foreground`
 (`lib/pulsar/components/form.ex:101`), which measures 6.0–7.23:1 across
 all surfaces. The axe-core browser gate reports no `color-contrast`
-violation for the form fixture in either theme (138 tests, 0 failures).
+violation for the form fixture in either theme.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
@@ -55,8 +55,13 @@ required field" at the start of the form, per technique H90 —
 field is required. The entire legend paragraph — asterisk and text — is
 marked `aria-hidden="true"` (`lib/pulsar/components/form.ex:101`), so AT
 users never hear it; they receive required state instead from each
-field's native `required` attribute, which `field` sets for every
-control type (see [label](label.md) 1.3.1/1.3.3).
+field's native `required` attribute, which `field` sets for `input`,
+`textarea`, `select`, `checkbox`, `radio`, `switch`, and `otp` control
+types (see [label](label.md) 1.3.1/1.3.3). **Known gap:** `date` and
+`daterange` fields route to `DatePicker`
+(`lib/pulsar/components/field.ex:518–567`), which has no `required`
+pass-through — a required date field gets no required signal at all,
+sighted or AT. Tracked separately as a product gap.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 

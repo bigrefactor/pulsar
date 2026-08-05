@@ -23,22 +23,33 @@ associates the label with an input.
 **Notes:** Label-to-input association is enforced by the API (required
 attr). The required *relationship* is carried programmatically by the
 associated control's `required` / `aria-required` attribute, which
-`field` sets. The asterisk is generated content — absent from the DOM,
-the accessibility tree, and the label's text content — so it is visual
-reinforcement only.
+`field` sets for `input` (text/email/password/number/etc.), `textarea`,
+`select`, `checkbox`, `radio`, `switch`, and `otp` control types. **Known
+gap:** `date` and `daterange` route to `DatePicker`
+(`lib/pulsar/components/field.ex:518–567`), which has no `required`
+pass-through at all — required state does not reach the control for
+those two types, sighted or AT. This is a pre-existing product gap
+tracked separately, not a defect in Label itself. The asterisk is
+generated content — absent from the DOM, the accessibility tree, and the
+label's text content — so it is visual reinforcement only.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** Required state is conveyed by the associated control's
 `required` attribute, not by "the red asterisk" —
-`lib/pulsar/components/field.ex:254, 319–594` passes `required` to every
-control type.
+`lib/pulsar/components/field.ex:254` declares the attr; it is forwarded
+at `:381` (select), `:402` (textarea), `:426` (otp), `:448` (checkbox),
+`:478` (switch), `:506` (radio), and `:594` (input, the default case).
+**Known gap:** `date`/`daterange` route to `DatePicker`
+(`lib/pulsar/components/field.ex:518–567`), which accepts no `required`
+attr at all — those two control types receive no required signal,
+sighted or AT. Tracked separately as a product gap; not a Label defect.
 
-**Notes:** The asterisk is CSS generated content, so it never reaches AT
-at all. AT users receive required state from the control itself, and no
-instruction depends on recognising a shape or colour. `form`'s optional
-`required_legend` explains the asterisk for sighted users (see
-[form](form.md)).
+**Notes:** For the control types that do carry it, the asterisk is CSS
+generated content, so it never reaches AT at all, and AT users receive
+required state from the control itself — no instruction depends on
+recognising a shape or colour. `form`'s optional `required_legend`
+explains the asterisk for sighted users (see [form](form.md)).
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
@@ -54,7 +65,7 @@ field's error message; the label never carries the only signal.
 
 **Evidence:** Default color `text-foreground`; error color `text-danger`
 (semantic tokens that resolve per-theme via CSS custom properties, not
-`dark:` variants) — `lib/pulsar/components/label.ex:155, 159`.
+`dark:` variants) — `lib/pulsar/components/label.ex:159, 155`.
 Semantic-token sourcing is sound.
 Browser measurement of 8 fixture cells (default, required, error,
 required-error × sizes xs-xl): min 6.14:1 (light, error/danger color) /
@@ -110,7 +121,7 @@ construction.
 
 **Evidence:** Native `<label>` element with required `for` association —
 `lib/pulsar/components/label.ex:97, 115–116`. Test
-`renders role="label" via native element` is implied by element check —
+`renders label with default props` asserts the native element —
 `test/pulsar/components/label_test.exs:18`.
 
 **Notes:** Role is implicit from the native `<label>`. No custom ARIA is
