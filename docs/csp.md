@@ -11,7 +11,10 @@ loosening `style-src`.
 
 **`style-src 'unsafe-inline'` is not required.** No Pulsar component renders an
 inline `style` attribute. Dynamic values reach CSS as static utility classes, or
-as SVG presentation attributes, which CSP does not govern.
+as SVG presentation attributes, which CSP does not govern. Every component
+accepts `:global` attrs, and `style` is one of Phoenix's global attributes — a
+caller who explicitly passes `style="…"` to a component still renders an inline
+style attribute and reintroduces the violation.
 
 A nonce would not have helped here: a `nonce-` value whitelists `<style>` and
 `<script>` *elements*, not style *attributes*. Style attributes are governed by
@@ -20,7 +23,10 @@ A nonce would not have helped here: a `nonce-` value whitelists `<style>` and
 **Runtime style mutation is permitted.** LiveView's own JavaScript sets inline
 styles at runtime — `JS.show` and `JS.hide` set `display`, and Pulsar's resizable
 hook sets a custom property as you drag. CSP governs style attributes in markup,
-not scripted style mutation from an already-allowed script.
+not scripted style mutation from an already-allowed script. One consequence:
+`resizable`'s second panel renders at a fixed 30% until its hook mounts and
+applies `default_size`, so a static render without JavaScript shows 30%
+regardless of the configured `default_size`.
 
 ## What Pulsar does require
 

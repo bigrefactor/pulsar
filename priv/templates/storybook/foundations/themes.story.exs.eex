@@ -144,7 +144,7 @@ defmodule <%= @web_module %>.Storybook.Foundations.Themes do
           title={"#{s.token} → #{s.palette}"}
         >
           <svg class="psb:h-8 psb:w-full psb:block psb:border border-border">
-            <rect width="100%" height="100%" fill={s.css} />
+            <rect width="100%" height="100%" class={s.fill} />
           </svg>
           <p class="psb:text-[0.6rem] psb:leading-tight text-muted-foreground psb:mt-1">
             {s.label}
@@ -325,29 +325,31 @@ defmodule <%= @web_module %>.Storybook.Foundations.Themes do
   # Data
   # ---------------------------------------------------------------------------
 
-  # Tokens shown as colored chips in the gallery. Values resolved via CSS
-  # variables so they always match the actual themes/<name>.css files.
+  # Tokens shown as colored chips in the gallery. `fill` is a literal Tailwind
+  # class per entry (Tailwind only generates classes it can find as literal
+  # strings in source) so the swatches always match the actual
+  # themes/<name>.css files.
   defp theme_swatches("light") do
     [
-      %{token: "--color-background", palette: "white", label: "bg", css: "var(--color-white)"},
-      %{token: "--color-surface-1", palette: "gray-50", label: "surf", css: "var(--color-gray-50)"},
-      %{token: "--color-border", palette: "gray-200", label: "border", css: "var(--color-gray-200)"},
-      %{token: "--color-primary", palette: "primary-700", label: "primary", css: "var(--color-primary-700)"},
-      %{token: "--color-success", palette: "success-900", label: "success", css: "var(--color-success-900)"},
-      %{token: "--color-danger", palette: "danger-700", label: "danger", css: "var(--color-danger-700)"},
-      %{token: "--color-foreground", palette: "gray-950", label: "fg", css: "var(--color-gray-950)"}
+      %{token: "--color-background", palette: "white", label: "bg", fill: "fill-white"},
+      %{token: "--color-surface-1", palette: "gray-50", label: "surf", fill: "fill-gray-50"},
+      %{token: "--color-border", palette: "gray-200", label: "border", fill: "fill-gray-200"},
+      %{token: "--color-primary", palette: "primary-700", label: "primary", fill: "fill-primary-700"},
+      %{token: "--color-success", palette: "success-900", label: "success", fill: "fill-success-900"},
+      %{token: "--color-danger", palette: "danger-700", label: "danger", fill: "fill-danger-700"},
+      %{token: "--color-foreground", palette: "gray-950", label: "fg", fill: "fill-gray-950"}
     ]
   end
 
   defp theme_swatches("dark") do
     [
-      %{token: "--color-background", palette: "gray-950", label: "bg", css: "var(--color-gray-950)"},
-      %{token: "--color-surface-1", palette: "gray-900", label: "surf", css: "var(--color-gray-900)"},
-      %{token: "--color-border", palette: "gray-800", label: "border", css: "var(--color-gray-800)"},
-      %{token: "--color-primary", palette: "primary-400", label: "primary", css: "var(--color-primary-400)"},
-      %{token: "--color-success", palette: "success-400", label: "success", css: "var(--color-success-400)"},
-      %{token: "--color-danger", palette: "danger-300", label: "danger", css: "var(--color-danger-300)"},
-      %{token: "--color-foreground", palette: "gray-50", label: "fg", css: "var(--color-gray-50)"}
+      %{token: "--color-background", palette: "gray-950", label: "bg", fill: "fill-gray-950"},
+      %{token: "--color-surface-1", palette: "gray-900", label: "surf", fill: "fill-gray-900"},
+      %{token: "--color-border", palette: "gray-800", label: "border", fill: "fill-gray-800"},
+      %{token: "--color-primary", palette: "primary-400", label: "primary", fill: "fill-primary-400"},
+      %{token: "--color-success", palette: "success-400", label: "success", fill: "fill-success-400"},
+      %{token: "--color-danger", palette: "danger-300", label: "danger", fill: "fill-danger-300"},
+      %{token: "--color-foreground", palette: "gray-50", label: "fg", fill: "fill-gray-50"}
     ]
   end
 

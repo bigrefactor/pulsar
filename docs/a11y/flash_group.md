@@ -168,7 +168,7 @@ child close buttons covered in `flash.md` 2.4.7.
 
 **Evidence:** Container is `fixed` at one of six edge positions with
 `z-50` default — `lib/pulsar/components/flash_group.ex:356–360, 245–276,
-588–596`. `pointer-events-none` on the container —
+588–597`. `pointer-events-none` on the container —
 `lib/pulsar/components/flash_group.ex:447–448` — means clicks pass
 through, but focus visibility under the flash stack is still a
 visual-overlap concern when focused page elements sit at the same edge.

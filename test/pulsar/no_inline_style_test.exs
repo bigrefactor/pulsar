@@ -8,10 +8,10 @@ defmodule Pulsar.NoInlineStyleTest do
   # as classes or, for dynamic values, as SVG presentation attributes. This
   # guards the generated lib modules and every template (source of truth),
   # including those under priv/templates/{storybook,test,themes} that ship into
-  # host apps.
+  # host apps, plus the dev_app storybook mirror used for local development.
   #
   # The lookbehind is required: a bare `style=` also matches `line_style="..."`.
-  @roots ["lib/pulsar/components", "priv/templates"]
+  @roots ["lib/pulsar/components", "priv/templates", "test/support/dev_app/storybook"]
   @pattern ~r/(?<![-\w])style=/
 
   test "no component source renders an inline style attribute" do

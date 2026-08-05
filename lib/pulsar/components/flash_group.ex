@@ -574,8 +574,8 @@ defmodule Pulsar.Components.FlashGroup do
   defp dismiss_callback(%JS{} = js, _key), do: js
   defp dismiss_callback(fun, key) when is_function(fun, 1), do: fun.(key)
 
-  defp stagger_ms(index, stagger_delay) when is_integer(stagger_delay) and stagger_delay > 0 do
-    target = index * stagger_delay
+  defp stagger_ms(index, stagger_delay) when is_number(stagger_delay) and stagger_delay > 0 do
+    target = round(index * stagger_delay)
     Enum.min_by(@stagger_steps, fn step -> abs(step - target) end)
   end
 

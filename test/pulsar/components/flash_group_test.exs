@@ -42,6 +42,24 @@ defmodule Pulsar.Components.FlashGroupTest do
       refute html =~ "delay-75"
     end
 
+    test "staggers with a float stagger_delay computed at runtime" do
+      # A literal float would trip the :integer attr's compile-time type
+      # warning, so it's assigned dynamically here, the same way a caller's
+      # computed value would arrive.
+      assigns = %{delay: 149.6}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group
+          flash={%{info: "Message 1", success: "Message 2"}}
+          stagger_delay={@delay}
+        />
+        """)
+
+      assert html =~ "delay-0"
+      assert html =~ "delay-150"
+    end
+
     test "renders no inline style attribute" do
       assigns = %{}
 

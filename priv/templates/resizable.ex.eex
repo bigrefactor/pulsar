@@ -35,6 +35,12 @@ Home/End jump to the minimum/maximum. Double-click the handle to reset to
 `default_size`. A collapsible panel adds a focusable toggle button to the handle — Tab to it and
 press Enter or Space to collapse or expand that panel. Dragging the handle to a
 panel's edge also collapses it.
+
+## Without JavaScript
+
+The component's hook applies `default_size` on mount. In a render where the
+hook never runs (a static/dead render, or JavaScript blocked or failed), the
+second panel shows the fixed 30% fallback regardless of `default_size`.
 """
 
 use Phoenix.Component

@@ -75,7 +75,7 @@ defmodule Pulsar.Components.Progress do
     "xl" => "h-20 w-20"
   }
 
-  # Fill background per house color (linear shape).
+  # Fill background per house color (indeterminate linear shape).
   @fill_color_config %{
     "neutral" => "bg-neutral",
     "primary" => "bg-primary",
