@@ -29,6 +29,13 @@ defmodule Pulsar.Components.Form do
           <:label>Name</:label>
         </Field.field>
       </Pulsar.Components.Form.form>
+
+      # With a legend explaining the required-field asterisk
+      <Pulsar.Components.Form.form :let={f} for={@form} required_legend>
+        <Field.field field={f[:name]} type="text" required>
+          <:label>Name</:label>
+        </Field.field>
+      </Pulsar.Components.Form.form>
   """
 
   use Phoenix.Component
@@ -44,6 +51,14 @@ defmodule Pulsar.Components.Form do
     include: ~w(autocomplete name rel action enctype method novalidate target multipart
          phx-change phx-submit phx-trigger-action phx-auto-recover),
     doc: "additional HTML attributes forwarded to the underlying <form> element"
+
+  attr :required_legend, :boolean,
+    default: false,
+    doc: "Render a legend explaining the required-field asterisk"
+
+  attr :required_legend_text, :string,
+    default: "indicates a required field",
+    doc: ~s{Legend text following the asterisk. Use with i18n: gettext("indicates a required field")}
 
   slot :inner_block, required: true
 
@@ -83,6 +98,9 @@ defmodule Pulsar.Components.Form do
       phx-hook=".PulsarForm"
       {@rest}
     >
+      <p :if={@required_legend} class="mb-4 text-sm text-muted-foreground" aria-hidden="true">
+        <span class="text-danger">*</span> {@required_legend_text}
+      </p>
       {render_slot(@inner_block, f)}
     </Phoenix.Component.form>
     <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarForm">

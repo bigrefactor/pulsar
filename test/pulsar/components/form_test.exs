@@ -64,6 +64,62 @@ defmodule Pulsar.Components.FormTest do
     end
   end
 
+  describe "form/1 required legend" do
+    test "renders no legend by default" do
+      assigns = %{form: to_form(%{}, as: :test)}
+
+      html =
+        rendered_to_string(~H"""
+        <Form.form for={@form}>
+          <p>inner content</p>
+        </Form.form>
+        """)
+
+      refute html =~ "indicates a required field"
+    end
+
+    test "renders the legend when required_legend is set" do
+      assigns = %{form: to_form(%{}, as: :test)}
+
+      html =
+        rendered_to_string(~H"""
+        <Form.form for={@form} required_legend>
+          <p>inner content</p>
+        </Form.form>
+        """)
+
+      assert html =~ "indicates a required field"
+      assert html =~ "text-danger"
+    end
+
+    test "hides the legend from assistive technology" do
+      assigns = %{form: to_form(%{}, as: :test)}
+
+      html =
+        rendered_to_string(~H"""
+        <Form.form for={@form} required_legend>
+          <p>inner content</p>
+        </Form.form>
+        """)
+
+      assert html =~ ~s(aria-hidden="true")
+    end
+
+    test "honors custom legend text for i18n" do
+      assigns = %{form: to_form(%{}, as: :test)}
+
+      html =
+        rendered_to_string(~H"""
+        <Form.form for={@form} required_legend required_legend_text="indique un champ obligatoire">
+          <p>inner content</p>
+        </Form.form>
+        """)
+
+      assert html =~ "indique un champ obligatoire"
+      refute html =~ "indicates a required field"
+    end
+  end
+
   describe "form/1 accessibility hook" do
     test "attaches the colocated PulsarForm hook to the form element" do
       assigns = %{form: to_form(%{}, as: :test)}

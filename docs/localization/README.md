@@ -28,12 +28,18 @@ Components expose their default labels as attributes. Pass `gettext/1` (or
   remaining_label={gettext("remaining")}
   over_label={gettext("over")}
 />
+
+<.form for={@form} required_legend
+       required_legend_text={gettext("indicates a required field")}>
+  <%!-- fields --%>
+</.form>
 ```
 
 | Component  | Attribute                          | Default        |
 | ---------- | ---------------------------------- | -------------- |
 | `flash`    | `dismiss_label`                    | `"Dismiss"`    |
 | `select`   | `remove_label`                     | `"Remove"`     |
+| `form`     | `required_legend_text`             | `"indicates a required field"` |
 | `textarea` | `remaining_label`, `over_label`    | `"remaining"`, `"over"` |
 
 ## Form error messages
