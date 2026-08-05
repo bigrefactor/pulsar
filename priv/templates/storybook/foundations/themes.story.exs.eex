@@ -143,8 +143,9 @@ defmodule <%= @web_module %>.Storybook.Foundations.Themes do
           class="psb:flex-1 psb:rounded psb:overflow-hidden psb:min-w-0 psb:text-center"
           title={"#{s.token} → #{s.palette}"}
         >
-          <div class="psb:h-8 psb:border border-border" style={"background-color: #{s.css}"}>
-          </div>
+          <svg class="psb:h-8 psb:w-full psb:block psb:border border-border">
+            <rect width="100%" height="100%" fill={s.css} />
+          </svg>
           <p class="psb:text-[0.6rem] psb:leading-tight text-muted-foreground psb:mt-1">
             {s.label}
           </p>
