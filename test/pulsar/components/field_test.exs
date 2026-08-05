@@ -875,6 +875,34 @@ defmodule Pulsar.Components.FieldTest do
       assert html =~ ~s(<label)
       refute html =~ ~s(aria-label="Date")
     end
+
+    test "type=date propagates required to the picker's aria-required" do
+      form = to_form(%{"starts_on" => "2026-06-10"}, as: :ev)
+      assigns = %{field: form[:starts_on]}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="date" required>
+          <:label>Start</:label>
+        </Field.field>
+        """)
+
+      assert html =~ ~s(aria-required="true")
+    end
+
+    test "type=daterange propagates required to the picker's aria-required" do
+      form = to_form(%{"from" => "2026-06-10", "to" => "2026-06-20"}, as: :trip)
+      assigns = %{form: form}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@form[:from]} type="daterange" end_field={@form[:to]} required>
+          <:label>Dates</:label>
+        </Field.field>
+        """)
+
+      assert html =~ ~s(aria-required="true")
+    end
   end
 
   describe "show_errors attribute" do

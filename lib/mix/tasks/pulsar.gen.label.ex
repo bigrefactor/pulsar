@@ -21,12 +21,11 @@ defmodule Mix.Tasks.Pulsar.Gen.Label do
     ## Features
 
     - Typography sizes: xs, sm, md, lg, xl (matching input components)
-    - Required field indicators with screen reader support
+    - Required field indicator drawn as a decorative asterisk
     - Error state styling for validation feedback
     - Proper label-input association via `for` attribute
     - Data attributes for additional CSS targeting
     - Automatic dark mode support
-    - Internationalization support for required text
 
     ## Usage Examples
 
@@ -45,16 +44,12 @@ defmodule Mix.Tasks.Pulsar.Gen.Label do
       Document Title
     </.label>
 
-    # With internationalized required text
-    <.label for="email" required sr_required_text={gettext("(required)")}>
-      Email Address
-    </.label>
     ```
 
     ## Accessibility Features
 
     - Proper association with inputs via `for` attribute
-    - Screen reader text for required indicators
+    - Required indicator paired with the control's `required` attribute
     - ARIA-compatible error state styling
     - Semantic HTML with proper label elements
 

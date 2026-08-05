@@ -42,7 +42,7 @@ defmodule Pulsar.Components.LabelTest do
       assert html =~ "Username"
     end
 
-    test "passes through data-required attribute from Stellar" do
+    test "passes through data-required attribute" do
       assigns = %{}
 
       html =
@@ -126,9 +126,8 @@ defmodule Pulsar.Components.LabelTest do
         """)
 
       assert html =~ "Password"
-      assert html =~ "<span"
-      assert html =~ "text-danger"
-      assert html =~ ">*</span>"
+      assert html =~ "after:content-[&#39;*&#39;]"
+      assert html =~ "after:text-danger"
     end
 
     test "required indicator matches label size" do
@@ -151,7 +150,7 @@ defmodule Pulsar.Components.LabelTest do
       assert html_xl =~ "text-xl"
     end
 
-    test "required indicator uses danger color and is aria-hidden" do
+    test "required indicator uses danger color" do
       assigns = %{}
 
       html =
@@ -159,36 +158,34 @@ defmodule Pulsar.Components.LabelTest do
         <Label.label for="field" required>Required</Label.label>
         """)
 
-      assert html =~ "text-danger"
-      assert html =~ ~s(aria-hidden="true")
+      assert html =~ "after:text-danger"
     end
 
-    test "supports custom sr_required_text for i18n" do
+    test "required label contributes no text to its accessible name or label text" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <Label.label for="field" required sr_required_text="(obligatorio)">Spanish Required</Label.label>
+        <Label.label for="field" required>Email</Label.label>
         """)
 
-      assert html =~ "Spanish Required"
-      # Should pass through custom text to Stellar (visible in sr-only span)
-      assert html =~ "(obligatorio)"
-      assert html =~ ~s(class="sr-only")
+      refute html =~ "sr-only"
+      refute html =~ "(required)"
+      refute html =~ ">*<"
+      assert html =~ "after:content-[&#39;*&#39;]"
+      assert html =~ "after:text-danger"
+      assert html =~ "Email"
     end
 
-    test "uses default sr_required_text when not specified" do
+    test "non-required label carries no required indicator classes" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <Label.label for="field" required>Default Required</Label.label>
+        <Label.label for="field">Email</Label.label>
         """)
 
-      assert html =~ "Default Required"
-      # Should use default "(required)" text
-      assert html =~ "(required)"
-      assert html =~ ~s(class="sr-only")
+      refute html =~ "after:content-[&#39;*&#39;]"
     end
   end
 
@@ -305,18 +302,15 @@ defmodule Pulsar.Components.LabelTest do
       refute html =~ "duration-normal"
     end
 
-    test "uses Stellar label for accessibility features" do
+    test "exposes required state via data-required attribute" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <Label.label for="field" required>Stellar Integration</Label.label>
+        <Label.label for="field" required>Required Field</Label.label>
         """)
 
-      # Should include Stellar's data-required attribute
       assert html =~ ~s(data-required="true")
-      # Should include screen reader text from Stellar
-      assert html =~ ~s(class="sr-only")
     end
   end
 
@@ -368,7 +362,6 @@ defmodule Pulsar.Components.LabelTest do
       # Should have all data attributes for external CSS targeting
       assert html =~ ~s(data-error="true")
       assert html =~ ~s(data-size="lg")
-      # From Stellar
       assert html =~ ~s(data-required="true")
     end
   end

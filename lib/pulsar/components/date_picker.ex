@@ -67,6 +67,7 @@ defmodule Pulsar.Components.DatePicker do
   attr(:size, :string, default: "md", values: ~w(xs sm md lg xl))
   attr(:disabled, :boolean, default: false)
   attr(:invalid, :boolean, default: false)
+  attr(:required, :boolean, default: false, doc: "Mark the date field as required")
   attr(:on_change, JS, default: %JS{})
   attr(:"aria-describedby", :string, default: nil)
 
@@ -118,6 +119,7 @@ defmodule Pulsar.Components.DatePicker do
           disabled={@disabled}
           aria-label={@display_label || (!@labelled_externally && "Date")}
           aria-invalid={(@invalid && "true") || "false"}
+          aria-required={(@required && "true") || "false"}
           aria-describedby={assigns[:"aria-describedby"]}
           class={@input_class}
           autocomplete="off"
@@ -132,6 +134,7 @@ defmodule Pulsar.Components.DatePicker do
           disabled={@disabled}
           aria-label={!@labelled_externally && "Start date"}
           aria-invalid={(@invalid && "true") || "false"}
+          aria-required={(@required && "true") || "false"}
           aria-describedby={assigns[:"aria-describedby"]}
           class={[@input_class, "text-center"]}
           autocomplete="off"
@@ -146,6 +149,7 @@ defmodule Pulsar.Components.DatePicker do
           disabled={@disabled}
           aria-label="End date"
           aria-invalid={(@invalid && "true") || "false"}
+          aria-required={(@required && "true") || "false"}
           aria-describedby={assigns[:"aria-describedby"]}
           class={[@input_class, "text-center"]}
           autocomplete="off"

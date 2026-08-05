@@ -98,18 +98,24 @@ defmodule Pulsar.Integration.A11y.FormTest do
 
     test "aria-invalid clears on a field after the next valid submit",
          %{conn: conn} do
-      # Type by id instead of label because Pulsar's required-field label
-      # includes a screen-reader-only span and a visual asterisk
-      # (label.ex:159-160), so `textContent` doesn't match "Full name"
-      # exactly — and Playwright's label matcher is exact.
       conn
       |> visit("/components/form")
       |> A11y.await_live_connected()
       |> click_button("Sign up")
       |> assert_has(~s|#signup_name[aria-invalid="true"]|)
-      |> type("#signup_name", "Alice")
+      |> fill_in("Full name", with: "Alice")
       |> click_button("Sign up")
       |> assert_has(~s|#signup_name[aria-invalid="false"]|)
+    end
+
+    test "required fields are fillable by their exact visible label", %{conn: conn} do
+      # Playwright's label matcher is exact. A required field whose label
+      # carries extra screen-reader text is unreachable by `fill_in`.
+      conn
+      |> visit("/components/form")
+      |> A11y.await_live_connected()
+      |> fill_in("Email address", with: "someone@example.com")
+      |> assert_has(~s|#signup_email[value="someone@example.com"]|)
     end
   end
 

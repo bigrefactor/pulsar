@@ -53,6 +53,42 @@ defmodule Pulsar.Components.DatePickerTest do
     end
   end
 
+  describe "date_picker/1 required state" do
+    test "required marks the display input aria-required" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DatePicker.date_picker id="dp" required />
+        """)
+
+      assert html =~ ~s(aria-required="true")
+    end
+
+    test "not required leaves the display input aria-required false" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DatePicker.date_picker id="dp" />
+        """)
+
+      assert html =~ ~s(aria-required="false")
+    end
+
+    test "required marks both display inputs aria-required in range mode" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DatePicker.date_picker id="dp" mode="range" required />
+        """)
+
+      assert html =~ ~s(aria-required="true")
+      refute html =~ ~s(aria-required="false")
+    end
+  end
+
   describe "date_picker/1 field wrapper and anchor" do
     test "wrapper div carries the -field id and popover panel carries the matching anchor" do
       assigns = %{}
