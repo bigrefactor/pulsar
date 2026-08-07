@@ -174,7 +174,7 @@ defmodule Pulsar.Components.DropzoneTest do
       html = rendered_to_string(~H[<Dropzone.dropzone upload={@upload} />])
 
       assert html =~ "cancel-upload"
-      assert html =~ ~s("ref":"0")
+      assert html =~ ~s(&quot;ref&quot;:&quot;0&quot;)
     end
 
     test "a plain %JS{} applies to every entry" do
@@ -193,7 +193,7 @@ defmodule Pulsar.Components.DropzoneTest do
 
       html = rendered_to_string(~H[<Dropzone.dropzone upload={@upload} on_cancel={@fun} />])
       assert html =~ "drop-entry"
-      assert html =~ ~s("ref":"0")
+      assert html =~ ~s(&quot;ref&quot;:&quot;0&quot;)
     end
   end
 
