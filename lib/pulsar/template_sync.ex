@@ -49,6 +49,7 @@ defmodule Pulsar.TemplateSync do
     {:divider, "lib/pulsar/components/divider.ex", "Pulsar.Components", "Pulsar.Components.Divider"},
     {:drawer, "lib/pulsar/components/drawer.ex", "Pulsar.Components", "Pulsar.Components.Drawer"},
     {:dropdown_menu, "lib/pulsar/components/dropdown_menu.ex", "Pulsar.Components", "Pulsar.Components.DropdownMenu"},
+    {:dropzone, "lib/pulsar/components/dropzone.ex", "Pulsar.Components", "Pulsar.Components.Dropzone"},
     {:field, "lib/pulsar/components/field.ex", "Pulsar.Components", "Pulsar.Components.Field"},
     {:flash, "lib/pulsar/components/flash.ex", "Pulsar.Components", "Pulsar.Components.Flash"},
     {:flash_group, "lib/pulsar/components/flash_group.ex", "Pulsar.Components", "Pulsar.Components.FlashGroup"},
