@@ -1,7 +1,7 @@
 # Pulsar accessibility audit — WCAG 2.2 Level AA
 
 This directory holds Pulsar's first formal accessibility audit. It covers
-every applicable WCAG 2.2 Level A and AA success criterion across all 44
+every applicable WCAG 2.2 Level A and AA success criterion across all 46
 components in `lib/pulsar/components/`. Original audit method was
 **code-only**; the browser-verification follow-up has
 since populated measured contrast, focus-ring, target-size, text-spacing,
@@ -141,6 +141,7 @@ not-applicable). Detailed per-criterion grids follow.
 | [popover](popover.md) | 5/0/15 | 7/0/13 | 1/0/12 | 1/0/1 |
 | [tooltip](tooltip.md) | 7/0/13 | 7/0/13 | 1/0/12 | 1/0/1 |
 | **Feedback / notification** | | | | |
+| [alert](alert.md) | 10/0/10 | 8/0/12 | 1/0/12 | 2/0/0 |
 | [flash](flash.md) | 11/0/9 | 11/0/9 | 1/0/12 | 2/0/0 |
 | [flash_group](flash_group.md) | 9/0/11 | 9/1/10 | 1/0/12 | 2/0/0 |
 | **Structure / layout** | | | | |
@@ -154,6 +155,7 @@ not-applicable). Detailed per-criterion grids follow.
 | [menu](menu.md) | 11/0/9 | 13/0/7 | 1/0/12 | 1/0/1 |
 | [navbar](navbar.md) | 10/0/10 | 11/0/9 | 1/0/12 | 1/0/1 |
 | [pagination](pagination.md) | 8/0/12 | 8/0/12 | 0/0/13 | 2/0/0 |
+| [resizable](resizable.md) | 2/0/18 | 4/0/16 | 0/0/13 | 1/0/1 |
 | [sidebar](sidebar.md) | 10/0/10 | 11/0/9 | 1/0/12 | 1/0/1 |
 | [steps](steps.md) | 9/0/11 | 0/0/13 | 0/0/13 | 0/0/2 |
 | [table](table.md) | 10/0/10 | 11/0/9 | 1/0/12 | 2/0/0 |
@@ -194,6 +196,7 @@ not-applicable). Detailed per-criterion grids follow.
 | modal | — | — | — | — | — | — | ✓ | — | — | — | — | — | — | ✓ | — | — | ✓ | ✓ | — | ✓ |
 | popover | — | — | — | — | — | — | ✓ | — | — | — | — | — | — | ✓ | — | — | ✓ | ✓ | — | ✓ |
 | tooltip | ✓ | — | — | — | — | — | ✓ | — | — | — | — | — | — | ✓ | ✓ | — | ✓ | ✓ | — | ✓ |
+| alert | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | flash | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | ✓ |
 | flash_group | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | — | — | — | ✓ | ✓ | ✓ | ✓ |
 | card | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
@@ -204,6 +207,7 @@ not-applicable). Detailed per-criterion grids follow.
 | menu | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | ✓ |
 | navbar | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | pagination | ✓ | — | — | — | — | — | ✓ | ✓ | — | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | — | — |
+| resizable | — | — | — | — | — | — | ✓ | — | — | ✓ | — | — | — | — | — | — | — | — | — | — |
 | sidebar | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | steps | ✓ | — | — | — | — | — | ✓ | ✓ | — | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | table | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
@@ -243,6 +247,7 @@ not-applicable). Detailed per-criterion grids follow.
 | modal | ✓ | ✓ | — | — | — | — | — | — | ✓ | — | — | — | ✓ | ✓ | — | ✓ | — | — | — | ✓ |
 | popover | ✓ | ✓ | — | — | — | — | — | — | ✓ | — | — | — | ✓ | ✓ | — | ✓ | — | — | — | ✓ |
 | tooltip | ✓ | ✓ | — | — | — | — | — | — | ✓ | — | — | — | ✓ | ✓ | — | ✓ | — | — | — | ✓ |
+| alert | ✓ | ✓ | — | — | — | — | — | — | ✓ | — | — | — | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | flash | ✓ | ✓ | — | ✓ | ✓ | ✓ | — | — | ✓ | — | — | — | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | flash_group | ✓ | ✓ | — | ✓ | ✓ | ✓ | — | — | ✓ | — | — | — | ✓ | ⚠ | — | ✓ | — | — | — | ✓ |
 | card | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
@@ -253,6 +258,7 @@ not-applicable). Detailed per-criterion grids follow.
 | menu | ✓ | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | navbar | ✓ | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | — | — | — | ✓ |
 | pagination | ✓ | ✓ | — | — | — | — | — | — | — | ✓ | — | — | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
+| resizable | ✓ | — | — | — | — | — | — | — | — | — | — | — | ✓ | — | — | — | — | — | ✓ | ✓ |
 | sidebar | ✓ | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | — | — | — | ✓ |
 | steps | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
 | table | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
@@ -292,6 +298,7 @@ not-applicable). Detailed per-criterion grids follow.
 | modal | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | — |
 | popover | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | — |
 | tooltip | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | — |
+| alert | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
 | flash | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
 | flash_group | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
 | card | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | — |
@@ -302,6 +309,7 @@ not-applicable). Detailed per-criterion grids follow.
 | menu | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | — |
 | navbar | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | — |
 | pagination | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
+| resizable | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | — |
 | sidebar | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | — |
 | steps | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
 | table | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
