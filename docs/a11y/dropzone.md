@@ -57,7 +57,7 @@ row-reverse` or absolute repositioning.
 
 **Evidence:** The drag-over state is conveyed by a border/background color
 shift (`@dragover_config`, `lib/pulsar/components/dropzone.ex:116–124`)
-*and* a text swap from "Click to upload and drag and drop" to "Drop files
+*and* a text swap from "Click to upload or drag and drop" to "Drop files
 here" (`lib/pulsar/components/dropzone.ex:254–262`) — color is not the only
 signal. Error state on an entry pairs a red border
 (`entry_classes/1`, `lib/pulsar/components/dropzone.ex:378–380`) with a
@@ -109,9 +109,20 @@ column that truncates rather than forcing overflow
 scale tokens measured ≥3:1 in both themes elsewhere in the library (Badge,
 Input, Accordion). The outline variant's per-color borders
 (`@color_config["outline"]`, `lib/pulsar/components/dropzone.ex:95–103`)
-and the drag-over border emphasis (`@dragover_config`,
-`:116–124`) use the same house `border-{color}`/`border-border-strong`
-tokens measured ≥4:1 on Input's outline-variant borders.
+and the drag-over border emphasis (`@dragover_config`, `:116–124`) use the
+same house `border-{color}`/`border-border-strong` tokens as Input's
+outline variant. Input's browser audit substantiates three of the seven:
+`border-border-strong` (neutral) 4.63:1, `border-primary` 4.4:1, and
+`border-danger` 4.2:1, both themes — see `docs/a11y/input.md`. The
+remaining four (`border-secondary`, `border-success`, `border-warning`,
+`border-info`) resolve through the same theme palette mechanism but have
+no recorded measurement of their own; a scoped
+`mix pulsar.a11y.measure --component dropzone` run hits the same
+data-fixture-cell placement gap noted on Input (the measured cell sits on
+inner content, not the bordered wrapper), so it doesn't yield usable
+numbers here either. The verdict stays PASS on the SC's 3:1 floor,
+semantic-token consistency with Input's measured outline borders, and the
+same-palette reasoning — not on a full seven-color measurement.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
