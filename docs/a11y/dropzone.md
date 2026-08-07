@@ -221,23 +221,34 @@ click-to-browse path end to end.
 
 **Evidence:** The cancel button has no `on`/`off` sizing utility — it
 sizes to content: `p-1` (4px) padding around a `size="sm"` icon (`w-4 h-4`
-= 16px — `lib/pulsar/components/icon.ex:75–81`), giving a computed target
-of 16 + 4 + 4 = 24×24 CSS px
-(`lib/pulsar/components/dropzone.ex:310–317`). That clears the 24×24 floor
-outright — no spacing exception needed. The zone itself (the file-picker
-target) is far larger than 24×24 at every size (`@size_config` zone
-padding starts at `p-4`, `lib/pulsar/components/dropzone.ex:59–65`).
+= 16px — `lib/pulsar/components/icon.ex:75–81`)
+(`lib/pulsar/components/dropzone.ex:310–317`). Width computes exactly:
+16 + 4 + 4 = 24 CSS px, landing precisely at the floor. Height is a plain
+(non-flex) `<button>`, so it's governed by the inline line box around the
+icon — the inherited line-height strut sets a minimum content height that
+padding then adds to, and a strut can only add height, never subtract it.
+So the rendered height is *at least* content-box height (16px icon +
+8px padding = 24px) and can be taller depending on the inherited
+line-height; either way it can't fall below the 24px the width already
+sits at. The floor is met on width exactly and on height at or above that
+same value — a browser measurement would be needed to pin the exact
+rendered height. The zone itself (the file-picker target) is far larger
+than 24×24 at every size (`@size_config` zone padding starts at `p-4`,
+`lib/pulsar/components/dropzone.ex:59–65`).
 
-**Notes:** The cancel button lands exactly at the 24px floor with no
-margin — a future padding reduction (e.g. `p-1` → `p-0.5`) would drop it
-below the floor. `test/integration/a11y/target_size_test.exs`'s automated
-gate scans `[data-fixture-cell]` elements whose tag is
+**Notes:** The cancel button's width lands exactly at the 24px floor with
+no margin — a future padding reduction (e.g. `p-1` → `p-0.5`) would drop
+width below the floor regardless of how tall the line box makes it.
+`test/integration/a11y/target_size_test.exs`'s automated gate scans
+`[data-fixture-cell]` elements whose tag is
 `button`/`select`/`textarea`/certain `input` types; the Dropzone fixture's
 `data-fixture-cell` attrs sit on the component root `<div>`
 (`test/support/dev_app/live/dropzone_live.ex:28`), not on the nested
-cancel `<button>`, so this measurement is code-derived, not
-browser-verified by that gate. If the cancel button's padding or icon size
-ever changes, re-verify this arithmetic by hand.
+cancel `<button>`, so neither dimension is browser-verified by that gate
+today — this is a code-derived width guarantee plus a height lower bound,
+not a measured box. If the cancel button's padding or icon size ever
+changes, re-verify the width arithmetic by hand and consider adding a
+browser measurement for the height.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 
@@ -293,13 +304,15 @@ independently overridable for i18n
   or contradictory name.
 - **Entry progress** — `Progress.progress` renders
   `role="progressbar"` with `aria-valuemin`/`aria-valuemax`/`aria-valuenow`
-  (`lib/pulsar/components/progress.ex:180–187`); Dropzone passes
+  (`lib/pulsar/components/progress.ex:180–187`). Dropzone passes
   `aria-label={item.entry.client_name}` through `Progress`'s `:rest`
-  global, which renders after (and so overrides) Progress's own
-  `aria-label={@label}` (nil here) —
-  `lib/pulsar/components/dropzone.ex:301–308`. Test asserts
-  `role="progressbar"` and `aria-valuenow="40"` —
-  `test/pulsar/components/dropzone_test.exs:88–97`.
+  global (`lib/pulsar/components/dropzone.ex:301–308`). Progress's own
+  `aria-label={@label}` attribute (`lib/pulsar/components/progress.ex:185`)
+  is `nil` here — Dropzone never sets `label` — and HEEx omits an
+  attribute entirely when its value is `nil`, so no duplicate `aria-label`
+  is ever emitted on the tag; the caller's value through `@rest` is simply
+  the only one rendered. Test asserts `role="progressbar"` and
+  `aria-valuenow="40"` — `test/pulsar/components/dropzone_test.exs:88–97`.
 - **Cancel button** — accessible name is `"<cancel_label>: <filename>"`
   (`lib/pulsar/components/dropzone.ex:313`), unique per entry. Test
   asserts `aria-label="Cancel upload: photo.jpg"` —
