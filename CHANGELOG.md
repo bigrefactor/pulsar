@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Dropzone Component
+
+- **`dropzone/1`** (`mix pulsar.gen.dropzone`): a file-upload dropzone for LiveView uploads. Renders a clickable, keyboard-operable upload zone for an `allow_upload/3` config — drag-and-drop via `phx-drop-target`, click-to-browse via a zone-wide label around `live_file_input`, image previews (`live_img_preview`), per-entry progress bars, and cancel buttons. The four LiveView upload errors render as overridable message attrs (`too_large_message`, `not_accepted_message`, `too_many_files_message`, `external_client_failure_message`); cancel defaults to pushing `"cancel-upload"` with the entry ref and accepts an `on_cancel` override (`%JS{}` or `(entry) -> %JS{}`). Carries the house `variant`/`color`/`size` axes (dashed-outline default) and composes `Icon` and `Progress`. WCAG 2.2 AA audited (`docs/a11y/dropzone.md`).
+
 ### Fixed - Content-Security-Policy
 
 - **No component renders an inline `style` attribute**: under a CSP whose `style-src` lacks `'unsafe-inline'`, browsers drop inline style declarations silently — no error, no fallback. Four sites were affected: resizable panels ignored `default_size` and collapsed to their flex default, progress bars rendered the track but never filled, and staggered flash animations lost their per-item delay. Dynamic values now reach CSS either as a static utility class or as an SVG presentation attribute, which CSP does not govern. A nonce would not have helped: nonces whitelist `<style>` and `<script>` *elements*, not style *attributes*. Pulsar now runs under `style-src 'self'` with no consumer configuration.
