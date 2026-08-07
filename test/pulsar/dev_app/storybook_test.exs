@@ -25,9 +25,9 @@ defmodule Pulsar.DevApp.StorybookTest do
     /components/checkbox
     /components/collapsible
     /components/divider
-    /components/dropzone
     /components/drawer
     /components/dropdown_menu
+    /components/dropzone
     /components/field
     /components/flash
     /components/flash_group
