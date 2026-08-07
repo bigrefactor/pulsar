@@ -25,6 +25,7 @@ lib/pulsar/
     ├── badge.ex          # Badge component
     ├── button.ex         # Button component with colocated JS
     ├── checkbox.ex       # Checkbox component with card variants
+    ├── dropzone.ex       # File-upload dropzone (drag-drop, previews, progress, errors)
     ├── icon.ex           # Icon component (partial)
     ├── input.ex          # Text input with decorators
     ├── label.ex          # Label component
