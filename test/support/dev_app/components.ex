@@ -16,6 +16,7 @@ defmodule Pulsar.DevApp.Components do
        {"Checkbox", "/components/checkbox"},
        {"DatePicker (single)", "/components/date_picker/single"},
        {"DatePicker (range)", "/components/date_picker/range"},
+       {"Dropzone", "/components/dropzone"},
        {"Field", "/components/field"},
        {"Form", "/components/form"},
        {"Input (outline)", "/components/input/outline"},
