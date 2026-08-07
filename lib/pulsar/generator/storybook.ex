@@ -30,6 +30,7 @@ defmodule Pulsar.Generator.Storybook do
     :collapsible,
     :date_picker,
     :divider,
+    :dropzone,
     :drawer,
     :dropdown_menu,
     :field,
