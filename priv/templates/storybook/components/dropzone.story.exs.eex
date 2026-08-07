@@ -61,19 +61,32 @@ defmodule <%= @web_module %>.Storybook.Components.Dropzone do
       %Variation{
         id: :default,
         description: "Default zone",
-        attributes: %{upload: empty, hint: "PNG or JPG, up to 8 MB"}
+        attributes: %{id: "sb-dz-default", upload: empty, hint: "PNG or JPG, up to 8 MB"}
       },
-      %Variation{id: :uploading, description: "Entries with progress", attributes: %{upload: uploading}},
-      %Variation{id: :entry_error, description: "Entry with an error", attributes: %{upload: errored}},
+      %Variation{
+        id: :uploading,
+        description: "Entries with progress",
+        attributes: %{id: "sb-dz-uploading", upload: uploading}
+      },
+      %Variation{
+        id: :entry_error,
+        description: "Entry with an error",
+        attributes: %{id: "sb-dz-entry-error", upload: errored}
+      },
       %Variation{
         id: :solid_primary,
         description: "Solid primary",
-        attributes: %{upload: upload_config(ref: "sb-dz-solid"), variant: "solid", color: "primary"}
+        attributes: %{
+          id: "sb-dz-solid-primary",
+          upload: upload_config(ref: "sb-dz-solid"),
+          variant: "solid",
+          color: "primary"
+        }
       },
       %Variation{
         id: :large,
         description: "Large zone",
-        attributes: %{upload: upload_config(ref: "sb-dz-lg"), size: "lg", hint: "Up to 8 MB"}
+        attributes: %{id: "sb-dz-large", upload: upload_config(ref: "sb-dz-lg"), size: "lg", hint: "Up to 8 MB"}
       }
     ]
   end

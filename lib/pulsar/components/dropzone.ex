@@ -112,15 +112,23 @@ defmodule Pulsar.Components.Dropzone do
     }
   }
 
-  # Drag-over emphasis per color, keyed off the hook-flipped data-dragover attr.
+  # Drag-over emphasis per color. LiveView (1.2+) toggles the
+  # phx-drop-target-active class on the phx-drop-target element while files
+  # are dragged over it.
   @dragover_config %{
-    "danger" => "group-data-dragover/dropzone:border-danger group-data-dragover/dropzone:bg-danger/5",
-    "info" => "group-data-dragover/dropzone:border-info group-data-dragover/dropzone:bg-info/5",
-    "neutral" => "group-data-dragover/dropzone:border-border-strong group-data-dragover/dropzone:bg-surface-2",
-    "primary" => "group-data-dragover/dropzone:border-primary group-data-dragover/dropzone:bg-primary/5",
-    "secondary" => "group-data-dragover/dropzone:border-secondary group-data-dragover/dropzone:bg-secondary/5",
-    "success" => "group-data-dragover/dropzone:border-success group-data-dragover/dropzone:bg-success/5",
-    "warning" => "group-data-dragover/dropzone:border-warning group-data-dragover/dropzone:bg-warning/5"
+    "danger" =>
+      "group-[.phx-drop-target-active]/dropzone:border-danger group-[.phx-drop-target-active]/dropzone:bg-danger/5",
+    "info" => "group-[.phx-drop-target-active]/dropzone:border-info group-[.phx-drop-target-active]/dropzone:bg-info/5",
+    "neutral" =>
+      "group-[.phx-drop-target-active]/dropzone:border-border-strong group-[.phx-drop-target-active]/dropzone:bg-surface-2",
+    "primary" =>
+      "group-[.phx-drop-target-active]/dropzone:border-primary group-[.phx-drop-target-active]/dropzone:bg-primary/5",
+    "secondary" =>
+      "group-[.phx-drop-target-active]/dropzone:border-secondary group-[.phx-drop-target-active]/dropzone:bg-secondary/5",
+    "success" =>
+      "group-[.phx-drop-target-active]/dropzone:border-success group-[.phx-drop-target-active]/dropzone:bg-success/5",
+    "warning" =>
+      "group-[.phx-drop-target-active]/dropzone:border-warning group-[.phx-drop-target-active]/dropzone:bg-warning/5"
   }
 
   for variant <- @valid_variants,
@@ -233,9 +241,13 @@ defmodule Pulsar.Components.Dropzone do
         }
       end)
 
+    entry_errors =
+      for item <- prepared, error <- item.errors, do: {item.entry, error}
+
     assigns =
       assigns
       |> assign(:prepared, prepared)
+      |> assign(:entry_errors, entry_errors)
       |> assign(:config_errors, upload_errors(assigns.upload))
       |> assign(:zone_class, zone_classes(assigns.variant, assigns.color, assigns.size))
       |> assign(:preview_class, @size_config[assigns.size].preview)
@@ -244,19 +256,18 @@ defmodule Pulsar.Components.Dropzone do
     ~H"""
     <div
       id={@id}
-      phx-hook=".PulsarDropzone"
       phx-drop-target={@upload.ref}
       class={merge(["group/dropzone", @class])}
       {@rest}
     >
       <label for={@upload.ref} class={@zone_class}>
         <Icon.icon name="hero-arrow-up-tray" size={@icon_size} color="neutral" />
-        <span class="text-sm font-medium text-foreground group-data-dragover/dropzone:hidden">
+        <span class="text-sm font-medium text-foreground group-[.phx-drop-target-active]/dropzone:hidden">
           {@prompt}
         </span>
         <span
           id={@id <> "-drop-prompt"}
-          class="hidden text-sm font-medium text-foreground group-data-dragover/dropzone:inline"
+          class="hidden text-sm font-medium text-foreground group-[.phx-drop-target-active]/dropzone:inline"
         >
           {@drop_prompt}
         </span>
@@ -270,6 +281,11 @@ defmodule Pulsar.Components.Dropzone do
       <div aria-live="polite">
         <p :for={error <- @config_errors} class="mt-2 text-sm text-danger">
           {error_message(error, assigns)}
+        </p>
+      </div>
+      <div aria-live="polite" class="sr-only">
+        <p :for={{entry, error} <- @entry_errors}>
+          {entry.client_name}: {error_message(error, assigns)}
         </p>
       </div>
       <ul :if={@prepared != []} class="mt-3 flex flex-col gap-2">
@@ -293,7 +309,7 @@ defmodule Pulsar.Components.Dropzone do
                 · {format_bytes(@format_size, item.entry.client_size)}
               </span>
             </p>
-            <div aria-live="polite">
+            <div>
               <p :for={error <- item.errors} class="mt-0.5 text-sm text-danger">
                 {error_message(error, assigns)}
               </p>
@@ -318,43 +334,6 @@ defmodule Pulsar.Components.Dropzone do
         </li>
       </ul>
     </div>
-    <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarDropzone">
-      export default {
-        mounted() {
-          this.depth = 0
-          this._enter = (e) => {
-            if (!this.hasFiles(e)) return
-            e.preventDefault()
-            this.depth++
-            this.el.setAttribute("data-dragover", "")
-          }
-          this._over = (e) => {
-            if (this.hasFiles(e)) e.preventDefault()
-          }
-          this._leave = () => {
-            if (this.depth > 0) this.depth--
-            if (this.depth === 0) this.el.removeAttribute("data-dragover")
-          }
-          this._drop = () => {
-            this.depth = 0
-            this.el.removeAttribute("data-dragover")
-          }
-          this.el.addEventListener("dragenter", this._enter)
-          this.el.addEventListener("dragover", this._over)
-          this.el.addEventListener("dragleave", this._leave)
-          this.el.addEventListener("drop", this._drop)
-        },
-        destroyed() {
-          this.el.removeEventListener("dragenter", this._enter)
-          this.el.removeEventListener("dragover", this._over)
-          this.el.removeEventListener("dragleave", this._leave)
-          this.el.removeEventListener("drop", this._drop)
-        },
-        hasFiles(e) {
-          return Array.from((e.dataTransfer && e.dataTransfer.types) || []).includes("Files")
-        }
-      }
-    </script>
     """
   end
 

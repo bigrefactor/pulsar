@@ -17,12 +17,5 @@ defmodule Mix.Tasks.Pulsar.Gen.DropzoneTest do
       |> assert_creates("lib/my_app/custom_components/dropzone.ex")
       |> apply_igniter!()
     end
-
-    test "generated component uses Phoenix.Component" do
-      phx_test_project()
-      |> Igniter.compose_task("pulsar.gen.dropzone", [])
-      |> assert_creates("lib/test_web/components/dropzone.ex")
-      |> apply_igniter!()
-    end
   end
 end

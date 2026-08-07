@@ -1271,12 +1271,17 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
 
       A11y.refute_visible(session, "kbd-dz-drop-prompt")
 
+      # LiveView toggles phx-drop-target-active inside requestAnimationFrame,
+      # so each dispatch resolves after two frames to let the class settle
+      # before the visibility assertion.
       drag_js = """
       (() => {
         const el = document.getElementById('kbd-dz');
         const dt = new DataTransfer();
         dt.items.add(new File(['x'], 'x.png', {type: 'image/png'}));
         el.dispatchEvent(new DragEvent('dragenter', {bubbles: true, dataTransfer: dt}));
+        return new Promise((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve('settled'))));
       })()
       """
 
@@ -1287,6 +1292,8 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
       (() => {
         const el = document.getElementById('kbd-dz');
         el.dispatchEvent(new DragEvent('dragleave', {bubbles: true}));
+        return new Promise((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve('settled'))));
       })()
       """
 

@@ -9,38 +9,39 @@ A `<label>` wraps a sr-only `<.live_file_input>`, so clicking or dragging
 files onto the zone and clicking/Enter-Space-activating the native file
 input are both first-class paths into the same upload. Per-entry rows
 render a preview/type icon, filename, formatted size, a determinate
-`Progress.progress` bar, and a cancel `<button>`. A colocated hook toggles
-`data-dragover` on the root during a file drag, which drives a CSS-only
-swap between the "Click to upload…" prompt and a "Drop files here" prompt;
-it does not touch upload state — file selection and cancellation both go
-through standard LiveView upload/`phx-click` wiring.
+`Progress.progress` bar, and a cancel `<button>`. During a file drag,
+LiveView toggles its built-in `phx-drop-target-active` class on the
+`phx-drop-target` root (LiveView 1.2+), which drives a CSS-only swap
+between the "Click to upload…" prompt and a "Drop files here" prompt; the
+component ships no JavaScript of its own — file selection and cancellation
+both go through standard LiveView upload/`phx-click` wiring.
 
 ## Applicable criteria
 
 ### 1.1.1 Non-text Content (A) — ✓ PASS
 
 **Evidence:** The upload-tray icon (`hero-arrow-up-tray`,
-`lib/pulsar/components/dropzone.ex:253`) and the non-image document icon
-(`hero-document`, `lib/pulsar/components/dropzone.ex:287`) are decorative
+`lib/pulsar/components/dropzone.ex:264`) and the non-image document icon
+(`hero-document`, `lib/pulsar/components/dropzone.ex:303`) are decorative
 and inherit `Icon`'s `aria-hidden="true"` default. The cancel button's icon
-(`hero-x-mark`, `lib/pulsar/components/dropzone.ex:316`) is likewise
+(`hero-x-mark`, `lib/pulsar/components/dropzone.ex:332`) is likewise
 decorative — the button's own `aria-label` (see 4.1.2) carries its name.
 Image entry previews use `<.live_img_preview alt="" .../>`
-(`lib/pulsar/components/dropzone.ex:277–282`): the filename is rendered as
-adjacent visible text (`lib/pulsar/components/dropzone.ex:290–295`), so the
+(`lib/pulsar/components/dropzone.ex:293–298`): the filename is rendered as
+adjacent visible text (`lib/pulsar/components/dropzone.ex:306–311`), so the
 empty `alt` doesn't leave the entry unnamed.
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:** The zone is a real `<label for={@upload.ref}>` wrapping
 `<.live_file_input>`, whose rendered `id` equals `@upload.ref`
-(`lib/pulsar/components/dropzone.ex:252, 264–268`) — a real label/control
+(`lib/pulsar/components/dropzone.ex:263, 275–279`) — a real label/control
 association, not just visual proximity. Test `label points at the file
 input's id` asserts `for="phx-upload"` / `id="phx-upload"` —
 `test/pulsar/components/dropzone_test.exs:56–63`. Entries render as a
-semantic `<ul>`/`<li>` list (`lib/pulsar/components/dropzone.ex:275–276`).
+semantic `<ul>`/`<li>` list (`lib/pulsar/components/dropzone.ex:291–292`).
 The optional hint is wired via `aria-describedby`
-(`lib/pulsar/components/dropzone.ex:263, 267`); test `hint renders and is
+(`lib/pulsar/components/dropzone.ex:274, 278`); test `hint renders and is
 wired via aria-describedby` —
 `test/pulsar/components/dropzone_test.exs:71–78`.
 
@@ -48,27 +49,27 @@ wired via aria-describedby` —
 
 **Evidence:** DOM order matches visual order throughout: zone icon →
 prompt/drop-prompt → hint → file input
-(`lib/pulsar/components/dropzone.ex:253–268`); per entry, preview → name +
+(`lib/pulsar/components/dropzone.ex:264–279`); per entry, preview → name +
 size → error text → progress → cancel button
-(`lib/pulsar/components/dropzone.ex:277–317`). No `flex-direction:
+(`lib/pulsar/components/dropzone.ex:293–334`). No `flex-direction:
 row-reverse` or absolute repositioning.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** The drag-over state is conveyed by a border/background color
-shift (`@dragover_config`, `lib/pulsar/components/dropzone.ex:116–124`)
+shift (`@dragover_config`, `lib/pulsar/components/dropzone.ex:118–137`)
 *and* a text swap from "Click to upload or drag and drop" to "Drop files
-here" (`lib/pulsar/components/dropzone.ex:254–262`) — color is not the only
+here" (`lib/pulsar/components/dropzone.ex:265–273`) — color is not the only
 signal. Error state on an entry pairs a red border
-(`entry_classes/1`, `lib/pulsar/components/dropzone.ex:378–380`) with a
-visible error message (`lib/pulsar/components/dropzone.ex:296–300`).
+(`entry_classes/1`, `lib/pulsar/components/dropzone.ex:357–359`) with a
+visible error message (`lib/pulsar/components/dropzone.ex:312–316`).
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** Config-level and per-entry upload errors render as
 `text-danger` text alongside the message string, never color alone
-(`lib/pulsar/components/dropzone.ex:270–274, 296–300`); the errored entry's
-red border (`lib/pulsar/components/dropzone.ex:378–380`) is redundant with
+(`lib/pulsar/components/dropzone.ex:281–285, 312–316`); the errored entry's
+red border (`lib/pulsar/components/dropzone.ex:357–359`) is redundant with
 that text, not a substitute for it. The drag-over state is text + color
 (see 1.3.3).
 
@@ -79,7 +80,7 @@ tokens measured elsewhere in the library: `text-foreground` (prompt),
 `text-muted-foreground` (hint/size — measured 6.0–7.23:1 on all surfaces in
 both themes, house-wide), and `text-danger` (errors, same token measured
 ≥4.5:1 for text on Input/Select's error states). The axe-core browser gate
-scans the Dropzone fixture's full variant × color grid (4 variants × 7
+scans the Dropzone fixtures' full variant × color grid (4 variants × 7
 colors) plus the uploading/errored/config-error state fixtures in both
 themes and reports no `color-contrast` violation.
 
@@ -96,8 +97,8 @@ fixed pixel heights, so nothing clips as text is resized.
 width (`@zone_base_classes`, `lib/pulsar/components/dropzone.ex:67–70`);
 the entry row is `flex items-center gap-3` with a `min-w-0 flex-1` text
 column that truncates rather than forcing overflow
-(`lib/pulsar/components/dropzone.ex:289–290`, `entry_classes/1` at
-`:374–380`). Nothing forces horizontal scrolling at 320 CSS px.
+(`lib/pulsar/components/dropzone.ex:305–306`, `entry_classes/1` at
+`:353–359`). Nothing forces horizontal scrolling at 320 CSS px.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
@@ -105,11 +106,11 @@ column that truncates rather than forcing overflow
 (`focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2`
 — `lib/pulsar/components/dropzone.ex:70`) and the cancel button's
 `focus-visible` ring (`focus-visible:ring-2 focus-visible:ring-primary` —
-`lib/pulsar/components/dropzone.ex:312`) both route through `--color-ring`
+`lib/pulsar/components/dropzone.ex:328`) both route through `--color-ring`
 scale tokens measured ≥3:1 in both themes elsewhere in the library (Badge,
 Input, Accordion). The outline variant's per-color borders
-(`@color_config["outline"]`, `lib/pulsar/components/dropzone.ex:95–103`)
-and the drag-over border emphasis (`@dragover_config`, `:116–124`) use the
+(`@color_config["outline"]`, `lib/pulsar/components/dropzone.ex:97–105`)
+and the drag-over border emphasis (`@dragover_config`, `:118–137`) use the
 same house `border-{color}`/`border-border-strong` tokens as Input's
 outline variant. Input's browser audit substantiates three of the seven:
 `border-border-strong` (neutral) 4.63:1, `border-primary` 4.4:1, and
@@ -129,10 +130,10 @@ same-palette reasoning — not on a full seven-color measurement.
 **Evidence:** No fixed heights on text-bearing elements; zone and entry
 sizing is padding/gap-driven (`@size_config` zone padding,
 `lib/pulsar/components/dropzone.ex:59–65`; entry `p-3`,
-`:374–380`). No `!important` text-spacing overrides.
+`:353–359`). No `!important` text-spacing overrides.
 
 **Notes:** The filename uses `truncate`
-(`lib/pulsar/components/dropzone.ex:290`), which single-line-ellipsizes on
+(`lib/pulsar/components/dropzone.ex:306`), which single-line-ellipsizes on
 horizontal overflow — a design choice orthogonal to 1.4.12 (which concerns
 user line-height/letter-spacing overrides, not intentional truncation).
 
@@ -140,12 +141,12 @@ user line-height/letter-spacing overrides, not intentional truncation).
 
 **Evidence:** The file input is a native `<input type="file">` rendered
 via `<.live_file_input>` with only `class="sr-only"` applied
-(`lib/pulsar/components/dropzone.ex:264–268`) — visually hidden but still
+(`lib/pulsar/components/dropzone.ex:275–279`) — visually hidden but still
 in the tab order and keyboard-operable (Enter/Space opens the native file
 picker). The cancel button is a real `<button type="button">`
-(`lib/pulsar/components/dropzone.ex:310–317`). Neither depends on the
-colocated drag-and-drop hook, which only toggles a presentation attribute
-(`lib/pulsar/components/dropzone.ex:321–357`).
+(`lib/pulsar/components/dropzone.ex:326–334`). The drag-over highlight is
+presentational CSS keyed off LiveView's built-in `phx-drop-target-active`
+class — the component ships no JavaScript.
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
@@ -156,7 +157,7 @@ in document order like any other control.
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
 **Evidence:** The per-entry `Progress.progress` bar
-(`lib/pulsar/components/dropzone.ex:301–308`) is a determinate indicator
+(`lib/pulsar/components/dropzone.ex:317–324`) is a determinate indicator
 tied to real upload progress (`item.entry.progress`) — an auto-updating
 display of essential activity status, which is the WCAG 2.2.2 exception
 (status of a real process, not decorative motion).
@@ -165,20 +166,19 @@ display of essential activity status, which is the WCAG 2.2.2 exception
 
 **Evidence:** The only animation is `transition-colors duration-fast
 ease-standard` on the zone and cancel button
-(`lib/pulsar/components/dropzone.ex:69, 312`) — a sub-second color
+(`lib/pulsar/components/dropzone.ex:69, 328`) — a sub-second color
 transition, not flashing.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
-**Evidence:** The file input and each entry's cancel button render in slot
-order with no positive `tabindex`; the drag-and-drop hook never moves
-focus (`lib/pulsar/components/dropzone.ex:321–357` — listens for
-`dragenter`/`dragover`/`dragleave`/`drop` only, calls no focus APIs).
+**Evidence:** The file input and each entry's cancel button render in
+document order with no positive `tabindex`; the component ships no
+JavaScript that could move focus.
 
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
 
 **Evidence:** `prompt` and `hint` are caller-overridable, i18n-ready attrs
-(`lib/pulsar/components/dropzone.ex:171–184`) with sensible English
+(`lib/pulsar/components/dropzone.ex:179–192`) with sensible English
 defaults ("Click to upload or drag and drop"). The component supports
 descriptive labeling; writing a meaningful `hint` is the caller's
 responsibility, same contract as Input/Select.
@@ -188,19 +188,19 @@ responsibility, same contract as Input/Select.
 **Evidence:** The zone shows a `focus-within` ring when the (sr-only) file
 input has focus (`lib/pulsar/components/dropzone.ex:70`); each cancel
 button shows its own `focus-visible` ring
-(`lib/pulsar/components/dropzone.ex:312`). Both route through
+(`lib/pulsar/components/dropzone.ex:328`). Both route through
 `--color-ring`, measured ≥3:1 in both themes elsewhere in the library.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Dropzone renders in normal document flow — no sticky,
 fixed, or overlay content that could cover a focused file input or cancel
-button (`lib/pulsar/components/dropzone.ex:245–320`).
+button (`lib/pulsar/components/dropzone.ex:256–338`).
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 
 **Evidence:** The cancel button's activation is `phx-click`
-(`lib/pulsar/components/dropzone.ex:314`), which fires on the native
+(`lib/pulsar/components/dropzone.ex:330`), which fires on the native
 `click` event (mouseup), not `pointerdown`/`mousedown`. The file-picker
 trigger is the browser's native `<label>`/`<input type="file">` click
 behavior — also an up-event activation.
@@ -209,7 +209,7 @@ behavior — also an up-event activation.
 
 **Evidence:** The cancel button has no visible text (icon-only), so its
 `aria-label` (`@cancel_label <> ": " <> item.entry.client_name` —
-`lib/pulsar/components/dropzone.ex:313`) can't contradict a visible label.
+`lib/pulsar/components/dropzone.ex:329`) can't contradict a visible label.
 The zone's visible prompt text *is* the file input's accessible name (via
 label wrapping) with no overriding `aria-label` anywhere in the chain.
 
@@ -217,15 +217,14 @@ label wrapping) with no overriding `aria-label` anywhere in the chain.
 
 **Evidence:** Every file dropped via drag-and-drop can equivalently be
 added via the native file picker — the same `<label>`/`<.live_file_input>`
-that the drag target wraps (`lib/pulsar/components/dropzone.ex:252,
-264–268`); the colocated hook only toggles a `data-dragover` presentation
-attribute on `dragenter`/`dragover`/`dragleave`/`drop`
-(`lib/pulsar/components/dropzone.ex:321–357`) — it never becomes the *only*
-path to add a file. Keyboard test `dragging files over shows the visible
-drop prompt; leaving hides it` exercises the hook directly via synthetic
-`DragEvent`s — `test/integration/a11y/keyboard_test.exs:1266–1295`;
+that the drag target wraps (`lib/pulsar/components/dropzone.ex:263,
+275–279`); dropping is an additive path handled entirely by LiveView's
+built-in `phx-drop-target` machinery — it never becomes the *only* path to
+add a file. Keyboard test `dragging files over shows the visible drop
+prompt; leaving hides it` exercises the drag path via synthetic
+`DragEvent`s — `test/integration/a11y/keyboard_test.exs:1266–1303`;
 `selecting a file renders a visible entry row`
-(`test/integration/a11y/keyboard_test.exs:1247–1254`) exercises the
+(`test/integration/a11y/keyboard_test.exs:1248–1254`) exercises the
 click-to-browse path end to end.
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
@@ -233,7 +232,7 @@ click-to-browse path end to end.
 **Evidence:** The cancel button has no `on`/`off` sizing utility — it
 sizes to content: `p-1` (4px) padding around a `size="sm"` icon (`w-4 h-4`
 = 16px — `lib/pulsar/components/icon.ex:75–81`)
-(`lib/pulsar/components/dropzone.ex:310–317`). Width computes exactly:
+(`lib/pulsar/components/dropzone.ex:326–334`). Width computes exactly:
 16 + 4 + 4 = 24 CSS px, landing precisely at the floor. Height is a plain
 (non-flex) `<button>`, so it's governed by the inline line box around the
 icon — the inherited line-height strut sets a minimum content height that
@@ -254,7 +253,7 @@ width below the floor regardless of how tall the line box makes it.
 `[data-fixture-cell]` elements whose tag is
 `button`/`select`/`textarea`/certain `input` types; the Dropzone fixture's
 `data-fixture-cell` attrs sit on the component root `<div>`
-(`test/support/dev_app/live/dropzone_live.ex:28`), not on the nested
+(`test/support/dev_app/live/dropzone_live.ex:24`), not on the nested
 cancel `<button>`, so neither dimension is browser-verified by that gate
 today — this is a code-derived width guarantee plus a height lower bound,
 not a measured box. If the cancel button's padding or icon size ever
@@ -277,30 +276,30 @@ notifies the LiveView but does not itself navigate or submit.
 
 ### 3.3.1 Error Identification (A) — ✓ PASS
 
-**Evidence:** Both error tiers render as visible text inside
-`aria-live="polite"` regions: config-level errors (too many files, etc.)
-under the zone (`lib/pulsar/components/dropzone.ex:270–274`), and
-per-entry errors (too large, not accepted, upload failed) under that
-entry's filename (`lib/pulsar/components/dropzone.ex:296–300`), so a
-screen-reader user is told an error occurred without needing to move
-focus. Tests cover every error atom mapping to visible text —
-`test/pulsar/components/dropzone_test.exs:127–169`.
+**Evidence:** Both error tiers render as visible text: config-level
+errors (too many files, etc.) under the zone
+(`lib/pulsar/components/dropzone.ex:281–285`), and per-entry errors (too
+large, not accepted, upload failed) under that entry's filename
+(`lib/pulsar/components/dropzone.ex:312–316`). Announcement without
+moving focus is handled by the persistent live regions covered under
+4.1.3. Tests cover every error atom mapping to visible text —
+`test/pulsar/components/dropzone_test.exs:127–184`.
 
 ### 3.3.2 Labels or Instructions (A) — ✓ PASS
 
 **Evidence:** The visible `prompt` labels the control (via the wrapping
 `<label>`) and the optional `hint` gives format/size instructions, wired
 with `aria-describedby`
-(`lib/pulsar/components/dropzone.ex:171–184, 263, 267`).
+(`lib/pulsar/components/dropzone.ex:179–192, 274, 278`).
 
 ### 3.3.3 Error Suggestion (AA) — ✓ PASS
 
 **Evidence:** Every upload error atom maps to a specific, actionable
 message — "File is too large", "File type not accepted", "Too many
-files" (`error_message/2`, `lib/pulsar/components/dropzone.ex:386–389`) —
+files" (`error_message/2`, `lib/pulsar/components/dropzone.ex:365–368`) —
 rather than a generic "Upload failed" for everything. Each message is
 independently overridable for i18n
-(`lib/pulsar/components/dropzone.ex:196–214`).
+(`lib/pulsar/components/dropzone.ex:204–222`).
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
@@ -308,16 +307,16 @@ independently overridable for i18n
 
 - **File input** — accessible name comes from the wrapping `<label>`'s
   visible text (prompt/drop-prompt/hint spans,
-  `lib/pulsar/components/dropzone.ex:254–263`). The prompt and drop-prompt
-  spans toggle `hidden`/visible off the same `group-data-dragover/dropzone`
-  state (`lib/pulsar/components/dropzone.ex:254–262`), so exactly one of
+  `lib/pulsar/components/dropzone.ex:265–274`). The prompt and drop-prompt
+  spans toggle `hidden`/visible off the same `phx-drop-target-active` group
+  state (`lib/pulsar/components/dropzone.ex:265–273`), so exactly one of
   the two is in the accessible-name computation at a time — no duplicated
   or contradictory name.
 - **Entry progress** — `Progress.progress` renders
   `role="progressbar"` with `aria-valuemin`/`aria-valuemax`/`aria-valuenow`
   (`lib/pulsar/components/progress.ex:180–187`). Dropzone passes
   `aria-label={item.entry.client_name}` through `Progress`'s `:rest`
-  global (`lib/pulsar/components/dropzone.ex:301–308`). Progress's own
+  global (`lib/pulsar/components/dropzone.ex:317–324`). Progress's own
   `aria-label={@label}` attribute (`lib/pulsar/components/progress.ex:185`)
   is `nil` here — Dropzone never sets `label` — and HEEx omits an
   attribute entirely when its value is `nil`, so no duplicate `aria-label`
@@ -325,19 +324,24 @@ independently overridable for i18n
   the only one rendered. Test asserts `role="progressbar"` and
   `aria-valuenow="40"` — `test/pulsar/components/dropzone_test.exs:88–97`.
 - **Cancel button** — accessible name is `"<cancel_label>: <filename>"`
-  (`lib/pulsar/components/dropzone.ex:313`), unique per entry. Test
+  (`lib/pulsar/components/dropzone.ex:329`), unique per entry. Test
   asserts `aria-label="Cancel upload: photo.jpg"` —
   `test/pulsar/components/dropzone_test.exs:96`.
 
 ### 4.1.3 Status Messages (AA) — ✓ PASS
 
-**Evidence:** Both the config-level and per-entry error regions carry
-`aria-live="polite"` (`lib/pulsar/components/dropzone.ex:270, 296`), so
-newly appearing error text is announced without moving focus. Tests
-`config-level :too_many_files renders under the zone` and `per-entry
-:too_large replaces the progress bar` assert both the message text and the
-`aria-live="polite"` wrapper — `test/pulsar/components/dropzone_test.exs:
-128–144`.
+**Evidence:** Two `aria-live="polite"` regions are rendered from the
+component's very first mount, before any error exists: one wraps the
+config-level error text (`lib/pulsar/components/dropzone.ex:281–285`), and
+a visually hidden one announces per-entry errors as
+"<filename>: <message>" (`lib/pulsar/components/dropzone.ex:286–290`).
+Because both regions exist in the accessibility tree before their content
+changes, error text patched into them is announced without moving focus.
+The visible per-entry error text (`:312–316`) deliberately carries no
+`aria-live` of its own — it enters the DOM together with its `<li>`, and a
+live region inserted already containing its message is not announced.
+Tests assert the persistent wrapper and the filename-prefixed announcement
+— `test/pulsar/components/dropzone_test.exs:128–160`.
 
 ## Not applicable
 
@@ -384,10 +388,12 @@ newly appearing error text is announced without moving focus. Tests
 
 ## Browser a11y findings
 
-The axe-core browser gate scans the Dropzone fixture — the full variant ×
-color grid plus uploading/errored/config-error state fixtures — in both
-themes and reports no violations. Three real-browser keyboard/interaction
-tests exercise the JS surface directly and assert visible DOM state (not
-just ARIA attributes): file-pick produces a visible entry row, cancel
-removes the row, and dragging over swaps the visible drop-prompt text
-(`test/integration/a11y/keyboard_test.exs:1247–1296`).
+The axe-core browser gate scans the Dropzone fixtures — one route per
+variant covering the full variant × color grid, plus the
+uploading/errored/config-error state fixtures on the outline route — in
+both themes and reports no violations. Three real-browser interaction
+tests exercise the upload and drag paths end to end and assert visible DOM
+state (not just ARIA attributes): file-pick produces a visible entry row,
+cancel removes the row, and dragging over swaps the visible drop-prompt
+text via LiveView's built-in `phx-drop-target-active` class
+(`test/integration/a11y/keyboard_test.exs:1248–1303`).

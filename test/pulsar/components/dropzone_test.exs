@@ -41,13 +41,13 @@ defmodule Pulsar.Components.DropzoneTest do
   end
 
   describe "dropzone/1 basic functionality" do
-    test "renders zone with file input, drop target, and hook" do
+    test "renders zone with file input, drop target, and drag-over styling" do
       assigns = %{upload: upload_config()}
       html = rendered_to_string(~H[<Dropzone.dropzone upload={@upload} />])
 
       assert html =~ ~s(type="file")
       assert html =~ ~s(phx-drop-target="phx-upload")
-      assert html =~ "phx-hook"
+      assert html =~ "group-[.phx-drop-target-active]/dropzone:"
       assert html =~ ~s(id="dropzone-files")
       assert html =~ "Click to upload or drag and drop"
       assert html =~ "Drop files here"
@@ -143,6 +143,21 @@ defmodule Pulsar.Components.DropzoneTest do
       refute html =~ ~s(role="progressbar")
     end
 
+    test "entry errors are announced with the filename in a persistent live region" do
+      cfg = upload_config(entries: [entry()], errors: [{"0", :too_large}])
+      assigns = %{upload: cfg}
+      html = rendered_to_string(~H[<Dropzone.dropzone upload={@upload} />])
+
+      assert html =~ ~s(aria-live="polite" class="sr-only")
+      assert html =~ "photo.jpg: File is too large"
+    end
+
+    test "the entry announcement region is present even with no errors" do
+      assigns = %{upload: upload_config()}
+      html = rendered_to_string(~H[<Dropzone.dropzone upload={@upload} />])
+      assert html =~ ~s(aria-live="polite" class="sr-only")
+    end
+
     test "per-entry :not_accepted renders its message" do
       cfg = upload_config(entries: [entry()], errors: [{"0", :not_accepted}])
       assigns = %{upload: cfg}
@@ -198,19 +213,42 @@ defmodule Pulsar.Components.DropzoneTest do
   end
 
   describe "variants, colors, sizes" do
-    test "renders every variant" do
-      for variant <- ~w(solid outline ghost elevated) do
+    test "each variant applies its zone surface classes" do
+      expected = %{
+        "solid" => "bg-primary/10",
+        "outline" => "border-primary",
+        "ghost" => "bg-transparent",
+        "elevated" => "shadow-dropdown"
+      }
+
+      for {variant, class} <- expected do
         assigns = %{upload: upload_config(), variant: variant}
-        html = rendered_to_string(~H[<Dropzone.dropzone upload={@upload} variant={@variant} />])
-        assert html =~ ~s(type="file")
+
+        html =
+          rendered_to_string(~H[<Dropzone.dropzone upload={@upload} variant={@variant} color="primary" />])
+
+        assert html =~ class, "expected #{variant} zone to carry #{class}"
       end
     end
 
-    test "renders every color" do
-      for color <- ~w(neutral primary secondary success danger warning info) do
+    test "each color applies its outline border class" do
+      expected = %{
+        "neutral" => "border-border-strong",
+        "primary" => "border-primary",
+        "secondary" => "border-secondary",
+        "success" => "border-success",
+        "danger" => "border-danger",
+        "warning" => "border-warning",
+        "info" => "border-info"
+      }
+
+      for {color, class} <- expected do
         assigns = %{upload: upload_config(), color: color}
-        html = rendered_to_string(~H[<Dropzone.dropzone upload={@upload} color={@color} />])
-        assert html =~ ~s(type="file")
+
+        html =
+          rendered_to_string(~H[<Dropzone.dropzone upload={@upload} variant="outline" color={@color} />])
+
+        assert html =~ class, "expected #{color} zone to carry #{class}"
       end
     end
 
@@ -224,11 +262,13 @@ defmodule Pulsar.Components.DropzoneTest do
       assert html =~ "border-dashed"
     end
 
-    test "renders every size" do
-      for size <- ~w(xs sm md lg xl) do
+    test "each size applies its zone padding class" do
+      expected = %{"xs" => "p-4", "sm" => "p-6", "md" => "p-8", "lg" => "p-10", "xl" => "p-12"}
+
+      for {size, class} <- expected do
         assigns = %{upload: upload_config(), size: size}
         html = rendered_to_string(~H[<Dropzone.dropzone upload={@upload} size={@size} />])
-        assert html =~ ~s(type="file")
+        assert html =~ class, "expected #{size} zone to carry #{class}"
       end
     end
   end

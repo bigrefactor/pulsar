@@ -6,29 +6,25 @@ defmodule Pulsar.DevApp.DropzoneLive do
   alias Phoenix.LiveView.UploadEntry
   alias Pulsar.Components.Dropzone
 
-  @variants ~w(solid outline ghost elevated)
   @colors ~w(neutral primary secondary success danger warning info)
 
   def render(assigns) do
-    assigns = assign(assigns, variants: @variants, colors: @colors)
+    variant = Atom.to_string(assigns.live_action)
+    assigns = assign(assigns, variant: variant, colors: @colors)
 
     ~H"""
-    <.fixture_page name="dropzone" title="Dropzone">
-      <.fixture_section
-        :for={variant <- @variants}
-        name={"variant-#{variant}"}
-        title={"variant: #{variant}"}
-      >
+    <.fixture_page name={"dropzone-#{@variant}"} title={"Dropzone (#{@variant})"}>
+      <.fixture_section name={"variant-#{@variant}"} title={"variant: #{@variant}"}>
         <Dropzone.dropzone
           :for={color <- @colors}
-          upload={config("#{variant}-#{color}")}
-          variant={variant}
+          upload={config("#{@variant}-#{color}")}
+          variant={@variant}
           color={color}
           hint="PNG or JPG, up to 8 MB"
-          data-fixture-cell={"#{variant}-#{color}-md"}
+          data-fixture-cell={"#{@variant}-#{color}-md"}
         />
       </.fixture_section>
-      <.fixture_section name="states" title="entry states">
+      <.fixture_section :if={@live_action == :outline} name="states" title="entry states">
         <Dropzone.dropzone upload={uploading_config()} data-fixture-cell="state-uploading" />
         <Dropzone.dropzone upload={errored_config()} data-fixture-cell="state-errored" />
         <Dropzone.dropzone upload={config_error_config()} data-fixture-cell="state-config-error" />
