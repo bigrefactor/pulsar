@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed - Disabled Items Are Keyboard-Reachable
+
+- **`dropdown_menu/1`, `tabs/1`, and `accordion/1` no longer skip disabled items in keyboard navigation**: arrow keys, Home/End, and (in menus) typeahead now reach a disabled item, so screen-reader users can discover it and hear why it's there — per the APG recommendation that disabled items in composite widgets stay focusable. Activation stays blocked: Enter, Space, and click do nothing on a disabled item, a disabled submenu trigger never opens its submenu, and focusing a disabled tab leaves the current tab selected (selection still follows focus onto enabled tabs).
+- **Disabled tabs and accordion headers no longer render the native `disabled` attribute** (a natively disabled button cannot receive focus): they carry `aria-disabled="true"` instead, as dropdown menu items already did. Anything targeting these buttons with `[disabled]` in CSS or tests should target `[aria-disabled="true"]`.
+
 ### Added - Dropzone Component
 
 - **`dropzone/1`** (`mix pulsar.gen.dropzone`): a file-upload dropzone for LiveView uploads. Renders a clickable, keyboard-operable upload zone for an `allow_upload/3` config — drag-and-drop via `phx-drop-target`, click-to-browse via a zone-wide label around `live_file_input`, image previews (`live_img_preview`), per-entry progress bars, and cancel buttons. The four LiveView upload errors render as overridable message attrs (`too_large_message`, `not_accepted_message`, `too_many_files_message`, `external_client_failure_message`); cancel defaults to pushing `"cancel-upload"` with the entry ref and accepts an `on_cancel` override (`%JS{}` or `(entry) -> %JS{}`). Carries the house `variant`/`color`/`size` axes (dashed-outline default) and composes `Icon` and `Progress`. The drag-over highlight and prompt swap key off LiveView's built-in `phx-drop-target-active` class, so the component ships no JavaScript of its own; this raises Pulsar's `phoenix_live_view` requirement to `~> 1.2` (the class shipped in LiveView 1.2.0). WCAG 2.2 AA audited (`docs/a11y/dropzone.md`).
