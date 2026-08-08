@@ -9,8 +9,7 @@ defmodule Mix.Tasks.Pulsar.Gen.DropdownMenu do
     Built on the popover primitive in click mode: the trigger opens a menu of
     actions anchored to it; outside-click or Escape closes it and returns focus
     to the trigger. A colocated hook provides the menu keyboard model (roving
-    focus, type-ahead, submenu navigation). Requires the icon and popover
-    components.
+    focus, type-ahead, submenu navigation).
 
     ## Example
 

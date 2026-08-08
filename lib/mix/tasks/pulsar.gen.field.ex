@@ -28,10 +28,6 @@ defmodule Mix.Tasks.Pulsar.Gen.Field do
     - Accessibility with proper label association
     - Phoenix form and changeset integration
 
-    ## Dependencies
-
-    This component requires: checkbox, icon, input, label, radio_group, select, switch, textarea
-
     ## Usage Examples
 
     ```elixir

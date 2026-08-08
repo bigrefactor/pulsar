@@ -156,8 +156,10 @@ icon, header → link + icon). When it does:
    between the generated lib file and the template beyond the module wrapper.)
 2. After `mix pulsar.sync`, the generated lib file has the concrete
    `alias Pulsar.Components.Icon` — produced for you, don't hand-edit it.
-3. In `lib/mix/tasks/pulsar.install.ex`, declare the dependency in `@components`:
-   `widget: [:icon]`. The dependency must itself be a key in `@components`.
+3. In `lib/pulsar/component_deps.ex`, declare the dependency in `@components`:
+   `widget: [:icon]`. The dependency must itself be a key (compile-time
+   enforced), and standalone `mix pulsar.gen.widget` auto-generates it when
+   missing.
 
 ## Colocated JavaScript (only if behavior truly needs JS)
 

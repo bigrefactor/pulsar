@@ -7,7 +7,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Tooltip do
 
     Built on the popover primitive in hover mode: the hint opens when the trigger
     is hovered or focused and closes on leave, blur, or Escape. Positioning
-    (flip + shift) runs in a colocated hook. Requires the popover component.
+    (flip + shift) runs in a colocated hook.
 
     ## Example
 

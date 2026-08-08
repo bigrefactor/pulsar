@@ -28,10 +28,6 @@ defmodule Mix.Tasks.Pulsar.Gen.FlashGroup do
     - Consistent styling across all flashes
     - Staggered entry/exit animations
 
-    ## Dependencies
-
-    This component requires: flash, icon
-
     ## Usage Examples
 
     ```elixir

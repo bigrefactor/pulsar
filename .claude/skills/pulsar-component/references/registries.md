@@ -15,7 +15,8 @@ reading the file before editing; don't trust line numbers cited here (they drift
 | 2 | `lib/pulsar/components/widget.ex` | **Generated** by `mix pulsar.sync` (do not hand-write) | unit tests, compile |
 | 3 | `lib/pulsar/template_sync.ex` | **Edit**: add tuple to `Pulsar.TemplateSync.pairs/0` | `mix pulsar.sync --check` |
 | 4 | `lib/mix/tasks/pulsar.gen.widget.ex` | **Create** generator task | generator test (if present) |
-| 5 | `lib/mix/tasks/pulsar.install.ex` | **Edit**: add to `@components` + `composes:` | install tests |
+| 5 | `lib/pulsar/component_deps.ex` | **Edit**: add to the `@components` map | `Pulsar.ComponentDepsTest` |
+| 5b | `lib/mix/tasks/pulsar.install.ex` | **Edit**: add `"pulsar.gen.widget"` to `composes:` | install tests |
 
 ### 1 → 2 — the `mix pulsar.sync` transform (critical)
 
@@ -72,22 +73,25 @@ defmodule Mix.Tasks.Pulsar.Gen.Widget do
 end
 ```
 
-### 4 — install task (`lib/mix/tasks/pulsar.install.ex`)
+### 4 — dependency map (`lib/pulsar/component_deps.ex`) + install task
 
-Two edits in the `Mix.Tasks.Pulsar.Install` module:
+Two registrations:
 
-- Add to the `@components` map. The value is the **list of other components this
-  one depends on** (empty list if none):
+- Add to the `@components` map in `Pulsar.ComponentDeps`. The value is the
+  **list of other components this one depends on** (empty list if none):
   ```elixir
   widget: [],            # or  widget: [:icon, :link]  if it composes them
   ```
-- Add the generator to the `composes:` list in `info/2`:
+- Add the generator to the `composes:` list in `Mix.Tasks.Pulsar.Install.info/2`:
   ```elixir
   "pulsar.gen.widget",
   ```
 
-`validate_component_dependencies!/0` will raise at runtime if you list a dependency
-that isn't itself a key in `@components`, so deps must be real components.
+Registration is enforced at compile time: `use Pulsar.Generator` raises for a
+component missing from the map, and the map itself fails compilation if a dep
+is not a registered component (or the graph has a cycle). Standalone
+`mix pulsar.gen.widget` auto-generates missing deps, so the deps list must
+be accurate — it drives generation, not just documentation.
 
 ## B. Unit tests
 

@@ -56,11 +56,22 @@ defmodule Mix.Tasks.Pulsar.InstallTest do
       |> apply_igniter!()
     end
 
-    test "installs button with its link dependency" do
+    test "installs button with its transitive link and icon dependencies" do
       phx_test_project()
       |> Igniter.compose_task("pulsar.install", ["--component", "button", "--no-core-components", "--yes"])
       |> assert_creates("lib/test_web/components/button.ex")
       |> assert_creates("lib/test_web/components/link.ex")
+      |> assert_creates("lib/test_web/components/icon.ex")
+      |> apply_igniter!()
+    end
+
+    test "installs date_picker with its transitive dependencies" do
+      phx_test_project()
+      |> Igniter.compose_task("pulsar.install", ["--component", "date_picker", "--no-core-components", "--yes"])
+      |> assert_creates("lib/test_web/components/date_picker.ex")
+      |> assert_creates("lib/test_web/components/calendar.ex")
+      |> assert_creates("lib/test_web/components/popover.ex")
+      |> assert_creates("lib/test_web/components/icon.ex")
       |> apply_igniter!()
     end
 
@@ -88,11 +99,12 @@ defmodule Mix.Tasks.Pulsar.InstallTest do
       |> apply_igniter!()
     end
 
-    test "installs select with badge dependency" do
+    test "installs select with badge and icon dependencies" do
       phx_test_project()
       |> Igniter.compose_task("pulsar.install", ["--component", "select", "--no-core-components", "--yes"])
       |> assert_creates("lib/test_web/components/select.ex")
       |> assert_creates("lib/test_web/components/badge.ex")
+      |> assert_creates("lib/test_web/components/icon.ex")
       |> apply_igniter!()
     end
 

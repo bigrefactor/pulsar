@@ -9,7 +9,7 @@ defmodule Mix.Tasks.Pulsar.Gen.AlertDialog do
     but bakes in a fixed Cancel/Confirm footer so the destructive `on_confirm`
     command rides only on the Confirm button. Escape and Cancel dismiss without
     running it; backdrop clicks and the corner close button are removed so the
-    choice can't be dismissed by accident. Requires the modal and button components.
+    choice can't be dismissed by accident.
 
     ## Example
 

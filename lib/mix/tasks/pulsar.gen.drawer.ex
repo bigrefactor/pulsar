@@ -8,7 +8,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Drawer do
     Built on the modal primitive: it traps focus, dims the page, locks scroll, and
     closes on Escape or a backdrop click, but anchors the panel to a viewport edge
     (right, left, top, or bottom) and slides it in. Drive it from anywhere with the
-    `open/2` and `close/2` helpers. Requires the modal and button components.
+    `open/2` and `close/2` helpers.
 
     ## Example
 
