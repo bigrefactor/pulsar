@@ -76,6 +76,27 @@ defmodule Pulsar.Generator do
             "Pulsar.Generator expects :short_doc to be a binary or false, got: #{inspect(short_doc)}"
     end
 
+    if component not in Pulsar.ComponentDeps.all() do
+      raise ArgumentError,
+            "Pulsar.Generator got unregistered component :#{component} — " <>
+              "add it to the @components map in Pulsar.ComponentDeps"
+    end
+
+    extra_deps = List.delete(Pulsar.ComponentDeps.resolution_order([component]), component)
+
+    long_doc =
+      if extra_deps == [] do
+        long_doc
+      else
+        long_doc <>
+          """
+
+          ## Dependencies
+
+          Also generates #{Enum.join(extra_deps, ", ")} if not already present in your app.
+          """
+      end
+
     task_name = "pulsar.gen.#{component}"
 
     no_igniter_message = """
@@ -125,7 +146,7 @@ defmodule Pulsar.Generator do
         def igniter(igniter) do
           igniter
           |> Pulsar.Generator.set_default_component_module()
-          |> Pulsar.Generator.install_component(unquote(component), [])
+          |> Pulsar.Generator.install_component_with_deps(unquote(component))
         end
 
         defoverridable info: 2, igniter: 1
@@ -190,6 +211,41 @@ defmodule Pulsar.Generator do
     igniter
     |> maybe_install_story(component_name)
     |> maybe_install_test(component_name)
+  end
+
+  @doc false
+  def install_component_with_deps(igniter, component_name) do
+    deps = List.delete(Pulsar.ComponentDeps.resolution_order([component_name]), component_name)
+
+    {igniter, generated} =
+      Enum.reduce(deps, {igniter, []}, fn dep, {acc, gen} ->
+        if component_file_exists?(acc, dep) do
+          {acc, gen}
+        else
+          {install_component(acc, dep, []), [dep | gen]}
+        end
+      end)
+
+    igniter
+    |> add_generated_deps_notice(component_name, Enum.reverse(generated))
+    |> install_component(component_name, [])
+  end
+
+  defp add_generated_deps_notice(igniter, _component_name, []), do: igniter
+
+  defp add_generated_deps_notice(igniter, component_name, generated) do
+    Igniter.add_notice(
+      igniter,
+      "pulsar.gen.#{component_name} also generated missing dependencies: " <>
+        Enum.join(generated, ", ")
+    )
+  end
+
+  defp component_file_exists?(igniter, component_name) do
+    namespace = components_namespace(igniter)
+    module = component_module(namespace, component_name)
+    path = Igniter.Project.Module.proper_location(igniter, module)
+    Igniter.exists?(igniter, path)
   end
 
   # Test generation is ON by default; only `--no-tests` (tests: false) suppresses it.

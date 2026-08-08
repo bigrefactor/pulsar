@@ -8,8 +8,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Dropzone do
     The dropzone renders a drag-and-drop upload zone with click-to-browse, image
     previews, per-entry progress bars, cancel buttons, and upload error messages
     for an upload configured with `allow_upload/3`. Render it inside a form bound
-    with `phx-change`. Requires the icon and progress components
-    (`mix pulsar.gen.icon`, `mix pulsar.gen.progress`).
+    with `phx-change`.
 
     ## Example
 

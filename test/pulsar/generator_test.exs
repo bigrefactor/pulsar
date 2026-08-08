@@ -72,8 +72,8 @@ defmodule Pulsar.GeneratorTest do
   describe "defoverridable" do
     defmodule OverridesIgniter do
       use Pulsar.Generator,
-        component: :__test_override__,
-        example: "mix pulsar.gen.__test_override__",
+        component: :badge,
+        example: "mix pulsar.gen.badge",
         long_doc: "test override"
 
       @impl Igniter.Mix.Task
@@ -206,5 +206,36 @@ defmodule Pulsar.GeneratorTest do
     end
 
     igniter
+  end
+
+  describe "use Pulsar.Generator component registration" do
+    test "raises for a component not registered in Pulsar.ComponentDeps" do
+      assert_raise ArgumentError, ~r/unregistered component/, fn ->
+        defmodule UnregisteredComponent do
+          use Pulsar.Generator,
+            component: :not_a_real_component,
+            example: "mix x",
+            long_doc: "doc"
+        end
+      end
+    end
+  end
+
+  describe "long_doc dependency section" do
+    test "dep-carrying tasks document their generated dependencies" do
+      {:docs_v1, _, _, _, %{"en" => moduledoc}, _, _} =
+        Code.fetch_docs(Mix.Tasks.Pulsar.Gen.Dropzone)
+
+      assert moduledoc =~ "## Dependencies"
+      assert moduledoc =~ "icon"
+      assert moduledoc =~ "progress"
+    end
+
+    test "dep-free tasks get no dependency section" do
+      {:docs_v1, _, _, _, %{"en" => moduledoc}, _, _} =
+        Code.fetch_docs(Mix.Tasks.Pulsar.Gen.Badge)
+
+      refute moduledoc =~ "## Dependencies"
+    end
   end
 end
