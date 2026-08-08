@@ -44,4 +44,25 @@ defmodule Pulsar.ComponentDepsTest do
   test "resolution_order/1 is deterministic" do
     assert ComponentDeps.resolution_order([:field]) == ComponentDeps.resolution_order([:field])
   end
+
+  test "deps match each component template's sibling imports exactly" do
+    for component <- ComponentDeps.all() do
+      template =
+        :pulsar
+        |> :code.priv_dir()
+        |> Path.join("templates")
+        |> Path.join("#{component}.ex.eex")
+
+      imports =
+        ~r/(?:import|alias) <%= @component_namespace %>\.([A-Za-z]+)/
+        |> Regex.scan(File.read!(template))
+        |> Enum.map(fn [_, mod] -> mod |> Macro.underscore() |> String.to_existing_atom() end)
+        |> Enum.uniq()
+        |> Enum.sort()
+
+      assert Enum.sort(ComponentDeps.deps(component)) == imports,
+             "#{component}: map deps #{inspect(Enum.sort(ComponentDeps.deps(component)))} " <>
+               "do not match template imports #{inspect(imports)}"
+    end
+  end
 end

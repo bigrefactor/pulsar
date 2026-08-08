@@ -25,7 +25,7 @@ defmodule Pulsar.ComponentDeps do
     collapsible: [:icon],
     date_picker: [:calendar, :popover, :icon],
     divider: [],
-    drawer: [:modal, :button],
+    drawer: [:modal],
     dropdown_menu: [:icon, :popover],
     dropzone: [:icon, :progress],
     field: [
@@ -43,7 +43,7 @@ defmodule Pulsar.ComponentDeps do
     flash: [],
     flash_group: [:flash, :icon],
     form: [],
-    header: [:link, :icon, :breadcrumb],
+    header: [:breadcrumb],
     icon: [],
     input: [],
     input_otp: [],
