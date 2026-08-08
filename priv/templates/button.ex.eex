@@ -550,7 +550,6 @@ defp render_navigation_link(assigns) do
   """
 end
 
-# Extract content rendering to eliminate 5x duplication
 defp render_button_content(assigns) do
   ~H"""
   <div :if={@loading && @variant != "link" && @loading_content != []}>

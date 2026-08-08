@@ -528,7 +528,6 @@ defmodule Pulsar.Components.Button do
     """
   end
 
-  # Extract content rendering to eliminate 5x duplication
   defp render_button_content(assigns) do
     ~H"""
     <div :if={@loading && @variant != "link" && @loading_content != []}>
