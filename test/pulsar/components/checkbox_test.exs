@@ -355,7 +355,6 @@ defmodule Pulsar.Components.CheckboxTest do
         <.checkbox field={@field} />
         """)
 
-      # Stellar handles form field integration - check for field presence
       assert html =~ ~s(type="checkbox")
     end
 

@@ -84,7 +84,7 @@ defmodule Pulsar.Components.TextareaTest do
       assert html =~ "max-h-80"
     end
 
-    test "passes through Stellar textarea props" do
+    test "passes through native textarea attributes" do
       assigns = %{}
 
       html =

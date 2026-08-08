@@ -94,7 +94,7 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ "px-4 py-2"
     end
 
-    test "passes through Stellar select props" do
+    test "passes through native select attributes" do
       assigns = %{}
 
       html =
@@ -902,8 +902,6 @@ defmodule Pulsar.Components.SelectTest do
         <Select.select field={@field} options={[{"US", "us"}, {"CA", "ca"}]} />
         """)
 
-      # Note: The actual implementation passes field to Stellar, which handles the attributes
-      # The test passes if the select element is rendered properly with Stellar handling
       assert html =~ ~s(<select)
       assert html =~ ~s(value="us">US)
       assert html =~ ~s(value="ca">CA)
