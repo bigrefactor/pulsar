@@ -97,7 +97,7 @@ defmodule Pulsar.MixProject do
     [
       {:igniter, "~> 0.6", optional: true},
       {:phoenix, "~> 1.8", optional: true},
-      {:phoenix_live_view, "~> 1.1", optional: true},
+      {:phoenix_live_view, "~> 1.2", optional: true},
       {:phoenix_html, "~> 4.0", optional: true},
       {:phoenix_html_helpers, "~> 1.0", optional: true},
       {:gettext, "~> 1.0", optional: true},

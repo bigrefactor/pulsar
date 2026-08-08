@@ -1,0 +1,44 @@
+defmodule <%= @component_namespace %>.DropzoneTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Dropzone
+
+  defp upload_config(attrs \\ []) do
+    defaults = [name: :files, ref: "phx-upload", entries: [], errors: [], max_entries: 3]
+    struct(Phoenix.LiveView.UploadConfig, Keyword.merge(defaults, attrs))
+  end
+
+  describe "dropzone/1" do
+    test "renders the upload zone with a file input" do
+      assigns = %{upload: upload_config()}
+      html = rendered_to_string(~H[<Dropzone.dropzone upload={@upload} />])
+
+      assert html =~ ~s(type="file")
+      assert html =~ ~s(phx-drop-target="phx-upload")
+      assert html =~ "Click to upload or drag and drop"
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(solid outline ghost elevated) do
+        assigns = %{upload: upload_config(), variant: variant}
+        html = rendered_to_string(~H[<Dropzone.dropzone upload={@upload} variant={@variant} />])
+        assert html =~ ~s(type="file")
+      end
+    end
+
+    test "renders config-level upload errors" do
+      assigns = %{upload: upload_config(errors: [{"phx-upload", :too_many_files}])}
+      html = rendered_to_string(~H[<Dropzone.dropzone upload={@upload} />])
+      assert html =~ "Too many files"
+    end
+
+    test "merges custom classes" do
+      assigns = %{upload: upload_config()}
+      html = rendered_to_string(~H[<Dropzone.dropzone upload={@upload} class="rounded-none" />])
+      assert html =~ "rounded-none"
+    end
+  end
+end

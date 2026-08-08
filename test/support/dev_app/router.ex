@@ -51,6 +51,10 @@ defmodule Pulsar.DevApp.Router do
     live "/components/divider", DividerLive, :index
     live "/components/drawer", DrawerLive, :index
     live "/components/dropdown_menu", DropdownMenuLive, :index
+    live "/components/dropzone/solid", DropzoneLive, :solid
+    live "/components/dropzone/outline", DropzoneLive, :outline
+    live "/components/dropzone/ghost", DropzoneLive, :ghost
+    live "/components/dropzone/elevated", DropzoneLive, :elevated
     live "/components/field", FieldLive, :index
     live "/components/flash", FlashLive, :index
     live "/components/flash/trigger", FlashTriggerLive, :index
@@ -109,6 +113,7 @@ defmodule Pulsar.DevApp.Router do
     live "/keyboard/collapsible", Keyboard.CollapsibleLive, :index
     live "/keyboard/drawer", Keyboard.DrawerLive, :index
     live "/keyboard/dropdown_menu", Keyboard.DropdownMenuLive, :index
+    live "/keyboard/dropzone", Keyboard.DropzoneLive, :index
     live "/keyboard/input_otp", Keyboard.InputOtpLive, :index
     live "/keyboard/menu", Keyboard.MenuLive, :index
     live "/keyboard/modal", Keyboard.ModalLive, :index
