@@ -176,22 +176,22 @@ section open.
 
 | APG key | Action | Status | Evidence |
 |---------|--------|:------:|----------|
-| Enter | Toggle the focused section | ✓ | Native `<button>` header (`accordion.ex:233`); click handler toggles (`accordion.ex:286–288`). |
+| Enter | Toggle the focused section | ✓ | Native `<button>` header (`accordion.ex:233`); click handler toggles (`accordion.ex:281–286`). |
 | Space | Toggle the focused section | ✓ | Native `<button>`: browser default. |
-| Down Arrow | Move focus to the next header (wraps) | ✓ | `accordion.ex:297`. |
-| Up Arrow | Move focus to the previous header (wraps) | ✓ | `accordion.ex:298`. |
-| Home | Move focus to the first header | ✓ | `accordion.ex:299`. |
-| End | Move focus to the last header | ✓ | `accordion.ex:300`. |
+| Down Arrow | Move focus to the next header (wraps) | ✓ | `accordion.ex:293`. |
+| Up Arrow | Move focus to the previous header (wraps) | ✓ | `accordion.ex:294`. |
+| Home | Move focus to the first header | ✓ | `accordion.ex:295`. |
+| End | Move focus to the last header | ✓ | `accordion.ex:296`. |
 
 ### WAI-ARIA roles, states, properties
 
 | APG requirement | Status | Evidence |
 |-----------------|:------:|----------|
-| Header is a `<button>` wrapped in a heading element | ✓ | `<.dynamic_tag tag_name={@heading_level}>` wraps the button (`accordion.ex:232–247`); `heading_level` defaults to `h3`. |
-| `aria-expanded` on the header | ✓ | `accordion.ex:238`; hook keeps it in sync (`accordion.ex:306–307`). |
+| Header is a `<button>` wrapped in a heading element | ✓ | `<.dynamic_tag tag_name={@heading_level}>` wraps the button (`accordion.ex:232–246`); `heading_level` defaults to `h3`. |
+| `aria-expanded` on the header | ✓ | `accordion.ex:238`; hook keeps it in sync (`accordion.ex:300–304`). |
 | `aria-controls` references the panel | ✓ | `accordion.ex:237`. |
-| Panel `role="region"` labelled by its header | ✓ | `accordion.ex:249` — `role="region"` + `aria-labelledby` to the header id. |
-| `aria-disabled` on disabled headers | ✓ | `accordion.ex:239`; disabled headers are skipped by roving focus (`accordion.ex:281`). |
+| Panel `role="region"` labelled by its header | ✓ | `accordion.ex:248` — `role="region"` + `aria-labelledby` to the header id. |
+| `aria-disabled` on disabled headers | ✓ | `accordion.ex:239`; disabled headers stay in the roving header set so keyboard users can reach them — toggling is guarded on `aria-disabled` in `onClick` (`accordion.ex:284`). |
 
 ### Divergences
 
