@@ -43,7 +43,7 @@ numbers (line numbers drift on every edit; enforced by
   exact spot.
 - Test evidence: the exact test name — `test "supports aria-label for
   icon-only buttons"` — plus the file when it isn't the page's
-  **Tests:** file. A test name that itself contains double quotes (e.g.
+  **Tests:** file (here `test/pulsar/components/button_test.exs`). A test name that itself contains double quotes (e.g.
   `renders aria-busy="true" while loading`) is cited as
   ``Test `<exact name>` `` (backticks instead of quotes) so the checker
   can parse it.
