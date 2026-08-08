@@ -227,7 +227,7 @@ defmodule Pulsar.Components.TabsTest do
       assert html =~ "hero-user"
     end
 
-    test "disabled tab is rendered disabled" do
+    test "disabled tab renders aria-disabled without the native disabled attribute" do
       assigns = %{}
 
       html =
@@ -238,8 +238,8 @@ defmodule Pulsar.Components.TabsTest do
         </Tabs.tabs>
         """)
 
-      assert html =~ ~r/id="two"[^>]*disabled/s
       assert html =~ ~r/id="two"[^>]*aria-disabled="true"/s
+      refute html =~ ~r/<button[^>]*id="two"[^>]*\sdisabled[\s>]/s
     end
 
     test "default active skips a leading disabled tab" do

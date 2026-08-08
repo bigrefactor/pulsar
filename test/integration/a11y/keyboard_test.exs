@@ -372,7 +372,8 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     # tablist (kbd-v-one / kbd-v-two). Roving focus + arrow/Home/End
     # navigation and the active-tab selection sync come from the
     # `.PulsarTabs` colocated hook, which reads orientation from the
-    # tabs root's `data-orientation`.
+    # tabs root's `data-orientation`. Disabled tabs are focusable but
+    # never selected.
     #
     # Verification: comment out the ArrowRight/ArrowLeft branch in the
     # keydown handler of `.PulsarTabs` (see `lib/pulsar/components/tabs.ex`,
@@ -380,14 +381,33 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     # assets.build`, re-run — the ArrowRight test fails because focus and
     # selection stay on kbd-h-one.
 
-    test "ArrowRight moves focus + selection and skips disabled", %{conn: conn} do
+    test "ArrowRight focuses a disabled tab without selecting it, then moves on", %{conn: conn} do
       conn
       |> visit("/keyboard/tabs")
       |> A11y.await_live_connected()
       |> press("#kbd-h-one", "ArrowRight")
+      |> A11y.assert_focused("kbd-h-mid")
+      |> assert_has(~s|#kbd-h-mid[aria-selected="false"]|)
+      |> assert_has(~s|#kbd-h-one[aria-selected="true"]|)
+      |> assert_has("#kbd-h-one-panel", text: "One panel")
+      |> press("#kbd-h-mid", "ArrowRight")
       |> A11y.assert_focused("kbd-h-two")
       |> assert_has(~s|#kbd-h-two[aria-selected="true"]|)
-      |> assert_has(~s|#kbd-h-one[aria-selected="false"]|)
+      |> assert_has("#kbd-h-two-panel", text: "Two panel")
+    end
+
+    test "Enter and Space on a focused disabled tab do not select it", %{conn: conn} do
+      conn
+      |> visit("/keyboard/tabs")
+      |> A11y.await_live_connected()
+      |> press("#kbd-h-one", "ArrowRight")
+      |> A11y.assert_focused("kbd-h-mid")
+      |> press("#kbd-h-mid", "Enter")
+      |> assert_has(~s|#kbd-h-mid[aria-selected="false"]|)
+      |> assert_has(~s|#kbd-h-one[aria-selected="true"]|)
+      |> press("#kbd-h-mid", "Space")
+      |> assert_has(~s|#kbd-h-mid[aria-selected="false"]|)
+      |> assert_has("#kbd-h-one-panel", text: "One panel")
     end
 
     test "ArrowLeft wraps from first to last", %{conn: conn} do
@@ -398,7 +418,7 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
       |> A11y.assert_focused("kbd-h-two")
     end
 
-    test "Home and End jump to first/last enabled tab", %{conn: conn} do
+    test "Home and End jump to the first/last tab", %{conn: conn} do
       conn
       |> visit("/keyboard/tabs")
       |> A11y.await_live_connected()

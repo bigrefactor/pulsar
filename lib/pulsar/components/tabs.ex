@@ -115,7 +115,7 @@ defmodule Pulsar.Components.Tabs do
 
   @icon_size %{"xs" => "xs", "sm" => "xs", "md" => "sm", "lg" => "sm", "xl" => "md"}
 
-  @tab_base "inline-flex items-center justify-center font-medium whitespace-nowrap cursor-pointer select-none transition-[transform,box-shadow,background-color,border-color,color,opacity] duration-normal ease-standard hover:scale-[1.02] active:scale-[0.98] motion-reduce:hover:scale-100 motion-reduce:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-disabled aria-disabled:pointer-events-none aria-disabled:opacity-disabled"
+  @tab_base "inline-flex items-center justify-center font-medium whitespace-nowrap cursor-pointer select-none transition-[transform,box-shadow,background-color,border-color,color,opacity] duration-normal ease-standard hover:scale-[1.02] active:scale-[0.98] motion-reduce:hover:scale-100 motion-reduce:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 aria-disabled:pointer-events-none aria-disabled:opacity-disabled"
 
   @wrapper %{
     "horizontal" => "flex flex-col",
@@ -186,7 +186,7 @@ defmodule Pulsar.Components.Tabs do
         "Override the group color on this tab's active state (one of neutral primary secondary success danger warning info)"
     )
 
-    attr(:disabled, :boolean, doc: "Disable this tab (skipped by keyboard navigation)")
+    attr(:disabled, :boolean, doc: "Disable this tab (keyboard focus can reach it, but it cannot be selected)")
   end
 
   @doc """
@@ -237,7 +237,6 @@ defmodule Pulsar.Components.Tabs do
           aria-selected={(tab.active && "true") || "false"}
           aria-disabled={(tab.disabled && "true") || "false"}
           tabindex={(tab.active && "0") || "-1"}
-          disabled={tab.disabled}
           class={tab_classes(@variant, @orientation, @size, tab.color)}
         >
           <Icon.icon :if={tab.icon} name={tab.icon} size={icon_size(@size)} />
@@ -283,20 +282,17 @@ defmodule Pulsar.Components.Tabs do
         allTabs() {
           return Array.from(this.tablist.querySelectorAll('[role="tab"]'))
         },
-        enabledTabs() {
-          return this.allTabs().filter((t) => !t.disabled && t.getAttribute("aria-disabled") !== "true")
-        },
         onClick(e) {
           const tab = e.target.closest('[role="tab"]')
           if (!tab || !this.tablist.contains(tab)) return
-          if (tab.disabled || tab.getAttribute("aria-disabled") === "true") return
+          if (tab.getAttribute("aria-disabled") === "true") return
           this.activate(tab)
         },
         onKeydown(e) {
           const vertical = (this.el.dataset.orientation || "horizontal") === "vertical"
           const nextKey = vertical ? "ArrowDown" : "ArrowRight"
           const prevKey = vertical ? "ArrowUp" : "ArrowLeft"
-          const tabs = this.enabledTabs()
+          const tabs = this.allTabs()
           if (tabs.length === 0) return
           let idx = tabs.indexOf(document.activeElement)
           if (e.key === nextKey) {
@@ -315,8 +311,11 @@ defmodule Pulsar.Components.Tabs do
             this.focusActivate(tabs[tabs.length - 1])
           }
         },
+        // Focus always moves; selection only follows focus onto enabled tabs, so
+        // a disabled tab can be reached and announced without being activated.
         focusActivate(tab) {
           tab.focus()
+          if (tab.getAttribute("aria-disabled") === "true") return
           this.activate(tab)
         },
         activate(tab) {
