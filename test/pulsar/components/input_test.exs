@@ -71,7 +71,7 @@ defmodule Pulsar.Components.InputTest do
       assert html =~ "text-lg"
     end
 
-    test "passes through Stellar input props" do
+    test "passes through native input attributes" do
       assigns = %{}
 
       html =
@@ -473,7 +473,6 @@ defmodule Pulsar.Components.InputTest do
     test "accepts field attribute for form integration" do
       assigns = %{}
 
-      # Test that field attribute is properly handled by the Stellar component
       html =
         rendered_to_string(~H"""
         <Input.input name="test" id="custom_id" value="test_value" />

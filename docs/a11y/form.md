@@ -13,8 +13,8 @@ explaining the required-field asterisk.
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:** Renders a native `<form>` element via
-`Phoenix.Component.form/1` — `lib/pulsar/components/form.ex:94–100`; field
-relationships are owned by the `field` component (see [field](field.md)).
+`Phoenix.Component.form/1` — `lib/pulsar/components/form.ex`, `form/1`;
+field relationships are owned by the `field` component (see [field](field.md)).
 
 **Notes:** The component adds no structural markup beyond the optional
 legend paragraph.
@@ -23,48 +23,47 @@ legend paragraph.
 
 **Evidence:** The optional legend pairs the `text-danger` asterisk with
 the text "indicates a required field" — colour is never the sole carrier
-— `lib/pulsar/components/form.ex:101–103`.
+— `lib/pulsar/components/form.ex`, `form/1`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Legend text uses `text-muted-foreground`
-(`lib/pulsar/components/form.ex:101`), which measures 6.0–7.23:1 across
-all surfaces. The axe-core browser gate reports no `color-contrast`
+(`lib/pulsar/components/form.ex`, `form/1`), which measures 6.0–7.23:1
+across all surfaces. The axe-core browser gate reports no `color-contrast`
 violation for the form fixture in either theme.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
 **Evidence:** After a failed submit the colocated `PulsarForm` hook
 focuses the first `[aria-invalid="true"]` descendant —
-`lib/pulsar/components/form.ex:106–129` (hook), `:116` (query), `:123`
-(deferred `.focus()`). Test `focus moves to the first invalid field after
-a failed submit` — `test/integration/a11y/form_test.exs:86`.
+`lib/pulsar/components/form.ex`, `form/1` (hook, deferred `.focus()`).
+`test "focus moves to the first invalid field after a failed submit"`
+— `test/integration/a11y/form_test.exs`.
 
 **Notes:** Routine `phx-change` validation does not move focus; only
 submit does — the hook only sets its internal flag on the native
-`submit` event (`lib/pulsar/components/form.ex:110`). The legend is not
-focusable and does not enter the tab order.
+`submit` event (`form/1`). The legend is not focusable and does not
+enter the tab order.
 
 ### 3.3.2 Labels or Instructions (A) — ✓ PASS
 
 **Evidence:** The optional `required_legend` renders "* indicates a
 required field" at the start of the form, per technique H90 —
-`lib/pulsar/components/form.ex:101–103`.
+`lib/pulsar/components/form.ex`, `form/1`.
 
 **Notes:** Opt-in, because the component cannot detect whether any child
 field is required. The entire legend paragraph — asterisk and text — is
-marked `aria-hidden="true"` (`lib/pulsar/components/form.ex:101`), so AT
-users never hear it; they receive required state instead from each
-field's `required` / `aria-required` attribute, which `field` sets for
-every control type it renders: `input`, `textarea`, `select`,
-`checkbox`, `radio`, `switch`, `otp`, and — via `DatePicker`'s
-`aria-required` — `date`/`daterange` (see [label](label.md)
-1.3.1/1.3.3).
+marked `aria-hidden="true"` (`form/1`), so AT users never hear it; they
+receive required state instead from each field's `required` /
+`aria-required` attribute, which `field` sets for every control type it
+renders: `input`, `textarea`, `select`, `checkbox`, `radio`, `switch`,
+`otp`, and — via `DatePicker`'s `aria-required` — `date`/`daterange` (see
+[label](label.md) 1.3.1/1.3.3).
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
 **Evidence:** Native `<form>` element via `Phoenix.Component.form/1`; no
-ARIA role overrides — `lib/pulsar/components/form.ex:94–100`.
+ARIA role overrides — `lib/pulsar/components/form.ex`, `form/1`.
 
 **Notes:** `phx-hook=".PulsarForm"` attaches behavior only; it adds no
 ARIA semantics.

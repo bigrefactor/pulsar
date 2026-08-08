@@ -17,44 +17,44 @@ clone behind a static dot, and reduced-motion users get a plain static dot.
 ### 1.1.1 Non-text Content (A) — ✓ PASS
 
 **Evidence:** With no `label` the dot is removed from the accessibility tree
-(`aria-hidden="true"` on the wrapper) — `lib/pulsar/components/status.ex:138`,
-resolved at `lib/pulsar/components/status.ex:235–236` —
+(`aria-hidden="true"` on the wrapper) — `lib/pulsar/components/status.ex`,
+`status/1`, resolved at `aria_hidden/1` —
 which is correct for a dot that is redundant with adjacent text. With a `label`
 the dot is exposed as a named image (`role="img"` + `aria-label`) —
-`lib/pulsar/components/status.ex:136–137`. The `ping` halo clone is always
-`aria-hidden="true"` — `lib/pulsar/components/status.ex:143`.
+`lib/pulsar/components/status.ex`, `status/1`. The `ping` halo clone is always
+`aria-hidden="true"` — `lib/pulsar/components/status.ex`, `status/1`.
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:** A labeled dot uses `role="img"` to mark itself a single graphical
-object — `lib/pulsar/components/status.ex:136`, resolved at
-`lib/pulsar/components/status.ex:232–233`. The dot has no internal structure
+object — `lib/pulsar/components/status.ex`, `status/1`, resolved at
+`status_role/1`. The dot has no internal structure
 to expose; `indicator/1` is a plain layout `<div>` with no role —
-`lib/pulsar/components/status.ex:196`.
+`lib/pulsar/components/status.ex`, `indicator/1`.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** No instruction depends on the dot's shape, size, or position; the
 state reaches assistive tech through the `label` text rather than the color or
-the corner it sits on — `lib/pulsar/components/status.ex:136–137`.
+the corner it sits on — `lib/pulsar/components/status.ex`, `status/1`.
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** When the dot carries meaning, that meaning is the `label` text
 (announced via `role="img"`/`aria-label`), never color alone —
-`lib/pulsar/components/status.ex:136–137`. A dot with no label is decorative and the
+`lib/pulsar/components/status.ex`, `status/1`. A dot with no label is decorative and the
 meaning lives in adjacent visible text the caller provides.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** All dot dimensions are `rem`-based Tailwind tokens
-(`h-1.5 w-1.5`…`h-4 w-4`) — `lib/pulsar/components/status.ex:66–72`. No fixed `px`.
+(`h-1.5 w-1.5`…`h-4 w-4`) — `lib/pulsar/components/status.ex`, `size_classes/1`. No fixed `px`.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** The dot is a small inline `<span>`; `indicator/1` is
 `relative inline-flex` with the item absolutely positioned relative to its own
-content — `lib/pulsar/components/status.ex:192, 223`. No fixed-`px` widths; reflows at
+content — `lib/pulsar/components/status.ex`, `indicator/1`, `item_classes/2`. No fixed-`px` widths; reflows at
 320 CSS px.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
@@ -62,11 +62,11 @@ content — `lib/pulsar/components/status.ex:192, 223`. No fixed-`px` widths; re
 **Evidence:** A status dot is a graphical object conveying state, so its fill
 must reach ≥3:1 against the surface behind it. The fills are the house semantic
 background tokens (`bg-primary`, `bg-success`, `bg-danger`, …) —
-`lib/pulsar/components/status.ex:55–63` — the same saturated tokens used as
+`lib/pulsar/components/status.ex`, `color_classes/1` — the same saturated tokens used as
 button/badge backgrounds, which clear 3:1 against both page backgrounds. When the
 dot is overlaid on busy content, `indicator/1` draws a `ring-background`
 separation ring around it so the dot edge stays distinguishable —
-`lib/pulsar/components/status.ex:88, 224`. Verified axe-clean in light + dark via the
+`lib/pulsar/components/status.ex`, `item_classes/2`. Verified axe-clean in light + dark via the
 fixture.
 
 **Notes:** axe's `color-contrast` rule targets text; the dot renders no text, so
@@ -76,25 +76,25 @@ needed, the separation ring), not by an automated text-contrast check.
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
 **Evidence:** The only motion is the optional `ping` halo (`animate-ping` —
-`lib/pulsar/components/status.ex:145`), a smooth sub-second loop, not essential to
+`lib/pulsar/components/status.ex`, `status/1`), a smooth sub-second loop, not essential to
 meaning. The library-wide `prefers-reduced-motion: reduce` rule near-stops it,
 and the halo clone additionally carries `motion-reduce:hidden` —
-`lib/pulsar/components/status.ex:145` — so reduced-motion users see a plain static
+`lib/pulsar/components/status.ex`, `status/1` — so reduced-motion users see a plain static
 dot.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
 **Evidence:** The `ping` halo is a smooth expand-and-fade loop —
-`lib/pulsar/components/status.ex:145` — nothing flashes more than three times per
+`lib/pulsar/components/status.ex`, `status/1` — nothing flashes more than three times per
 second.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
 **Evidence:** A labeled dot exposes `role="img"` with an accessible name from
-`aria-label` — `lib/pulsar/components/status.ex:136–137`; an unlabeled dot sets
+`aria-label` — `lib/pulsar/components/status.ex`, `status/1`; an unlabeled dot sets
 `aria-hidden="true"` and is removed from the tree —
-`lib/pulsar/components/status.ex:138`. `@rest` forwards `id`/`data-*`/ARIA —
-`lib/pulsar/components/status.ex:139, 196`. The dot has no settable value or
+`lib/pulsar/components/status.ex`, `status/1`. `@rest` forwards `id`/`data-*`/ARIA —
+`lib/pulsar/components/status.ex`, `status/1`, `indicator/1`. The dot has no settable value or
 interactive state.
 
 ## Not applicable

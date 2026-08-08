@@ -15,14 +15,14 @@ component is non-interactive (no focusable elements).
 ### 1.1.1 Non-text Content (A) — ✓ PASS
 
 **Evidence:** The placeholder shapes carry `aria-hidden="true"`
-(`lib/pulsar/components/skeleton.ex:197, 200`) so they are exposed to assistive
+(`lib/pulsar/components/skeleton.ex`, `skeleton_body/1`) so they are exposed to assistive
 tech as nothing rather than as meaningless graphics. When `label` is set the
 shapes are wrapped in a `role="status" aria-busy="true" aria-live="polite"`
 region whose accessible name is a visually-hidden (`sr-only`) text node, so the
 loading state is reliably announced
-(`lib/pulsar/components/skeleton.ex:138–139`). In `animate_text` mode the inner
+(`render_skeleton/1`). In `animate_text` mode the inner
 text is real content, exposed unless a label already announces the region
-(`lib/pulsar/components/skeleton.ex:196`).
+(`skeleton_body/1`).
 
 **Notes:** Without a `label`, a skeleton is purely decorative — the correct
 treatment for a placeholder whose meaning ("loading") is better conveyed by a
@@ -31,14 +31,14 @@ surrounding region the caller controls.
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:** A single shape is one element; multi-line text is a flat flex
-column of bars (`lib/pulsar/components/skeleton.ex:197–199`); the optional status
-region is a single wrapper (`lib/pulsar/components/skeleton.ex:138`). No implied
+column of bars (`lib/pulsar/components/skeleton.ex`, `skeleton_body/1`); the optional status
+region is a single wrapper (`render_skeleton/1`). No implied
 structure to expose.
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** DOM order matches visual order; stacked lines render top-to-bottom
-in source order (`lib/pulsar/components/skeleton.ex:198`). No reordering CSS.
+in source order (`lib/pulsar/components/skeleton.ex`, `skeleton_body/1`). No reordering CSS.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
@@ -48,15 +48,15 @@ placeholder; the shapes carry no operable meaning.
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** "Loading" is conveyed by the motion of the placeholder and, when
-provided, the `role="status"` announcement (`lib/pulsar/components/skeleton.ex:138`)
-— never by color alone. The placeholder fill (`lib/pulsar/components/skeleton.ex:63`)
+provided, the `role="status"` announcement (`lib/pulsar/components/skeleton.ex`, `render_skeleton/1`)
+— never by color alone. The placeholder fill (`shape_classes/2` and `line_classes/2`)
 is decorative.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** The placeholder shapes contain no text. The only text the component
 renders is the `animate_text` content, which uses `text-foreground`
-(`lib/pulsar/components/skeleton.ex:85`) — not `text-muted-foreground` — so it
+(`lib/pulsar/components/skeleton.ex`, `skeleton_body/1`) — not `text-muted-foreground` — so it
 clears the 4.5:1 minimum by a wide margin in both themes. Browser measurement of
 the text-bearing cells (`animate-text`, `labelled`, `lines-3`): min **19.27:1
 light** / **16.98:1 dark**
@@ -68,19 +68,20 @@ contrast does not apply to them (see 1.4.11).
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** All dimensions use `rem`-based Tailwind tokens (`h-4`, `w-*`,
-circle `w-6 h-6`…`w-16 h-16`) — `lib/pulsar/components/skeleton.ex:67–81, 213`.
+circle `w-6 h-6`…`w-16 h-16`) — `lib/pulsar/components/skeleton.ex`,
+`shape_classes/2` and `circle_size/1`.
 No fixed `px`.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** Widths are class-driven (default `w-full`), with no fixed-`px`
 minimum; multi-line stacks use `flex flex-col`
-(`lib/pulsar/components/skeleton.ex:197`). Placeholders reflow at 320 CSS px.
+(`lib/pulsar/components/skeleton.ex`, `skeleton_body/1`). Placeholders reflow at 320 CSS px.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** The placeholder shapes are decorative and marked `aria-hidden`
-(`lib/pulsar/components/skeleton.ex:197, 200`); WCAG exempts decorative content
+(`lib/pulsar/components/skeleton.ex`, `skeleton_body/1`); WCAG exempts decorative content
 from the 3:1 non-text minimum. The component draws no borders, focus rings, or
 icons that convey state.
 
@@ -94,12 +95,13 @@ the background.
 
 **Evidence:** No fixed line-height or letter/word-spacing overrides; the
 `animate_text` span inherits page text-spacing
-(`lib/pulsar/components/skeleton.ex:196`).
+(`lib/pulsar/components/skeleton.ex`, `skeleton_body/1`).
 
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
 **Evidence:** The pulse is a subtle 2s opacity oscillation (1 ↔ .85) defined by
-`animate-pulse-subtle` (`lib/pulsar/components/skeleton.ex:63, 85`). The
+`animate-pulse-subtle` (`lib/pulsar/components/skeleton.ex`, `shape_classes/2`,
+`line_classes/2`, and `skeleton_body/1`). The
 library-wide `prefers-reduced-motion: reduce` rule zeroes the animation, giving
 users a mechanism to stop it. The animation is also a transient loading
 indicator that disappears when real content replaces the skeleton.
@@ -111,33 +113,33 @@ shape.
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
 **Evidence:** The pulse completes one cycle every 2s (0.5 Hz) —
-`lib/pulsar/components/skeleton.ex:63` — far below the 3-flashes-per-second
+`lib/pulsar/components/skeleton.ex`, `shape_classes/2` — far below the 3-flashes-per-second
 threshold, and it is an opacity fade rather than a flash.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
 **Evidence:** Decorative shapes are `aria-hidden` with no role
-(`lib/pulsar/components/skeleton.ex:197, 200`). When announcing, the wrapper
+(`lib/pulsar/components/skeleton.ex`, `skeleton_body/1`). When announcing, the wrapper
 exposes `role="status"`, `aria-busy="true"`, `aria-live="polite"`, and a
 visually-hidden text node naming the region
-(`lib/pulsar/components/skeleton.ex:138–139`). `@rest` forwards `id`/`data-*`/ARIA
-(`lib/pulsar/components/skeleton.ex:118, 200`).
+(`render_skeleton/1`). `@rest` forwards `id`/`data-*`/ARIA
+(`skeleton/1` and `skeleton_body/1`).
 
-**Notes:** Tests confirm the decorative default, the status wrapper, and the
+**Notes:** Tests `shapes are decorative (aria-hidden) by default`, `a label wraps the shapes in a polite loading status region`, and `label + animate_text hides the inline text so it is not announced twice` confirm the decorative default, the status wrapper, and the
 labelled + `animate_text` double-announcement guard —
-`test/pulsar/components/skeleton_test.exs:107–138`.
+`test/pulsar/components/skeleton_test.exs`.
 
 ### 4.1.3 Status Messages (AA) — ✓ PASS
 
 **Evidence:** With `label`, the loading state is a status message:
 `role="status" aria-busy="true" aria-live="polite"` with a visually-hidden text
 node announces it politely without moving focus
-(`lib/pulsar/components/skeleton.ex:138–139`). Removing the skeleton (rendering
+(`lib/pulsar/components/skeleton.ex`, `render_skeleton/1`). Removing the skeleton (rendering
 the real content) flips the region's busy state off.
 
 **Notes:** Without `label` the skeleton is silent decoration — the caller's
 surrounding region carries the status. This is documented in the moduledoc
-(`lib/pulsar/components/skeleton.ex:40–46`).
+(`lib/pulsar/components/skeleton.ex`).
 
 ## Not applicable
 

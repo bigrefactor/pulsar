@@ -89,7 +89,7 @@ defmodule Pulsar.Components.ButtonTest do
       assert html =~ "Large"
     end
 
-    test "passes through Stellar button props" do
+    test "passes through native button attributes" do
       assigns = %{}
 
       html =
@@ -314,7 +314,6 @@ defmodule Pulsar.Components.ButtonTest do
         <Button.button loading={true}>Loading</Button.button>
         """)
 
-      # Should pass loading to Stellar button
       assert html =~ ~s(data-loading="true")
     end
 

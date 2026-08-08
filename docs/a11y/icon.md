@@ -15,27 +15,27 @@ informative (`aria_label` set) modes.
 
 **Evidence:**
 - Decorative default: `aria-hidden="true"` and no `role` —
-  `lib/pulsar/components/icon.ex:209–214`
+  `lib/pulsar/components/icon.ex`, `assign_aria_attributes/1`, `icon/1`
 - Informative mode: setting `aria_label` switches to `role="img"` with
-  `aria-label` and drops `aria-hidden` —
-  `lib/pulsar/components/icon.ex:202–206`
+  `aria-label` and drops `aria-hidden` — `assign_aria_attributes/1`, `icon/1`
 - Override escape hatch: `aria_hidden` attr lets callers force visible/
-  hidden — `lib/pulsar/components/icon.ex:194–199`
-- Tests: decorative default at
-  `test/pulsar/components/icon_test.exs:136–143`; informative mode at
-  `test/pulsar/components/icon_test.exs:145–152`; override at
-  `test/pulsar/components/icon_test.exs:165–171`
+  hidden — `assign_aria_attributes/1`
+- Tests: decorative default —
+  `test "renders decorative icon by default with aria-hidden"`;
+  informative mode — `test "renders informative icon with aria_label"`;
+  override — `test "respects user-provided aria-hidden in rest"` —
+  `test/pulsar/components/icon_test.exs`
 
 **Notes:** Both halves of the WCAG requirement are covered — decorative
 icons are hidden from AT, meaningful icons get a programmatic name. API
-documents the contract — `lib/pulsar/components/icon.ex:46–60`.
+documents the contract — `lib/pulsar/components/icon.ex`, `icon/1`.
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:** Renders a single `<span>` with `role="img"` only when a
-label exists — `lib/pulsar/components/icon.ex:140, 199, 206, 213`.
-Decorative spans carry no role, matching the WAI-ARIA practice for
-purely presentational graphics.
+label exists — `lib/pulsar/components/icon.ex`, `icon/1`. Decorative
+spans carry no role, matching the WAI-ARIA practice for purely
+presentational graphics.
 
 **Notes:** CSS-background rendering means the icon glyph itself is not
 in the DOM; the wrapper's role/label is the only relationship surface,
@@ -44,15 +44,15 @@ which is correct for a single-icon element.
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** Single self-closing `<span />` element —
-`lib/pulsar/components/icon.ex:140`. No reordering possible.
+`lib/pulsar/components/icon.ex`, `icon/1`. No reordering possible.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** Icon can be paired with text via the caller (and via
-`aria_label` for the screen-reader signal) —
-`lib/pulsar/components/icon.ex:112–114, 202–206`. The component itself
-doesn't require color-only interpretation; the `aria_label` API allows a
-text equivalent for any state communicated by color.
+`aria_label` for the screen-reader signal) — `lib/pulsar/components/icon.ex`,
+`icon/1`, `assign_aria_attributes/1`. The component itself doesn't
+require color-only interpretation; the `aria_label` API allows a text
+equivalent for any state communicated by color.
 
 **Notes:** Caller is responsible for pairing icons with text labels in
 context (e.g., a warning icon + visible "Warning" text); the component
@@ -62,7 +62,7 @@ supports that pattern.
 
 **Evidence:** `aria_label` attribute is the documented escape hatch for
 meaning that would otherwise be conveyed only by color/glyph —
-`lib/pulsar/components/icon.ex:30, 56, 112–114`. Decorative-by-default
+`lib/pulsar/components/icon.ex`, `icon/1`. Decorative-by-default
 behavior implies the meaning must already exist elsewhere in the DOM.
 
 **Notes:** Color tokens (`text-danger`, `text-success`, etc.) are
@@ -76,7 +76,8 @@ here for traceability — see 1.4.11.
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** Size classes are Tailwind `rem`-based
-(`w-3 h-3` … `w-8 h-8`) — `lib/pulsar/components/icon.ex:73–79`.
+(`w-3 h-3` … `w-8 h-8`) — `lib/pulsar/components/icon.ex`,
+`get_size_classes/1`.
 
 **Notes:** Icon scales with root font size when users zoom.
 
@@ -84,21 +85,22 @@ here for traceability — see 1.4.11.
 
 **Evidence:** Fixed but small inline dimensions (12–32px) with no
 `min-width` or `min-height` constraints on surrounding layout —
-`lib/pulsar/components/icon.ex:73–79`.
+`lib/pulsar/components/icon.ex`, `get_size_classes/1`.
 
 **Notes:** Inline icon does not force horizontal scrolling at 320 CSS px.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** Icon glyph color is driven by semantic color tokens
-(`text-danger`/`text-success`/etc.) — `lib/pulsar/components/icon.ex:84–93`.
-When `aria_label` is set the icon is meaningful (`role="img"`) and needs 3:1
-against its background. Heroicons paint the glyph with
-`background-color: currentColor` behind a CSS mask; the measure tool reads
-that painted color against the ancestor background. Every labelled
-(informative) glyph clears 3:1 in both themes — the lowest is `neutral`
-3.67:1 (dark); the meaning-bearing `success`/`warning`/`danger` colors
-measure 6–10:1 (see the `labelled-color-*` and `aria-label` cells in
+(`text-danger`/`text-success`/etc.) — `lib/pulsar/components/icon.ex`,
+`get_color_classes/1`. When `aria_label` is set the icon is meaningful
+(`role="img"`) and needs 3:1 against its background. Heroicons paint the
+glyph with `background-color: currentColor` behind a CSS mask; the
+measure tool reads that painted color against the ancestor background.
+Every labelled (informative) glyph clears 3:1 in both themes — the
+lowest is `neutral` 3.67:1 (dark); the meaning-bearing
+`success`/`warning`/`danger` colors measure 6–10:1 (see the
+`labelled-color-*` and `aria-label` cells in
 [`measurements/icon-light.md`](measurements/icon-light.md) and
 [`measurements/icon-dark.md`](measurements/icon-dark.md)).
 
@@ -111,7 +113,8 @@ now resolves the painted glyph color against the ancestor background.
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
 **Evidence:** No text inside the icon; no fixed line-height or
-letter-spacing values — `lib/pulsar/components/icon.ex:73–79`.
+letter-spacing values — `lib/pulsar/components/icon.ex`,
+`get_size_classes/1`.
 
 **Notes:** Icon is a square box; user text-spacing overrides have no
 effect on it.
@@ -119,20 +122,22 @@ effect on it.
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Non-focusable single inline span —
-`lib/pulsar/components/icon.ex:140`. Doesn't create sticky/overlapping
+`lib/pulsar/components/icon.ex`, `icon/1`. Doesn't create sticky/overlapping
 content.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
 **Evidence:**
 - Meaningful icons get `role="img"` and `aria-label` —
-  `lib/pulsar/components/icon.ex:202–206`
+  `lib/pulsar/components/icon.ex`, `assign_aria_attributes/1`, `icon/1`
 - Decorative icons get `aria-hidden="true"` and no role —
-  `lib/pulsar/components/icon.ex:209–214`
-- Override path preserves user intent —
-  `lib/pulsar/components/icon.ex:194–199`
+  `assign_aria_attributes/1`, `icon/1`
+- Override path preserves user intent — `assign_aria_attributes/1`
 - Tests verify all three branches —
-  `test/pulsar/components/icon_test.exs:136–171`
+  `test "renders decorative icon by default with aria-hidden"`,
+  `test "renders informative icon with aria_label"`,
+  `test "respects user-provided aria-hidden in rest"` —
+  `test/pulsar/components/icon_test.exs`
 
 **Notes:** Icon has no state, so role + name are the complete contract.
 

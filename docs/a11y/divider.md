@@ -13,9 +13,10 @@ labeled variants. Supports optional inline label content.
 ### 1.1.1 Non-text Content (A) — ✓ PASS
 
 **Evidence:** Decorative line segments in labeled dividers are marked
-`aria-hidden="true"` — `lib/pulsar/components/divider.ex:325, 329`. Test
-`labeled divider has proper structure` —
-`test/pulsar/components/divider_test.exs:195–202`.
+`aria-hidden="true"` — `lib/pulsar/components/divider.ex`,
+`render_labeled_divider/1`.
+`test "labeled divider has proper structure"` —
+`test/pulsar/components/divider_test.exs`.
 
 **Notes:** The visual lines flanking a label are presentational; hiding
 them prevents redundant AT noise while preserving the semantic separator
@@ -25,13 +26,17 @@ role on the container.
 
 **Evidence:**
 - Simple horizontal divider uses native `<hr>` —
-  `lib/pulsar/components/divider.ex:293`
+  `lib/pulsar/components/divider.ex`, `render_simple_divider/1`
 - Vertical divider applies `role="separator"` with
-  `aria-orientation="vertical"` — `lib/pulsar/components/divider.ex:301`
+  `aria-orientation="vertical"` — `lib/pulsar/components/divider.ex`,
+  `render_simple_divider/1`
 - Labeled divider applies `role="separator"` and conditional
-  `aria-orientation` — `lib/pulsar/components/divider.ex:319–323`
+  `aria-orientation` — `lib/pulsar/components/divider.ex`,
+  `render_labeled_divider/1`
 - Tests assert `role="separator"` and `<hr>` —
-  `test/pulsar/components/divider_test.exs:14, 183`
+  `test "renders basic horizontal divider with defaults"`,
+  `test "renders labeled divider with text"` —
+  `test/pulsar/components/divider_test.exs`
 
 **Notes:** Semantic separator role is preserved across every render
 path. `<hr>` has implicit `role="separator"` with horizontal orientation,
@@ -42,11 +47,11 @@ correct.
 
 **Evidence:** Labeled divider renders line / label / line in DOM order
 matching the visual flex layout —
-`lib/pulsar/components/divider.ex:325–329`.
+`lib/pulsar/components/divider.ex`, `render_labeled_divider/1`.
 
 **Notes:** No reverse-direction flex. Vertical labeled divider uses
-`flex-col` (`lib/pulsar/components/divider.ex:361`), again matching
-visual order.
+`flex-col` (`lib/pulsar/components/divider.ex`, `build_container_classes/1`),
+again matching visual order.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
@@ -58,37 +63,38 @@ position.
 
 **Evidence:** Color variants on dividers are decorative emphasis; they
 do not communicate information that needs a non-color alternative —
-`lib/pulsar/components/divider.ex:155–183`.
+`lib/pulsar/components/divider.ex`, `color_classes/2`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — N/A
 
 **Notes:** Divider lines are non-text. Label text contrast falls under
 1.4.11 and would require browser verification, but the label inherits
 semantic color tokens (`text-foreground`, `text-primary`, etc.) —
-`lib/pulsar/components/divider.ex:186–214`.
+`lib/pulsar/components/divider.ex`, `label_color_classes/2`.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** Label sizing uses Tailwind `text-*` classes (`text-xs`
 through `text-xl`) that resolve to `rem` —
-`lib/pulsar/components/divider.ex:95, 106, 117, 128, 139`.
+`lib/pulsar/components/divider.ex`, `build_label_classes/1`.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** Horizontal divider is `w-full`; labeled container is
-`flex items-center w-full` (`lib/pulsar/components/divider.ex:359`); no
-fixed minimum width — `lib/pulsar/components/divider.ex:413–418`.
+`flex items-center w-full` (`lib/pulsar/components/divider.ex`,
+`build_container_classes/1`); no
+fixed minimum width — `lib/pulsar/components/divider.ex`, `orientation_classes/1`.
 
 **Notes:** Vertical divider relies on caller-provided height
-(documented at `lib/pulsar/components/divider.ex:34–35`). Component
-itself doesn't force any minimum dimension that would break at 320 CSS
-px.
+(documented at `lib/pulsar/components/divider.ex` moduledoc `## Examples`).
+Component itself doesn't force any minimum dimension that would break at 320
+CSS px.
 
 ### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (minor) — non-functional decoration
 
 **Evidence:** Border colors come from semantic tokens with opacity
 modifiers (e.g., `border-border/30`, `border-primary/60`) —
-`lib/pulsar/components/divider.ex:155–183`. Measurement: horizontal
+`lib/pulsar/components/divider.ex`, `color_classes/2`. Measurement: horizontal
 dividers read `no-border` because the visible line is rendered via
 `border-top` on a child `<hr>` rather than on the data-fixture-cell
 element. Vertical dividers carry their rule as a `border-left` on the
@@ -107,8 +113,9 @@ either theme. The border itself is intentional and decorative.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
-**Evidence:** Label uses `whitespace-nowrap` (`lib/pulsar/components/divider.ex:391`)
-which is permitted under 1.4.12. No fixed height on the label container.
+**Evidence:** Label uses `whitespace-nowrap` (`lib/pulsar/components/divider.ex`,
+`build_label_classes/1`) which is permitted under 1.4.12. No fixed height on
+the label container.
 
 **Notes:** `whitespace-nowrap` constrains wrapping but does not violate
 1.4.12, which addresses line-height/letter-spacing/word-spacing/paragraph
@@ -122,11 +129,12 @@ spacing overrides.
 
 **Evidence:**
 - `<hr>` has implicit `role="separator"` —
-  `lib/pulsar/components/divider.ex:293`
+  `lib/pulsar/components/divider.ex`, `render_simple_divider/1`
 - Non-`<hr>` paths apply explicit `role="separator"` plus
-  `aria-orientation` for vertical — `lib/pulsar/components/divider.ex:301, 319–323`
+  `aria-orientation` for vertical — `lib/pulsar/components/divider.ex`,
+  `render_simple_divider/1`, `render_labeled_divider/1`
 - Label content is exposed via the `<span>` text —
-  `lib/pulsar/components/divider.ex:326–328`
+  `lib/pulsar/components/divider.ex`, `render_labeled_divider/1`
 
 **Notes:** Separators have no value/state to expose; name comes from
 slot content where present.

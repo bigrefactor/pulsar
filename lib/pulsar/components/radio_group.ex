@@ -1,6 +1,6 @@
 defmodule Pulsar.Components.RadioGroup do
   @moduledoc """
-  Styled radio group component built on Stellar.Components.RadioGroup.
+  Self-contained styled radio group component with card variants.
 
   Provides beautiful, accessible radio button groups with custom design and card-style
   layouts. All styling is applied via Tailwind CSS utilities with semantic color tokens
@@ -107,12 +107,10 @@ defmodule Pulsar.Components.RadioGroup do
   alias Phoenix.HTML.FormField
   alias Phoenix.LiveView.Rendered
 
-  # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
   defp generate_id(prefix) do
     "#{prefix}-#{System.unique_integer([:positive])}"
   end
 
-  # Essential Stellar helpers copied locally for normalization
   defp normalize_field_props(assigns) do
     field = assigns[:field]
 
@@ -210,7 +208,6 @@ defmodule Pulsar.Components.RadioGroup do
     doc: "Size of the radio buttons and cards"
   )
 
-  # Stellar radio group attributes - copied from Stellar.Components.RadioGroup
   attr(:field, FormField, default: nil, doc: "Phoenix form field for automatic validation")
 
   # Core attributes
@@ -386,7 +383,6 @@ defmodule Pulsar.Components.RadioGroup do
     """
   end
 
-  # Render individual radio option with group context from Stellar
   defp render_radio_option(assigns, option, group, option_index) do
     # Generate unique ID for this radio option using deterministic indexing
     radio_id = "#{group.id}-#{option_index}"

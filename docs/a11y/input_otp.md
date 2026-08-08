@@ -17,61 +17,59 @@ reflects error state; the label and `aria-describedby` are supplied by the
 
 **Evidence:** The only non-text content is the caret animation element and the
 slot char spans, both of which are inside the `aria-hidden="true"` slot row —
-`lib/pulsar/components/input_otp.ex:147`. No meaningful icon-only or image
-content is rendered by the component. The separator dash rendered between groups
-is also `aria-hidden="true"` — `lib/pulsar/components/input_otp.ex:225`.
+`lib/pulsar/components/input_otp.ex`, `input_otp/1`, `otp_cell/1`. No meaningful
+icon-only or image content is rendered by the component. The separator dash
+rendered between groups is also `aria-hidden="true"` — `otp_cell/1`.
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:**
 - The real `<input>` carries `type="text"`, `autocomplete="one-time-code"`, and
-  `inputmode` — `lib/pulsar/components/input_otp.ex:129–136`
-- `aria-invalid` reflects error state — `lib/pulsar/components/input_otp.ex:142`
+  `inputmode` — `lib/pulsar/components/input_otp.ex`, `input_otp/1`
+- `aria-invalid` reflects error state — `input_otp/1`
 - The decorative slot row is `aria-hidden="true"` so assistive technologies see
-  only the real input — `lib/pulsar/components/input_otp.ex:147`
-- Test `renders one real input with one-time-code autofill and the hook` —
-  `test/pulsar/components/input_otp_test.exs:11–25`
-- Test `renders one painted slot per length, all aria-hidden` —
-  `test/pulsar/components/input_otp_test.exs:27–37`
+  only the real input — `input_otp/1`
+- `test "renders one real input with one-time-code autofill and the hook"`
+- `test "renders one painted slot per length, all aria-hidden"`
 
 **Notes:** Label association is the responsibility of the `field` wrapper
 (see [`field.md`](field.md)); this leaf accepts `id` and exposes it for `for=`
-linkage — `lib/pulsar/components/input_otp.ex:131`.
+linkage — `lib/pulsar/components/input_otp.ex`, `input_otp/1` (`attr :id`).
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** DOM order: hidden real input (absolute-positioned overlay) →
-`aria-hidden` slot row — `lib/pulsar/components/input_otp.ex:129–149`. The
+`aria-hidden` slot row — `lib/pulsar/components/input_otp.ex`, `input_otp/1`. The
 real input is the only perceivable element for assistive technologies; the slot
 row is decorative and hidden from the accessibility tree.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** Invalid/error state is conveyed via `aria-invalid="true"` on the
-real input (not color alone) — `lib/pulsar/components/input_otp.ex:142`. The
+real input (not color alone) — `lib/pulsar/components/input_otp.ex`, `input_otp/1`. The
 `field` wrapper adds a visible error message. Disabled state combines
 `opacity-disabled` on slots and the native `disabled` attribute on the input —
-`lib/pulsar/components/input_otp.ex:140, 237`.
+`input_otp/1`, `otp_cell/1`.
 
 ### 1.3.5 Identify Input Purpose (AA) — ✓ PASS
 
 **Evidence:** `autocomplete="one-time-code"` is hardcoded on the real input —
-`lib/pulsar/components/input_otp.ex:136`. This is the WCAG-recognized token for
+`lib/pulsar/components/input_otp.ex`, `input_otp/1`. This is the WCAG-recognized token for
 OTP / verification-code inputs and maps directly to the WCAG 1.3.5 purpose list.
-Test asserts this value — `test/pulsar/components/input_otp_test.exs:21`.
+Test asserts this value — `test "renders one real input with one-time-code autofill and the hook"`.
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** Error state pairs color change on slot borders with
-`aria-invalid="true"` on the real input — `lib/pulsar/components/input_otp.ex:142`.
+`aria-invalid="true"` on the real input — `lib/pulsar/components/input_otp.ex`, `input_otp/1`.
 The `field` wrapper supplies a text error message alongside the color signal.
 Disabled state pairs `opacity-disabled` with the native `disabled` attribute —
-`lib/pulsar/components/input_otp.ex:140, 237`.
+`input_otp/1`, `otp_cell/1`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Entered characters and the caret indicator use `text-foreground`
-via `@slot_base` — `lib/pulsar/components/input_otp.ex:55`. The mask dot
+via `@slot_base` — `lib/pulsar/components/input_otp.ex`, `slot_classes/3`. The mask dot
 (`•`) inherits the same token. `text-foreground` maps to `gray-950` (light) /
 `gray-50` (dark), measured well above 4.5:1 against `bg-background` in the
 browser axe gate. The axe gate is clean across all fixture cells.
@@ -81,14 +79,14 @@ browser axe gate. The axe gate is clean across all fixture cells.
 **Evidence:** Slot sizes use rem-based Tailwind text utilities — `text-sm`,
 `text-base`, `text-xl`, `text-2xl`, `text-3xl` — and fixed-pixel slot
 dimensions (`h-8 w-8` through `h-16 w-14`) that scale the slot box, not the
-text container height exclusively — `lib/pulsar/components/input_otp.ex:40–45`.
+text container height exclusively — `lib/pulsar/components/input_otp.ex`, `slot_classes/3`.
 The real input uses `h-full w-full` (inherits from the wrapper), so text
 content is never clipped.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** The outer container is `inline-flex items-center` with a `gap-*`
-class — `lib/pulsar/components/input_otp.ex:127`. No `min-width` or fixed
+class — `lib/pulsar/components/input_otp.ex`, `input_otp/1`. No `min-width` or fixed
 container width is imposed; the slot row wraps to the natural width of its
 content. The component does not force horizontal scrolling at 320 CSS px.
 
@@ -96,9 +94,9 @@ content. The component does not force horizontal scrolling at 320 CSS px.
 
 **Evidence:**
 - Outline and ghost variants use `border-border-strong` for slot borders —
-  `lib/pulsar/components/input_otp.ex:58, 60`
+  `lib/pulsar/components/input_otp.ex`, `slot_classes/3`
 - The active slot ring uses `ring-ring` (neutral color) —
-  `lib/pulsar/components/input_otp.ex:64`
+  `slot_classes/3`
 - `--color-ring` measured 5.02:1 (light) / 6.72:1 (dark) — above the 3:1
   non-text minimum (same token used by Button, Input, and Tabs)
 - `--color-border-strong` resolves to `gray-500` (light) / `gray-400` (dark),
@@ -108,54 +106,55 @@ content. The component does not force horizontal scrolling at 320 CSS px.
 
 **Evidence:** No `!important` overrides on spacing; slot sizes use fixed `h-*`
 / `w-*` Tailwind utilities that allow text to overflow rather than clip —
-`lib/pulsar/components/input_otp.ex:40–45`. The real input uses `h-full` so
+`lib/pulsar/components/input_otp.ex`, `slot_classes/3`. The real input uses `h-full` so
 any user-overridden line-height is absorbed by the slot box.
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
 **Evidence:** The real `<input>` is natively keyboard-operable — typing,
 Tab/Shift+Tab, and clipboard paste all work without custom key handlers —
-`lib/pulsar/components/input_otp.ex:129–146`. The `.PulsarInputOtp` hook
+`lib/pulsar/components/input_otp.ex`, `input_otp/1`. The `.PulsarInputOtp` hook
 listens only to `input`, `focus`, `blur`, `keyup`, `click`, and `select`
 events for painting the slot display; it never intercepts or cancels Tab or
-Shift+Tab — `lib/pulsar/components/input_otp.ex:163–168`.
+Shift+Tab — `input_otp/1` (colocated hook `boot`).
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
 **Evidence:** No `keydown` handler is registered by the hook. Native Tab
 behavior is fully preserved — the user can Tab into and out of the input
-without restriction — `lib/pulsar/components/input_otp.ex:163–168`.
+without restriction — `lib/pulsar/components/input_otp.ex`, `input_otp/1`.
 
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
 **Evidence:** The only animation is the caret blink (`animate-pulse`) and the
 slot transition (`transition-[box-shadow,border-color,background-color]
-duration-150`) — `lib/pulsar/components/input_otp.ex:55, 240`. Both respect
-`motion-reduce:animate-none` on the caret — `lib/pulsar/components/input_otp.ex:240`.
-No auto-updating or auto-advancing content.
+duration-150`) — `lib/pulsar/components/input_otp.ex`, `slot_classes/3`,
+`otp_cell/1`. Both respect `motion-reduce:animate-none` on the caret —
+`otp_cell/1`. No auto-updating or auto-advancing content.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
 **Evidence:** No flashing animations. The caret pulse and color transitions are
-smooth and sub-threshold — `lib/pulsar/components/input_otp.ex:55, 240`.
+smooth and sub-threshold — `lib/pulsar/components/input_otp.ex`, `slot_classes/3`,
+`otp_cell/1`.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
 **Evidence:** No positive `tabindex` is used. The real `<input>` participates
-in natural document tab order — `lib/pulsar/components/input_otp.ex:129–146`.
+in natural document tab order — `lib/pulsar/components/input_otp.ex`, `input_otp/1`.
 The slot row is `aria-hidden` and not focusable.
 
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
 
 **Evidence:** Label is the caller's responsibility via the `field` wrapper (see
 [`field.md`](field.md)); the leaf accepts `id` for `for=` / `aria-labelledby`
-linkage — `lib/pulsar/components/input_otp.ex:131`.
+linkage — `lib/pulsar/components/input_otp.ex`, `input_otp/1` (`attr :id`).
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
 **Evidence:** The active slot gains a `ring-2 ring-ring` indicator controlled
 by the `data-[active=true]:ring-2 data-[active=true]:ring-ring` CSS variant —
-`lib/pulsar/components/input_otp.ex:64`. The `--color-ring` token measures
+`lib/pulsar/components/input_otp.ex`, `slot_classes/3`. The `--color-ring` token measures
 5.02:1 (light) / 6.72:1 (dark), above the 3:1 non-text minimum. The real
 `<input>` has `outline-none` but the painted slot row provides the visible
 focus cue.
@@ -164,58 +163,58 @@ focus cue.
 
 **Evidence:** Single in-flow render; the component creates no sticky or
 overlapping content that could cover the focused input —
-`lib/pulsar/components/input_otp.ex:119–215`.
+`lib/pulsar/components/input_otp.ex`, `input_otp/1`.
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 
 **Evidence:** The component registers no `mousedown` or `pointerdown`
 listeners. The hook uses the native `click` event (fires on mouseup) for
-`paint` resyncs — `lib/pulsar/components/input_otp.ex:166–168`.
+`paint` resyncs — `lib/pulsar/components/input_otp.ex`, `input_otp/1`.
 
 ### 2.5.3 Label in Name (A) — ✓ PASS
 
 **Evidence:** The input does not set its own `aria-label`; its accessible name
 flows from the associated `<label>` element (via `field`) or a caller-supplied
-`aria-label` in `:rest` — `lib/pulsar/components/input_otp.ex:109, 145`.
+`aria-label` in `:rest` — `lib/pulsar/components/input_otp.ex`, `input_otp/1`
+(`attr :rest`).
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** The smallest slot size is `xs` = `h-8 w-8` (32×32 CSS px) —
-`lib/pulsar/components/input_otp.ex:40`. All sizes exceed the 24×24 minimum:
+`lib/pulsar/components/input_otp.ex`, `slot_classes/3`. All sizes exceed the 24×24 minimum:
 `xs`=32px, `sm`=36px, `md`=48×44px, `lg`=56×48px, `xl`=64×56px. Slots are
 separated by `gap-1` through `gap-3` so adjacent targets do not overlap —
-`lib/pulsar/components/input_otp.ex:48–53`.
+`input_otp/1`.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 
 **Evidence:** Focusing the input does not trigger navigation or form
 submission; it only fires the `paint` repaint of the slot display —
-`lib/pulsar/components/input_otp.ex:163–168`.
+`lib/pulsar/components/input_otp.ex`, `input_otp/1`.
 
 ### 3.2.2 On Input (A) — ✓ PASS
 
 **Evidence:** Entering a character updates the slot display and, once all
 characters are entered, executes the caller-supplied `on_complete` `%JS{}`
-command — `lib/pulsar/components/input_otp.ex:201–210`. The component does
-not trigger navigation or form submission on its own; those actions are
-caller-initiated via `JS.push(...)`.
+command — `lib/pulsar/components/input_otp.ex`, `input_otp/1` (colocated hook
+`maybeComplete`). The component does not trigger navigation or form
+submission on its own; those actions are caller-initiated via `JS.push(...)`.
 
 ### 3.3.1 Error Identification (A) — ✓ PASS
 
 **Evidence:** `aria-invalid="true"` / `"false"` is written to the real input
-based on the `invalid` assign — `lib/pulsar/components/input_otp.ex:142`. The
+based on the `invalid` assign — `lib/pulsar/components/input_otp.ex`, `input_otp/1`. The
 `field` wrapper supplies the visible error message text and links it via
 `aria-describedby`. See [`field.md`](field.md) for the full error-identification
-chain. Test `sets aria-invalid from invalid` —
-`test/pulsar/components/input_otp_test.exs:56–60`.
+chain. `test "sets aria-invalid from invalid"`.
 
 ### 3.3.2 Labels or Instructions (A) — ✓ PASS
 
 **Evidence:** Label and instructions are the responsibility of the `field`
 wrapper (see [`field.md`](field.md)). The leaf accepts `id` for `for=` /
-`aria-labelledby` linkage — `lib/pulsar/components/input_otp.ex:131`. When
-used standalone, callers supply `aria-label` via `:rest` —
-`lib/pulsar/components/input_otp.ex:109, 145`.
+`aria-labelledby` linkage — `lib/pulsar/components/input_otp.ex`, `input_otp/1`
+(`attr :id`). When used standalone, callers supply `aria-label` via `:rest` —
+`input_otp/1` (`attr :rest`).
 
 ### 3.3.3 Error Suggestion (AA) — ✓ PASS
 
@@ -227,23 +226,22 @@ text; error message rendering is the `field` wrapper's responsibility. See
 
 **Evidence:**
 - Role: implicit from native `<input type="text">` —
-  `lib/pulsar/components/input_otp.ex:129`
+  `lib/pulsar/components/input_otp.ex`, `input_otp/1`
 - Name: from `name=` attr (Phoenix form integration) or caller-supplied —
-  `lib/pulsar/components/input_otp.ex:132`
+  `input_otp/1`
 - Value: from `value=` attr (bound to the field value) —
-  `lib/pulsar/components/input_otp.ex:133`
+  `input_otp/1`
 - State: `aria-invalid`, native `required`/`disabled`/`autofocus` —
-  `lib/pulsar/components/input_otp.ex:139–142`
+  `input_otp/1`
 - The decorative slot row is `aria-hidden="true"` so it exposes no spurious
   role or name to assistive technologies —
-  `lib/pulsar/components/input_otp.ex:147`
-- Test `derives id/name/value from a Phoenix field` —
-  `test/pulsar/components/input_otp_test.exs:62–74`
+  `input_otp/1`
+- `test "derives id/name/value from a Phoenix field"`
 
 ### 4.1.3 Status Messages (AA) — ✓ PASS
 
 **Evidence:** `aria-invalid` flips with error state —
-`lib/pulsar/components/input_otp.ex:142`. The associated error region
+`lib/pulsar/components/input_otp.ex`, `input_otp/1`. The associated error region
 (rendered by `field`) carries `aria-live="polite"`. See [`field.md`](field.md).
 
 ## Not applicable
@@ -279,9 +277,10 @@ text; error message rendering is the `field` wrapper's responsibility. See
 
 - **2.4.13 Focus Appearance (AAA, new in 2.2)** — `ring-2` (2px) meets the
   AAA minimum thickness, and the `--color-ring` token clears AAA contrast
-  (5.02:1 light / 6.72:1 dark) — `lib/pulsar/components/input_otp.ex:64`.
+  (5.02:1 light / 6.72:1 dark) — `lib/pulsar/components/input_otp.ex`,
+  `slot_classes/3`.
 - **2.5.5 Target Size (Enhanced) (AAA)** — sizes `md` (`h-12`=48px) and
-  above exceed the AAA 44×44 floor — `lib/pulsar/components/input_otp.ex:42–44`.
+  above exceed the AAA 44×44 floor — `slot_classes/3`.
 
 ## Browser a11y findings
 

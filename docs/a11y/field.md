@@ -14,7 +14,7 @@ component selected by `:type`.
 ### 1.1.1 Non-text Content (A) — ✓ PASS
 
 **Evidence:** Error icon `hero-exclamation-circle` rendered alongside
-error text — `lib/pulsar/components/field.ex:318`. Icon is purely
+error text — `lib/pulsar/components/field.ex`, `field/1`. Icon is purely
 decorative; the error message itself carries the meaning.
 
 **Notes:** Pulsar's icon component renders `aria-hidden="true"` for
@@ -25,14 +25,15 @@ decorative icons by default.
 **Evidence:**
 - Generates a unique `label_id`, `description_id`, and per-error
   `error_ids`, then composes `aria_describedby` from the union —
-  `lib/pulsar/components/field.ex:504–525`
+  `lib/pulsar/components/field.ex`, `generate_aria_ids/1`
 - Label uses `for` for normal inputs and `aria-labelledby` for radio
-  groups — `lib/pulsar/components/field.ex:280–281, 448, 529–537`
+  groups — `field/1`, `render_input/1`, `get_label_for/2`, `get_label_id/2`
 - Inline labels for checkbox/switch wrap the input in a `<label for=…>` —
-  `lib/pulsar/components/field.ex:377, 406`
-- Tests assert `aria-labelledby` linkage for radio and
-  `aria-describedby` composition —
-  `test/pulsar/components/field_test.exs:669–736`
+  `render_input/1`
+- Tests `test "radio group uses aria-labelledby instead of for attribute"`
+  and `test "aria-describedby includes description and errors"` assert
+  `aria-labelledby` linkage for radio and `aria-describedby` composition —
+  `test/pulsar/components/field_test.exs`
 
 **Notes:** Comprehensive label/description/error linkage. Picks the
 right association mechanism per input type.
@@ -40,24 +41,25 @@ right association mechanism per input type.
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** DOM order is label section → input → error region —
-`lib/pulsar/components/field.ex:276–322`. Visual order matches DOM
+`lib/pulsar/components/field.ex`, `field/1`. Visual order matches DOM
 order.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** Error state combines text message, icon, color change, and
-`aria-invalid` — `lib/pulsar/components/field.ex:312–321`. Required state
-is programmatic, not sensory: `required` is forwarded to the leaf control —
-`lib/pulsar/components/field.ex:381, 402, 426, 448, 478, 506, 534, 561, 596` —
-so AT announces it from the control itself. The asterisk `Label` renders
-(`required={@required}` — `lib/pulsar/components/field.ex:319`) is a decorative
-CSS pseudo-element and carries no information of its own.
+`aria-invalid` — `lib/pulsar/components/field.ex`, `field/1`. Required
+state is programmatic, not sensory: `required` is forwarded to the leaf
+control — `render_input/1` — so AT announces it from the control itself.
+The asterisk `Label` renders (`required={@required}` — `field/1`) is a
+decorative CSS pseudo-element and carries no information of its own.
 
 ### 1.3.5 Identify Input Purpose (AA) — ✓ PASS
 
 **Evidence:** `autocomplete` attribute pass-through is supported via the
-non-select/non-textarea branch — `lib/pulsar/components/field.ex:245, 466–467`.
-Generic HTML attributes are forwarded via `{@rest}` and `{@html_attrs}`.
+non-select/non-textarea branch — `lib/pulsar/components/field.ex`,
+`field/1` (attr declaration), `render_input/1` (forwarded to `Input.input`
+via `html_attrs`). Generic HTML attributes are forwarded via `{@rest}` and
+`{@html_attrs}`.
 
 **Notes:** Caller passes `autocomplete="email"` etc.; field forwards it
 to the underlying input.
@@ -65,20 +67,19 @@ to the underlying input.
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** Error state combines red color + icon + text + `aria-invalid` —
-`lib/pulsar/components/field.ex:312–321`. The required indicator is not
+`lib/pulsar/components/field.ex`, `field/1`. The required indicator is not
 color-alone: the asterisk `Label` draws is a glyph, and the state is also
 exposed programmatically through the leaf control's `required` /
-`aria-required` — `lib/pulsar/components/field.ex:319, 381`.
+`aria-required` — `field/1`, `render_input/1`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
-**Evidence:** Description colors use semantic tokens
-(`text-gray-600 dark:text-gray-400`, danger variant, etc.) —
-`lib/pulsar/components/field.ex:151–159`. Error message color is
-`text-danger-600 dark:text-danger-400` —
-`lib/pulsar/components/field.ex:182`. Browser measurement of 16 cells:
-all field-fixture cells pass, min 19.27:1 (light) / 16.98:1 (dark)
-([light](measurements/field-light.md),
+**Evidence:** Description colors use semantic tokens (danger variant,
+etc.) via `@description_colors` — `lib/pulsar/components/field.ex`,
+`get_description_color_class/2`. Error message color uses
+`@error_message_classes` (danger token) — `field/1`. Browser measurement
+of 16 cells: all field-fixture cells pass, min 19.27:1 (light) / 16.98:1
+(dark) ([light](measurements/field-light.md),
 [dark](measurements/field-dark.md)).
 
 **Notes:** The per-cell measure suite covers the field-fixture cells
@@ -92,13 +93,15 @@ Form fixture in both themes.
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** All sizing uses Tailwind rem-based classes (`text-sm`,
-`text-base`, etc.) — `lib/pulsar/components/field.ex:173–179, 182, 185`.
-No fixed pixel heights at the wrapper level.
+`text-base`, etc.) — `lib/pulsar/components/field.ex`,
+`get_description_color_class/2`, `get_inline_label_classes/4`. No fixed
+pixel heights at the wrapper level.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
-**Evidence:** Wrapper uses `flex flex-col gap-2` — content-driven width,
-no `min-width` — `lib/pulsar/components/field.ex:185`.
+**Evidence:** Wrapper uses `flex flex-col gap-2` (`@field_wrapper_base_classes`)
+— content-driven width, no `min-width` — `lib/pulsar/components/field.ex`,
+`field/1`.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS (delegated)
 
@@ -117,8 +120,8 @@ the leaf input's responsibility.
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
 **Evidence:** Inline label classes include `leading-none` —
-`lib/pulsar/components/field.ex:637`. Browser test injects the WCAG
-overrides: 0 cells overflow
+`lib/pulsar/components/field.ex`, `get_inline_label_classes/4`. Browser
+test injects the WCAG overrides: 0 cells overflow
 ([light](measurements/field-light.md#text-spacing-override-wcag-1412),
 [dark](measurements/field-dark.md#text-spacing-override-wcag-1412)).
 The inline-label `leading-none` is on a single-line label and
@@ -129,9 +132,11 @@ doesn't fix the wrapper height.
 
 **Evidence:**
 - Auto-generates a humanized label from the field name when no label
-  slot is provided — `lib/pulsar/components/field.ex:289, 554–562`
+  slot is provided — `lib/pulsar/components/field.ex`, `field/1`,
+  `generate_label_if_missing/1`
 - Tests cover humanization (`:first_name` → "First name", etc.) —
-  `test/pulsar/components/field_test.exs:117–138`
+  `test "generates proper labels from field names using Phoenix.Naming.humanize"`
+  — `test/pulsar/components/field_test.exs`
 
 **Notes:** Field never renders unlabeled inputs (except checkbox/switch
 without an inline label, where the label inversion is opt-in by passing
@@ -147,32 +152,32 @@ the 1.4.11 entry above.
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Field creates no sticky/overlapping content —
-`lib/pulsar/components/field.ex:275–323`.
+`lib/pulsar/components/field.ex`, `field/1`.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 
 **Evidence:** No focus handler in field template —
-`lib/pulsar/components/field.ex:275–323`.
+`lib/pulsar/components/field.ex`, `field/1`.
 
 ### 3.2.2 On Input (A) — ✓ PASS
 
 **Evidence:** Field forwards `phx-change` to the underlying input via
 `{@rest}`; the field itself triggers no context change on input —
-`lib/pulsar/components/field.ex:249, 348, 370, 391, 421, 450, 487`.
+`lib/pulsar/components/field.ex`, `field/1` (attr declaration),
+`render_input/1` (forwarded in each clause).
 
 ### 3.3.1 Error Identification (A) — ✓ PASS
 
 **Evidence:**
 - Errors are rendered as text inside `<p>` tags with unique IDs —
-  `lib/pulsar/components/field.ex:313–320`
+  `lib/pulsar/components/field.ex`, `field/1`
 - `aria-invalid` is passed to every leaf via `invalid={@has_errors}` —
-  `lib/pulsar/components/field.ex:346, 368, 389, 419, 447, 485`
-- Container has `aria-live="polite"` —
-  `lib/pulsar/components/field.ex:312`
-- Test `error container has aria-live attribute for screen readers` —
-  `test/pulsar/components/field_test.exs:159–170`
-- Test `aria-invalid passed to all input types when errors present` —
-  `test/pulsar/components/field_test.exs:738–757`
+  `render_input/1`
+- Container has `aria-live="polite"` — `field/1`
+- `test "error container has aria-live attribute for screen readers"`
+  — `test/pulsar/components/field_test.exs`
+- `test "aria-invalid passed to all input types when errors present"`
+  — `test/pulsar/components/field_test.exs`
 
 **Notes:** Errors are identified in text, announced via aria-live, and
 linked to the input via `aria-describedby` + `aria-invalid`.
@@ -180,14 +185,14 @@ linked to the input via `aria-describedby` + `aria-invalid`.
 ### 3.3.2 Labels or Instructions (A) — ✓ PASS
 
 **Evidence:** Auto-generates label from field name; description slot
-supports instructional text — `lib/pulsar/components/field.ex:252–259, 289`.
+supports instructional text — `lib/pulsar/components/field.ex`, `field/1`.
 The label is always present (auto-generated when no slot).
 
 ### 3.3.3 Error Suggestion (AA) — ✓ PASS
 
 **Evidence:** Field renders the error strings provided by the caller's
 changeset (`Enum.with_index(@field_errors)`) —
-`lib/pulsar/components/field.ex:313–320`. The component faithfully
+`lib/pulsar/components/field.ex`, `field/1`. The component faithfully
 displays caller-supplied suggestions; it doesn't suppress or filter.
 
 **Notes:** Quality of suggestions is the caller's responsibility.
@@ -197,16 +202,17 @@ displays caller-supplied suggestions; it doesn't suppress or filter.
 **Evidence:**
 - Role: native input element selected per `:type`, or `role="radiogroup"`
   on the RadioGroup container (delegated) —
-  `lib/pulsar/components/field.ex:331–497`
+  `lib/pulsar/components/field.ex`, `render_input/1`
 - Name: label association via `for`/`id` or `aria-labelledby`; description
-  via `aria-describedby` — `lib/pulsar/components/field.ex:280–281, 448`
+  via `aria-describedby` — `field/1`, `render_input/1`
 - Value: `field_value` passed through from `Phoenix.HTML.FormField` —
-  `lib/pulsar/components/field.ex:548–550`
+  `normalize_field_props/1`
 - State: `aria-invalid`, `aria-required` (via leaf), `aria-describedby`
-  pointing to description + error IDs —
-  `lib/pulsar/components/field.ex:347, 369, 390, 420, 448, 486, 522–524`
+  pointing to description + error IDs — `render_input/1`,
+  `generate_aria_ids/1`
 - Tests assert `aria-describedby="…-description …-error-0"` composition —
-  `test/pulsar/components/field_test.exs:687–736`
+  `test "aria-describedby includes description and errors"` —
+  `test/pulsar/components/field_test.exs`
 
 **Notes:** Field is the orchestrator — it pre-builds IDs and pushes them
 into the right ARIA slots on each leaf.
@@ -214,8 +220,8 @@ into the right ARIA slots on each leaf.
 ### 4.1.3 Status Messages (AA) — ✓ PASS
 
 **Evidence:** Error container has `aria-live="polite"` —
-`lib/pulsar/components/field.ex:312`. New errors announce via AT without
-moving focus.
+`lib/pulsar/components/field.ex`, `field/1`. New errors announce via AT
+without moving focus.
 
 **Notes:** `polite` is correct for validation feedback (less interruptive
 than `assertive` / `role="alert"`); the tradeoff is acknowledged.

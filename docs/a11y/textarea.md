@@ -15,48 +15,49 @@ counter, and auto-resize hook hint. Automatically merges
 **Evidence:** No icons rendered by the textarea itself. Character
 counter is plain text. The counter wrapper is `aria-hidden="true"` to
 prevent double-reading of the count (which is implicit from the
-textarea content) — `lib/pulsar/components/textarea.ex:537`.
+textarea content) — `lib/pulsar/components/textarea.ex`, `character_count_display/1`.
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:**
 - Native `<textarea>` carries semantic role —
-  `lib/pulsar/components/textarea.ex:474`
+  `lib/pulsar/components/textarea.ex`, `textarea/1`
 - `aria-describedby` composed from caller value + field error region ID —
-  `lib/pulsar/components/textarea.ex:488, 701–713`
+  `lib/pulsar/components/textarea.ex`, `textarea/1`, `assign_computed_attributes/1`
 - Test `merges caller aria-describedby with error ids` —
-  `test/pulsar/components/textarea_test.exs:583–603`
+  `test/pulsar/components/textarea_test.exs`
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** DOM order: textarea then optional character counter —
-`lib/pulsar/components/textarea.ex:473–514`. Visual order matches.
+`lib/pulsar/components/textarea.ex`, `textarea/1`. Visual order matches.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** Error state pairs color with `aria-invalid="true"` and (at
 the field level) a text error message —
-`lib/pulsar/components/textarea.ex:489`. Character counter changes color
+`lib/pulsar/components/textarea.ex`, `textarea/1`. Character counter changes color
 at thresholds *and* shows explicit numeric values + "remaining" /
-"over" text — `lib/pulsar/components/textarea.ex:539–542, 558–571`.
+"over" text — `lib/pulsar/components/textarea.ex`, `character_count_display/1`,
+`get_character_count_color_class/4`.
 
 ### 1.3.5 Identify Input Purpose (AA) — ✓ PASS
 
 **Evidence:** `:rest` is `:global`, allowing `autocomplete=` to pass
-through — `lib/pulsar/components/textarea.ex:422, 503`.
+through — `lib/pulsar/components/textarea.ex`, `textarea/1`.
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** Error state combines danger color + `aria-invalid` + (via
-field) text error — `lib/pulsar/components/textarea.ex:489`. Character
+field) text error — `lib/pulsar/components/textarea.ex`, `textarea/1`. Character
 counter color changes are paired with explicit numeric text and
-"remaining"/"over" labels — `lib/pulsar/components/textarea.ex:539–542`.
+"remaining"/"over" labels — `lib/pulsar/components/textarea.ex`, `character_count_display/1`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Color/variant matrix uses semantic tokens —
-`lib/pulsar/components/textarea.ex:151–310`. Character counter has
-multi-state colors — `lib/pulsar/components/textarea.ex:313–325`.
+`lib/pulsar/components/textarea.ex`, `get_color_classes/2`. Character counter has
+multi-state colors — `lib/pulsar/components/textarea.ex`, `get_character_count_color_class/4`.
 Browser measurement of 271 cells per theme: all 271 pass at min
 4.78:1 (light) / 5.40:1 (dark)
 ([light](measurements/textarea-light.md),
@@ -70,23 +71,23 @@ fixture is now axe-clean for color-contrast in both themes.
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** Min-heights use rem-based `min-h-*` —
-`lib/pulsar/components/textarea.ex:104–135`. Padding/text classes also rem.
+`lib/pulsar/components/textarea.ex`, `get_size_classes/1`. Padding/text classes also rem.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** Textarea uses `w-full` and no fixed width —
-`lib/pulsar/components/textarea.ex:139`. Container is `space-y-2` —
-`lib/pulsar/components/textarea.ex:473`.
+`lib/pulsar/components/textarea.ex`, `get_classes/3`. Container is `space-y-2` —
+`lib/pulsar/components/textarea.ex`, `textarea/1`.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** Outline variant uses `border-2` —
-`lib/pulsar/components/textarea.ex:146`. Outline-neutral routes through
+`lib/pulsar/components/textarea.ex`, `get_classes/3`. Outline-neutral routes through
 `border-border-strong`; colored outline variants use full-saturation
-`border-{color}` — `lib/pulsar/components/textarea.ex:202–257`. Focus
+`border-{color}` — `lib/pulsar/components/textarea.ex`, `get_color_classes/2`. Focus
 ring `focus-visible:ring-2 focus-visible:ring-offset-2` resolves to
 `--color-ring` across all variants —
-`lib/pulsar/components/textarea.ex:140`. Browser
+`lib/pulsar/components/textarea.ex`, `get_classes/3`. Browser
 measurement: outline borders ≥ 3:1 across both themes for every
 variant.
 
@@ -97,7 +98,7 @@ dropping the opacity modifier; paired with the matching Select fix.
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
 **Evidence:** `min-h-*` (not `h-*`) gives vertical headroom —
-`lib/pulsar/components/textarea.ex:104–135`. `max-h-*` *does* cap growth,
+`lib/pulsar/components/textarea.ex`, `get_size_classes/1`. `max-h-*` *does* cap growth,
 which could be a concern under user line-height overrides. Browser
 test injects the WCAG overrides and re-measures: 0 cells overflow
 ([light](measurements/textarea-light.md#text-spacing-override-wcag-1412),
@@ -108,7 +109,7 @@ The textarea content uses native scrolling, so once content exceeds
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
 **Evidence:** Native `<textarea>` is fully keyboard-operable —
-`lib/pulsar/components/textarea.ex:474–504`. No custom keydown handlers.
+`lib/pulsar/components/textarea.ex`, `textarea/1`. No custom keydown handlers.
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
@@ -118,7 +119,7 @@ The textarea content uses native scrolling, so once content exceeds
 
 **Evidence:** Only `transition-[color,background-color,border-color,box-shadow,height]
 duration-fast ease-standard` for color/height changes —
-`lib/pulsar/components/textarea.ex:138`. No essential motion.
+`lib/pulsar/components/textarea.ex`, `get_classes/3`. No essential motion.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
@@ -127,7 +128,7 @@ duration-fast ease-standard` for color/height changes —
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
 **Evidence:** No positive `tabindex`; native textarea takes focus in DOM
-order — `lib/pulsar/components/textarea.ex:474–504`.
+order — `lib/pulsar/components/textarea.ex`, `textarea/1`.
 
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
 
@@ -139,7 +140,7 @@ order — `lib/pulsar/components/textarea.ex:474–504`.
 **Evidence:**
 `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2`
 resolves to `--color-ring` for every variant —
-`lib/pulsar/components/textarea.ex:140, 151–308`. Browser measurement:
+`lib/pulsar/components/textarea.ex`, `get_classes/3`, `get_color_classes/2`. Browser measurement:
 focus ring 5.02:1 (light) / 6.72:1 (dark) across every variant
 ([light](measurements/textarea-light.md),
 [dark](measurements/textarea-dark.md)).
@@ -156,17 +157,17 @@ variations.
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 
 **Evidence:** Native textarea; no custom click handlers —
-`lib/pulsar/components/textarea.ex:474–504`.
+`lib/pulsar/components/textarea.ex`, `textarea/1`.
 
 ### 2.5.3 Label in Name (A) — ✓ PASS
 
 **Evidence:** No `aria-label` set; accessible name flows from the
-associated label — `lib/pulsar/components/textarea.ex:474–504`.
+associated label — `lib/pulsar/components/textarea.ex`, `textarea/1`.
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Smallest size `xs` is `min-h-16` (64px) —
-`lib/pulsar/components/textarea.ex:131`. All sizes exceed the 24px
+`lib/pulsar/components/textarea.ex`, `get_size_classes/1`. All sizes exceed the 24px
 floor comfortably. Width is `w-full`. Browser measurement: 271/271
 cells ≥ 24×24
 ([light](measurements/textarea-light.md),
@@ -176,19 +177,19 @@ cells ≥ 24×24
 
 **Evidence:** No focus handler; auto-resize is a data-attribute hint
 (`data-auto-resize`) not a focus trigger —
-`lib/pulsar/components/textarea.ex:494`.
+`lib/pulsar/components/textarea.ex`, `textarea/1`.
 
 ### 3.2.2 On Input (A) — ✓ PASS
 
 **Evidence:** `:rest` forwards `phx-change` to the textarea, but
 component itself triggers no navigation/submit —
-`lib/pulsar/components/textarea.ex:422, 503`.
+`lib/pulsar/components/textarea.ex`, `textarea/1`.
 
 ### 3.3.1 Error Identification (A) — ✓ PASS
 
 **Evidence:** `aria-invalid` flips based on errors or explicit `:invalid` —
-`lib/pulsar/components/textarea.ex:489`. `aria-describedby` extends to
-the errors ID — `lib/pulsar/components/textarea.ex:701–713`.
+`lib/pulsar/components/textarea.ex`, `textarea/1`. `aria-describedby` extends to
+the errors ID — `lib/pulsar/components/textarea.ex`, `assign_computed_attributes/1`.
 
 ### 3.3.2 Labels or Instructions (A) — ✓ PASS
 
@@ -204,23 +205,23 @@ the `field` wrapper level.
 
 **Evidence:**
 - Role: native `<textarea>` —
-  `lib/pulsar/components/textarea.ex:474`
+  `lib/pulsar/components/textarea.ex`, `textarea/1`
 - Name: `name=` attr —
-  `lib/pulsar/components/textarea.ex:476`
+  `lib/pulsar/components/textarea.ex`, `textarea/1`
 - Value: rendered as text content `{to_string(@value || "")}` —
-  `lib/pulsar/components/textarea.ex:504`
+  `lib/pulsar/components/textarea.ex`, `textarea/1`
 - State: `aria-invalid`, `aria-describedby`, native
   `required`/`disabled`/`readonly`/`maxlength`/`minlength` —
-  `lib/pulsar/components/textarea.ex:481–489`
+  `lib/pulsar/components/textarea.ex`, `textarea/1`
 
 ### 4.1.3 Status Messages (AA) — ✓ PASS
 
 **Evidence:** `aria-invalid` reflects error state —
-`lib/pulsar/components/textarea.ex:489`. Field-level error region carries
+`lib/pulsar/components/textarea.ex`, `textarea/1`. Field-level error region carries
 `aria-live="polite"`.
 
 **Notes:** Character counter is `aria-hidden="true"` —
-`lib/pulsar/components/textarea.ex:537`. This is intentional to prevent
+`lib/pulsar/components/textarea.ex`, `character_count_display/1`. This is intentional to prevent
 double-announcement when the user is typing; the count is implicit from
 the textarea content. If callers need live count announcement, they
 should add their own `aria-live` region — out of scope here.

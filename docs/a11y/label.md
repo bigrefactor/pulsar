@@ -14,11 +14,12 @@ associates the label with an input.
 
 **Evidence:**
 - Native `<label for={@for}>` association; `for` attr is `required: true` —
-  `lib/pulsar/components/label.ex:97, 115`
+  `lib/pulsar/components/label.ex`, `label/1`
 - Required indicator is a CSS `::after` pseudo-element on the label —
-  `lib/pulsar/components/label.ex:164–169`
-- Test `for attribute` and `data-required` cited —
-  `test/pulsar/components/label_test.exs:33–55`
+  `required_indicator_classes/2`
+- `test "renders with for attribute"` and
+  `test "passes through data-required attribute"` —
+  `test/pulsar/components/label_test.exs`
 
 **Notes:** Label-to-input association is enforced by the API (required
 attr). The required *relationship* is carried programmatically by the
@@ -34,11 +35,11 @@ visual reinforcement only.
 
 **Evidence:** Required state is conveyed by the associated control's
 `required` attribute, not by "the red asterisk" —
-`lib/pulsar/components/field.ex:254` declares the attr; it is forwarded
-at `:381` (select), `:402` (textarea), `:426` (otp), `:448` (checkbox),
-`:478` (switch), `:506` (radio), `:596` (input, the default case), and
-`:534`/`:561` (date/daterange, which pass it on to `DatePicker`'s
-`aria-required` — `lib/pulsar/components/date_picker.ex:122, 137, 152`).
+`lib/pulsar/components/field.ex`, `field/1` declares the attr; it is
+forwarded by `render_input/1` for `select`, `textarea`, `otp`,
+`checkbox`, `switch`, `radio`, and `input` (the default case), and for
+`date`/`daterange`, which pass it on to `DatePicker`'s `aria-required` —
+`lib/pulsar/components/date_picker.ex`, `date_picker/1`.
 
 **Notes:** The asterisk is CSS generated content, so it never reaches AT
 at all, and AT users receive required state from the control itself —
@@ -49,7 +50,7 @@ optional `required_legend` explains the asterisk for sighted users (see
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** The required indicator is an asterisk glyph, not colour
-alone — `lib/pulsar/components/label.ex:164–169`.
+alone — `lib/pulsar/components/label.ex`, `required_indicator_classes/2`.
 Error state pairs `text-danger` colour with the field's error message text.
 
 **Notes:** Removing the asterisk's colour would leave the glyph legible,
@@ -60,7 +61,7 @@ field's error message; the label never carries the only signal.
 
 **Evidence:** Default color `text-foreground`; error color `text-danger`
 (semantic tokens that resolve per-theme via CSS custom properties, not
-`dark:` variants) — `lib/pulsar/components/label.ex:159, 155`.
+`dark:` variants) — `lib/pulsar/components/label.ex`, `color_classes/1`.
 Semantic-token sourcing is sound.
 Browser measurement of 8 fixture cells (default, required, error,
 required-error × sizes xs-xl): min 6.14:1 (light, error/danger color) /
@@ -75,7 +76,8 @@ violation for the Label fixture in either theme.
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** Tailwind text classes (`text-xs` through `text-xl`) use
-`rem`; no fixed `px` sizes — `lib/pulsar/components/label.ex:67–88`.
+`rem`; no fixed `px` sizes — `lib/pulsar/components/label.ex`,
+`size_text_classes/1`.
 
 **Notes:** Default `font-medium` and `cursor-pointer` do not constrain
 scalability.
@@ -83,14 +85,14 @@ scalability.
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** No fixed widths or `min-width` on the label —
-`lib/pulsar/components/label.ex:115–132, 141–175`. Label is inline-level
+`lib/pulsar/components/label.ex`, `label/1`. Label is inline-level
 by default.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
 **Evidence:** No fixed heights on the label. Default Tailwind text
 classes inherit line-height which exceeds 1.5× on typical settings —
-`lib/pulsar/components/label.ex:115`. Browser test injects the WCAG
+`lib/pulsar/components/label.ex`, `label/1`. Browser test injects the WCAG
 overrides and re-measures: 0 cells overflow
 ([light](measurements/label-light.md#text-spacing-override-wcag-1412),
 [dark](measurements/label-dark.md#text-spacing-override-wcag-1412)).
@@ -98,7 +100,7 @@ overrides and re-measures: 0 cells overflow
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
 
 **Evidence:** `inner_block` slot is `required: true` —
-`lib/pulsar/components/label.ex:111`. The component cannot render without
+`lib/pulsar/components/label.ex`, `label/1`. The component cannot render without
 visible label text.
 
 **Notes:** Quality of label text is the caller's responsibility; the
@@ -107,7 +109,8 @@ component enforces presence.
 ### 2.5.3 Label in Name (A) — ✓ PASS
 
 **Evidence:** Accessible name comes from `inner_block` (visible text);
-no `aria-label` attribute on the component — `lib/pulsar/components/label.ex:97–134`.
+no `aria-label` attribute on the component — `lib/pulsar/components/label.ex`,
+`label/1`.
 
 **Notes:** Visible text and accessible name are identical by
 construction.
@@ -115,9 +118,8 @@ construction.
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
 **Evidence:** Native `<label>` element with required `for` association —
-`lib/pulsar/components/label.ex:97, 115–116`. Test
-`renders label with default props` asserts the native element —
-`test/pulsar/components/label_test.exs:18`.
+`lib/pulsar/components/label.ex`, `label/1`.
+`test "renders label with default props"` asserts the native element.
 
 **Notes:** Role is implicit from the native `<label>`. No custom ARIA is
 needed.

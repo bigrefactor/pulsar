@@ -230,12 +230,10 @@ defmodule Pulsar.Components.Input do
     }
   }
 
-  # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
   defp generate_id(prefix) do
     "#{prefix}-#{System.unique_integer([:positive])}"
   end
 
-  # Essential Stellar helpers copied locally for normalization
   defp normalize_field_props(assigns) do
     field = assigns[:field]
 
@@ -283,7 +281,6 @@ defmodule Pulsar.Components.Input do
     doc: "Size of the input"
   )
 
-  # Stellar input attributes - copied from Stellar.Components.Input
   attr(:type, :string,
     values:
       ~w(text email password number tel url search date time datetime-local month week color range file hidden checkbox radio button submit reset image),

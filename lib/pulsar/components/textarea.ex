@@ -1,6 +1,6 @@
 defmodule Pulsar.Components.Textarea do
   @moduledoc """
-  Styled textarea component built on Stellar.Components.Textarea with auto-resize and character counting.
+  Self-contained styled textarea component with auto-resize and character counting.
 
   Provides beautiful, accessible textarea fields with automatic height adjustment and character count display.
   All styling is applied via Tailwind CSS utilities with semantic color tokens supporting both light and dark modes.
@@ -322,7 +322,6 @@ defmodule Pulsar.Components.Textarea do
     "warning" => "text-warning"
   }
 
-  # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
   defp generate_id(prefix) do
     "#{prefix}-#{System.unique_integer([:positive])}"
   end
@@ -357,7 +356,6 @@ defmodule Pulsar.Components.Textarea do
     doc: "Maximum height (CSS value like '300px' or '20rem')"
   )
 
-  # Stellar textarea attributes - copied from Stellar.Components.Textarea
   attr(:field, FormField, default: nil, doc: "Phoenix form field")
 
   # Core attributes
@@ -688,9 +686,6 @@ defmodule Pulsar.Components.Textarea do
     end
   end
 
-  # === Stellar Helper Functions (Merged) ===
-
-  # Normalize field props (from Stellar)
   defp normalize_field_props(%{field: %FormField{} = field} = assigns) do
     assigns
     |> assign(:id, assigns[:id] || field.id || generate_id("textarea"))
@@ -721,7 +716,6 @@ defmodule Pulsar.Components.Textarea do
     end
   end
 
-  # Compute attributes (from Stellar)
   defp assign_computed_attributes(assigns) do
     # ARIA describedby merging - start with caller's value
     caller_describedby = assigns[:"aria-describedby"]
@@ -751,7 +745,6 @@ defmodule Pulsar.Components.Textarea do
     |> assign(:data_state, compute_data_state(assigns))
   end
 
-  # Helper functions (from Stellar)
   defp compute_data_state(%{disabled: true}), do: "disabled"
   defp compute_data_state(%{readonly: true}), do: "readonly"
   defp compute_data_state(_), do: "default"

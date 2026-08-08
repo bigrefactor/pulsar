@@ -19,15 +19,19 @@ or images in slot content are caller-supplied.
 
 **Evidence:**
 - Populated path uses `<dl>` only when items are present —
-  `lib/pulsar/components/list.ex:343, 376`
+  `lib/pulsar/components/list.ex`, `list/1`
 - Each item renders `<dt>` (label) and `<dd>` (value) —
-  `lib/pulsar/components/list.ex:356–361, 389–394`
+  `lib/pulsar/components/list.ex`, `list/1`
 - Empty-state path renders a plain `<div data-list-empty>` in place of
   `<dl>` — no `<dl>`/`<dt>`/`<dd>` semantics are emitted when there are
-  no items — `lib/pulsar/components/list.ex:363–370, 404–415`
+  no items — `lib/pulsar/components/list.ex`, `list/1`
 - Tests assert the populated path produces `<dl>`/`<dt>`/`<dd>` and the
   empty path does not —
-  `test/pulsar/components/list_test.exs:31–47, 430–488, 605–622`
+  `test "renders basic list with defaults"`,
+  `test "handles no items with default message"`,
+  `test "handles no items with custom empty slot"`,
+  `test "empty state works with header"` —
+  `test/pulsar/components/list_test.exs`
 
 **Notes:** Item DOM in the populated path is `<dl> > <div> > <dt> + <dd>`.
 Strict HTML5 allows `<dl>` to contain `<div>` wrappers only when the
@@ -39,8 +43,8 @@ HTML5; this is resolved by dropping `<dl>` entirely when empty.
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** Items render in `Enum.with_index` order over the slot list
-— `lib/pulsar/components/list.ex:345, 377`. `<dt>` precedes `<dd>` in
-each item — `lib/pulsar/components/list.ex:357–362`.
+— `lib/pulsar/components/list.ex`, `list/1`. `<dt>` precedes `<dd>` in
+each item — `lib/pulsar/components/list.ex`, `list/1`.
 
 **Notes:** Responsive layout uses `sm:grid sm:grid-cols-3` — does not
 reorder DOM, only visually re-columns at wider viewports.
@@ -49,21 +53,24 @@ reorder DOM, only visually re-columns at wider viewports.
 
 **Evidence:** No directional or shape-based instructions. Striping and
 dividers are decorative emphasis only —
-`lib/pulsar/components/list.ex:455–472`.
+`lib/pulsar/components/list.ex`, `item_variant_classes/5` (striping),
+`list/1` (dividers).
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** Color variants are decorative; structure is conveyed via
 `<dt>` / `<dd>` semantics —
-`lib/pulsar/components/list.ex:152–250`.
+`lib/pulsar/components/list.ex`, `title_classes/3` (color application),
+`list/1` (`<dt>`/`<dd>` semantics).
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Text uses semantic tokens like `text-foreground`,
 `text-primary`, `text-muted-foreground` —
-`lib/pulsar/components/list.ex:152–250, 484–501`. Description text in
+`lib/pulsar/components/list.ex`, `title_classes/3`, `content_classes/1`,
+`empty_classes/1`. Description text in
 header uses `text-muted-foreground dark:text-dark-muted-foreground` —
-`lib/pulsar/components/list.ex:574`. Per-cell browser measurement of
+`lib/pulsar/components/list.ex`, `description_classes/1`. Per-cell browser measurement of
 the 57 tagged `<dl>` cells per theme: all pass (min 7.56:1 light /
 13.67:1 dark) ([light](measurements/list-light.md),
 [dark](measurements/list-dark.md)).
@@ -81,24 +88,27 @@ text on dark background (dark) that were previously flagged.
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** All text sizing uses `rem`-based Tailwind classes —
-`lib/pulsar/components/list.ex:99–130, 548–572`. No fixed `px` sizes.
+`lib/pulsar/components/list.ex`, `title_classes/3`,
+`title_header_classes/3`. No fixed `px` sizes.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** Item layout collapses to a single column below the `sm`
 breakpoint (`flex` falls through with no grid) and uses
 `sm:grid sm:grid-cols-3 sm:gap-4` only at wider widths —
-`lib/pulsar/components/list.ex:451`. No fixed minimum width.
+`lib/pulsar/components/list.ex`, `build_item_base_classes/1`. No fixed minimum width.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS (decorative borders are out of scope)
 
 **Evidence:** Item dividers use `border-t border-border` —
-`lib/pulsar/components/list.ex:352, 383`. Outline variant border-1 on
-the wrapper — `lib/pulsar/components/list.ex:144, 513`. Outline-neutral
-and solid-neutral both route through `border-border-strong` —
-`lib/pulsar/components/list.ex:144, 230`. Solid (non-neutral) variants
-use 20% opacity borders next to tinted fills —
-`lib/pulsar/components/list.ex:222–248`. Browser measurement: 38
+`lib/pulsar/components/list.ex`, `list/1`. Outline variant border-1 on
+the wrapper — `lib/pulsar/components/list.ex`, `wrapper_classes/3`.
+Outline-neutral and solid-neutral both route through
+`border-border-strong` — `lib/pulsar/components/list.ex`,
+`wrapper_classes/3`, `build_container_classes/2`. Solid (non-neutral)
+variants use 20% opacity borders next to tinted fills —
+`lib/pulsar/components/list.ex`, `wrapper_classes/3`,
+`build_container_classes/2`. Browser measurement: 38
 border cells per theme. Outline variants pass; `solid-neutral` passes
 (~5:1 via `--color-border-strong`). Remaining failing cells are
 `solid-*` (non-neutral) variants (≈1.5:1) where the colored 20%-alpha
@@ -115,7 +125,8 @@ state are out of scope.
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
 **Evidence:** No fixed heights on text containers. Padding via `py-*`
-and `px-*` only — `lib/pulsar/components/list.ex:99–130`.
+and `px-*` only — `lib/pulsar/components/list.ex`,
+`build_item_base_classes/1`, `header_classes/1`.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
@@ -125,8 +136,8 @@ and `px-*` only — `lib/pulsar/components/list.ex:99–130`.
 
 **Evidence:** Native `<dl>` / `<dt>` / `<dd>` carry their implicit
 roles. Header `<h3>` renders only when a `:title` slot is supplied —
-`lib/pulsar/components/list.ex:335–337`. Description renders as `<p>` —
-`lib/pulsar/components/list.ex:338–340`.
+`lib/pulsar/components/list.ex`, `list/1`. Description renders as `<p>` —
+`lib/pulsar/components/list.ex`, `list/1`.
 
 ## Not applicable
 

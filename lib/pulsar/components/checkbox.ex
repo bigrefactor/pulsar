@@ -129,12 +129,10 @@ defmodule Pulsar.Components.Checkbox do
                        "focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-ring " <>
                        "has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-disabled"
 
-  # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
   defp generate_id(prefix) do
     "#{prefix}-#{System.unique_integer([:positive])}"
   end
 
-  # Essential Stellar helpers copied locally for normalization
   defp normalize_field_props(assigns) do
     field = assigns[:field]
 
@@ -238,7 +236,6 @@ defmodule Pulsar.Components.Checkbox do
     doc: "Additional CSS classes for the card container (label element in card mode)"
   )
 
-  # Stellar checkbox attributes - copied from Stellar.Components.Checkbox
   attr(:field, FormField, default: nil, doc: "Phoenix form field")
 
   # Core attributes

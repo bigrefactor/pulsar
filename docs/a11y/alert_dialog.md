@@ -11,7 +11,7 @@ a fixed Cancel/Confirm footer and the `alertdialog` role. The destructive
 `on_confirm` command rides only on the Confirm button; Escape and Cancel dismiss
 without running it, while backdrop clicks and the corner close button are removed
 (`backdrop_close={false}`, `show_close_button={false}`) so the choice can't be
-dismissed by accident — `lib/pulsar/components/alert_dialog.ex:162–177`. The
+dismissed by accident — `lib/pulsar/components/alert_dialog.ex`, `alert_dialog/1`. The
 inherited dialog mechanics are audited in [`modal.md`](modal.md); this page covers
 what AlertDialog adds or constrains.
 
@@ -22,8 +22,8 @@ what AlertDialog adds or constrains.
 **Evidence:** The native `<dialog>` carries `role="alertdialog"`; `title` is wired
 as `aria-labelledby` (through the modal) and the message body is wired as
 `aria-describedby` via an explicit id on the message wrapper —
-`lib/pulsar/components/alert_dialog.ex:158` (title), `:165–166` (role +
-describedby), `:170` (message wrapper id). Unit tests assert the role and the
+`lib/pulsar/components/alert_dialog.ex`, `alert_dialog/1` (title, role +
+describedby, message wrapper id). Unit tests assert the role and the
 labelledby/describedby wiring — `test/pulsar/components/alert_dialog_test.exs`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
@@ -51,37 +51,37 @@ token set as Modal and Button. These are rendered in the
 
 **Evidence:** The dialog opens only on explicit activation (an `open/2` command on
 a control), never on hover or focus, and is persistent until the user picks an
-action or presses Escape — `lib/pulsar/components/alert_dialog.ex:187–211`
-(open/close helpers).
+action or presses Escape — `lib/pulsar/components/alert_dialog.ex`, `open/1`,
+`open/2`, `close/1`, `close/2` (open/close helpers).
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
 **Evidence:** The Cancel and Confirm controls are native Pulsar `Button`s, fully
 keyboard-operable, and Escape dismissal is native to the modal `<dialog>` —
-`lib/pulsar/components/alert_dialog.ex:172–177` (footer buttons), `:187–211`
-(helpers).
+`lib/pulsar/components/alert_dialog.ex`, `alert_dialog/1` (footer buttons),
+`open/1`, `open/2`, `close/1`, `close/2` (helpers).
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
 **Evidence:** The dialog contains focus while open (the permitted modal pattern)
 but is always releasable by keyboard: Escape closes it (it stays `dismissable`),
 and the Cancel button returns a `close` command. Either path restores focus to the
-opener (native `<dialog>` behavior) — `lib/pulsar/components/alert_dialog.ex:162`
-(`dismissable={true}`), `:172–174` (Cancel).
+opener (native `<dialog>` behavior) — `lib/pulsar/components/alert_dialog.ex`,
+`alert_dialog/1` (`dismissable={true}`, Cancel).
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
 **Evidence:** `showModal()` moves focus into the dialog on open; the Cancel button
 carries `autofocus`, so focus lands on the least-destructive action and an
 accidental Enter can't trigger the destructive one. Focus restores to the opener
-on close; no positive `tabindex` is used — `lib/pulsar/components/alert_dialog.ex:172`
-(Cancel `autofocus`).
+on close; no positive `tabindex` is used — `lib/pulsar/components/alert_dialog.ex`,
+`alert_dialog/1` (Cancel `autofocus`).
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
 **Evidence:** Both footer controls are Pulsar `Button`s, which carry
-`focus-visible:ring-2 focus-visible:ring-ring` — `lib/pulsar/components/alert_dialog.ex:172–177`.
-See [`button.md`](button.md).
+`focus-visible:ring-2 focus-visible:ring-ring` — `lib/pulsar/components/alert_dialog.ex`,
+`alert_dialog/1`. See [`button.md`](button.md).
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
@@ -93,25 +93,26 @@ above all page content and never clipped by `overflow:hidden` ancestors — see
 
 **Evidence:** The Cancel and Confirm buttons activate on `click` (pointer-up), and
 backdrop dismissal is disabled, so there is no down-event activation —
-`lib/pulsar/components/alert_dialog.ex:163` (`backdrop_close={false}`), `:172–177`
-(buttons).
+`lib/pulsar/components/alert_dialog.ex`, `alert_dialog/1` (`backdrop_close={false}`,
+buttons).
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** The footer controls are Pulsar `Button`s, which meet the 24×24 floor
-— `lib/pulsar/components/alert_dialog.ex:172–177`. See [`button.md`](button.md).
+— `lib/pulsar/components/alert_dialog.ex`, `alert_dialog/1`. See [`button.md`](button.md).
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 
 **Evidence:** Focusing any control causes no context change; the dialog opens only
-on explicit `open/2` activation — `lib/pulsar/components/alert_dialog.ex:187–199`.
+on explicit `open/2` activation — `lib/pulsar/components/alert_dialog.ex`, `open/1`,
+`open/2`.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
 **Evidence:** The `<dialog>` exposes `role="alertdialog"` and is announced as modal
 when opened with `showModal()`; `aria-labelledby` (title) and `aria-describedby`
 (message) supply the accessible name and description —
-`lib/pulsar/components/alert_dialog.ex:158` (title), `:165–170` (role, describedby,
+`lib/pulsar/components/alert_dialog.ex`, `alert_dialog/1` (title, role, describedby,
 message). Unit tests assert the role and aria wiring —
 `test/pulsar/components/alert_dialog_test.exs`.
 

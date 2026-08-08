@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - Generated Docs No Longer Reference Stellar
+
+- **Generated components no longer claim Stellar provenance**: the `select/1`, `radio_group/1`, and `textarea/1` moduledocs said the component was "built on Stellar.Components.*" — a library Pulsar does not depend on — and eight component templates carried Stellar provenance comments, all of which shipped into user apps via the generators. The moduledocs now describe the component itself and the comments are gone. No behavior change.
+
 ### Changed - Disabled Items Are Keyboard-Reachable
 
 - **`dropdown_menu/1`, `tabs/1`, and `accordion/1` no longer skip disabled items in keyboard navigation**: arrow keys, Home/End, and (in menus) typeahead now reach a disabled item, so screen-reader users can discover it and hear why it's there — per the APG recommendation that disabled items in composite widgets stay focusable. Activation stays blocked: Enter, Space, and click do nothing on a disabled item, a disabled submenu trigger never opens its submenu, and focusing a disabled tab leaves the current tab selected (selection still follows focus onto enabled tabs).

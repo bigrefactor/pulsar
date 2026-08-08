@@ -230,12 +230,10 @@ defmodule Pulsar.Components.Switch do
                         "group-active:scale-95 " <>
                         "peer-focus-visible:scale-110"
 
-  # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
   defp generate_id(prefix) do
     "#{prefix}-#{System.unique_integer([:positive])}"
   end
 
-  # Essential Stellar helpers copied locally for normalization
   defp normalize_field_props(assigns) do
     field = assigns[:field]
 
@@ -292,7 +290,6 @@ defmodule Pulsar.Components.Switch do
     doc: "Show automatic spinner when loading (can be disabled for custom loading content)"
   )
 
-  # Stellar switch attributes - copied from Stellar.Components.Switch
   attr(:field, FormField, default: nil, doc: "Phoenix form field")
 
   # Core attributes

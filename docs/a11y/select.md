@@ -15,13 +15,13 @@ options via a `pulsar:remove-selection` event.
 **Evidence:**
 - Custom chevron icon is rendered in a `pointer-events-none` div without
   an accessible name; semantically decorative —
-  `lib/pulsar/components/select.ex:384–390`
+  `lib/pulsar/components/select.ex`, `select/1`
 - Badge remove button uses `hero-x-mark` icon with explicit
   `aria-hidden="true"` and the button itself has
   `aria-label="Remove #{option.label}"` —
-  `lib/pulsar/components/select.ex:351, 353`
+  `lib/pulsar/components/select.ex`, `select/1`
 - Test `badge close buttons have aria-label for accessibility` —
-  `test/pulsar/components/select_test.exs:592–610`
+  `test/pulsar/components/select_test.exs`
 
 **Notes:** Decorative chevron + labeled remove control match the
 correct pattern.
@@ -30,40 +30,42 @@ correct pattern.
 
 **Evidence:**
 - Native `<select>` element carries semantic role —
-  `lib/pulsar/components/select.ex:361`
+  `lib/pulsar/components/select.ex`, `select/1`
 - `aria-invalid` and `aria-describedby` pass through from caller —
-  `lib/pulsar/components/select.ex:368–369`
+  `lib/pulsar/components/select.ex`, `select/1`
 - Option groups render as `<optgroup>` via Phoenix's
-  `Form.options_for_select` — `lib/pulsar/components/select.ex:580–583`
+  `Form.options_for_select` — `lib/pulsar/components/select.ex`,
+  `generate_options_html/1`
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** DOM order: badges (if any) → select wrapper → arrow icon —
-`lib/pulsar/components/select.ex:323–391`. Matches visual order.
+`lib/pulsar/components/select.ex`, `select/1`. Matches visual order.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** Error state combines danger color + `aria-invalid` —
-`lib/pulsar/components/select.ex:369`. Disabled state combines opacity +
-cursor + native `disabled` — `lib/pulsar/components/select.ex:469–475`.
+`lib/pulsar/components/select.ex`, `select/1`. Disabled state combines opacity +
+cursor + native `disabled` — `lib/pulsar/components/select.ex`,
+`get_state_classes/1` and `select/1`.
 
 ### 1.3.5 Identify Input Purpose (AA) — ✓ PASS
 
 **Evidence:** `:rest` is `:global`, allowing `autocomplete=` pass-through —
-`lib/pulsar/components/select.ex:270, 375`.
+`lib/pulsar/components/select.ex`, `select/1` (`attr :rest`).
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** Error state pairs color with `aria-invalid="true"` —
-`lib/pulsar/components/select.ex:369`. Disabled state combines opacity +
+`lib/pulsar/components/select.ex`, `select/1`. Disabled state combines opacity +
 `cursor-not-allowed` + native `disabled` —
-`lib/pulsar/components/select.ex:469–475`.
+`lib/pulsar/components/select.ex`, `get_state_classes/1` and `select/1`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Color/variant matrix with semantic tokens —
-`lib/pulsar/components/select.ex:127–179`. Arrow color tracks the field
-color — `lib/pulsar/components/select.ex:182–190`. Browser measurement
+`lib/pulsar/components/select.ex`, `color_classes/2`. Arrow color tracks the field
+color — `get_arrow_classes/2`. Browser measurement
 of 289 cells per theme: all 289 cells pass at min 4.78:1 (light) /
 5.40:1 (dark).
 
@@ -76,23 +78,23 @@ theme-token contrast work. The fixture is now axe-clean.
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** Min-heights use rem-based `min-h-*` —
-`lib/pulsar/components/select.ex:99–105`. Padding/text classes rem.
+`lib/pulsar/components/select.ex`, `size_classes/1`. Padding/text classes rem.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** Select uses `block w-full` —
-`lib/pulsar/components/select.ex:117`. Badge container wraps with
-`flex-wrap` — `lib/pulsar/components/select.ex:337`.
+`lib/pulsar/components/select.ex`, `base_select_classes/0`. Badge container wraps with
+`flex-wrap` — `select/1`.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** Outline variant uses `border-2` —
-`lib/pulsar/components/select.ex:122`. Outline-neutral routes through
+`lib/pulsar/components/select.ex`, `variant_classes/1`. Outline-neutral routes through
 `border-border-strong`; colored outline variants use full-saturation
-`border-{color}` — `lib/pulsar/components/select.ex:130–142`. Focus
+`border-{color}` — `color_classes/2`. Focus
 ring `focus-visible:ring-2 focus-visible:ring-offset-2` resolves to
 the standard `--color-ring` token across all variants —
-`lib/pulsar/components/select.ex:117`. Browser measurement: outline
+`base_select_classes/0`. Browser measurement: outline
 borders and focus rings ≥ 3:1 across both themes for every variant.
 
 **Notes:** Previously failed on colored outline variants in light
@@ -104,7 +106,7 @@ Button's pattern.
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
 **Evidence:** `min-h-*` (not `h-*`) allows growth —
-`lib/pulsar/components/select.ex:99–105`. Browser test injects the
+`lib/pulsar/components/select.ex`, `size_classes/1`. Browser test injects the
 WCAG overrides and re-measures: 0 cells overflow
 ([light](measurements/select-light.md#text-spacing-override-wcag-1412),
 [dark](measurements/select-dark.md#text-spacing-override-wcag-1412)).
@@ -112,9 +114,9 @@ WCAG overrides and re-measures: 0 cells overflow
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
 **Evidence:** Native `<select>` is fully keyboard-operable —
-`lib/pulsar/components/select.ex:361–376`. Badge remove buttons are
+`lib/pulsar/components/select.ex`, `select/1`. Badge remove buttons are
 native `<button type="button">` with Phoenix click handlers —
-`lib/pulsar/components/select.ex:346–354`.
+`select/1`.
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
@@ -124,7 +126,7 @@ native `<button type="button">` with Phoenix click handlers —
 
 **Evidence:** Only smooth color/border/shadow transitions
 (`transition-[color,background-color,border-color,box-shadow] duration-fast
-ease-standard`) — `lib/pulsar/components/select.ex:117`.
+ease-standard`) — `lib/pulsar/components/select.ex`, `base_select_classes/0`.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
@@ -134,23 +136,23 @@ ease-standard`) — `lib/pulsar/components/select.ex:117`.
 
 **Evidence:** No positive `tabindex`. Badge remove buttons are
 keyboard-reachable in DOM order before the select itself, matching
-visual order — `lib/pulsar/components/select.ex:337–356`.
+visual order — `lib/pulsar/components/select.ex`, `select/1`.
 
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
 
 **Evidence:** Label is caller's responsibility via `field` wrapper.
 Per-badge remove buttons have `aria-label="Remove …"` —
-`lib/pulsar/components/select.ex:351`.
+`lib/pulsar/components/select.ex`, `select/1`.
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
 **Evidence:** Select has
 `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2` —
-`lib/pulsar/components/select.ex:117`. All color variants resolve
+`lib/pulsar/components/select.ex`, `base_select_classes/0`. All color variants resolve
 the ring to `--color-ring` —
-`lib/pulsar/components/select.ex:130–176`. Remove button has
+`color_classes/2`. Remove button has
 `focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current` —
-`lib/pulsar/components/select.ex:350`. Browser measurement: focus
+`select/1`. Browser measurement: focus
 ring 5.02:1 (light) / 6.72:1 (dark) across every variant — passes
 the 3:1 minimum.
 
@@ -165,12 +167,12 @@ Button/Input. Mouse activation no longer paints a focus ring.
 
 **Evidence:** Native `<select>` interaction; remove buttons use
 `phx-click` which fires on click (mouseup) —
-`lib/pulsar/components/select.ex:348`.
+`lib/pulsar/components/select.ex`, `select/1`.
 
 ### 2.5.3 Label in Name (A) — ✓ PASS
 
 **Evidence:** Remove button `aria-label` is built from the option label
-(`"Remove #{option.label}"`) — `lib/pulsar/components/select.ex:351`.
+(`"Remove #{option.label}"`) — `lib/pulsar/components/select.ex`, `select/1`.
 Visible text "Remove" + option name are reflected in the accessible
 name (where the X icon is the visible identifier, the aria-label
 expands it).
@@ -178,8 +180,8 @@ expands it).
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Select `xs` is `min-h-6` (24px) exactly at floor —
-`lib/pulsar/components/select.ex:104`. Badge remove button has `p-0.5`
-padding around an `xs` icon — `lib/pulsar/components/select.ex:350, 353`.
+`lib/pulsar/components/select.ex`, `size_classes/1`. Badge remove button has `p-0.5`
+padding around an `xs` icon — `select/1`.
 Browser measurement of 289 cells: 289/289 pass ≥ 24×24
 ([light](measurements/select-light.md),
 [dark](measurements/select-dark.md)). The remove button receives the
@@ -198,18 +200,19 @@ exception, it meets AA.
 
 **Evidence:** `:rest` forwards `phx-change` to the select, but no
 navigation/submit on input from the component itself —
-`lib/pulsar/components/select.ex:270, 375`.
+`lib/pulsar/components/select.ex`, `select/1` (`attr :rest`).
 
 ### 3.3.1 Error Identification (A) — ✓ PASS
 
 **Evidence:** `aria-invalid={@invalid && "true"}` reflects errors —
-`lib/pulsar/components/select.ex:369`. Test asserts presence —
-`test/pulsar/components/select_test.exs:773–795`.
+`lib/pulsar/components/select.ex`, `select/1`. Test
+`sets aria-invalid to 'true' when field has errors` asserts presence —
+`test/pulsar/components/select_test.exs`.
 
 **Notes:** `aria-invalid` is *omitted* when there are no errors (rather
 than set to `"false"`), which is intentional to reduce screen reader
-noise — see test `omits aria-invalid when field has no errors (reduces
-noise)` — `test/pulsar/components/select_test.exs:796–818`.
+noise — see test `omits aria-invalid when field has no errors (reduces noise)` —
+`test/pulsar/components/select_test.exs`.
 
 ### 3.3.2 Labels or Instructions (A) — ✓ PASS
 
@@ -224,20 +227,20 @@ the `field` wrapper level.
 
 **Evidence:**
 - Role: native `<select>` (with `multiple` as appropriate) —
-  `lib/pulsar/components/select.ex:361–364`
+  `lib/pulsar/components/select.ex`, `select/1`
 - Name: from `name=` attr (array-suffixed for multi-select) —
-  `lib/pulsar/components/select.ex:362, 588–596`
+  `lib/pulsar/components/select.ex`, `assign_final_name/1` and `select/1`
 - Value: rendered via `Form.options_for_select` —
-  `lib/pulsar/components/select.ex:380`
+  `lib/pulsar/components/select.ex`, `generate_options_html/1`
 - State: `aria-invalid`, native `required`/`disabled`/`multiple` —
-  `lib/pulsar/components/select.ex:365–369`
-- Tests assert `data-required`, `data-multiple`, etc. —
-  `test/pulsar/components/select_test.exs:903–928`
+  `lib/pulsar/components/select.ex`, `select/1`
+- Test `includes standard data attributes` asserts `data-required`,
+  `data-multiple`, etc. — `test/pulsar/components/select_test.exs`
 
 ### 4.1.3 Status Messages (AA) — ✓ PASS
 
 **Evidence:** `aria-invalid` reflects validation state —
-`lib/pulsar/components/select.ex:369`. Field-level error region carries
+`lib/pulsar/components/select.ex`, `select/1`. Field-level error region carries
 `aria-live="polite"`.
 
 ## Not applicable

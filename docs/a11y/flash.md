@@ -13,11 +13,12 @@ auto-dismiss with pause-on-hover/focus, and a colocated JS hook
 ### 1.1.1 Non-text Content (A) — ✓ PASS
 
 **Evidence:**
-- Close-button icon `aria-hidden="true"` — `lib/pulsar/components/flash.ex:301`
+- Close-button icon `aria-hidden="true"` — `lib/pulsar/components/flash.ex`,
+  `flash/1`
 - Close button has visible accessible name via `aria-label="Dismiss"` —
-  `lib/pulsar/components/flash.ex:297`
+  `flash/1`
 - `start_icon` slot is caller-supplied; the wrapper div is purely
-  presentational sizing — `lib/pulsar/components/flash.ex:285–287`
+  presentational sizing — `flash/1`
 
 **Notes:** Decorative X SVG is hidden from AT and the button itself
 carries the accessible name. Callers supplying icons in `start_icon`
@@ -27,11 +28,12 @@ are responsible for marking decorative ones `aria-hidden`.
 
 **Evidence:**
 - Container exposes `role={@role}` (`status` or `alert`) —
-  `lib/pulsar/components/flash.ex:275`
+  `lib/pulsar/components/flash.ex`, `flash/1`
 - `aria-controls={@id}` ties the close button to the dismissible region —
-  `lib/pulsar/components/flash.ex:298`
+  `flash/1`
 - Tests assert `role="status"` and `role="alert"` —
-  `test/pulsar/components/flash_test.exs:26, 258, 284, 297`
+  `test "renders flash with default props"`, `test "uses alert role for urgent messages"`
+  — `test/pulsar/components/flash_test.exs`
 
 **Notes:** Semantic role is programmatically determinable; the
 button↔region relationship is explicit via `aria-controls`.
@@ -39,7 +41,7 @@ button↔region relationship is explicit via `aria-controls`.
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** Inner block follows start_icon in DOM order; close button
-trails the content — `lib/pulsar/components/flash.ex:284–304`. No
+trails the content — `lib/pulsar/components/flash.ex`, `flash/1`. No
 `flex-direction: row-reverse` or absolute positioning of children.
 
 **Notes:** DOM order matches visual order.
@@ -47,18 +49,19 @@ trails the content — `lib/pulsar/components/flash.ex:284–304`. No
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** Status communicated via role/aria-live + caller-supplied
-`start_icon` + visible text content — `lib/pulsar/components/flash.ex:275–291`.
-Flash group docs show icon pairing (`hero-x-circle` for error,
-`hero-check-circle` for success) — `lib/pulsar/components/flash_group.ex:227–233`.
+`start_icon` + visible text content — `lib/pulsar/components/flash.ex`,
+`flash/1`. Flash group docs show icon pairing (`hero-x-circle` for error,
+`hero-check-circle` for success) — `lib/pulsar/components/flash_group.ex`,
+`get_flash_icon/1`.
 
 **Notes:** Not shape/color/position-only; text and icon convey type.
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** Caller supplies textual message in `inner_block` (required
-slot) and may supply a `start_icon` — `lib/pulsar/components/flash.ex:211–219`.
-ARIA role/live region also signals criticality non-visually —
-`lib/pulsar/components/flash.ex:275–277`.
+slot) and may supply a `start_icon` — `lib/pulsar/components/flash.ex`,
+`flash/1`. ARIA role/live region also signals criticality non-visually —
+`flash/1`.
 
 **Notes:** Color variants convey criticality redundantly with role
 (`alert` vs `status`) and conventional icons; not color-only.
@@ -67,8 +70,8 @@ ARIA role/live region also signals criticality non-visually —
 
 **Evidence:** Colors come from semantic tokens via `@color_config`
 (text/bg/border pairs across 3 variants × 7 colors × 2 themes) —
-`lib/pulsar/components/flash.ex:107–143`. Browser measurement of 55
-cells per theme ([light](measurements/flash-light.md),
+`lib/pulsar/components/flash.ex`, `color_classes/2`. Browser measurement
+of 55 cells per theme ([light](measurements/flash-light.md),
 [dark](measurements/flash-dark.md)): all 55 cells pass in both themes,
 min 4.78:1 (light) / 4.84:1 (dark).
 
@@ -80,7 +83,7 @@ axe-clean (zero `color-contrast` violations in either theme).
 
 **Evidence:** Tailwind text utilities (`text-sm`, `text-base`) use `rem`;
 spacing (`p-2`, `p-3`, `p-4`, `gap-2`, `gap-3`) is rem-based —
-`lib/pulsar/components/flash.ex:78–93`.
+`lib/pulsar/components/flash.ex`, `size_classes/1`.
 
 **Notes:** No fixed `px` font sizes; container is content-driven height,
 not fixed.
@@ -88,21 +91,22 @@ not fixed.
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** Flash itself uses `flex items-start justify-between` with
-no `min-width` — `lib/pulsar/components/flash.ex:97`. Width is governed
-by the parent container (FlashGroup sets `max-w-sm w-full` —
-`lib/pulsar/components/flash_group.ex:238–266`).
+no `min-width` (`@flash_base_classes`) — `lib/pulsar/components/flash.ex`,
+`base_flash_classes/0`. Width is governed by the parent container
+(FlashGroup sets `max-w-sm w-full` — `lib/pulsar/components/flash_group.ex`,
+`get_position_config/1`).
 
 **Notes:** Inner content uses `min-w-0` to permit wrap —
-`lib/pulsar/components/flash.ex:284, 288`. Reflows at 320 CSS px.
+`lib/pulsar/components/flash.ex`, `flash/1`. Reflows at 320 CSS px.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** Focus ring lives only on the close button via
 `focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-2` —
-`lib/pulsar/components/flash.ex:close_button_classes/1`. Outline variant
-uses `border` (1px) in the active color —
-`lib/pulsar/components/flash.ex:117–132`. Browser measurement: 18
-border cells per theme, all 18 pass (min 5.64:1 light / 3.67:1 dark).
+`lib/pulsar/components/flash.ex`, `close_button_classes/1`. Outline variant
+uses `border` (1px) in the active color — `color_classes/2`. Browser
+measurement: 18 border cells per theme, all 18 pass (min 5.64:1 light /
+3.67:1 dark).
 
 **Notes:** Outline borders use the same color as the variant
 foreground text — when text passes 1.4.3 (4.5:1) the border easily
@@ -111,16 +115,17 @@ clears the 3:1 non-text minimum.
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
 **Evidence:** No fixed heights on the container; padding is rem-based;
-no `!important` on text spacing — `lib/pulsar/components/flash.ex:78–93,
-96–104`.
+no `!important` on text spacing — `lib/pulsar/components/flash.ex`,
+`size_classes/1`, `base_flash_classes/0`.
 
 **Notes:** Inherits line-height from page; container grows with content.
 
 ### 1.4.13 Content on Hover or Focus (AA) — ✓ PASS
 
 **Evidence:** Hover/focus on the flash pauses the auto-dismiss timer
-(does not add or remove content) — `lib/pulsar/components/flash.ex:381–392,
-403–410`. No tooltips or popovers.
+(does not add or remove content) — `lib/pulsar/components/flash.ex`,
+`flash/1` (colocated `PulsarFlash` hook's `pause`/`resume` handlers). No
+tooltips or popovers.
 
 **Notes:** Hover/focus behavior keeps content persistent, satisfying the
 spirit of 1.4.13 (content remains visible until dismissed).
@@ -129,11 +134,11 @@ spirit of 1.4.13 (content remains visible until dismissed).
 
 **Evidence:**
 - Close button is a native `<button type="button">` —
-  `lib/pulsar/components/flash.ex:293–295`
+  `lib/pulsar/components/flash.ex`, `flash/1`
 - `phx-click` triggers `JS.dispatch("pulsar:flash-dismiss", ...)` —
-  `lib/pulsar/components/flash.ex:299`
-- Hook listens for that event and runs `dismiss()` —
-  `lib/pulsar/components/flash.ex:391, 421–427`
+  `flash/1`
+- Hook listens for that event and runs its `dismiss()` method —
+  `flash/1` (colocated `PulsarFlash` hook)
 
 **Notes:** Native button supplies Space/Enter activation automatically.
 
@@ -141,8 +146,9 @@ spirit of 1.4.13 (content remains visible until dismissed).
 
 **Evidence:** No focus trap. Event listeners are `mouseenter`,
 `mouseleave`, `focusin`, `focusout`, the custom dismiss event, and a
-`keydown` handler — `lib/pulsar/components/flash.ex:setupInteractionHandlers`.
-The `keydown` handler acts only on `Escape` (and only when the flash is
+`keydown` handler — `lib/pulsar/components/flash.ex`, `flash/1`
+(colocated `PulsarFlash` hook's `setupInteractionHandlers`). The
+`keydown` handler acts only on `Escape` (and only when the flash is
 dismissible), does not call `preventDefault`, and never intercepts Tab,
 so it cannot trap focus.
 
@@ -152,16 +158,16 @@ so it cannot trap focus.
 - `auto_dismiss` is role-aware: defaults to `false` for `role="alert"`
   (urgent messages aren't auto-dismissed) and `true` for `role="status"`.
   Callers can override in either direction —
-  `lib/pulsar/components/flash.ex:resolve_auto_dismiss/2`
+  `lib/pulsar/components/flash.ex`, `resolve_auto_dismiss/2`
 - `dismiss_after` integer attr; callers can extend (clamped 100ms–60s) —
-  `lib/pulsar/components/flash.ex:175–178, 319–322`
-- Manual dismiss always available via close button —
-  `lib/pulsar/components/flash.ex:293–304`
-- Hover/focus pauses timer; mouseleave/focusout resumes —
-  `lib/pulsar/components/flash.ex:381–392, 403–418`
+  `flash/1`
+- Manual dismiss always available via close button — `flash/1`
+- Hover/focus pauses timer; mouseleave/focusout resumes — `flash/1`
+  (colocated `PulsarFlash` hook)
 - Tests assert role-aware defaults and explicit override —
-  `test/pulsar/components/flash_test.exs:"auto_dismiss defaults to false for role=alert"`,
-  `"explicit auto_dismiss=true on role=alert is respected"`
+  `test "auto_dismiss defaults to false for role=alert (WCAG 2.2.1)"`,
+  `test "explicit auto_dismiss=true on role=alert is respected"` —
+  `test/pulsar/components/flash_test.exs`
 
 **Notes:** Alert-role flashes no longer disappear before users can read
 them (the prior `auto_dismiss: true` default was a 2.2.1 risk for screen-
@@ -170,10 +176,9 @@ reader and low-vision users on urgent messages).
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
 **Evidence:** Pause-on-hover via `mouseenter`/`mouseleave` and
-pause-on-focus via `focusin`/`focusout` handlers —
-`lib/pulsar/components/flash.ex:381–392, 403–418`. Dismiss button hides
-the flash entirely on demand — `lib/pulsar/components/flash.ex:293–304,
-421–427`.
+pause-on-focus via `focusin`/`focusout` handlers — `lib/pulsar/components/flash.ex`,
+`flash/1` (colocated `PulsarFlash` hook). Dismiss button hides the flash
+entirely on demand — `flash/1`.
 
 **Notes:** The auto-updating content (the flash being removed) is both
 pausable (hover/focus) and hideable (dismiss button).
@@ -181,14 +186,15 @@ pausable (hover/focus) and hideable (dismiss button).
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
 **Evidence:** Only animations are CSS transitions on opacity/transform
-during exit — `lib/pulsar/components/flash.ex:452–455` — and the
-container's `transition-[opacity,transform] duration-normal` — `lib/pulsar/components/flash.ex:104`.
+during exit — `lib/pulsar/components/flash.ex`, `flash/1` (colocated
+`PulsarFlash` hook's `animateExit`) — and the container's
+`transition-[opacity,transform] duration-normal` — `base_flash_classes/0`.
 No flashing/blinking.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
 **Evidence:** Only focusable child is the native close button rendered
-after the content — `lib/pulsar/components/flash.ex:293–304`. No
+after the content — `lib/pulsar/components/flash.ex`, `flash/1`. No
 positive `tabindex` values used.
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
@@ -196,7 +202,7 @@ positive `tabindex` values used.
 **Evidence:**
 - Close button uses `focus-visible:outline-none focus-visible:ring-2
   focus-visible:ring-current focus-visible:ring-offset-2` —
-  `lib/pulsar/components/flash.ex:close_button_classes/1`
+  `lib/pulsar/components/flash.ex`, `close_button_classes/1`
 - Container no longer carries a `focus-within:ring` (would have
   double-ringed with the button)
 
@@ -213,7 +219,7 @@ matches the rest of the library.
 that obscures other focused elements; FlashGroup positions
 (`fixed top-4 right-4` etc.) could overlap content but the close button
 inside the flash is never obscured by the flash itself —
-`lib/pulsar/components/flash_group.ex:236–267`.
+`lib/pulsar/components/flash_group.ex`, `get_position_config/1`.
 
 **Notes:** Page-level concern when flash overlays critical inputs;
 component-level passes.
@@ -221,28 +227,29 @@ component-level passes.
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 
 **Evidence:** Native `<button>` fires on `click` (mouseup) —
-`lib/pulsar/components/flash.ex:293–304`. Custom dismiss event listener
-uses `click`-driven `phx-click`, not `mousedown` —
-`lib/pulsar/components/flash.ex:299`.
+`lib/pulsar/components/flash.ex`, `flash/1`. Custom dismiss event listener
+uses `click`-driven `phx-click`, not `mousedown` — `flash/1`.
 
 ### 2.5.3 Label in Name (A) — ✓ PASS
 
 **Evidence:** Close button has no visible text label (icon-only); the
 `aria-label="Dismiss"` is the accessible name — no conflict possible —
-`lib/pulsar/components/flash.ex:297`.
+`lib/pulsar/components/flash.ex`, `flash/1`.
 
 **Notes:** Icon-only button pattern; no visible text to mismatch.
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Close-button hit area is a uniform 24×24 CSS px at every
-size — `lib/pulsar/components/flash.ex:@size_config`:
+size — `lib/pulsar/components/flash.ex`, `close_button_classes/1`
+(`@size_config`):
 - `sm`: `h-6 w-6 p-1.5` (24×24 box, 12px inner glyph)
 - `md`: `h-6 w-6 p-1`   (24×24 box, 16px inner glyph)
 - `lg`: `h-6 w-6 p-0.5` (24×24 box, 20px inner glyph)
 
 Test pins the floor at every size —
-`test/pulsar/components/flash_test.exs` → `"close button is at least 24x24 to meet WCAG 2.5.8 at every size"`.
+`test "close button is at least 24x24 to meet WCAG 2.5.8 at every size"`
+— `test/pulsar/components/flash_test.exs`.
 
 **Notes:** Padding scales the inner SVG so the X glyph grows with the
 flash, while the touch target stays compliant without depending on the
@@ -252,23 +259,24 @@ flash, while the touch target stays compliant without depending on the
 
 **Evidence:** No focus handler on the flash container or close button
 triggers a context change. `focusin`/`focusout` only pause/resume the
-auto-dismiss timer — `lib/pulsar/components/flash.ex:383–390`.
+auto-dismiss timer — `lib/pulsar/components/flash.ex`, `flash/1`
+(colocated `PulsarFlash` hook).
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
 **Evidence:**
 - Container role: `role={@role}` (`status` or `alert`) —
-  `lib/pulsar/components/flash.ex:275`
+  `lib/pulsar/components/flash.ex`, `flash/1`
 - Container live region: `aria-live={get_aria_live(@live, @role)}` —
-  `lib/pulsar/components/flash.ex:276`
-- Container atomicity: `aria-atomic="true"` —
-  `lib/pulsar/components/flash.ex:277`
+  `flash/1`
+- Container atomicity: `aria-atomic="true"` — `flash/1`
 - Close button is a native `<button type="button">` with
-  `aria-label="Dismiss"` and `aria-controls={@id}` —
-  `lib/pulsar/components/flash.ex:293–299`
+  `aria-label="Dismiss"` and `aria-controls={@id}` — `flash/1`
 - Tests assert `role`, `aria-live`, `aria-label="Dismiss"`,
-  `type="button"` — `test/pulsar/components/flash_test.exs:26–29,
-  102–113, 220–307`
+  `type="button"` — `test "renders flash with default props"`,
+  `test "includes proper ARIA attributes by default"`,
+  `test "uses alert role for urgent messages"` —
+  `test/pulsar/components/flash_test.exs`
 
 **Notes:** Comprehensive name/role/value on both the message region
 and the dismiss control.
@@ -278,11 +286,15 @@ and the dismiss control.
 **Evidence:**
 - `role="status"` (default) with `aria-live="polite"` for general
   updates; `role="alert"` with `aria-live="assertive"` for urgent
-  messages — `lib/pulsar/components/flash.ex:186–196, 275–276, 569–571`
+  messages — `lib/pulsar/components/flash.ex`, `flash/1` (attr
+  declarations and template), `get_aria_live/2`
 - `aria-atomic="true"` ensures the entire message is read on update —
-  `lib/pulsar/components/flash.ex:277`
+  `flash/1`
 - Tests assert `aria-live="polite"` for status and `aria-live="assertive"`
-  for alert — `test/pulsar/components/flash_test.exs:260, 285, 298, 307`
+  for alert — `test "includes proper ARIA attributes by default"`,
+  `test "uses alert role for urgent messages"`,
+  `test "automatically sets aria-live based on role when using auto"` —
+  `test/pulsar/components/flash_test.exs`
 
 **Notes:** Status messages are programmatically determinable and
 auto-announced; the role↔live-region mapping (`alert→assertive`,
@@ -326,7 +338,7 @@ auto-announced; the role↔live-region mapping (`alert→assertive`,
 - **2.2.3 No Timing (AAA)** — `auto_dismiss={false}` removes any timing
   constraint entirely; callers can opt into a no-timeout flash.
 - **2.2.4 Interruptions (AAA)** — pause-on-hover and pause-on-focus
-  (`lib/pulsar/components/flash.ex:381–392`) and the manual dismiss
+  (`lib/pulsar/components/flash.ex`, `flash/1`) and the manual dismiss
   button let users defer or suppress the disappearing-content
   interruption.
 - **2.5.5 Target Size (Enhanced) (AAA)** — not met by any size;

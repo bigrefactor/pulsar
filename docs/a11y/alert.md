@@ -15,9 +15,9 @@ and an optional dismiss button. Static by default; opt-in `role="alert"` or
 
 **Evidence:** The leading status icon is rendered via `<Icon.icon>` which
 defaults to `aria-hidden="true"` (decorative) —
-`lib/pulsar/components/alert.ex:170`. The dismiss `<button>` carries a
+`lib/pulsar/components/alert.ex`, `alert/1`. The dismiss `<button>` carries a
 visible icon also marked decorative; the button's accessible name comes
-from `aria-label` — `lib/pulsar/components/alert.ex:185`. No informational
+from `aria-label` — `lib/pulsar/components/alert.ex`, `alert/1`. No informational
 non-text content lacks a text alternative.
 
 **Notes:** `icon={false}` suppresses the icon entirely; `icon="hero-..."` lets
@@ -27,11 +27,11 @@ primary communication channel.
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:** Title renders as `<p class="font-semibold ...">` —
-`lib/pulsar/components/alert.ex:172`. Body text is a sibling `<p>` or a
-`<div>` for rich inner_block content — `lib/pulsar/components/alert.ex:173–174`.
+`lib/pulsar/components/alert.ex`, `alert/1`. Body text is a sibling `<p>` or a
+`<div>` for rich inner_block content — `lib/pulsar/components/alert.ex`, `alert/1`.
 Actions are wrapped in a `<div>` that contains real `<button>` elements —
-`lib/pulsar/components/alert.ex:177–179`. The dismiss control is a native
-`<button>` — `lib/pulsar/components/alert.ex:181–196`. All semantic
+`lib/pulsar/components/alert.ex`, `alert/1`. The dismiss control is a native
+`<button>` — `lib/pulsar/components/alert.ex`, `alert/1`. All semantic
 relationships are expressed in markup, not implied by visual layout alone.
 
 **Notes:** The component does not use heading elements for the title by design
@@ -41,7 +41,7 @@ conveyed via proximity and weight, which is acceptable for a banner pattern.
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** DOM order: icon → content (title, description) → actions →
-dismiss — `lib/pulsar/components/alert.ex:169–197`. Reading order matches
+dismiss — `lib/pulsar/components/alert.ex`, `alert/1`. Reading order matches
 visual order; no CSS reorders content.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
@@ -53,7 +53,7 @@ No instruction given to the user relies solely on shape, size, or position.
 
 **Evidence:** Each color has a distinct auto-selected status icon (check-circle
 for success, x-circle for danger, exclamation-triangle for warning, information-
-circle for all others) — `lib/pulsar/components/alert.ex:234–237`. The type of
+circle for all others) — `lib/pulsar/components/alert.ex`, `default_icon/1`. The type of
 message is indicated by both icon and text content, never by color alone.
 
 **Notes:** `icon={false}` suppresses the icon at the caller's discretion.
@@ -67,7 +67,7 @@ the call site, not in the component.
 - **solid** variant: all 7 colors pass in light (min 7.22:1) and dark (min 4.84:1).
 - **outline** variant: all 7 colors pass in light (min 5.89:1) and dark (min 7.06:1).
 - **ghost** variant: all 7 colors pass in both themes. `info` measures **5.88:1** in
-  light and **8.16:1** in dark — `lib/pulsar/components/alert.ex:65`. All other
+  light and **8.16:1** in dark — `lib/pulsar/components/alert.ex`, `color_classes/2`. All other
   ghost colors pass in both themes.
 - **Size cells** (all default to `color="info"`, `variant="ghost"`): pass in light
   at 5.88:1 and in dark at 8.16:1.
@@ -79,7 +79,8 @@ Full measurements: [light](measurements/alert-light.md) · [dark](measurements/a
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** All sizing uses `rem`-based Tailwind tokens (`text-sm`, `text-base`,
-`text-lg`, `p-2`, `p-3`, `p-4`) — `lib/pulsar/components/alert.ex:53–55`. No fixed
+`text-lg`, `p-2`, `p-3`, `p-4`) — `lib/pulsar/components/alert.ex`, `size_classes/1`,
+`title_classes/1`. No fixed
 `px` font sizes. The component scales with the user's root font size.
 
 ### 1.4.5 Images of Text (AA) — N/A
@@ -89,7 +90,7 @@ No images of text. Icons are inline SVG, not raster images.
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** The container is `flex items-center` with no `min-width` or
-`overflow: hidden` constraint — `lib/pulsar/components/alert.ex:58, 169`. Text
+`overflow: hidden` constraint — `lib/pulsar/components/alert.ex`, `alert/1`. Text
 wraps naturally. Measurement: no cells overflow at 320 CSS px
 ([light](measurements/alert-light.md) · [dark](measurements/alert-dark.md)).
 
@@ -99,11 +100,11 @@ this is the fixture scaffold's padding, not the component.
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** The `outline` variant renders `border border-{color}` —
-`lib/pulsar/components/alert.ex:73–79`. Measured border contrast: light min
+`lib/pulsar/components/alert.ex`, `color_classes/2`. Measured border contrast: light min
 5.64:1 (outline-secondary), dark min 3.67:1 (outline-neutral) — all clear the 3:1
 threshold. `solid` and `ghost` variants have no border by design. The dismiss
 button focus ring is `focus-visible:ring-2 focus-visible:ring-current
-focus-visible:ring-offset-2` — `lib/pulsar/components/alert.ex:219`. Focus ring
+focus-visible:ring-offset-2` — `lib/pulsar/components/alert.ex`, `close_button_classes/1`. Focus ring
 is `ring-current`, inheriting the alert's semantic color, which passes 3:1 on its
 own tinted/solid surface across all measured variants.
 
@@ -122,7 +123,7 @@ The alert is static inline content; no hover/focus-revealed overlay.
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
 **Evidence:** The dismiss button is a native `<button type="button">` —
-`lib/pulsar/components/alert.ex:181–183`. It is in the natural tab order,
+`lib/pulsar/components/alert.ex`, `alert/1`. It is in the natural tab order,
 activatable by Space and Enter with native browser behavior. The action slot
 accepts caller-supplied controls; the fixture uses a native `<button>`. No
 custom keyboard handling is required.
@@ -138,14 +139,14 @@ The dismiss button is a standard focusable element with no trap logic.
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
 **Evidence:** DOM order is icon → content → actions → dismiss —
-`lib/pulsar/components/alert.ex:169–197`. No positive `tabindex` is used.
+`lib/pulsar/components/alert.ex`, `alert/1`. No positive `tabindex` is used.
 Focus visits controls in logical left-to-right, reading order.
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
 **Evidence:** The dismiss button carries `focus-visible:ring-2
 focus-visible:ring-current focus-visible:ring-offset-2` —
-`lib/pulsar/components/alert.ex:219`. `ring-current` inherits the alert
+`lib/pulsar/components/alert.ex`, `close_button_classes/1`. `ring-current` inherits the alert
 color, which passes 3:1 non-text contrast against its own surface.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
@@ -157,23 +158,23 @@ would obscure focused siblings. It is static in-flow content.
 
 **Evidence:** The dismiss button is a native `<button>` with a `phx-click`
 handler, which fires on the `click` event (mouseup) —
-`lib/pulsar/components/alert.ex:187`. No down-event activation.
+`lib/pulsar/components/alert.ex`, `alert/1`. No down-event activation.
 
 ### 2.5.3 Label in Name (A) — ✓ PASS
 
 **Evidence:** The dismiss button has no visible text label; its accessible name
 is `aria-label={@dismiss_label}` (default "Dismiss") —
-`lib/pulsar/components/alert.ex:185`. No visible text label to conflict with.
+`lib/pulsar/components/alert.ex`, `alert/1`. No visible text label to conflict with.
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** The close button is sized at `h-6 w-6` = 24×24 CSS px across all
 three alert sizes, with only the inner icon padding varying (`p-1.5` / `p-1` /
-`p-0.5`) — `lib/pulsar/components/alert.ex:53–55`. 24×24 meets the WCAG 2.5.8
+`p-0.5`) — `lib/pulsar/components/alert.ex`, `close_button_classes/1`. 24×24 meets the WCAG 2.5.8
 minimum exactly. Measurement confirms: dismissible cell height 72 px ≥ 24 px
 ([light](measurements/alert-light.md)).
 
-**Notes:** The close button comment at `lib/pulsar/components/alert.ex:50–51`
+**Notes:** The `@size_config` comment in `lib/pulsar/components/alert.ex`
 explicitly documents this invariant.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
@@ -185,13 +186,13 @@ plain button with no focus handler.
 
 **Evidence:**
 - The container `<div>` exposes `role={@role}` (nil by default; callers opt in
-  to `"alert"` or `"status"`) — `lib/pulsar/components/alert.ex:169`.
+  to `"alert"` or `"status"`) — `lib/pulsar/components/alert.ex`, `alert/1`.
 - The dismiss button carries `aria-label={@dismiss_label}` and
-  `aria-controls={@id}` — `lib/pulsar/components/alert.ex:185–186`.
+  `aria-controls={@id}` — `lib/pulsar/components/alert.ex`, `alert/1`.
 - The status icon is decorative (`aria-hidden` via Icon default) —
-  `lib/pulsar/components/alert.ex:170`.
+  `lib/pulsar/components/alert.ex`, `alert/1`.
 - `@rest` forwards `id`, `data-*`, and any additional ARIA attributes —
-  `lib/pulsar/components/alert.ex:169`.
+  `lib/pulsar/components/alert.ex`, `alert/1`.
 
 **Notes:** Callers that show the alert dynamically should set
 `role="alert"` (assertive) or `role="status"` (polite) to announce it. The
@@ -202,7 +203,7 @@ opt-in design avoids assertive interruptions for static banners.
 **Evidence:** When `role="alert"` or `role="status"` is set, the component is
 a live region that announces its content to assistive technology. The opt-in
 is documented on the `role` attribute —
-`lib/pulsar/components/alert.ex:133–138`. Static banners (the default) do not
+`lib/pulsar/components/alert.ex`, `alert/1` (`attr :role`). Static banners (the default) do not
 need a live region role.
 
 ## Not applicable

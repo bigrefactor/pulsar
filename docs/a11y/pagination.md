@@ -21,106 +21,116 @@ and every control has a `focus-visible` ring.
 
 **Evidence:** The only non-text content is the prev/next chevron icons, which are
 decorative (`aria-hidden` via the Icon component's default) and accompanied by the
-visible `previous_label` / `next_label` text — `lib/pulsar/components/pagination.ex:244, 278`.
+visible `previous_label` / `next_label` text — `lib/pulsar/components/pagination.ex`,
+`pagination/1`.
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:** `<nav>` landmark with `aria-label`; the controls are a `<ul>`/`<li>`
 list; the current page is marked with `aria-current="page"` —
-`lib/pulsar/components/pagination.ex:233, 260`. Tests `renders a nav landmark…` and
-`current page carries aria-current=page` — `test/pulsar/components/pagination_test.exs:13, 37`.
+`lib/pulsar/components/pagination.ex`, `pagination/1`. Tests
+`test "renders a nav landmark labeled Pagination by default"` and
+`test "current page carries aria-current=page"` —
+`test/pulsar/components/pagination_test.exs`.
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** Items render in the order produced by `page_items/4` (prev, pages
-left-to-right, next), matching visual order — `lib/pulsar/components/pagination.ex:317`.
+left-to-right, next), matching visual order — `lib/pulsar/components/pagination.ex`.
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** The current page is not signaled by color alone — it carries
 `aria-current="page"` and, per variant, a fill (solid), tinted background (ghost),
-or border ring (outline) — `lib/pulsar/components/pagination.ex:260, 400`.
+or border ring (outline) — `lib/pulsar/components/pagination.ex`, `pagination/1`
+(`aria-current`) and `item_state/3` (variant fill/tint/ring).
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Active pages pair a semantic fill with its readable foreground
 (`bg-{color} text-{color}-foreground`) or `text-{color}` on the background;
 inactive controls use `text-muted-foreground` (measured 6.0–7.23:1 on all
-surfaces) — `lib/pulsar/components/pagination.ex:400–408`. The axe gate scans the
+surfaces) — `lib/pulsar/components/pagination.ex`, `item_state/3`. The axe gate scans the
 `/components/pagination/{ghost,solid,outline}` fixtures in light and dark with no violations.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** Sizes use rem-based Tailwind text utilities (`text-xs`–`text-lg`)
-and rem padding — `lib/pulsar/components/pagination.ex:91`. `whitespace-nowrap`
-applies only to short numeric labels.
+and rem padding — `lib/pulsar/components/pagination.ex`, `item_classes/4`
+(`@size_item`). `whitespace-nowrap` applies only to short numeric labels.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** The list is `flex flex-row flex-wrap`, so controls wrap rather than
-force horizontal scrolling at narrow widths — `lib/pulsar/components/pagination.ex:103`.
+force horizontal scrolling at narrow widths — `lib/pulsar/components/pagination.ex`,
+`pagination/1` (`@list_base`).
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** The outline variant's active border routes through
 `border-border-strong` (≥3:1); the focus ring uses `ring-ring` (the `--color-ring`
-token, 5.02:1 light / 6.72:1 dark) — `lib/pulsar/components/pagination.ex:72, 101`.
+token, 5.02:1 light / 6.72:1 dark) — `lib/pulsar/components/pagination.ex`,
+`item_state/3` (outline border) and `item_classes/4` (focus ring).
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
 **Evidence:** All controls are native `<.link>`s reachable and activatable by
 keyboard (Tab + Enter); disabled boundaries are non-focusable spans —
-`lib/pulsar/components/pagination.ex:236, 247`.
+`lib/pulsar/components/pagination.ex`, `pagination/1`.
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
 **Evidence:** Links are in normal flow with no focus management or key interception —
-`lib/pulsar/components/pagination.ex:236`.
+`lib/pulsar/components/pagination.ex`, `pagination/1`.
 
 ### 2.4.4 Link Purpose (In Context) (A) — ✓ PASS
 
 **Evidence:** Each non-current page link has `aria-label="{go_to_label_prefix} {n}"`;
 the current page's label is just its number (`aria-current="page"` conveys state);
-prev/next carry visible label text — `lib/pulsar/components/pagination.ex:261, 245`. Test
-`previous_label / next_label / go_to_label_prefix override…` —
-`test/pulsar/components/pagination_test.exs:254`.
+prev/next carry visible label text — `lib/pulsar/components/pagination.ex`,
+`pagination/1`. Test
+`test "previous_label / next_label / go_to_label_prefix override the defaults"` —
+`test/pulsar/components/pagination_test.exs`.
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
 **Evidence:** Every control applies `focus-visible:ring-2 focus-visible:ring-ring
-focus-visible:ring-offset-2` — `lib/pulsar/components/pagination.ex:101`.
+focus-visible:ring-offset-2` — `lib/pulsar/components/pagination.ex`,
+`item_classes/4` and `control_classes/2`.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Linear in-flow render; no sticky/overlapping content covers a focused
-control — `lib/pulsar/components/pagination.ex:233`.
+control — `lib/pulsar/components/pagination.ex`, `pagination/1`.
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 
 **Evidence:** Native link activation fires on click (mouseup), not pointer-down —
-`lib/pulsar/components/pagination.ex:236`.
+`lib/pulsar/components/pagination.ex`, `pagination/1`.
 
 ### 2.5.3 Label in Name (A) — ✓ PASS
 
 **Evidence:** Page link visible text is its number; its `aria-label` contains that
 number (`Go to page 4` over visible `4`; the current page reads as just `3`) —
-`lib/pulsar/components/pagination.ex:261`.
+`lib/pulsar/components/pagination.ex`, `pagination/1`.
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** The smallest control is `min-w-7 h-7` (28 CSS px), above the 24×24
-minimum, with `gap` separation between items — `lib/pulsar/components/pagination.ex:92, 103`.
+minimum, with `gap` separation between items — `lib/pulsar/components/pagination.ex`,
+`item_classes/4` (sizing) and `pagination/1` (list `gap`).
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
 **Evidence:** Native `<nav>`/`<a>` roles; nav named via `aria-label`; current page
 exposes `aria-current="page"`; disabled controls expose `aria-disabled="true"` —
-`lib/pulsar/components/pagination.ex:233, 260, 247`.
+`lib/pulsar/components/pagination.ex`, `pagination/1`.
 
 ### 4.1.3 Status Messages (AA) — ✓ PASS
 
 **Evidence:** When `show_summary` is set, the summary is an `aria-live="polite"`
-region so page changes are announced — `lib/pulsar/components/pagination.ex:287`.
+region so page changes are announced — `lib/pulsar/components/pagination.ex`,
+`pagination/1`.
 
 ## Not applicable
 
@@ -166,7 +176,7 @@ region so page changes are announced — `lib/pulsar/components/pagination.ex:28
 
 - **2.4.13 Focus Appearance (AAA, new in 2.2)** — `ring-2` (2px) meets the AAA
   thickness minimum and `--color-ring` clears AAA contrast (5.02:1 / 6.72:1) —
-  `lib/pulsar/components/pagination.ex:101`.
+  `lib/pulsar/components/pagination.ex`, `item_classes/4`.
 
 ## Browser a11y findings
 

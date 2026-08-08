@@ -17,11 +17,11 @@ the button in sync. The component stays in document flow and does not trap focus
 
 | Disclosure requirement | Implementation |
 | --- | --- |
-| The trigger is a native `<button type="button">`. | `lib/pulsar/components/collapsible.ex:160–169` |
-| The button carries `aria-expanded` reflecting the panel's state. | `:164` (markup), hook `setOpen` (`:200–205`) |
-| The button carries `aria-controls` pointing at its panel. | `:163`, panel id `:171` |
-| Click or Enter/Space toggles the panel. | hook `click` listener (`:185`), `toggle` (`:191–199`) |
-| Open/closed state survives LiveView re-renders. | hook `restore` (`:206–209`), `mounted`/`updated` (`:178–179`) |
+| The trigger is a native `<button type="button">`. | `lib/pulsar/components/collapsible.ex`, `collapsible/1` |
+| The button carries `aria-expanded` reflecting the panel's state. | `collapsible/1` (markup and hook `setOpen`) |
+| The button carries `aria-controls` pointing at its panel. | `collapsible/1` (button and panel id) |
+| Click or Enter/Space toggles the panel. | `collapsible/1` (hook `click` listener and `toggle`) |
+| Open/closed state survives LiveView re-renders. | `collapsible/1` (hook `restore`, `mounted`/`updated`) |
 
 ## Applicable criteria
 
@@ -34,10 +34,10 @@ themes) and darkens to `text-foreground` on hover and when open
 surrounding `foreground`. The browser axe gate measures the settled colors of
 the trigger and the open panel across light + dark and reports clean.
 
-**Evidence line numbers:** `lib/pulsar/components/collapsible.ex:91`
-(`@trigger_base` — `text-muted-foreground … hover:text-foreground`),
-`lib/pulsar/components/collapsible.ex:50–58` (`@trigger_open` open-state tint map),
-`lib/pulsar/components/collapsible.ex:230–233` (`trigger_classes/2` composing them).
+**Evidence:** `lib/pulsar/components/collapsible.ex`,
+`trigger_classes/3`
+(`@trigger_base` — `text-muted-foreground … hover:text-foreground`;
+`@trigger_open` open-state tint map; composes both).
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
@@ -48,11 +48,12 @@ surface). The chevron indicator inherits the trigger's text color — at rest
 expanded — and rotates 180° to encode open/closed, so the state is conveyed by
 orientation and `aria-expanded`, not by contrast alone.
 
-**Evidence line numbers:** `lib/pulsar/components/collapsible.ex:91`
+**Evidence:** `lib/pulsar/components/collapsible.ex`,
+`trigger_classes/3`
 (`focus-visible:ring-2 focus-visible:ring-ring` in `@trigger_base`),
-`lib/pulsar/components/collapsible.ex:93` (`@chevron_base` —
+`chevron_class/0` (`@chevron_base` —
 `group-data-[expanded]/collapsible:rotate-180`),
-`lib/pulsar/components/collapsible.ex:168` (chevron icon, color inherited from
+`collapsible/1` (chevron icon, color inherited from
 the trigger button).
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
@@ -62,14 +63,15 @@ it and Enter/Space toggles the panel natively (the hook's `click` listener fires
 on the synthetic click that Enter/Space dispatches on a button). There is no
 pointer-only affordance.
 
-**Evidence line numbers:** `lib/pulsar/components/collapsible.ex:160–161`
-(`<button type="button">`), `lib/pulsar/components/collapsible.ex:185`
-(`addEventListener("click", …)` on the trigger),
-`lib/pulsar/components/collapsible.ex:191–199` (`toggle` — runs on click, which
-Enter/Space synthesize on a button). Tests `trigger is a button wired to the
-panel, closed by default` and `open renders expanded state` —
+**Evidence:** `lib/pulsar/components/collapsible.ex`,
+`collapsible/1`
+(`<button type="button">`; `addEventListener("click", …)` on the trigger;
+`toggle` — runs on click, which
+Enter/Space synthesize on a button). Tests
+`test "trigger is a button wired to the panel, closed by default"` and
+`test "open renders expanded state"` —
 `test/pulsar/components/collapsible_test.exs`. The browser interaction test
-`clicking the trigger opens the panel (visible, not just aria)` in
+`test "clicking the trigger opens the panel (visible, not just aria)"` in
 `test/integration/a11y/keyboard/collapsible_test.exs` proves the panel actually expands.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
@@ -78,7 +80,7 @@ panel, closed by default` and `open renders expanded state` —
 document order, so Tab visits the trigger then any focusables inside the open
 panel in source order, with no positive `tabindex` reordering.
 
-**Evidence line numbers:** `lib/pulsar/components/collapsible.ex:160–174`
+**Evidence:** `lib/pulsar/components/collapsible.ex`, `collapsible/1`
 (trigger button then panel, no positive tabindex).
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
@@ -87,7 +89,8 @@ panel in source order, with no positive `tabindex` reordering.
 focus-visible:ring-ring focus-visible:ring-inset` indicator and
 `focus-visible:outline-none` to suppress the doubled UA outline.
 
-**Evidence line numbers:** `lib/pulsar/components/collapsible.ex:91`
+**Evidence:** `lib/pulsar/components/collapsible.ex`,
+`trigger_classes/3`
 (`@trigger_base` — `focus-visible:outline-none focus-visible:ring-2
 focus-visible:ring-ring focus-visible:ring-inset`).
 
@@ -97,7 +100,7 @@ focus-visible:ring-ring focus-visible:ring-inset`).
 sticky, fixed, or overlapping content that could cover the focused trigger or
 its panel — the markup is a plain `<div>` of button and panel.
 
-**Evidence line numbers:** `lib/pulsar/components/collapsible.ex:152–175`
+**Evidence:** `lib/pulsar/components/collapsible.ex`, `collapsible/1`
 (in-flow container → button/panel render tree; no sticky/overlay layer).
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
@@ -106,9 +109,8 @@ its panel — the markup is a plain `<div>` of button and panel.
 the up-event so a pointer-down can be cancelled by dragging off), not by
 `pointerdown`/`mousedown`.
 
-**Evidence line numbers:** `lib/pulsar/components/collapsible.ex:185`
-(`addEventListener("click", …)`), `lib/pulsar/components/collapsible.ex:191–199`
-(`toggle` — runs on click).
+**Evidence:** `lib/pulsar/components/collapsible.ex`, `collapsible/1`
+(`addEventListener("click", …)`; `toggle` — runs on click).
 
 ### 2.5.3 Label in Name (A) — ✓ PASS
 
@@ -116,9 +118,9 @@ the up-event so a pointer-down can be cancelled by dragging off), not by
 content; there is no `aria-label` on the button to contradict the visible label,
 and the chevron is decorative.
 
-**Evidence line numbers:** `lib/pulsar/components/collapsible.ex:167`
-(`<span>{render_slot(@trigger)}</span>` — visible text is the accessible name),
-`lib/pulsar/components/collapsible.ex:160–169` (button has no overriding
+**Evidence:** `lib/pulsar/components/collapsible.ex`, `collapsible/1`
+(`<span>{render_slot(@trigger)}</span>` — visible text is the accessible name;
+button has no overriding
 `aria-label`).
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
@@ -127,9 +129,10 @@ and the chevron is decorative.
 through the size scale, keeping the clickable box at or above 24×24 CSS px; the
 trigger is a full-width row with no overlapping adjacent targets.
 
-**Evidence line numbers:** `lib/pulsar/components/collapsible.ex:73–79`
+**Evidence:** `lib/pulsar/components/collapsible.ex`,
+`trigger_classes/3`
 (`@size_trigger` padding scale — `px-3 py-2` floor at xs up to `px-6 py-5` at xl),
-`lib/pulsar/components/collapsible.ex:160–169` (full-width trigger button).
+`collapsible/1` (full-width trigger button).
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
@@ -142,14 +145,13 @@ trigger is a full-width row with no overlapping adjacent targets.
   LiveView re-renders via `restore()` in `updated()`. The panel is linked from
   the trigger via `aria-controls`.
 
-**Evidence line numbers:** `lib/pulsar/components/collapsible.ex:160–169` (button:
-`aria-controls` at :163, `aria-expanded` at :164, `:trigger` span at :167),
-`lib/pulsar/components/collapsible.ex:171` (panel `id` matching `aria-controls`),
-`lib/pulsar/components/collapsible.ex:200–205` (`setOpen` — `aria-expanded` sync),
-`lib/pulsar/components/collapsible.ex:206–209` (`restore` — re-asserts open state
-after a LiveView patch), `lib/pulsar/components/collapsible.ex:178–179`
-(`mounted`/`updated` both call `restore`). Tests `trigger is a button wired to
-the panel, closed by default` and `open renders expanded state` —
+**Evidence:** `lib/pulsar/components/collapsible.ex`,
+`collapsible/1` (button:
+`aria-controls`, `aria-expanded`, `:trigger` span; panel `id` matching
+`aria-controls`; `setOpen` — `aria-expanded` sync; `restore` — re-asserts open state
+after a LiveView patch; `mounted`/`updated` both call `restore`). Tests
+`test "trigger is a button wired to the panel, closed by default"` and
+`test "open renders expanded state"` —
 `test/pulsar/components/collapsible_test.exs`.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
@@ -157,7 +159,7 @@ the panel, closed by default` and `open renders expanded state` —
 **Evidence:** Focusing the trigger does not toggle the panel or cause any context
 change; only Enter/Space or a click toggles it.
 
-**Evidence line numbers:** `lib/pulsar/components/collapsible.ex:185`
+**Evidence:** `lib/pulsar/components/collapsible.ex`, `collapsible/1`
 (only a `click` listener — no `focus` handler that changes context).
 
 ### 3.2.2 On Input (A) — ✓ PASS
@@ -166,7 +168,7 @@ change; only Enter/Space or a click toggles it.
 it only shows/hides in-page content and (when `on_change` is wired) pushes a
 server event the app handles.
 
-**Evidence line numbers:** `lib/pulsar/components/collapsible.ex:191–199`
+**Evidence:** `lib/pulsar/components/collapsible.ex`, `collapsible/1`
 (`toggle` — local show/hide plus an optional `on_change` push, no navigation).
 
 ## Not applicable
@@ -221,7 +223,7 @@ server event the app handles.
 
 - **2.4.13 Focus Appearance (AAA, new in 2.2)** — `ring-2` (2px) meets the AAA
   minimum thickness and the `--color-ring` token clears AAA contrast —
-  `lib/pulsar/components/collapsible.ex:91`.
+  `lib/pulsar/components/collapsible.ex`, `trigger_classes/3`.
 
 ## Browser a11y findings
 

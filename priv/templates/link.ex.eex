@@ -52,7 +52,6 @@ attr(:size, :string,
   doc: "Size of the link text. inherit adapts to parent text size"
 )
 
-# Stellar Link attributes - copied from Stellar.Components.Link
 attr(:href, :string, default: nil, doc: "External URL to navigate to")
 attr(:navigate, :any, default: nil, doc: "Phoenix route to navigate to (string or VerifiedRoute)")
 attr(:patch, :any, default: nil, doc: "Phoenix route to patch navigate to (string or VerifiedRoute)")
@@ -66,7 +65,6 @@ attr(:rel, :string, default: nil, doc: "Link relationship (auto-set for external
 attr(:id, :string, default: nil)
 attr(:class, :string, default: "", doc: "Additional CSS classes")
 
-# ARIA attributes (matching Stellar.Components.Link)
 attr(:aria_label, :string, default: nil, doc: "Accessible label for the link")
 attr(:aria_describedby, :string, default: nil)
 attr(:aria_current, :string, default: nil)

@@ -15,44 +15,50 @@ card-only selection (input goes `sr-only`).
 
 **Evidence:** Radio inputs use CSS pseudo-element fills (no glyph). No
 decorative icons rendered by the component itself —
-`lib/pulsar/components/radio_group.ex:577–601`.
+`lib/pulsar/components/radio_group.ex`, `radio_input_base_classes/0` and
+`radio_color_classes/1`.
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:**
 - Container has `role="radiogroup"` —
-  `lib/pulsar/components/radio_group.ex:327`
+  `lib/pulsar/components/radio_group.ex`, `radio_group/1`
 - Each option has `<label for={radio_id}>` (default mode) or a card
-  `<label>` wrapping the input — `lib/pulsar/components/radio_group.ex:409, 445`
+  `<label>` wrapping the input — `lib/pulsar/components/radio_group.ex`,
+  `render_default_radio/1` and `render_card_radio/1`
 - Native radio inputs share a `name=` (radio group semantics) —
-  `lib/pulsar/components/radio_group.ex:400, 455`
+  `lib/pulsar/components/radio_group.ex`, `render_default_radio/1` and
+  `render_card_radio/1`
 - Test `renders role="radiogroup" on the container` —
-  `test/pulsar/components/radio_group_test.exs:497–508`
+  `test/pulsar/components/radio_group_test.exs`
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** Options render in slot order with `Enum.with_index`
-producing deterministic IDs — `lib/pulsar/components/radio_group.ex:339–341, 349`.
+producing deterministic IDs — `lib/pulsar/components/radio_group.ex`,
+`radio_group/1` and `render_radio_option/4`.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** Checked state combines color fill via `checked:bg-*` +
 inner-dot pseudo element + native `checked` attr —
-`lib/pulsar/components/radio_group.ex:492–540, 598–600`. Error/invalid
+`lib/pulsar/components/radio_group.ex`, `radio_color_classes/1` and
+`radio_input_base_classes/0`. Error/invalid
 combines `aria-invalid` + danger color override + ring —
-`lib/pulsar/components/radio_group.ex:330, 405, 460, 854`.
+`lib/pulsar/components/radio_group.ex`, `radio_group/1` and
+`card_state_classes/2`.
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** Checked is signaled by inner dot (not color alone) —
-`lib/pulsar/components/radio_group.ex:596–600`. Invalid combines border
-ring + `aria-invalid` — `lib/pulsar/components/radio_group.ex:854`.
+`lib/pulsar/components/radio_group.ex`, `radio_input_base_classes/0`. Invalid combines border
+ring + `aria-invalid` — `lib/pulsar/components/radio_group.ex`, `card_state_classes/2`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Per-color matrix for 7 colors —
-`lib/pulsar/components/radio_group.ex:490–540`. Card variant matrix —
-`lib/pulsar/components/radio_group.ex:683–828`. Browser measurement of
+`lib/pulsar/components/radio_group.ex`, `radio_color_classes/1`. Card variant matrix —
+`lib/pulsar/components/radio_group.ex`, `card_variant_classes/2`. Browser measurement of
 28 cells across both themes
 ([light](measurements/radio_group-light.md),
 [dark](measurements/radio_group-dark.md)): min 19.27:1 (light) /
@@ -64,23 +70,23 @@ no per-color text on tinted backgrounds in this component.
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** Sizes use rem-based `w-*`/`h-*` for the radio circle —
-`lib/pulsar/components/radio_group.ex:145–181`. Labels use rem-based
+`lib/pulsar/components/radio_group.ex`, `radio_input_classes/2`. Labels use rem-based
 text classes.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** Container is `flex flex-col gap-3` by default —
-`lib/pulsar/components/radio_group.ex:478`. Layout is overridable via
+`lib/pulsar/components/radio_group.ex`, `container_base_classes/0`. Layout is overridable via
 `class` to grid/flex-row as needed; no fixed widths.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** Radio uses `border-2` —
-`lib/pulsar/components/radio_group.ex:593`. Focus ring
+`lib/pulsar/components/radio_group.ex`, `radio_input_base_classes/0`. Focus ring
 `focus-visible:ring-2 focus-visible:ring-offset-2` —
-`lib/pulsar/components/radio_group.ex:594`. Card focus uses
+`radio_input_base_classes/0`. Card focus uses
 `focus-within:ring-2 focus-within:ring-offset-2` —
-`lib/pulsar/components/radio_group.ex:629`. The radio-circle border
+`card_base_classes/2`. The radio-circle border
 itself is rendered by the browser's native widget appearance, not by
 Tailwind border tokens — measurement reads `no-border` because the
 visible ring is the input's UA shadow tree. Focus indicator measured
@@ -97,7 +103,7 @@ measures pass (focus ring 5.02:1 light / 6.72:1 dark).
 
 **Evidence:** Radio is a fixed `w-*`/`h-*` circle (rem-based, scales).
 Labels use standard Tailwind text classes —
-`lib/pulsar/components/radio_group.ex:605–615`. Browser test injects
+`lib/pulsar/components/radio_group.ex`, `radio_label_classes/3`. Browser test injects
 the WCAG 1.4.12 overrides and re-measures: no cells overflow
 ([light](measurements/radio_group-light.md#text-spacing-override-wcag-1412),
 [dark](measurements/radio_group-dark.md#text-spacing-override-wcag-1412)).
@@ -107,7 +113,7 @@ the WCAG 1.4.12 overrides and re-measures: no cells overflow
 **Evidence:** Native `<input type="radio">` group; arrow keys cycle
 within `name=`-shared inputs by browser default. Tab moves into / out of
 the group. No custom keydown handlers —
-`lib/pulsar/components/radio_group.ex:397–408`.
+`lib/pulsar/components/radio_group.ex`, `render_default_radio/1`.
 
 **Notes:** `data-orientation` is set but not consumed by any JS hook —
 relying on native browser arrow-key behavior, which works for both
@@ -122,7 +128,7 @@ behavior preserved.
 
 **Evidence:** Only smooth transform/opacity transitions on the inner dot
 (`before:transition-[transform,opacity] before:duration-fast
-before:ease-standard`) — `lib/pulsar/components/radio_group.ex:640`.
+before:ease-standard`) — `lib/pulsar/components/radio_group.ex`, `radio_input_base_classes/0`.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
@@ -132,24 +138,26 @@ before:ease-standard`) — `lib/pulsar/components/radio_group.ex:640`.
 
 **Evidence:** No positive `tabindex`. Native radio group semantics
 handle roving tabindex via the browser (focus goes to checked option, or
-first if none checked) — `lib/pulsar/components/radio_group.ex:397–408`.
+first if none checked) — `lib/pulsar/components/radio_group.ex`, `render_default_radio/1`.
 
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
 
 **Evidence:** Each option has a `<label>` next to the input or wrapping
-it in card mode — `lib/pulsar/components/radio_group.ex:409–411, 444–471`.
+it in card mode — `lib/pulsar/components/radio_group.ex`,
+`render_default_radio/1` and `render_card_radio/1`.
 The radio group as a whole expects `aria-labelledby` (or
 `aria-label`) from the caller — `field` passes
 `aria-labelledby="#{field_id}-label"` for the field's label —
-`lib/pulsar/components/field.ex:448`.
+`lib/pulsar/components/field.ex`, `render_input/1`.
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS (inferred)
 
 **Evidence:** `focus-visible:outline-none focus-visible:ring-2
 focus-visible:ring-offset-2` plus color ring —
-`lib/pulsar/components/radio_group.ex:594, 496, 503, 510, 517, 524, 531, 538`.
+`lib/pulsar/components/radio_group.ex`, `radio_input_base_classes/0` and
+`radio_color_classes/1`.
 Card variant uses `focus-within:ring-2` —
-`lib/pulsar/components/radio_group.ex:629`. The wrapper `<label>` is
+`card_base_classes/2`. The wrapper `<label>` is
 not the focusable element; the focusable `<input type="radio">`
 inside doesn't carry `data-fixture-cell`, so the per-cell focus
 measurement falls back to `not-focusable-in-state` on the wrapper.
@@ -174,7 +182,7 @@ no `aria-label` set on individual inputs.
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS (per WCAG spacing exception)
 
 **Evidence:** Radio sizes `xs`=12px, `sm`=16px, `md`=20px, `lg`=24px,
-`xl`=28px — `lib/pulsar/components/radio_group.ex:145–181`. `xs`,
+`xl`=28px — `lib/pulsar/components/radio_group.ex`, `radio_input_classes/2`. `xs`,
 `sm`, and default `md` are below 24×24 for the radio circle itself.
 The `<label>` (clickable via `for=`) extends the practical hit area.
 Browser measurement of the 28 fixture cells shows all wrapper rows
@@ -185,7 +193,7 @@ effective target, not the input circle.
 
 **Notes:** WCAG 2.5.8 spacing exception applies: each radio input is
 paired with a `<label>` and surrounding spacing in `flex-col gap-3`
-(`radio_group.ex:478`), so adjacent radios don't overlap. The
+(`radio_group.ex`, `container_base_classes/0`), so adjacent radios don't overlap. The
 effective target (label + input together) exceeds 24×24 even at
 `xs`.
 
@@ -197,18 +205,20 @@ effective target (label + input together) exceeds 24×24 even at
 
 **Evidence:** `:rest` forwards `phx-change` to the radiogroup container,
 but component itself triggers no navigation/submit —
-`lib/pulsar/components/radio_group.ex:243, 337`.
+`lib/pulsar/components/radio_group.ex`, `radio_group/1` (`attr :rest`).
 
 ### 3.3.1 Error Identification (A) — ✓ PASS
 
 **Evidence:**
 - `aria-invalid={@invalid && "true"}` on the group container *and* each
-  radio input — `lib/pulsar/components/radio_group.ex:330, 405, 460`
+  radio input — `lib/pulsar/components/radio_group.ex`, `radio_group/1`,
+  `render_default_radio/1`, and `render_card_radio/1`
 - `aria-required={@required && "true"}` on the group container *and*
-  each radio input — `lib/pulsar/components/radio_group.ex:331, 406, 461`
+  each radio input — `lib/pulsar/components/radio_group.ex`, `radio_group/1`,
+  `render_default_radio/1`, and `render_card_radio/1`
 - Test `integrates with Phoenix form field for automatic validation`
   asserts both `data-invalid="true"` and `aria-invalid="true"` —
-  `test/pulsar/components/radio_group_test.exs:186–221`
+  `test/pulsar/components/radio_group_test.exs`
 
 ### 3.3.2 Labels or Instructions (A) — ✓ PASS
 
@@ -224,21 +234,24 @@ component doesn't suppress it.
 
 **Evidence:**
 - Role: `role="radiogroup"` on container; native `<input type="radio">`
-  inputs — `lib/pulsar/components/radio_group.ex:327, 398, 453`
+  inputs — `lib/pulsar/components/radio_group.ex`, `radio_group/1`,
+  `render_default_radio/1`, and `render_card_radio/1`
 - Name: shared `name=` across all radio inputs in the group —
-  `lib/pulsar/components/radio_group.ex:400, 455`
+  `lib/pulsar/components/radio_group.ex`, `render_default_radio/1` and
+  `render_card_radio/1`
 - Value: per-option `value=`, native `checked` attr reflects current
-  selection — `lib/pulsar/components/radio_group.ex:401–402, 456–457`
+  selection — `lib/pulsar/components/radio_group.ex`, `render_default_radio/1`
+  and `render_card_radio/1`
 - State: `aria-invalid`, `aria-required`, native `disabled` (group
-  and/or per-option) — `lib/pulsar/components/radio_group.ex:330–331, 404–406, 459–461`
-- Test `checks the radio matching the group value (native aria-checked
-  propagation)` asserts checked attribute mapping —
-  `test/pulsar/components/radio_group_test.exs:523–538`
+  and/or per-option) — `lib/pulsar/components/radio_group.ex`, `radio_group/1`,
+  `render_default_radio/1`, and `render_card_radio/1`
+- Test `checks the radio matching the group value (native aria-checked propagation)` asserts checked attribute mapping —
+  `test/pulsar/components/radio_group_test.exs`
 
 ### 4.1.3 Status Messages (AA) — ✓ PASS
 
 **Evidence:** `aria-invalid` reflects validation state —
-`lib/pulsar/components/radio_group.ex:330`. Field-level error region
+`lib/pulsar/components/radio_group.ex`, `radio_group/1`. Field-level error region
 carries `aria-live="polite"`.
 
 ## Not applicable

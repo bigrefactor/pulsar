@@ -23,14 +23,12 @@ both panels it operates on and `aria-valuemin`/`aria-valuenow`/`aria-valuemax`
 panel's size. The hook keeps `aria-valuenow` and `aria-valuetext` in sync on every
 resize and collapse event.
 
-**Evidence line numbers:** `lib/pulsar/components/resizable.ex:135–144`
-(separator markup: `role="separator"` at 135, `tabindex` at 137,
-`aria-orientation` at 138, `aria-controls` at 139, `aria-label` at 140,
-`aria-valuemin` at 141, `aria-valuenow` at 142, `aria-valuetext` at 143) and
-`lib/pulsar/components/resizable.ex:370–373`
-(hook sync: comment + `setAttribute("aria-valuenow")`). Tests `renders a
-window-splitter separator handle` and `reflects the controlled panel range on
-the separator` — `test/pulsar/components/resizable_test.exs:28–41`.
+**Evidence:** `lib/pulsar/components/resizable.ex`, `resizable/1`
+(separator markup: `role="separator"`, `tabindex`, `aria-orientation`,
+`aria-controls`, `aria-label`, `aria-valuemin`, `aria-valuenow`, `aria-valuetext`)
+and the hook's `applySize` (`setAttribute("aria-valuenow")`). Test `renders a window-splitter separator handle` and
+Test `reflects the controlled panel range on the separator` —
+`test/pulsar/components/resizable_test.exs`.
 
 ### 1.3.4 Orientation (AA) — ✓ PASS
 
@@ -39,10 +37,9 @@ the separator` — `test/pulsar/components/resizable_test.exs:28–41`.
 separator orientation is inverted relative to the panel layout, per the APG
 window-splitter pattern.
 
-**Evidence line numbers:** `lib/pulsar/components/resizable.ex:138` (attribute
-emission), `lib/pulsar/components/resizable.ex:425–426` (`separator_orientation/1`
-helper). Test `inverts orientation: horizontal split uses a vertical separator` —
-`test/pulsar/components/resizable_test.exs:43–46`.
+**Evidence:** `lib/pulsar/components/resizable.ex`, `resizable/1`
+(attribute emission) and `separator_orientation/1` (helper). Test `inverts orientation: horizontal split uses a vertical separator` —
+`test/pulsar/components/resizable_test.exs`.
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
@@ -53,14 +50,12 @@ exclusively via the focusable pill buttons and drag-to-edge. Each per-panel
 chevron is a real `<button>` (`type="button"`) in the tab order — no
 `tabindex="-1"` — so Tab reaches it and Enter/Space triggers `toggleCollapse`.
 
-**Evidence line numbers:** `lib/pulsar/components/resizable.ex:137` (`tabindex="0"`
-on separator), `lib/pulsar/components/resizable.ex:151–172` (pill buttons —
-`type="button"`, no negative tabindex), `lib/pulsar/components/resizable.ex:297–317`
-(hook `onKeydown`: arrow/Page/Home/End at lines 306–311; no `"Enter"` case —
-Enter is handled natively by the focused button),
-`lib/pulsar/components/resizable.ex:327–336` (`toggleCollapse`). Tests
+**Evidence:** `lib/pulsar/components/resizable.ex`, `resizable/1`
+(`tabindex="0"` on separator; pill buttons — `type="button"`, no negative
+tabindex), the hook's `onKeydown` (arrow/Page/Home/End; no `"Enter"` case —
+Enter is handled natively by the focused button), and `toggleCollapse`. Test
 `toggles are real focusable buttons (no negative tabindex)` —
-`test/pulsar/components/resizable_test.exs:139–143`.
+`test/pulsar/components/resizable_test.exs`.
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
@@ -69,11 +64,8 @@ focus-visible:ring-offset-1` ring; the visual divider line shifts to `bg-primary
 on `group-focus-visible`. Each chevron button also carries
 `focus-visible:ring-2 focus-visible:ring-ring` (inset).
 
-**Evidence line numbers:** `lib/pulsar/components/resizable.ex:447–452`
-(`handle_classes/1` — vertical, `focus-visible:ring-2` at line 450),
-`lib/pulsar/components/resizable.ex:454–458`
-(`handle_classes/1` — horizontal, `focus-visible:ring-2` at line 456),
-`lib/pulsar/components/resizable.ex:493`
+**Evidence:** `lib/pulsar/components/resizable.ex`, `handle_classes/1`
+(vertical and horizontal, `focus-visible:ring-2`) and `toggle_button_classes/2`
 (toggle `focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring`).
 
 ### 2.5.7 Dragging Movements (AA) — ✓ PASS
@@ -83,10 +75,9 @@ focused separator (arrow keys, Page Up/Down, Home/End), and collapse/expand via
 the pill `<button>`(s) — one focusable chevron button per collapsible panel,
 each triggering `toggleCollapse` on click.
 
-**Evidence line numbers:** `lib/pulsar/components/resizable.ex:150–173`
-(collapse pill with per-panel buttons), `lib/pulsar/components/resizable.ex:297–317`
-(keyboard resize in `onKeydown`), `lib/pulsar/components/resizable.ex:327–336`
-(`toggleCollapse`).
+**Evidence:** `lib/pulsar/components/resizable.ex`, `resizable/1`
+(collapse pill with per-panel buttons), the hook's `onKeydown` (keyboard
+resize), and `toggleCollapse`.
 
 ### 2.5.8 Target Size (Minimum) (AA) — ✓ PASS
 
@@ -95,12 +86,10 @@ handles, `w-6` for horizontal) with a thinner visual line centered inside it. Ea
 chevron button is `size-6` (24 × 24 px) — documented in the comment at lines
 485–487 and applied by `toggle_button_classes/2`.
 
-**Evidence line numbers:** `lib/pulsar/components/resizable.ex:442–443`
-(`handle_wrapper_classes/1`, `h-6` at line 442 for vertical, `w-6` at line 443
-for horizontal), `lib/pulsar/components/resizable.ex:447–458`
-(`handle_classes/1` — the `absolute inset-0` fill that makes the wrapper the
-true pointer target), `lib/pulsar/components/resizable.ex:485–496`
-(`toggle_button_classes/2` comment + `size-6` at line 491).
+**Evidence:** `lib/pulsar/components/resizable.ex`,
+`handle_wrapper_classes/1` (`h-6` for vertical, `w-6` for horizontal),
+`handle_classes/1` (the `absolute inset-0` fill that makes the wrapper the
+true pointer target), and `toggle_button_classes/2` (`size-6`).
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
@@ -119,19 +108,16 @@ states: `0` when the end panel is collapsed, and up to `100` when the start pane
 is collapsed. Both are permitted by the APG window-splitter collapse exception
 (comment at lines 370–372, `setAttribute` at line 373).
 
-**Evidence line numbers:** `lib/pulsar/components/resizable.ex:135` (role),
-`lib/pulsar/components/resizable.ex:140` (separator `aria-label`),
-`lib/pulsar/components/resizable.ex:151–172` (both toggle buttons with
-`aria-expanded`/`aria-controls`/`aria-label`),
-`lib/pulsar/components/resizable.ex:337–348` (`setCollapsed` + `updateToggle`,
-`aria-expanded` sync at line 345),
-`lib/pulsar/components/resizable.ex:205–221` (`updated()` re-asserts collapsed
-state on LiveView patch),
-`lib/pulsar/components/resizable.ex:370–373` (valuenow out-of-range comment +
-setAttribute). Tests `marking the end panel collapsible renders one end toggle`,
-`marking both panels collapsible renders two toggles, one per side`,
-`toggles are real focusable buttons (no negative tabindex)`, `toggles start
-expanded` — `test/pulsar/components/resizable_test.exs:107–148`.
+**Evidence:** `lib/pulsar/components/resizable.ex`, `resizable/1`
+(role, separator `aria-label`, both toggle buttons with
+`aria-expanded`/`aria-controls`/`aria-label`), the hook's `setCollapsed` and
+`updateToggle` (`aria-expanded` sync), `updated()` (re-asserts collapsed state
+on LiveView patch), and `applySize` (valuenow out-of-range comment +
+`setAttribute`). Test `marking the end panel collapsible renders one end toggle`,
+Test `marking both panels collapsible renders two toggles, one per side`,
+Test `toggles are real focusable buttons (no negative tabindex)`, and
+Test `toggles start expanded` —
+`test/pulsar/components/resizable_test.exs`.
 
 ## Not applicable
 
@@ -163,8 +149,7 @@ expanded` — `test/pulsar/components/resizable_test.exs:107–148`.
   `border-strong` (gray-500, ≈3.9:1 on the panel surfaces), darkening to
   `foreground` on hover and `primary` on focus — every state clears the 3:1
   non-text floor, so the resize affordance is identifiable at rest, not only on
-  interaction. Evidence: `lib/pulsar/components/resizable.ex:460–469`
-  (`line_classes/1`).
+  interaction. Evidence: `lib/pulsar/components/resizable.ex`, `line_classes/1`.
 - **1.4.12 Text Spacing (AA)** — no text rendered.
 - **1.4.13 Content on Hover or Focus (AA)** — no hover/focus-triggered
   supplementary content.
@@ -215,7 +200,8 @@ expanded` — `test/pulsar/components/resizable_test.exs:107–148`.
 
 - **2.4.13 Focus Appearance (AAA, new in 2.2)** — `ring-2` (2px) meets the AAA
   minimum thickness, and the `--color-ring` token clears AAA contrast —
-  `lib/pulsar/components/resizable.ex:450, 456, 493`.
+  `lib/pulsar/components/resizable.ex`, `handle_classes/1` and
+  `toggle_button_classes/2`.
 
 ## Browser a11y findings
 

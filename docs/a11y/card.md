@@ -15,19 +15,23 @@ activation) when a `phx-click` handler is provided.
 
 **Evidence:** Card renders no non-text content of its own; media / icon
 content is supplied by the caller through slots —
-`lib/pulsar/components/card.ex:350–356`. Callers are responsible for
-`alt` text on images (e.g. test `<img src="/image.jpg" alt="Hero" />` —
-`test/pulsar/components/card_test.exs:231`).
+`lib/pulsar/components/card.ex`, `card/1`. Callers are responsible for
+`alt` text on images (e.g. test
+`test "renders media slot when provided"` —
+`test/pulsar/components/card_test.exs`).
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:**
 - Static card renders a plain `<div>`; interactive card adds
-  `role="button"` — `lib/pulsar/components/card.ex:453`
+  `role="button"` — `lib/pulsar/components/card.ex`, `add_interactive_attrs/1`
 - Card preserves caller-supplied heading levels and structure in
   `header` / `footer` / body slots —
-  `lib/pulsar/components/card.ex:350–364`
-- Tests verify slot heading rendering — `test/pulsar/components/card_test.exs:188–203, 416–436`
+  `lib/pulsar/components/card.ex`, `card/1`
+- Tests verify slot heading rendering —
+  `test "renders header slot when provided"`,
+  `test "renders card with complex header layout"` —
+  `test/pulsar/components/card_test.exs`
 
 **Notes:** Card is a presentational container and does not wrap content
 in extra semantic landmarks. Slot content keeps the structural intent
@@ -36,7 +40,7 @@ the caller chose.
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** Slots render in DOM order media → header → body → footer
-matching their visual stacking — `lib/pulsar/components/card.ex:349–364`.
+matching their visual stacking — `lib/pulsar/components/card.ex`, `card/1`.
 
 **Notes:** No flex direction reversal; body uses `flex-col` which keeps
 top-down order.
@@ -44,22 +48,24 @@ top-down order.
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** Variants (`solid` / `outline` / `ghost` / `elevated`) use
-combinations of border + background + shadow — `lib/pulsar/components/card.ex:199–237`.
+combinations of border + background + shadow — `lib/pulsar/components/card.ex`,
+`color_classes/2`.
 Interactive state adds `cursor-pointer` plus focus ring, not color
-alone — `lib/pulsar/components/card.ex:428–435`.
+alone — `lib/pulsar/components/card.ex`, `interactive_classes/1`.
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** Card color encodes visual emphasis; no information is
 conveyed by color alone. Interactive state combines `cursor-pointer`,
-focus ring, and `role="button"` — `lib/pulsar/components/card.ex:428–435, 453`.
+focus ring, and `role="button"` — `lib/pulsar/components/card.ex`,
+`interactive_classes/1`, `add_interactive_attrs/1`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Card renders no text of its own; text contrast is the
 caller's responsibility for slot content. Background + border tokens
 (`bg-surface-1`, `border-border`, etc.) come from the theme —
-`lib/pulsar/components/card.ex:199–237`. Browser measurement of 72
+`lib/pulsar/components/card.ex`, `color_classes/2`. Browser measurement of 72
 cells per theme: all pass, min 15.93:1 (light) / 14.03:1 (dark)
 ([light](measurements/card-light.md),
 [dark](measurements/card-dark.md)). The fixture's heading/body text
@@ -72,12 +78,12 @@ a text-contrast one. Caller-supplied text is out of scope.
 
 **Evidence:** No fixed `px` font sizes or heights on the card itself;
 padding is `rem`-based via Tailwind (`p-3` through `p-8`) —
-`lib/pulsar/components/card.ex:155–186`.
+`lib/pulsar/components/card.ex`, `size_classes/2`.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** Card uses `block w-full overflow-hidden` —
-`lib/pulsar/components/card.ex:190`. No `min-width` is enforced.
+`lib/pulsar/components/card.ex`, `base_card_classes/0`. No `min-width` is enforced.
 
 **Notes:** `overflow-hidden` on the card root means caller content that
 exceeds the card width is clipped rather than producing horizontal page
@@ -87,14 +93,14 @@ scroll, which is consistent with 1.4.10.
 
 **Evidence:**
 - Outline variant border is `border-2` in the active color —
-  `lib/pulsar/components/card.ex:218–226`
+  `lib/pulsar/components/card.ex`, `color_classes/2`
 - Outline-neutral routes through `border-border-strong` —
-  `lib/pulsar/components/card.ex:219`
+  `lib/pulsar/components/card.ex`, `color_classes/2`
 - Solid variant border is at 20% opacity, except `solid-neutral`
   which now routes through `border-border-strong` —
-  `lib/pulsar/components/card.ex:227–236`
+  `lib/pulsar/components/card.ex`, `color_classes/2`
 - Interactive focus ring is `ring-2 ring-primary` —
-  `lib/pulsar/components/card.ex:431–434`
+  `lib/pulsar/components/card.ex`, `interactive_classes/1`
 
 Browser measurement of 36 border cells per theme: outline variants
 all pass (`outline-neutral` 4.63:1 in both themes via
@@ -122,46 +128,49 @@ its border IS the boundary — that variant now uses
 
 **Evidence:** No fixed-height containers, no `!important` text-spacing
 overrides. Card body uses `flex flex-col` with `gap-*` between children —
-`lib/pulsar/components/card.ex:155–186`.
+`lib/pulsar/components/card.ex`, `size_classes/2`.
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
 **Evidence:**
-- Interactive card gets `tabindex="0"` — `lib/pulsar/components/card.ex:454`
+- Interactive card gets `tabindex="0"` — `lib/pulsar/components/card.ex`,
+  `add_interactive_attrs/1`
 - Colocated `.PulsarCard` hook handles Space (keyup, prevents page
   scroll on keydown) and Enter to trigger `el.click()` —
-  `lib/pulsar/components/card.ex:366–397`
-- Test `adds keyboard activation hook for interactive cards` —
-  `test/pulsar/components/card_test.exs:676–682`
+  `lib/pulsar/components/card.ex`, `card/1`
+- `test "adds keyboard activation hook for interactive cards"` —
+  `test/pulsar/components/card_test.exs`
 
 **Notes:** Matches WAI-ARIA APG button activation pattern.
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
 **Evidence:** Hook listens only for Space/Enter; does not block Tab or
-Shift+Tab — `lib/pulsar/components/card.ex:372–387`.
+Shift+Tab — `lib/pulsar/components/card.ex`, `card/1`.
 
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
 **Evidence:** Card transitions are `transition-colors duration-200`
-only — `lib/pulsar/components/card.ex:191`. No looping motion.
+only — `lib/pulsar/components/card.ex`, `base_card_classes/0`. No looping motion.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
 **Evidence:** No flashing animation; only smooth color transition —
-`lib/pulsar/components/card.ex:191`.
+`lib/pulsar/components/card.ex`, `base_card_classes/0`.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
 **Evidence:** Interactive card uses `tabindex="0"` (default order); no
-positive tabindex anywhere — `lib/pulsar/components/card.ex:454`.
+positive tabindex anywhere — `lib/pulsar/components/card.ex`,
+`add_interactive_attrs/1`.
 
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
 
 **Evidence:** Card preserves caller-supplied heading text in the
 `header` slot without altering or wrapping the heading element —
-`lib/pulsar/components/card.ex:354–356`. Tests confirm `<h3>` slot
-content is rendered verbatim — `test/pulsar/components/card_test.exs:188–203`.
+`lib/pulsar/components/card.ex`, `card/1`. Tests confirm `<h3>` slot
+content is rendered verbatim — `test "renders header slot when provided"` —
+`test/pulsar/components/card_test.exs`.
 
 **Notes:** Caller is responsible for the heading text itself; the
 component does not enforce hierarchy.
@@ -171,8 +180,9 @@ component does not enforce hierarchy.
 **Evidence:** Interactive card applies `focus-visible:outline-none`,
 `focus-visible:ring-2`, `focus-visible:ring-primary`,
 `dark:focus-visible:ring-dark-primary`, `focus-visible:ring-offset-2` —
-`lib/pulsar/components/card.ex:430–434`. Test asserts these classes —
-`test/pulsar/components/card_test.exs:665–674`. The card fixture
+`lib/pulsar/components/card.ex`, `interactive_classes/1`. Test asserts these classes —
+`test "interactive cards include focus ring styles"` —
+`test/pulsar/components/card_test.exs`. The card fixture
 doesn't render interactive cards (the fixture is static cards), so
 per-cell focus measurements are `not-focusable-in-state`.
 
@@ -188,34 +198,36 @@ container render.
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 
 **Evidence:** Hook listens for `click` (mouseup-fired) for Enter, and
-for `keyup` for Space — `lib/pulsar/components/card.ex:382–390`.
+for `keyup` for Space — `lib/pulsar/components/card.ex`, `card/1`.
 
 ### 2.5.3 Label in Name (A) — ✓ PASS
 
 **Evidence:** Interactive card derives its accessible name from inner
 content unless `aria-label` is passed; test demonstrates pass-through —
-`test/pulsar/components/card_test.exs:641–654`.
+`test "supports custom aria-label"` —
+`test/pulsar/components/card_test.exs`.
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Interactive cards are full-width container elements
-(`block w-full`, padding `p-3`+) — `lib/pulsar/components/card.ex:155–192`.
+(`block w-full`, padding `p-3`+) — `lib/pulsar/components/card.ex`,
+`base_card_classes/0`, `size_classes/2`.
 Total height vastly exceeds the 24×24 minimum.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 
 **Evidence:** No `phx-focus` or focus-triggered context change in the
-component template — `lib/pulsar/components/card.ex:348–399`.
+component template — `lib/pulsar/components/card.ex`, `card/1`.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
 **Evidence:**
 - Interactive card adds `role="button"` and `tabindex="0"` —
-  `lib/pulsar/components/card.ex:453–454`
+  `lib/pulsar/components/card.ex`, `add_interactive_attrs/1`
 - Caller-supplied `role` is respected (uses `Map.put_new`) —
-  `lib/pulsar/components/card.ex:452–455`
-- Test `respects explicitly provided role attribute` —
-  `test/pulsar/components/card_test.exs:612–625`
+  `lib/pulsar/components/card.ex`, `add_interactive_attrs/1`
+- `test "respects explicitly provided role attribute"` —
+  `test/pulsar/components/card_test.exs`
 
 **Notes:** No state to expose beyond focus; static cards intentionally
 have no role.
