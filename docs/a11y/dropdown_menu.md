@@ -23,7 +23,7 @@ separators (`role="separator"`), and submenus (a `menuitem` with
 **Evidence:** The leading icons, the checkbox check, the radio dot, and the
 submenu chevron are decorative. Icons render through `Icon.icon` with no
 `aria_label`, so they are `aria-hidden`; the radio dot is a bare `<span>` —
-`lib/pulsar/components/dropdown_menu.ex:512`, `:573–574`, `:641–642`. Each item's
+`lib/pulsar/components/dropdown_menu.ex:515`, `:573–574`, `:641–642`. Each item's
 meaning is carried by its text label.
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
@@ -50,7 +50,7 @@ identified by their text labels.
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** State is never color-only. A checked checkbox/radio shows a check
-glyph / filled dot, not just a tint — `lib/pulsar/components/dropdown_menu.ex:573–574`,
+glyph / filled dot, not just a tint — `lib/pulsar/components/dropdown_menu.ex:576–577`,
 `:641–642`. An item set to `color="danger"` pairs its danger color with the action's
 text label (and typically an icon) — `:834–835`.
 
@@ -98,7 +98,7 @@ and inherit line-height, so user spacing overrides reflow without clipping —
 it is **dismissable** (Escape closes the submenu via the native nested popover),
 **hoverable** (the nested `popover="auto"` panel stays open while the pointer is
 over it), and **persistent** (it stays until dismissed or focus/pointer leaves) —
-`lib/pulsar/components/dropdown_menu.ex:384–392` (hover-intent open), the nested
+`lib/pulsar/components/dropdown_menu.ex:387–395` (hover-intent open), the nested
 `Popover.popover` at `:762–794`.
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
@@ -111,7 +111,7 @@ ArrowRight/ArrowLeft open and close submenus (`:300–309`). Disabled items rema
 in the navigable set (reachable by arrows, Home/End, and typeahead) while
 `activate`/`handleClick`/`openSubmenu` guard on `aria-disabled` — `:361`,
 `:374–377`, `:400`. The keyboard fixture exercises these —
-`test/integration/a11y/keyboard_test.exs`.
+`test/integration/a11y/keyboard/dropdown_menu_test.exs`.
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
@@ -123,7 +123,7 @@ normally. `lib/pulsar/components/popover.ex:246–261`.
 
 **Evidence:** The only single-character keys are type-ahead, which is active *only*
 while the open menu holds focus — it meets the "active only on focus of a component"
-exception and registers no global shortcut — `lib/pulsar/components/dropdown_menu.ex:417–426`.
+exception and registers no global shortcut — `lib/pulsar/components/dropdown_menu.ex:420–429`.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
@@ -136,7 +136,7 @@ tab order. No positive `tabindex` is used.
 
 **Evidence:** Item links require `inner_block` content and derive their purpose
 from that visible text; the component renders no "click here" markup and adds no
-contradicting accessible name — `lib/pulsar/components/dropdown_menu.ex:472,
+contradicting accessible name — `lib/pulsar/components/dropdown_menu.ex:475,
 496–533`.
 
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
@@ -162,7 +162,7 @@ side when the requested side lacks room — `lib/pulsar/components/popover.ex:42
 
 **Evidence:** Items are native `<button>`/`<a>` activated on `click` (fires on
 pointer-up), and the menu opens via the trigger's `click` — no action fires on
-pointer-down — `lib/pulsar/components/dropdown_menu.ex:497`, `:517`.
+pointer-down — `lib/pulsar/components/dropdown_menu.ex:500`, `:517`.
 
 ### 2.5.3 Label in Name (A) — ✓ PASS
 

@@ -2,7 +2,7 @@
 
 **Source:** [`lib/pulsar/components/calendar.ex`](../../lib/pulsar/components/calendar.ex)
 **Tests:** [`test/pulsar/components/calendar_test.exs`](../../test/pulsar/components/calendar_test.exs)
-**Keyboard tests:** [`test/integration/a11y/keyboard_test.exs`](../../test/integration/a11y/keyboard_test.exs)
+**Keyboard tests:** [`test/integration/a11y/keyboard/calendar_test.exs`](../../test/integration/a11y/keyboard/calendar_test.exs)
 **Audited:** 2026-06-11 (code + browser axe gate)
 
 A locale-aware month-grid for selecting a single date or a date range.
@@ -144,11 +144,9 @@ target — `lib/pulsar/components/calendar.ex:479–490`. Navigation across mont
 boundaries automatically shifts the visible view and focuses the target cell —
 `lib/pulsar/components/calendar.ex:519–527`.
 
-Real-browser keyboard tests in `test/integration/a11y/keyboard_test.exs`:
-- `ArrowRight moves the focused cell and Enter selects it` —
-  `test/integration/a11y/keyboard_test.exs:65–73`
-- `clicking a day selects it and writes the hidden ISO value` —
-  `test/integration/a11y/keyboard_test.exs:36–55`
+Real-browser keyboard tests in `test/integration/a11y/keyboard/calendar_test.exs`:
+- `ArrowRight moves the focused cell and Enter selects it`
+- `clicking a day selects it and writes the hidden ISO value`
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
@@ -179,7 +177,7 @@ smooth single-pass change far below the 3-flash/second threshold —
 values are used anywhere. The `refreshCells` helper keeps the roving tabindex
 consistent after selection — `lib/pulsar/components/calendar.ex:406`. The test
 `ArrowRight moves the focused cell` verifies `tabindex="0"` migrates to the new
-cursor — `test/integration/a11y/keyboard_test.exs:65–73`.
+cursor — `test/integration/a11y/keyboard/calendar_test.exs`.
 
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
 
@@ -246,7 +244,7 @@ nav buttons does not trigger navigation or form submission.
 component does not trigger page navigation or form submission itself; those actions
 are caller-initiated via `JS.push(...)`. The test `selecting a day notifies
 LiveView via phx-change` verifies the side-effect is limited to a controlled event
-— `test/integration/a11y/keyboard_test.exs:57–63`.
+— `test/integration/a11y/keyboard/calendar_test.exs`.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 

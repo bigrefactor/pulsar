@@ -171,7 +171,7 @@ pattern):
 |------|--------|
 | `test/support/dev_app/live/keyboard/widget_live.ex` | **Create** keyboard fixture |
 | `test/support/dev_app/router.ex` | **Edit**: add `live "/keyboard/widget", Keyboard.WidgetLive, :index` |
-| `test/integration/a11y/keyboard_test.exs` | **Edit**: add a `describe` block exercising the keys |
+| `test/integration/a11y/keyboard/widget_test.exs` | **Create**: a per-component test module exercising the keys |
 
 ## G. Nice-to-have / check-if-present
 

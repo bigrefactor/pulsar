@@ -222,10 +222,9 @@ that the drag target wraps (`lib/pulsar/components/dropzone.ex:263,
 built-in `phx-drop-target` machinery — it never becomes the *only* path to
 add a file. Keyboard test `dragging files over shows the visible drop
 prompt; leaving hides it` exercises the drag path via synthetic
-`DragEvent`s — `test/integration/a11y/keyboard_test.exs:1266–1303`;
-`selecting a file renders a visible entry row`
-(`test/integration/a11y/keyboard_test.exs:1248–1254`) exercises the
-click-to-browse path end to end.
+`DragEvent`s, and `selecting a file renders a visible entry row` exercises
+the click-to-browse path end to end — both in
+`test/integration/a11y/keyboard/dropzone_test.exs`.
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
@@ -396,4 +395,4 @@ tests exercise the upload and drag paths end to end and assert visible DOM
 state (not just ARIA attributes): file-pick produces a visible entry row,
 cancel removes the row, and dragging over swaps the visible drop-prompt
 text via LiveView's built-in `phx-drop-target-active` class
-(`test/integration/a11y/keyboard_test.exs:1248–1303`).
+(`test/integration/a11y/keyboard/dropzone_test.exs`).

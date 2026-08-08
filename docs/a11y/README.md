@@ -79,8 +79,8 @@ flips it to required once all fixtures pass.
 
 ## Keyboard tests
 
-`test/integration/a11y/keyboard_test.exs` adds real-browser keyboard
-behavior coverage to the same `:integration` suite. Axe-clean catches
+`test/integration/a11y/keyboard/` (one file per component) adds
+real-browser keyboard behavior coverage to the same `:integration` suite. Axe-clean catches
 static a11y problems (missing labels, contrast, ARIA shape) but does not
 exercise behavior — a button could fail to activate on Enter and axe
 would happily report it clean. This suite closes that gap with
@@ -93,7 +93,7 @@ The acceptance signal is concrete and reproducible: temporarily comment
 out the Space/Enter branches in `lib/pulsar/components/button.ex`'s
 `.PulsarButton` colocated hook (`_onKeydown` / `_onKeyup`), run
 `mix assets.build` to rebuild the dev_app bundle, then run
-`mix test --only integration test/integration/a11y/keyboard_test.exs` —
+`mix test --only integration test/integration/a11y/keyboard/button_test.exs` —
 the Button activation test fails with the counter stuck at 0. Revert,
 rebuild, re-run; back to green. **The asset rebuild matters:** the
 dev_app serves a pre-built `priv/static/assets/app.js` and `mix test`

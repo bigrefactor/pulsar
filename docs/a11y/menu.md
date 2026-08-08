@@ -121,7 +121,7 @@ native `<button>`s — vertical toggles on Enter/Space through the hook, horizon
 toggles via the native `popovertarget` — `lib/pulsar/components/menu.ex:438, 456, 555, 583`.
 Arrow keys add roving focus (Up/Down vertical, Left/Right horizontal) and
 Home/End — `:290–314`. A keyboard fixture exercises ArrowDown, Enter-to-expand,
-and Escape — `test/integration/a11y/keyboard_test.exs`.
+and Escape — `test/integration/a11y/keyboard/menu_test.exs`.
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 

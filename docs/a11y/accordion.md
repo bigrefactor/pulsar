@@ -18,7 +18,7 @@ between headers. The component stays in document flow and does not trap focus.
 
 | APG requirement | Implementation |
 | --- | --- |
-| Each accordion header is a `<button>`. | `lib/pulsar/components/accordion.ex:233–245` |
+| Each accordion header is a `<button>`. | `lib/pulsar/components/accordion.ex:234–246` |
 | The button is wrapped in a heading element (`h2`–`h6`) fitting the document outline. | `heading_level` attr (`:173–177`); `<.dynamic_tag>` (`:232`) |
 | The button carries `aria-expanded` reflecting the panel's state. | `:238` (markup), hook `applyState` (`:300–304`) |
 | The button carries `aria-controls` pointing at its panel. | `:237` |
@@ -40,7 +40,7 @@ every header and the open panel across light + dark and reports clean.
 **Evidence line numbers:** `lib/pulsar/components/accordion.ex:124`
 (`@header_base` — `text-muted-foreground … hover:text-foreground`),
 `lib/pulsar/components/accordion.ex:71–79` (`@header_open` open-state tint map),
-`lib/pulsar/components/accordion.ex:404–407` (`header_classes/2` composing them).
+`lib/pulsar/components/accordion.ex:407–410` (`header_classes/2` composing them).
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
@@ -54,7 +54,7 @@ orientation and `aria-expanded`, not by contrast alone.
 **Evidence line numbers:** `lib/pulsar/components/accordion.ex:124`
 (`focus-visible:ring-2 focus-visible:ring-ring` in `@header_base`),
 `lib/pulsar/components/accordion.ex:126` (`@chevron_base` —
-`group-data-[expanded]/item:rotate-180`), `lib/pulsar/components/accordion.ex:244`
+`group-data-[expanded]/item:rotate-180`), `lib/pulsar/components/accordion.ex:245`
 (chevron icon, color inherited from the header button).
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
@@ -67,11 +67,11 @@ jump to the first/last; disabled headers are included in the roving set but
 never open. All interactions have a keyboard path — there is no pointer-only
 affordance.
 
-**Evidence line numbers:** `lib/pulsar/components/accordion.ex:233–234`
-(`<button type="button">`), `lib/pulsar/components/accordion.ex:281–286`
+**Evidence line numbers:** `lib/pulsar/components/accordion.ex:234–235`
+(`<button type="button">`), `lib/pulsar/components/accordion.ex:285–290`
 (`onClick` — toggles on click, which Enter/Space synthesize on a button),
-`lib/pulsar/components/accordion.ex:287–297` (`onKeydown` — ArrowDown/ArrowUp at
-:293–294, Home/End at :295–296), `lib/pulsar/components/accordion.ex:278`
+`lib/pulsar/components/accordion.ex:291–301` (`onKeydown` — ArrowDown/ArrowUp at
+:293–294, Home/End at :295–296), `lib/pulsar/components/accordion.ex:282`
 (`headers` — the roving set, including disabled headers). Tests `headers are
 buttons with aria-expanded, default closed` and `disabled item is aria-disabled,
 not natively disabled, and never open` — `test/pulsar/components/accordion_test.exs`.
@@ -83,9 +83,9 @@ visits the headers in document order with no positive `tabindex` reordering. The
 hook's roving navigation moves focus among headers with Up/Down/Home/End but
 never alters the natural Tab sequence.
 
-**Evidence line numbers:** `lib/pulsar/components/accordion.ex:233–245`
+**Evidence line numbers:** `lib/pulsar/components/accordion.ex:234–246`
 (header `<button>` rendered in slot order, no positive tabindex),
-`lib/pulsar/components/accordion.ex:287–297` (`onKeydown` roving — moves focus
+`lib/pulsar/components/accordion.ex:291–301` (`onKeydown` roving — moves focus
 without rewriting tab order).
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
@@ -104,7 +104,7 @@ focus-visible:ring-ring focus-visible:ring-inset`).
 sticky, fixed, or overlapping content that could cover a focused header or its
 panel — the markup is a plain `<div>` of heading/button/region rows.
 
-**Evidence line numbers:** `lib/pulsar/components/accordion.ex:216–253`
+**Evidence line numbers:** `lib/pulsar/components/accordion.ex:217–254`
 (in-flow container → item → header/region render tree; no sticky/overlay layer).
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
@@ -113,8 +113,8 @@ panel — the markup is a plain `<div>` of heading/button/region rows.
 the up-event so a pointer-down can be cancelled by dragging off), not by
 `pointerdown`/`mousedown`.
 
-**Evidence line numbers:** `lib/pulsar/components/accordion.ex:267`
-(`addEventListener("click", …)`), `lib/pulsar/components/accordion.ex:281–286`
+**Evidence line numbers:** `lib/pulsar/components/accordion.ex:269`
+(`addEventListener("click", …)`), `lib/pulsar/components/accordion.ex:285–290`
 (`onClick` — resolves the header and toggles on click).
 
 ### 2.5.3 Label in Name (A) — ✓ PASS
@@ -125,7 +125,7 @@ leading icon and chevron are decorative.
 
 **Evidence line numbers:** `lib/pulsar/components/accordion.ex:243`
 (`<span>{item.title}</span>` — visible text is the accessible name),
-`lib/pulsar/components/accordion.ex:233–245` (button has no overriding
+`lib/pulsar/components/accordion.ex:234–246` (button has no overriding
 `aria-label`).
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
@@ -136,7 +136,7 @@ CSS px; headers are full-width rows with no overlapping adjacent targets.
 
 **Evidence line numbers:** `lib/pulsar/components/accordion.ex:87–93`
 (`@size_header` padding scale — `px-3 py-2` floor at xs up to `px-6 py-5` at xl),
-`lib/pulsar/components/accordion.ex:233–245` (full-width header button).
+`lib/pulsar/components/accordion.ex:234–246` (full-width header button).
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
@@ -152,13 +152,13 @@ CSS px; headers are full-width rows with no overlapping adjacent targets.
 - **State** — disabled sections carry `aria-disabled="true"` (no native
   `disabled`, so they remain focusable).
 
-**Evidence line numbers:** `lib/pulsar/components/accordion.ex:233–245` (button:
+**Evidence line numbers:** `lib/pulsar/components/accordion.ex:234–246` (button:
 `aria-controls` at :237, `aria-expanded` at :238, `aria-disabled` at :239,
-`title` span at :243), `lib/pulsar/components/accordion.ex:248`
+`title` span at :243), `lib/pulsar/components/accordion.ex:249`
 (`role="region"` + `id` + `aria-labelledby`),
-`lib/pulsar/components/accordion.ex:300–304` (`applyState` — `aria-expanded`
-sync), `lib/pulsar/components/accordion.ex:331–337` (`restore` — re-asserts open
-set after a LiveView patch), `lib/pulsar/components/accordion.ex:256–257`
+`lib/pulsar/components/accordion.ex:303–307` (`applyState` — `aria-expanded`
+sync), `lib/pulsar/components/accordion.ex:334–340` (`restore` — re-asserts open
+set after a LiveView patch), `lib/pulsar/components/accordion.ex:257–258`
 (`mounted`/`updated` both call `restore`). Tests `wires
 aria-controls/aria-labelledby between header and region` and `exposes type +
 collapsible config to the hook` — `test/pulsar/components/accordion_test.exs`.

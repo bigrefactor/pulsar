@@ -2,7 +2,7 @@
 
 **Source:** [`lib/pulsar/components/date_picker.ex`](../../lib/pulsar/components/date_picker.ex)
 **Tests:** [`test/pulsar/components/date_picker_test.exs`](../../test/pulsar/components/date_picker_test.exs)
-**Keyboard tests:** [`test/integration/a11y/keyboard_test.exs`](../../test/integration/a11y/keyboard_test.exs)
+**Keyboard tests:** [`test/integration/a11y/keyboard/date_picker_test.exs`](../../test/integration/a11y/keyboard/date_picker_test.exs)
 **Audited:** 2026-06-11 (code + browser axe gate)
 
 A date input with a locale-aware calendar popover. One or two visible text
@@ -165,12 +165,10 @@ height that would also clip text.
   `Calendar`. Arrow keys, Home/End, PageUp/PageDown, Enter/Space are all
   handled inside the Calendar component — see [`calendar.md`](calendar.md).
 
-Real-browser interaction tests in `test/integration/a11y/keyboard_test.exs`:
+Real-browser interaction tests in `test/integration/a11y/keyboard/date_picker_test.exs`:
 - `picking a day in the popover fills the hidden ISO input` — verifies the
-  calendar-click path writes the ISO value end-to-end —
-  `test/integration/a11y/keyboard_test.exs:994–1015`
-- `typing a date writes the hidden ISO value` — verifies the type-in parse path —
-  `test/integration/a11y/keyboard_test.exs:1017–1045`
+  calendar-click path writes the ISO value end-to-end
+- `typing a date writes the hidden ISO value` — verifies the type-in parse path
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
