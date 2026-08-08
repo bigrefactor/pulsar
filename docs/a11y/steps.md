@@ -25,26 +25,26 @@ no JavaScript.
 check/x-mark icons render through the Icon component (`aria-hidden` by default),
 the loading spinner is an `aria-hidden="true"` span, and the connector line
 between steps is an `aria-hidden="true"` span, all inside an `aria-hidden="true"`
-marker wrapper — `lib/pulsar/components/steps.ex:270–283`. Meaning is carried by
+marker wrapper — `lib/pulsar/components/steps.ex`, `steps/1`. Meaning is carried by
 the visible `label` and a per-state `sr-only` status line, not by the glyph —
-`lib/pulsar/components/steps.ex:285–286`. Test
+`lib/pulsar/components/steps.ex`, `steps/1`. Test
 `sr-only status text is present for screen readers` —
-`test/pulsar/components/steps_test.exs:72`.
+`test/pulsar/components/steps_test.exs`.
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:** The steps are an ordered `<ol>` list with an accessible name via
 `aria-label`, each step an `<li>`; the current step is marked with
-`aria-current="step"` — `lib/pulsar/components/steps.ex:268–269`. Tests
+`aria-current="step"` — `lib/pulsar/components/steps.ex`, `steps/1`. Tests
 `renders an ordered list labeled by aria_label` and
 `marks the current step with aria-current=step` —
-`test/pulsar/components/steps_test.exs:10, 36`.
+`test/pulsar/components/steps_test.exs`.
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** Items render in authored slot order (`Enum.with_index(1)`), so DOM
 order matches both the numbered visual order and the progress sequence —
-`lib/pulsar/components/steps.ex:238, 269`.
+`lib/pulsar/components/steps.ex`, `steps/1`.
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
@@ -52,7 +52,7 @@ order matches both the numbered visual order and the progress sequence —
 glyph/shape — a checkmark for done, an x-mark for error, a spinner for loading,
 the step number (or a dot) for upcoming — and the `<li>` carries an `sr-only`
 status line plus, for the active step, `aria-current="step"` —
-`lib/pulsar/components/steps.ex:269–286`.
+`lib/pulsar/components/steps.ex`, `steps/1`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
@@ -60,7 +60,8 @@ status line plus, for the active step, `aria-current="step"` —
 foreground (`bg-{color} text-{color}-foreground`) or accent text on the
 background (outline/ghost); upcoming and disabled markers and labels use
 `text-muted-foreground` (measured 6.0–7.23:1 on all surfaces) —
-`lib/pulsar/components/steps.ex:345–370`. Per-cell measurements record
+`lib/pulsar/components/steps.ex`, `marker_state/3`, `done_fill/2`,
+`label_classes/2`. Per-cell measurements record
 the rendered text at ~19:1 (light) / ~17:1 (dark) across every variant × color ×
 size cell plus the state-vocabulary and vertical cells —
 [`measurements/steps-light.md`](measurements/steps-light.md),
@@ -69,15 +70,15 @@ deliberately stay AA-legible (`text-muted-foreground`, not a sub-floor grey):
 this is a presentational indicator, not a disabled form control, so it does not
 rely on the WCAG disabled-control contrast exemption — test
 `disabled step is de-emphasized but keeps legible text` —
-`test/pulsar/components/steps_test.exs:120`. The axe gate scans the
+`test/pulsar/components/steps_test.exs`. The axe gate scans the
 `/components/steps/{solid,outline,ghost}` fixtures in light and dark with no
 violations.
 
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** Marker and label sizes use rem-based Tailwind text utilities
-(`text-xs`–`text-lg`) — `lib/pulsar/components/steps.ex:126–132, 155–161`. Text
-scales with the user's font size.
+(`text-xs`–`text-lg`) — `lib/pulsar/components/steps.ex`, `marker_classes/4`,
+`label_classes/2`. Text scales with the user's font size.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
@@ -86,7 +87,8 @@ fixed width. Each horizontal step is `min-w-0 flex-1` and its label is
 `wrap-anywhere` (`overflow-wrap: anywhere`), which both wraps a long single-word
 label and reduces its intrinsic min-content, so the step shrinks to its marker
 instead of forcing the row wider than 320 px — even a dense six-step row
-reflows — `lib/pulsar/components/steps.ex:373–378, 284, 370`. The reflow gate at
+reflows — `lib/pulsar/components/steps.ex`, `item_classes/1`, `label_classes/2`,
+`steps/1`. The reflow gate at
 320 CSS px reports no overflowing cells across the `solid`/`outline`/`ghost`
 fixtures in light and dark — `test/integration/a11y/reflow_test.exs`.
 
@@ -167,7 +169,7 @@ fixtures in light and dark.
 The only animation is the loading spinner, which carries
 `motion-reduce:animate-none` so it freezes to a static ring for users who request
 reduced motion; the marker transitions also carry `motion-reduce:transition-none`
-— `lib/pulsar/components/steps.ex:166, 277`.
+— `lib/pulsar/components/steps.ex`, `steps/1`, `marker_classes/4`.
 
 ## Browser a11y findings
 

@@ -14,46 +14,49 @@ clicks to the input. Optional loading state with spinner.
 ### 1.1.1 Non-text Content (A) — ✓ PASS
 
 **Evidence:** Loading spinner SVG has `aria-hidden="true"` —
-`lib/pulsar/components/switch.ex:525`. The visual track button has
-`tabindex="-1"` so AT doesn't see it as a separate control —
-`lib/pulsar/components/switch.ex:507`.
+`lib/pulsar/components/switch.ex`, `render_switch_only/1`. The visual track
+has `tabindex="-1"` so AT doesn't see it as a separate control —
+`lib/pulsar/components/switch.ex`.
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:**
 - Real input has explicit `role="switch"` —
-  `lib/pulsar/components/switch.ex:496`
+  `lib/pulsar/components/switch.ex`, `render_switch_only/1`
 - `aria-checked` reflects state explicitly —
-  `lib/pulsar/components/switch.ex:497`
+  `lib/pulsar/components/switch.ex`, `render_switch_only/1`
 - Test `renders role="switch" on the input` —
-  `test/pulsar/components/switch_test.exs:276–281`
-- Test `renders aria-checked` —
-  `test/pulsar/components/switch_test.exs:283–299`
+  `test/pulsar/components/switch_test.exs`
+- Test `renders aria-checked="true" when checked` and
+  Test `renders aria-checked="false" when not checked` —
+  `test/pulsar/components/switch_test.exs`
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** DOM order: hidden companion → real input → visual track →
 thumb. Visual order matches DOM order —
-`lib/pulsar/components/switch.ex:478–547`.
+`lib/pulsar/components/switch.ex`, `render_switch_only/1`.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** State change combines color shift + thumb translation +
-`aria-checked` value flip — `lib/pulsar/components/switch.ex:104–127, 497`.
+`aria-checked` value flip — `lib/pulsar/components/switch.ex`,
+`thumb_classes/2`, `render_switch_only/1`.
 Disabled combines opacity + cursor + native `disabled` —
-`lib/pulsar/components/switch.ex:240`.
+`lib/pulsar/components/switch.ex`, `base_switch_classes/0`,
+`render_switch_only/1`.
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** On/off is signaled by thumb position (not color alone) —
-`lib/pulsar/components/switch.ex:105, 110, 115, 120, 125`. Invalid is
+`lib/pulsar/components/switch.ex`, `thumb_classes/2`. Invalid is
 `ring-danger` plus `aria-invalid="true"` —
-`lib/pulsar/components/switch.ex:500, 635`.
+`lib/pulsar/components/switch.ex`, `state_classes/2`, `render_switch_only/1`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Color matrix for 7 colors × 3 variants —
-`lib/pulsar/components/switch.ex:131–230`. Browser measurement of 120
+`lib/pulsar/components/switch.ex`, `track_variant_classes/2`. Browser measurement of 120
 cells per theme: all pass, min 19.27:1 (light) / 16.98:1 (dark)
 ([light](measurements/switch-light.md),
 [dark](measurements/switch-dark.md)).
@@ -65,16 +68,17 @@ are non-text and covered under 1.4.11.
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** Track/thumb sizes use rem-based Tailwind classes
-(`h-3.5`, `h-7`, etc.) — `lib/pulsar/components/switch.ex:102–127`.
+(`h-3.5`, `h-7`, etc.) — `lib/pulsar/components/switch.ex`,
+`track_size_classes/1`, `thumb_classes/2`.
 
 **Notes:** Thumb translation distances are written in pixel custom
-values (e.g., `translate-x-[24px]`) — `lib/pulsar/components/switch.ex:110`.
-These don't affect text resizing but won't scale to ems.
+values (e.g., `translate-x-[24px]`) — `lib/pulsar/components/switch.ex`,
+`thumb_classes/2`. These don't affect text resizing but won't scale to ems.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
-**Evidence:** `inline-flex` wrapper — `lib/pulsar/components/switch.ex:479`.
-No fixed widths.
+**Evidence:** `inline-flex` wrapper — `lib/pulsar/components/switch.ex`,
+`render_switch_only/1`. No fixed widths.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
@@ -84,15 +88,15 @@ No fixed widths.
   `--color-border-strong` = `gray-500` (light) / `gray-400` (dark),
   which clear 3:1 against `--color-background` (≈4.83:1 light,
   ≈7.5:1 dark) —
-  `lib/pulsar/components/switch.ex:548–577`
+  `lib/pulsar/components/switch.ex`, `track_variant_classes/2`
 - Checked-state track uses semantic color tokens at high opacity
   (`bg-{color}/90` solid, `bg-{color}/10 border-{color}` outline,
-  `bg-{color}/15` ghost) — `lib/pulsar/components/switch.ex:131–209`
+  `bg-{color}/15` ghost) — `lib/pulsar/components/switch.ex`, `track_variant_classes/2`
 - Focus ring on the **visible track** (not the `sr-only` input) uses
   `peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background`
-  — `lib/pulsar/components/switch.ex:216–218`
+  — `lib/pulsar/components/switch.ex`, `base_switch_classes/0`
 - Thumb has shadow rings —
-  `lib/pulsar/components/switch.ex:597–607`
+  `lib/pulsar/components/switch.ex`, `thumb_variant_classes/1`
 
 The ring on the visible track resolves to the standard `--color-ring`
 token at full opacity, matching Button (5.02:1 light / 6.72:1 dark).
@@ -109,8 +113,8 @@ background on the visible track div, not the `sr-only` input.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
-**Evidence:** Track has fixed `h-*` — `lib/pulsar/components/switch.ex:104–127`.
-No text inside the switch itself. Browser test injects the WCAG
+**Evidence:** Track has fixed `h-*` — `lib/pulsar/components/switch.ex`,
+`track_size_classes/1`. No text inside the switch itself. Browser test injects the WCAG
 overrides and re-measures: 0 cells overflow
 ([light](measurements/switch-light.md#text-spacing-override-wcag-1412),
 [dark](measurements/switch-dark.md#text-spacing-override-wcag-1412)).
@@ -118,11 +122,11 @@ overrides and re-measures: 0 cells overflow
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
 **Evidence:** Real input is a native checkbox with `role="switch"`,
-keyboard-toggleable via Space — `lib/pulsar/components/switch.ex:488–502`.
-Visual track has `tabindex="-1"` so it's not in the tab order —
-`lib/pulsar/components/switch.ex:507`. Clicks on the visual track
-dispatch a click to the real input —
-`lib/pulsar/components/switch.ex:508`.
+keyboard-toggleable via Space — `lib/pulsar/components/switch.ex`,
+`render_switch_only/1`. Visual track has `tabindex="-1"` so it's not
+in the tab order — `lib/pulsar/components/switch.ex`. Clicks on the
+visual track dispatch a click to the real input —
+`lib/pulsar/components/switch.ex`, `render_switch_only/1`.
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
@@ -132,11 +136,11 @@ preserved.
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
 **Evidence:** Loading spinner uses `animate-spin` (essential per WCAG
-exemption) — `lib/pulsar/components/switch.ex:526`. Track
+exemption) — `lib/pulsar/components/switch.ex`, `render_switch_only/1`. Track
 (`transition-[background-color,border-color,box-shadow]`) and thumb
 (`transition-[transform,background-color]`) are smooth 200ms
 (`duration-normal`) transitions —
-`lib/pulsar/components/switch.ex:213, 225`.
+`lib/pulsar/components/switch.ex`, `base_switch_classes/0`, `base_thumb_classes/0`.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
@@ -146,13 +150,15 @@ rotation, not flash).
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
 **Evidence:** Real input is `sr-only peer`; tabindex is the browser
-default (0). Visual track is `tabindex="-1"`. No positive tabindex —
-`lib/pulsar/components/switch.ex:493, 507`.
+default (0) — `lib/pulsar/components/switch.ex`, `render_switch_only/1`.
+Visual track is `tabindex="-1"`. No positive tabindex —
+`lib/pulsar/components/switch.ex`.
 
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
 
 **Evidence:** Switch accepts `aria_label` and `aria_labelledby`
-attributes — `lib/pulsar/components/switch.ex:376–384, 498–499`. The
+attributes — `lib/pulsar/components/switch.ex`, `switch/1`,
+`render_switch_only/1`. The
 `field` wrapper provides the visible label and passes it via inline
 `<label for=>` for the switch type.
 
@@ -161,12 +167,12 @@ attributes — `lib/pulsar/components/switch.ex:376–384, 498–499`. The
 **Evidence:** Real input is `sr-only`. The visible track shows a real
 keyboard-focus ring via
 `peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2`
-— `lib/pulsar/components/switch.ex:216–218`. Additional peer-focus
+— `lib/pulsar/components/switch.ex`, `base_switch_classes/0`. Additional peer-focus
 cues remain on the track (`peer-focus-visible:bg-*`,
 `peer-focus-visible:border-*` —
-`lib/pulsar/components/switch.ex:573, 585, 596`) and thumb
+`lib/pulsar/components/switch.ex`, `track_variant_classes/2`) and thumb
 (`peer-focus-visible:scale-110` —
-`lib/pulsar/components/switch.ex:255`).
+`lib/pulsar/components/switch.ex`, `base_thumb_classes/0`).
 
 Ring resolves to `--color-ring` (5.02:1 light / 6.72:1 dark) — passes
 the 3:1 minimum.
@@ -179,22 +185,23 @@ the 3:1 minimum.
 
 **Evidence:** Native checkbox click; visual track uses
 `phx-click={JS.dispatch("click", to: ...)}` which fires on click
-(mouseup) — `lib/pulsar/components/switch.ex:508`.
+(mouseup) — `lib/pulsar/components/switch.ex`, `render_switch_only/1`.
 
 ### 2.5.3 Label in Name (A) — ✓ PASS
 
 **Evidence:** `aria_label` is supported but optional. When `field`
 provides an inline `<label>`, the accessible name comes from that visible
-text — `lib/pulsar/components/field.ex:406–432`.
+text — `lib/pulsar/components/field.ex`, `render_input/1`.
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** The visible track keeps its design width (`xs`=28px …
 `xl`=64px), all already ≥24px wide. The wrapper sets a 24px floor
-(`min-h-6`, `lib/pulsar/components/switch.ex:458`) with the pill centered
+(`min-h-6`, `lib/pulsar/components/switch.ex`, `render_switch_only/1`) with
+the pill centered
 inside; the click target is an absolute overlay that is a sibling of the
 track (not the track itself) and carries the `phx-click`
-(`lib/pulsar/components/switch.ex:526–531`), so every size clicks through a
+(`lib/pulsar/components/switch.ex`, `render_switch_only/1`), so every size clicks through a
 ≥24×24 box without changing the pill. Browser measurement: 120/120 cells
 pass ≥24×24 across all 6 colors, 5 states, and 5 sizes
 ([light](measurements/switch-light.md), [dark](measurements/switch-dark.md)).
@@ -213,14 +220,15 @@ clickable height grew to the 24px floor.
 ### 3.2.2 On Input (A) — ✓ PASS
 
 **Evidence:** `:rest` forwards `phx-change`, but component itself
-triggers no navigation/submit — `lib/pulsar/components/switch.ex:393, 501`.
+triggers no navigation/submit — `lib/pulsar/components/switch.ex`,
+`switch/1`, `render_switch_only/1`.
 
 ### 3.3.1 Error Identification (A) — ✓ PASS
 
 **Evidence:** `aria-invalid={@invalid && "true"}` —
-`lib/pulsar/components/switch.ex:500`. Test
+`lib/pulsar/components/switch.ex`, `render_switch_only/1`. Test
 `sets aria-invalid for field errors` —
-`test/pulsar/components/switch_test.exs:258–265`.
+`test/pulsar/components/switch_test.exs`.
 
 ### 3.3.2 Labels or Instructions (A) — ✓ PASS
 
@@ -236,21 +244,26 @@ switch doesn't suppress.
 
 **Evidence:**
 - Role: explicit `role="switch"` on the input —
-  `lib/pulsar/components/switch.ex:496`
+  `lib/pulsar/components/switch.ex`, `render_switch_only/1`
 - Name: `aria_label`/`aria_labelledby` or associated `<label for=>` —
-  `lib/pulsar/components/switch.ex:498–499`
+  `lib/pulsar/components/switch.ex`, `render_switch_only/1`
 - Value: `aria-checked="true"`/`"false"` —
-  `lib/pulsar/components/switch.ex:497`
+  `lib/pulsar/components/switch.ex`, `render_switch_only/1`
 - State: `aria-invalid`, native `disabled`/`required` —
-  `lib/pulsar/components/switch.ex:494–500`
+  `lib/pulsar/components/switch.ex`, `render_switch_only/1`
 - Tests assert `role="switch"`, `aria-checked`, `aria-label`,
-  `aria-labelledby`, `aria-invalid` —
-  `test/pulsar/components/switch_test.exs:244–299`
+  `aria-labelledby`, `aria-invalid` — `test/pulsar/components/switch_test.exs`:
+  - Test `renders role="switch" on the input`
+  - Test `renders aria-checked="true" when checked`
+  - Test `renders aria-checked="false" when not checked`
+  - test "includes proper ARIA attributes"
+  - test "supports aria_labelledby"
+  - test "sets aria-invalid for field errors"
 
 ### 4.1.3 Status Messages (AA) — ✓ PASS
 
 **Evidence:** `aria-invalid` reflects validation —
-`lib/pulsar/components/switch.ex:500`. Loading state is communicated via
+`lib/pulsar/components/switch.ex`, `render_switch_only/1`. Loading state is communicated via
 `data-loading="true"` on the track and thumb; the spinner SVG is
 `aria-hidden` and intended as decorative. Note that the switch does
 *not* set `aria-busy` for the loading state, which would be the more

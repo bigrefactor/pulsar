@@ -15,11 +15,11 @@ header, loading state, and empty state.
 
 **Evidence:**
 - Empty-state SVG icon has `aria-hidden="true"` —
-  `lib/pulsar/components/table.ex:398, 453`
+  `lib/pulsar/components/table.ex`, `table/1`
 - Action column `<th>` contains visually-hidden text label
-  `<span class="sr-only">Actions</span>` — `lib/pulsar/components/table.ex:377`
-- Tests `decorative SVG has aria-hidden`, `includes screen reader text for actions` —
-  `test/pulsar/components/table_test.exs:381–396, 417–428`
+  `<span class="sr-only">Actions</span>` — `lib/pulsar/components/table.ex`, `table/1`
+- Test `decorative SVG has aria-hidden` — `test/pulsar/components/table_test.exs`
+- Test `includes screen reader text for actions` — `test/pulsar/components/table_test.exs`
 
 **Notes:** Decorative graphics hidden from AT; the actions column has a
 programmatic name even though it has no visible header text.
@@ -28,12 +28,12 @@ programmatic name even though it has no visible header text.
 
 **Evidence:**
 - Native `<table>` with `<thead>` and `<tbody>` —
-  `lib/pulsar/components/table.ex:366, 367, 381`
-- Column headers use `<th scope="col">` — `lib/pulsar/components/table.ex:369–378`
+  `lib/pulsar/components/table.ex`, `table/1`
+- Column headers use `<th scope="col">` — `lib/pulsar/components/table.ex`, `table/1`
 - Test `renders table headers correctly` asserts `scope="col"` —
-  `test/pulsar/components/table_test.exs:33–47`
+  `test/pulsar/components/table_test.exs`
 - Test `includes proper semantic markup` asserts `<table>`/`<thead>`/`<tbody>`/`scope="col"` —
-  `test/pulsar/components/table_test.exs:365–379`
+  `test/pulsar/components/table_test.exs`
 
 **Notes:** No row headers — the component treats all data cells as
 `<td>`, which is correct for a generic data table where rows aren't
@@ -43,26 +43,26 @@ see 2.4.6 for full accessible-name affordances.
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** Rows render in `Enum.with_index` order over `@rows`;
-columns render in slot order — `lib/pulsar/components/table.ex:412–433`.
+columns render in slot order — `lib/pulsar/components/table.ex`.
 Action column always appears last, matching its visual position.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** No instructions rely on column color or shape. Striping
 and sticky header are decorative —
-`lib/pulsar/components/table.ex:213–217, 531`.
+`lib/pulsar/components/table.ex`, `build_container_classes/1`.
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** Color variants are decorative emphasis on the header.
 Row-click hover state combines `cursor-pointer`, hover background, and
-focus ring, not color alone — `lib/pulsar/components/table.ex:562–567`.
+focus ring, not color alone — `lib/pulsar/components/table.ex`, `build_row_classes/1`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Header `solid` variant uses paired `bg-*` / `text-*-foreground`
-tokens — `lib/pulsar/components/table.ex:200–209`. Empty state uses
-`text-muted-foreground` — `lib/pulsar/components/table.ex:397, 452`.
+tokens — `lib/pulsar/components/table.ex`, `build_header_classes/1`. Empty state uses
+`text-muted-foreground` — `lib/pulsar/components/table.ex`, `table/1`.
 Browser measurement of 56 cells across both themes: all pass, min
 19.27:1 (light) / 16.98:1 (dark) ([light](measurements/table-light.md),
 [dark](measurements/table-dark.md)). Existing axe `color-contrast`
@@ -77,14 +77,15 @@ to render those before re-measuring.
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** Cell sizing uses `rem`-based Tailwind classes (`text-xs`
-through `text-xl`) — `lib/pulsar/components/table.ex:126–147`. No fixed
+through `text-xl`) — `lib/pulsar/components/table.ex`,
+`build_header_cell_classes/3`, `build_data_cell_classes/3`. No fixed
 `px` font sizes or heights.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** Container is wrapped in `relative overflow-x-auto` —
-`lib/pulsar/components/table.ex:155`. Table uses `w-full border-collapse`
-— `lib/pulsar/components/table.ex:151`.
+`lib/pulsar/components/table.ex`, `build_container_classes/1`. Table uses `w-full border-collapse`
+— `lib/pulsar/components/table.ex`, `build_table_base_classes/0`.
 
 **Notes:** Horizontal scroll on the wrapper is the WCAG-recommended
 pattern for wide data tables at narrow viewports; users can scroll the
@@ -96,13 +97,13 @@ within the component is acceptable.
 
 **Evidence:**
 - Row borders use `border-border/50` (50% opacity) —
-  `lib/pulsar/components/table.ex:222` — decorative, exempt under
+  `lib/pulsar/components/table.ex`, `build_row_classes/1` — decorative, exempt under
   WCAG 1.4.11.
 - Outline variant header uses `border-b-2 border-border` —
-  `lib/pulsar/components/table.ex:194`.
+  `lib/pulsar/components/table.ex`, `build_header_classes/1`.
 - Row focus ring uses `focus-visible:ring-ring focus-visible:ring-offset-2`
   resolving to the standard `--color-ring` token —
-  `lib/pulsar/components/table.ex:666`.
+  `lib/pulsar/components/table.ex`, `build_row_classes/1`.
 
 Row focus ring matches Button at full opacity (5.02:1 / 6.72:1) —
 above the 3:1 minimum in both themes.
@@ -115,19 +116,20 @@ neutral `--color-ring` token at full opacity and using `focus-visible:`
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
 **Evidence:** No fixed-height cells; padding-only sizing —
-`lib/pulsar/components/table.ex:126–147`.
+`lib/pulsar/components/table.ex`, `build_header_cell_classes/3`,
+`build_data_cell_classes/3`.
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
 **Evidence:**
 - Row with `row_click` gets `tabindex="0"` and `role="button"` —
-  `lib/pulsar/components/table.ex:417–418`
+  `lib/pulsar/components/table.ex`, `table/1`
 - Colocated `.PulsarTableRow` hook activates on Enter or Space —
-  `lib/pulsar/components/table.ex:467–489`
+  `lib/pulsar/components/table.ex`, `table/1`
 - Hook checks `role === "button"` before binding —
-  `lib/pulsar/components/table.ex:471`
+  `lib/pulsar/components/table.ex`, `table/1`
 - Test `adds keyboard accessibility attributes when row_click provided` —
-  `test/pulsar/components/table_test.exs:398–415`
+  `test/pulsar/components/table_test.exs`
 
 **Notes:** Static (non-clickable) tables are inherently keyboard-safe —
 no interactive elements added by the component.
@@ -135,14 +137,14 @@ no interactive elements added by the component.
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
 **Evidence:** Hook handles only Enter/Space; does not block Tab —
-`lib/pulsar/components/table.ex:473–478`.
+`lib/pulsar/components/table.ex`, `table/1`.
 
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
 **Evidence:** Loading skeleton uses `animate-pulse` which is
 essential-to-function (loading indicator, exempt under 2.2.2) —
-`lib/pulsar/components/table.ex:439, 442`. Row transitions are smooth
-`transition-colors` — `lib/pulsar/components/table.ex:221`.
+`lib/pulsar/components/table.ex`, `table/1`. Row transitions are smooth
+`transition-colors` — `lib/pulsar/components/table.ex`, `build_row_classes/1`.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
@@ -152,7 +154,7 @@ essential-to-function (loading indicator, exempt under 2.2.2) —
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
 **Evidence:** Clickable rows use `tabindex="0"` —
-`lib/pulsar/components/table.ex:417`. Reading order is row-then-cell
+`lib/pulsar/components/table.ex`, `table/1`. Reading order is row-then-cell
 following DOM. No positive `tabindex`.
 
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
@@ -160,22 +162,23 @@ following DOM. No positive `tabindex`.
 **Evidence:** Three first-class accessible-name affordances are exposed on
 `table/1`:
 
-* `aria_label` attr — `lib/pulsar/components/table.ex:285–287`,
+* `aria_label` attr — `lib/pulsar/components/table.ex`, `table/1`,
   rendered as `aria-label` on `<table>` —
-  `lib/pulsar/components/table.ex:407`.
-* `aria_labelledby` attr — `lib/pulsar/components/table.ex:289–291`,
+  `lib/pulsar/components/table.ex`, `table/1`.
+* `aria_labelledby` attr — `lib/pulsar/components/table.ex`, `table/1`,
   rendered as `aria-labelledby` —
-  `lib/pulsar/components/table.ex:408`.
-* `:caption` slot — `lib/pulsar/components/table.ex:308–309`, rendered
+  `lib/pulsar/components/table.ex`, `table/1`.
+* `:caption` slot — `lib/pulsar/components/table.ex`, `table/1`, rendered
   as the first child of `<table>` —
-  `lib/pulsar/components/table.ex:411–413`.
+  `lib/pulsar/components/table.ex`, `table/1`.
 
 If none of these is provided (and no `aria-label` / `aria-labelledby`
 passes through the global `:rest`), the component emits
 `Logger.warning` to nudge the caller —
-`lib/pulsar/components/table.ex:566–582`. Rendering is not blocked. The
+`lib/pulsar/components/table.ex`, `warn_if_missing_accessible_name/1`.
+Rendering is not blocked. The
 docstring documents all three patterns —
-`lib/pulsar/components/table.ex:319–367`.
+`lib/pulsar/components/table.ex`, `table/1`.
 
 Column-level labels remain in place: each `<:col>` slot requires a
 `label`, and the action column carries an `sr-only` "Actions" header.
@@ -189,7 +192,7 @@ the global-`:rest` passthrough path.
 
 **Evidence:** Row focus uses
 `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background`
-— `lib/pulsar/components/table.ex:666`. Ring resolves to the standard
+— `lib/pulsar/components/table.ex`, `build_row_classes/1`. Ring resolves to the standard
 `--color-ring` token at 5.02:1 (light) / 6.72:1 (dark).
 
 **Notes:** Uses `focus-visible:` (keyboard-only) consistent with
@@ -202,29 +205,29 @@ row.
 `[&_thead_th]:sticky [&_thead_th]:top-0 [&_thead_th]:z-docked`
 **and** a size-appropriate `[&_tbody_tr]:scroll-mt-{N}` so focused
 rows scroll clear of the sticky thead —
-`lib/pulsar/components/table.ex:626–637`. Per-size scroll-margin
+`lib/pulsar/components/table.ex`, `build_container_classes/1`. Per-size scroll-margin
 values mirror the thead row height —
-`lib/pulsar/components/table.ex:149–157`.
+`lib/pulsar/components/table.ex`, `build_container_classes/1`.
 
-Test: `applies size-appropriate scroll-margin on rows so focus is not
-obscured` — `test/pulsar/components/table_test.exs`.
+Test `applies size-appropriate scroll-margin on rows so focus is not obscured` —
+`test/pulsar/components/table_test.exs`.
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 
 **Evidence:** Hook listens for `keydown` Enter/Space and triggers
-`el.click()` — `lib/pulsar/components/table.ex:473–478`. Native click on
+`el.click()` — `lib/pulsar/components/table.ex`, `table/1`. Native click on
 the row uses `mouseup`.
 
 ### 2.5.3 Label in Name (A) — ✓ PASS
 
 **Evidence:** Clickable row has no `aria-label` injected by the
 component; accessible name is computed from cell text content. Callers
-can override via `rest` — `lib/pulsar/components/table.ex:285`.
+can override via `rest` — `lib/pulsar/components/table.ex`, `table/1`.
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Row height at the smallest size is dictated by `py-1 text-xs`
-(`lib/pulsar/components/table.ex:144`) which yields roughly 24px row
+(`lib/pulsar/components/table.ex`, `build_data_cell_classes/3`) which yields roughly 24px row
 height for `xs`. Clickable rows span the full table width, so width is
 not a concern — only height. Browser measurement of 56 fixture
 cells (table headers, cells, multiple sizes): all rows ≥ 24×24
@@ -242,16 +245,16 @@ metrics; sm/md/lg sizes exceed 32 px.
 
 **Evidence:**
 - Native `<table>`, `<thead>`, `<tbody>`, `<tr>`, `<th>`, `<td>` carry
-  implicit roles — `lib/pulsar/components/table.ex:366–445`
+  implicit roles — `lib/pulsar/components/table.ex`, `table/1`
 - Loading state exposes `aria-busy={to_string(@loading)}` on the
-  `<table>` — `lib/pulsar/components/table.ex:366`
+  `<table>` — `lib/pulsar/components/table.ex`, `table/1`
 - Clickable rows add explicit `role="button"` —
-  `lib/pulsar/components/table.ex:418`
+  `lib/pulsar/components/table.ex`, `table/1`
 - Column headers carry `scope="col"` —
-  `lib/pulsar/components/table.ex:371, 376`
+  `lib/pulsar/components/table.ex`, `table/1`
 
 **Notes:** Empty state row uses `class="only:table-row hidden"` —
-`lib/pulsar/components/table.ex:388–391`. The `only:` Tailwind variant
+`lib/pulsar/components/table.ex`, `table/1`. The `only:` Tailwind variant
 relies on the empty `<tr>` being `:only-child` of `<tbody>` to display.
 This is a clever CSS-only solution but exposes a tabIndex-less hidden
 row to AT until it becomes the only child. Functionally safe but worth
@@ -261,9 +264,9 @@ noting.
 
 **Evidence:**
 - Loading state renders a visually-hidden `role="status" aria-live="polite"`
-  region announcing "Loading rows" — `lib/pulsar/components/table.ex:358–365`
+  region announcing "Loading rows" — `lib/pulsar/components/table.ex`, `table/1`
 - `aria-busy="true"` set on the `<table>` while loading —
-  `lib/pulsar/components/table.ex:366`
+  `lib/pulsar/components/table.ex`, `table/1`
 
 **Notes:** Loading skeletons are visual; the SR announcement and
 `aria-busy` together convey state programmatically.
