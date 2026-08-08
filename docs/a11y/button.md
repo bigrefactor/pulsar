@@ -15,7 +15,7 @@ with variants, sizes, loading, disabled, pressed, and disclosure states.
 - Loading spinner `aria-hidden="true"` — `lib/pulsar/components/button.ex`, `render_button_content/1`
 - `aria_label` attr supported for icon-only buttons —
   `lib/pulsar/components/button.ex`, `button/1`
-- Test `test "supports aria-label for icon-only buttons"` —
+- `test "supports aria-label for icon-only buttons"` —
   `test/pulsar/components/button_test.exs`
 
 **Notes:** Decorative SVG spinner is correctly hidden from AT. Callers
@@ -196,7 +196,7 @@ available as a supplement for icon-only buttons —
   `focus-visible:ring-ring` — `lib/pulsar/components/button.ex`, `base_button_classes/0`
 - Link variant overrides ring with `focus-visible:underline` —
   `lib/pulsar/components/button.ex`, `variant_classes/1`
-- Test `test "includes focus ring classes"` — `test/pulsar/components/button_test.exs`
+- `test "includes focus ring classes"` — `test/pulsar/components/button_test.exs`
 - Browser measurement: `--color-ring` resolves to 5.02:1 (light) and
   6.72:1 (dark) against the page background — passes the 3:1 non-text
   contrast minimum. Disabled and loading buttons correctly report
