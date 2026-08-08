@@ -14,12 +14,12 @@ landmark.
 ### 1.1.1 Non-text Content (A) — ✓ PASS
 
 **Evidence:** Breadcrumbs are delegated to `Pulsar.Components.Breadcrumb`
-— `lib/pulsar/components/header.ex:258–262` — whose chevron separators
+— `lib/pulsar/components/header.ex`, `header/1` — whose chevron separators
 render with `aria-hidden="true"`; see
 [`docs/a11y/breadcrumb.md`](breadcrumb.md) and
 `lib/pulsar/components/breadcrumb.ex`. Test
-`icons have proper accessibility attributes` —
-`test/pulsar/components/header_test.exs:513–527`.
+`test "icons have proper accessibility attributes"` —
+`test/pulsar/components/header_test.exs`.
 
 **Notes:** Decorative separators are correctly hidden; meaningful text
 in breadcrumbs comes from slot content.
@@ -28,30 +28,30 @@ in breadcrumbs comes from slot content.
 
 **Evidence:**
 - Wrapper renders semantic `<header>` landmark —
-  `lib/pulsar/components/header.ex:257`
+  `lib/pulsar/components/header.ex`, `header/1`
 - Title uses `Phoenix.Component.dynamic_tag` with the caller's chosen
-  heading level (`h1` default, configurable `h1`–`h6`) —
-  `lib/pulsar/components/header.ex:203–206, 266–268`
+  heading level (`h1` default, configurable `h1`–`h6`) — `header/1`
 - Breadcrumbs are delegated to `Pulsar.Components.Breadcrumb`, which
   renders `<nav aria-label="Breadcrumb">` wrapping an `<ol>` of `<li>`
-  items — delegation at `lib/pulsar/components/header.ex:258–262`; the
-  breadcrumb list semantics live in `lib/pulsar/components/breadcrumb.ex`
-  (see [`docs/a11y/breadcrumb.md`](breadcrumb.md))
+  items — delegation at `header/1`; the breadcrumb list semantics live in
+  `lib/pulsar/components/breadcrumb.ex` (see [`docs/a11y/breadcrumb.md`](breadcrumb.md))
 - Current page is marked `aria-current="page"` by the Breadcrumb component
   — `lib/pulsar/components/breadcrumb.ex` (see [`breadcrumb.md`](breadcrumb.md))
 - Tests assert `<header>`, `<h1>`, `<nav>`, `<ol>`, `aria-label="Breadcrumb"`,
-  `aria-current="page"` — `test/pulsar/components/header_test.exs:481–528`
+  `aria-current="page"` — `test "uses proper semantic HTML"`,
+  `test "breadcrumb navigation has proper ARIA"` —
+  `test/pulsar/components/header_test.exs`
 
 **Notes:** Breadcrumb structure follows the WAI-ARIA breadcrumb pattern
 in the Breadcrumb component. The header's `as` attribute uses
-`values: ~w(h1 h2 h3 h4 h5 h6)`
-(`lib/pulsar/components/header.ex:205`) so the heading is always a real
-heading element, never a styled `<div>`.
+`values: ~w(h1 h2 h3 h4 h5 h6)` (`lib/pulsar/components/header.ex`,
+`header/1`) so the heading is always a real heading element, never a
+styled `<div>`.
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** DOM order is breadcrumb → title → subtitle → actions →
-divider — `lib/pulsar/components/header.ex:257–282`. Layout uses
+divider — `lib/pulsar/components/header.ex`, `header/1`. Layout uses
 `sm:flex-row sm:justify-between` rather than visual reordering.
 
 **Notes:** On desktop, actions visually appear right-aligned but remain
@@ -62,9 +62,9 @@ expectation.
 
 **Evidence:** No instructions in the component rely on shape/color/
 position. Variants use a mix of border, background, and text color
-(`lib/pulsar/components/header.ex:154–182`); current breadcrumb is
-identified by both `aria-current="page"` and `font-medium` in the
-Breadcrumb component — `lib/pulsar/components/breadcrumb.ex` (see
+(`lib/pulsar/components/header.ex`, `variant_classes/2`); current
+breadcrumb is identified by both `aria-current="page"` and `font-medium`
+in the Breadcrumb component — `lib/pulsar/components/breadcrumb.ex` (see
 [`breadcrumb.md`](breadcrumb.md)).
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
@@ -76,15 +76,13 @@ Header variants are decorative emphasis only.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
-**Evidence:** Subtitle uses `text-muted-foreground`
-across all sizes — `lib/pulsar/components/header.ex:129, 133, 137, 141, 145`.
-Breadcrumb text contrast is owned by the Breadcrumb component —
-`lib/pulsar/components/breadcrumb.ex` (see [`breadcrumb.md`](breadcrumb.md)).
-Solid variants pair `*-100`
-backgrounds with `*-900` foregrounds —
-`lib/pulsar/components/header.ex:174–180`. Browser measurement across
-both themes: neutral content cells reach 19.27:1 (light) / 16.98:1 (dark)
-([light](measurements/header-light.md),
+**Evidence:** Subtitle uses `text-muted-foreground` across all sizes —
+`lib/pulsar/components/header.ex`, `header/1`. Breadcrumb text contrast
+is owned by the Breadcrumb component — `lib/pulsar/components/breadcrumb.ex`
+(see [`breadcrumb.md`](breadcrumb.md)). Solid variants pair `*-100`
+backgrounds with `*-900` foregrounds — `variant_classes/2`. Browser
+measurement across both themes: neutral content cells reach 19.27:1
+(light) / 16.98:1 (dark) ([light](measurements/header-light.md),
 [dark](measurements/header-dark.md)).
 
 **Notes:** The header fixture exercises sizes (xs–xl), heading levels
@@ -102,20 +100,19 @@ to exceed 4.5:1 in both palettes.
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** All title and subtitle sizes use `rem`-based Tailwind
-`text-*` classes — `lib/pulsar/components/header.ex:127–148`. No fixed
-`px` heights on heading elements.
+`text-*` classes — `lib/pulsar/components/header.ex`, `header/1`. No
+fixed `px` heights on heading elements.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:**
 - Content row uses `flex flex-col sm:flex-row sm:items-start sm:justify-between` —
-  `lib/pulsar/components/header.ex:264`
+  `lib/pulsar/components/header.ex`, `header/1`
 - Breadcrumb `<ol>` uses `flex-wrap` in the Breadcrumb component —
   `lib/pulsar/components/breadcrumb.ex` (see [`breadcrumb.md`](breadcrumb.md))
-- Title block uses `flex-1 min-w-0` to prevent text overflow —
-  `lib/pulsar/components/header.ex:265`
-- Test `has responsive flex classes for mobile/desktop` —
-  `test/pulsar/components/header_test.exs:428–447`
+- Title block uses `flex-1 min-w-0` to prevent text overflow — `header/1`
+- `test "has responsive flex classes for mobile/desktop"` —
+  `test/pulsar/components/header_test.exs`
 
 **Notes:** Layout collapses to a stacked column at narrow viewports;
 breadcrumb chips wrap rather than overflow.
@@ -123,12 +120,11 @@ breadcrumb chips wrap rather than overflow.
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** The outline variant's bottom border routes through
-`border-border-strong` for every color —
-`lib/pulsar/components/header.ex:165–171`. The optional divider `hr` uses
-the same token — `lib/pulsar/components/header.ex:281`. Browser
-measurement of the outline variant across all seven colors: every border
-cell passes in both themes (4.63:1 light / 6.82:1 dark)
-([light](measurements/header-light.md),
+`border-border-strong` for every color — `lib/pulsar/components/header.ex`,
+`variant_classes/2`. The optional divider `hr` uses the same token —
+`header/1`. Browser measurement of the outline variant across all seven
+colors: every border cell passes in both themes (4.63:1 light / 6.82:1
+dark) ([light](measurements/header-light.md),
 [dark](measurements/header-dark.md)).
 
 **Notes:** `--color-border-strong` resolves to `gray-500` (light) /
@@ -140,16 +136,16 @@ measured on the outline cells.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
-**Evidence:** Header uses `flex flex-col gap-4` —
-`lib/pulsar/components/header.ex:151`. Subtitle uses `mt-1` and inherits
-line-height — `lib/pulsar/components/header.ex:269`. No fixed heights on
+**Evidence:** Header uses `flex flex-col gap-4` (`@header_base_classes`)
+— `lib/pulsar/components/header.ex`, `build_header_classes/1`. Subtitle
+uses `mt-1` and inherits line-height — `header/1`. No fixed heights on
 text containers.
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
 **Evidence:** Header itself is non-interactive. Breadcrumbs are delegated
 to the Breadcrumb component, whose links use `Pulsar.Components.Link.a/1`
-— `lib/pulsar/components/header.ex:258–262`,
+— `lib/pulsar/components/header.ex`, `header/1`,
 `lib/pulsar/components/breadcrumb.ex` (see [`breadcrumb.md`](breadcrumb.md))
 — which uses native `<a>` and inherits keyboard activation. Action
 buttons in the `actions` slot are caller-supplied.
@@ -162,7 +158,7 @@ caller-supplied actions use native focus management.
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
 **Evidence:** No animation. Sticky positioning is static —
-`lib/pulsar/components/header.ex:314`.
+`lib/pulsar/components/header.ex`, `sticky_classes/2`.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
@@ -171,7 +167,8 @@ caller-supplied actions use native focus management.
 ### 2.4.1 Bypass Blocks (A) — ✓ PASS (partial credit, page-level)
 
 **Evidence:** Header is rendered as a `<header>` landmark, which AT
-landmark navigation can skip to/from — `lib/pulsar/components/header.ex:257`.
+landmark navigation can skip to/from — `lib/pulsar/components/header.ex`,
+`header/1`.
 
 **Notes:** Strictly a page-level criterion, but the landmark contributes
 positively rather than obstructing.
@@ -179,14 +176,14 @@ positively rather than obstructing.
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
 **Evidence:** DOM order matches visual order; breadcrumb → title →
-actions — `lib/pulsar/components/header.ex:257–282`. No positive
+actions — `lib/pulsar/components/header.ex`, `header/1`. No positive
 `tabindex` set anywhere.
 
 ### 2.4.4 Link Purpose (In Context) (A) — ✓ PASS
 
 **Evidence:** Breadcrumb links use the slot's inner_block text as the
 link text, rendered by the Breadcrumb component —
-`lib/pulsar/components/header.ex:258–262`,
+`lib/pulsar/components/header.ex`, `header/1`,
 `lib/pulsar/components/breadcrumb.ex` (see [`breadcrumb.md`](breadcrumb.md)).
 Combined with the parent `<nav aria-label="Breadcrumb">` landmark, link
 purpose is clear.
@@ -194,13 +191,13 @@ purpose is clear.
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
 
 **Evidence:**
-- `as` attribute restricted to `h1`–`h6` — `lib/pulsar/components/header.ex:205`,
-  so the header always renders a real heading element
-- Title slot is `required: true` — `lib/pulsar/components/header.ex:226–228`
+- `as` attribute restricted to `h1`–`h6` — `lib/pulsar/components/header.ex`,
+  `header/1`, so the header always renders a real heading element
+- Title slot is `required: true` — `header/1`
 - Subtitle is rendered as a `<div>` (not a heading) so it doesn't
-  pollute the heading outline — `lib/pulsar/components/header.ex:269–271`
-- Test `renders with custom heading level` —
-  `test/pulsar/components/header_test.exs:395–408`
+  pollute the heading outline — `header/1`
+- `test "renders with custom heading level"` —
+  `test/pulsar/components/header_test.exs`
 
 **Notes:** The component preserves the level the caller chose. Hierarchy
 across multiple headers is a page-level concern.
@@ -216,8 +213,9 @@ styling.
 **Evidence:** Sticky header uses `sticky top-0 z-docked bg-background`
 plus a size-appropriate sibling/descendant `scroll-mt-{N}` so
 focusable content below the header scrolls clear of the sticky band
-— `lib/pulsar/components/header.ex:314–325`. Per-size scroll-margin
-values approximate the header's rendered height.
+— `lib/pulsar/components/header.ex`, `sticky_classes/2`,
+`sticky_scroll_margin/1`. Per-size scroll-margin values approximate the
+header's rendered height.
 
 **Notes:** The component applies `scroll-margin-top` to siblings and
 their descendants via Tailwind arbitrary-selector variants
@@ -234,12 +232,12 @@ template.
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
 **Evidence:**
-- `<header>` landmark with implicit role — `lib/pulsar/components/header.ex:257`
+- `<header>` landmark with implicit role — `lib/pulsar/components/header.ex`,
+  `header/1`
 - Breadcrumb name/role/value (the `<nav aria-label="Breadcrumb">`
   landmark, `<ol>` / `<li>` list, `aria-current="page"` current crumb, and
   `aria-hidden="true"` chevrons) is owned by the Breadcrumb component the
-  header delegates to — delegation at
-  `lib/pulsar/components/header.ex:258–262`;
+  header delegates to — delegation at `header/1`;
   `lib/pulsar/components/breadcrumb.ex` (see [`breadcrumb.md`](breadcrumb.md))
 
 ## Not applicable
