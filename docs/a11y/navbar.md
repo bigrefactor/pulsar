@@ -18,39 +18,41 @@ goes in each region is caller-supplied.
 **Evidence:** The only non-text content the navbar renders itself is the menu
 button's hamburger glyph, which is decorative (`Icon` defaults to
 `aria-hidden="true"`) while the button carries a text alternative via
-`aria-label` — `lib/pulsar/components/navbar.ex:243, 247`. Region content is
+`aria-label` — `lib/pulsar/components/navbar.ex`, `navbar/1`. Region content is
 caller-supplied.
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:**
 - Root is a `<header>` banner landmark with an optional accessible name —
-  `lib/pulsar/components/navbar.ex:236`
+  `lib/pulsar/components/navbar.ex`, `navbar/1`
 - The left / center / right regions render as distinct flex groups in DOM order
-  — `:237–260`
-- Tests assert the banner and the three regions render — `test/pulsar/components/navbar_test.exs:37–52`
+  — `navbar/1`
+- Tests assert the banner and the three regions render —
+  `test "renders a banner with default attributes"`,
+  `test "renders left, center, and right regions"`
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** Regions render left → center → right in DOM order, matching the
-visual row (`flex`, no `flex-row-reverse`) — `lib/pulsar/components/navbar.ex:236–260`.
+visual row (`flex`, no `flex-row-reverse`) — `lib/pulsar/components/navbar.ex`, `navbar/1`.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** No instruction depends on shape/position/color; the menu button is
-identified by its label, not "the button on the left" — `lib/pulsar/components/navbar.ex:243`.
+identified by its label, not "the button on the left" — `lib/pulsar/components/navbar.ex`, `navbar/1`.
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** Color encodes visual emphasis only. The menu button pairs an icon
 with a text `aria-label`, so its purpose is not color-borne —
-`lib/pulsar/components/navbar.ex:243, 247`.
+`lib/pulsar/components/navbar.ex`, `navbar/1`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Each variant/color pairs a semantic background with its matching
 `-foreground` (solid) or `text-foreground` on a surface (outline/ghost/elevated)
-— `lib/pulsar/components/navbar.ex:86–123`. Region text inherits the bar
+— `lib/pulsar/components/navbar.ex`, `color_classes/2`. Region text inherits the bar
 foreground. Browser measurement of all 34 fixture cells per theme: every cell
 passes, min text contrast 5.89:1 (light, `solid-secondary`) / 7.06:1 (dark,
 `solid-secondary`) ([light](measurements/navbar-light.md),
@@ -62,13 +64,13 @@ the caller's responsibility.
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** No fixed `px` font sizes; height, padding, and gap use `rem`-based
-Tailwind utilities — `lib/pulsar/components/navbar.ex:60–66`.
+Tailwind utilities — `lib/pulsar/components/navbar.ex`, `size_classes/1`.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** The bar is `w-full` with no enforced minimum width; the left and
 right regions are `shrink-0` and the center is `min-w-0` so it absorbs the
-remaining space — `lib/pulsar/components/navbar.ex:237, 254, 258`. A standalone
+remaining space — `lib/pulsar/components/navbar.ex`, `navbar/1`. A standalone
 bar reflows to 320 CSS px.
 
 **Notes:** The measurement run flags overflow at 320px because the fixture tiles
@@ -81,9 +83,9 @@ responsive.
 
 **Evidence:**
 - The neutral bottom border routes through `border-border-strong` (≥3:1) in both
-  `solid` and `outline` — `lib/pulsar/components/navbar.ex:88, 97`
-- Colored `outline` borders use the saturated brand/status color — `:98–103`
-- The menu button's focus ring uses `ring-ring` — `:79`
+  `solid` and `outline` — `lib/pulsar/components/navbar.ex`, `color_classes/2`
+- Colored `outline` borders use the saturated brand/status color — `color_classes/2`
+- The menu button's focus ring uses `ring-ring` — `menu_button_classes/0`
 
 Browser measurement of the bordered cells: all pass — `outline-neutral` /
 `solid-neutral` / sizes 4.63:1 (light) via `border-border-strong`; colored
@@ -95,7 +97,7 @@ project ring audit.
 **Notes:** For colored `solid` bars the filled background provides the boundary
 and the same-hue border is decorative reinforcement; `ghost` has no boundary by
 design and `elevated` delineates with `shadow-dropdown` —
-`lib/pulsar/components/navbar.ex:105–122`. Per WCAG 1.4.11 understanding,
+`lib/pulsar/components/navbar.ex`, `color_classes/2`. Per WCAG 1.4.11 understanding,
 decorative container outlines are out of scope; the one neutral case where the
 border *is* the boundary uses `border-border-strong`.
 
@@ -110,81 +112,84 @@ no overflowing cells ([light](measurements/navbar-light.md),
 
 **Evidence:** The menu button is a native `<button>` whose action is the
 caller's `%JS{}` composed into `phx-click` — keyboard-operable by default (no
-custom key handling) — `lib/pulsar/components/navbar.ex:238–248`. Region content
+custom key handling) — `lib/pulsar/components/navbar.ex`, `navbar/1`. Region content
 is caller-supplied interactive markup.
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
 **Evidence:** The navbar adds no focus management, modal, or focus trap; focus
-moves through it in normal tab order — `lib/pulsar/components/navbar.ex:236–261`.
+moves through it in normal tab order — `lib/pulsar/components/navbar.ex`, `navbar/1`.
 
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
 **Evidence:** The only transition is `transition-colors` on the menu button
-hover, which is finite — `lib/pulsar/components/navbar.ex:78`. Reduced motion is
+hover, which is finite — `lib/pulsar/components/navbar.ex`, `menu_button_classes/0`. Reduced motion is
 honored globally by the theme's single `@media (prefers-reduced-motion: reduce)`
 rule. No looping or auto-updating content.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
 **Evidence:** No flashing; only a color transition on hover —
-`lib/pulsar/components/navbar.ex:78`.
+`lib/pulsar/components/navbar.ex`, `menu_button_classes/0`.
 
 ### 2.4.1 Bypass Blocks (A) — ✓ PASS
 
 **Evidence:** The bar is a `<header>` banner landmark (optionally named), so
 assistive tech can jump to or past it via landmark navigation —
-`lib/pulsar/components/navbar.ex:236`.
+`lib/pulsar/components/navbar.ex`, `navbar/1`.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
 **Evidence:** No positive `tabindex`; the menu button (when present) precedes the
 left/center/right content in DOM order, matching the visual order —
-`lib/pulsar/components/navbar.ex:237–260`.
+`lib/pulsar/components/navbar.ex`, `navbar/1`.
 
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
 
 **Evidence:** The banner takes an optional descriptive `aria-label`, and the menu
-button has an overridable `aria-label` — `lib/pulsar/components/navbar.ex:236, 243`.
-Tests assert both — `test/pulsar/components/navbar_test.exs:108–118, 228–238`.
+button has an overridable `aria-label` — `lib/pulsar/components/navbar.ex`, `navbar/1`.
+Tests assert both — `test "menu_label overrides the hamburger accessible name (i18n)"`,
+`test "label sets an accessible name on the banner (multiple-banner pages)"`.
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
 **Evidence:** The menu button applies `focus-visible:ring-2 focus-visible:ring-ring
-focus-visible:ring-offset-2` — `lib/pulsar/components/navbar.ex:79`. Caller
+focus-visible:ring-offset-2` — `lib/pulsar/components/navbar.ex`, `menu_button_classes/0`. Caller
 controls keep their own focus rings; `focus-visible:outline-none` is scoped to
-the bar root, which is not in the tab sequence — `:72`.
+the bar root, which is not in the tab sequence — `lib/pulsar/components/navbar.ex`.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** When `sticky` is set, sibling and descendant focusable content gets
 `scroll-mt-*` sized to the bar height, so a keyboard-scrolled element is pushed
 clear of the sticky band rather than obscured by it —
-`lib/pulsar/components/navbar.ex:135–141, 282, 286`.
+`lib/pulsar/components/navbar.ex`, `sticky_scroll_margin/1`, `sticky_classes/2`.
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 
 **Evidence:** The menu button activates on `click` (pointer-up), cancellable by
-moving off-target before release — `lib/pulsar/components/navbar.ex:242`.
+moving off-target before release — `lib/pulsar/components/navbar.ex`, `navbar/1`.
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** The menu button is `size-9` (36×36 CSS px), above the 24×24
-minimum — `lib/pulsar/components/navbar.ex:77`. Other targets are caller-supplied.
+minimum — `lib/pulsar/components/navbar.ex`, `menu_button_classes/0`. Other targets are caller-supplied.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 
 **Evidence:** Focusing the bar or the menu button triggers no context change;
-the menu action runs on click, not focus — `lib/pulsar/components/navbar.ex:242`.
+the menu action runs on click, not focus — `lib/pulsar/components/navbar.ex`, `navbar/1`.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
 **Evidence:**
-- `<header>` banner role, optionally named — `lib/pulsar/components/navbar.ex:236`
+- `<header>` banner role, optionally named — `lib/pulsar/components/navbar.ex`, `navbar/1`
 - The menu button is a native `<button>` with an `aria-label` and an optional
-  `aria-controls` pointing at the element it drives — `:238–244`
+  `aria-controls` pointing at the element it drives — `navbar/1`
 - Tests assert the button's name, `aria-controls`, and that it renders only when
-  `on_menu_toggle` is set — `test/pulsar/components/navbar_test.exs:66–119`
+  `on_menu_toggle` is set — `test "renders no hamburger by default"`,
+  `test "renders a labeled hamburger wired to on_menu_toggle when set"`,
+  `test "menu_controls sets aria-controls on the hamburger (sidebar id)"`
 
 ## Not applicable
 

@@ -15,11 +15,11 @@ start/end icons, and a trailing icon for new-tab links.
 
 **Evidence:**
 - Start/end icon slot wrapper applies `aria-hidden="true"` —
-  `lib/pulsar/components/link.ex:116–122`
+  `lib/pulsar/components/link.ex`, `render_icon_slot/1`
 - External-link indicator icon is `aria-hidden="true"` —
-  `lib/pulsar/components/link.ex:124–134`
+  `render_external_icon/1`
 - `aria_label` attr supported for cases where visible text needs
-  augmentation — `lib/pulsar/components/link.ex:70`
+  augmentation — `a/1` (`attr :aria_label`)
 
 **Notes:** Decorative icons (caller-provided in slots and the built-in
 new-tab indicator) are correctly hidden from AT; the link's accessible
@@ -29,11 +29,10 @@ name comes from `inner_block` text or `aria_label`.
 
 **Evidence:**
 - Renders Phoenix `<.link>`, which emits a native `<a>` element —
-  `lib/pulsar/components/link.ex:88–113`
+  `lib/pulsar/components/link.ex`, `a/1`
 - `aria-current` pass-through allows callers to mark the current page
-  in a nav — `lib/pulsar/components/link.ex:72, 102`
-- Test `supports aria-current attribute` —
-  `test/pulsar/components/link_test.exs:573–582`
+  in a nav — `a/1` (`attr :aria_current`)
+- `test "supports aria-current attribute"`
 
 **Notes:** Native `<a href>` semantics are preserved; navigation type
 (redirect/patch) is exposed via `data-phx-link` attributes from Phoenix.
@@ -41,7 +40,7 @@ name comes from `inner_block` text or `aria_label`.
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** Slots render in DOM order: `start_icon`, inner_block,
-external icon, `end_icon` — `lib/pulsar/components/link.ex:108–111`.
+external icon, `end_icon` — `lib/pulsar/components/link.ex`, `a/1`.
 
 **Notes:** No `flex-direction: row-reverse` or absolute positioning;
 visual order matches DOM order.
@@ -49,7 +48,8 @@ visual order matches DOM order.
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** External links combine visual icon + `target="_blank"` +
-`data-external="true"` data attribute — `lib/pulsar/components/link.ex:103, 124–134, 252–272`.
+`data-external="true"` data attribute — `lib/pulsar/components/link.ex`,
+`a/1`, `render_external_icon/1`, `apply_external_security/3`.
 
 **Notes:** External-link cue is not color-only; the new-tab icon and
 data attribute provide non-visual signals alongside any color
@@ -58,14 +58,15 @@ distinction.
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** The default variant is `outline` —
-`lib/pulsar/components/link.ex:38` — which pairs color with a
-persistent `border-b-2 border-current` underline-equivalent —
-`lib/pulsar/components/link.ex:297`. So a link inline in body copy is
-distinguished from surrounding text by an underline shape, not color
-alone. The `solid` (color-only) and `ghost` (hover-only) variants
-remain available as explicit opt-outs for standalone / navigation
-links — `lib/pulsar/components/link.ex:296, 298` — where the
-inline 3:1-against-adjacent-text technique does not apply.
+`lib/pulsar/components/link.ex`, `a/1` (`attr :variant`) — which pairs
+color with a persistent `border-b-2 border-current` underline-equivalent
+— `build_classes/1` (outline entry in the variant class map). So a link
+inline in body copy is distinguished from surrounding text by an
+underline shape, not color alone. The `solid` (color-only) and `ghost`
+(hover-only) variants remain available as explicit opt-outs for
+standalone / navigation links — `build_classes/1` (ghost/solid entries
+in the variant class map) — where the inline 3:1-against-adjacent-text
+technique does not apply.
 
 **Notes:** Previously the default `solid` variant was distinguished by
 color alone, a minor gap for the borderline success/warning colors in
@@ -76,7 +77,8 @@ out-of-the-box behavior carries a non-color visual cue.
 
 **Evidence:** Colors come from semantic tokens
 (`text-primary`, `text-danger`, dark-mode pairs, etc.) —
-`lib/pulsar/components/link.ex:300–310`. Hover state uses `/80`
+`lib/pulsar/components/link.ex`, `build_classes/1` (color class map).
+Hover state uses `/80`
 opacity on the same token. Browser measurement of 97 cells per theme
 ([light](measurements/link-light.md),
 [dark](measurements/link-dark.md)): all 97 cells pass in both themes,
@@ -90,7 +92,8 @@ now axe-clean.
 
 **Evidence:** Size classes use rem-based Tailwind text utilities
 (`text-xs`, `text-sm`, `text-base`, `text-lg`, `text-xl`) and the
-default `inherit` adopts the parent — `lib/pulsar/components/link.ex:312–319`.
+default `inherit` adopts the parent — `lib/pulsar/components/link.ex`,
+`build_classes/1` (size class map).
 
 **Notes:** No fixed-pixel font sizes; all sizing scales with root font
 size.
@@ -98,7 +101,7 @@ size.
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** `inline-flex` layout with no `min-width` or fixed widths —
-`lib/pulsar/components/link.ex:289`.
+`lib/pulsar/components/link.ex`, `build_classes/1` (base classes).
 
 **Notes:** Link width is content-driven; reflows at 320 CSS px without
 horizontal scroll.
@@ -106,8 +109,9 @@ horizontal scroll.
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** Focus ring is `ring-2 ring-ring` with `ring-offset-2` —
-`lib/pulsar/components/link.ex:288–292`. Ghost/outline variants use
-`border-b-2 border-current` — `lib/pulsar/components/link.ex:295–296`.
+`lib/pulsar/components/link.ex`, `build_classes/1` (base classes).
+Ghost/outline variants use `border-b-2 border-current` —
+`build_classes/1` (variant class map).
 Browser measurement: focus ring measures 5.02:1 (light) / 6.72:1
 (dark) across every color variant — matches Button at full opacity.
 
@@ -119,7 +123,8 @@ opacity modifier.
 
 **Evidence:** No fixed heights or `!important` on text spacing
 properties; only inline-flex layout and text-size utilities —
-`lib/pulsar/components/link.ex:288–292, 312–319`.
+`lib/pulsar/components/link.ex`, `build_classes/1` (base + size class
+maps).
 
 **Notes:** Inherits page line-height/spacing; adapts cleanly under
 user-overridden spacing.
@@ -128,7 +133,7 @@ user-overridden spacing.
 
 **Evidence:** Native `<a href>` is keyboard-operable by default; the
 component delegates to Phoenix `<.link>` which renders a real anchor —
-`lib/pulsar/components/link.ex:89–112`.
+`lib/pulsar/components/link.ex`, `a/1`.
 
 **Notes:** Standard Tab to focus, Enter to activate; no custom JS
 handling needed.
@@ -136,30 +141,33 @@ handling needed.
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
 **Evidence:** No `keydown` handlers in the component —
-`lib/pulsar/components/link.ex:88–113`. Tab/Shift+Tab pass through
+`lib/pulsar/components/link.ex`, `a/1`. Tab/Shift+Tab pass through
 unimpeded.
 
 ### 2.2.2 Pause, Stop, Hide (A) — ✓ PASS
 
 **Evidence:** Only animation is a `transition-all duration-200`
 color/border transition on hover —
-`lib/pulsar/components/link.ex:289`. No auto-playing motion.
+`lib/pulsar/components/link.ex`, `build_classes/1` (base classes). No
+auto-playing motion.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
 **Evidence:** Only animations are smooth color/border transitions on
-hover — `lib/pulsar/components/link.ex:289`. No flashing.
+hover — `lib/pulsar/components/link.ex`, `build_classes/1` (base
+classes). No flashing.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
 **Evidence:** Native `<a>` participates in tab order by default; no
-positive `tabindex` set — `lib/pulsar/components/link.ex:88–113`.
+positive `tabindex` set — `lib/pulsar/components/link.ex`, `a/1`.
 
 ### 2.4.4 Link Purpose (In Context) (A) — ✓ PASS
 
 **Evidence:** `inner_block` slot is `required: true` —
-`lib/pulsar/components/link.ex:77`. `aria_label` available for
-supplemental context — `lib/pulsar/components/link.ex:70`.
+`lib/pulsar/components/link.ex`, `a/1` (`slot :inner_block`).
+`aria_label` available for supplemental context — `a/1`
+(`attr :aria_label`).
 
 **Notes:** Component enforces presence of link text; caller is
 responsible for descriptive content (avoid "click here" patterns).
@@ -167,7 +175,8 @@ responsible for descriptive content (avoid "click here" patterns).
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
 
 **Evidence:** `inner_block` required (visible label); `aria_label`
-available as supplemental — `lib/pulsar/components/link.ex:70, 77`.
+available as supplemental — `lib/pulsar/components/link.ex`, `a/1`
+(`attr :aria_label`, `slot :inner_block`).
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
@@ -175,9 +184,9 @@ available as supplemental — `lib/pulsar/components/link.ex:70, 77`.
 - Base classes include `focus-visible:outline-none`,
   `focus-visible:ring-2`, `focus-visible:ring-ring`,
   `focus-visible:ring-offset-2` —
-  `lib/pulsar/components/link.ex:288–292`
+  `lib/pulsar/components/link.ex`, `build_classes/1` (base classes)
 - Tests assert focus ring classes —
-  `test/pulsar/components/link_test.exs:538–549`
+  `test "includes focus ring classes"`
 
 Ring measures 5.02:1 (light) / 6.72:1 (dark) against the adjacent
 background — passes the 3:1 non-text minimum.
@@ -186,7 +195,7 @@ background — passes the 3:1 non-text minimum.
 
 **Evidence:** Link doesn't create sticky/overlapping content —
 single-element render via Phoenix `<.link>` —
-`lib/pulsar/components/link.ex:88–113`.
+`lib/pulsar/components/link.ex`, `a/1`.
 
 **Notes:** Page-level concern when links are used in sticky headers;
 not a component-level gap.
@@ -194,13 +203,14 @@ not a component-level gap.
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 
 **Evidence:** Native `<a>` activates on `click` (mouseup); no custom
-mousedown handler — `lib/pulsar/components/link.ex:88–113`.
+mousedown handler — `lib/pulsar/components/link.ex`, `a/1`.
 
 ### 2.5.3 Label in Name (A) — ✓ PASS
 
 **Evidence:** `aria_label` is optional and documented as "Accessible
-label for the link" — `lib/pulsar/components/link.ex:70`. Default
-accessible name is the visible `inner_block` text.
+label for the link" — `lib/pulsar/components/link.ex`, `a/1`
+(`attr :aria_label`). Default accessible name is the visible
+`inner_block` text.
 
 **Notes:** Callers can set `aria_label` that conflicts with visible
 text; out of library control. Default behavior passes.
@@ -208,7 +218,8 @@ text; out of library control. Default behavior passes.
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Component renders inline (`inline-flex`) and inherits
-size from context — `lib/pulsar/components/link.ex:289, 312–319`.
+size from context — `lib/pulsar/components/link.ex`, `build_classes/1`
+(base + size class maps).
 
 **Notes:** WCAG 2.5.8 explicitly exempts inline links in a sentence /
 block of text. Links rendered standalone (e.g., as a nav button) depend
@@ -221,24 +232,26 @@ which has guaranteed tap-target sizing.
 ### 3.2.1 On Focus (A) — ✓ PASS
 
 **Evidence:** No `phx-focus` or focus-triggered context change in
-component template — `lib/pulsar/components/link.ex:88–113`.
+component template — `lib/pulsar/components/link.ex`, `a/1`.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
 **Evidence:**
 - Native `<a>` has implicit `link` role —
-  `lib/pulsar/components/link.ex:88–113`
-- Properties: `aria-label`, `aria-describedby`, `aria-current` —
-  `lib/pulsar/components/link.ex:100–102`
+  `lib/pulsar/components/link.ex`, `a/1`
+- Properties: `aria-label`, `aria-describedby`, `aria-current` — `a/1`
 - External-link security: auto-adds `rel="noopener noreferrer"` when
-  `target="_blank"` — `lib/pulsar/components/link.ex:254–272`
+  `target="_blank"` — `apply_external_security/3`
 - XSS protection: dangerous schemes (`javascript:`, `data:`,
   `vbscript:`, `about:`, `file:`) replaced with `#` —
-  `lib/pulsar/components/link.ex:222–236`
+  `sanitize_href/1`
 - Tests assert aria-label, aria-describedby, aria-current —
-  `test/pulsar/components/link_test.exs:551–582`
+  `test "supports aria-label attribute"`,
+  `test "supports aria-describedby attribute"`,
+  `test "supports aria-current attribute"`
 - Tests assert `rel="noopener noreferrer"` and `target="_blank"` for
-  external — `test/pulsar/components/link_test.exs:247–306`
+  external —
+  `test "adds security rel tokens for external links with target blank"`
 
 **Notes:** Comprehensive coverage. The `apply_external_security` helper
 prevents tabnabbing on external links; `sanitize_href` neutralizes
@@ -248,7 +261,7 @@ script-injection vectors before render.
 
 **Evidence:** Link is not a stateful component; `aria-current` is the
 only status-like attribute and is correctly pass-through —
-`lib/pulsar/components/link.ex:72, 102`.
+`lib/pulsar/components/link.ex`, `a/1`.
 
 **Notes:** No loading or busy state to expose.
 
@@ -288,8 +301,9 @@ only status-like attribute and is correctly pass-through —
 ## AAA wins (bonus)
 
 - **2.4.9 Link Purpose (Link Only) (AAA)** — `inner_block` is
-  `required: true` (`lib/pulsar/components/link.ex:77`), so every link
-  has text content. The component enforces presence; "Link Only"
+  `required: true` (`lib/pulsar/components/link.ex`, `a/1`
+  (`slot :inner_block`)), so every link has text content. The
+  component enforces presence; "Link Only"
   quality depends on the caller's text, but the API design supports it
   by not allowing icon-only links without explicit `aria_label`.
 - **2.4.13 Focus Appearance (AAA, new in 2.2)** — focus ring uses
