@@ -2,6 +2,7 @@ defmodule Mix.Tasks.Pulsar.Gen.CoreComponentsTest do
   use ExUnit.Case, async: false
 
   import Igniter.Test
+  import Pulsar.GeneratorTestHelpers
 
   describe "pulsar.gen.core_components" do
     test "creates core_components module with default naming" do
@@ -42,8 +43,7 @@ defmodule Mix.Tasks.Pulsar.Gen.CoreComponentsTest do
 
       # Read the generated file content from the pending igniter (apply_igniter!
       # clears rewrite.sources, so the assertions must run before applying).
-      {:ok, source} = Map.fetch(igniter.rewrite.sources, core_components_path)
-      content = Rewrite.Source.get(source, :content)
+      content = source_content(igniter, core_components_path)
 
       # Verify component aliases use TestWeb.Components namespace, not TestWeb
       assert content =~ "alias TestWeb.Components.Button"

@@ -2,12 +2,15 @@ defmodule Mix.Tasks.Pulsar.Gen.InputOtpTest do
   use ExUnit.Case, async: false
 
   import Igniter.Test
+  import Pulsar.GeneratorTestHelpers
 
   describe "pulsar.gen.input_otp" do
     test "creates input_otp component with default naming" do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.input_otp", [])
       |> assert_creates("lib/test_web/components/input_otp.ex")
+      |> assert_generated_component("lib/test_web/components/input_otp.ex")
+      |> assert_generated_source("lib/test_web/components/input_otp.ex", ~s(name=".PulsarInputOtp"))
       |> apply_igniter!()
     end
 
@@ -15,6 +18,7 @@ defmodule Mix.Tasks.Pulsar.Gen.InputOtpTest do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.input_otp", ["--components-module", "MyApp.CustomComponents"])
       |> assert_creates("lib/my_app/custom_components/input_otp.ex")
+      |> assert_generated_component("lib/my_app/custom_components/input_otp.ex")
       |> apply_igniter!()
     end
   end

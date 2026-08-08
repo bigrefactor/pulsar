@@ -2,6 +2,7 @@ defmodule Mix.Tasks.Pulsar.Gen.StorybookTest do
   use ExUnit.Case, async: false
 
   import Igniter.Test
+  import Pulsar.GeneratorTestHelpers
 
   @moduletag :igniter
 
@@ -77,9 +78,7 @@ defmodule Mix.Tasks.Pulsar.Gen.StorybookTest do
         |> Igniter.compose_task("pulsar.gen.button", ["--storybook"])
 
       story_path = "lib/test_web/storybook/components/button.story.exs"
-      source = igniter.rewrite.sources[story_path]
-      refute is_nil(source), "Expected #{story_path} to have been created"
-      content = Rewrite.Source.get(source, :content)
+      content = source_content(igniter, story_path)
 
       assert content =~ "defmodule TestWeb.Storybook.Components.Button"
       assert content =~ "alias TestWeb.Components.Button"
@@ -201,20 +200,17 @@ defmodule Mix.Tasks.Pulsar.Gen.StorybookTest do
         ])
 
       # Component story (emitted by per-component generator) should alias Custom.UI.
-      button_story = igniter.rewrite.sources["lib/test_web/storybook/components/button.story.exs"]
-      refute is_nil(button_story), "expected button story to be created"
-      assert Rewrite.Source.get(button_story, :content) =~ "alias Custom.UI.Button"
+      assert source_content(igniter, "lib/test_web/storybook/components/button.story.exs") =~
+               "alias Custom.UI.Button"
 
       # Foundation/example stories (emitted by pulsar.gen.storybook --skip-components)
       # should also see Custom.UI — this is the bug Fix 3 addresses: argv_flags
       # must propagate from pulsar.install to the composed storybook task.
-      spacing_story = igniter.rewrite.sources["lib/test_web/storybook/foundations/spacing.story.exs"]
-      refute is_nil(spacing_story), "expected spacing foundation to be created"
-      assert Rewrite.Source.get(spacing_story, :content) =~ "alias Custom.UI"
+      assert source_content(igniter, "lib/test_web/storybook/foundations/spacing.story.exs") =~
+               "alias Custom.UI"
 
-      login_story = igniter.rewrite.sources["lib/test_web/storybook/examples/login.story.exs"]
-      refute is_nil(login_story), "expected login example to be created"
-      assert Rewrite.Source.get(login_story, :content) =~ "alias Custom.UI"
+      assert source_content(igniter, "lib/test_web/storybook/examples/login.story.exs") =~
+               "alias Custom.UI"
 
       apply_igniter!(igniter)
     end

@@ -2,12 +2,15 @@ defmodule Mix.Tasks.Pulsar.Gen.DatePickerTest do
   use ExUnit.Case, async: false
 
   import Igniter.Test
+  import Pulsar.GeneratorTestHelpers
 
   describe "pulsar.gen.date_picker" do
     test "creates date_picker component with default naming" do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.date_picker", [])
       |> assert_creates("lib/test_web/components/date_picker.ex")
+      |> assert_generated_component("lib/test_web/components/date_picker.ex")
+      |> assert_generated_source("lib/test_web/components/date_picker.ex", ~s(name=".PulsarDatePicker"))
       |> apply_igniter!()
     end
 
@@ -15,6 +18,7 @@ defmodule Mix.Tasks.Pulsar.Gen.DatePickerTest do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.date_picker", ["--components-module", "MyApp.CustomComponents"])
       |> assert_creates("lib/my_app/custom_components/date_picker.ex")
+      |> assert_generated_component("lib/my_app/custom_components/date_picker.ex")
       |> apply_igniter!()
     end
 
