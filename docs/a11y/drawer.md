@@ -9,10 +9,11 @@ renders a native `<dialog>` opened with `showModal()`, so it inherits the modal
 focus trap, scroll lock, Escape handling, focus restoration, backdrop, the
 `title`→`aria-labelledby` / `:description`→`aria-describedby` wiring, the corner
 close button, and the audited semantic-token contrast matrix — all forwarded
-unchanged through the modal wrapper — `lib/pulsar/components/drawer.ex:197–216`.
+unchanged through the modal wrapper — `lib/pulsar/components/drawer.ex`, `drawer/1`.
 What Drawer adds is the edge geometry (anchor + fill per side) and a directional
-slide-in animation — `lib/pulsar/components/drawer.ex:72–94` (side/height config),
-`:80–85` (slide-in utilities). The inherited dialog mechanics are audited in
+slide-in animation — `lib/pulsar/components/drawer.ex`, `side_classes/1`,
+`height_classes/2` (side/height config), `panel_animation/1` (slide-in
+utilities). The inherited dialog mechanics are audited in
 [`modal.md`](modal.md); this page covers what Drawer adds or constrains.
 
 ## Applicable criteria
@@ -22,16 +23,16 @@ slide-in animation — `lib/pulsar/components/drawer.ex:72–94` (side/height co
 **Evidence:** Inherited from the modal wrapper — `title` renders the `<h2>`
 referenced by `aria-labelledby` and the `:description` slot renders the `<p>`
 referenced by `aria-describedby`; Drawer forwards both straight through —
-`lib/pulsar/components/drawer.ex:199` (title), `:213` (`:description`), `:197–216`
-(modal wrapper). See [`modal.md`](modal.md) §1.3.1.
+`lib/pulsar/components/drawer.ex`, `drawer/1` (title, `:description`, modal
+wrapper). See [`modal.md`](modal.md) §1.3.1.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** The panel surface uses the same audited semantic-token matrix as
 Modal (`variant`/`color` passthrough); the title and body inherit
 `text-foreground` and the description uses `text-muted-foreground`, which measures
-6.0–7.23:1 across every variant×color surface — `lib/pulsar/components/drawer.ex:200–202`
-(variant/color/size forwarded). The token map is unchanged from Modal — see
+6.0–7.23:1 across every variant×color surface — `lib/pulsar/components/drawer.ex`,
+`drawer/1` (variant/color/size forwarded). The token map is unchanged from Modal — see
 [`modal.md`](modal.md) §1.4.3 for the measured table. The axe gate scans the
 `/components/drawer` fixture cells in light and dark with zero violations.
 
@@ -39,17 +40,17 @@ Modal (`variant`/`color` passthrough); the title and body inherit
 
 **Evidence:** Left/right drawers cap their width via the inherited modal
 `max-w-*` per size and fill the available height (`w-full`), so they never force
-horizontal scrolling at 320px — `lib/pulsar/components/drawer.ex:73–74`
+horizontal scrolling at 320px — `lib/pulsar/components/drawer.ex`, `side_classes/1`
 (`w-full` + `h-dvh`). Top/bottom drawers fill the viewport width (`w-full
 max-w-none`) and cap their height on a `vh` scale (`max-h-[30vh]`…`max-h-[85vh]`)
-— `:75–76`, `:89–94` (`@height_config`). Long content scrolls inside the panel via
+— `height_classes/2` (`@height_config`). Long content scrolls inside the panel via
 the inherited `overflow-y-auto` — see [`modal.md`](modal.md) §1.4.10.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** The panel boundary (shadow for `elevated`, `border-{color}` /
 `border-border-strong` for `outline`/`solid`) is the same audited token set as
-Modal, forwarded unchanged — `lib/pulsar/components/drawer.ex:200–201`. These
+Modal, forwarded unchanged — `lib/pulsar/components/drawer.ex`, `drawer/1`. These
 boundaries are rendered in the `/components/drawer` fixture cells and pass the axe
 gate. See [`modal.md`](modal.md) §1.4.11.
 
@@ -57,7 +58,7 @@ gate. See [`modal.md`](modal.md) §1.4.11.
 
 **Evidence:** Inherited — the drawer opens on explicit `open/2` activation
 (a command on a control), never on hover or focus, and is persistent until
-dismissed — `lib/pulsar/components/drawer.ex:229` (`open/1`), `:235` (`open/2`).
+dismissed — `lib/pulsar/components/drawer.ex`, `open/1`, `open/2`.
 See [`modal.md`](modal.md) §1.4.13.
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
@@ -65,7 +66,8 @@ See [`modal.md`](modal.md) §1.4.13.
 **Evidence:** Inherited — opened/closed by `open/2`/`close/2` composed onto
 keyboard-operable controls; the built-in close button is a native `<button>` and
 Escape dismissal is native to the modal `<dialog>` —
-`lib/pulsar/components/drawer.ex:229–247` (helpers delegate to Modal). See
+`lib/pulsar/components/drawer.ex`, `open/1`, `open/2`, `close/1`, `close/2`
+(helpers delegate to Modal). See
 [`modal.md`](modal.md) §2.1.1.
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
@@ -73,22 +75,22 @@ Escape dismissal is native to the modal `<dialog>` —
 **Evidence:** Inherited — the modal `<dialog>` contains focus while open (the
 permitted modal pattern) but is always releasable by keyboard; Escape closes a
 `dismissable` drawer and either path returns focus to the opener —
-`lib/pulsar/components/drawer.ex:203` (`dismissable` forwarded). See
+`lib/pulsar/components/drawer.ex`, `drawer/1` (`dismissable` forwarded). See
 [`modal.md`](modal.md) §2.1.2.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
 **Evidence:** Inherited — `showModal()` moves focus into the dialog on open and
 restores it to the opener on close; no positive `tabindex` is used —
-`lib/pulsar/components/drawer.ex:197–216` (modal wrapper). See
+`lib/pulsar/components/drawer.ex`, `drawer/1` (modal wrapper). See
 [`modal.md`](modal.md) §2.4.3.
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
 **Evidence:** Inherited — the built-in close button carries
 `focus-visible:ring-2 focus-visible:ring-ring` and the dialog itself uses
-`focus:outline-none` only — `lib/pulsar/components/drawer.ex:205` (close button
-forwarded). See [`modal.md`](modal.md) §2.4.7.
+`focus:outline-none` only — `lib/pulsar/components/drawer.ex`, `drawer/1` (close
+button forwarded). See [`modal.md`](modal.md) §2.4.7.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
@@ -100,21 +102,22 @@ ancestors. See [`modal.md`](modal.md) §2.4.11.
 
 **Evidence:** Inherited — the close button activates on `click` (pointer-up) and
 backdrop dismissal fires on a `click`; no down-event activation —
-`lib/pulsar/components/drawer.ex:204` (`backdrop_close` forwarded). See
+`lib/pulsar/components/drawer.ex`, `drawer/1` (`backdrop_close` forwarded). See
 [`modal.md`](modal.md) §2.5.2.
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Inherited — the built-in close button is a `sm` icon with `p-1`
 padding, meeting the 24×24 floor; caller-supplied footer controls are the caller's
-responsibility — `lib/pulsar/components/drawer.ex:205` (close button forwarded),
-`:215` (`:footer`). See [`modal.md`](modal.md) §2.5.8.
+responsibility — `lib/pulsar/components/drawer.ex`, `drawer/1` (close button
+forwarded, `:footer`). See [`modal.md`](modal.md) §2.5.8.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 
 **Evidence:** Inherited — focusing any control causes no context change; the
 drawer opens only on explicit `open/2` activation —
-`lib/pulsar/components/drawer.ex:229–235`. See [`modal.md`](modal.md) §3.2.1.
+`lib/pulsar/components/drawer.ex`, `open/1`, `open/2`. See
+[`modal.md`](modal.md) §3.2.1.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
@@ -122,7 +125,7 @@ drawer opens only on explicit `open/2` activation —
 announced as modal when opened with `showModal()`; `aria-labelledby` /
 `aria-describedby` supply the accessible name and description, and callers can
 pass `aria-label` via `{@rest}` when rendering no visible title —
-`lib/pulsar/components/drawer.ex:211` (`{@rest}` passthrough), `:157–160` (`:rest`
+`lib/pulsar/components/drawer.ex`, `drawer/1` (`{@rest}` passthrough, `:rest`
 with `aria-label`). See [`modal.md`](modal.md) §4.1.2.
 
 ## Not applicable
@@ -144,7 +147,7 @@ with `aria-label`). See [`modal.md`](modal.md) §4.1.2.
 - **1.4.12 Text Spacing (AA)** — no `!important` spacing; content is caller-supplied.
 - **2.1.4 Character Key Shortcuts (A)** — only Escape (native), no single-character shortcuts.
 - **2.2.1 Timing Adjustable (A)** — no time limit.
-- **2.2.2 Pause, Stop, Hide (A)** — the only motion is a sub-second directional slide-in on open (`@side_animation`, transform-only), near-zeroed by the global reduced-motion rule; there is no close animation and no continuous or auto-updating content — `lib/pulsar/components/drawer.ex:80–85`.
+- **2.2.2 Pause, Stop, Hide (A)** — the only motion is a sub-second directional slide-in on open (`@side_animation`, transform-only), near-zeroed by the global reduced-motion rule; there is no close animation and no continuous or auto-updating content — `lib/pulsar/components/drawer.ex`, `panel_animation/1`.
 - **2.3.1 Three Flashes or Below Threshold (A)** — no flashing; the entrance is a single transform-only transition.
 - **2.4.1 Bypass Blocks (A)** — page-level concern.
 - **2.4.2 Page Titled (A)** — page-level concern.

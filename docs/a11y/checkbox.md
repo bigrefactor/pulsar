@@ -15,7 +15,7 @@ an optional "card" variant that wraps the input in a clickable `<label>`.
 
 **Evidence:** Checkmark glyph (`✓`) and indeterminate dash (`−`) are
 CSS `content` pseudo-elements with no DOM presence —
-`lib/pulsar/components/checkbox.ex:122, 126`. They reinforce the state
+`lib/pulsar/components/checkbox.ex`, `base_checkbox_classes/0`. They reinforce the state
 visually; AT relies on the native `checked` attribute and the
 `indeterminate` IDL property (set by the colocated `PulsarCheckbox`
 hook from `data-indeterminate`).
@@ -24,16 +24,17 @@ hook from `data-indeterminate`).
 
 **Evidence:**
 - Native `<input type="checkbox">` —
-  `lib/pulsar/components/checkbox.ex:386`
+  `lib/pulsar/components/checkbox.ex`, `render_default_checkbox/1`
 - Card variant uses `<label for={@id}>` wrapping the input —
-  `lib/pulsar/components/checkbox.ex:427, 433`
+  `lib/pulsar/components/checkbox.ex`, `render_card_checkbox/1`
 - Card content gets an `id="#{@id}-content"` referenced by the input's
-  `aria-describedby` — `lib/pulsar/components/checkbox.ex:457, 461`
+  `aria-describedby` — `lib/pulsar/components/checkbox.ex`, `render_card_checkbox/1`
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
 **Evidence:** DOM order: hidden companion (if any) → checkbox →
-optional content slot — `lib/pulsar/components/checkbox.ex:376–466`.
+optional content slot — `lib/pulsar/components/checkbox.ex`,
+`render_default_checkbox/1`, `render_card_checkbox/1`.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
@@ -41,23 +42,26 @@ optional content slot — `lib/pulsar/components/checkbox.ex:376–466`.
 native `checked` attr; indeterminate is signaled by the dash glyph plus
 the native `indeterminate` IDL property (synced from
 `data-indeterminate` by the `PulsarCheckbox` hook) —
-`lib/pulsar/components/checkbox.ex:122–126, 390, 392, 399, 472–486`.
+`lib/pulsar/components/checkbox.ex`, `base_checkbox_classes/0`,
+`render_default_checkbox/1`, `render_card_checkbox/1`, `checkbox_hook/1`.
 Disabled state combines opacity + `disabled:cursor-not-allowed` + native
 `disabled`.
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
 **Evidence:** Checked state is signaled by checkmark glyph (not just
-fill color) — `lib/pulsar/components/checkbox.ex:122, 125`. Error
+fill color) — `lib/pulsar/components/checkbox.ex`, `base_checkbox_classes/0`. Error
 state combines danger border + `aria-invalid="true"` —
-`lib/pulsar/components/checkbox.ex:398, 559`.
+`lib/pulsar/components/checkbox.ex`, `render_default_checkbox/1`,
+`checkbox_border_classes/1`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
 **Evidence:** Color matrix with semantic foreground/background tokens
 for each of 7 colors —
-`lib/pulsar/components/checkbox.ex:528–684`. Card variant adds another
-matrix — `lib/pulsar/components/checkbox.ex:706–980`. Browser
+`lib/pulsar/components/checkbox.ex`, `checkbox_border_classes/1`,
+`checkbox_background_classes/1`, `checkbox_text_classes/1`. Card variant adds another
+matrix — `card_variant_classes/2`. Browser
 measurement of 123 cells per theme: all pass, min 13.3:1 (light) /
 10.88:1 (dark) ([light](measurements/checkbox-light.md),
 [dark](measurements/checkbox-dark.md)).
@@ -69,7 +73,7 @@ a wide margin. Card variant text against `bg-surface-1` also passes.
 ### 1.4.4 Resize Text (AA) — ✓ PASS
 
 **Evidence:** Sizes use Tailwind `h-*`/`w-*` rem-based classes
-(`h-3`/`h-7`) — `lib/pulsar/components/checkbox.ex:91–112`. Text inside
+(`h-3`/`h-7`) — `lib/pulsar/components/checkbox.ex`, `size_classes/1`. Text inside
 checkmark uses rem-based `text-*`.
 
 **Notes:** `h-*` (not `min-h-*`) sets fixed sizes; needed for the square
@@ -79,15 +83,15 @@ appearance, but they're rem-based so they scale.
 
 **Evidence:** Checkbox is inline-sized; card variant uses `flex
 items-center` with no fixed widths —
-`lib/pulsar/components/checkbox.ex:131`.
+`lib/pulsar/components/checkbox.ex`, `card_base_classes/0`.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** Border `before:border-2` —
-`lib/pulsar/components/checkbox.ex:121`. Focus ring
+`lib/pulsar/components/checkbox.ex`, `base_checkbox_classes/0`. Focus ring
 `focus-visible:before:ring-2 focus-visible:before:ring-offset-2
 focus-visible:before:ring-ring` —
-`lib/pulsar/components/checkbox.ex:117–118`. Browser measurement of
+`lib/pulsar/components/checkbox.ex`, `base_checkbox_classes/0`. Browser measurement of
 96 focus-ring cells per theme: 96/96 pass, ring contrast 5.02:1
 (light) / 6.72:1 (dark). The checkbox's `before:` pseudo-element
 border is rendered through Tailwind's `--color-border` token; per
@@ -100,7 +104,7 @@ as Button — fully verified.
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
 **Evidence:** Fixed `h-*`/`w-*` square sizes by design —
-`lib/pulsar/components/checkbox.ex:91–112`. Card text uses standard
+`lib/pulsar/components/checkbox.ex`, `size_classes/1`. Card text uses standard
 Tailwind classes. Browser test injects the WCAG overrides and re-
 measures: 0 cells overflow
 ([light](measurements/checkbox-light.md#text-spacing-override-wcag-1412),
@@ -112,7 +116,7 @@ the surrounding flex layout.
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
 **Evidence:** Native `<input type="checkbox">` is keyboard-operable
-(Space) — `lib/pulsar/components/checkbox.ex:386`. Card variant uses
+(Space) — `lib/pulsar/components/checkbox.ex`, `render_default_checkbox/1`. Card variant uses
 native `<label for=>` so clicks/Enter activate the input via browser
 defaults.
 
@@ -124,7 +128,7 @@ defaults.
 
 **Evidence:** Only smooth transform/opacity transitions on the checkmark
 (`after:transition-[transform,opacity] after:duration-fast
-after:ease-standard`) — `lib/pulsar/components/checkbox.ex:122`. No essential
+after:ease-standard`) — `lib/pulsar/components/checkbox.ex`, `base_checkbox_classes/0`. No essential
 motion.
 
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
@@ -146,9 +150,10 @@ labels for default mode.
 
 **Evidence:** Default checkbox: `focus-visible:outline-none
 focus-visible:before:ring-2 focus-visible:before:ring-offset-2
-focus-visible:before:ring-ring` — `lib/pulsar/components/checkbox.ex:117–118`.
+focus-visible:before:ring-ring` — `lib/pulsar/components/checkbox.ex`,
+`base_checkbox_classes/0`.
 Card uses `focus-within:ring-2 focus-within:ring-offset-2
-focus-within:ring-ring` — `lib/pulsar/components/checkbox.ex:132–133`.
+focus-within:ring-ring` — `lib/pulsar/components/checkbox.ex`, `card_base_classes/0`.
 Browser measurement: 96 focus-ring cells pass 5.02:1 (light) / 6.72:1
 (dark) ([light](measurements/checkbox-light.md),
 [dark](measurements/checkbox-dark.md)).
@@ -170,7 +175,7 @@ associated label or card content.
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Every size clicks through a 24×24 CSS-px input box
-(`h-6 w-6`, `lib/pulsar/components/checkbox.ex:91–111`). At `xs`/`sm`/`md`
+(`h-6 w-6`, `lib/pulsar/components/checkbox.ex`, `size_classes/1`). At `xs`/`sm`/`md`
 the box is held to its glyph size — 12/16/20 px — by insetting the
 visible `::before` square (`before:inset-[6px]` / `[4px]` / `[2px]`),
 so the pointer target grows to the WCAG floor while the checkmark stays
@@ -195,14 +200,15 @@ pixel-identical to before.
 
 **Evidence:** `:rest` forwards `phx-click`/`phx-change`, but component
 itself triggers no navigation/submit —
-`lib/pulsar/components/checkbox.ex:308`.
+`lib/pulsar/components/checkbox.ex`, `checkbox/1` (`attr :rest`).
 
 ### 3.3.1 Error Identification (A) — ✓ PASS
 
 **Evidence:** `aria-invalid={@invalid && "true"}` —
-`lib/pulsar/components/checkbox.ex:398, 456`. Test
-`sets aria-invalid when invalid` —
-`test/pulsar/components/checkbox_test.exs:617–626`.
+`lib/pulsar/components/checkbox.ex`, `render_default_checkbox/1`,
+`render_card_checkbox/1`.
+`test "sets aria-invalid when invalid"` —
+`test/pulsar/components/checkbox_test.exs`.
 
 ### 3.3.2 Labels or Instructions (A) — ✓ PASS
 
@@ -217,19 +223,21 @@ checkbox doesn't suppress.
 
 **Evidence:**
 - Role: native `<input type="checkbox">` —
-  `lib/pulsar/components/checkbox.ex:386`
+  `lib/pulsar/components/checkbox.ex`, `render_default_checkbox/1`
 - Name: from `name=` attr —
-  `lib/pulsar/components/checkbox.ex:388`
+  `lib/pulsar/components/checkbox.ex`, `render_default_checkbox/1`
 - Value: from `value=` (checked-value) and the hidden companion's
-  unchecked value — `lib/pulsar/components/checkbox.ex:378–399`
+  unchecked value — `lib/pulsar/components/checkbox.ex`, `render_default_checkbox/1`
 - State: native `checked`, `disabled`, `required`; `aria-invalid`;
   indeterminate exposed via the JS-only `indeterminate` IDL property,
   set by the colocated `PulsarCheckbox` hook from `data-indeterminate`
-  on mount and update — `lib/pulsar/components/checkbox.ex:399,
-  472–486`
+  on mount and update — `lib/pulsar/components/checkbox.ex`,
+  `render_default_checkbox/1`, `checkbox_hook/1`
 - Tests assert the hook is wired and that `aria-checked` is never set
   on the native input —
-  `test/pulsar/components/checkbox_test.exs:628–660`
+  `test "wires PulsarCheckbox hook to sync indeterminate IDL property"`,
+  `test "never sets aria-checked on the native checkbox input"` —
+  `test/pulsar/components/checkbox_test.exs`
 
 **Notes:** `aria-checked` is invalid on a native `<input
 type="checkbox">` (axe rule `aria-conditional-attr`); the ARIA spec
@@ -243,7 +251,7 @@ the assistive-tech state stay aligned across LiveView patches.
 ### 4.1.3 Status Messages (AA) — ✓ PASS
 
 **Evidence:** `aria-invalid` reflects validation state —
-`lib/pulsar/components/checkbox.ex:398`. Field-level error region carries
+`lib/pulsar/components/checkbox.ex`, `render_default_checkbox/1`. Field-level error region carries
 `aria-live="polite"`.
 
 ## Not applicable
