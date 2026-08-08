@@ -103,55 +103,6 @@ if Code.ensure_loaded?(Igniter) do
     alias Igniter.Mix.Task.Info
     alias Igniter.Project.Deps
 
-    @components %{
-      accordion: [:icon],
-      alert: [:icon],
-      alert_dialog: [:modal, :button],
-      avatar: [:icon, :link],
-      badge: [],
-      breadcrumb: [:icon, :link],
-      button: [:link],
-      calendar: [],
-      card: [],
-      checkbox: [],
-      collapsible: [:icon],
-      date_picker: [:calendar, :popover, :icon],
-      divider: [],
-      drawer: [:modal, :button],
-      dropdown_menu: [:icon, :popover],
-      dropzone: [:icon, :progress],
-      field: [:checkbox, :date_picker, :icon, :input, :input_otp, :label, :radio_group, :select, :switch, :textarea],
-      flash: [],
-      flash_group: [:flash, :icon],
-      form: [],
-      header: [:link, :icon, :breadcrumb],
-      icon: [],
-      input: [],
-      input_otp: [],
-      label: [],
-      link: [:icon],
-      list: [],
-      menu: [:icon, :popover],
-      modal: [:icon],
-      navbar: [:icon],
-      pagination: [:icon],
-      popover: [],
-      progress: [],
-      radio_group: [],
-      resizable: [:icon],
-      select: [:badge],
-      sidebar: [],
-      skeleton: [],
-      spinner: [],
-      status: [],
-      steps: [:icon],
-      switch: [],
-      table: [],
-      tabs: [:icon],
-      textarea: [],
-      tooltip: [:popover]
-    }
-
     @impl Igniter.Mix.Task
     def info(_argv, _composing_task) do
       %Info{
@@ -257,7 +208,6 @@ if Code.ensure_loaded?(Igniter) do
 
     @impl Igniter.Mix.Task
     def igniter(igniter) do
-      validate_component_dependencies!()
       options = igniter.args.options
 
       components = gather_components(igniter)
@@ -306,26 +256,6 @@ if Code.ensure_loaded?(Igniter) do
 
     defp maybe_install_storybook_extras(igniter, _), do: igniter
 
-    defp validate_component_dependencies! do
-      keys = @components |> Map.keys() |> MapSet.new()
-
-      invalid =
-        Enum.flat_map(@components, fn {comp, deps} ->
-          Enum.reject(deps, &MapSet.member?(keys, &1))
-          |> Enum.map(&{comp, &1})
-        end)
-
-      if invalid != [] do
-        details =
-          invalid
-          |> Enum.map_join(", ", fn {c, d} -> "#{Atom.to_string(c)} -> #{Atom.to_string(d)}" end)
-
-        raise "Invalid component dependencies found: #{details}"
-      end
-
-      :ok
-    end
-
     # Helpers for component selection and dependency resolution
     defp parse_requested_components(options) do
       case options[:component] do
@@ -340,7 +270,7 @@ if Code.ensure_loaded?(Igniter) do
         raise "No components specified. Pass --component=name1,name2 or use --all"
       end
 
-      valid_keys = Map.keys(@components)
+      valid_keys = Pulsar.ComponentDeps.all()
       Enum.map(requested, &validate_component!(&1, valid_keys))
     end
 
@@ -355,71 +285,16 @@ if Code.ensure_loaded?(Igniter) do
       end
     end
 
-    defp resolve_all_dependencies(selected) do
-      deps_of = fn comp -> Map.get(@components, comp, []) end
-
-      resolver = fn resolver, queue, acc ->
-        case queue do
-          [] ->
-            acc
-
-          [h | t] ->
-            {new_queue, new_acc} = process_component_dependencies(deps_of.(h), t, acc)
-            resolver.(resolver, new_queue, new_acc)
-        end
-      end
-
-      resolver.(resolver, selected, MapSet.new(selected))
-      |> MapSet.to_list()
-    end
-
-    defp process_component_dependencies(dependencies, queue, acc) do
-      Enum.reduce(dependencies, {queue, acc}, fn dependency, {q, a} ->
-        if MapSet.member?(a, dependency) do
-          {q, a}
-        else
-          {[dependency | q], MapSet.put(a, dependency)}
-        end
-      end)
-    end
-
-    defp missing_dependencies(all, selected) do
-      MapSet.difference(MapSet.new(all), MapSet.new(selected))
-      |> MapSet.to_list()
-      |> Enum.sort()
-    end
-
-    defp prompt_to_include_missing(_igniter, selected, []), do: selected
-
-    defp prompt_to_include_missing(igniter, selected, missing) do
-      if igniter.args.options[:yes] || confirm_missing?(missing) do
-        selected ++ Enum.reject(missing, &(&1 in selected))
-      else
-        selected
-      end
-    end
-
-    defp confirm_missing?(missing) do
-      message =
-        "The following Pulsar component dependencies are required: " <>
-          Enum.map_join(missing, ", ", &Atom.to_string/1) <>
-          ". Install them as well?"
-
-      Igniter.Util.IO.yes?(message)
-    end
-
     defp gather_components(igniter) do
       options = igniter.args.options
       all = options[:all] && Enum.empty?(options[:component])
 
       if all do
-        @components |> Map.keys()
+        Pulsar.ComponentDeps.resolution_order(Pulsar.ComponentDeps.all())
       else
         requested = parse_requested_components(options)
         selected = normalize_and_validate!(requested)
-        all = resolve_all_dependencies(selected)
-        missing = missing_dependencies(all, selected)
-        prompt_to_include_missing(igniter, selected, missing)
+        Pulsar.ComponentDeps.resolution_order(selected)
       end
     end
   end
