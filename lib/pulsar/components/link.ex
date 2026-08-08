@@ -53,7 +53,6 @@ defmodule Pulsar.Components.Link do
     doc: "Size of the link text. inherit adapts to parent text size"
   )
 
-  # Stellar Link attributes - copied from Stellar.Components.Link
   attr(:href, :string, default: nil, doc: "External URL to navigate to")
   attr(:navigate, :any, default: nil, doc: "Phoenix route to navigate to (string or VerifiedRoute)")
   attr(:patch, :any, default: nil, doc: "Phoenix route to patch navigate to (string or VerifiedRoute)")
@@ -67,7 +66,6 @@ defmodule Pulsar.Components.Link do
   attr(:id, :string, default: nil)
   attr(:class, :string, default: "", doc: "Additional CSS classes")
 
-  # ARIA attributes (matching Stellar.Components.Link)
   attr(:aria_label, :string, default: nil, doc: "Accessible label for the link")
   attr(:aria_describedby, :string, default: nil)
   attr(:aria_current, :string, default: nil)

@@ -1,6 +1,6 @@
 defmodule Pulsar.Components.Select do
   @moduledoc """
-  Styled select component built on Stellar.Components.Select with consistent theming.
+  Self-contained styled select component with consistent theming.
 
   Provides beautiful, accessible select fields with optional multi-select badge display.
   All styling is applied via Tailwind CSS utilities with semantic color tokens
@@ -169,7 +169,6 @@ defmodule Pulsar.Components.Select do
     "warning" => "text-warning"
   }
 
-  # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
   defp generate_id(prefix) do
     "#{prefix}-#{System.unique_integer([:positive])}"
   end
@@ -193,7 +192,6 @@ defmodule Pulsar.Components.Select do
     doc: "Size of the select"
   )
 
-  # Stellar select attributes - copied from Stellar.Components.Select
   attr(:field, FormField, default: nil, doc: "Phoenix form field")
 
   # Core attributes
@@ -265,7 +263,6 @@ defmodule Pulsar.Components.Select do
   """
   @spec select(map()) :: Rendered.t()
   def select(assigns) do
-    # Apply Stellar field normalization and computed attributes
     assigns =
       assigns
       |> normalize_field_props()
@@ -519,9 +516,6 @@ defmodule Pulsar.Components.Select do
   defp value_or_field(nil, _), do: nil
   defp value_or_field(v, _), do: v
 
-  # === Stellar Helper Functions (Merged) ===
-
-  # Normalize field props (from Stellar)
   defp normalize_field_props(%{field: %FormField{} = field} = assigns) do
     assigns
     |> assign(:id, assigns[:id] || field.id || generate_id("select"))
@@ -546,7 +540,6 @@ defmodule Pulsar.Components.Select do
     assigns
   end
 
-  # Compute attributes (from Stellar)
   defp assign_computed_attributes(assigns) do
     # Compute data_has_value considering arrays and empty values
     data_has_value =
@@ -564,13 +557,11 @@ defmodule Pulsar.Components.Select do
     |> assign(:data_has_value, data_has_value)
   end
 
-  # Options generation (from Stellar)
   defp generate_options_html(assigns) do
     Form.options_for_select(assigns.options, assigns.value)
     |> Phoenix.HTML.safe_to_string()
   end
 
-  # Data attribute helper (from Stellar)
   defp data_boolean(val), do: if(val, do: "true", else: "false")
 
   # Handle array name for multi-select

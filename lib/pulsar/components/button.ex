@@ -76,7 +76,6 @@ defmodule Pulsar.Components.Button do
   # Custom guard for validating navigation links
   defguardp is_link(href) when is_binary(href) or is_struct(href, Route) or is_struct(href, URI)
 
-  # Inline ID generator (replacing Stellar.Helpers.IdGenerator)
   defp generate_id(prefix \\ "button") do
     "#{prefix}-#{System.unique_integer([:positive])}"
   end
@@ -196,7 +195,6 @@ defmodule Pulsar.Components.Button do
     doc: "Size of the button. Note: link variant ignores size to preserve natural text flow"
   )
 
-  # Stellar button attributes - copied from Stellar.Components.Button
   attr(:as, :atom,
     values: [:button, :a, :div],
     default: :button,
@@ -357,7 +355,6 @@ defmodule Pulsar.Components.Button do
     """
   end
 
-  # Native button rendering (from Stellar with Pulsar loading content)
   defp render_button(%{as: :button} = assigns) do
     ~H"""
     <button
@@ -559,7 +556,6 @@ defmodule Pulsar.Components.Button do
     """
   end
 
-  # Colocated hook component for pseudo-buttons (renamed from Stellar)
   defp button_hook(assigns) do
     ~H"""
     <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarButton">
@@ -640,7 +636,6 @@ defmodule Pulsar.Components.Button do
 
   # === Helper Functions ===
 
-  # Element resolution (from Stellar)
   defp resolve_as_from_props(%{as: :div} = _assigns), do: :div
 
   defp resolve_as_from_props(assigns) do
