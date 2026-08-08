@@ -14,23 +14,23 @@ static `aria-hidden` ellipsis.
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
-**Evidence:** Ordered `<ol>`/`<li>` structure conveys sequence; `aria-current="page"` marks the current crumb — `lib/pulsar/components/breadcrumb.ex:123, 157`.
+**Evidence:** Ordered `<ol>`/`<li>` structure conveys sequence; `aria-current="page"` marks the current crumb — `lib/pulsar/components/breadcrumb.ex`, `breadcrumb/1`, `crumb_body/1`.
 
 ### 2.4.4 Link Purpose (In Context) (A) — ✓ PASS
 
-**Evidence:** Each crumb link's accessible name is its visible text via the item slot — `lib/pulsar/components/breadcrumb.ex:162`.
+**Evidence:** Each crumb link's accessible name is its visible text via the item slot — `lib/pulsar/components/breadcrumb.ex`, `crumb_body/1`.
 
 ### 2.4.8 Location (AAA, met as bonus) — ✓ PASS
 
-**Evidence:** The trail communicates the page's location in the site hierarchy; the current page is identified with `aria-current="page"` — `lib/pulsar/components/breadcrumb.ex:157`.
+**Evidence:** The trail communicates the page's location in the site hierarchy; the current page is identified with `aria-current="page"` — `lib/pulsar/components/breadcrumb.ex`, `crumb_body/1`.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
-**Evidence:** `<nav aria-label>` names the landmark; links expose role/name; the current crumb exposes `aria-current` — `lib/pulsar/components/breadcrumb.ex:122, 157`.
+**Evidence:** `<nav aria-label>` names the landmark; links expose role/name; the current crumb exposes `aria-current` — `lib/pulsar/components/breadcrumb.ex`, `breadcrumb/1`, `crumb_body/1`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
-**Evidence:** `text-muted-foreground` links and `text-foreground` current crumb meet AA on all surfaces — `lib/pulsar/components/breadcrumb.ex:158, 175`. Verified by the axe gate across the `/components/breadcrumb` fixture in light and dark themes.
+**Evidence:** `text-muted-foreground` links and `text-foreground` current crumb meet AA on all surfaces — `lib/pulsar/components/breadcrumb.ex`, `crumb_body/1`. Verified by the axe gate across the `/components/breadcrumb` fixture in light and dark themes.
 
 ## Not applicable
 

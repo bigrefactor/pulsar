@@ -13,7 +13,7 @@ slots for icons or interactive controls.
 ### 1.1.1 Non-text Content (A) — ✓ PASS
 
 **Evidence:** Badge is text-first: `inner_block` is `required: true` —
-`lib/pulsar/components/badge.ex:152`. Addon slots are optional and
+`lib/pulsar/components/badge.ex`, `badge/1`. Addon slots are optional and
 expected to contain icons (decorative by default via the Icon
 component's `aria-hidden="true"` default).
 
@@ -24,7 +24,7 @@ accessible name comes from the inner text.
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
 **Evidence:** Single semantic `<span>` wrapping inline addon/text/addon
-flow — `lib/pulsar/components/badge.ex:167–173`. No grouping
+flow — `lib/pulsar/components/badge.ex`, `badge/1`. No grouping
 relationships to preserve.
 
 **Notes:** Badge is a presentational marker; no implicit ARIA role is
@@ -34,14 +34,14 @@ required. Text content is exposed directly to AT.
 
 **Evidence:** DOM order is `start_addon` → `inner_block` → `end_addon`,
 matching visual `inline-flex items-center` order —
-`lib/pulsar/components/badge.ex:82, 168–172`.
+`lib/pulsar/components/badge.ex`, `base_badge_classes/0`, `badge/1`.
 
 **Notes:** No `flex-direction: row-reverse` or absolute positioning.
 
 ### 1.3.3 Sensory Characteristics (A) — ✓ PASS
 
 **Evidence:** Color variants are paired with required text content
-(`inner_block` required at `lib/pulsar/components/badge.ex:152`). Status
+(`inner_block` required at `lib/pulsar/components/badge.ex`, `badge/1`). Status
 meaning (success/danger/warning) reaches AT through the text, not just
 the color token.
 
@@ -51,7 +51,7 @@ empty color-only badges.
 
 ### 1.4.1 Use of Color (A) — ✓ PASS
 
-**Evidence:** Required `inner_block` (`lib/pulsar/components/badge.ex:152`)
+**Evidence:** Required `inner_block` (`lib/pulsar/components/badge.ex`, `badge/1`)
 ensures text accompanies every color variant. The 7-color palette
 (neutral/primary/secondary/success/danger/warning/info) is decorative
 on top of the text label.
@@ -63,7 +63,7 @@ conveyed by color alone.
 
 **Evidence:** Foreground/background colors come from semantic tokens
 (`bg-*`/`text-*-foreground`, `text-*` for outline/ghost) —
-`lib/pulsar/components/badge.ex:89–125`. Browser measurement of 91 cells
+`lib/pulsar/components/badge.ex`, `variant_color_classes/2`. Browser measurement of 91 cells
 per theme — all pass, min 5.64:1 (light) / 4.84:1 (dark)
 ([light](measurements/badge-light.md),
 [dark](measurements/badge-dark.md)).
@@ -78,7 +78,7 @@ the Badge fixture in either theme.
 
 **Evidence:** All text classes use `rem`-based Tailwind tokens
 (`text-xs`/`text-sm`/`text-base`/`text-lg`) and padding uses
-`rem`-based spacing utilities — `lib/pulsar/components/badge.ex:72–78`.
+`rem`-based spacing utilities — `lib/pulsar/components/badge.ex`, `size_classes/1`.
 No fixed `px` heights constrain text.
 
 **Notes:** Badge height is content-driven (padding only), so text
@@ -87,18 +87,18 @@ resizes without clipping.
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
 **Evidence:** `inline-flex` layout with no `min-width` or fixed widths —
-`lib/pulsar/components/badge.ex:82`.
+`lib/pulsar/components/badge.ex`, `base_badge_classes/0`.
 
 **Notes:** Badge sizes to its content and reflows at 320 CSS px.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
 **Evidence:** Outline variant uses `border border-*` against
-`bg-background` — `lib/pulsar/components/badge.ex:99–114`. The
+`bg-background` — `lib/pulsar/components/badge.ex`, `variant_color_classes/2`. The
 `outline-neutral` variant routes through `border-border-strong` —
-`lib/pulsar/components/badge.ex:113`. Focus-within ring is
+`lib/pulsar/components/badge.ex`, `variant_color_classes/2`. Focus-within ring is
 `focus-within:ring-2 focus-within:ring-current focus-within:ring-offset-2`
-— `lib/pulsar/components/badge.ex:84–85`. Browser measurement: 30 cells
+— `lib/pulsar/components/badge.ex`, `base_badge_classes/0`. Browser measurement: 30 cells
 with measurable borders, all pass in both themes (min 4.63:1 light /
 6.22:1 dark) ([light](measurements/badge-light.md),
 [dark](measurements/badge-dark.md)).
@@ -110,7 +110,7 @@ page background.
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
 **Evidence:** No fixed heights; padding-only sizing
-(`px-*`/`py-*`/`gap-*`) — `lib/pulsar/components/badge.ex:72–78`. No
+(`px-*`/`py-*`/`gap-*`) — `lib/pulsar/components/badge.ex`, `size_classes/1`. No
 `!important` overrides on text spacing.
 
 **Notes:** Badge adapts to user-overridden line-height/letter-spacing
@@ -120,7 +120,7 @@ because vertical size is driven by padding, not a fixed height.
 
 **Evidence:** `focus-within:outline-none focus-within:ring-2
 focus-within:ring-current focus-within:ring-offset-2` —
-`lib/pulsar/components/badge.ex:84–85`. The badge itself is not
+`lib/pulsar/components/badge.ex`, `base_badge_classes/0`. The badge itself is not
 focusable; the ring appears when a focusable addon child (e.g., a
 remove button) is focused. Measurement reads `not-focusable-in-state`
 for every cell because the wrapping `<span>` doesn't receive focus.
@@ -133,7 +133,7 @@ satisfies the 3:1 non-text minimum by a wide margin in every cell.
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Badge is a single inline element that doesn't create
-sticky or overlapping content — `lib/pulsar/components/badge.ex:167–173`.
+sticky or overlapping content — `lib/pulsar/components/badge.ex`, `badge/1`.
 
 **Notes:** Page-level concern if badges sit in sticky toolbars; not a
 component-level gap.
@@ -144,7 +144,7 @@ component-level gap.
 controls live in caller-provided `start_addon`/`end_addon` slots and
 inherit their own activation semantics (native buttons, etc.).
 
-**Notes:** Sample usage in module docs (`lib/pulsar/components/badge.ex:32–53`)
+**Notes:** Sample usage in module docs (`lib/pulsar/components/badge.ex`)
 uses `<button phx-click="...">` which fires on mouseup.
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
@@ -154,10 +154,10 @@ to the wrapper `<span>` — the body-cell matrix still measures the `xs`
 body at 20px (73/91 body cells ≥24×24; the 18 sub-floor cells are `xs`
 bodies, which carry no pointer action). The *interactive* target is a
 caller-supplied control in `start_addon`/`end_addon`
-(`lib/pulsar/components/badge.ex:154–155`). Those slots are now wrapped
+(`lib/pulsar/components/badge.ex`, `badge/1`). Those slots are now wrapped
 so any direct `<button>`/`<a>` is sized to a ≥24px floor
 (`[&>button]:min-h-6 [&>button]:min-w-6`,
-`lib/pulsar/components/badge.ex:91–95, 174–176`), so a dismissible badge
+`lib/pulsar/components/badge.ex`, `badge/1`), so a dismissible badge
 meets the floor even at `xs`.
 
 **Notes:** A decorative addon (icon, status dot) is left untouched — only
@@ -169,12 +169,13 @@ its own ≥24px target.
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
 **Evidence:** Semantic `<span>` with no implicit role —
-`lib/pulsar/components/badge.ex:168`. Accessible name comes from inner
+`lib/pulsar/components/badge.ex`, `badge/1`. Accessible name comes from inner
 text content; `@rest` allows callers to pass `aria-label`, `id`, or
-other ARIA properties — `lib/pulsar/components/badge.ex:150, 168`.
+other ARIA properties — `lib/pulsar/components/badge.ex`, `badge/1`.
 
 **Notes:** Test confirms global attribute pass-through —
-`test/pulsar/components/badge_test.exs:191–197`. Badge has no state, so
+`test "accepts global attributes"` —
+`test/pulsar/components/badge_test.exs`. Badge has no state, so
 no state attributes are needed.
 
 ## Not applicable
