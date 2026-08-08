@@ -2,12 +2,14 @@ defmodule Mix.Tasks.Pulsar.Gen.SelectTest do
   use ExUnit.Case, async: false
 
   import Igniter.Test
+  import Pulsar.GeneratorTestHelpers
 
   describe "pulsar.gen.select" do
     test "creates select component with default naming" do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.select", [])
       |> assert_creates("lib/test_web/components/select.ex")
+      |> assert_generated_component("lib/test_web/components/select.ex")
       |> apply_igniter!()
     end
 
@@ -15,20 +17,6 @@ defmodule Mix.Tasks.Pulsar.Gen.SelectTest do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.select", ["--components-module", "MyApp.CustomComponents"])
       |> assert_creates("lib/my_app/custom_components/select.ex")
-      |> apply_igniter!()
-    end
-
-    test "generated component includes expected functions" do
-      phx_test_project()
-      |> Igniter.compose_task("pulsar.gen.select", [])
-      |> assert_creates("lib/test_web/components/select.ex")
-      |> apply_igniter!()
-    end
-
-    test "generated component uses Phoenix.Component" do
-      phx_test_project()
-      |> Igniter.compose_task("pulsar.gen.select", [])
-      |> assert_creates("lib/test_web/components/select.ex")
       |> apply_igniter!()
     end
   end

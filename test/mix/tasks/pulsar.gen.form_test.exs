@@ -2,12 +2,14 @@ defmodule Mix.Tasks.Pulsar.Gen.FormTest do
   use ExUnit.Case, async: false
 
   import Igniter.Test
+  import Pulsar.GeneratorTestHelpers
 
   describe "pulsar.gen.form" do
     test "creates form component with default naming" do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.form", [])
       |> assert_creates("lib/test_web/components/form.ex")
+      |> assert_generated_component("lib/test_web/components/form.ex")
       |> apply_igniter!()
     end
 
@@ -19,13 +21,6 @@ defmodule Mix.Tasks.Pulsar.Gen.FormTest do
     end
 
     test "generated component includes the PulsarForm colocated hook" do
-      phx_test_project()
-      |> Igniter.compose_task("pulsar.gen.form", [])
-      |> assert_creates("lib/test_web/components/form.ex")
-      |> apply_igniter!()
-    end
-
-    test "generated component uses Phoenix.Component" do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.form", [])
       |> assert_creates("lib/test_web/components/form.ex")
