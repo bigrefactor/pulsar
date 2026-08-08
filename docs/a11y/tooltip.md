@@ -31,7 +31,7 @@ itself is caller-supplied text.
 trigger→hint relationship is programmatic — `lib/pulsar/components/tooltip.ex:186`,
 `lib/pulsar/components/popover.ex:312` (hover-mode `setupHover`), `:455` (`updated`
 re-sync). The keyboard fixture asserts the `aria-describedby` linkage —
-`test/integration/a11y/keyboard_test.exs`.
+`test/integration/a11y/keyboard/tooltip_test.exs`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
@@ -77,14 +77,14 @@ itself is a filled shape against the page, not a bordered control.
   only on leave, blur, or Escape — `lib/pulsar/components/popover.ex:305–357`.
 
 The keyboard fixture asserts focus-to-open and Escape-to-dismiss —
-`test/integration/a11y/keyboard_test.exs`.
+`test/integration/a11y/keyboard/tooltip_test.exs`.
 
 ### 2.1.1 Keyboard (A) — ✓ PASS
 
 **Evidence:** The hint is reachable without a pointer: focusing the trigger opens
 it immediately, and Escape dismisses it — `lib/pulsar/components/popover.ex:321–325`
 (`_openNow` on `focusin`), `:308–312` (Escape). The keyboard fixture exercises
-both — `test/integration/a11y/keyboard_test.exs`.
+both — `test/integration/a11y/keyboard/tooltip_test.exs`.
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 

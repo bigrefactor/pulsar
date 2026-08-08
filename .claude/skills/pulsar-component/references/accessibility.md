@@ -47,11 +47,11 @@ navigation, Escape, Home/End), you must:
 
 1. Implement it (native element behavior, or `Phoenix.LiveView.JS` /
    colocated hook — no external JS).
-2. Add a keyboard fixture + route + a `describe` block in
-   `test/integration/a11y/keyboard_test.exs` exercising each key. See
-   `registries.md` §F and the existing Button/Card/RadioGroup/Select/Checkbox/
-   Switch blocks for the `visit |> await_live_connected |> press |> assert_has`
-   pattern.
+2. Add a keyboard fixture + route + a per-component test module in
+   `test/integration/a11y/keyboard/<component>_test.exs` exercising each key.
+   See `registries.md` §F and the existing button/card/radio_group/select/
+   checkbox/switch files for the `visit |> await_live_connected |> press |>
+   assert_has` pattern.
 
 ## Localization (i18n)
 

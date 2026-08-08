@@ -4,7 +4,7 @@ defmodule Pulsar.DevApp.Keyboard.TabsLive do
 
   Provides a horizontal group and a vertical group with stable tab ids so the
   keyboard suite can press arrow/Home/End keys and assert focus + selection
-  move correctly, and that a disabled tab is skipped.
+  move correctly, and that a disabled tab receives focus but is never selected.
   """
   use Pulsar.DevApp.Web, :live_view
 

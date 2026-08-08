@@ -66,7 +66,7 @@ keyboard-operable controls; the built-in close button is a native `<button>`;
 Escape dismissal is native to the modal `<dialog>` —
 `lib/pulsar/components/modal.ex:268–276` (close button), `:404–428` (helpers). The
 keyboard fixture exercises open, Escape-to-close, and the non-dismissable lock —
-`test/integration/a11y/keyboard_test.exs`.
+`test/integration/a11y/keyboard/modal_test.exs`.
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
@@ -78,7 +78,7 @@ returns focus to the opener (native `<dialog>` behavior) —
 `lib/pulsar/components/modal.ex:342–344` (Escape lock only when non-dismissable).
 The keyboard fixture asserts Escape closes the dismissable dialog and restores
 focus, and that the locked dialog stays open on Escape —
-`test/integration/a11y/keyboard_test.exs`.
+`test/integration/a11y/keyboard/modal_test.exs`.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 
@@ -86,7 +86,7 @@ focus, and that the locked dialog stays open on Escape —
 or the first focusable control) and restores it to the opener on close; no
 positive `tabindex` is used — `lib/pulsar/components/modal.ex:324–330` (open),
 `:332–334` (close). The keyboard fixture asserts focus lands inside on open and
-returns to the opener on close — `test/integration/a11y/keyboard_test.exs`.
+returns to the opener on close — `test/integration/a11y/keyboard/modal_test.exs`.
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 

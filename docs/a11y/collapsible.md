@@ -70,7 +70,7 @@ Enter/Space synthesize on a button). Tests `trigger is a button wired to the
 panel, closed by default` and `open renders expanded state` —
 `test/pulsar/components/collapsible_test.exs`. The browser interaction test
 `clicking the trigger opens the panel (visible, not just aria)` in
-`test/integration/a11y/keyboard_test.exs` proves the panel actually expands.
+`test/integration/a11y/keyboard/collapsible_test.exs` proves the panel actually expands.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 

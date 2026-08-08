@@ -5,8 +5,9 @@ defmodule Pulsar.DevApp.Keyboard.AccordionLive do
   A single (`type="single"`, `collapsible`) accordion with stable item/header
   ids and unique panel body text, so the integration suite can click and key the
   headers and assert that panels actually open (`data-expanded`, visible body)
-  and that single-mode exclusivity, the disabled item, and arrow-key roving all
-  behave. Behavior comes from the `.PulsarAccordion` colocated hook.
+  and that single-mode exclusivity, the disabled item (focusable, never opens),
+  and arrow-key roving all behave. Behavior comes from the `.PulsarAccordion`
+  colocated hook.
   """
   use Pulsar.DevApp.Web, :live_view
 

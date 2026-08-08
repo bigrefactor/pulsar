@@ -17,7 +17,7 @@ The panel imposes no role; callers pass `role="dialog"` and a name when needed.
 **Evidence:** The trigger's `aria-controls` points at the panel `id`, and the
 hook keeps `aria-expanded` in sync as the panel opens and closes — see the
 `mounted`/`setupClick` wiring in `lib/pulsar/components/popover.ex:265–303`. The keyboard
-fixture asserts the expanded state on open/close — `test/integration/a11y/keyboard_test.exs`.
+fixture asserts the expanded state on open/close — `test/integration/a11y/keyboard/popover_test.exs`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
 
@@ -54,13 +54,13 @@ is persistent until dismissed — `lib/pulsar/components/popover.ex:248` (the pa
 **Evidence:** The trigger is a native `<button>`; Enter/Space toggle the popover
 via the browser's `popovertarget` invoker (stamped by the hook —
 `lib/pulsar/components/popover.ex:297`); Escape closes natively. The keyboard
-fixture exercises Enter-to-open and Escape-to-close — `test/integration/a11y/keyboard_test.exs`.
+fixture exercises Enter-to-open and Escape-to-close — `test/integration/a11y/keyboard/popover_test.exs`.
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
 **Evidence:** Non-modal — Tab moves through panel content and back out to the
 page; nothing holds focus. The keyboard fixture asserts Tab from inside the panel
-leaves it — `test/integration/a11y/keyboard_test.exs`.
+leaves it — `test/integration/a11y/keyboard/popover_test.exs`.
 
 ### 2.4.3 Focus Order (A) — ✓ PASS
 

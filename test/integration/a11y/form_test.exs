@@ -7,7 +7,7 @@ defmodule Pulsar.Integration.A11y.FormTest do
 
   Tagged `:integration`; excluded from `mix test` by default. Run with
   `mix test --only integration`. Tag rationale matches `AxeCleanTest` and
-  `KeyboardTest`: `:browser` is a reserved Playwright key.
+  the `Keyboard.*Test` modules: `:browser` is a reserved Playwright key.
 
   ## Verification
 

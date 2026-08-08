@@ -115,7 +115,7 @@ defmodule Pulsar.Components.Tabs do
 
   @icon_size %{"xs" => "xs", "sm" => "xs", "md" => "sm", "lg" => "sm", "xl" => "md"}
 
-  @tab_base "inline-flex items-center justify-center font-medium whitespace-nowrap cursor-pointer select-none transition-[transform,box-shadow,background-color,border-color,color,opacity] duration-normal ease-standard hover:scale-[1.02] active:scale-[0.98] motion-reduce:hover:scale-100 motion-reduce:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-disabled aria-disabled:pointer-events-none aria-disabled:opacity-disabled"
+  @tab_base "inline-flex items-center justify-center font-medium whitespace-nowrap cursor-pointer select-none transition-[transform,box-shadow,background-color,border-color,color,opacity] duration-normal ease-standard hover:scale-[1.02] active:scale-[0.98] motion-reduce:hover:scale-100 motion-reduce:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 aria-disabled:pointer-events-none aria-disabled:opacity-disabled"
 
   @wrapper %{
     "horizontal" => "flex flex-col",
@@ -186,7 +186,7 @@ defmodule Pulsar.Components.Tabs do
         "Override the group color on this tab's active state (one of neutral primary secondary success danger warning info)"
     )
 
-    attr(:disabled, :boolean, doc: "Disable this tab (skipped by keyboard navigation)")
+    attr(:disabled, :boolean, doc: "Disable this tab (keyboard focus can reach it, but it cannot be selected)")
   end
 
   @doc """
@@ -237,7 +237,6 @@ defmodule Pulsar.Components.Tabs do
           aria-selected={(tab.active && "true") || "false"}
           aria-disabled={(tab.disabled && "true") || "false"}
           tabindex={(tab.active && "0") || "-1"}
-          disabled={tab.disabled}
           class={tab_classes(@variant, @orientation, @size, tab.color)}
         >
           <Icon.icon :if={tab.icon} name={tab.icon} size={icon_size(@size)} />
@@ -283,21 +282,16 @@ defmodule Pulsar.Components.Tabs do
         allTabs() {
           return Array.from(this.tablist.querySelectorAll('[role="tab"]'))
         },
-        enabledTabs() {
-          return this.allTabs().filter((t) => !t.disabled && t.getAttribute("aria-disabled") !== "true")
-        },
         onClick(e) {
           const tab = e.target.closest('[role="tab"]')
           if (!tab || !this.tablist.contains(tab)) return
-          if (tab.disabled || tab.getAttribute("aria-disabled") === "true") return
           this.activate(tab)
         },
         onKeydown(e) {
           const vertical = (this.el.dataset.orientation || "horizontal") === "vertical"
           const nextKey = vertical ? "ArrowDown" : "ArrowRight"
           const prevKey = vertical ? "ArrowUp" : "ArrowLeft"
-          const tabs = this.enabledTabs()
-          if (tabs.length === 0) return
+          const tabs = this.allTabs()
           let idx = tabs.indexOf(document.activeElement)
           if (e.key === nextKey) {
             e.preventDefault()
@@ -316,10 +310,14 @@ defmodule Pulsar.Components.Tabs do
           }
         },
         focusActivate(tab) {
+          // Roving tabindex follows focus (not selection) so Tab exits the
+          // tablist even when focus rests on a disabled, unselectable tab.
+          this.allTabs().forEach((t) => t.setAttribute("tabindex", t === tab ? "0" : "-1"))
           tab.focus()
           this.activate(tab)
         },
         activate(tab) {
+          if (tab.getAttribute("aria-disabled") === "true") return
           this.selected = tab.id
           this.applySelection(tab)
           const encoded = this.el.dataset.onChange
@@ -348,7 +346,14 @@ defmodule Pulsar.Components.Tabs do
         restoreSelection() {
           if (!this.selected || !this.tablist) return
           const tab = this.allTabs().find((t) => t.id === this.selected)
-          if (tab) this.applySelection(tab)
+          if (!tab) return
+          if (tab.getAttribute("aria-disabled") === "true") {
+            // The server disabled the client-selected tab; drop the client
+            // choice and let the server-rendered selection stand.
+            this.selected = null
+            return
+          }
+          this.applySelection(tab)
         }
       }
     </script>
