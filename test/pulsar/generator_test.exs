@@ -2,6 +2,7 @@ defmodule Pulsar.GeneratorTest do
   use ExUnit.Case, async: false
 
   import Igniter.Test
+  import Pulsar.GeneratorTestHelpers
 
   describe "use Pulsar.Generator argument validation" do
     test ":component must be a non-nil atom" do
@@ -191,11 +192,6 @@ defmodule Pulsar.GeneratorTest do
         |> apply_igniter!()
       end
     end
-  end
-
-  defp source_content(igniter, path) do
-    {:ok, source} = Map.fetch(igniter.rewrite.sources, path)
-    Rewrite.Source.get(source, :content)
   end
 
   defp assert_changed(igniter, path_or_paths) do

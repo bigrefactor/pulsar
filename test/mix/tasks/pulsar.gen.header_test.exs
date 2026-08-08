@@ -17,6 +17,7 @@ defmodule Mix.Tasks.Pulsar.Gen.HeaderTest do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.header", ["--components-module", "MyApp.CustomComponents"])
       |> assert_creates("lib/my_app/custom_components/header.ex")
+      |> assert_generated_component("lib/my_app/custom_components/header.ex")
       |> apply_igniter!()
     end
   end

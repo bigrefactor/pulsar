@@ -17,6 +17,7 @@ defmodule Mix.Tasks.Pulsar.Gen.AvatarTest do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.avatar", ["--components-module", "MyApp.CustomComponents"])
       |> assert_creates("lib/my_app/custom_components/avatar.ex")
+      |> assert_generated_component("lib/my_app/custom_components/avatar.ex")
       |> apply_igniter!()
     end
   end

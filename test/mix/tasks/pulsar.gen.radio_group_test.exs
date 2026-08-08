@@ -17,6 +17,7 @@ defmodule Mix.Tasks.Pulsar.Gen.RadioGroupTest do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.radio_group", ["--components-module", "MyApp.CustomComponents"])
       |> assert_creates("lib/my_app/custom_components/radio_group.ex")
+      |> assert_generated_component("lib/my_app/custom_components/radio_group.ex")
       |> apply_igniter!()
     end
   end

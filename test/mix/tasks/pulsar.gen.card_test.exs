@@ -17,6 +17,7 @@ defmodule Mix.Tasks.Pulsar.Gen.CardTest do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.card", ["--components-module", "MyApp.CustomComponents"])
       |> assert_creates("lib/my_app/custom_components/card.ex")
+      |> assert_generated_component("lib/my_app/custom_components/card.ex")
       |> apply_igniter!()
     end
   end

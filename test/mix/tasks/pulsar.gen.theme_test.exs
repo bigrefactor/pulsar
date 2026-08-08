@@ -2,6 +2,7 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
   use ExUnit.Case, async: false
 
   import Igniter.Test
+  import Pulsar.GeneratorTestHelpers
 
   describe "pulsar.gen.theme" do
     test "creates theme.css with theme definitions" do
@@ -220,8 +221,7 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
         phx_test_project()
         |> Igniter.compose_task("pulsar.gen.theme", [])
 
-      {:ok, source} = Map.fetch(igniter.rewrite.sources, "assets/css/theme.css")
-      content = Rewrite.Source.get(source, :content)
+      content = source_content(igniter, "assets/css/theme.css")
       assert content =~ ~s(@import "./themes/light.css";)
       assert content =~ ~s(@import "./themes/dark.css";)
 
@@ -368,11 +368,6 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
     end
 
     igniter
-  end
-
-  defp source_content(igniter, path) do
-    {:ok, source} = Map.fetch(igniter.rewrite.sources, path)
-    Rewrite.Source.get(source, :content)
   end
 
   defp has_import_line?(content, import_line) do

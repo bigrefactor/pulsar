@@ -17,6 +17,7 @@ defmodule Mix.Tasks.Pulsar.Gen.TableTest do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.table", ["--components-module", "MyApp.CustomComponents"])
       |> assert_creates("lib/my_app/custom_components/table.ex")
+      |> assert_generated_component("lib/my_app/custom_components/table.ex")
       |> apply_igniter!()
     end
   end

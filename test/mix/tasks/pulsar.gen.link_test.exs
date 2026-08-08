@@ -9,7 +9,7 @@ defmodule Mix.Tasks.Pulsar.Gen.LinkTest do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.link", [])
       |> assert_creates("lib/test_web/components/link.ex")
-      |> assert_generated_component("lib/test_web/components/link.ex")
+      |> assert_generated_component("lib/test_web/components/link.ex", "a")
       |> apply_igniter!()
     end
 
@@ -17,6 +17,7 @@ defmodule Mix.Tasks.Pulsar.Gen.LinkTest do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.link", ["--components-module", "MyApp.CustomComponents"])
       |> assert_creates("lib/my_app/custom_components/link.ex")
+      |> assert_generated_component("lib/my_app/custom_components/link.ex", "a")
       |> apply_igniter!()
     end
   end

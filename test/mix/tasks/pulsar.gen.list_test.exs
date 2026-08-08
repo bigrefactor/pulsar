@@ -17,6 +17,7 @@ defmodule Mix.Tasks.Pulsar.Gen.ListTest do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.list", ["--components-module", "MyApp.CustomComponents"])
       |> assert_creates("lib/my_app/custom_components/list.ex")
+      |> assert_generated_component("lib/my_app/custom_components/list.ex")
       |> apply_igniter!()
     end
   end

@@ -17,6 +17,7 @@ defmodule Mix.Tasks.Pulsar.Gen.SkeletonTest do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.skeleton", ["--components-module", "MyApp.CustomComponents"])
       |> assert_creates("lib/my_app/custom_components/skeleton.ex")
+      |> assert_generated_component("lib/my_app/custom_components/skeleton.ex")
       |> apply_igniter!()
     end
   end

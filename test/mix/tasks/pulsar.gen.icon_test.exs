@@ -17,6 +17,7 @@ defmodule Mix.Tasks.Pulsar.Gen.IconTest do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.icon", ["--components-module", "MyApp.CustomComponents"])
       |> assert_creates("lib/my_app/custom_components/icon.ex")
+      |> assert_generated_component("lib/my_app/custom_components/icon.ex")
       |> apply_igniter!()
     end
   end

@@ -17,6 +17,7 @@ defmodule Mix.Tasks.Pulsar.Gen.SwitchTest do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.switch", ["--components-module", "MyApp.CustomComponents"])
       |> assert_creates("lib/my_app/custom_components/switch.ex")
+      |> assert_generated_component("lib/my_app/custom_components/switch.ex")
       |> apply_igniter!()
     end
   end
