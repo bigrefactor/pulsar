@@ -35,8 +35,8 @@ component (the `label` is required) — `lib/pulsar/components/tabs.ex`, `tabs/1
   `lib/pulsar/components/tabs.ex`, `tabs/1`
 - Each panel has `role="tabpanel"` and `aria-labelledby` pointing back at its
   tab — `lib/pulsar/components/tabs.ex`, `tabs/1`
-- Test `renders tablist, tabs and panels with roles` and Test
-  `tabs reference their panels via aria-controls / aria-labelledby` —
+- Test `renders tablist, tabs and panels with roles` and
+  Test `tabs reference their panels via aria-controls / aria-labelledby` —
   `test/pulsar/components/tabs_test.exs`
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
@@ -179,8 +179,8 @@ navigation or form submission — `lib/pulsar/components/tabs.ex`, `tabs/1`.
   `lib/pulsar/components/tabs.ex`, `tabs/1`. The hook keeps `aria-selected`,
   `tabindex`, and panel `hidden` in sync on activation —
   `lib/pulsar/components/tabs.ex`, `tabs/1`.
-- Test `tabs reference their panels via aria-controls / aria-labelledby` and Test
-  `vertical orientation sets aria-orientation and data-orientation` —
+- Test `tabs reference their panels via aria-controls / aria-labelledby` and
+  Test `vertical orientation sets aria-orientation and data-orientation` —
   `test/pulsar/components/tabs_test.exs`
 
 ## Not applicable

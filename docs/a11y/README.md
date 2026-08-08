@@ -36,7 +36,7 @@ numbers (line numbers drift on every edit; enforced by
 `test/docs/a11y_citation_test.exs`):
 
 - Source evidence: the file plus the function containing the evidence,
-  e.g. `` `lib/pulsar/components/button.ex` — `render_button_content/1` ``.
+  e.g. `` `lib/pulsar/components/button.ex`, `render_button_content/1` ``.
   A bare basename (`button.ex`) resolves to `lib/pulsar/components/`.
   Evidence in an `attr`/`slot` declaration cites the component function
   whose block declares it; optional prose after the anchor pins the

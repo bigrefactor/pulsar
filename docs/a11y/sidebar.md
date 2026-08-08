@@ -24,7 +24,9 @@ The backdrop is purely decorative and marked `aria-hidden="true"` —
 **Evidence:**
 - Root is a `<nav>` landmark with an accessible name — `lib/pulsar/components/sidebar.ex`, `sidebar/1`
 - Header / body / footer render in distinct regions in DOM order — `sidebar/1`
-- Tests `renders a nav landmark with default attributes` and `renders header, content, and footer slots` assert the landmark and the three slots render —
+- Test `renders a nav landmark with default attributes` and
+  Test `renders header, content, and footer slots` assert the landmark and
+  the three slots render —
   `test/pulsar/components/sidebar_test.exs`
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
@@ -141,7 +143,8 @@ open — `lib/pulsar/components/sidebar.ex`, `sidebar/1` and the hook's `focusFi
 ### 2.4.6 Headings and Labels (AA) — ✓ PASS
 
 **Evidence:** The landmark has a descriptive, overridable `aria-label` —
-`lib/pulsar/components/sidebar.ex`, `sidebar/1`. Tests `renders a nav landmark with default attributes` and `label overrides the navigation accessible name (i18n)` assert default and override —
+`lib/pulsar/components/sidebar.ex`, `sidebar/1`. Test `renders a nav landmark with default attributes` and
+Test `label overrides the navigation accessible name (i18n)` assert default and override —
 `test/pulsar/components/sidebar_test.exs`.
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS (inferred)

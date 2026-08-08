@@ -67,7 +67,7 @@ defmodule Pulsar.Docs.A11yCitationTest do
   defp evidence_blocks(content) do
     content
     |> String.split(~r/\n\s*\n/)
-    |> Enum.filter(&String.contains?(&1, "**Evidence:**"))
+    |> Enum.filter(&String.contains?(&1, "**Evidence"))
   end
 
   defp cited_files(text) do
