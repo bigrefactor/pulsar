@@ -49,6 +49,21 @@ defmodule Pulsar.DevApp.Keyboard.DropdownMenuLive do
           Sign out
         </DropdownMenu.dropdown_menu_item>
       </DropdownMenu.dropdown_menu>
+
+      <DropdownMenu.dropdown_menu id="kbd-dm3" label="Disabled items">
+        <:trigger>
+          <button id="kbd-dm3-trigger" type="button">Open disabled-items menu</button>
+        </:trigger>
+
+        <DropdownMenu.dropdown_menu_item id="kbd-dm3-edit" href="#">Edit</DropdownMenu.dropdown_menu_item>
+        <DropdownMenu.dropdown_menu_item id="kbd-dm3-delete" disabled href="/keyboard/menu">
+          Delete
+        </DropdownMenu.dropdown_menu_item>
+        <DropdownMenu.dropdown_menu_submenu id="kbd-dm3-sub" label="Share" disabled>
+          <DropdownMenu.dropdown_menu_item id="kbd-dm3-email" href="#">Email</DropdownMenu.dropdown_menu_item>
+        </DropdownMenu.dropdown_menu_submenu>
+        <DropdownMenu.dropdown_menu_item id="kbd-dm3-archive" disabled href="#">Archive</DropdownMenu.dropdown_menu_item>
+      </DropdownMenu.dropdown_menu>
     </main>
     """
   end

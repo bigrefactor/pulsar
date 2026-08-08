@@ -323,15 +323,13 @@ defmodule Pulsar.Components.DropdownMenu do
           }
         },
 
-        // Navigable items of one menu: every [data-menu-item] whose nearest menu is
-        // this one (so a nested submenu's items are excluded), that is visible and
-        // not disabled.
+        // Navigable items of one menu: every [data-menu-item] whose nearest menu
+        // is this one (so a nested submenu's items are excluded) and that is
+        // visible. Disabled items are included — reachable but not actionable —
+        // so keyboard users can discover them; activation is guarded separately.
         items(menu) {
           return Array.from(menu.querySelectorAll("[data-menu-item]")).filter(
-            (el) =>
-              el.closest('[role="menu"]') === menu &&
-              this.isVisible(el) &&
-              el.getAttribute("aria-disabled") !== "true"
+            (el) => el.closest('[role="menu"]') === menu && this.isVisible(el)
           )
         },
 
@@ -399,6 +397,7 @@ defmodule Pulsar.Components.DropdownMenu do
         },
 
         openSubmenu(trigger) {
+          if (trigger.getAttribute("aria-disabled") === "true") return
           const sub = this.submenuFor(trigger)
           if (!sub) return
           if (!sub.matches(":popover-open")) sub.showPopover()
@@ -444,7 +443,11 @@ defmodule Pulsar.Components.DropdownMenu do
   attr(:patch, :any, default: nil, doc: "Phoenix route to patch navigate to (string or VerifiedRoute)")
   attr(:href, :string, default: nil, doc: "URL to link to. Renders an action button when no target is given.")
   attr(:icon, :string, default: nil, doc: ~s{Leading Heroicon name, e.g. "hero-user"})
-  attr(:disabled, :boolean, default: false, doc: "Marks the item as disabled (not actionable, skipped by arrow keys)")
+
+  attr(:disabled, :boolean,
+    default: false,
+    doc: "Marks the item as disabled (not actionable; keyboard focus can still reach it)"
+  )
 
   attr(:color, :string,
     default: "neutral",

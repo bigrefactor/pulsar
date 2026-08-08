@@ -443,6 +443,7 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
     # (kbd-dm-email). The `.PulsarDropdownMenu` colocated hook drives roving
     # focus, opening from the trigger, and submenu navigation; open/close and
     # Escape come from the native `[popover]` it composes.
+    # A third menu (kbd-dm3) holds disabled items for the reachable-but-inert tests.
     #
     # Verification: comment out the ArrowDown/ArrowUp branch in
     # `handleTriggerKeydown` of `.PulsarDropdownMenu` (priv/templates/
@@ -535,6 +536,53 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
       |> click("#kbd-dm2-nav")
       |> assert_path("/keyboard/menu")
       |> assert_has("#kbd-vmenu")
+    end
+
+    # Disabled items (kbd-dm3: Edit / Delete[disabled] / Share submenu[disabled]
+    # / Archive[disabled]) must stay REACHABLE by every keyboard path — arrows,
+    # Home/End, typeahead — so screen-reader users can discover them, while
+    # activation (Enter/Space/click) and submenu opening stay blocked.
+    test "arrow keys reach a disabled item; Enter and Space do not activate it", %{conn: conn} do
+      conn
+      |> visit("/keyboard/dropdown_menu")
+      |> A11y.await_live_connected()
+      |> press("#kbd-dm3-trigger", "ArrowDown")
+      |> A11y.assert_focused("kbd-dm3-edit")
+      |> press("#kbd-dm3-edit", "ArrowDown")
+      |> A11y.assert_focused("kbd-dm3-delete")
+      |> press("#kbd-dm3-delete", "Enter")
+      |> assert_has(~s|#kbd-dm3[data-state="open"]|)
+      |> assert_path("/keyboard/dropdown_menu")
+      |> press("#kbd-dm3-delete", "Space")
+      |> assert_has(~s|#kbd-dm3[data-state="open"]|)
+      |> assert_path("/keyboard/dropdown_menu")
+    end
+
+    test "End lands on a disabled last item and typeahead reaches a disabled item", %{conn: conn} do
+      conn
+      |> visit("/keyboard/dropdown_menu")
+      |> A11y.await_live_connected()
+      |> press("#kbd-dm3-trigger", "ArrowDown")
+      |> press("#kbd-dm3-edit", "End")
+      |> A11y.assert_focused("kbd-dm3-archive")
+      |> press("#kbd-dm3-archive", "Home")
+      |> A11y.assert_focused("kbd-dm3-edit")
+      |> press("#kbd-dm3-edit", "d")
+      |> A11y.assert_focused("kbd-dm3-delete")
+    end
+
+    test "a disabled submenu trigger is reachable but never opens its submenu", %{conn: conn} do
+      conn
+      |> visit("/keyboard/dropdown_menu")
+      |> A11y.await_live_connected()
+      |> press("#kbd-dm3-trigger", "ArrowDown")
+      |> press("#kbd-dm3-edit", "ArrowDown")
+      |> press("#kbd-dm3-delete", "ArrowDown")
+      |> A11y.assert_focused("kbd-dm3-sub-trigger")
+      |> press("#kbd-dm3-sub-trigger", "ArrowRight")
+      |> A11y.refute_visible("kbd-dm3-email")
+      |> press("#kbd-dm3-sub-trigger", "Enter")
+      |> A11y.refute_visible("kbd-dm3-email")
     end
   end
 
