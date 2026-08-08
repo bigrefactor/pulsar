@@ -24,6 +24,7 @@ defmodule Mix.Tasks.Pulsar.Gen.FormTest do
       phx_test_project()
       |> Igniter.compose_task("pulsar.gen.form", [])
       |> assert_creates("lib/test_web/components/form.ex")
+      |> assert_generated_source("lib/test_web/components/form.ex", ~s(name=".PulsarForm"))
       |> apply_igniter!()
     end
   end
