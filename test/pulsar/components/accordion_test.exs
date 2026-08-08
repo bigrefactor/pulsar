@@ -109,7 +109,7 @@ defmodule Pulsar.Components.AccordionTest do
       assert html =~ "hero-user"
     end
 
-    test "disabled item is a disabled button with aria-disabled and never open" do
+    test "disabled item is aria-disabled, not natively disabled, and never open" do
       assigns = %{}
 
       html =
@@ -120,7 +120,7 @@ defmodule Pulsar.Components.AccordionTest do
         """)
 
       assert html =~ ~r/data-accordion-header[^>]*aria-disabled="true"/s
-      assert html =~ ~r/data-accordion-header[^>]*disabled/s
+      refute html =~ ~r/<button[^>]*data-accordion-header[^>]*\sdisabled[\s>]/s
       assert html =~ ~r/id="a-header"[^>]*aria-expanded="false"/s
     end
   end

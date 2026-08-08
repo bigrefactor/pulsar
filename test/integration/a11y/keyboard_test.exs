@@ -678,9 +678,10 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
 
   describe "Accordion interaction" do
     # The fixture at `/keyboard/accordion` renders a single-mode accordion
-    # (`kbd-acc`) with headers kbd-acc-{one,two,three}-header, item two disabled,
-    # and unique panel bodies kbd-acc-{one,three}-body. Behavior comes from the
-    # `.PulsarAccordion` colocated hook.
+    # (`kbd-acc`) with headers kbd-acc-{one,two,three}-header, item two disabled
+    # (the disabled header is focusable but never opens), and unique panel
+    # bodies kbd-acc-{one,three}-body. Behavior comes from the `.PulsarAccordion`
+    # colocated hook.
     #
     # These assert the panel actually OPENS (visible body), not just that
     # `aria-expanded` flips — the hook can toggle `data-expanded` while the panel
@@ -728,22 +729,28 @@ defmodule Pulsar.Integration.A11y.KeyboardTest do
       |> A11y.refute_visible("kbd-acc-one-body")
     end
 
-    test "the disabled header renders disabled and its panel stays closed", %{conn: conn} do
-      # A real <button disabled> can't be clicked (the browser blocks it), so the
-      # closed state is asserted directly; keyboard-skip of the disabled header is
-      # covered by the ArrowDown test below.
+    test "a disabled header is focusable but Enter leaves its panel closed", %{conn: conn} do
       conn
       |> visit("/keyboard/accordion")
       |> A11y.await_live_connected()
-      |> assert_has(~s|#kbd-acc-two-header[disabled][aria-expanded="false"]|)
+      |> assert_has(~s|#kbd-acc-two-header[aria-disabled="true"][aria-expanded="false"]|)
+      |> press("#kbd-acc-one-header", "ArrowDown")
+      |> A11y.assert_focused("kbd-acc-two-header")
+      |> press("#kbd-acc-two-header", "Enter")
+      |> assert_has(~s|#kbd-acc-two-header[aria-expanded="false"]|)
+      |> A11y.refute_visible("kbd-acc-two-body")
+      |> press("#kbd-acc-two-header", "Space")
+      |> assert_has(~s|#kbd-acc-two-header[aria-expanded="false"]|)
       |> A11y.refute_visible("kbd-acc-two-body")
     end
 
-    test "ArrowDown moves focus to the next enabled header (skips disabled)", %{conn: conn} do
+    test "ArrowDown roves through the disabled header to the next one", %{conn: conn} do
       conn
       |> visit("/keyboard/accordion")
       |> A11y.await_live_connected()
       |> press("#kbd-acc-one-header", "ArrowDown")
+      |> A11y.assert_focused("kbd-acc-two-header")
+      |> press("#kbd-acc-two-header", "ArrowDown")
       |> A11y.assert_focused("kbd-acc-three-header")
     end
   end

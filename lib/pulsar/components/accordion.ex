@@ -121,7 +121,7 @@ defmodule Pulsar.Components.Accordion do
     "elevated" => ""
   }
 
-  @header_base "group/header flex w-full items-center text-left font-medium cursor-pointer select-none text-muted-foreground transition-[color] duration-normal ease-standard hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-disabled aria-disabled:pointer-events-none aria-disabled:opacity-disabled"
+  @header_base "group/header flex w-full items-center text-left font-medium cursor-pointer select-none text-muted-foreground transition-[color] duration-normal ease-standard hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset aria-disabled:pointer-events-none aria-disabled:opacity-disabled"
 
   @chevron_base "ml-auto shrink-0 transition-transform duration-fast ease-standard group-data-[expanded]/item:rotate-180"
 
@@ -188,7 +188,7 @@ defmodule Pulsar.Components.Accordion do
     attr(:title, :string, required: true, doc: "Header text")
     attr(:id, :string, doc: "Stable id (used by `value`; auto-generated if omitted)")
     attr(:icon, :string, doc: "Heroicon name shown before the title")
-    attr(:disabled, :boolean, doc: "Disable this section (not toggleable; skipped by keyboard nav)")
+    attr(:disabled, :boolean, doc: "Disable this section (not toggleable; keyboard focus can still reach it)")
   end
 
   @doc """
@@ -237,7 +237,6 @@ defmodule Pulsar.Components.Accordion do
             aria-controls={item.panel_id}
             aria-expanded={(item.open && "true") || "false"}
             aria-disabled={(item.disabled && "true") || "false"}
-            disabled={item.disabled}
             class={header_classes(@size, item.color)}
           >
             <Icon.icon :if={item.icon} name={item.icon} size={icon_size(@size)} />
@@ -277,21 +276,18 @@ defmodule Pulsar.Components.Accordion do
         },
         items() { return Array.from(this.el.querySelectorAll("[data-accordion-item]")) },
         headers() { return Array.from(this.el.querySelectorAll("[data-accordion-header]")) },
-        enabledHeaders() {
-          return this.headers().filter((h) => !h.disabled && h.getAttribute("aria-disabled") !== "true")
-        },
         headerFor(item) { return item.querySelector("[data-accordion-header]") },
         itemFor(header) { return header.closest("[data-accordion-item]") },
         onClick(e) {
           const header = e.target.closest("[data-accordion-header]")
           if (!header || !this.el.contains(header)) return
-          if (header.disabled || header.getAttribute("aria-disabled") === "true") return
+          if (header.getAttribute("aria-disabled") === "true") return
           this.toggle(header)
         },
         onKeydown(e) {
           const header = e.target.closest("[data-accordion-header]")
           if (!header) return
-          const headers = this.enabledHeaders()
+          const headers = this.headers()
           if (headers.length === 0) return
           const idx = headers.indexOf(header)
           if (e.key === "ArrowDown") { e.preventDefault(); this.focusAt(headers, (idx + 1) % headers.length) }
