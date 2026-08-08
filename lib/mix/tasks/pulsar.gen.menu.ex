@@ -32,10 +32,6 @@ defmodule Mix.Tasks.Pulsar.Gen.Menu do
     - Keyboard navigation, Escape-to-close, and click-outside dismissal
     - Accessibility built-in (nav landmark, list of links, focus-visible rings)
 
-    ## Dependencies
-
-    This component requires: icon, popover
-
     ## Usage Examples
 
     ```elixir

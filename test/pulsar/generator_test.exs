@@ -237,5 +237,17 @@ defmodule Pulsar.GeneratorTest do
 
       refute moduledoc =~ "## Dependencies"
     end
+
+    test "no gen task carries a duplicate Dependencies heading" do
+      for component <- Pulsar.ComponentDeps.all() do
+        module = Module.concat(Mix.Tasks.Pulsar.Gen, Macro.camelize(to_string(component)))
+        {:docs_v1, _, _, _, %{"en" => moduledoc}, _, _} = Code.fetch_docs(module)
+
+        headings = moduledoc |> String.split("## Dependencies") |> length() |> Kernel.-(1)
+
+        assert headings <= 1,
+               "#{inspect(module)} moduledoc has #{headings} '## Dependencies' headings"
+      end
+    end
   end
 end

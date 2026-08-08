@@ -99,11 +99,12 @@ defmodule Mix.Tasks.Pulsar.InstallTest do
       |> apply_igniter!()
     end
 
-    test "installs select with badge dependency" do
+    test "installs select with badge and icon dependencies" do
       phx_test_project()
       |> Igniter.compose_task("pulsar.install", ["--component", "select", "--no-core-components", "--yes"])
       |> assert_creates("lib/test_web/components/select.ex")
       |> assert_creates("lib/test_web/components/badge.ex")
+      |> assert_creates("lib/test_web/components/icon.ex")
       |> apply_igniter!()
     end
 

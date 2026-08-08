@@ -28,10 +28,6 @@ defmodule Mix.Tasks.Pulsar.Gen.Breadcrumb do
     - Colors: muted, primary, secondary, success, danger, warning, info; sizes: xs … xl
     - WCAG 2.2 AA accessibility compliance
 
-    ## Dependencies
-
-    This component requires: link, icon
-
     ## Usage Examples
 
     ```elixir

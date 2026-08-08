@@ -29,10 +29,6 @@ defmodule Mix.Tasks.Pulsar.Gen.Link do
     - WCAG 2.2 AA accessibility compliance
     - Automatic dark mode support
 
-    ## Dependencies
-
-    This component requires: icon
-
     ## Usage Examples
 
     ```elixir

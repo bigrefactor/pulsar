@@ -58,7 +58,7 @@ defmodule Pulsar.ComponentDeps do
     progress: [],
     radio_group: [],
     resizable: [:icon],
-    select: [:badge],
+    select: [:badge, :icon],
     sidebar: [],
     skeleton: [],
     spinner: [],

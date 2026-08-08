@@ -290,7 +290,7 @@ if Code.ensure_loaded?(Igniter) do
       all = options[:all] && Enum.empty?(options[:component])
 
       if all do
-        Pulsar.ComponentDeps.resolution_order(Pulsar.ComponentDeps.all())
+        Pulsar.ComponentDeps.all()
       else
         requested = parse_requested_components(options)
         selected = normalize_and_validate!(requested)

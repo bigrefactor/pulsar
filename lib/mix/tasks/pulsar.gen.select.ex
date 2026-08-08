@@ -30,10 +30,6 @@ defmodule Mix.Tasks.Pulsar.Gen.Select do
     - Accessibility with proper select semantics
     - Automatic dark mode support
 
-    ## Dependencies
-
-    This component requires: badge (for multi-select mode), icon (for dropdown arrow)
-
     ## Usage Examples
 
     ```elixir
