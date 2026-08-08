@@ -22,7 +22,7 @@ defmodule Pulsar.Generator do
 
   The macro emits `@moduledoc`, the `info/2` callback (with the standard
   `:pulsar` group and `[components_module: :string]` schema), and the `igniter/1`
-  callback (calling `set_default_component_module/1` + `install_component/3`).
+  callback (calling `set_default_component_module/1` + `install_component_with_deps/2`).
   Both callbacks are `defoverridable` so consumers can redefine either when a
   component needs custom behavior.
 

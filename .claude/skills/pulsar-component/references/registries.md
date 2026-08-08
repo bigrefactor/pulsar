@@ -90,7 +90,7 @@ Two registrations:
 Registration is enforced at compile time: `use Pulsar.Generator` raises for a
 component missing from the map, and the map itself fails compilation if a dep
 is not a registered component (or the graph has a cycle). Standalone
-`mix pulsar.gen.widget` runs auto-generate missing deps, so the deps list must
+`mix pulsar.gen.widget` auto-generates missing deps, so the deps list must
 be accurate — it drives generation, not just documentation.
 
 ## B. Unit tests
