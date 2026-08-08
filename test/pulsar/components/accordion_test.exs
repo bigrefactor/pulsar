@@ -120,7 +120,9 @@ defmodule Pulsar.Components.AccordionTest do
         """)
 
       assert html =~ ~r/data-accordion-header[^>]*aria-disabled="true"/s
-      refute html =~ ~r/<button[^>]*data-accordion-header[^>]*\sdisabled[\s>]/s
+
+      [header_button] = Regex.run(~r/<button[^>]*data-accordion-header[^>]*>/s, html)
+      refute header_button =~ ~r/\sdisabled[\s>=]/
       assert html =~ ~r/id="a-header"[^>]*aria-expanded="false"/s
     end
   end

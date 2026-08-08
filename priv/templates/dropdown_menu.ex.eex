@@ -372,7 +372,10 @@ def dropdown_menu(assigns) do
         const item = e.target.closest("[data-menu-item]")
         if (!item) return
         if (item.getAttribute("aria-disabled") === "true") {
+          // Stop the event before LiveView's window-level phx-click listener,
+          // which pushes without checking defaultPrevented.
           e.preventDefault()
+          e.stopPropagation()
           return
         }
         if (item.hasAttribute("data-submenu-trigger")) return

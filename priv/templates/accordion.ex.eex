@@ -215,6 +215,7 @@ def accordion(assigns) do
   <div
     id={@id}
     phx-hook=".PulsarAccordion"
+    data-accordion
     data-type={@type}
     data-collapsible={to_string(@collapsible)}
     data-on-change={@on_change}
@@ -273,21 +274,23 @@ def accordion(assigns) do
           this.el.removeEventListener("keydown", this._onKeydown)
         }
       },
-      items() { return Array.from(this.el.querySelectorAll("[data-accordion-item]")) },
-      headers() { return Array.from(this.el.querySelectorAll("[data-accordion-header]")) },
+      // Scope to this accordion's own sections: an accordion nested inside a
+      // panel has its own hook, so its items/headers belong to it alone.
+      owns(el) { return el.closest("[data-accordion]") === this.el },
+      items() { return Array.from(this.el.querySelectorAll("[data-accordion-item]")).filter((i) => this.owns(i)) },
+      headers() { return Array.from(this.el.querySelectorAll("[data-accordion-header]")).filter((h) => this.owns(h)) },
       headerFor(item) { return item.querySelector("[data-accordion-header]") },
       itemFor(header) { return header.closest("[data-accordion-item]") },
       onClick(e) {
         const header = e.target.closest("[data-accordion-header]")
-        if (!header || !this.el.contains(header)) return
+        if (!header || !this.owns(header)) return
         if (header.getAttribute("aria-disabled") === "true") return
         this.toggle(header)
       },
       onKeydown(e) {
         const header = e.target.closest("[data-accordion-header]")
-        if (!header) return
+        if (!header || !this.owns(header)) return
         const headers = this.headers()
-        if (headers.length === 0) return
         const idx = headers.indexOf(header)
         if (e.key === "ArrowDown") { e.preventDefault(); this.focusAt(headers, (idx + 1) % headers.length) }
         else if (e.key === "ArrowUp") { e.preventDefault(); this.focusAt(headers, (idx - 1 + headers.length) % headers.length) }

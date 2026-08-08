@@ -239,7 +239,9 @@ defmodule Pulsar.Components.TabsTest do
         """)
 
       assert html =~ ~r/id="two"[^>]*aria-disabled="true"/s
-      refute html =~ ~r/<button[^>]*id="two"[^>]*\sdisabled[\s>]/s
+
+      [tab_button] = Regex.run(~r/<button[^>]*id="two"[^>]*>/s, html)
+      refute tab_button =~ ~r/\sdisabled[\s>=]/
     end
 
     test "default active skips a leading disabled tab" do

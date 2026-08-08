@@ -283,7 +283,6 @@ def tabs(assigns) do
       onClick(e) {
         const tab = e.target.closest('[role="tab"]')
         if (!tab || !this.tablist.contains(tab)) return
-        if (tab.getAttribute("aria-disabled") === "true") return
         this.activate(tab)
       },
       onKeydown(e) {
@@ -291,7 +290,6 @@ def tabs(assigns) do
         const nextKey = vertical ? "ArrowDown" : "ArrowRight"
         const prevKey = vertical ? "ArrowUp" : "ArrowLeft"
         const tabs = this.allTabs()
-        if (tabs.length === 0) return
         let idx = tabs.indexOf(document.activeElement)
         if (e.key === nextKey) {
           e.preventDefault()
@@ -309,14 +307,15 @@ def tabs(assigns) do
           this.focusActivate(tabs[tabs.length - 1])
         }
       },
-      // Focus always moves; selection only follows focus onto enabled tabs, so
-      // a disabled tab can be reached and announced without being activated.
       focusActivate(tab) {
+        // Roving tabindex follows focus (not selection) so Tab exits the
+        // tablist even when focus rests on a disabled, unselectable tab.
+        this.allTabs().forEach((t) => t.setAttribute("tabindex", t === tab ? "0" : "-1"))
         tab.focus()
-        if (tab.getAttribute("aria-disabled") === "true") return
         this.activate(tab)
       },
       activate(tab) {
+        if (tab.getAttribute("aria-disabled") === "true") return
         this.selected = tab.id
         this.applySelection(tab)
         const encoded = this.el.dataset.onChange
@@ -345,7 +344,14 @@ def tabs(assigns) do
       restoreSelection() {
         if (!this.selected || !this.tablist) return
         const tab = this.allTabs().find((t) => t.id === this.selected)
-        if (tab) this.applySelection(tab)
+        if (!tab) return
+        if (tab.getAttribute("aria-disabled") === "true") {
+          // The server disabled the client-selected tab; drop the client
+          // choice and let the server-rendered selection stand.
+          this.selected = null
+          return
+        }
+        this.applySelection(tab)
       }
     }
   </script>
