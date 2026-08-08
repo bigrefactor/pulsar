@@ -83,8 +83,8 @@ resize), and `toggleCollapse`.
 
 **Evidence:** The handle's grab zone is at least 24 px (`h-6` for vertical
 handles, `w-6` for horizontal) with a thinner visual line centered inside it. Each
-chevron button is `size-6` (24 × 24 px) — documented in the comment at lines
-485–487 and applied by `toggle_button_classes/2`.
+chevron button is `size-6` (24 × 24 px) — documented in the comment above
+`toggle_button_classes/2` and applied by it.
 
 **Evidence:** `lib/pulsar/components/resizable.ex`,
 `handle_wrapper_classes/1` (`h-6` for vertical, `w-6` for horizontal),
@@ -96,17 +96,18 @@ true pointer target), and `toggle_button_classes/2` (`size-6`).
 **Evidence:** Separator role + value attributes as above. Each collapse toggle is
 a `<button>` with:
 
-- `aria-expanded` — set to `"true"` in markup (line 155/166) and kept in sync by
-  `updateToggle` (line 345) on every `setCollapsed` call, including across LiveView
-  re-renders via `updated()` (line 205).
-- `aria-controls` → its own panel id (start button at line 156, end button at
-  line 167).
-- `aria-label` derived from the panel's `label` slot attribute (line 157/168).
+- `aria-expanded` — set to `"true"` in the `resizable/1` markup for both toggle
+  buttons and kept in sync by `updateToggle` on every `setCollapsed` call,
+  including across LiveView re-renders via `updated()`.
+- `aria-controls` → its own panel id (each toggle button in `resizable/1`
+  references the panel it collapses).
+- `aria-label` derived from the panel's `label` slot attribute (both toggle
+  buttons in `resizable/1`).
 
 `aria-valuenow` on the separator now has two documented out-of-`[min,max]`
 states: `0` when the end panel is collapsed, and up to `100` when the start panel
 is collapsed. Both are permitted by the APG window-splitter collapse exception
-(comment at lines 370–372, `setAttribute` at line 373).
+(the comment and `setAttribute` in the hook's `applySize`).
 
 **Evidence:** `lib/pulsar/components/resizable.ex`, `resizable/1`
 (role, separator `aria-label`, both toggle buttons with

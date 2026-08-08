@@ -4,7 +4,8 @@
 **Tests:** [`test/pulsar/components/dropzone_test.exs`](../../test/pulsar/components/dropzone_test.exs)
 **Audited:** 2026-08-07 (code + browser axe gate + keyboard interaction tests)
 
-File-upload dropzone for a LiveView upload configured with `allow_upload/3`.
+File-upload dropzone for a LiveView upload configured with
+`Phoenix.LiveView.allow_upload/3`.
 A `<label>` wraps a sr-only `<.live_file_input>`, so clicking or dragging
 files onto the zone and clicking/Enter-Space-activating the native file
 input are both first-class paths into the same upload. Per-entry rows
