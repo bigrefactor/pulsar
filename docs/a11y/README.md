@@ -28,8 +28,25 @@ Raw per-cell measurements live under
   component's page.
 
 **How to read a component page:** Each page lists the applicable criteria
-with explicit status (`✓ PASS`, `⚠ GAP`, or `N/A`), evidence as file +
-line refs to source or test assertions, and notes explaining the call.
+with explicit status (`✓ PASS`, `⚠ GAP`, or `N/A`), evidence as anchor
+citations into source or tests, and notes explaining the call.
+
+**Citation convention:** Evidence cites durable anchors, never line
+numbers (line numbers drift on every edit; enforced by
+`test/docs/a11y_citation_test.exs`):
+
+- Source evidence: the file plus the function containing the evidence,
+  e.g. `` `lib/pulsar/components/button.ex` — `render_button_content/1` ``.
+  A bare basename (`button.ex`) resolves to `lib/pulsar/components/`.
+  Evidence in an `attr`/`slot` declaration cites the component function
+  whose block declares it; optional prose after the anchor pins the
+  exact spot.
+- Test evidence: the exact test name — `test "supports aria-label for
+  icon-only buttons"` — plus the file when it isn't the page's
+  **Tests:** file.
+- In evidence blocks, write references to external functions qualified
+  (`Phoenix.Component.render_slot/2`), so the checker doesn't read them
+  as local anchors.
 GAP entries carry a severity tag (`blocker` / `serious` / `minor`) and
 a reference to the browser-audit follow-up that tracks the fix.
 
