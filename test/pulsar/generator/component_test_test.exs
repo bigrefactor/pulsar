@@ -136,7 +136,7 @@ defmodule Pulsar.Generator.ComponentTestTest do
       :tabs,
       :tooltip
     ]
-    @simple_components [:button, :badge, :avatar, :input] ++
+    @simple_components [:alert, :button, :badge, :avatar, :input] ++
                          @form_components ++
                          @data_components ++ @override_components ++ @hook_components
 

@@ -661,7 +661,7 @@ def dropdown_menu_label(assigns) do
   """
 end
 
-attr(:id, :string, doc: "Group ID (auto-generated if omitted), used to label the group")
+attr(:id, :string, default: nil, doc: "Group ID, used to label the group")
 attr(:label, :string, default: nil, doc: ~s{Optional group heading. Use with i18n: gettext("...")})
 attr(:class, :string, default: "", doc: "Additional CSS classes")
 attr(:rest, :global, doc: "Additional HTML attributes")
@@ -678,7 +678,8 @@ Renders a labelled group of related items inside a menu.
 """
 @spec dropdown_menu_group(map()) :: Rendered.t()
 def dropdown_menu_group(assigns) do
-  assigns = assign_new(assigns, :id, fn -> generate_id("dropdown-menu-group") end)
+  assigns =
+    assign(assigns, :id, assigns[:id] || (assigns[:label] && generate_id("dropdown-menu-group")))
 
   ~H"""
   <div

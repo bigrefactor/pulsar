@@ -541,4 +541,33 @@ defmodule Pulsar.Components.DropdownMenuTest do
       assert html =~ ~s(id="share-trigger")
     end
   end
+
+  describe "dropdown_menu_group/1 id handling" do
+    test "renders no id when unlabelled" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu_group>
+          <DropdownMenu.dropdown_menu_item>Edit</DropdownMenu.dropdown_menu_item>
+        </DropdownMenu.dropdown_menu_group>
+        """)
+
+      refute html =~ ~s( id=")
+    end
+
+    test "generates an id when labelled so aria-labelledby resolves" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu_group label="Workspace">
+          <DropdownMenu.dropdown_menu_item>Edit</DropdownMenu.dropdown_menu_item>
+        </DropdownMenu.dropdown_menu_group>
+        """)
+
+      assert [_, id] = Regex.run(~r/<div id="([^"]+)"/, html)
+      assert html =~ ~s(aria-labelledby="#{id}")
+    end
+  end
 end

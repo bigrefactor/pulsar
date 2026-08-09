@@ -466,7 +466,7 @@ defmodule Pulsar.Components.Menu do
     """
   end
 
-  attr(:id, :string, doc: "Section ID (auto-generated if omitted), used to label the grouped list")
+  attr(:id, :string, default: nil, doc: "Section ID, used to label the grouped list")
   attr(:label, :string, default: nil, doc: ~s{Optional section heading. Use with i18n: gettext("...")})
   attr(:class, :string, default: "", doc: "Additional CSS classes")
   attr(:rest, :global, doc: "Additional HTML attributes")
@@ -484,7 +484,7 @@ defmodule Pulsar.Components.Menu do
   """
   @spec menu_section(map()) :: Rendered.t()
   def menu_section(assigns) do
-    assigns = assign_new(assigns, :id, fn -> generate_id("menu-section") end)
+    assigns = assign(assigns, :id, assigns[:id] || (assigns[:label] && generate_id("menu-section")))
 
     ~H"""
     <li class={["list-none", @class]} {@rest}>

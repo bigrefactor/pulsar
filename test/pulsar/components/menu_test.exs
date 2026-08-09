@@ -500,4 +500,33 @@ defmodule Pulsar.Components.MenuTest do
       assert html =~ ~s(id="more-trigger")
     end
   end
+
+  describe "menu_section/1 id handling" do
+    test "renders no id when unlabelled" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Menu.menu_section>
+          <Menu.menu_item>Edit</Menu.menu_item>
+        </Menu.menu_section>
+        """)
+
+      refute html =~ ~s( id=")
+    end
+
+    test "generates an id when labelled so aria-labelledby resolves" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Menu.menu_section label="Actions">
+          <Menu.menu_item>Edit</Menu.menu_item>
+        </Menu.menu_section>
+        """)
+
+      assert [_, id] = Regex.run(~r/<p id="([^"]+)"/, html)
+      assert html =~ ~s(aria-labelledby="#{id}")
+    end
+  end
 end

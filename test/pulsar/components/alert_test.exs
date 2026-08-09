@@ -191,4 +191,40 @@ defmodule Pulsar.Components.AlertTest do
       assert html =~ ~s(role="alert")
     end
   end
+
+  describe "alert/1 id handling" do
+    test "renders no id when not dismissible" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Alert.alert color="info" title="Heads up" />
+        """)
+
+      refute html =~ ~s( id=")
+    end
+
+    test "generates an id when dismissible so aria-controls resolves" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Alert.alert color="info" title="Heads up" dismissible />
+        """)
+
+      assert [_, id] = Regex.run(~r/<div id="([^"]+)"/, html)
+      assert html =~ ~s(aria-controls="#{id}")
+    end
+
+    test "renders the caller's id unchanged" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Alert.alert id="quota" color="info" title="Heads up" />
+        """)
+
+      assert html =~ ~s(id="quota")
+    end
+  end
 end

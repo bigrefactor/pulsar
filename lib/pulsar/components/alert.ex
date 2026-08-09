@@ -41,10 +41,15 @@ defmodule Pulsar.Components.Alert do
   # CONFIGURATION & CONSTANTS
   # ============================================================================
 
-  # Inline ID generator (auto-assigned when the caller omits one).
+  # Inline ID generator (auto-assigned for dismissible alerts when the caller omits one).
   defp generate_id(prefix \\ "alert") do
     "#{prefix}-#{System.unique_integer([:positive])}"
   end
+
+  @spec resolve_id(map()) :: String.t() | nil
+  defp resolve_id(%{id: id}) when is_binary(id), do: id
+  defp resolve_id(%{dismissible: true}), do: generate_id()
+  defp resolve_id(_assigns), do: nil
 
   # Per-size container padding/text/gap/radius, icon size token, title text size,
   # and close-button box. close keeps a uniform 24x24 (h-6 w-6) hit target across
@@ -93,7 +98,7 @@ defmodule Pulsar.Components.Alert do
   # ATTRIBUTES & SLOTS
   # ============================================================================
 
-  attr :id, :string, doc: "Alert ID (auto-generated if omitted)"
+  attr :id, :string, default: nil, doc: "Alert ID"
 
   attr :variant, :string,
     default: "ghost",
@@ -153,7 +158,7 @@ defmodule Pulsar.Components.Alert do
   def alert(assigns) do
     assigns =
       assigns
-      |> assign_new(:id, fn -> generate_id() end)
+      |> assign(:id, resolve_id(assigns))
       |> assign(:icon_name, resolve_icon(assigns.icon, assigns.color))
       |> assign(
         :merged_classes,
