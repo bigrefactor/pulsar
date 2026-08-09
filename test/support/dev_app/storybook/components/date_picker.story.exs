@@ -8,13 +8,7 @@ defmodule Pulsar.DevApp.Storybook.Components.DatePicker do
 
   def attributes do
     [
-      %Attr{
-        id: :mode,
-        type: :string,
-        values: ~w(single range),
-        default: "single",
-        doc: "Single date or date range"
-      },
+      %Attr{id: :mode, type: :string, values: ~w(single range), default: "single", doc: "Single date or date range"},
       %Attr{
         id: :variant,
         type: :string,
@@ -38,16 +32,8 @@ defmodule Pulsar.DevApp.Storybook.Components.DatePicker do
     [
       %Variation{id: :single, description: "Single date", attributes: %{id: "sb-dp-single"}},
       %Variation{id: :range, description: "Range", attributes: %{id: "sb-dp-range", mode: "range"}},
-      %Variation{
-        id: :disabled,
-        description: "Disabled",
-        attributes: %{id: "sb-dp-disabled", disabled: true}
-      },
-      %Variation{
-        id: :solid,
-        description: "Solid variant",
-        attributes: %{id: "sb-dp-solid", variant: "solid"}
-      }
+      %Variation{id: :disabled, description: "Disabled", attributes: %{id: "sb-dp-disabled", disabled: true}},
+      %Variation{id: :solid, description: "Solid variant", attributes: %{id: "sb-dp-solid", variant: "solid"}}
     ]
   end
 end

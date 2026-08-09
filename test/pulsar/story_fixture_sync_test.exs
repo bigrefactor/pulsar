@@ -49,4 +49,16 @@ defmodule Pulsar.StoryFixtureSyncTest do
              "expected/1 collapsed two distinct templates — drift detection is no longer load-bearing"
     end
   end
+
+  describe "diff/0" do
+    test "committed dev-app story fixtures are in sync with their templates" do
+      drifted =
+        StoryFixtureSync.diff()
+        |> Enum.map(fn {{_template, fixture_path}, _expected} -> fixture_path end)
+
+      assert drifted == [],
+             "Run `mix pulsar.sync` — these story fixtures have drifted from their templates: " <>
+               Enum.join(drifted, ", ")
+    end
+  end
 end
