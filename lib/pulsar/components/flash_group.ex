@@ -77,12 +77,12 @@ defmodule Pulsar.Components.FlashGroup do
             case safe_to_existing_atom(key) do
               {:ok, key_atom} ->
                 # Track the dismissal with the actual flash type
-                MyApp.Analytics.track("flash_dismissed", %{type: key_atom})
+                :telemetry.execute([:my_app_web, :flash, :dismissed], %{}, %{type: key_atom})
                 {:noreply, socket}
 
               :error ->
                 # Invalid key, log or track as unknown but don't crash
-                MyApp.Analytics.track("flash_dismissed", %{type: "invalid_key"})
+                :telemetry.execute([:my_app_web, :flash, :dismissed], %{}, %{type: "invalid_key"})
                 {:noreply, socket}
             end
           end

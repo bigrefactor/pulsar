@@ -18,6 +18,8 @@ defmodule Pulsar.TemplateSync do
 
   @components_root "Pulsar.Components"
   @gettext_module "Pulsar.Gettext"
+  @web_module "MyAppWeb"
+  @web_module_underscore "my_app_web"
 
   @typedoc """
   `{component_name, lib_path, component_namespace, module_name}`.
@@ -109,7 +111,9 @@ defmodule Pulsar.TemplateSync do
         assigns: [
           component_namespace: component_namespace,
           components_namespace: @components_root,
-          gettext_module: @gettext_module
+          gettext_module: @gettext_module,
+          web_module: @web_module,
+          web_module_underscore: @web_module_underscore
         ],
         engine: EEx.SmartEngine
       )
