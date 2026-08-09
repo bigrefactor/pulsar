@@ -20,7 +20,7 @@ defmodule <%= @web_module %>.Storybook.Foundations.Typography do
           <h2 class="psb:text-lg psb:font-semibold psb:text-slate-700 psb:mb-4 psb:border-b psb:border-slate-200 psb:pb-2">
             Heading scale
           </h2>
-          <%!-- NOTE: "pulsar-sandbox" must match the sandbox_class setting in your
+          <%%!-- NOTE: "pulsar-sandbox" must match the sandbox_class setting in your
                PhoenixStorybook backend module (e.g. <%= @web_module %>.Storybook). --%>
           <div class="pulsar-sandbox psb:space-y-6">
             <div class="psb:flex psb:items-baseline psb:gap-4">

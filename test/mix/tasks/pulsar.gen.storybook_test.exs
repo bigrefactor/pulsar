@@ -49,7 +49,13 @@ defmodule Mix.Tasks.Pulsar.Gen.StorybookTest do
 
       for foundation <- ~w(colors dark_mode spacing themes typography) do
         path = "lib/test_web/storybook/foundations/#{foundation}.story.exs"
-        assert_generated_source(igniter, path, "TestWeb.Storybook")
+
+        assert_generated_source(
+          igniter,
+          path,
+          "PhoenixStorybook backend module (e.g. TestWeb.Storybook)"
+        )
+
         refute source_content(igniter, path) =~ "MyApp"
       end
 

@@ -152,7 +152,7 @@ defmodule <%= @web_module %>.Storybook.Foundations.Themes do
         </div>
       </div>
 
-      <%!-- NOTE: "pulsar-sandbox" must match the sandbox_class setting in your
+      <%%!-- NOTE: "pulsar-sandbox" must match the sandbox_class setting in your
            PhoenixStorybook backend module (e.g. <%= @web_module %>.Storybook). --%>
       <div
         data-theme={@slug}
