@@ -296,6 +296,11 @@ defmodule Pulsar.Components.FlashGroup do
   @entry_duration_ms 200
 
   # FlashGroup attributes
+  attr(:id, :string,
+    default: "flash-group",
+    doc: "Container ID. Child flash ids derive from it."
+  )
+
   attr(:flash, :map,
     required: true,
     doc: "Flash messages map from Phoenix.Flash (typically @flash)"
@@ -427,13 +432,7 @@ defmodule Pulsar.Components.FlashGroup do
     # Extract and process flash messages
     flash_messages = extract_flash_messages(assigns.flash, assigns.max_items)
 
-    # Generate unique component ID to prevent collisions
-    component_id = System.unique_integer([:positive])
-
-    assigns =
-      assigns
-      |> assign(:flash_messages, flash_messages)
-      |> assign(:component_id, component_id)
+    assigns = assign(assigns, :flash_messages, flash_messages)
 
     # Get position configuration with validation
     position_config = get_position_config(assigns.position)
@@ -460,7 +459,7 @@ defmodule Pulsar.Components.FlashGroup do
     >
       <Flash.flash
         :for={{{type, message}, index} <- Enum.with_index(@flash_messages)}
-        id={"flash-#{@component_id}-#{type}"}
+        id={"#{@id}-#{type}"}
         variant={@variant}
         color={get_flash_color(type)}
         size={@size}

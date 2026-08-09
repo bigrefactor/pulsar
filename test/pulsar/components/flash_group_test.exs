@@ -112,8 +112,8 @@ defmodule Pulsar.Components.FlashGroupTest do
       # Default position (top-right)
       assert html =~ "top-4"
       assert html =~ "right-4"
-      # Should render Flash component with unique ID format: flash-{component_id}-{type}
-      assert html =~ ~r/id="flash-\d+-info"/
+      # Flash id derives from the group id: {group_id}-{type}
+      assert html =~ ~s(id="flash-group-info")
     end
 
     test "renders multiple flash messages" do
@@ -460,8 +460,8 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       assert html =~ "Error message"
       assert html =~ "Success message"
-      refute html =~ ~r/id="flash-\d+-info"/
-      refute html =~ ~r/id="flash-\d+-warning"/
+      refute html =~ ~s(id="flash-group-info")
+      refute html =~ ~s(id="flash-group-warning")
     end
   end
 
@@ -639,26 +639,21 @@ defmodule Pulsar.Components.FlashGroupTest do
   end
 
   describe "flash_group/1 ID collision prevention" do
-    test "generates different component IDs for multiple flash groups" do
+    test "distinct caller-supplied group ids prevent child id collisions" do
       assigns = %{}
 
-      # Render two flash groups
       html1 =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{info: "Message 1"}} />
+        <FlashGroup.flash_group id="group-1" flash={%{info: "Message 1"}} />
         """)
 
       html2 =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{info: "Message 2"}} />
+        <FlashGroup.flash_group id="group-2" flash={%{info: "Message 2"}} />
         """)
 
-      # Extract the component IDs from both rendered HTML
-      [_, id1] = Regex.run(~r/id="flash-(\d+)-info"/, html1)
-      [_, id2] = Regex.run(~r/id="flash-(\d+)-info"/, html2)
-
-      # Component IDs should be different
-      assert id1 != id2
+      assert html1 =~ ~s(id="group-1-info")
+      assert html2 =~ ~s(id="group-2-info")
     end
   end
 
@@ -683,7 +678,7 @@ defmodule Pulsar.Components.FlashGroupTest do
         """)
 
       # Extract flash elements in order they appear in HTML
-      flash_elements = Regex.scan(~r/id="flash-\d+-(\w+)"/, html, capture: :all_but_first)
+      flash_elements = Regex.scan(~r/id="flash-group-(\w+)"/, html, capture: :all_but_first)
       flash_types = Enum.map(flash_elements, fn [type] -> type end)
 
       # Should be in priority order: error, warning, info, success, custom
@@ -717,9 +712,9 @@ defmodule Pulsar.Components.FlashGroupTest do
         <FlashGroup.flash_group flash={@flash} />
         """)
 
-      # Extract types from each render (ignoring the unique component IDs)
+      # Extract types from each render
       extract_types = fn html ->
-        Regex.scan(~r/id="flash-\d+-(\w+)"/, html, capture: :all_but_first)
+        Regex.scan(~r/id="flash-group-(\w+)"/, html, capture: :all_but_first)
         |> Enum.map(fn [type] -> type end)
       end
 
@@ -776,9 +771,9 @@ defmodule Pulsar.Components.FlashGroupTest do
         <FlashGroup.flash_group flash={@flash} />
         """)
 
-      # Should have unique IDs for each flash with component ID
-      assert html =~ ~r/id="flash-\d+-error"/
-      assert html =~ ~r/id="flash-\d+-info"/
+      # Should have unique IDs for each flash type within the group
+      assert html =~ ~s(id="flash-group-error")
+      assert html =~ ~s(id="flash-group-info")
     end
 
     test "falls back to default position for invalid position" do
@@ -800,6 +795,30 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       # Should log a warning about invalid position
       assert log =~ "Invalid flash group position 'invalid', falling back to 'top-right'"
+    end
+  end
+
+  describe "flash_group/1 id handling" do
+    test "derives child ids from the default group id" do
+      assigns = %{flash: %{"info" => "Saved"}}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={@flash} />
+        """)
+
+      assert html =~ ~s(id="flash-group-info")
+    end
+
+    test "derives child ids from a caller-supplied group id" do
+      assigns = %{flash: %{"info" => "Saved"}}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group id="toasts" flash={@flash} />
+        """)
+
+      assert html =~ ~s(id="toasts-info")
     end
   end
 end
