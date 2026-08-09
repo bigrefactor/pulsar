@@ -140,8 +140,20 @@ defmodule Pulsar.TemplateSync do
   """
   @spec current(pair()) :: {:ok, String.t()} | {:error, File.posix()}
   def current({_component_name, lib_path, _component_namespace, _module_name}) do
-    case File.read(lib_path) do
-      {:ok, content} -> {:ok, format(content, lib_path)}
+    read_formatted(lib_path)
+  end
+
+  @doc """
+  Reads a committed generated file and normalizes it through `format/2` for
+  drift comparison. Also used by `Pulsar.StoryFixtureSync`.
+
+  Content the formatter cannot parse is returned raw, so it compares unequal to
+  the freshly rendered content and counts as drift instead of raising.
+  """
+  @spec read_formatted(Path.t()) :: {:ok, String.t()} | {:error, File.posix()}
+  def read_formatted(path) do
+    case File.read(path) do
+      {:ok, content} -> {:ok, safe_format(content, path)}
       {:error, reason} -> {:error, reason}
     end
   end
@@ -179,16 +191,27 @@ defmodule Pulsar.TemplateSync do
     end)
   end
 
-  # Format through the project's real formatter (`.formatter.exs` — `import_deps`,
-  # `line_length`, and the Quokka/HTMLFormatter plugins) so generated lib files
-  # match `mix format`-clean committed files exactly. The lib path picks the
-  # formatter config that applies to that file.
-  defp format(content, lib_path) do
-    {formatter, _opts} = Format.formatter_for_file(lib_path)
+  @doc """
+  Formats generated content through the project's real formatter
+  (`.formatter.exs` — `import_deps`, `line_length`, and the
+  Quokka/HTMLFormatter plugins) so it matches a `mix format`-clean committed
+  file exactly. `path` picks the formatter config that applies to that file.
+
+  Also used by `Pulsar.StoryFixtureSync` so both drift checks normalize
+  identically.
+  """
+  @spec format(String.t(), Path.t()) :: String.t()
+  def format(content, path) do
+    {formatter, _opts} = Format.formatter_for_file(path)
 
     content
     |> formatter.()
-    |> String.replace(~r/[ \t]+$/m, "")
     |> String.trim_trailing("\n")
+  end
+
+  defp safe_format(content, path) do
+    format(content, path)
+  rescue
+    _error -> content
   end
 end

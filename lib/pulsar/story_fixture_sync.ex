@@ -9,14 +9,15 @@ defmodule Pulsar.StoryFixtureSync do
   templates by `mix pulsar.sync` — rendered with the dev app's assigns and run
   through the project formatter — so the two never need to be hand-mirrored.
 
-  Discovery is glob-driven: every story template is covered automatically, and
-  a template without a committed fixture counts as drift.
+  Discovery is glob-driven: every story template is covered automatically, a
+  template without a committed fixture counts as drift, and a committed fixture
+  whose template was deleted or renamed counts as an orphan (`orphans/0`).
 
   This is build tooling for the Pulsar repository itself — it is not part of
   the public, generated-into-your-app surface.
   """
 
-  alias Mix.Tasks.Format
+  alias Pulsar.TemplateSync
 
   @assigns [web_module: "Pulsar.DevApp", components_module: "Pulsar.Components"]
   @fixture_root "test/support/dev_app/storybook"
@@ -53,20 +54,35 @@ defmodule Pulsar.StoryFixtureSync do
   def expected({template_path, fixture_path}) do
     template_path
     |> EEx.eval_file(assigns: @assigns, engine: EEx.SmartEngine)
-    |> format(fixture_path)
+    |> TemplateSync.format(fixture_path)
   end
 
   @doc """
   Reads the committed fixture for a `pair` and formats it for comparison.
 
-  Returns `{:error, :enoent}` if the fixture does not exist yet.
+  Returns `{:error, :enoent}` if the fixture does not exist yet. An
+  unparseable fixture is returned raw, so it counts as drift instead of
+  crashing the sync that would regenerate it.
   """
   @spec current(pair()) :: {:ok, String.t()} | {:error, File.posix()}
   def current({_template_path, fixture_path}) do
-    case File.read(fixture_path) do
-      {:ok, content} -> {:ok, format(content, fixture_path)}
-      {:error, reason} -> {:error, reason}
-    end
+    TemplateSync.read_formatted(fixture_path)
+  end
+
+  @doc """
+  Committed fixture files no story template generates.
+
+  Deleting or renaming a template leaves its old fixture behind; those orphans
+  are drift too — `mix pulsar.sync` deletes them and `--check` reports them.
+  """
+  @spec orphans() :: [String.t()]
+  def orphans do
+    generated = pairs() |> MapSet.new(&elem(&1, 1))
+
+    @fixture_root
+    |> Path.join("**/*.exs")
+    |> Path.wildcard()
+    |> Enum.reject(&MapSet.member?(generated, &1))
   end
 
   @doc """
@@ -86,14 +102,5 @@ defmodule Pulsar.StoryFixtureSync do
     :pulsar
     |> :code.priv_dir()
     |> Path.join("templates/storybook")
-  end
-
-  defp format(content, fixture_path) do
-    {formatter, _opts} = Format.formatter_for_file(fixture_path)
-
-    content
-    |> formatter.()
-    |> String.replace(~r/[ \t]+$/m, "")
-    |> String.trim_trailing("\n")
   end
 end
