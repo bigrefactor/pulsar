@@ -155,7 +155,7 @@ defmodule Pulsar.CoreComponents do
     {pulsar_variant, pulsar_color} = map_phoenix_to_pulsar_variant(assigns[:variant], assigns[:color])
 
     # Extract attributes to pass to Pulsar button
-    extra = assigns_to_attributes(assigns, [:variant, :color])
+    extra = assigns_to_attributes(assigns, [:variant, :color, :rest])
 
     assigns =
       assigns
@@ -458,7 +458,7 @@ defmodule Pulsar.CoreComponents do
   end
 
   def header(assigns) do
-    extra = assigns_to_attributes(assigns, [:variant, :color, :size, :as, :sticky, :divider, :class])
+    extra = assigns_to_attributes(assigns, [:variant, :color, :size, :as, :sticky, :divider, :class, :rest])
 
     assigns = assign(assigns, :extra, extra)
 
@@ -593,7 +593,17 @@ defmodule Pulsar.CoreComponents do
       end
 
     # Extract attributes to pass to Pulsar table
-    extra = assigns_to_attributes(assigns, [:variant, :color, :size, :striped, :sticky_header, :loading, :class])
+    extra =
+      assigns_to_attributes(assigns, [
+        :variant,
+        :color,
+        :size,
+        :striped,
+        :sticky_header,
+        :loading,
+        :class,
+        :rest
+      ])
 
     assigns =
       assigns
@@ -698,7 +708,16 @@ defmodule Pulsar.CoreComponents do
 
   def list(assigns) do
     # Extract attributes to pass to Pulsar list
-    extra = assigns_to_attributes(assigns, [:variant, :color, :size, :striped, :dividers, :class])
+    extra =
+      assigns_to_attributes(assigns, [
+        :variant,
+        :color,
+        :size,
+        :striped,
+        :dividers,
+        :class,
+        :rest
+      ])
 
     assigns = assign(assigns, :extra, extra)
 

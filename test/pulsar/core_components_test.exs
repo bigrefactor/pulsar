@@ -51,4 +51,70 @@ defmodule Pulsar.CoreComponentsTest do
       assert CoreComponents.translate_errors([age: {"is invalid", []}], :name) == []
     end
   end
+
+  describe "global attributes are not spread twice" do
+    defp count_attr(html, name) do
+      html |> String.split(~s( #{name}=)) |> length() |> Kernel.-(1)
+    end
+
+    test "button/1 emits a caller-supplied id exactly once" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <CoreComponents.button id="theme-toggle" variant="ghost" color="neutral">Go</CoreComponents.button>
+        """)
+
+      assert html =~ ~s(id="theme-toggle")
+      assert count_attr(html, "id") == 1
+    end
+
+    test "button/1 emits a caller-supplied aria-label exactly once" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <CoreComponents.button id="t" aria-label="Switch theme">Go</CoreComponents.button>
+        """)
+
+      assert count_attr(html, "aria-label") == 1
+    end
+
+    test "header/1 emits a caller-supplied id exactly once" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <CoreComponents.header id="page-header">Title</CoreComponents.header>
+        """)
+
+      assert count_attr(html, "id") == 1
+    end
+
+    test "table/1 emits a caller-supplied id exactly once" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <CoreComponents.table id="users" rows={[]}>
+          <:col :let={u} label="Name">{u}</:col>
+        </CoreComponents.table>
+        """)
+
+      assert count_attr(html, "id") == 1
+    end
+
+    test "list/1 emits a caller-supplied id exactly once" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <CoreComponents.list id="facts">
+          <:item title="Name">Ada</:item>
+        </CoreComponents.list>
+        """)
+
+      assert count_attr(html, "id") == 1
+    end
+  end
 end
