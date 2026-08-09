@@ -15,7 +15,7 @@ defmodule Mix.Tasks.Pulsar.GeneratedVocabularyTest do
     "test/test_web/components/"
   ]
 
-  @placeholder ~r/MyApp|\bmy_app\b/
+  @placeholder ~r/MyApp|my_app/
 
   describe "generated output" do
     test "never names the MyApp placeholder vocabulary" do
@@ -35,6 +35,13 @@ defmodule Mix.Tasks.Pulsar.GeneratedVocabularyTest do
                  "but none was present — an empty match set would make the placeholder " <>
                  "assertion below pass vacuously"
       end
+
+      # phx_test_project/0 already ships lib/test_web/components/{core_components,layouts}.ex,
+      # so the "lib/test_web/components/" prefix check above passes even if Pulsar wrote
+      # nothing there. Anchor on a path only Pulsar generates to prove non-vacuity.
+      assert Enum.any?(swept, fn {path, _source} -> path == "lib/test_web/components/avatar.ex" end),
+             "expected the sweep to find lib/test_web/components/avatar.ex, a file only " <>
+               "Pulsar generates — its absence means the sweep isn't seeing Pulsar's output"
 
       offenders =
         for {path, source} <- swept,

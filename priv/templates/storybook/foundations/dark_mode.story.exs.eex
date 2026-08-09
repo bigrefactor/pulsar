@@ -75,7 +75,7 @@ defmodule <%= @web_module %>.Storybook.Foundations.DarkMode do
           </h2>
 
           <div class="psb:grid psb:grid-cols-1 md:grid-cols-2 psb:gap-6">
-            <%!-- Light mode card --%>
+            <%%!-- Light mode card --%>
             <div>
               <p class="psb:text-sm psb:font-semibold psb:text-slate-500 psb:uppercase psb:tracking-wide psb:mb-3">
                 Light mode
@@ -119,7 +119,7 @@ defmodule <%= @web_module %>.Storybook.Foundations.DarkMode do
                 </p>
               </div>
             </div>
-            <%!-- Dark mode card --%>
+            <%%!-- Dark mode card --%>
             <div>
               <p class="psb:text-sm psb:font-semibold psb:text-slate-500 psb:uppercase psb:tracking-wide psb:mb-3">
                 Dark mode
