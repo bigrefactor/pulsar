@@ -23,7 +23,7 @@ defmodule Pulsar.Components.NavbarTest do
       assert html =~ "Acme"
     end
 
-    test "auto-generates an id when omitted" do
+    test "renders no id when omitted" do
       assigns = %{}
 
       html =
@@ -33,7 +33,7 @@ defmodule Pulsar.Components.NavbarTest do
         </Navbar.navbar>
         """)
 
-      assert html =~ ~s(id="navbar-)
+      refute html =~ ~s( id=")
     end
 
     test "renders left, center, and right regions" do
@@ -318,6 +318,30 @@ defmodule Pulsar.Components.NavbarTest do
 
       assert html =~ "h-10"
       refute html =~ "h-16"
+    end
+  end
+
+  describe "navbar/1 id handling" do
+    test "renders no id attribute when none is supplied" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Navbar.navbar label="Main">Content</Navbar.navbar>
+        """)
+
+      refute html =~ ~s( id=")
+    end
+
+    test "renders the caller's id unchanged" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Navbar.navbar id="top-bar" label="Main">Content</Navbar.navbar>
+        """)
+
+      assert html =~ ~s(id="top-bar")
     end
   end
 end

@@ -47,11 +47,6 @@ defmodule Pulsar.Components.Navbar do
   alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Icon
 
-  # Inline ID generator
-  defp generate_id(prefix \\ "navbar") do
-    "#{prefix}-#{System.unique_integer([:positive])}"
-  end
-
   # ============================================================================
   # CONFIGURATION & CONSTANTS
   # ============================================================================
@@ -144,7 +139,7 @@ defmodule Pulsar.Components.Navbar do
   # COMPONENT
   # ============================================================================
 
-  attr(:id, :string, doc: "Banner ID (auto-generated if omitted)")
+  attr(:id, :string, default: nil, doc: "Banner ID")
 
   attr(:variant, :string,
     default: "solid",
@@ -214,10 +209,7 @@ defmodule Pulsar.Components.Navbar do
   """
   @spec navbar(map()) :: Rendered.t()
   def navbar(assigns) do
-    assigns =
-      assigns
-      |> assign_new(:id, fn -> generate_id() end)
-      |> assign(:show_menu, assigns.on_menu_toggle != %JS{})
+    assigns = assign(assigns, :show_menu, assigns.on_menu_toggle != %JS{})
 
     assigns =
       assign(

@@ -876,4 +876,40 @@ defmodule Pulsar.Components.ButtonTest do
       assert html =~ "No Href"
     end
   end
+
+  describe "button/1 id handling" do
+    test "renders no id attribute when none is supplied" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Button.button>Click me</Button.button>
+        """)
+
+      refute html =~ ~s( id=")
+    end
+
+    test "renders the caller's id unchanged" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Button.button id="save">Click me</Button.button>
+        """)
+
+      assert html =~ ~s(id="save")
+    end
+
+    test "pseudo-button branches still carry an id for the hook" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Button.button as={:div}>Click me</Button.button>
+        """)
+
+      assert html =~ ~s(phx-hook="Pulsar.Components.Button.PulsarButton")
+      assert html =~ ~s(id=")
+    end
+  end
 end
