@@ -20,15 +20,5 @@ defmodule Mix.Tasks.Pulsar.Gen.AvatarTest do
       |> assert_generated_component("lib/my_app/custom_components/avatar.ex")
       |> apply_igniter!()
     end
-
-    test "format_count doc names the host web module" do
-      phx_test_project()
-      |> Igniter.compose_task("pulsar.gen.avatar", [])
-      |> assert_generated_source(
-        "lib/test_web/components/avatar.ex",
-        "&TestWeb.Cldr.Number.to_string!/1"
-      )
-      |> apply_igniter!()
-    end
   end
 end

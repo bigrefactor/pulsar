@@ -522,7 +522,11 @@ When modifying existing components:
 ### Template Assigns
 
 `priv/templates/*.ex.eex` templates render with `component_namespace`,
-`components_namespace`, `gettext_module`, `web_module`, and
-`web_module_underscore` available as assigns. Doc prose (moduledoc, `@doc`,
-comments) must interpolate these rather than hardcoding a placeholder
-namespace like `MyApp`.
+`components_namespace`, `gettext_module`, `web_module`, and `app_name`
+available as assigns. Doc prose (moduledoc, `@doc`, comments) must interpolate
+these rather than hardcoding a placeholder namespace like `MyApp`.
+
+Interpolate a host-app name only where the generated app really has that
+module. An example naming a module the user must supply themselves (a CLDR
+backend, say) reads as installed code once it carries their namespace — describe
+it in prose instead.

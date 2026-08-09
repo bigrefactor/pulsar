@@ -408,7 +408,7 @@ defmodule Pulsar.Components.Textarea do
   attr(:format_count, :any,
     default: &Integer.to_string/1,
     doc:
-      ~s{Function that formats counter integers for display. Defaults to Integer.to_string/1; pass a CLDR formatter such as &MyAppWeb.Cldr.Number.to_string!/1 for locale-aware grouping.}
+      ~s{Function that formats counter integers for display. Defaults to Integer.to_string/1; pass a CLDR formatter such as your CLDR backend's Number.to_string!/1 for locale-aware grouping.}
   )
 
   attr(:remaining_label, :string,

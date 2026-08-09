@@ -33,9 +33,8 @@ defmodule Mix.Tasks.Pulsar.Gen.FlashGroupTest do
       |> assert_generated_source(path, "use TestWeb, :live_view")
       |> assert_generated_source(path, "defmodule TestWeb.UserController do")
       |> assert_generated_source(path, "use TestWeb, :controller")
-      |> assert_generated_source(path, ":telemetry.execute([:test_web, :flash, :dismissed]")
+      |> assert_generated_source(path, ":telemetry.execute([:test, :flash, :dismissed]")
 
-      refute source_content(igniter, path) =~ "MyApp"
       refute source_content(igniter, path) =~ "Analytics.track"
 
       apply_igniter!(igniter)

@@ -175,7 +175,6 @@ defmodule Pulsar.Generator do
     component = component_module(namespace, component_name)
     # Convert namespace to inspect format to avoid Elixir. prefix in templates
     namespace_inspected = inspect(namespace)
-    web_module = inspect(Phoenix.web_module(igniter))
 
     # For core_components, we need both the web module and the components namespace
     # Core components module goes under web module, but it needs to alias components
@@ -184,8 +183,8 @@ defmodule Pulsar.Generator do
       |> Keyword.put_new(:component_namespace, namespace_inspected)
       |> Keyword.put_new(:components_namespace, get_components_namespace(igniter, namespace_inspected))
       |> Keyword.put_new(:gettext_module, inspect(Phoenix.web_module_name(igniter, "Gettext")))
-      |> Keyword.put_new(:web_module, web_module)
-      |> Keyword.put_new(:web_module_underscore, underscore_module(web_module))
+      |> Keyword.put_new(:web_module, web_module_string(igniter))
+      |> Keyword.put_new(:app_name, app_name(igniter))
 
     contents = contents(component_name, assigns)
     path = Igniter.Project.Module.proper_location(igniter, component)
@@ -291,16 +290,30 @@ defmodule Pulsar.Generator do
     end)
   end
 
-  defp component_module(namespace, component_name) do
-    Module.concat(namespace, Macro.camelize(to_string(component_name)))
+  @doc """
+  Returns the host application's web module as a string (`"MyAppWeb"`).
+  """
+  @spec web_module_string(Igniter.t()) :: String.t()
+  def web_module_string(igniter) do
+    igniter
+    |> Phoenix.web_module()
+    |> inspect()
   end
 
-  # "AcmeWeb" -> "acme_web". A dotted web module underscores to "acme/web",
-  # so the separator collapses to keep the result usable as an atom segment.
-  defp underscore_module(inspected) do
-    inspected
-    |> Macro.underscore()
-    |> String.replace("/", "_")
+  @doc """
+  Returns the host application's OTP app name as a string (`"my_app"`).
+  """
+  @spec app_name(Igniter.t()) :: String.t()
+  def app_name(igniter) do
+    igniter
+    |> Igniter.Project.Application.app_name()
+    |> to_string()
+  rescue
+    _ -> "my_app"
+  end
+
+  defp component_module(namespace, component_name) do
+    Module.concat(namespace, Macro.camelize(to_string(component_name)))
   end
 
   defp get_components_namespace(igniter, _namespace_inspected) do
