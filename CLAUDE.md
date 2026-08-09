@@ -185,10 +185,13 @@ The entry file declares non-swapping tokens (palette aliases, radius scale, shad
 
 The selector matches both the `[data-theme="dark"]` attribute and the `.theme-dark` class so the same CSS works under PhoenixStorybook's `sandbox_class` switcher strategy.
 
-Each theme also declares `color-scheme`. That is the only signal browser-drawn
-UI reads — scrollbars, `<select>` popup lists, date and time pickers, the
-autofill overlay — so without it a dark page renders light chrome against dark
-surfaces. It sits in a plain CSS rule rather than the `@theme` block because
+Each theme also declares `color-scheme`. That is the only signal that sets the
+*polarity* of browser-drawn UI — scrollbars, `<select>` popup lists, date and
+time pickers, the autofill overlay — so without it a dark page renders light
+chrome against dark surfaces. (`scrollbar-color`, the `::-webkit-scrollbar`
+pseudo-elements, and `accent-color` can also reach that chrome, but only
+`color-scheme` controls which polarity it draws in.) It sits in a plain CSS
+rule rather than the `@theme` block because
 Tailwind accepts only custom properties and `@keyframes` there. `mix
 pulsar.gen.theme <name> --dark` scaffolds a dark theme with the matching
 declaration.
@@ -226,6 +229,11 @@ mix pulsar.gen.theme high_contrast
 Generates `assets/css/themes/high_contrast.css` (refusing to overwrite an existing one) and idempotently appends `@import "./themes/high_contrast.css";` to `assets/css/theme.css`. Activate by setting `data-theme="high_contrast"` or `class="theme-high_contrast"` on any ancestor element. Start by copying lines from `themes/dark.css` and editing the token values.
 
 #### Theme Toggle
+
+Setting `data-theme` (or `theme-*`) on `<html>` is what makes the page
+scrollbar follow the theme — the viewport reads the root element only, so a
+theme scoped to a wrapper element restyles nested scrollers and controls but
+leaves the page scrollbar in the host document's polarity.
 
 ```javascript
 // Attribute-based (recommended)

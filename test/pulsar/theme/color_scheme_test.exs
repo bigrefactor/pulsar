@@ -21,7 +21,7 @@ defmodule Pulsar.Theme.ColorSchemeTest do
 
   describe "light theme template" do
     test "declares color-scheme: light in a bare :root rule" do
-      assert File.read!(@light) =~ ~r/:root\s*\{\s*color-scheme:\s*light;/,
+      assert File.read!(@light) =~ ~r/^:root \{\n\s*color-scheme: light;/m,
              "light.css.eex must carry a bare `:root { color-scheme: light; }` rule"
     end
 

@@ -246,7 +246,10 @@ never reach that chrome.
 ### Switching themes
 
 Activate a theme by setting `data-theme` (or the matching `theme-*` class) on any
-ancestor element — no rebuild needed:
+ancestor element — no rebuild needed. Setting it on `<html>` is what makes the
+page scrollbar follow, though: the viewport reads the root element only, so a
+theme scoped to a deeper wrapper restyles nested scrollers and controls but
+leaves the page scrollbar in the host document's polarity.
 
 ```javascript
 // Attribute-based (recommended)

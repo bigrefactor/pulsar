@@ -55,9 +55,10 @@ defmodule Mix.Tasks.Pulsar.Gen.Theme.Docs do
 
     Pass `--dark` when the theme is a dark one. The scaffold then declares
     `color-scheme: dark`, which is what tells the browser to draw scrollbars,
-    `<select>` popup lists and date pickers in dark polarity — without it they
-    render light against your dark surfaces. Themes scaffolded without the flag
-    declare `color-scheme: light`; edit the line directly to change it later.
+    `<select>` popup lists, date and time pickers, and the autofill overlay in
+    dark polarity — without it they render light against your dark surfaces.
+    Themes scaffolded without the flag declare `color-scheme: light`; edit the
+    line directly to change it later.
 
     The flag applies only when scaffolding a named theme. It has no effect on
     the bare `mix pulsar.gen.theme` install path, which generates the built-in

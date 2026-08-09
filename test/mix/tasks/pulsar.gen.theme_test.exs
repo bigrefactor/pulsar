@@ -268,6 +268,17 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
 
       apply_igniter!(igniter)
     end
+
+    test "the install path generates themes declaring their polarity" do
+      igniter =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.gen.theme", ["--dark"])
+
+      assert source_content(igniter, "assets/css/themes/light.css") =~ "color-scheme: light;"
+      assert source_content(igniter, "assets/css/themes/dark.css") =~ "color-scheme: dark;"
+
+      apply_igniter!(igniter)
+    end
   end
 
   describe "pulsar.gen.theme <name> — scaffolding" do
