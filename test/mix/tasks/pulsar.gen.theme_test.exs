@@ -228,6 +228,28 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
       apply_igniter!(igniter)
     end
 
+    test "scaffolds a light theme declaring color-scheme: light" do
+      igniter =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.gen.theme", ["purple"])
+        |> assert_creates("assets/css/themes/purple.css")
+
+      assert source_content(igniter, "assets/css/themes/purple.css") =~ "color-scheme: light;"
+
+      apply_igniter!(igniter)
+    end
+
+    test "--dark scaffolds a theme declaring color-scheme: dark" do
+      igniter =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.gen.theme", ["midnight", "--dark"])
+        |> assert_creates("assets/css/themes/midnight.css")
+
+      assert source_content(igniter, "assets/css/themes/midnight.css") =~ "color-scheme: dark;"
+
+      apply_igniter!(igniter)
+    end
+
     test "re-running the default task re-registers a previously scaffolded custom theme" do
       igniter =
         phx_test_project()
