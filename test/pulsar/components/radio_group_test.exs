@@ -670,5 +670,31 @@ defmodule Pulsar.Components.RadioGroupTest do
 
       assert html =~ ~s(id="user[plan]")
     end
+
+    test "prefers field.id over name" do
+      assigns = %{field: to_form(%{"plan" => "basic"}, as: :user)[:plan]}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group field={@field} name="explicit">
+          <:option value="basic">Basic</:option>
+        </.radio_group>
+        """)
+
+      assert html =~ ~s(id="user_plan")
+    end
+
+    test "prefers a caller id over field.id and name" do
+      assigns = %{field: to_form(%{"plan" => "basic"}, as: :user)[:plan]}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group id="custom" field={@field} name="explicit">
+          <:option value="basic">Basic</:option>
+        </.radio_group>
+        """)
+
+      assert html =~ ~s(id="custom")
+    end
   end
 end

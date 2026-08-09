@@ -950,5 +950,27 @@ defmodule Pulsar.Components.CheckboxTest do
 
       assert html =~ ~s(id="user[terms]")
     end
+
+    test "prefers field.id over name" do
+      assigns = %{field: to_form(%{"terms" => "true"}, as: :user)[:terms]}
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox field={@field} name="explicit" />
+        """)
+
+      assert html =~ ~s(id="user_terms")
+    end
+
+    test "prefers a caller id over field.id and name" do
+      assigns = %{field: to_form(%{"terms" => "true"}, as: :user)[:terms]}
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox id="custom" field={@field} name="explicit" />
+        """)
+
+      assert html =~ ~s(id="custom")
+    end
   end
 end

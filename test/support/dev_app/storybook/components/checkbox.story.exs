@@ -108,7 +108,7 @@ defmodule Pulsar.DevApp.Storybook.Components.Checkbox do
       %Variation{
         id: :checked,
         description: "Checked checkbox",
-        attributes: %{name: "accept", checked: true}
+        attributes: %{name: "accept_checked", checked: true}
       },
       %Variation{
         id: :primary_color,

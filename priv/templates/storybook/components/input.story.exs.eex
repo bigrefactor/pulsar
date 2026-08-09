@@ -117,12 +117,12 @@ defmodule <%= @web_module %>.Storybook.Components.Input do
       %Variation{
         id: :with_value,
         description: "Input with pre-filled value",
-        attributes: %{name: "email", type: "email", value: "user@example.com"}
+        attributes: %{name: "email_filled", type: "email", value: "user@example.com"}
       },
       %Variation{
         id: :invalid_state,
         description: "Invalid/error state",
-        attributes: %{name: "email", type: "email", invalid: true, value: "not-an-email"}
+        attributes: %{name: "email_invalid", type: "email", invalid: true, value: "not-an-email"}
       },
       %Variation{
         id: :disabled_state,
@@ -132,7 +132,7 @@ defmodule <%= @web_module %>.Storybook.Components.Input do
       %Variation{
         id: :size_lg,
         description: "Large size input",
-        attributes: %{name: "search", size: "lg", placeholder: "Large search input"}
+        attributes: %{name: "search_lg", size: "lg", placeholder: "Large search input"}
       }
     ]
   end
