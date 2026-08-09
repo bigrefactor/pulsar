@@ -111,4 +111,39 @@ defmodule Pulsar.Components.CalendarTest do
       assert html =~ "cursor-pointer"
     end
   end
+
+  describe "calendar/1 id resolution" do
+    test "raises when given neither an id nor a field" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/requires an :id when no form field is bound/, fn ->
+        rendered_to_string(~H"""
+        <Calendar.calendar />
+        """)
+      end
+    end
+
+    test "derives its id from a bound field" do
+      form = to_form(%{"starts_on" => nil}, as: :user)
+      assigns = %{field: form[:starts_on]}
+
+      html =
+        rendered_to_string(~H"""
+        <Calendar.calendar field={@field} />
+        """)
+
+      assert html =~ ~s(id="calendar-user_starts_on")
+    end
+
+    test "renders the caller's id unchanged" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Calendar.calendar id="picker" />
+        """)
+
+      assert html =~ ~s(id="picker")
+    end
+  end
 end
