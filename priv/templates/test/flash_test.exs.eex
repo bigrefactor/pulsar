@@ -1,0 +1,132 @@
+defmodule <%= @component_namespace %>.FlashTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Flash
+
+  # `flash` requires an `id`: it carries the colocated hook, and the dismiss
+  # button targets the flash by that id. The tests assert the server-rendered
+  # live region and dismiss wiring, not the hook's runtime behavior.
+
+  describe "flash/1" do
+    test "renders a live region carrying the caller's id" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash id="notice" color="success" role="status">Changes saved</Flash.flash>
+        """)
+
+      assert html =~ ~s(id="notice")
+      assert html =~ ~s(role="status")
+      assert html =~ ~s(aria-live="polite")
+      assert html =~ "Changes saved"
+    end
+
+    test "renders a dismiss button targeting the flash id" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash id="notice" dismissible>Dismiss me</Flash.flash>
+        """)
+
+      assert html =~ ~s(aria-controls="notice")
+      assert html =~ ~s(aria-label="Dismiss")
+    end
+
+    test "omits the dismiss button when dismissible is false" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash id="notice" dismissible={false}>Sticky</Flash.flash>
+        """)
+
+      refute html =~ ~s(aria-controls="notice")
+      assert html =~ "Sticky"
+    end
+
+    test "renders the start_icon slot" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash id="notice" color="info">
+          <:start_icon><span data-test="icon"></span></:start_icon>
+          New version available
+        </Flash.flash>
+        """)
+
+      assert html =~ ~s(data-test="icon")
+      assert html =~ "New version available"
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(solid outline ghost) do
+        assigns = %{variant: variant}
+
+        html =
+          rendered_to_string(~H"""
+          <Flash.flash id="f" variant={@variant}>Message</Flash.flash>
+          """)
+
+        assert html =~ "Message"
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{color: color}
+
+        html =
+          rendered_to_string(~H"""
+          <Flash.flash id="f" color={@color}>Message</Flash.flash>
+          """)
+
+        assert html =~ "Message"
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(sm md lg) do
+        assigns = %{size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <Flash.flash id="f" size={@size}>Message</Flash.flash>
+          """)
+
+        assert html =~ "Message"
+      end
+    end
+
+    test "renders every role" do
+      for role <- ~w(alert status) do
+        assigns = %{role: role}
+
+        html =
+          rendered_to_string(~H"""
+          <Flash.flash id="f" role={@role}>Message</Flash.flash>
+          """)
+
+        assert html =~ ~s(role=) <> inspect(role)
+      end
+    end
+
+    test "renders auto_dismiss true and false" do
+      for auto_dismiss <- [true, false] do
+        assigns = %{auto_dismiss: auto_dismiss}
+
+        html =
+          rendered_to_string(~H"""
+          <Flash.flash id="f" auto_dismiss={@auto_dismiss}>Message</Flash.flash>
+          """)
+
+        assert html =~ ~s(data-auto-dismiss=) <> inspect(to_string(auto_dismiss))
+      end
+    end
+  end
+end

@@ -127,8 +127,10 @@ defmodule Pulsar.Generator.ComponentTestTest do
       :alert_dialog,
       :collapsible,
       :dropdown_menu,
+      :flash,
       :menu,
       :popover,
+      :sidebar,
       :tabs,
       :tooltip
     ]
@@ -174,6 +176,19 @@ defmodule Pulsar.Generator.ComponentTestTest do
           end
 
         assert is_list(modules) and modules != []
+
+        # Compiling only proves the HEEx is well-formed: a missing required attr is
+        # a warning at compile time and a KeyError at render time. Run every probe
+        # function so the generated test's renders actually execute.
+        for {mod, _bin} <- modules,
+            {fun, 0} <- mod.__info__(:functions),
+            match?("probe_" <> _, Atom.to_string(fun)) do
+          try do
+            apply(mod, fun, [])
+          rescue
+            e -> flunk("generated test for #{component} failed to run: #{Exception.message(e)}")
+          end
+        end
 
         for {mod, _bin} <- modules do
           :code.purge(mod)
