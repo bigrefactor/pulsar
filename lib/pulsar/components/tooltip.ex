@@ -49,11 +49,6 @@ defmodule Pulsar.Components.Tooltip do
   alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Popover
 
-  # Inline ID generator
-  defp generate_id(prefix \\ "tooltip") do
-    "#{prefix}-#{System.unique_integer([:positive])}"
-  end
-
   # ============================================================================
   # CONFIGURATION & CONSTANTS
   # ============================================================================
@@ -102,7 +97,7 @@ defmodule Pulsar.Components.Tooltip do
   # COMPONENT
   # ============================================================================
 
-  attr(:id, :string, doc: "Tooltip ID (auto-generated if omitted). Describes the trigger.")
+  attr(:id, :string, required: true, doc: "Tooltip ID. Describes the trigger.")
 
   attr(:placement, :string,
     default: "top",
@@ -164,8 +159,6 @@ defmodule Pulsar.Components.Tooltip do
   """
   @spec tooltip(map()) :: Rendered.t()
   def tooltip(assigns) do
-    assigns = assign_new(assigns, :id, fn -> generate_id() end)
-
     assigns =
       assign(
         assigns,

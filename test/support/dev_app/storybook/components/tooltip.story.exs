@@ -9,6 +9,12 @@ defmodule Pulsar.DevApp.Storybook.Components.Tooltip do
   def attributes do
     [
       %Attr{
+        id: :id,
+        type: :string,
+        required: true,
+        doc: "Tooltip ID. Describes the trigger."
+      },
+      %Attr{
         id: :placement,
         type: :string,
         values:
@@ -60,30 +66,31 @@ defmodule Pulsar.DevApp.Storybook.Components.Tooltip do
       %Variation{
         id: :default,
         description: "Default neutral tooltip",
+        attributes: %{id: "sb-tooltip-default"},
         slots: [trigger, "Save changes"]
       },
       %Variation{
         id: :primary,
         description: "Primary surface",
-        attributes: %{color: "primary"},
+        attributes: %{id: "sb-tooltip-primary", color: "primary"},
         slots: [trigger, "More information"]
       },
       %Variation{
         id: :danger,
         description: "Danger surface",
-        attributes: %{color: "danger"},
+        attributes: %{id: "sb-tooltip-danger", color: "danger"},
         slots: [trigger, "This cannot be undone"]
       },
       %Variation{
         id: :right_placement,
         description: "Anchored to the right",
-        attributes: %{placement: "right"},
+        attributes: %{id: "sb-tooltip-right-placement", placement: "right"},
         slots: [trigger, "Appears to the side"]
       },
       %Variation{
         id: :no_arrow,
         description: "Without the caret",
-        attributes: %{arrow: false},
+        attributes: %{id: "sb-tooltip-no-arrow", arrow: false},
         slots: [trigger, "No caret here"]
       }
     ]

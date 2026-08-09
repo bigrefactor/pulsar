@@ -48,11 +48,6 @@ alias Phoenix.LiveView.JS
 alias Phoenix.LiveView.Rendered
 alias <%= @component_namespace %>.Popover
 
-# Inline ID generator
-defp generate_id(prefix \\ "tooltip") do
-  "#{prefix}-#{System.unique_integer([:positive])}"
-end
-
 # ============================================================================
 # CONFIGURATION & CONSTANTS
 # ============================================================================
@@ -101,7 +96,7 @@ end
 # COMPONENT
 # ============================================================================
 
-attr(:id, :string, doc: "Tooltip ID (auto-generated if omitted). Describes the trigger.")
+attr(:id, :string, required: true, doc: "Tooltip ID. Describes the trigger.")
 
 attr(:placement, :string,
   default: "top",
@@ -164,8 +159,6 @@ The `:trigger` slot holds the focusable control; the default slot holds the hint
 """
 @spec tooltip(map()) :: Rendered.t()
 def tooltip(assigns) do
-  assigns = assign_new(assigns, :id, fn -> generate_id() end)
-
   assigns =
     assign(
       assigns,

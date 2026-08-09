@@ -79,17 +79,13 @@ alias <%= @component_namespace %>.Modal
 alias Phoenix.LiveView.JS
 alias Phoenix.LiveView.Rendered
 
-# Inline ID generator
-defp generate_id(prefix \\ "alert-dialog") do
-  "#{prefix}-#{System.unique_integer([:positive])}"
-end
-
 # ============================================================================
 # COMPONENT
 # ============================================================================
 
 attr(:id, :string,
-  doc: "Dialog ID (auto-generated if omitted). Targeted by the open/close helpers."
+  required: true,
+  doc: "Dialog ID. Targeted by the open/close helpers."
 )
 
 attr(:title, :string, required: true, doc: "The question; wired as the dialog's accessible name")
@@ -152,8 +148,6 @@ destructive command passed as `on_confirm` is wired only to the Confirm button.
 """
 @spec alert_dialog(map()) :: Rendered.t()
 def alert_dialog(assigns) do
-  assigns = assign_new(assigns, :id, fn -> generate_id() end)
-
   ~H"""
   <Modal.modal
     id={@id}

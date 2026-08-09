@@ -80,16 +80,14 @@ defmodule Pulsar.Components.AlertDialog do
   alias Pulsar.Components.Button
   alias Pulsar.Components.Modal
 
-  # Inline ID generator
-  defp generate_id(prefix \\ "alert-dialog") do
-    "#{prefix}-#{System.unique_integer([:positive])}"
-  end
-
   # ============================================================================
   # COMPONENT
   # ============================================================================
 
-  attr(:id, :string, doc: "Dialog ID (auto-generated if omitted). Targeted by the open/close helpers.")
+  attr(:id, :string,
+    required: true,
+    doc: "Dialog ID. Targeted by the open/close helpers."
+  )
 
   attr(:title, :string, required: true, doc: "The question; wired as the dialog's accessible name")
 
@@ -150,8 +148,6 @@ defmodule Pulsar.Components.AlertDialog do
   """
   @spec alert_dialog(map()) :: Rendered.t()
   def alert_dialog(assigns) do
-    assigns = assign_new(assigns, :id, fn -> generate_id() end)
-
     ~H"""
     <Modal.modal
       id={@id}

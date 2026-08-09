@@ -56,11 +56,6 @@ alias <%= @component_namespace %>.Modal
 alias Phoenix.LiveView.JS
 alias Phoenix.LiveView.Rendered
 
-# Inline ID generator
-defp generate_id(prefix \\ "drawer") do
-  "#{prefix}-#{System.unique_integer([:positive])}"
-end
-
 # ============================================================================
 # CONFIGURATION & CONSTANTS
 # ============================================================================
@@ -96,7 +91,7 @@ end
 # COMPONENT
 # ============================================================================
 
-attr(:id, :string, doc: "Drawer ID (auto-generated if omitted). Targeted by the open/close helpers.")
+attr(:id, :string, required: true, doc: "Drawer ID. Targeted by the open/close helpers.")
 
 attr(:side, :string,
   default: "right",
@@ -179,8 +174,6 @@ elsewhere on the page.
 """
 @spec drawer(map()) :: Rendered.t()
 def drawer(assigns) do
-  assigns = assign_new(assigns, :id, fn -> generate_id() end)
-
   assigns =
     assign(
       assigns,

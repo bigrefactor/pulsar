@@ -18,7 +18,7 @@ defmodule Pulsar.DevApp.Storybook.Components.Table do
       %Attr{
         id: :id,
         type: :string,
-        default: nil,
+        required: true,
         doc: "Table ID"
       },
       %Attr{

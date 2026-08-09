@@ -7,8 +7,8 @@ defmodule <%= @web_module %>.Storybook.Components.AlertDialog do
   def render_source, do: :function
 
   # Render each variation "in use": clicking the trigger opens the dialog as a real
-  # focus-trapped modal (showModal + backdrop). The dialog auto-generates its id, so
-  # the wrapper dispatches the open event to the dialog within it via
+  # focus-trapped modal (showModal + backdrop). One template backs every variation,
+  # so the wrapper dispatches the open event to the dialog within it via
   # `{:inner, "dialog"}` (PSB doesn't substitute :variation_id into component attrs).
   def template do
     """
@@ -31,6 +31,12 @@ defmodule <%= @web_module %>.Storybook.Components.AlertDialog do
 
   def attributes do
     [
+      %Attr{
+        id: :id,
+        type: :string,
+        required: true,
+        doc: "Dialog ID. Targeted by the open/close helpers."
+      },
       %Attr{
         id: :title,
         type: :string,
@@ -92,13 +98,18 @@ defmodule <%= @web_module %>.Storybook.Components.AlertDialog do
       %Variation{
         id: :default,
         description: "Destructive confirm — danger by default",
-        attributes: %{title: "Delete account?", confirm_label: "Delete"},
+        attributes: %{
+          id: "sb-alert-dialog-default",
+          title: "Delete account?",
+          confirm_label: "Delete"
+        },
         slots: [body]
       },
       %Variation{
         id: :important_not_destructive,
         description: "Important but non-destructive confirm (primary panel + Confirm button)",
         attributes: %{
+          id: "sb-alert-dialog-important-not-destructive",
           title: "Publish now?",
           variant: "solid",
           color: "primary",
@@ -110,6 +121,7 @@ defmodule <%= @web_module %>.Storybook.Components.AlertDialog do
         id: :outline_danger,
         description: "Outline danger surface",
         attributes: %{
+          id: "sb-alert-dialog-outline-danger",
           title: "Delete project?",
           variant: "outline",
           color: "danger",
@@ -120,7 +132,12 @@ defmodule <%= @web_module %>.Storybook.Components.AlertDialog do
       %Variation{
         id: :large,
         description: "Large dialog",
-        attributes: %{title: "Remove all members?", size: "xl", confirm_label: "Remove all"},
+        attributes: %{
+          id: "sb-alert-dialog-large",
+          title: "Remove all members?",
+          size: "xl",
+          confirm_label: "Remove all"
+        },
         slots: [body]
       }
     ]

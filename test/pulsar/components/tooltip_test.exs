@@ -28,19 +28,21 @@ defmodule Pulsar.Components.TooltipTest do
       assert html =~ ~s(role="tooltip")
       assert html =~ "PulsarPopover"
     end
+  end
 
-    test "auto-generates a panel id when omitted" do
+  describe "tooltip/1 id handling" do
+    test "renders the caller's id unchanged" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <Tooltip.tooltip>
-          <:trigger><button>Help</button></:trigger>
-          Body
+        <Tooltip.tooltip id="save-tip">
+          <:trigger>Save</:trigger>
+          Saves your work
         </Tooltip.tooltip>
         """)
 
-      assert html =~ ~s(id="tooltip-)
+      assert html =~ ~s(id="save-tip")
     end
   end
 

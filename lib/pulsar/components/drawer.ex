@@ -57,11 +57,6 @@ defmodule Pulsar.Components.Drawer do
   alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Modal
 
-  # Inline ID generator
-  defp generate_id(prefix \\ "drawer") do
-    "#{prefix}-#{System.unique_integer([:positive])}"
-  end
-
   # ============================================================================
   # CONFIGURATION & CONSTANTS
   # ============================================================================
@@ -97,7 +92,7 @@ defmodule Pulsar.Components.Drawer do
   # COMPONENT
   # ============================================================================
 
-  attr(:id, :string, doc: "Drawer ID (auto-generated if omitted). Targeted by the open/close helpers.")
+  attr(:id, :string, required: true, doc: "Drawer ID. Targeted by the open/close helpers.")
 
   attr(:side, :string,
     default: "right",
@@ -180,8 +175,6 @@ defmodule Pulsar.Components.Drawer do
   """
   @spec drawer(map()) :: Rendered.t()
   def drawer(assigns) do
-    assigns = assign_new(assigns, :id, fn -> generate_id() end)
-
     assigns =
       assign(
         assigns,

@@ -9,6 +9,12 @@ defmodule <%= @web_module %>.Storybook.Components.Modal do
   def attributes do
     [
       %Attr{
+        id: :id,
+        type: :string,
+        required: true,
+        doc: "Dialog ID. Targeted by the open/close helpers."
+      },
+      %Attr{
         id: :variant,
         type: :string,
         values: ~w(solid outline ghost elevated),
@@ -86,7 +92,7 @@ defmodule <%= @web_module %>.Storybook.Components.Modal do
       %Variation{
         id: :default,
         description: "Elevated neutral dialog with title, description, and footer",
-        attributes: Map.merge(open, %{title: "Edit user"}),
+        attributes: Map.merge(open, %{id: "sb-modal-default", title: "Edit user"}),
         slots: [
           ~s|<:description>Update the user's details below.</:description>|,
           body,
@@ -96,14 +102,25 @@ defmodule <%= @web_module %>.Storybook.Components.Modal do
       %Variation{
         id: :outline_primary,
         description: "Outline primary surface",
-        attributes: Map.merge(open, %{variant: "outline", color: "primary", title: "Details"}),
+        attributes:
+          Map.merge(open, %{
+            id: "sb-modal-outline-primary",
+            variant: "outline",
+            color: "primary",
+            title: "Details"
+          }),
         slots: [body, footer]
       },
       %Variation{
         id: :solid_danger,
         description: "Danger surface for a destructive confirmation",
         attributes:
-          Map.merge(open, %{variant: "solid", color: "danger", title: "Delete project?"}),
+          Map.merge(open, %{
+            id: "sb-modal-solid-danger",
+            variant: "solid",
+            color: "danger",
+            title: "Delete project?"
+          }),
         slots: [
           ~s|<:description>This can't be undone.</:description>|,
           body,
@@ -113,13 +130,19 @@ defmodule <%= @web_module %>.Storybook.Components.Modal do
       %Variation{
         id: :non_dismissable,
         description: "Locked dialog — no close button; Escape/backdrop ignored",
-        attributes: Map.merge(open, %{title: "Confirm", dismissable: false}),
+        attributes:
+          Map.merge(open, %{
+            id: "sb-modal-non-dismissable",
+            title: "Confirm",
+            dismissable: false
+          }),
         slots: [body, footer]
       },
       %Variation{
         id: :large,
         description: "Large dialog",
-        attributes: Map.merge(open, %{size: "xl", title: "Wide content"}),
+        attributes:
+          Map.merge(open, %{id: "sb-modal-large", size: "xl", title: "Wide content"}),
         slots: [body]
       }
     ]

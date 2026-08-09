@@ -133,4 +133,17 @@ defmodule Pulsar.Components.DrawerTest do
       assert Drawer.close("d") == Modal.close("d")
     end
   end
+
+  describe "drawer/1 id handling" do
+    test "renders the caller's id unchanged" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Drawer.drawer id="filters" title="Filters">Body</Drawer.drawer>
+        """)
+
+      assert html =~ ~s(id="filters")
+    end
+  end
 end

@@ -22,7 +22,7 @@ defmodule <%= @component_namespace %>.TableTest do
 
       html =
         rendered_to_string(~H"""
-        <Table.table rows={@rows} aria_label="People">
+        <Table.table id="people" rows={@rows} aria_label="People">
           <:col :let={row} label="Name">{row.name}</:col>
           <:col :let={row} label="Email">{row.email}</:col>
         </Table.table>
@@ -42,7 +42,7 @@ defmodule <%= @component_namespace %>.TableTest do
 
         html =
           rendered_to_string(~H"""
-          <Table.table rows={@rows} variant={@variant} aria_label="People">
+          <Table.table id="people" rows={@rows} variant={@variant} aria_label="People">
             <:col :let={row} label="Name">{row.name}</:col>
           </Table.table>
           """)
@@ -58,7 +58,7 @@ defmodule <%= @component_namespace %>.TableTest do
 
         html =
           rendered_to_string(~H"""
-          <Table.table rows={@rows} color={@color} aria_label="People">
+          <Table.table id="people" rows={@rows} color={@color} aria_label="People">
             <:col :let={row} label="Name">{row.name}</:col>
           </Table.table>
           """)
@@ -73,7 +73,7 @@ defmodule <%= @component_namespace %>.TableTest do
 
         html =
           rendered_to_string(~H"""
-          <Table.table rows={@rows} size={@size} aria_label="People">
+          <Table.table id="people" rows={@rows} size={@size} aria_label="People">
             <:col :let={row} label="Name">{row.name}</:col>
           </Table.table>
           """)
@@ -87,7 +87,7 @@ defmodule <%= @component_namespace %>.TableTest do
 
       html =
         rendered_to_string(~H"""
-        <Table.table rows={@rows} aria_label="People">
+        <Table.table id="people" rows={@rows} aria_label="People">
           <:col :let={row} label="Name">{row.name}</:col>
           <:action :let={row}>Edit {row.name}</:action>
         </Table.table>
@@ -101,7 +101,7 @@ defmodule <%= @component_namespace %>.TableTest do
 
       html =
         rendered_to_string(~H"""
-        <Table.table rows={[]} aria_label="People">
+        <Table.table id="people" rows={[]} aria_label="People">
           <:col :let={row} label="Name">{row.name}</:col>
           <:empty>Nothing here yet</:empty>
         </Table.table>

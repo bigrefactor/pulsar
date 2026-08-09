@@ -59,11 +59,6 @@ defmodule Pulsar.Components.Modal do
   alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Icon
 
-  # Inline ID generator
-  defp generate_id(prefix \\ "modal") do
-    "#{prefix}-#{System.unique_integer([:positive])}"
-  end
-
   # ============================================================================
   # CONFIGURATION & CONSTANTS
   # ============================================================================
@@ -139,7 +134,7 @@ defmodule Pulsar.Components.Modal do
   # COMPONENT
   # ============================================================================
 
-  attr(:id, :string, doc: "Dialog ID (auto-generated if omitted). Targeted by the open/close helpers.")
+  attr(:id, :string, required: true, doc: "Dialog ID. Targeted by the open/close helpers.")
 
   attr(:variant, :string,
     default: "elevated",
@@ -227,8 +222,6 @@ defmodule Pulsar.Components.Modal do
   """
   @spec modal(map()) :: Rendered.t()
   def modal(assigns) do
-    assigns = assign_new(assigns, :id, fn -> generate_id() end)
-
     assigns =
       assign(
         assigns,

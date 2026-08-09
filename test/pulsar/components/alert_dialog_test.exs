@@ -24,16 +24,18 @@ defmodule Pulsar.Components.AlertDialogTest do
       assert html =~ "This can't be undone."
       assert html =~ "PulsarModal"
     end
+  end
 
-    test "auto-generates a dialog id when omitted" do
+  describe "alert_dialog/1 id handling" do
+    test "renders the caller's id unchanged" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <AlertDialog.alert_dialog title="Delete?">Body</AlertDialog.alert_dialog>
+        <AlertDialog.alert_dialog id="delete" title="Delete?">Body</AlertDialog.alert_dialog>
         """)
 
-      assert html =~ ~s(id="alert-dialog-)
+      assert html =~ ~s(id="delete")
     end
   end
 

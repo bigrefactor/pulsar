@@ -7,10 +7,10 @@ defmodule Pulsar.DevApp.Storybook.Components.Drawer do
   def render_source, do: :function
 
   # Each variation renders "in use": clicking the trigger opens the drawer as a
-  # real focus-trapped dialog (showModal + backdrop + slide). The drawer
-  # auto-generates its id, so the wrapper dispatches the open event to the inner
-  # dialog via `{:inner, "dialog"}` (PSB doesn't substitute :variation_id into
-  # component attrs).
+  # real focus-trapped dialog (showModal + backdrop + slide). One template backs
+  # every variation, so the wrapper dispatches the open event to the inner dialog
+  # via `{:inner, "dialog"}` (PSB doesn't substitute :variation_id into component
+  # attrs).
   def template do
     """
     <div class="flex min-h-48 items-center justify-center p-8" psb-code-hidden>
@@ -32,6 +32,12 @@ defmodule Pulsar.DevApp.Storybook.Components.Drawer do
 
   def attributes do
     [
+      %Attr{
+        id: :id,
+        type: :string,
+        required: true,
+        doc: "Drawer ID. Targeted by the open/close helpers."
+      },
       %Attr{
         id: :side,
         type: :string,
@@ -88,31 +94,38 @@ defmodule Pulsar.DevApp.Storybook.Components.Drawer do
       %Variation{
         id: :right,
         description: "Right-anchored (default)",
-        attributes: %{side: "right", title: "Details"},
+        attributes: %{id: "sb-drawer-right", side: "right", title: "Details"},
         slots: [body]
       },
       %Variation{
         id: :left,
         description: "Left-anchored — mobile nav",
-        attributes: %{side: "left", title: "Navigation"},
+        attributes: %{id: "sb-drawer-left", side: "left", title: "Navigation"},
         slots: [body]
       },
       %Variation{
         id: :top,
         description: "Top-anchored sheet",
-        attributes: %{side: "top", title: "Notifications"},
+        attributes: %{id: "sb-drawer-top", side: "top", title: "Notifications"},
         slots: [body]
       },
       %Variation{
         id: :bottom,
         description: "Bottom-anchored sheet",
-        attributes: %{side: "bottom", title: "Actions"},
+        attributes: %{id: "sb-drawer-bottom", side: "bottom", title: "Actions"},
         slots: [body]
       },
       %Variation{
         id: :large_filters,
         description: "Large right drawer for filters",
-        attributes: %{side: "right", size: "xl", title: "Filters", variant: "solid", color: "primary"},
+        attributes: %{
+          id: "sb-drawer-large-filters",
+          side: "right",
+          size: "xl",
+          title: "Filters",
+          variant: "solid",
+          color: "primary"
+        },
         slots: [body]
       }
     ]
