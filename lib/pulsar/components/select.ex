@@ -518,7 +518,7 @@ defmodule Pulsar.Components.Select do
 
   defp normalize_field_props(%{field: %FormField{} = field} = assigns) do
     assigns
-    |> assign(:id, assigns[:id] || field.id || generate_id("select"))
+    |> assign(:id, assigns[:id] || field.id || assigns[:name] || field.name || generate_id("select"))
     |> assign_new(:name, fn -> field.name end)
     |> assign_new(:value, fn -> field.value end)
     |> assign(:field_provided, true)
@@ -527,7 +527,7 @@ defmodule Pulsar.Components.Select do
   defp normalize_field_props(assigns) do
     assigns
     |> ensure_name!()
-    |> assign(:id, assigns[:id] || assigns[:name] || generate_id("select"))
+    |> assign(:id, assigns[:id] || assigns[:name])
     |> assign_new(:value, fn -> nil end)
     |> assign(:field_provided, false)
   end

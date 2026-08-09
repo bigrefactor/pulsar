@@ -1056,4 +1056,26 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ ~s(phx-value-option="elixir")
     end
   end
+
+  describe "select/1 id resolution" do
+    test "falls back to name when a bound field has no id" do
+      assigns = %{
+        field: %FormField{
+          id: nil,
+          name: "user[country]",
+          value: "",
+          errors: [],
+          field: :country,
+          form: nil
+        }
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select field={@field} options={["US", "CA"]} />
+        """)
+
+      assert html =~ ~s(id="user[country]")
+    end
+  end
 end

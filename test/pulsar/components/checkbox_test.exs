@@ -918,4 +918,37 @@ defmodule Pulsar.Components.CheckboxTest do
       assert html =~ "p-5 gap-4 text-lg"
     end
   end
+
+  describe "checkbox/1 id resolution" do
+    test "falls back to name when unbound and given no id" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox name="terms" />
+        """)
+
+      assert html =~ ~s(id="terms")
+    end
+
+    test "falls back to name when a bound field has no id" do
+      assigns = %{
+        field: %FormField{
+          id: nil,
+          name: "user[terms]",
+          value: "",
+          errors: [],
+          field: :terms,
+          form: nil
+        }
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox field={@field} />
+        """)
+
+      assert html =~ ~s(id="user[terms]")
+    end
+  end
 end

@@ -252,20 +252,25 @@ defp generate_id(prefix) do
   "#{prefix}-#{System.unique_integer([:positive])}"
 end
 
+defp resolve_id(assigns, nil), do: assigns[:id] || assigns[:name] || generate_id("input")
+
+defp resolve_id(assigns, field),
+  do: assigns[:id] || field.id || assigns[:name] || field.name || generate_id("input")
+
 defp normalize_field_props(assigns) do
   field = assigns[:field]
 
   if field do
     %{
       errors: field.errors || [],
-      id: assigns[:id] || field.id || generate_id("input"),
+      id: resolve_id(assigns, field),
       name: assigns[:name] || field.name,
       value: assigns[:value] || field.value
     }
   else
     %{
       errors: [],
-      id: assigns[:id] || generate_id("input"),
+      id: resolve_id(assigns, nil),
       name: assigns[:name],
       value: assigns[:value]
     }

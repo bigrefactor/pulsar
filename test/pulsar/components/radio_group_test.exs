@@ -5,6 +5,8 @@ defmodule Pulsar.Components.RadioGroupTest do
   import Phoenix.LiveViewTest
   import Pulsar.Components.RadioGroup
 
+  alias Phoenix.HTML.FormField
+
   describe "radio_group/1 basic functionality" do
     test "renders radio group with default props" do
       assigns = %{}
@@ -630,6 +632,43 @@ defmodule Pulsar.Components.RadioGroupTest do
         """)
 
       assert html =~ ~r/<div[^>]*role="radiogroup"[^>]*phx-hook="Pulsar\.Components\.RadioGroup\.PulsarRadioGroup"/
+    end
+  end
+
+  describe "radio_group/1 id resolution" do
+    test "falls back to name when unbound and given no id" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group name="plan">
+          <:option value="basic">Basic</:option>
+        </.radio_group>
+        """)
+
+      assert html =~ ~s(id="plan")
+    end
+
+    test "falls back to name when a bound field has no id" do
+      assigns = %{
+        field: %FormField{
+          id: nil,
+          name: "user[plan]",
+          value: "",
+          errors: [],
+          field: :plan,
+          form: nil
+        }
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <.radio_group field={@field}>
+          <:option value="basic">Basic</:option>
+        </.radio_group>
+        """)
+
+      assert html =~ ~s(id="user[plan]")
     end
   end
 end

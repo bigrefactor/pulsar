@@ -688,7 +688,7 @@ defmodule Pulsar.Components.Textarea do
 
   defp normalize_field_props(%{field: %FormField{} = field} = assigns) do
     assigns
-    |> assign(:id, assigns[:id] || field.id || generate_id("textarea"))
+    |> assign(:id, assigns[:id] || field.id || assigns[:name] || field.name || generate_id("textarea"))
     |> assign_new(:name, fn -> field.name end)
     |> assign_new(:value, fn -> field.value end)
     |> assign(:field_provided, true)
@@ -700,7 +700,7 @@ defmodule Pulsar.Components.Textarea do
     end
 
     assigns
-    |> assign(:id, assigns[:id] || assigns[:name] || generate_id("textarea"))
+    |> assign(:id, assigns[:id] || assigns[:name])
     |> assign_new(:value, fn -> nil end)
     |> assign(:field_provided, false)
   end
