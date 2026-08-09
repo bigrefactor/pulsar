@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - Generated Storybook Uses Semantic Radius Tokens
+
+- **Generated storybook stories no longer hardcode raw Tailwind radii on themed surfaces**: the Dark mode page's sample cards and the Resizable story's panel containers said `rounded-lg`, the Typography page's inline code chip said `rounded-md`, and the Login example's card said `rounded-xl` — while the Themes page prescribes `rounded-box`/`rounded-field` for exactly those surfaces. They now use the semantic tokens, so `--radius-box`/`--radius-field` overrides reach every generated story surface. Visually identical under the default theme except the login card (0.75rem → 0.5rem, now matching the real Card component's radius).
+- **The Link story's variant control defaults to `"outline"` again**: the story template still said `"solid"` from before the component's default changed to always-underlined links, so generated storybooks documented a default the component doesn't have. The story now matches the component.
+
 ### Fixed - Generated Components No Longer Reference Stellar
 
 - **Generated components no longer claim Stellar provenance**: the `select/1`, `radio_group/1`, and `textarea/1` moduledocs said the component was "built on Stellar.Components.*" — a library Pulsar does not depend on — and eight component templates carried Stellar provenance comments, all of which shipped into user apps via the generators. The moduledocs now describe the component itself and the comments are gone. No behavior change.
