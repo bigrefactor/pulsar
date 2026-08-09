@@ -232,15 +232,24 @@ Scaffold a brand-new theme with the generator:
 
 ```bash
 mix pulsar.gen.theme high_contrast
+mix pulsar.gen.theme midnight --dark
 ```
 
-This creates `assets/css/themes/high_contrast.css` and wires its import into
+This creates the theme file under `assets/css/themes/` and wires its import into
 `theme.css`. Fill in the token values for your theme.
+
+Pass `--dark` for a dark theme. The scaffold then declares `color-scheme: dark`,
+which is what makes the browser draw scrollbars, `<select>` popup lists, date and
+time pickers, and the autofill overlay in dark polarity — token values alone
+never reach that chrome.
 
 ### Switching themes
 
 Activate a theme by setting `data-theme` (or the matching `theme-*` class) on any
-ancestor element — no rebuild needed:
+ancestor element — no rebuild needed. Setting it on `<html>` is what makes the
+page scrollbar follow, though: the viewport reads the root element only, so a
+theme scoped to a deeper wrapper restyles nested scrollers and controls but
+leaves the page scrollbar in the host document's polarity.
 
 ```javascript
 // Attribute-based (recommended)

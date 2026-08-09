@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - Generated Themes Declare `color-scheme`
+
+- **Generated themes now declare `color-scheme`, so browser-drawn UI matches the theme's polarity**: swapping semantic tokens repaints only what CSS paints. Scrollbars, `<select>` popup lists, `<input type="date">` and `type="time"` pickers, the autofill overlay, and spellcheck menus are drawn by the browser and read `color-scheme` — nothing else, not even a `background-color` on `<body>`. A page under `[data-theme="dark"]` therefore painted dark surfaces while its scrollbars and dropdowns stayed light. `themes/light.css` now carries `color-scheme: light` in a bare `:root` rule (covering apps that never set `data-theme`) and in its `[data-theme="light"], .theme-light` block (so a light subtree nested inside a dark ancestor flips its chrome back); `themes/dark.css` carries `color-scheme: dark`. The declaration sits outside the `@theme` block because Tailwind v4 accepts only custom properties and `@keyframes` there. Note that the viewport scrollbar reads the root element only — set the theme on `<html>` if you want it to follow.
+- **`mix pulsar.gen.theme <name> --dark` sets a scaffolded theme's polarity**: with `:root` now declaring `light`, a scaffolded theme that declares nothing inherits light polarity and reproduces the bug above. Themes scaffolded without the flag declare `color-scheme: light`; `--dark` declares `color-scheme: dark`. The flag has no effect on the bare `mix pulsar.gen.theme` install path, which generates the built-in light and dark pair.
+
 ### Fixed - Generated Storybook Uses Semantic Radius Tokens
 
 - **Generated storybook stories no longer hardcode raw Tailwind radii on themed surfaces**: the Dark mode page's sample cards and the Resizable story's panel containers said `rounded-lg`, the Typography page's inline code chip said `rounded-md`, and the Login example's card said `rounded-xl` — while the Themes page prescribes `rounded-box`/`rounded-field` for exactly those surfaces. They now use the semantic tokens, so `--radius-box`/`--radius-field` overrides reach every generated story surface. Visually identical under the default theme except the login card (0.75rem → 0.5rem, now matching the real Card component's radius).

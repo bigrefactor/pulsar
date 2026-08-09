@@ -228,6 +228,28 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
       apply_igniter!(igniter)
     end
 
+    test "scaffolds a light theme declaring color-scheme: light" do
+      igniter =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.gen.theme", ["purple"])
+        |> assert_creates("assets/css/themes/purple.css")
+
+      assert source_content(igniter, "assets/css/themes/purple.css") =~ "color-scheme: light;"
+
+      apply_igniter!(igniter)
+    end
+
+    test "--dark scaffolds a theme declaring color-scheme: dark" do
+      igniter =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.gen.theme", ["midnight", "--dark"])
+        |> assert_creates("assets/css/themes/midnight.css")
+
+      assert source_content(igniter, "assets/css/themes/midnight.css") =~ "color-scheme: dark;"
+
+      apply_igniter!(igniter)
+    end
+
     test "re-running the default task re-registers a previously scaffolded custom theme" do
       igniter =
         phx_test_project()
@@ -243,6 +265,17 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
       assert has_import_line?(content, ~s(@import "./themes/cupcake.css";)),
              "expected the cupcake theme, still present on disk at assets/css/themes/cupcake.css, " <>
                "to still be registered in theme.css after re-running the default task, got:\n\n#{content}"
+
+      apply_igniter!(igniter)
+    end
+
+    test "the install path generates themes declaring their polarity" do
+      igniter =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.gen.theme", ["--dark"])
+
+      assert source_content(igniter, "assets/css/themes/light.css") =~ "color-scheme: light;"
+      assert source_content(igniter, "assets/css/themes/dark.css") =~ "color-scheme: dark;"
 
       apply_igniter!(igniter)
     end

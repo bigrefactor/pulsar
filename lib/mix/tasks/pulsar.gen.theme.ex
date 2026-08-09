@@ -45,12 +45,24 @@ defmodule Mix.Tasks.Pulsar.Gen.Theme.Docs do
 
     ```sh
     mix pulsar.gen.theme cupcake
+    mix pulsar.gen.theme midnight --dark
     ```
 
     This generates `assets/css/themes/cupcake.css` (refusing to overwrite an
     existing one) and appends `@import "./themes/cupcake.css";` to
     `assets/css/theme.css` — but only if the line isn't already there, so the
     task is safe to re-run.
+
+    Pass `--dark` when the theme is a dark one. The scaffold then declares
+    `color-scheme: dark`, which is what tells the browser to draw scrollbars,
+    `<select>` popup lists, date and time pickers, and the autofill overlay in
+    dark polarity — without it they render light against your dark surfaces.
+    Themes scaffolded without the flag declare `color-scheme: light`; edit the
+    line directly to change it later.
+
+    The flag applies only when scaffolding a named theme. It has no effect on
+    the bare `mix pulsar.gen.theme` install path, which generates the built-in
+    light and dark pair.
 
     Activate the new theme by setting `data-theme="cupcake"` on any ancestor
     element. Edit the generated file to override semantic tokens (start by
@@ -92,8 +104,8 @@ if Code.ensure_loaded?(Igniter) do
         example: __MODULE__.Docs.example(),
         positional: [{:name, optional: true}],
         composes: [],
-        schema: [],
-        defaults: [],
+        schema: [dark: :boolean],
+        defaults: [dark: false],
         aliases: [],
         required: []
       }
@@ -174,9 +186,10 @@ if Code.ensure_loaded?(Igniter) do
 
       dest = "assets/css/themes/#{name}.css"
       import_line = ~s(@import "./themes/#{name}.css";)
+      color_scheme = if igniter.args.options[:dark], do: "dark", else: "light"
 
       igniter
-      |> scaffold_theme_file(dest, name)
+      |> scaffold_theme_file(dest, name, color_scheme)
       |> add_theme_import("assets/css/theme.css", import_line, dest)
     end
 
@@ -184,11 +197,14 @@ if Code.ensure_loaded?(Igniter) do
     # rather than relying on `copy_template`'s `on_exists: :skip`, because
     # Igniter only consults loaded sources for that check and won't see a file
     # that exists on disk but hasn't been read into the rewrite yet.
-    defp scaffold_theme_file(igniter, dest, name) do
+    defp scaffold_theme_file(igniter, dest, name, color_scheme) do
       if Igniter.exists?(igniter, dest) do
         igniter
       else
-        Igniter.copy_template(igniter, template_path("themes/scaffold.css.eex"), dest, theme_name: name)
+        Igniter.copy_template(igniter, template_path("themes/scaffold.css.eex"), dest,
+          theme_name: name,
+          color_scheme: color_scheme
+        )
       end
     end
 

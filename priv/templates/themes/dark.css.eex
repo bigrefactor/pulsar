@@ -9,9 +9,16 @@
   Tailwind utilities (e.g. `.bg-primary`) resolve through `var()` at runtime,
   so components don't need a `dark:` variant — the variable value swaps
   beneath them when the attribute or class flips.
+
+  `color-scheme: dark` tells the browser to draw its own UI — scrollbars,
+  `<select>` popup lists, date and time pickers, the autofill overlay — in
+  dark polarity. Token values never reach that chrome, so without this line
+  the page paints dark while its scrollbars and dropdowns stay light.
 */
 [data-theme="dark"],
 .theme-dark {
+  color-scheme: dark;
+
   --color-background: var(--color-gray-950);
   --color-foreground: var(--color-gray-50);
   --color-muted: var(--color-gray-900);

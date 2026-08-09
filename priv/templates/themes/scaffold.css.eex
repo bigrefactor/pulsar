@@ -7,10 +7,16 @@
   you want to change — anything you omit falls back to the light defaults
   declared in `themes/light.css`.
 
+  `color-scheme` tells the browser to draw its own UI — scrollbars,
+  `<select>` popup lists, date and time pickers, the autofill overlay — in
+  matching polarity. Change it if this theme's polarity differs.
+
   See `themes/dark.css` for a complete override example.
 */
 [data-theme="<%= @theme_name %>"],
 .theme-<%= @theme_name %> {
+  color-scheme: <%= @color_scheme %>;
+
   /* TODO: override semantic tokens for this theme.
      Start by copying lines from themes/dark.css and tweaking values.
 
