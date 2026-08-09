@@ -141,7 +141,7 @@ defmodule Pulsar.Components.DatePickerTest do
     test "raises when given neither an id nor a field" do
       assigns = %{}
 
-      assert_raise ArgumentError, ~r/requires an :id when no form field is bound/, fn ->
+      assert_raise ArgumentError, ~r/<\.date_picker> requires an :id/, fn ->
         rendered_to_string(~H"""
         <DatePicker.date_picker />
         """)

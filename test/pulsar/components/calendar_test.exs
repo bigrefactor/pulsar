@@ -116,7 +116,7 @@ defmodule Pulsar.Components.CalendarTest do
     test "raises when given neither an id nor a field" do
       assigns = %{}
 
-      assert_raise ArgumentError, ~r/requires an :id when no form field is bound/, fn ->
+      assert_raise ArgumentError, ~r/<\.calendar> requires an :id/, fn ->
         rendered_to_string(~H"""
         <Calendar.calendar />
         """)
