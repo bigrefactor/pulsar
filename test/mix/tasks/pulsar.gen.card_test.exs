@@ -20,5 +20,15 @@ defmodule Mix.Tasks.Pulsar.Gen.CardTest do
       |> assert_generated_component("lib/my_app/custom_components/card.ex")
       |> apply_igniter!()
     end
+
+    test "ships no placeholder namespace in comments" do
+      igniter =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.gen.card", [])
+
+      refute source_content(igniter, "lib/test_web/components/card.ex") =~ "MyApp"
+
+      apply_igniter!(igniter)
+    end
   end
 end
