@@ -9,6 +9,12 @@ defmodule <%= @web_module %>.Storybook.Components.DropdownMenu do
   def attributes do
     [
       %Attr{
+        id: :id,
+        type: :string,
+        required: true,
+        doc: "Menu ID. Wires the trigger to the menu."
+      },
+      %Attr{
         id: :placement,
         type: :string,
         values:
@@ -83,27 +89,31 @@ defmodule <%= @web_module %>.Storybook.Components.DropdownMenu do
       %Variation{
         id: :default,
         description: "Account menu with a destructive action",
+        attributes: %{id: "sb-dropdown-menu-default"},
         slots: [trigger, actions]
       },
       %Variation{
         id: :colored_items,
         description: "Items emphasized with the color attr (primary, warning, danger)",
+        attributes: %{id: "sb-dropdown-menu-colored-items"},
         slots: [trigger, colored]
       },
       %Variation{
         id: :selections,
         description: "Checkbox and radio items (the menu stays open on toggle)",
+        attributes: %{id: "sb-dropdown-menu-selections"},
         slots: [trigger, selections]
       },
       %Variation{
         id: :with_submenu,
         description: "Row actions with a nested submenu",
+        attributes: %{id: "sb-dropdown-menu-with-submenu"},
         slots: [trigger, with_submenu]
       },
       %Variation{
         id: :outline_primary,
         description: "Outline primary surface",
-        attributes: %{variant: "outline", color: "primary"},
+        attributes: %{id: "sb-dropdown-menu-outline-primary", variant: "outline", color: "primary"},
         slots: [trigger, actions]
       }
     ]

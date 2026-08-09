@@ -18,7 +18,7 @@ defmodule Pulsar.Components.Menu do
   ## Examples
 
       # Vertical menu in a sidebar content slot
-      <.menu label="Primary">
+      <.menu id="primary-nav" label="Primary">
         <.menu_item navigate={~p"/"} icon="hero-home" active>Home</.menu_item>
         <.menu_item navigate={~p"/inbox"} icon="hero-inbox">
           Inbox
@@ -27,7 +27,7 @@ defmodule Pulsar.Components.Menu do
 
         <.menu_section label="Workspace">
           <.menu_item navigate={~p"/projects"} icon="hero-folder">Projects</.menu_item>
-          <.menu_group label="Reports" icon="hero-chart-bar">
+          <.menu_group id="reports" label="Reports" icon="hero-chart-bar">
             <.menu_item navigate={~p"/reports/sales"}>Sales</.menu_item>
             <.menu_item navigate={~p"/reports/traffic"}>Traffic</.menu_item>
           </.menu_group>
@@ -36,9 +36,9 @@ defmodule Pulsar.Components.Menu do
 
       # Horizontal menu in a navbar region — groups open as dropdowns. Set
       # `orientation="horizontal"` on each group to match the menu.
-      <.menu orientation="horizontal" label="Primary">
+      <.menu id="top-nav" orientation="horizontal" label="Primary">
         <.menu_item navigate={~p"/"} active>Home</.menu_item>
-        <.menu_group orientation="horizontal" label="Products">
+        <.menu_group id="products" orientation="horizontal" label="Products">
           <.menu_item navigate={~p"/products/app"}>App</.menu_item>
           <.menu_item navigate={~p"/products/api"}>API</.menu_item>
         </.menu_group>
@@ -51,7 +51,7 @@ defmodule Pulsar.Components.Menu do
   into the icon rail automatically when the sidebar collapses to `collapsible="icon"`.
 
       <.sidebar id="app-sidebar" collapsible="icon">
-        <.menu landmark={false} label="Primary">
+        <.menu id="primary-nav" landmark={false} label="Primary">
           <.menu_item navigate={~p"/"} icon="hero-home">Home</.menu_item>
         </.menu>
       </.sidebar>
@@ -76,7 +76,7 @@ defmodule Pulsar.Components.Menu do
   alias Pulsar.Components.Popover
 
   # Inline ID generator
-  defp generate_id(prefix \\ "menu") do
+  defp generate_id(prefix) do
     "#{prefix}-#{System.unique_integer([:positive])}"
   end
 
@@ -135,7 +135,7 @@ defmodule Pulsar.Components.Menu do
   # COMPONENT
   # ============================================================================
 
-  attr(:id, :string, doc: "Menu ID (auto-generated if omitted). Targeted by the keyboard/disclosure behavior.")
+  attr(:id, :string, required: true, doc: "Menu ID. Targeted by the keyboard/disclosure behavior.")
 
   attr(:orientation, :string,
     default: "vertical",
@@ -176,16 +176,13 @@ defmodule Pulsar.Components.Menu do
 
   ## Examples
 
-      <.menu label="Primary">
+      <.menu id="primary-nav" label="Primary">
         <.menu_item navigate={~p"/"} icon="hero-home" active>Home</.menu_item>
       </.menu>
   """
   @spec menu(map()) :: Rendered.t()
   def menu(assigns) do
-    assigns =
-      assigns
-      |> assign_new(:id, fn -> generate_id() end)
-      |> assign(:list_classes, merge([list_base(assigns.orientation), assigns.class]))
+    assigns = assign(assigns, :list_classes, merge([list_base(assigns.orientation), assigns.class]))
 
     ~H"""
     <.menu_landmark landmark={@landmark} label={@label}>
@@ -499,7 +496,7 @@ defmodule Pulsar.Components.Menu do
     """
   end
 
-  attr(:id, :string, doc: "Group ID (auto-generated if omitted), wires the trigger to its panel")
+  attr(:id, :string, required: true, doc: "Group ID, wires the trigger to its panel")
   attr(:label, :string, required: true, doc: ~s{Group label shown on the trigger. Use with i18n: gettext("...")})
 
   attr(:orientation, :string,
@@ -527,20 +524,18 @@ defmodule Pulsar.Components.Menu do
 
   ## Examples
 
-      <.menu_group label="Reports" icon="hero-chart-bar">
+      <.menu_group id="reports" label="Reports" icon="hero-chart-bar">
         <.menu_item navigate={~p"/reports/sales"}>Sales</.menu_item>
       </.menu_group>
 
-      <.menu_group orientation="horizontal" label="Products">
+      <.menu_group id="products" orientation="horizontal" label="Products">
         <.menu_item navigate={~p"/products/app"}>App</.menu_item>
       </.menu_group>
   """
   @spec menu_group(map()) :: Rendered.t()
   def menu_group(assigns) do
     assigns =
-      assigns
-      |> assign_new(:id, fn -> generate_id("menu-group") end)
-      |> assign(:trigger_classes, merge([@row_base, trigger_active(assigns.active), assigns.class]))
+      assign(assigns, :trigger_classes, merge([@row_base, trigger_active(assigns.active), assigns.class]))
 
     ~H"""
     <li

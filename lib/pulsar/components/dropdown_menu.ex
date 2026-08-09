@@ -80,7 +80,7 @@ defmodule Pulsar.Components.DropdownMenu do
   alias Pulsar.Components.Popover
 
   # Inline ID generator
-  defp generate_id(prefix \\ "dropdown-menu") do
+  defp generate_id(prefix) do
     "#{prefix}-#{System.unique_integer([:positive])}"
   end
 
@@ -113,7 +113,7 @@ defmodule Pulsar.Components.DropdownMenu do
   # COMPONENT
   # ============================================================================
 
-  attr(:id, :string, doc: "Menu ID (auto-generated if omitted). Wires the trigger to the menu.")
+  attr(:id, :string, required: true, doc: "Menu ID. Wires the trigger to the menu.")
 
   attr(:label, :string,
     default: nil,
@@ -178,10 +178,7 @@ defmodule Pulsar.Components.DropdownMenu do
   """
   @spec dropdown_menu(map()) :: Rendered.t()
   def dropdown_menu(assigns) do
-    assigns =
-      assigns
-      |> assign_new(:id, fn -> generate_id() end)
-      |> assign(:rest, put_aria_label(assigns.rest, assigns.label))
+    assigns = assign(assigns, :rest, put_aria_label(assigns.rest, assigns.label))
 
     ~H"""
     <div id={"#{@id}-root"} class="contents" phx-hook=".PulsarDropdownMenu">
@@ -713,7 +710,7 @@ defmodule Pulsar.Components.DropdownMenu do
     """
   end
 
-  attr(:id, :string, doc: "Submenu ID (auto-generated if omitted), wires the trigger to its panel")
+  attr(:id, :string, required: true, doc: "Submenu ID, wires the trigger to its panel")
 
   attr(:label, :string,
     required: true,
@@ -757,7 +754,6 @@ defmodule Pulsar.Components.DropdownMenu do
   def dropdown_menu_submenu(assigns) do
     assigns =
       assigns
-      |> assign_new(:id, fn -> generate_id("dropdown-menu-sub") end)
       |> assign(:row_classes, merge([@item_base, assigns.class]))
       |> assign(:rest, put_aria_label(assigns.rest, assigns.label))
 
