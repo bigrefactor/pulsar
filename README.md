@@ -239,8 +239,9 @@ This creates the theme file under `assets/css/themes/` and wires its import into
 `theme.css`. Fill in the token values for your theme.
 
 Pass `--dark` for a dark theme. The scaffold then declares `color-scheme: dark`,
-which is what makes the browser draw scrollbars, `<select>` popup lists and date
-pickers in dark polarity — token values alone never reach that chrome.
+which is what makes the browser draw scrollbars, `<select>` popup lists, date and
+time pickers, and the autofill overlay in dark polarity — token values alone
+never reach that chrome.
 
 ### Switching themes
 
