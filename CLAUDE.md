@@ -518,3 +518,15 @@ When modifying existing components:
 2. Maintain backwards compatibility where possible
 3. Update documentation and examples
 4. Test generation in sample Phoenix app
+
+### Template Assigns
+
+`priv/templates/*.ex.eex` templates render with `component_namespace`,
+`components_namespace`, `gettext_module`, `web_module`, and `app_name`
+available as assigns. Doc prose (moduledoc, `@doc`, comments) must interpolate
+these rather than hardcoding a placeholder namespace like `MyApp`.
+
+Interpolate a host-app name only where the generated app really has that
+module. An example naming a module the user must supply themselves (a CLDR
+backend, say) reads as installed code once it carries their namespace — describe
+it in prose instead.

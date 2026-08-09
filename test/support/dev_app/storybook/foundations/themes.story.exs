@@ -154,7 +154,7 @@ defmodule Pulsar.DevApp.Storybook.Foundations.Themes do
       </div>
 
       <%!-- NOTE: "pulsar-sandbox" must match the sandbox_class setting in your
-           PhoenixStorybook backend module (e.g. MyAppWeb.Storybook). --%>
+           PhoenixStorybook backend module (e.g. Pulsar.DevApp.Storybook). --%>
       <div
         data-theme={@slug}
         class="pulsar-sandbox bg-surface-1 border border-border rounded-box p-5 space-y-4"

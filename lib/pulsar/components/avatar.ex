@@ -237,7 +237,7 @@ defmodule Pulsar.Components.Avatar do
 
   attr :format_count, :any,
     default: &Integer.to_string/1,
-    doc: ~s{Formats the overflow count. Use with i18n: &MyAppWeb.Cldr.Number.to_string!/1}
+    doc: ~s{Formats the overflow count. Use with i18n: your CLDR backend's Number.to_string!/1}
 
   attr :href, :any, default: nil, doc: "External URL for the overflow counter"
   attr :navigate, :any, default: nil, doc: "Phoenix route for the overflow counter"

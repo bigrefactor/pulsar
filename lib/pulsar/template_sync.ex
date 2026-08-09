@@ -12,12 +12,24 @@ defmodule Pulsar.TemplateSync do
 
   This is build tooling for the Pulsar repository itself — it is not part of the
   public, generated-into-your-app surface.
+
+  ## Host-app assigns in library mode
+
+  `component_namespace`, `components_namespace`, and `gettext_module` resolve to
+  Pulsar's own modules, because in library mode those *are* the modules a reader
+  calls. `web_module` and `app_name` have no such counterpart — the host app is
+  whoever depends on Pulsar — so doc examples render against the conventional
+  `MyAppWeb` / `my_app` placeholders, which the reader substitutes. Generated
+  installs never see these values; `Pulsar.Generator` derives both from the
+  host project.
   """
 
   alias Mix.Tasks.Format
 
   @components_root "Pulsar.Components"
   @gettext_module "Pulsar.Gettext"
+  @web_module "MyAppWeb"
+  @app_name "my_app"
 
   @typedoc """
   `{component_name, lib_path, component_namespace, module_name}`.
@@ -109,7 +121,9 @@ defmodule Pulsar.TemplateSync do
         assigns: [
           component_namespace: component_namespace,
           components_namespace: @components_root,
-          gettext_module: @gettext_module
+          gettext_module: @gettext_module,
+          web_module: @web_module,
+          app_name: @app_name
         ],
         engine: EEx.SmartEngine
       )

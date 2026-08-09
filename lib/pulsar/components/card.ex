@@ -437,15 +437,7 @@ defmodule Pulsar.Components.Card do
 
   # Add keyboard accessibility attributes for interactive cards.
   #
-  # `phx-hook` carries the colocated hook's fully-qualified name (built
-  # from `__MODULE__`, not hard-coded), so generator-copied components
-  # like `MyApp.Components.Card` resolve to their own
-  # `MyApp.Components.Card.PulsarCard` registration. The leading-dot
-  # form (`.PulsarCard`) is only rewritten by Phoenix when it appears as
-  # a template literal inside `~H`; injecting it through `Map.put_new`
-  # bypasses that rewrite, so the attribute would ship to the browser
-  # unresolved and the keyboard handler would silently never attach.
-  # `Map.put_new` keeps caller-provided `phx-hook` taking precedence.
+  # Caller-provided `role`, `tabindex`, and `phx-hook` take precedence.
   @spec add_interactive_attrs(map()) :: map()
   defp add_interactive_attrs(%{rest: rest} = assigns) do
     if interactive?(rest) do

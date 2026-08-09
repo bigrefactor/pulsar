@@ -183,6 +183,8 @@ defmodule Pulsar.Generator do
       |> Keyword.put_new(:component_namespace, namespace_inspected)
       |> Keyword.put_new(:components_namespace, get_components_namespace(igniter, namespace_inspected))
       |> Keyword.put_new(:gettext_module, inspect(Phoenix.web_module_name(igniter, "Gettext")))
+      |> Keyword.put_new(:web_module, web_module_string(igniter))
+      |> Keyword.put_new(:app_name, app_name(igniter))
 
     contents = contents(component_name, assigns)
     path = Igniter.Project.Module.proper_location(igniter, component)
@@ -286,6 +288,28 @@ defmodule Pulsar.Generator do
       opts = opts || []
       Keyword.put_new(opts, :components_module, default)
     end)
+  end
+
+  @doc """
+  Returns the host application's web module as a string (`"MyAppWeb"`).
+  """
+  @spec web_module_string(Igniter.t()) :: String.t()
+  def web_module_string(igniter) do
+    igniter
+    |> Phoenix.web_module()
+    |> inspect()
+  end
+
+  @doc """
+  Returns the host application's OTP app name as a string (`"my_app"`).
+  """
+  @spec app_name(Igniter.t()) :: String.t()
+  def app_name(igniter) do
+    igniter
+    |> Igniter.Project.Application.app_name()
+    |> to_string()
+  rescue
+    _ -> "my_app"
   end
 
   defp component_module(namespace, component_name) do

@@ -80,6 +80,8 @@ defmodule Pulsar.DevApp.Storybook.Foundations.DarkMode do
               <p class="psb:text-sm psb:font-semibold psb:text-slate-500 psb:uppercase psb:tracking-wide psb:mb-3">
                 Light mode
               </p>
+              <%!-- NOTE: "pulsar-sandbox" must match the sandbox_class setting in your
+                   PhoenixStorybook backend module (e.g. Pulsar.DevApp.Storybook). --%>
               <div class="pulsar-sandbox bg-surface-1 border border-border rounded-box p-6 space-y-4">
                 <div>
                   <h3 class="text-lg font-semibold text-foreground">Sign in to your account</h3>
@@ -122,6 +124,8 @@ defmodule Pulsar.DevApp.Storybook.Foundations.DarkMode do
               <p class="psb:text-sm psb:font-semibold psb:text-slate-500 psb:uppercase psb:tracking-wide psb:mb-3">
                 Dark mode
               </p>
+              <%!-- NOTE: "pulsar-sandbox" must match the sandbox_class setting in your
+                   PhoenixStorybook backend module (e.g. Pulsar.DevApp.Storybook). --%>
               <div
                 data-theme="dark"
                 class="pulsar-sandbox bg-surface-1 border border-border rounded-box p-6 space-y-4"

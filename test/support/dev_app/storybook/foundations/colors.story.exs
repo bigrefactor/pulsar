@@ -54,6 +54,8 @@ defmodule Pulsar.DevApp.Storybook.Foundations.Colors do
           <h2 class="psb:text-xl psb:font-semibold psb:text-slate-900 psb:mb-6">
             Light mode
           </h2>
+          <%!-- NOTE: "pulsar-sandbox" must match the sandbox_class setting in your
+               PhoenixStorybook backend module (e.g. Pulsar.DevApp.Storybook). --%>
           <div class="pulsar-sandbox psb:space-y-4">
             {color_row("primary", "blue", assigns)}
             {color_row("secondary", "violet", assigns)}
@@ -69,6 +71,8 @@ defmodule Pulsar.DevApp.Storybook.Foundations.Colors do
           <h2 class="psb:text-xl psb:font-semibold psb:text-slate-900 psb:mb-6">
             Dark mode
           </h2>
+          <%!-- NOTE: "pulsar-sandbox" must match the sandbox_class setting in your
+               PhoenixStorybook backend module (e.g. Pulsar.DevApp.Storybook). --%>
           <div data-theme="dark" class="pulsar-sandbox psb:bg-gray-950 psb:rounded-lg psb:p-4 psb:space-y-4">
             {color_row("primary", "blue", assigns)}
             {color_row("secondary", "violet", assigns)}

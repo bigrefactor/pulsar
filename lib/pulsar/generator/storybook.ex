@@ -246,10 +246,7 @@ defmodule Pulsar.Generator.Storybook do
     ]
   end
 
-  defp web_module_string(igniter) do
-    Phoenix.web_module(igniter)
-    |> inspect()
-  end
+  defp web_module_string(igniter), do: Pulsar.Generator.web_module_string(igniter)
 
   defp components_module_string(igniter) do
     get_components_module(igniter)
@@ -260,13 +257,7 @@ defmodule Pulsar.Generator.Storybook do
     Pulsar.Generator.components_namespace(igniter)
   end
 
-  defp app_name(igniter) do
-    igniter
-    |> Igniter.Project.Application.app_name()
-    |> to_string()
-  rescue
-    _ -> "my_app"
-  end
+  defp app_name(igniter), do: Pulsar.Generator.app_name(igniter)
 
   defp render_template(path_parts, assigns) do
     template = template_path(path_parts)
