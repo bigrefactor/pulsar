@@ -256,9 +256,7 @@ defmodule Pulsar.DevApp.Storybook.Foundations.Themes do
           </h3>
           <p class="psb:text-sm text-muted-foreground psb:mb-2">
             The generator creates
-            <code class="psb:font-mono psb:text-xs bg-muted psb:px-1 psb:rounded">
-              assets/css/themes/&lt;name&gt;.css
-            </code>
+            <code class="psb:font-mono psb:text-xs bg-muted psb:px-1 psb:rounded">assets/css/themes/&lt;name&gt;.css</code>
             and adds an <code class="psb:font-mono psb:text-xs bg-muted psb:px-1 psb:rounded">@import</code>
             to <code class="psb:font-mono psb:text-xs bg-muted psb:px-1 psb:rounded">theme.css</code>:
           </p>

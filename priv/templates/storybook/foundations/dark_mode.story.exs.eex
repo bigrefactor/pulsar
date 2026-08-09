@@ -82,7 +82,7 @@ defmodule <%= @web_module %>.Storybook.Foundations.DarkMode do
               </p>
               <%%!-- NOTE: "pulsar-sandbox" must match the sandbox_class setting in your
                    PhoenixStorybook backend module (e.g. <%= @web_module %>.Storybook). --%>
-              <div class="pulsar-sandbox bg-surface-1 border border-border rounded-lg p-6 space-y-4">
+              <div class="pulsar-sandbox bg-surface-1 border border-border rounded-box p-6 space-y-4">
                 <div>
                   <h3 class="text-lg font-semibold text-foreground">Sign in to your account</h3>
                   <p class="text-sm text-muted-foreground mt-1">
@@ -128,7 +128,7 @@ defmodule <%= @web_module %>.Storybook.Foundations.DarkMode do
                    PhoenixStorybook backend module (e.g. <%= @web_module %>.Storybook). --%>
               <div
                 data-theme="dark"
-                class="pulsar-sandbox bg-surface-1 border border-border rounded-lg p-6 space-y-4"
+                class="pulsar-sandbox bg-surface-1 border border-border rounded-box p-6 space-y-4"
               >
                 <div>
                   <h3 class="text-lg font-semibold text-foreground">Sign in to your account</h3>

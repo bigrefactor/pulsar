@@ -295,8 +295,8 @@ and why components render no inline `style` attributes — is documented in
 ```bash
 mix deps.get             # Install dependencies (only Twm)
 mix compile              # Compile the library
-mix pulsar.sync          # Regenerate lib/pulsar/components/*.ex from priv/templates (after editing a template)
-mix pulsar.sync --check  # Verify generated lib files match their templates (run by check/CI)
+mix pulsar.sync          # Regenerate lib/pulsar/components/*.ex and the dev-app story fixtures (test/support/dev_app/storybook/) from priv/templates (after editing a template)
+mix pulsar.sync --check  # Verify generated lib files and story fixtures match their templates (run by check/CI)
 mix test                 # Run all tests  
 mix dialyzer             # Type checking
 mix credo --strict       # Code quality analysis

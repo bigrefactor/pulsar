@@ -1,17 +1,26 @@
 defmodule Mix.Tasks.Pulsar.Sync do
   @moduledoc """
-  Regenerates the bundled library components from their EEx templates.
+  Regenerates the bundled library components and the dev-app storybook fixtures
+  from their EEx templates.
 
-  `priv/templates/*.ex.eex` are the single source of truth. This task renders
-  each template with the fixed library assigns and writes the result to its
-  committed `lib/pulsar/components/*.ex` (or `lib/pulsar/core_components.ex`)
-  file, so the two never need to be hand-mirrored.
+  `priv/templates/*.ex.eex` and `priv/templates/storybook/**/*.exs.eex` are the
+  single source of truth. This task renders each component template with the
+  fixed library assigns and writes the result to its committed
+  `lib/pulsar/components/*.ex` (or `lib/pulsar/core_components.ex`) file, and
+  renders each story template with the dev app's assigns into its committed
+  `test/support/dev_app/storybook/**/*.exs` fixture, so the pairs never need to
+  be hand-mirrored.
 
-      mix pulsar.sync           # regenerate lib files from templates
+      mix pulsar.sync           # regenerate lib files and story fixtures from templates
       mix pulsar.sync --check   # verify they're in sync; exit non-zero on drift
 
+  Every generated file is overwritten on sync — direct edits to a lib component
+  or a story fixture are discarded; change the template instead. A fixture whose
+  template was deleted or renamed is an orphan: sync deletes it, `--check`
+  reports it.
+
   `--check` writes nothing and is wired into the `check`/`check.ci` aliases and
-  CI to fail when a committed lib file has drifted from its template.
+  CI to fail when a committed generated file has drifted from its template.
 
   This is a maintainer task for the Pulsar repository itself; it is not meant to
   be run inside an application that has installed Pulsar.
@@ -22,6 +31,7 @@ defmodule Mix.Tasks.Pulsar.Sync do
 
   use Mix.Task
 
+  alias Pulsar.StoryFixtureSync
   alias Pulsar.TemplateSync
 
   @impl Mix.Task
@@ -38,32 +48,58 @@ defmodule Mix.Tasks.Pulsar.Sync do
   end
 
   defp write do
-    written =
+    written_components =
       for {{_component, lib_path, _ns, _module}, expected} <- TemplateSync.diff() do
         File.write!(lib_path, expected <> "\n")
         lib_path
       end
 
-    case written do
-      [] ->
-        Mix.shell().info("pulsar.sync: all generated components already in sync with templates.")
+    written_fixtures =
+      for {{_template_path, fixture_path}, expected} <- StoryFixtureSync.diff() do
+        fixture_path |> Path.dirname() |> File.mkdir_p!()
+        File.write!(fixture_path, expected <> "\n")
+        fixture_path
+      end
 
-      paths ->
-        Mix.shell().info("pulsar.sync: regenerated #{length(paths)} file(s) from templates:")
-        Enum.each(paths, &Mix.shell().info("  * #{&1}"))
+    deleted_fixtures =
+      for orphan <- StoryFixtureSync.orphans() do
+        File.rm!(orphan)
+        orphan
+      end
+
+    written = written_components ++ written_fixtures
+
+    if written == [] and deleted_fixtures == [] do
+      Mix.shell().info("pulsar.sync: all generated files already in sync with templates.")
+    else
+      if written != [] do
+        Mix.shell().info("pulsar.sync: regenerated #{length(written)} file(s) from templates:")
+        Enum.each(written, &Mix.shell().info("  * #{&1}"))
+      end
+
+      if deleted_fixtures != [] do
+        Mix.shell().info("pulsar.sync: deleted #{length(deleted_fixtures)} orphaned fixture(s) with no template:")
+        Enum.each(deleted_fixtures, &Mix.shell().info("  * #{&1}"))
+      end
+
+      Mix.shell().info("Generated files are overwritten on every sync — make changes in priv/templates/.")
     end
   end
 
   defp check do
-    case TemplateSync.diff() do
+    drifted =
+      Enum.map(TemplateSync.diff(), fn {{_c, lib_path, _ns, _m}, _expected} -> lib_path end) ++
+        Enum.map(StoryFixtureSync.diff(), fn {{_t, fixture_path}, _expected} -> fixture_path end) ++
+        StoryFixtureSync.orphans()
+
+    case drifted do
       [] ->
-        Mix.shell().info("pulsar.sync --check: generated components are in sync with templates.")
+        Mix.shell().info("pulsar.sync --check: generated files are in sync with templates.")
 
-      drifted ->
-        paths = Enum.map(drifted, fn {{_c, lib_path, _ns, _m}, _expected} -> lib_path end)
-
+      paths ->
         Mix.raise("""
-        The following generated lib files have drifted from their templates:
+        The following generated files have drifted from their templates
+        (changed, missing a fixture, or orphaned by a deleted template):
 
         #{Enum.map_join(paths, "\n", &"  * #{&1}")}
 
@@ -78,8 +114,9 @@ defmodule Mix.Tasks.Pulsar.Sync do
     if Mix.Project.config()[:app] != :pulsar do
       Mix.raise(
         "mix pulsar.sync is a maintainer task for the Pulsar repository only " <>
-          "(it rewrites lib/pulsar/* from priv/templates/*). It is not meant to run " <>
-          "inside an application — use `mix pulsar.install` / `mix pulsar.gen.*` instead."
+          "(it rewrites lib/pulsar/* and test/support/dev_app/storybook/* from priv/templates/*). " <>
+          "It is not meant to run inside an application — use `mix pulsar.install` / " <>
+          "`mix pulsar.gen.*` instead."
       )
     end
   end
