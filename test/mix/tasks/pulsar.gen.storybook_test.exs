@@ -41,6 +41,20 @@ defmodule Mix.Tasks.Pulsar.Gen.StorybookTest do
       |> refute_creates("lib/test_web/storybook/components/badge.story.exs")
       |> apply_igniter!()
     end
+
+    test "sandbox notes name the host storybook backend module" do
+      igniter =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.gen.storybook", ["--skip-components"])
+
+      for foundation <- ~w(colors dark_mode spacing themes typography) do
+        path = "lib/test_web/storybook/foundations/#{foundation}.story.exs"
+        assert_generated_source(igniter, path, "TestWeb.Storybook")
+        refute source_content(igniter, path) =~ "MyApp"
+      end
+
+      apply_igniter!(igniter)
+    end
   end
 
   describe "pulsar.gen.storybook (catch-up mode)" do

@@ -21,7 +21,7 @@ defmodule <%= @web_module %>.Storybook.Foundations.Typography do
             Heading scale
           </h2>
           <%!-- NOTE: "pulsar-sandbox" must match the sandbox_class setting in your
-               PhoenixStorybook backend module (e.g. MyAppWeb.Storybook). --%>
+               PhoenixStorybook backend module (e.g. <%= @web_module %>.Storybook). --%>
           <div class="pulsar-sandbox psb:space-y-6">
             <div class="psb:flex psb:items-baseline psb:gap-4">
               <span class="psb:w-8 psb:shrink-0 psb:text-xs psb:font-mono psb:text-slate-400">xl</span>

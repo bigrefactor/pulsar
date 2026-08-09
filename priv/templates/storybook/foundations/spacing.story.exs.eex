@@ -26,7 +26,7 @@ defmodule <%= @web_module %>.Storybook.Foundations.Spacing do
             Buttons
           </h2>
           <%!-- NOTE: "pulsar-sandbox" must match the sandbox_class setting in your
-               PhoenixStorybook backend module (e.g. MyAppWeb.Storybook). --%>
+               PhoenixStorybook backend module (e.g. <%= @web_module %>.Storybook). --%>
           <div class="pulsar-sandbox psb:flex psb:flex-wrap psb:items-end psb:gap-4">
             <div class="psb:flex psb:flex-col psb:items-center psb:gap-1">
               <Button.button size="xl" variant="solid" color="primary">Extra Large</Button.button>
