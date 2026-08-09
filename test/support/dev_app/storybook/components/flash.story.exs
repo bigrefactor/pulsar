@@ -64,7 +64,7 @@ defmodule Pulsar.DevApp.Storybook.Components.Flash do
       %Attr{
         id: :id,
         type: :string,
-        default: nil,
+        required: true,
         doc: "Flash ID"
       },
       %Attr{

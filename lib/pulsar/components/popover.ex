@@ -66,11 +66,6 @@ defmodule Pulsar.Components.Popover do
   alias Phoenix.LiveView.JS
   alias Phoenix.LiveView.Rendered
 
-  # Inline ID generator
-  defp generate_id(prefix \\ "popover") do
-    "#{prefix}-#{System.unique_integer([:positive])}"
-  end
-
   # ============================================================================
   # CONFIGURATION & CONSTANTS
   # ============================================================================
@@ -152,7 +147,7 @@ defmodule Pulsar.Components.Popover do
   # COMPONENT
   # ============================================================================
 
-  attr(:id, :string, doc: "Panel ID (auto-generated if omitted). Wires the trigger to the panel.")
+  attr(:id, :string, required: true, doc: "Panel ID. Wires the trigger to the panel.")
 
   attr(:placement, :string,
     default: "bottom-start",
@@ -228,8 +223,6 @@ defmodule Pulsar.Components.Popover do
   """
   @spec popover(map()) :: Rendered.t()
   def popover(assigns) do
-    assigns = assign_new(assigns, :id, fn -> generate_id() end)
-
     assigns =
       assign(
         assigns,

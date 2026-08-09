@@ -39,20 +39,6 @@ defmodule Pulsar.Components.CollapsibleTest do
       assert html =~ ~r/data-collapsible-trigger[^>]*aria-expanded="true"/s
     end
 
-    test "auto-generates an id when omitted" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <Collapsible.collapsible>
-          <:trigger>T</:trigger>
-          Body
-        </Collapsible.collapsible>
-        """)
-
-      assert html =~ ~r/aria-controls="collapsible-\d+-panel"/
-    end
-
     test "attaches the colocated hook via a static literal" do
       assert basic() =~ "PulsarCollapsible"
     end
@@ -87,6 +73,22 @@ defmodule Pulsar.Components.CollapsibleTest do
       # rotate, trigger tint, panel visibility) is inert without a `group/collapsible`
       # root on the same element that carries `data-expanded` (the hook's `this.el`).
       assert basic() =~ ~r/id="col"[^>]*class="[^"]*group\/collapsible/s
+    end
+  end
+
+  describe "collapsible/1 id handling" do
+    test "renders the caller's id unchanged" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Collapsible.collapsible id="details">
+          <:trigger>More</:trigger>
+          Body
+        </Collapsible.collapsible>
+        """)
+
+      assert html =~ ~s(id="details")
     end
   end
 end

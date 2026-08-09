@@ -9,6 +9,12 @@ defmodule <%= @web_module %>.Storybook.Components.Tabs do
   def attributes do
     [
       %Attr{
+        id: :id,
+        type: :string,
+        required: true,
+        doc: "Tabs container ID"
+      },
+      %Attr{
         id: :variant,
         type: :string,
         values: ~w(solid outline ghost elevated),

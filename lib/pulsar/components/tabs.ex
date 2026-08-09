@@ -48,12 +48,6 @@ defmodule Pulsar.Components.Tabs do
   alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Icon
 
-  # Inline ID generator
-  @spec generate_id(String.t()) :: String.t()
-  defp generate_id(prefix \\ "tabs") do
-    "#{prefix}-#{System.unique_integer([:positive])}"
-  end
-
   # ============================================================================
   # CONFIGURATION & CONSTANTS
   # ============================================================================
@@ -133,7 +127,7 @@ defmodule Pulsar.Components.Tabs do
   # COMPONENT
   # ============================================================================
 
-  attr(:id, :string, doc: "Tabs container ID (auto-generated if omitted)")
+  attr(:id, :string, required: true, doc: "Tabs container ID")
 
   attr(:variant, :string,
     default: "ghost",
@@ -201,8 +195,6 @@ defmodule Pulsar.Components.Tabs do
   """
   @spec tabs(map()) :: Rendered.t()
   def tabs(assigns) do
-    assigns = assign_new(assigns, :id, fn -> generate_id() end)
-
     prepared = prepare_tabs(assigns.tab, assigns.id, assigns.active, assigns.color)
 
     assigns =

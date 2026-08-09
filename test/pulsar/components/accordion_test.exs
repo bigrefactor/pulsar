@@ -155,4 +155,32 @@ defmodule Pulsar.Components.AccordionTest do
       assert basic() =~ ~r/data-accordion-item[^>]*class="[^"]*group\/item/s
     end
   end
+
+  describe "accordion/1 id handling" do
+    test "renders the caller's id unchanged" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Accordion.accordion id="faq">
+          <:item id="one" title="One">Content</:item>
+        </Accordion.accordion>
+        """)
+
+      assert html =~ ~s(id="faq")
+    end
+
+    test "derives slot child ids from the container id" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Accordion.accordion id="faq">
+          <:item title="One">Content</:item>
+        </Accordion.accordion>
+        """)
+
+      assert html =~ ~s(id="faq-item-0")
+    end
+  end
 end

@@ -178,7 +178,7 @@ defmodule <%= @web_module %>.Storybook.Foundations.Themes do
           <Button.button variant="solid" color="primary">Save changes</Button.button>
           <Button.button variant="outline" color="neutral">Cancel</Button.button>
         </div>
-        <Flash.flash color="success" role="status">
+        <Flash.flash id="theme-preview-flash" color="success" role="status">
           Theme variables resolved through CSS — no JS, no <code class="font-mono">dark:</code> variants.
         </Flash.flash>
       </div>

@@ -8,7 +8,7 @@ defmodule Pulsar.DevApp.Storybook.Components.Accordion do
 
   def attributes do
     [
-      %Attr{id: :id, type: :string, doc: "Accordion container id (auto-generated if omitted)."},
+      %Attr{id: :id, type: :string, required: true, doc: "Accordion container id."},
       %Attr{
         id: :type,
         type: :string,

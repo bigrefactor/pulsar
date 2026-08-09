@@ -12,7 +12,7 @@ Components expose their default labels as attributes. Pass `gettext/1` (or
 `dgettext/2`) to translate them:
 
 ```heex
-<.flash dismiss_label={gettext("Dismiss")}>{@message}</.flash>
+<.flash id="notice" dismiss_label={gettext("Dismiss")}>{@message}</.flash>
 
 <.select
   field={@form[:skills]}
