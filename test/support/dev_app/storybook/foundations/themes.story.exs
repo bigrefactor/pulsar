@@ -20,10 +20,16 @@ defmodule Pulsar.DevApp.Storybook.Foundations.Themes do
     change — anything you omit falls back to the light defaults declared
     in `themes/light.css`.
 
+    `color-scheme` tells the browser to draw its own UI — scrollbars,
+    `<select>` popup lists, date pickers — in matching polarity. Change it
+    if this theme's polarity differs.
+
     See `themes/dark.css` for a complete override example.
   */
   [data-theme="purple"],
   .theme-purple {
+    color-scheme: light;
+
     /* TODO: override semantic tokens for this theme. */
   }\
   """
@@ -262,8 +268,14 @@ defmodule Pulsar.DevApp.Storybook.Foundations.Themes do
           </p>
           <pre class="psb:bg-slate-800 psb:text-slate-100 psb:font-mono psb:text-sm psb:rounded-lg psb:px-5 psb:py-4 psb:mb-3"><code>$ {@gen_theme_command}</code></pre>
           <p class="psb:text-sm text-muted-foreground psb:mb-2">
-            The scaffolded file is intentionally empty — every token falls back to the light
-            defaults until you override it:
+            The scaffolded file declares only its polarity — every token falls back to the
+            light defaults until you override it. Pass
+            <code class="psb:font-mono psb:text-xs bg-muted psb:px-1 psb:rounded">--dark</code>
+            for a dark theme and the scaffold declares
+            <code class="psb:font-mono psb:text-xs bg-muted psb:px-1 psb:rounded">color-scheme: dark</code>
+            instead, so scrollbars,
+            <code class="psb:font-mono psb:text-xs bg-muted psb:px-1 psb:rounded">&lt;select&gt;</code>
+            popups and date pickers render dark too:
           </p>
           <pre class="psb:bg-slate-800 psb:text-slate-100 psb:font-mono psb:text-sm psb:rounded-lg psb:px-5 psb:py-4"><code>{@scaffold_output}</code></pre>
         </div>
@@ -297,6 +309,10 @@ defmodule Pulsar.DevApp.Storybook.Foundations.Themes do
           user picks a theme from the chrome dropdown — so registering your new theme in
           the storybook backend's <code class="psb:font-mono psb:text-xs bg-surface-2 psb:px-1 psb:rounded">themes:</code>
           option makes it switchable from the toolbar with no extra wiring.
+          One limit: that class lands on the sandbox container rather than <code class="psb:font-mono psb:text-xs bg-surface-2 psb:px-1 psb:rounded">&lt;html&gt;</code>,
+          and the viewport scrollbar reads the root element only — so nested scrollers and
+          controls follow the theme here, while the page scrollbar keeps the host document's
+          polarity.
         </div>
       </div>
     </section>

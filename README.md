@@ -232,10 +232,15 @@ Scaffold a brand-new theme with the generator:
 
 ```bash
 mix pulsar.gen.theme high_contrast
+mix pulsar.gen.theme midnight --dark
 ```
 
-This creates `assets/css/themes/high_contrast.css` and wires its import into
+This creates the theme file under `assets/css/themes/` and wires its import into
 `theme.css`. Fill in the token values for your theme.
+
+Pass `--dark` for a dark theme. The scaffold then declares `color-scheme: dark`,
+which is what makes the browser draw scrollbars, `<select>` popup lists and date
+pickers in dark polarity — token values alone never reach that chrome.
 
 ### Switching themes
 

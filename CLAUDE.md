@@ -156,14 +156,24 @@ The entry file declares non-swapping tokens (palette aliases, radius scale, shad
   --color-border: var(--color-gray-200);
   /* ... */
 }
+
+:root {
+  color-scheme: light;
+}
+
+[data-theme="light"],
+.theme-light {
+  color-scheme: light;
+  /* ...the same token values, re-asserted for nested light subtrees */
+}
 ```
 
 ```css
 /* assets/css/themes/dark.css — overrides */
 [data-theme="dark"],
-[data-theme="dark"] *,
-.theme-dark,
-.theme-dark * {
+.theme-dark {
+  color-scheme: dark;
+
   --color-primary: var(--color-blue-400);
   --color-foreground: var(--color-gray-50);
   --color-muted-foreground: var(--color-gray-400);
@@ -174,6 +184,14 @@ The entry file declares non-swapping tokens (palette aliases, radius scale, shad
 ```
 
 The selector matches both the `[data-theme="dark"]` attribute and the `.theme-dark` class so the same CSS works under PhoenixStorybook's `sandbox_class` switcher strategy.
+
+Each theme also declares `color-scheme`. That is the only signal browser-drawn
+UI reads — scrollbars, `<select>` popup lists, date and time pickers, the
+autofill overlay — so without it a dark page renders light chrome against dark
+surfaces. It sits in a plain CSS rule rather than the `@theme` block because
+Tailwind accepts only custom properties and `@keyframes` there. `mix
+pulsar.gen.theme <name> --dark` scaffolds a dark theme with the matching
+declaration.
 
 **Why `@theme` (non-inline) for swapping tokens:** `@theme inline` inlines variable values into utility class definitions at build time, which defeats `[data-theme="dark"]` cascade overrides. Non-inline `@theme` emits `background-color: var(--color-primary)` instead of the literal color, so the override under `[data-theme="dark"]` takes effect at runtime.
 
