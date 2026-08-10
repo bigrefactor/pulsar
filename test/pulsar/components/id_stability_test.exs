@@ -20,14 +20,15 @@ defmodule Pulsar.Components.IdStabilityTest do
 
   The other two are known gaps, not decisions — do not read either as settled.
   Both land a generated id on a `phx-hook` root, which is exactly the churn the
-  rest of this file exists to prevent, and closing either is a contract change:
+  rest of this file exists to prevent. Neither is reachable from a wired-up
+  call, and closing either is a contract change:
 
-    * `input_otp` with neither a `field`, a `name`, nor an `id` — the more
-      consequential of the two. Its hook root is `"<id>-otp"`, and that hook
-      holds the typed one-time code and the active-slot index, so remounting it
-      on a churned id discards a partially typed code. The case is not
-      degenerate either: `<.input_otp on_complete={JS.push("verify")} />` is a
-      legitimate call, because the hook pushes the value and nothing submits.
+    * `input_otp` with neither a `field`, a `name`, nor an `id` — its hook root
+      is `"<id>-otp"`, so remounting it on a churned id discards a partially
+      typed code. The case is degenerate in the same way `radio_group`'s is:
+      `on_complete` runs a `%JS{}` command and never sends the field value, so
+      an `input_otp` with no field and no name has no path to the server for
+      the code either.
     * `radio_group` with neither a `field` nor a `name` — `resolve_id/2` falls
       through to a generated id. The other five form inputs raise when unbound
       without a `name`; `radio_group` has no such check. It was left as-is
