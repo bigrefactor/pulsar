@@ -359,7 +359,7 @@ defmodule Pulsar.Components.Textarea do
   attr(:field, FormField, default: nil, doc: "Phoenix form field")
 
   # Core attributes
-  attr(:id, :string, doc: "Textarea ID (auto-generated if not provided)")
+  attr(:id, :string, doc: "Textarea ID (from field or name if not provided)")
 
   attr(:name, :string, doc: "Textarea name (from field if not provided)")
 

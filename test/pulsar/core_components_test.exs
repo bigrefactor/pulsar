@@ -91,7 +91,7 @@ defmodule Pulsar.CoreComponentsTest do
       assert count_attr(html, "id") == 1
     end
 
-    test "table/1 emits a caller-supplied id exactly once" do
+    test "table/1 derives a single tbody id from the caller-supplied id" do
       assigns = %{}
 
       html =
@@ -101,6 +101,7 @@ defmodule Pulsar.CoreComponentsTest do
         </CoreComponents.table>
         """)
 
+      assert html =~ ~s(id="users-tbody")
       assert count_attr(html, "id") == 1
     end
 

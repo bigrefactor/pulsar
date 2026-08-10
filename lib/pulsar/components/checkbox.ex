@@ -246,7 +246,7 @@ defmodule Pulsar.Components.Checkbox do
   # Core attributes
   attr(:id, :string,
     default: nil,
-    doc: "Checkbox ID (auto-generated if not provided)"
+    doc: "Checkbox ID (from field or name if not provided)"
   )
 
   attr(:name, :string,

@@ -297,7 +297,7 @@ defmodule Pulsar.Components.Input do
   # Core attributes
   attr(:id, :string,
     default: nil,
-    doc: "Input ID (auto-generated if not provided)"
+    doc: "Input ID (from field or name if not provided)"
   )
 
   attr(:name, :string,

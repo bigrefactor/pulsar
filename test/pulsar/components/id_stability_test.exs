@@ -3,7 +3,7 @@ defmodule Pulsar.Components.IdStabilityTest do
   Renders every component twice and asserts the markup is byte-identical, so a
   component that starts minting a fresh id per render fails here immediately.
 
-  Five branches are left uncovered, because they still generate an id on every
+  Six branches are left uncovered, because they still generate an id on every
   render. Adding a case for any of them produces a red test — check it against
   this list before filing a bug or "completing the matrix".
 
@@ -18,16 +18,24 @@ defmodule Pulsar.Components.IdStabilityTest do
       cannot be made required. The hook attaches listeners and holds no client
       state, so remounting it on a churned id costs nothing.
 
-  The fifth is a known gap, not a decision — do not read it as settled:
+  The other two are known gaps, not decisions — do not read either as settled.
+  Both land a generated id on a `phx-hook` root, which is exactly the churn the
+  rest of this file exists to prevent, and closing either is a contract change:
 
+    * `input_otp` with neither a `field`, a `name`, nor an `id` — the more
+      consequential of the two. Its hook root is `"<id>-otp"`, and that hook
+      holds the typed one-time code and the active-slot index, so remounting it
+      on a churned id discards a partially typed code. The case is not
+      degenerate either: `<.input_otp on_complete={JS.push("verify")} />` is a
+      legitimate call, because the hook pushes the value and nothing submits.
     * `radio_group` with neither a `field` nor a `name` — `resolve_id/2` falls
-      through to a generated id, and it lands on a `phx-hook` root, which is
-      exactly the churn the rest of this file exists to prevent. The other five
-      form inputs raise when unbound without a `name`; `radio_group` has no
-      such check. It was left as-is because the case is degenerate (a group
-      with no field and no name submits nowhere) and adding the raise is a
-      contract change. The covered case supplies a `name`; passing either a
-      `name` or an explicit `id` makes the id stable.
+      through to a generated id. The other five form inputs raise when unbound
+      without a `name`; `radio_group` has no such check. It was left as-is
+      because the case is degenerate (a group with no field and no name submits
+      nowhere).
+
+  For both, the covered case supplies a `name`; passing either a `name` or an
+  explicit `id` makes the id stable.
 
   Every one of these is a branch of a component that IS covered here in its
   other form, so a regression that reintroduces a generated id elsewhere in the
@@ -52,6 +60,7 @@ defmodule Pulsar.Components.IdStabilityTest do
   alias Pulsar.Components.Flash
   alias Pulsar.Components.FlashGroup
   alias Pulsar.Components.Input
+  alias Pulsar.Components.InputOtp
   alias Pulsar.Components.Menu
   alias Pulsar.Components.Modal
   alias Pulsar.Components.Navbar
@@ -363,6 +372,7 @@ defmodule Pulsar.Components.IdStabilityTest do
       {DropdownMenu, :dropdown_menu_group},
       {FlashGroup, :flash_group},
       {Input, :input},
+      {InputOtp, :input_otp},
       {Menu, :menu_section},
       {Navbar, :navbar},
       {RadioGroup, :radio_group},

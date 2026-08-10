@@ -299,7 +299,7 @@ defmodule Pulsar.Components.Switch do
   # Core attributes
   attr(:id, :string,
     default: nil,
-    doc: "Switch ID (auto-generated if not provided)"
+    doc: "Switch ID (from field or name if not provided)"
   )
 
   attr(:name, :string,

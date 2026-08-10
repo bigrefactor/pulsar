@@ -44,7 +44,9 @@ alias Phoenix.LiveView.Rendered
 
 attr :for, :any, required: true, doc: "the form source data"
 attr :as, :any, default: nil, doc: "the server-side parameter to collect all input fields under"
-attr :id, :string, default: nil, doc: "the id of the form element (auto-generated if omitted)"
+attr :id, :string,
+  default: nil,
+  doc: "the id of the form element (derived from the form source if not provided)"
 
 attr :rest, :global,
   include: ~w(autocomplete name rel action enctype method novalidate target multipart
