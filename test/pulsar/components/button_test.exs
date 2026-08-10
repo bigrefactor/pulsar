@@ -197,9 +197,10 @@ defmodule Pulsar.Components.ButtonTest do
           "info" -> assert html =~ "text-info"
         end
 
-        # Ghost variants should not have border but do have shadow
+        # Ghost is chrome — no border, no elevation
         refute html =~ "border-2"
-        assert html =~ "shadow-card"
+        refute html =~ "shadow-card"
+        refute html =~ "shadow-dropdown"
       end
     end
 

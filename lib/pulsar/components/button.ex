@@ -124,7 +124,7 @@ defmodule Pulsar.Components.Button do
   # Variant-specific layout and behavior classes
   @variant_classes %{
     "ghost" =>
-      "inline-flex items-center justify-center shadow-card hover:shadow-dropdown " <>
+      "inline-flex items-center justify-center " <>
         "hover:scale-[1.02] active:scale-[0.98] " <>
         "motion-reduce:hover:scale-100 motion-reduce:active:scale-100",
     "link" =>
