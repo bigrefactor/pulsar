@@ -27,7 +27,7 @@
   --color-muted: var(--color-gray-100);
   --color-muted-foreground: var(--color-gray-600);
 
-  --color-surface-0: var(--color-white);     /* Canvas/page background */
+  --color-surface-0: var(--color-white);     /* Base elevation surface */
   --color-surface-1: var(--color-gray-50);   /* Card/section background */
   --color-surface-2: var(--color-gray-100);  /* Elevated content */
   --color-surface-3: var(--color-gray-200);  /* Modal/popover background */
