@@ -80,7 +80,7 @@ defmodule Pulsar.DevApp.FormLive do
           phx-submit="submit"
           novalidate
           required_legend
-          class="grid w-full max-w-2xl grid-cols-1 gap-4"
+          class="w-full max-w-2xl"
         >
           <Field.field field={@form[:name]} type="text" required data-fixture-cell="name">
             <:label>Full name</:label>
@@ -119,11 +119,9 @@ defmodule Pulsar.DevApp.FormLive do
           <Field.field field={@form[:notes]} type="textarea" data-fixture-cell="notes">
             <:label>Notes</:label>
           </Field.field>
-          <div>
-            <Pulsar.Components.Button.button type="submit" variant="solid" color="primary">
-              Sign up
-            </Pulsar.Components.Button.button>
-          </div>
+          <Pulsar.Components.Button.button type="submit" variant="solid" color="primary">
+            Sign up
+          </Pulsar.Components.Button.button>
         </PulsarForm.form>
       </.fixture_section>
     </.fixture_page>
