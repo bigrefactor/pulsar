@@ -634,6 +634,7 @@ defmodule Pulsar.Components.ButtonTest do
         <Button.button variant="ghost">Chrome</Button.button>
         """)
 
+      assert html =~ "inline-flex"
       assert html =~ "hover:scale-[1.02]"
       assert html =~ "active:scale-[0.98]"
       assert html =~ "motion-reduce:hover:scale-100"
