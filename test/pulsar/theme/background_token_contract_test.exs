@@ -5,6 +5,7 @@ defmodule Pulsar.Theme.BackgroundTokenContractTest do
   @light Path.expand("../../../priv/templates/themes/light.css.eex", __DIR__)
   @dark Path.expand("../../../priv/templates/themes/dark.css.eex", __DIR__)
   @dev_app_css Path.expand("../../support/dev_app/assets/css/app.css", __DIR__)
+  @root_layout Path.expand("../../support/dev_app/layouts/root.html.heex", __DIR__)
 
   test "documents --color-background as the body page ground" do
     css = File.read!(@entry)
@@ -31,5 +32,12 @@ defmodule Pulsar.Theme.BackgroundTokenContractTest do
 
     refute css =~
              ~r/\.pulsar-sandbox\s*\{[^}]*background-color:\s*var\(--color-surface-0\);/s
+  end
+
+  test "the development root layout applies the page ground token to body" do
+    layout = File.read!(@root_layout)
+
+    assert layout =~ ~r/<body\b[^>]*\bclass="[^"]*\bbg-background\b[^"]*"/s
+    refute layout =~ ~r/<body\b[^>]*\bclass="[^"]*\bbg-surface-0\b[^"]*"/s
   end
 end
