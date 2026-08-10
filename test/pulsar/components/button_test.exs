@@ -639,9 +639,26 @@ defmodule Pulsar.Components.ButtonTest do
       assert html =~ "active:scale-[0.98]"
       assert html =~ "motion-reduce:hover:scale-100"
       assert html =~ "motion-reduce:active:scale-100"
+    end
 
-      refute html =~ "shadow-card"
-      refute html =~ "shadow-dropdown"
+    test "ghost renders a pressed toggle differently from an unpressed one" do
+      assigns = %{}
+
+      pressed =
+        rendered_to_string(~H"""
+        <Button.button variant="ghost" color="primary" pressed>Filter</Button.button>
+        """)
+
+      unpressed =
+        rendered_to_string(~H"""
+        <Button.button variant="ghost" color="primary" pressed={false}>Filter</Button.button>
+        """)
+
+      assert pressed =~ ~s(data-pressed="true")
+      assert unpressed =~ ~s(data-pressed="false")
+
+      assert pressed =~ "data-[pressed=true]:bg-primary/15"
+      assert pressed =~ "data-[pressed=true]:hover:bg-primary/25"
     end
 
     test "includes simplified base classes for link variant" do

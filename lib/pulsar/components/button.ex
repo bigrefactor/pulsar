@@ -143,13 +143,27 @@ defmodule Pulsar.Components.Button do
   # Color configuration for each variant and color combination
   @color_config %{
     "ghost" => %{
-      "danger" => "text-danger hover:bg-danger/10 active:bg-danger/20",
-      "info" => "text-info hover:bg-info/10 active:bg-info/20",
-      "neutral" => "text-foreground hover:bg-surface-1-hover active:bg-surface-1-active",
-      "primary" => "text-primary hover:bg-primary/10 active:bg-primary/20",
-      "secondary" => "text-secondary hover:bg-secondary/10 active:bg-secondary/20",
-      "success" => "text-success hover:bg-success/10 active:bg-success/20",
-      "warning" => "text-warning hover:bg-warning/10 active:bg-warning/20"
+      "danger" =>
+        "text-danger hover:bg-danger/10 active:bg-danger/20 " <>
+          "data-[pressed=true]:bg-danger/15 data-[pressed=true]:hover:bg-danger/25",
+      "info" =>
+        "text-info hover:bg-info/10 active:bg-info/20 " <>
+          "data-[pressed=true]:bg-info/15 data-[pressed=true]:hover:bg-info/25",
+      "neutral" =>
+        "text-foreground hover:bg-surface-1-hover active:bg-surface-1-active " <>
+          "data-[pressed=true]:bg-surface-1-active data-[pressed=true]:hover:bg-surface-2-active",
+      "primary" =>
+        "text-primary hover:bg-primary/10 active:bg-primary/20 " <>
+          "data-[pressed=true]:bg-primary/15 data-[pressed=true]:hover:bg-primary/25",
+      "secondary" =>
+        "text-secondary hover:bg-secondary/10 active:bg-secondary/20 " <>
+          "data-[pressed=true]:bg-secondary/15 data-[pressed=true]:hover:bg-secondary/25",
+      "success" =>
+        "text-success hover:bg-success/10 active:bg-success/20 " <>
+          "data-[pressed=true]:bg-success/15 data-[pressed=true]:hover:bg-success/25",
+      "warning" =>
+        "text-warning hover:bg-warning/10 active:bg-warning/20 " <>
+          "data-[pressed=true]:bg-warning/15 data-[pressed=true]:hover:bg-warning/25"
     },
     "link" => %{
       "danger" => "text-danger hover:text-danger/80",

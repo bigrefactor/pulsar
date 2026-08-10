@@ -127,7 +127,7 @@ defmodule Pulsar.Components.Checkbox do
   # Base card container styling classes
   @card_base_classes "flex items-center gap-3 rounded-box cursor-pointer transition-[color,background-color,border-color,box-shadow] duration-fast ease-standard " <>
                        "focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-ring " <>
-                       "has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-disabled"
+                       "has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-disabled has-[:disabled]:pointer-events-none"
 
   defp generate_id(prefix) do
     "#{prefix}-#{System.unique_integer([:positive])}"
@@ -807,7 +807,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_outline_background("neutral") do
     [
       "bg-background",
-      "has-[:checked]:bg-primary/10 has-[:checked]:hover:bg-primary/15"
+      "has-[:checked]:bg-neutral/10 has-[:checked]:hover:bg-neutral/15"
     ]
     |> Enum.join(" ")
   end
@@ -921,7 +921,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_ghost_background("neutral") do
     [
       "bg-transparent hover:bg-surface-1-hover",
-      "has-[:checked]:bg-primary/10 has-[:checked]:hover:bg-primary/15"
+      "has-[:checked]:bg-neutral/15 has-[:checked]:hover:bg-neutral/20"
     ]
     |> Enum.join(" ")
   end

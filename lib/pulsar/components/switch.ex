@@ -615,7 +615,7 @@ defmodule Pulsar.Components.Switch do
   end
 
   defp thumb_variant_classes("ghost") do
-    "bg-background shadow-dropdown shadow-black/6 border border-border-strong"
+    "bg-background border border-border-strong"
   end
 
   # State classes for invalid states

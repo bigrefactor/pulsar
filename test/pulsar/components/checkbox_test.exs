@@ -499,9 +499,49 @@ defmodule Pulsar.Components.CheckboxTest do
       assert html =~ "bg-transparent"
       assert html =~ "border-transparent"
 
+      # The tint is the ghost card's only hover and selection affordance
+      assert html =~ "hover:bg-secondary/10"
+      assert html =~ "has-[:checked]:bg-secondary/15"
+
       # Ghost cards are chrome — no elevation, at rest or on hover
-      refute html =~ "hover:shadow-card"
-      refute html =~ "hover:shadow-dropdown"
+      refute html =~ "shadow-card"
+      refute html =~ "shadow-dropdown"
+    end
+
+    test "neutral cards tint neutral, not primary" do
+      assigns = %{}
+
+      for variant <- ~w(solid outline ghost) do
+        assigns = Map.put(assigns, :variant, variant)
+
+        html =
+          rendered_to_string(~H"""
+          <.checkbox card variant={@variant} name="plan" color="neutral">
+            <div class="font-medium">Neutral Card</div>
+          </.checkbox>
+          """)
+
+        assert html =~ "has-[:checked]:bg-neutral/"
+        refute html =~ "bg-primary/"
+      end
+    end
+
+    test "disabled cards do not respond to hover" do
+      assigns = %{}
+
+      for variant <- ~w(solid outline ghost) do
+        assigns = Map.put(assigns, :variant, variant)
+
+        html =
+          rendered_to_string(~H"""
+          <.checkbox card variant={@variant} name="plan" color="primary" disabled>
+            <div class="font-medium">Disabled Card</div>
+          </.checkbox>
+          """)
+
+        assert html =~ "has-[:disabled]:pointer-events-none"
+        assert html =~ "has-[:disabled]:cursor-not-allowed"
+      end
     end
 
     test "renders card with all content slots" do
