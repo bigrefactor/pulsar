@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - Page Background Token Documentation
+
+- **`--color-background` is now explicitly documented as the application/page ground**: apply `bg-background` to `<body>`. `--color-surface-0` remains independently customizable as the base of the surface elevation scale and is no longer described as the canvas/page background. Pulsar's development Storybook sandbox now demonstrates the same contract. Token names, built-in values, and default rendering are unchanged.
+
 ### Fixed - Ghost Variants No Longer Carry Card Elevation
 
 - **`button`'s `ghost` variant no longer renders `shadow-card hover:shadow-dropdown`**: ghost is flat chrome — no fill, no border, no lift — so it can sit in a header or toolbar without competing with the controls around it. `solid` and `outline` are unchanged and keep their elevation; `link` is unaffected. Ghost keeps its `hover:scale-[1.02] active:scale-[0.98]` press affordance — only the resting and hover shadow are gone. Anyone who wants an elevated ghost button can pass `class="shadow-card"`, which Twm composes normally.
