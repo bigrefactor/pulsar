@@ -658,7 +658,7 @@ defmodule Pulsar.Components.InputTest do
         <Input.input field={@field} />
         """)
 
-      assert html =~ ~s(id="user[email]")
+      assert html =~ ~s(id="user_email")
     end
 
     test "prefers field.id over name" do

@@ -1075,7 +1075,7 @@ defmodule Pulsar.Components.SelectTest do
         <Select.select field={@field} options={["US", "CA"]} />
         """)
 
-      assert html =~ ~s(id="user[country]")
+      assert html =~ ~s(id="user_country")
     end
 
     test "a caller-supplied id wins over the name" do

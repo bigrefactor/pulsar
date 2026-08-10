@@ -234,9 +234,18 @@ defmodule Pulsar.Components.Input do
     "#{prefix}-#{System.unique_integer([:positive])}"
   end
 
-  defp resolve_id(assigns, nil), do: assigns[:id] || assigns[:name] || generate_id("input")
+  defp id_from_name(nil), do: nil
 
-  defp resolve_id(assigns, field), do: assigns[:id] || field.id || assigns[:name] || field.name || generate_id("input")
+  defp id_from_name(name) do
+    name
+    |> String.trim_trailing("]")
+    |> String.replace(~r/\W+/u, "_")
+  end
+
+  defp resolve_id(assigns, nil), do: assigns[:id] || id_from_name(assigns[:name]) || generate_id("input")
+
+  defp resolve_id(assigns, field),
+    do: assigns[:id] || field.id || id_from_name(assigns[:name] || field.name) || generate_id("input")
 
   defp normalize_field_props(assigns) do
     field = assigns[:field]

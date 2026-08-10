@@ -948,7 +948,7 @@ defmodule Pulsar.Components.CheckboxTest do
         <.checkbox field={@field} />
         """)
 
-      assert html =~ ~s(id="user[terms]")
+      assert html =~ ~s(id="user_terms")
     end
 
     test "prefers field.id over name" do

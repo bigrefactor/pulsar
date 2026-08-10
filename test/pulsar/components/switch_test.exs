@@ -445,7 +445,7 @@ defmodule Pulsar.Components.SwitchTest do
         <Switch.switch field={@field} />
         """)
 
-      assert html =~ ~s(id="user[notifications]")
+      assert html =~ ~s(id="user_notifications")
     end
 
     test "prefers field.id over name" do

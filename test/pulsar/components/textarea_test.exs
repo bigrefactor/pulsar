@@ -930,7 +930,7 @@ defmodule Pulsar.Components.TextareaTest do
         <Textarea.textarea field={@field} />
         """)
 
-      assert html =~ ~s(id="user[bio]")
+      assert html =~ ~s(id="user_bio")
     end
   end
 end

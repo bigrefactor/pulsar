@@ -668,7 +668,7 @@ defmodule Pulsar.Components.RadioGroupTest do
         </.radio_group>
         """)
 
-      assert html =~ ~s(id="user[plan]")
+      assert html =~ ~s(id="user_plan")
     end
 
     test "prefers field.id over name" do
