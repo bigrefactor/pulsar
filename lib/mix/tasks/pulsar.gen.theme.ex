@@ -146,7 +146,7 @@ if Code.ensure_loaded?(Igniter) do
     # via `mix pulsar.gen.theme <name>` still has its themes/<name>.css file on
     # disk, so re-add its @import or it silently stops loading.
     defp reregister_custom_themes(igniter) do
-      igniter = Igniter.include_glob(igniter, "assets/css/themes/*.css")
+      igniter = Igniter.include_glob(igniter, Path.expand("assets/css/themes/*.css"))
 
       igniter.rewrite.sources
       |> Map.keys()
