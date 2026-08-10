@@ -8,37 +8,45 @@ does not discover it and therefore does not restore its import after overwriting
 
 `reregister_custom_themes/1` passes the relative glob `assets/css/themes/*.css` to `Igniter.include_glob/2`. In test
 mode, the current Igniter/GlobEx combination expands each fixture path to an absolute path before matching it against
-that relative glob. The match fails and no custom theme enters `rewrite.sources`. Production uses a different
-`Rewrite.read!/2` path, but Pulsar can make both modes unambiguous by supplying an absolute glob.
+that relative glob. The match fails and no custom theme enters `rewrite.sources`.
+
+Production uses a different `Rewrite.read!/2` path and must keep the relative glob: an absolute string makes Rewrite
+store absolute source keys, which the generator's relative `assets/css/themes/` filtering rejects. The two Igniter
+paths therefore need different glob forms while preserving the same relative source-key contract downstream.
 
 ## Decision
 
-Keep the current dependency versions. Change the generator to call `Igniter.include_glob/2` with
-`Path.expand("assets/css/themes/*.css")`.
+Keep the current dependency versions. Define the canonical relative glob as `assets/css/themes/*.css`. When
+`igniter.assigns[:test_mode?]` is true, expand that glob before passing it to `Igniter.include_glob/2`; otherwise pass
+the relative glob unchanged.
 
-Igniter explicitly normalizes an absolute compiled glob for its production path, while its test-mode branch then
-matches absolute fixture paths against an absolute glob. This preserves the generator's intended behavior and keeps
-the existing regression test meaningful.
+The absolute test-mode glob matches Igniter's absolute fixture paths. The relative production glob keeps Rewrite's
+source keys relative, so the existing custom-theme filter and import registration continue to operate unchanged.
 
 ## Scope
 
-- Modify only the custom-theme discovery call in `lib/mix/tasks/pulsar.gen.theme.ex`.
+- Modify only custom-theme glob selection in `lib/mix/tasks/pulsar.gen.theme.ex`.
 - Retain the existing test at `test/mix/tasks/pulsar.gen.theme_test.exs` as the regression gate.
-- Do not alter dependency versions, preload the fixture manually, or change theme registration semantics.
+- Add a filesystem-backed regression test that exercises Igniter outside test mode and proves an existing custom theme
+  is rediscovered and re-imported.
+- Do not alter dependency versions, preload the in-memory fixture manually, or change theme registration semantics.
 - Do not add a changelog entry because the change restores existing intended behavior after a dependency update and
   does not change Pulsar's public contract.
 
 ## Verification
 
-Use the existing failing test as the TDD red case. After changing the glob, run that single test and then the complete
-`pulsar.gen.theme` test file. Finally run formatting and whitespace checks.
+Use the existing failing in-memory test as the first TDD red case. Add a filesystem-backed test that runs the task in a
+temporary project without `test_mode?`; verify that it fails against an unconditional absolute-glob implementation and
+passes with conditional glob selection. Then run the complete `pulsar.gen.theme` test file, formatting, and whitespace
+checks.
 
 Success means the custom theme is discovered and re-imported after the default theme files are overwritten, with no
 other generator-test regressions.
 
 ## Compatibility and Failure Modes
 
-The absolute glob is evaluated from the generator's current project directory, which is the same base already assumed
-by the relative destination paths throughout the task. No new runtime error path is introduced. If Igniter changes its
-glob normalization again, the existing regression test will fail at the discovery boundary instead of silently
-allowing custom themes to become unregistered.
+The generator continues to evaluate the production glob from the current project directory, matching its existing
+relative destination paths. Accessing the established `:test_mode?` test-harness assign introduces no new production
+error path because a missing key evaluates to `nil`. If Igniter changes either discovery path again, the paired
+in-memory and filesystem-backed tests will fail at the discovery boundary instead of silently allowing custom themes
+to become unregistered.
