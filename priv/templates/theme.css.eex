@@ -20,8 +20,8 @@
 
   Page and surface roles:
 
-  - `--color-background` is the application/page ground. apply `bg-background` to `<body>`
-    (or use `background-color: var(--color-background)`).
+  - `--color-background` is the application/page ground. Apply `bg-background`
+    to `<body>` (or use `background-color: var(--color-background)`).
   - `--color-surface-0` is the independently customizable base of the surface
     elevation scale used by `--color-surface-1`, `--color-surface-2`, and
     `--color-surface-3`; it is not the page ground.
