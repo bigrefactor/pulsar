@@ -10,7 +10,8 @@ defmodule Pulsar.Components.Button do
 
   - **Polymorphic Rendering**: Renders as `<button>`, `<a>`, or `<div>` elements
   - **Accessibility-First**: WCAG 2.2 AA compliance with proper ARIA attributes
-  - **Variants**: solid, outline, ghost, link with semantic styling
+  - **Variants**: solid and outline are raised surfaces; ghost is flat chrome for
+    toolbars and headers; link flows inline with text
   - **Colors**: neutral, primary, secondary, success, danger, warning for theming
   - **Multiple Sizes**: xs, sm, md, lg, xl for complete range
   - **Smart Navigation**: Phoenix LiveView navigation with security
@@ -124,7 +125,7 @@ defmodule Pulsar.Components.Button do
   # Variant-specific layout and behavior classes
   @variant_classes %{
     "ghost" =>
-      "inline-flex items-center justify-center shadow-card hover:shadow-dropdown " <>
+      "inline-flex items-center justify-center " <>
         "hover:scale-[1.02] active:scale-[0.98] " <>
         "motion-reduce:hover:scale-100 motion-reduce:active:scale-100",
     "link" =>
@@ -142,13 +143,27 @@ defmodule Pulsar.Components.Button do
   # Color configuration for each variant and color combination
   @color_config %{
     "ghost" => %{
-      "danger" => "text-danger hover:bg-danger/10 active:bg-danger/20",
-      "info" => "text-info hover:bg-info/10 active:bg-info/20",
-      "neutral" => "text-foreground hover:bg-surface-1-hover active:bg-surface-1-active",
-      "primary" => "text-primary hover:bg-primary/10 active:bg-primary/20",
-      "secondary" => "text-secondary hover:bg-secondary/10 active:bg-secondary/20",
-      "success" => "text-success hover:bg-success/10 active:bg-success/20",
-      "warning" => "text-warning hover:bg-warning/10 active:bg-warning/20"
+      "danger" =>
+        "text-danger hover:bg-danger/10 active:bg-danger/20 " <>
+          "data-[pressed=true]:bg-danger/10 data-[pressed=true]:ring-1 data-[pressed=true]:ring-inset data-[pressed=true]:ring-danger/50",
+      "info" =>
+        "text-info hover:bg-info/10 active:bg-info/20 " <>
+          "data-[pressed=true]:bg-info/10 data-[pressed=true]:ring-1 data-[pressed=true]:ring-inset data-[pressed=true]:ring-info/50",
+      "neutral" =>
+        "text-foreground hover:bg-surface-1-hover active:bg-surface-1-active " <>
+          "data-[pressed=true]:bg-surface-1-hover data-[pressed=true]:ring-1 data-[pressed=true]:ring-inset data-[pressed=true]:ring-border-strong",
+      "primary" =>
+        "text-primary hover:bg-primary/10 active:bg-primary/20 " <>
+          "data-[pressed=true]:bg-primary/10 data-[pressed=true]:ring-1 data-[pressed=true]:ring-inset data-[pressed=true]:ring-primary/50",
+      "secondary" =>
+        "text-secondary hover:bg-secondary/10 active:bg-secondary/20 " <>
+          "data-[pressed=true]:bg-secondary/10 data-[pressed=true]:ring-1 data-[pressed=true]:ring-inset data-[pressed=true]:ring-secondary/50",
+      "success" =>
+        "text-success hover:bg-success/10 active:bg-success/20 " <>
+          "data-[pressed=true]:bg-success/10 data-[pressed=true]:ring-1 data-[pressed=true]:ring-inset data-[pressed=true]:ring-success/50",
+      "warning" =>
+        "text-warning hover:bg-warning/10 active:bg-warning/20 " <>
+          "data-[pressed=true]:bg-warning/10 data-[pressed=true]:ring-1 data-[pressed=true]:ring-inset data-[pressed=true]:ring-warning/50"
     },
     "link" => %{
       "danger" => "text-danger hover:text-danger/80",

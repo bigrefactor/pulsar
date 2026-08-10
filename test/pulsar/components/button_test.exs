@@ -197,9 +197,10 @@ defmodule Pulsar.Components.ButtonTest do
           "info" -> assert html =~ "text-info"
         end
 
-        # Ghost variants should not have border but do have shadow
+        # Ghost is chrome — no border, no elevation
         refute html =~ "border-2"
-        assert html =~ "shadow-card"
+        refute html =~ "shadow-card"
+        refute html =~ "shadow-dropdown"
       end
     end
 
@@ -623,6 +624,45 @@ defmodule Pulsar.Components.ButtonTest do
       assert html =~ "motion-reduce:hover:scale-100"
       assert html =~ "motion-reduce:active:scale-100"
       refute html =~ "motion-reduce:transition-none"
+    end
+
+    test "ghost keeps the scale affordance without elevation" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Button.button variant="ghost">Chrome</Button.button>
+        """)
+
+      assert html =~ "inline-flex"
+      assert html =~ "hover:scale-[1.02]"
+      assert html =~ "active:scale-[0.98]"
+      assert html =~ "motion-reduce:hover:scale-100"
+      assert html =~ "motion-reduce:active:scale-100"
+    end
+
+    test "ghost renders a pressed toggle differently from an unpressed one" do
+      assigns = %{}
+
+      pressed =
+        rendered_to_string(~H"""
+        <Button.button variant="ghost" color="primary" pressed>Filter</Button.button>
+        """)
+
+      unpressed =
+        rendered_to_string(~H"""
+        <Button.button variant="ghost" color="primary" pressed={false}>Filter</Button.button>
+        """)
+
+      assert pressed =~ ~s(data-pressed="true")
+      assert unpressed =~ ~s(data-pressed="false")
+
+      # The tint sits at the hover level and the inset ring carries the state,
+      # so pressed text never lands on a deeper same-hue tint.
+      assert pressed =~ "data-[pressed=true]:bg-primary/10"
+      assert pressed =~ "data-[pressed=true]:ring-1"
+      assert pressed =~ "data-[pressed=true]:ring-inset"
+      assert pressed =~ "data-[pressed=true]:ring-primary/50"
     end
 
     test "includes simplified base classes for link variant" do

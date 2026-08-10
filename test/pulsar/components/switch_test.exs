@@ -181,6 +181,14 @@ defmodule Pulsar.Components.SwitchTest do
 
       assert html =~ "border border-border-strong"
     end
+
+    test "ghost thumb carries no elevation" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Switch.switch name="test" variant="ghost" />])
+
+      refute html =~ "shadow-dropdown"
+      refute html =~ "shadow-modal"
+    end
   end
 
   describe "switch/1 sizes" do
