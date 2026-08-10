@@ -498,7 +498,10 @@ defmodule Pulsar.Components.CheckboxTest do
 
       assert html =~ "bg-transparent"
       assert html =~ "border-transparent"
-      assert html =~ "hover:shadow-card"
+
+      # Ghost cards are chrome — no elevation, at rest or on hover
+      refute html =~ "hover:shadow-card"
+      refute html =~ "hover:shadow-dropdown"
     end
 
     test "renders card with all content slots" do

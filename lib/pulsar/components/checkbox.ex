@@ -741,8 +741,7 @@ defmodule Pulsar.Components.Checkbox do
   defp card_variant_classes("ghost", color) do
     [
       card_ghost_background(color),
-      "border-2 border-transparent",
-      "hover:shadow-card"
+      "border-2 border-transparent"
     ]
   end
 

@@ -7,9 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed - Ghost Button No Longer Carries Card Elevation
+### Fixed - Ghost Variants No Longer Carry Card Elevation
 
 - **`button`'s `ghost` variant no longer renders `shadow-card hover:shadow-dropdown`**: ghost is flat chrome — no fill, no border, no lift — so it can sit in a header or toolbar without competing with the controls around it. `solid` and `outline` are unchanged and keep their elevation; `link` is unaffected. Ghost keeps its `hover:scale-[1.02] active:scale-[0.98]` press affordance — only the resting and hover shadow are gone. Host apps that already generated `button.ex` keep their current copy; this lands only when they regenerate. Anyone who wants an elevated ghost button can pass `class="shadow-card"`, which Twm composes normally.
+- **`checkbox`'s `card` layout no longer lifts on hover in the `ghost` variant**: `hover:shadow-card` is gone, for the same reason — a ghost card is a selectable region, not a raised surface. The `solid` (`hover:shadow-card`) and `outline` (`hover:shadow-dropdown`) card variants are unchanged, and the ghost card keeps its `hover:bg-*/10` tint and checked-state background, so hover and selection remain visible.
 
 ### Changed (Breaking) - Components No Longer Invent Random ids
 
