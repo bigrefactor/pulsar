@@ -118,4 +118,25 @@ defmodule Pulsar.CoreComponentsTest do
       assert count_attr(html, "id") == 1
     end
   end
+
+  describe "simple_form/1 layout" do
+    test "renders children as direct form children under the form's own rhythm" do
+      assigns = %{form: to_form(%{}, as: :test)}
+
+      html =
+        rendered_to_string(~H"""
+        <CoreComponents.simple_form for={@form}>
+          <p>inner content</p>
+          <:actions>
+            <button type="submit">Save</button>
+          </:actions>
+        </CoreComponents.simple_form>
+        """)
+
+      assert html =~ "inner content"
+      assert html =~ "Save"
+      assert html =~ "space-y-6"
+      refute html =~ "space-y-8"
+    end
+  end
 end
