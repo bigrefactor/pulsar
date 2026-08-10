@@ -21,18 +21,27 @@ focus, because the flag is only set on `submit`.
 The form stacks its children vertically with `space-y-6`. Pass your own
 spacing class to change the rhythm:
 
-    <Pulsar.Components.Form.form for={@form} class="space-y-4">
+    <Pulsar.Components.Form.form :let={f} for={@form} class="space-y-4">
+      <Field.field field={f[:name]} type="text">
+        <:label>Name</:label>
+      </Field.field>
+    </Pulsar.Components.Form.form>
 
 To lay the form out some other way, pass `space-y-0` alongside your own
 layout classes so the default spacing does not apply on top of them:
 
     <Pulsar.Components.Form.form
+      :let={f}
       for={@form}
       class="space-y-0 grid grid-cols-2 gap-4"
     >
+      <Field.field field={f[:name]} type="text">
+        <:label>Name</:label>
+      </Field.field>
+    </Pulsar.Components.Form.form>
 
-To change the spacing above a single child, put a margin utility on that
-child rather than on the form.
+To change the spacing between two children, put a `mb-*` utility on the
+first of the two.
 
 ## Examples
 
