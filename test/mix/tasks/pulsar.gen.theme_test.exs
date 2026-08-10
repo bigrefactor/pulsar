@@ -269,6 +269,32 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
       apply_igniter!(igniter)
     end
 
+    @tag :tmp_dir
+    test "re-registers a custom theme from the real filesystem", %{tmp_dir: tmp_dir} do
+      seeded =
+        phx_test_project()
+        |> Igniter.compose_task("pulsar.gen.theme", [])
+        |> apply_igniter!()
+        |> Igniter.compose_task("pulsar.gen.theme", ["cupcake"])
+        |> apply_igniter!()
+
+      for {path, content} <- seeded.assigns.test_files do
+        target = Path.join(tmp_dir, path)
+        File.mkdir_p!(Path.dirname(target))
+        File.write!(target, content)
+      end
+
+      igniter =
+        File.cd!(tmp_dir, fn ->
+          Igniter.new()
+          |> Igniter.compose_task("pulsar.gen.theme", [])
+        end)
+
+      content = source_content(igniter, "assets/css/theme.css")
+
+      assert has_import_line?(content, ~s(@import "./themes/cupcake.css";))
+    end
+
     test "the install path generates themes declaring their polarity" do
       igniter =
         phx_test_project()
