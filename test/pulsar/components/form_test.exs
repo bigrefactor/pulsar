@@ -54,13 +54,70 @@ defmodule Pulsar.Components.FormTest do
 
       html =
         rendered_to_string(~H"""
-        <Form.form for={@form} class="custom-class" data-test-id="my-form">
+        <Form.form for={@form} data-test-id="my-form">
           <input type="text" />
         </Form.form>
         """)
 
-      assert html =~ ~s(class="custom-class")
       assert html =~ ~s(data-test-id="my-form")
+    end
+  end
+
+  describe "form/1 layout" do
+    test "stacks children with a default vertical rhythm" do
+      assigns = %{form: to_form(%{}, as: :test)}
+
+      html =
+        rendered_to_string(~H"""
+        <Form.form for={@form}>
+          <p>inner content</p>
+        </Form.form>
+        """)
+
+      assert html =~ "space-y-6"
+    end
+
+    test "merges a caller's custom class with the default rhythm" do
+      assigns = %{form: to_form(%{}, as: :test)}
+
+      html =
+        rendered_to_string(~H"""
+        <Form.form for={@form} class="custom-class">
+          <p>inner content</p>
+        </Form.form>
+        """)
+
+      assert html =~ "space-y-6"
+      assert html =~ "custom-class"
+    end
+
+    test "a caller's spacing class replaces the default rhythm" do
+      assigns = %{form: to_form(%{}, as: :test)}
+
+      html =
+        rendered_to_string(~H"""
+        <Form.form for={@form} class="space-y-4">
+          <p>inner content</p>
+        </Form.form>
+        """)
+
+      assert html =~ "space-y-4"
+      refute html =~ "space-y-6"
+    end
+
+    test "space-y-0 clears the default so callers can supply their own layout" do
+      assigns = %{form: to_form(%{}, as: :test)}
+
+      html =
+        rendered_to_string(~H"""
+        <Form.form for={@form} class="space-y-0 grid grid-cols-2 gap-4">
+          <p>inner content</p>
+        </Form.form>
+        """)
+
+      assert html =~ "space-y-0"
+      assert html =~ "grid-cols-2"
+      refute html =~ "space-y-6"
     end
   end
 
@@ -102,7 +159,7 @@ defmodule Pulsar.Components.FormTest do
         </Form.form>
         """)
 
-      assert html =~ ~s(<p class="mb-4 text-sm text-muted-foreground" aria-hidden="true">)
+      assert html =~ ~s(<p class="text-sm text-muted-foreground" aria-hidden="true">)
     end
 
     test "honors custom legend text for i18n" do

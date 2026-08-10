@@ -17,6 +17,24 @@ defmodule Pulsar.Components.Form do
   form and clears the flag. Routine `phx-change` validation does not steal
   focus, because the flag is only set on `submit`.
 
+  ## Layout
+
+  The form stacks its children vertically with `space-y-6`. Pass your own
+  spacing class to change the rhythm:
+
+      <Pulsar.Components.Form.form for={@form} class="space-y-4">
+
+  To lay the form out some other way, pass `space-y-0` alongside your own
+  layout classes so the default spacing does not apply on top of them:
+
+      <Pulsar.Components.Form.form
+        for={@form}
+        class="space-y-0 grid grid-cols-2 gap-4"
+      >
+
+  To change the spacing above a single child, put a margin utility on that
+  child rather than on the form.
+
   ## Examples
 
       <Pulsar.Components.Form.form
@@ -40,6 +58,8 @@ defmodule Pulsar.Components.Form do
 
   use Phoenix.Component
 
+  import Twm, only: [merge: 1]
+
   alias Phoenix.HTML.Form
   alias Phoenix.LiveView.Rendered
 
@@ -49,6 +69,8 @@ defmodule Pulsar.Components.Form do
   attr :id, :string,
     default: nil,
     doc: "the id of the form element (derived from the form source if not provided)"
+
+  attr :class, :string, default: "", doc: "Additional CSS classes for the form element"
 
   attr :rest, :global,
     include: ~w(autocomplete name rel action enctype method novalidate target multipart
@@ -98,10 +120,11 @@ defmodule Pulsar.Components.Form do
       :let={f}
       for={@for}
       {@form_attrs}
+      class={merge(["space-y-6", @class])}
       phx-hook=".PulsarForm"
       {@rest}
     >
-      <p :if={@required_legend} class="mb-4 text-sm text-muted-foreground" aria-hidden="true">
+      <p :if={@required_legend} class="text-sm text-muted-foreground" aria-hidden="true">
         <span class="text-danger">*</span> {@required_legend_text}
       </p>
       {render_slot(@inner_block, f)}
