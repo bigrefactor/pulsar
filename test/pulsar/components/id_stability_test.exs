@@ -3,9 +3,11 @@ defmodule Pulsar.Components.IdStabilityTest do
   Renders every component twice and asserts the markup is byte-identical, so a
   component that starts minting a fresh id per render fails here immediately.
 
-  Four branches are deliberately left uncovered, because they still generate an
-  id on every render by design. Adding a case for any of them produces a red
-  test that reflects the design, not a bug — do not "complete the matrix":
+  Five branches are left uncovered, because they still generate an id on every
+  render. Adding a case for any of them produces a red test — check it against
+  this list before filing a bug or "completing the matrix".
+
+  Four are settled trade-offs, where the churn is understood to cost nothing:
 
     * `alert` when `dismissible` — the id exists only so the dismiss button can
       point `aria-controls` at it, within the same render.
@@ -15,6 +17,17 @@ defmodule Pulsar.Components.IdStabilityTest do
       `phx-hook` root, and these branches accept `href`/`navigate`, so the id
       cannot be made required. The hook attaches listeners and holds no client
       state, so remounting it on a churned id costs nothing.
+
+  The fifth is a known gap, not a decision — do not read it as settled:
+
+    * `radio_group` with neither a `field` nor a `name` — `resolve_id/2` falls
+      through to a generated id, and it lands on a `phx-hook` root, which is
+      exactly the churn the rest of this file exists to prevent. The other five
+      form inputs raise when unbound without a `name`; `radio_group` has no
+      such check. It was left as-is because the case is degenerate (a group
+      with no field and no name submits nowhere) and adding the raise is a
+      contract change. The covered case supplies a `name`; passing either a
+      `name` or an explicit `id` makes the id stable.
 
   Every one of these is a branch of a component that IS covered here in its
   other form, so a regression that reintroduces a generated id elsewhere in the
