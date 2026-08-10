@@ -657,8 +657,12 @@ defmodule Pulsar.Components.ButtonTest do
       assert pressed =~ ~s(data-pressed="true")
       assert unpressed =~ ~s(data-pressed="false")
 
-      assert pressed =~ "data-[pressed=true]:bg-primary/15"
-      assert pressed =~ "data-[pressed=true]:hover:bg-primary/25"
+      # The tint sits at the hover level and the inset ring carries the state,
+      # so pressed text never lands on a deeper same-hue tint.
+      assert pressed =~ "data-[pressed=true]:bg-primary/10"
+      assert pressed =~ "data-[pressed=true]:ring-1"
+      assert pressed =~ "data-[pressed=true]:ring-inset"
+      assert pressed =~ "data-[pressed=true]:ring-primary/50"
     end
 
     test "includes simplified base classes for link variant" do
