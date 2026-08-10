@@ -10,7 +10,8 @@ defmodule Pulsar.Components.Button do
 
   - **Polymorphic Rendering**: Renders as `<button>`, `<a>`, or `<div>` elements
   - **Accessibility-First**: WCAG 2.2 AA compliance with proper ARIA attributes
-  - **Variants**: solid, outline, ghost, link with semantic styling
+  - **Variants**: solid and outline are raised surfaces; ghost is flat chrome for
+    toolbars and headers; link flows inline with text
   - **Colors**: neutral, primary, secondary, success, danger, warning for theming
   - **Multiple Sizes**: xs, sm, md, lg, xl for complete range
   - **Smart Navigation**: Phoenix LiveView navigation with security

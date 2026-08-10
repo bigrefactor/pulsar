@@ -626,6 +626,23 @@ defmodule Pulsar.Components.ButtonTest do
       refute html =~ "motion-reduce:transition-none"
     end
 
+    test "ghost keeps the scale affordance without elevation" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Button.button variant="ghost">Chrome</Button.button>
+        """)
+
+      assert html =~ "hover:scale-[1.02]"
+      assert html =~ "active:scale-[0.98]"
+      assert html =~ "motion-reduce:hover:scale-100"
+      assert html =~ "motion-reduce:active:scale-100"
+
+      refute html =~ "shadow-card"
+      refute html =~ "shadow-dropdown"
+    end
+
     test "includes simplified base classes for link variant" do
       assigns = %{}
 
