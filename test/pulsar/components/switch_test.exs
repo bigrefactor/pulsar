@@ -415,4 +415,59 @@ defmodule Pulsar.Components.SwitchTest do
       assert html =~ ~s(data-testid="my-switch")
     end
   end
+
+  describe "switch/1 id resolution" do
+    test "falls back to name when unbound and given no id" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Switch.switch name="notifications" />
+        """)
+
+      assert html =~ ~s(id="notifications")
+    end
+
+    test "falls back to name when a bound field has no id" do
+      assigns = %{
+        field: %FormField{
+          id: nil,
+          name: "user[notifications]",
+          value: "",
+          errors: [],
+          field: :notifications,
+          form: nil
+        }
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <Switch.switch field={@field} />
+        """)
+
+      assert html =~ ~s(id="user_notifications")
+    end
+
+    test "prefers field.id over name" do
+      assigns = %{field: to_form(%{"notifications" => "true"}, as: :user)[:notifications]}
+
+      html =
+        rendered_to_string(~H"""
+        <Switch.switch field={@field} name="explicit" />
+        """)
+
+      assert html =~ ~s(id="user_notifications")
+    end
+
+    test "prefers a caller id over field.id and name" do
+      assigns = %{field: to_form(%{"notifications" => "true"}, as: :user)[:notifications]}
+
+      html =
+        rendered_to_string(~H"""
+        <Switch.switch id="custom" field={@field} name="explicit" />
+        """)
+
+      assert html =~ ~s(id="custom")
+    end
+  end
 end

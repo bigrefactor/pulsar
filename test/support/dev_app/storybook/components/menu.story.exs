@@ -9,6 +9,12 @@ defmodule Pulsar.DevApp.Storybook.Components.Menu do
   def attributes do
     [
       %Attr{
+        id: :id,
+        type: :string,
+        required: true,
+        doc: "Menu ID. Targeted by the keyboard/disclosure behavior."
+      },
+      %Attr{
         id: :orientation,
         type: :string,
         values: ~w(vertical horizontal),
@@ -52,11 +58,13 @@ defmodule Pulsar.DevApp.Storybook.Components.Menu do
       %Variation{
         id: :default,
         description: "Vertical menu with an active item",
+        attributes: %{id: "sb-menu-default"},
         slots: [flat]
       },
       %Variation{
         id: :with_section,
         description: "Vertical menu with a labelled section",
+        attributes: %{id: "sb-menu-with-section"},
         slots: [
           ~s|<Menu.menu_item href="#" icon="hero-home" active>Home</Menu.menu_item>| <>
             ~s|<Menu.menu_section label="Workspace"><Menu.menu_item href="#" icon="hero-folder">Projects</Menu.menu_item><Menu.menu_item href="#" icon="hero-users">Team</Menu.menu_item></Menu.menu_section>|
@@ -65,19 +73,20 @@ defmodule Pulsar.DevApp.Storybook.Components.Menu do
       %Variation{
         id: :with_group,
         description: "Vertical menu with an expanded collapsible group",
+        attributes: %{id: "sb-menu-with-group"},
         slots: [
           ~s|<Menu.menu_item href="#" icon="hero-home">Home</Menu.menu_item>| <>
-            ~s|<Menu.menu_group label="Reports" icon="hero-chart-bar" open><Menu.menu_item href="#">Sales</Menu.menu_item><Menu.menu_item href="#">Traffic</Menu.menu_item></Menu.menu_group>|
+            ~s|<Menu.menu_group id="sb-menu-reports" label="Reports" icon="hero-chart-bar" open><Menu.menu_item href="#">Sales</Menu.menu_item><Menu.menu_item href="#">Traffic</Menu.menu_item></Menu.menu_group>|
         ]
       },
       %Variation{
         id: :horizontal,
         description: "Horizontal menu with a dropdown group",
-        attributes: %{orientation: "horizontal"},
+        attributes: %{id: "sb-menu-horizontal", orientation: "horizontal"},
         slots: [
           ~s|<Menu.menu_item href="#" active>Home</Menu.menu_item>| <>
             ~s|<Menu.menu_item href="#">Pricing</Menu.menu_item>| <>
-            ~s|<Menu.menu_group orientation="horizontal" label="Products"><Menu.menu_item href="#">App</Menu.menu_item><Menu.menu_item href="#">API</Menu.menu_item></Menu.menu_group>|
+            ~s|<Menu.menu_group id="sb-menu-products" orientation="horizontal" label="Products"><Menu.menu_item href="#">App</Menu.menu_item><Menu.menu_item href="#">API</Menu.menu_item></Menu.menu_group>|
         ]
       }
     ]

@@ -911,4 +911,26 @@ defmodule Pulsar.Components.TextareaTest do
       assert html =~ ~s(wrap="hard")
     end
   end
+
+  describe "textarea/1 id resolution" do
+    test "falls back to name when a bound field has no id" do
+      assigns = %{
+        field: %FormField{
+          id: nil,
+          name: "user[bio]",
+          value: "",
+          errors: [],
+          field: :bio,
+          form: nil
+        }
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <Textarea.textarea field={@field} />
+        """)
+
+      assert html =~ ~s(id="user_bio")
+    end
+  end
 end

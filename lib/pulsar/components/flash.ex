@@ -19,15 +19,15 @@ defmodule Pulsar.Components.Flash do
   ## Examples
 
       # Basic flash notification
-      <.flash color="success">Changes saved successfully!</.flash>
+      <.flash id="saved" color="success">Changes saved successfully!</.flash>
 
       # Flash with close button
-      <.flash color="danger" dismissible>
+      <.flash id="save-failed" color="danger" dismissible>
         Unable to save changes
       </.flash>
 
       # Flash with icon and auto-dismiss
-      <.flash color="info" auto_dismiss dismiss_after={3000}>
+      <.flash id="new-feature" color="info" auto_dismiss dismiss_after={3000}>
         <:start_icon>
           <.icon name="hero-information-circle-mini" size="sm" />
         </:start_icon>
@@ -35,7 +35,7 @@ defmodule Pulsar.Components.Flash do
       </.flash>
 
       # Custom styled flash
-      <.flash variant="outline" color="warning" dismissible>
+      <.flash id="destructive-warning" variant="outline" color="warning" dismissible>
         <:start_icon>
           <.icon name="hero-exclamation-triangle-mini" size="sm" />
         </:start_icon>
@@ -67,11 +67,6 @@ defmodule Pulsar.Components.Flash do
   # ============================================================================
   # CONFIGURATION & CONSTANTS
   # ============================================================================
-
-  # Inline ID generator (replacing external dependencies)
-  defp generate_id(prefix \\ "flash") do
-    "#{prefix}-#{System.unique_integer([:positive])}"
-  end
 
   # Size configuration for flash components.
   # close_button keeps a uniform 24x24 (h-6 w-6) hit target across sizes to satisfy
@@ -195,7 +190,10 @@ defmodule Pulsar.Components.Flash do
   )
 
   # Core attributes
-  attr(:id, :string, doc: "Flash ID (auto-generated if omitted)")
+  attr(:id, :string,
+    required: true,
+    doc: "Flash ID"
+  )
 
   attr(:class, :string,
     default: "",
@@ -239,7 +237,7 @@ defmodule Pulsar.Components.Flash do
   ## Examples
 
       # Error flash with icon
-      <.flash variant="solid" color="danger" role="alert">
+      <.flash id="save-error" variant="solid" color="danger" role="alert">
         <:start_icon>
           <.icon name="hero-exclamation-circle-mini" />
         </:start_icon>
@@ -248,8 +246,6 @@ defmodule Pulsar.Components.Flash do
   """
   @spec flash(map()) :: Rendered.t()
   def flash(assigns) do
-    assigns = assign_new(assigns, :id, fn -> generate_id() end)
-
     assigns = assign(assigns, :auto_dismiss, resolve_auto_dismiss(assigns.auto_dismiss, assigns.role))
 
     # Build complete class string using Twm

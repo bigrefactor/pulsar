@@ -112,7 +112,7 @@ defmodule Pulsar.DevApp.Components do
     assigns = assign(assigns, :groups, @fixture_groups)
 
     ~H"""
-    <Menu.menu landmark={false} label="Fixtures" data-fixture-nav>
+    <Menu.menu id="fixture-nav" landmark={false} label="Fixtures" data-fixture-nav>
       <Menu.menu_section
         :for={{group, items} <- @groups}
         id={"fixnav-#{String.downcase(group)}"}

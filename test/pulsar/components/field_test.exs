@@ -962,4 +962,41 @@ defmodule Pulsar.Components.FieldTest do
       assert html_default == html_explicit
     end
   end
+
+  describe "field/1 select id wiring" do
+    defp select_tag(html) do
+      [tag] = Regex.run(~r/<select[^>]*>/, html)
+      tag
+    end
+
+    defp count_attr(html, name) do
+      html |> String.split(~s( #{name}=)) |> length() |> Kernel.-(1)
+    end
+
+    test "the select element carries the field id exactly once" do
+      field = create_field(:country)
+      assigns = %{field: field, options: [{"US", "us"}]}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="select" options={@options} />
+        """)
+
+      assert count_attr(select_tag(html), "id") == 1
+    end
+
+    test "a custom id reaches the select element and the label points at it" do
+      field = create_field(:country)
+      assigns = %{field: field, options: [{"US", "us"}]}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="select" id="custom-country" options={@options} />
+        """)
+
+      assert count_attr(select_tag(html), "id") == 1
+      assert select_tag(html) =~ ~s(id="custom-country")
+      assert html =~ ~s(for="custom-country")
+    end
+  end
 end

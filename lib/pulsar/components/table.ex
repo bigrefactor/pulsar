@@ -113,11 +113,6 @@ defmodule Pulsar.Components.Table do
   alias Phoenix.LiveView.LiveStream
   alias Phoenix.LiveView.Rendered
 
-  # Inline ID generator (replacing external dependencies)
-  defp generate_id(prefix \\ "table") do
-    "#{prefix}-#{System.unique_integer([:positive])}"
-  end
-
   # ============================================================================
   # CONFIGURATION & CONSTANTS
   # ============================================================================
@@ -239,8 +234,8 @@ defmodule Pulsar.Components.Table do
 
   # Attributes
   attr :id, :string,
-    default: nil,
-    doc: "Unique identifier for the table (auto-generated if not provided)"
+    required: true,
+    doc: "Unique identifier for the table"
 
   attr :rows, :any,
     required: true,
@@ -392,9 +387,6 @@ defmodule Pulsar.Components.Table do
   @spec table(map()) :: Rendered.t()
   def table(assigns) do
     warn_if_missing_accessible_name(assigns)
-
-    # Ensure ID exists
-    assigns = assign(assigns, :id, assigns[:id] || generate_id())
 
     # Detect LiveStream and set up row handling
     assigns = setup_stream_handling(assigns)

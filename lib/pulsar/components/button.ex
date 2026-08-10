@@ -80,6 +80,11 @@ defmodule Pulsar.Components.Button do
     "#{prefix}-#{System.unique_integer([:positive])}"
   end
 
+  @spec resolve_id(map()) :: String.t() | nil
+  defp resolve_id(%{id: id}) when is_binary(id), do: id
+  defp resolve_id(%{as: :button}), do: nil
+  defp resolve_id(_assigns), do: generate_id()
+
   # ============================================================================
   # CONFIGURATION & CONSTANTS
   # ============================================================================
@@ -267,7 +272,10 @@ defmodule Pulsar.Components.Button do
   )
 
   # Core
-  attr(:id, :string, doc: "Button ID (auto-generated if omitted)")
+  attr(:id, :string,
+    default: nil,
+    doc: "Button ID. Required for `as={:a}` and `as={:div}`, which are generated when omitted."
+  )
 
   attr(:tabindex, :string,
     default: "0",
@@ -329,11 +337,8 @@ defmodule Pulsar.Components.Button do
     # Button-specific validation only
     assigns = ensure_disclosure_linkage!(assigns)
 
-    # Ensure ID exists for hook functionality (replacing IdGenerator)
-    assigns = assign_new(assigns, :id, fn -> generate_id() end)
-
-    # Resolve element type and build styling
     assigns = assign(assigns, :as, resolve_as_from_props(assigns))
+    assigns = assign(assigns, :id, resolve_id(assigns))
 
     # Build complete class string using Twm
     assigns =

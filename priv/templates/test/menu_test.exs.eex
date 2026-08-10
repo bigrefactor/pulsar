@@ -17,7 +17,7 @@ defmodule <%= @component_namespace %>.MenuTest do
 
       html =
         rendered_to_string(~H"""
-        <Menu.menu label="Primary">
+        <Menu.menu id="primary-nav" label="Primary">
           <Menu.menu_item navigate="/" active>Home</Menu.menu_item>
           <Menu.menu_item navigate="/inbox">Inbox</Menu.menu_item>
         </Menu.menu>
@@ -37,7 +37,7 @@ defmodule <%= @component_namespace %>.MenuTest do
 
         html =
           rendered_to_string(~H"""
-          <Menu.menu label="Primary" orientation={@orientation}>
+          <Menu.menu id="oriented-nav" label="Primary" orientation={@orientation}>
             <Menu.menu_item navigate="/">Home</Menu.menu_item>
           </Menu.menu>
           """)
@@ -52,7 +52,7 @@ defmodule <%= @component_namespace %>.MenuTest do
 
       html =
         rendered_to_string(~H"""
-        <Menu.menu label="Primary" landmark={false}>
+        <Menu.menu id="nested-nav" label="Primary" landmark={false}>
           <Menu.menu_item navigate="/">Home</Menu.menu_item>
         </Menu.menu>
         """)
@@ -110,7 +110,7 @@ defmodule <%= @component_namespace %>.MenuTest do
 
       html =
         rendered_to_string(~H"""
-        <Menu.menu_group label="Reports">
+        <Menu.menu_group id="reports" label="Reports">
           <Menu.menu_item navigate="/reports/sales">Sales</Menu.menu_item>
         </Menu.menu_group>
         """)

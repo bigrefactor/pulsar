@@ -75,7 +75,7 @@ defmodule Pulsar.Components.Calendar do
   """
   @spec calendar(map()) :: Rendered.t()
 
-  attr(:id, :string, doc: "Calendar id (derived from the bound field, or auto-generated, if omitted)")
+  attr(:id, :string, doc: "Calendar id. Derived from the bound field if omitted; required when no field is bound")
   attr(:mode, :string, default: "single", values: ~w(single range), doc: "Single date or a start/end range")
   attr(:value, :any, default: nil, doc: "Selected Date/ISO (single) or {start, end} (range)")
   attr(:months, :integer, default: nil, doc: "Month grids shown at once (nil → 1 single / 2 range)")
@@ -104,7 +104,7 @@ defmodule Pulsar.Components.Calendar do
 
     assigns =
       assigns
-      |> assign_new(:id, fn -> stable_id(assigns) end)
+      |> assign(:id, stable_id(assigns))
       |> normalize_months()
       |> normalize_hidden_inputs()
       |> assign(:cell_class, cell_classes(assigns.color, assigns.size))
@@ -541,17 +541,13 @@ defmodule Pulsar.Components.Calendar do
   # HELPERS
   # ============================================================================
 
-  # A colocated hook holds selection/cursor state in JS, so the element id must be
-  # stable across re-renders — a changing id makes morphdom replace the node and
-  # remount the hook, dropping client state. Derive it from the bound field when
-  # present (stable across the form's re-renders); otherwise fall back to a
-  # generated id for unbound, client-only use.
+  defp stable_id(%{id: id}) when is_binary(id), do: id
   defp stable_id(%{field: %FormField{} = field}), do: "calendar-#{field.id}"
   defp stable_id(%{start_field: %FormField{} = field}), do: "calendar-#{field.id}"
-  defp stable_id(_assigns), do: generate_id()
 
-  defp generate_id(prefix \\ "calendar") do
-    "#{prefix}-#{System.unique_integer([:positive])}"
+  defp stable_id(_assigns) do
+    raise ArgumentError,
+          "<.calendar> requires an :id when no form field is bound"
   end
 
   # Range mode binds both a start and end field; single mode binds one. Partially

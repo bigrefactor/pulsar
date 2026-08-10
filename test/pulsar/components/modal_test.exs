@@ -22,16 +22,18 @@ defmodule Pulsar.Components.ModalTest do
       assert html =~ "PulsarModal"
       assert html =~ ~s(data-state="closed")
     end
+  end
 
-    test "auto-generates a dialog id when omitted" do
+  describe "modal/1 id handling" do
+    test "renders the caller's id unchanged" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <Modal.modal>Body</Modal.modal>
+        <Modal.modal id="confirm" title="Confirm">Body</Modal.modal>
         """)
 
-      assert html =~ ~s(id="modal-)
+      assert html =~ ~s(id="confirm")
     end
   end
 

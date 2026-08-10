@@ -1,0 +1,90 @@
+defmodule <%= @component_namespace %>.ModalTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Modal
+
+  # `modal` requires an `id` (the open/close helpers target it) and a default
+  # slot. It renders a native `<dialog>` that the `open/2` helper shows, so the
+  # markup under test is the closed dialog; the tests assert the server-rendered
+  # id wiring, title, and slots, not open state.
+
+  describe "modal/1" do
+    test "renders a dialog with the caller's id, title, and body" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Modal.modal id="edit-user" title="Edit user">
+          <:description>Update the details below.</:description>
+          Body content
+          <:footer>Save</:footer>
+        </Modal.modal>
+        """)
+
+      assert html =~ "<dialog"
+      assert html =~ ~s(id="edit-user")
+      assert html =~ ~s(id="edit-user-title")
+      assert html =~ ~s(aria-labelledby="edit-user-title")
+      assert html =~ ~s(id="edit-user-desc")
+      assert html =~ ~s(aria-describedby="edit-user-desc")
+      assert html =~ "Edit user"
+      assert html =~ "Update the details below."
+      assert html =~ "Body content"
+      assert html =~ "Save"
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(solid outline ghost elevated) do
+        assigns = %{variant: variant}
+
+        html =
+          rendered_to_string(~H"""
+          <Modal.modal id="m" title="Title" variant={@variant}>Body</Modal.modal>
+          """)
+
+        assert html =~ "<dialog"
+        assert html =~ "Body"
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{color: color}
+
+        html =
+          rendered_to_string(~H"""
+          <Modal.modal id="m" title="Title" color={@color}>Body</Modal.modal>
+          """)
+
+        assert html =~ "<dialog"
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(sm md lg xl) do
+        assigns = %{size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <Modal.modal id="m" title="Title" size={@size}>Body</Modal.modal>
+          """)
+
+        assert html =~ "<dialog"
+      end
+    end
+
+    test "dismissable={false} drops the close button" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Modal.modal id="m" title="Confirm" dismissable={false}>Body</Modal.modal>
+        """)
+
+      refute html =~ ~s(aria-label="Close")
+    end
+  end
+end

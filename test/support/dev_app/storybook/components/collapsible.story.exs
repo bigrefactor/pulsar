@@ -8,7 +8,7 @@ defmodule Pulsar.DevApp.Storybook.Components.Collapsible do
 
   def attributes do
     [
-      %Attr{id: :id, type: :string, doc: "Collapsible container id (auto-generated if omitted)."},
+      %Attr{id: :id, type: :string, required: true, doc: "Collapsible container id."},
       %Attr{id: :open, type: :boolean, default: false, doc: "Open on first render."},
       %Attr{
         id: :variant,

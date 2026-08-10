@@ -35,19 +35,19 @@ defmodule Mix.Tasks.Pulsar.Gen.Menu do
     ## Usage Examples
 
     ```elixir
-    <.menu label="Primary">
+    <.menu id="primary-nav" label="Primary">
       <.menu_item navigate={~p"/"} icon="hero-home" active>Home</.menu_item>
       <.menu_section label="Workspace">
-        <.menu_group label="Reports" icon="hero-chart-bar">
+        <.menu_group id="reports" label="Reports" icon="hero-chart-bar">
           <.menu_item navigate={~p"/reports/sales"}>Sales</.menu_item>
         </.menu_group>
       </.menu_section>
     </.menu>
 
     # Horizontal menu in a navbar region — groups open as dropdowns
-    <.menu orientation="horizontal" label="Primary">
+    <.menu id="top-nav" orientation="horizontal" label="Primary">
       <.menu_item navigate={~p"/"} active>Home</.menu_item>
-      <.menu_group orientation="horizontal" label="Products">
+      <.menu_group id="products" orientation="horizontal" label="Products">
         <.menu_item navigate={~p"/products/app"}>App</.menu_item>
       </.menu_group>
     </.menu>

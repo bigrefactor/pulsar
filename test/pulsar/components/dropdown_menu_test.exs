@@ -30,20 +30,6 @@ defmodule Pulsar.Components.DropdownMenuTest do
       assert html =~ "PulsarPopover"
       assert html =~ "PulsarDropdownMenu"
     end
-
-    test "auto-generates a menu id when omitted" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <DropdownMenu.dropdown_menu>
-          <:trigger><button>Open</button></:trigger>
-          <DropdownMenu.dropdown_menu_item>One</DropdownMenu.dropdown_menu_item>
-        </DropdownMenu.dropdown_menu>
-        """)
-
-      assert html =~ ~s(id="dropdown-menu-)
-    end
   end
 
   describe "dropdown_menu_item/1" do
@@ -524,6 +510,64 @@ defmodule Pulsar.Components.DropdownMenuTest do
         """)
 
       assert html =~ "rounded-none"
+    end
+  end
+
+  describe "dropdown_menu id handling" do
+    test "dropdown_menu/1 renders the caller's id unchanged" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu id="actions">
+          <:trigger>Open</:trigger>
+          <DropdownMenu.dropdown_menu_item>Edit</DropdownMenu.dropdown_menu_item>
+        </DropdownMenu.dropdown_menu>
+        """)
+
+      assert html =~ ~s(id="actions")
+    end
+
+    test "dropdown_menu_submenu/1 derives its trigger id from the caller's id" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu_submenu id="share" label="Share">
+          <DropdownMenu.dropdown_menu_item>Email</DropdownMenu.dropdown_menu_item>
+        </DropdownMenu.dropdown_menu_submenu>
+        """)
+
+      assert html =~ ~s(id="share-trigger")
+    end
+  end
+
+  describe "dropdown_menu_group/1 id handling" do
+    test "renders no id when unlabelled" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu_group>
+          <DropdownMenu.dropdown_menu_item>Edit</DropdownMenu.dropdown_menu_item>
+        </DropdownMenu.dropdown_menu_group>
+        """)
+
+      refute html =~ ~s( id=")
+    end
+
+    test "generates an id when labelled so aria-labelledby resolves" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu_group label="Workspace">
+          <DropdownMenu.dropdown_menu_item>Edit</DropdownMenu.dropdown_menu_item>
+        </DropdownMenu.dropdown_menu_group>
+        """)
+
+      assert [_, id] = Regex.run(~r/<div id="([^"]+)"/, html)
+      assert html =~ ~s(aria-labelledby="#{id}")
     end
   end
 end

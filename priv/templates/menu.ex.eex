@@ -17,7 +17,7 @@ screen reader's landmark list.
 ## Examples
 
     # Vertical menu in a sidebar content slot
-    <.menu label="Primary">
+    <.menu id="primary-nav" label="Primary">
       <.menu_item navigate={~p"/"} icon="hero-home" active>Home</.menu_item>
       <.menu_item navigate={~p"/inbox"} icon="hero-inbox">
         Inbox
@@ -26,7 +26,7 @@ screen reader's landmark list.
 
       <.menu_section label="Workspace">
         <.menu_item navigate={~p"/projects"} icon="hero-folder">Projects</.menu_item>
-        <.menu_group label="Reports" icon="hero-chart-bar">
+        <.menu_group id="reports" label="Reports" icon="hero-chart-bar">
           <.menu_item navigate={~p"/reports/sales"}>Sales</.menu_item>
           <.menu_item navigate={~p"/reports/traffic"}>Traffic</.menu_item>
         </.menu_group>
@@ -35,9 +35,9 @@ screen reader's landmark list.
 
     # Horizontal menu in a navbar region — groups open as dropdowns. Set
     # `orientation="horizontal"` on each group to match the menu.
-    <.menu orientation="horizontal" label="Primary">
+    <.menu id="top-nav" orientation="horizontal" label="Primary">
       <.menu_item navigate={~p"/"} active>Home</.menu_item>
-      <.menu_group orientation="horizontal" label="Products">
+      <.menu_group id="products" orientation="horizontal" label="Products">
         <.menu_item navigate={~p"/products/app"}>App</.menu_item>
         <.menu_item navigate={~p"/products/api"}>API</.menu_item>
       </.menu_group>
@@ -50,7 +50,7 @@ doesn't nest a second `<nav>` inside the sidebar's own landmark. Labels fold
 into the icon rail automatically when the sidebar collapses to `collapsible="icon"`.
 
     <.sidebar id="app-sidebar" collapsible="icon">
-      <.menu landmark={false} label="Primary">
+      <.menu id="primary-nav" landmark={false} label="Primary">
         <.menu_item navigate={~p"/"} icon="hero-home">Home</.menu_item>
       </.menu>
     </.sidebar>
@@ -75,7 +75,7 @@ alias Phoenix.LiveView.JS
 alias Phoenix.LiveView.Rendered
 
 # Inline ID generator
-defp generate_id(prefix \\ "menu") do
+defp generate_id(prefix) do
   "#{prefix}-#{System.unique_integer([:positive])}"
 end
 
@@ -134,7 +134,7 @@ end
 # COMPONENT
 # ============================================================================
 
-attr(:id, :string, doc: "Menu ID (auto-generated if omitted). Targeted by the keyboard/disclosure behavior.")
+attr(:id, :string, required: true, doc: "Menu ID. Targeted by the keyboard/disclosure behavior.")
 
 attr(:orientation, :string,
   default: "vertical",
@@ -175,16 +175,13 @@ Compose it from `menu_item/1`, `menu_section/1`, and `menu_group/1`.
 
 ## Examples
 
-    <.menu label="Primary">
+    <.menu id="primary-nav" label="Primary">
       <.menu_item navigate={~p"/"} icon="hero-home" active>Home</.menu_item>
     </.menu>
 """
 @spec menu(map()) :: Rendered.t()
 def menu(assigns) do
-  assigns =
-    assigns
-    |> assign_new(:id, fn -> generate_id() end)
-    |> assign(:list_classes, merge([list_base(assigns.orientation), assigns.class]))
+  assigns = assign(assigns, :list_classes, merge([list_base(assigns.orientation), assigns.class]))
 
   ~H"""
   <.menu_landmark landmark={@landmark} label={@label}>
@@ -468,7 +465,7 @@ def menu_item(assigns) do
   """
 end
 
-attr(:id, :string, doc: "Section ID (auto-generated if omitted), used to label the grouped list")
+attr(:id, :string, default: nil, doc: "Section ID, used to label the grouped list")
 attr(:label, :string, default: nil, doc: ~s{Optional section heading. Use with i18n: gettext("...")})
 attr(:class, :string, default: "", doc: "Additional CSS classes")
 attr(:rest, :global, doc: "Additional HTML attributes")
@@ -486,7 +483,7 @@ Renders a labelled section grouping a set of items.
 """
 @spec menu_section(map()) :: Rendered.t()
 def menu_section(assigns) do
-  assigns = assign_new(assigns, :id, fn -> generate_id("menu-section") end)
+  assigns = assign(assigns, :id, assigns[:id] || (assigns[:label] && generate_id("menu-section")))
 
   ~H"""
   <li class={["list-none", @class]} {@rest}>
@@ -498,7 +495,7 @@ def menu_section(assigns) do
   """
 end
 
-attr(:id, :string, doc: "Group ID (auto-generated if omitted), wires the trigger to its panel")
+attr(:id, :string, required: true, doc: "Group ID, wires the trigger to its panel")
 attr(:label, :string, required: true, doc: ~s{Group label shown on the trigger. Use with i18n: gettext("...")})
 
 attr(:orientation, :string,
@@ -527,20 +524,18 @@ popover when horizontal. Set `orientation` to match the parent menu.
 
 ## Examples
 
-    <.menu_group label="Reports" icon="hero-chart-bar">
+    <.menu_group id="reports" label="Reports" icon="hero-chart-bar">
       <.menu_item navigate={~p"/reports/sales"}>Sales</.menu_item>
     </.menu_group>
 
-    <.menu_group orientation="horizontal" label="Products">
+    <.menu_group id="products" orientation="horizontal" label="Products">
       <.menu_item navigate={~p"/products/app"}>App</.menu_item>
     </.menu_group>
 """
 @spec menu_group(map()) :: Rendered.t()
 def menu_group(assigns) do
   assigns =
-    assigns
-    |> assign_new(:id, fn -> generate_id("menu-group") end)
-    |> assign(:trigger_classes, merge([@row_base, trigger_active(assigns.active), assigns.class]))
+    assign(assigns, :trigger_classes, merge([@row_base, trigger_active(assigns.active), assigns.class]))
 
   ~H"""
   <li

@@ -50,7 +50,7 @@ defmodule Pulsar.Components.DatePicker do
   """
   @spec date_picker(map()) :: Rendered.t()
 
-  attr(:id, :string, doc: "Derived from the bound field, or auto-generated, if omitted")
+  attr(:id, :string, doc: "Derived from the bound field if omitted; required when no field is bound")
   attr(:mode, :string, default: "single", values: ~w(single range))
   attr(:field, FormField, default: nil, doc: "Single-mode form field")
   attr(:start_field, FormField, default: nil, doc: "Range start field")
@@ -91,7 +91,7 @@ defmodule Pulsar.Components.DatePicker do
 
     assigns =
       assigns
-      |> assign_new(:id, fn -> stable_id(assigns) end)
+      |> assign(:id, stable_id(assigns))
       |> normalize_fields()
       |> assign_calendar_value()
       |> assign(:input_class, input_classes(assigns.size))
@@ -377,16 +377,13 @@ defmodule Pulsar.Components.DatePicker do
   # HELPERS
   # ============================================================================
 
-  # The colocated hook holds typed/selected state in JS, so the element id must be
-  # stable across the form's re-renders — a changing id makes morphdom replace the
-  # node and remount the hook, dropping client state. Derive it from the bound
-  # field when present; otherwise fall back to a generated id for unbound use.
+  defp stable_id(%{id: id}) when is_binary(id), do: id
   defp stable_id(%{field: %FormField{} = field}), do: "date-picker-#{field.id}"
   defp stable_id(%{start_field: %FormField{} = field}), do: "date-picker-#{field.id}"
-  defp stable_id(_assigns), do: generate_id()
 
-  defp generate_id(prefix \\ "date-picker") do
-    "#{prefix}-#{System.unique_integer([:positive])}"
+  defp stable_id(_assigns) do
+    raise ArgumentError,
+          "<.date_picker> requires an :id when no form field is bound"
   end
 
   # Range mode binds both start_field and end_field; single mode binds field.

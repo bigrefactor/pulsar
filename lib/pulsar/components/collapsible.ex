@@ -40,11 +40,6 @@ defmodule Pulsar.Components.Collapsible do
   alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Icon
 
-  @spec generate_id(String.t()) :: String.t()
-  defp generate_id(prefix \\ "collapsible") do
-    "#{prefix}-#{System.unique_integer([:positive])}"
-  end
-
   @valid_colors ~w(neutral primary secondary success danger warning info)
 
   @trigger_open %{
@@ -105,7 +100,7 @@ defmodule Pulsar.Components.Collapsible do
 
   @panel_inner "overflow-hidden invisible group-data-[expanded]/collapsible:visible"
 
-  attr(:id, :string, doc: "Collapsible container id (auto-generated if omitted)")
+  attr(:id, :string, required: true, doc: "Collapsible container id")
 
   attr(:open, :boolean, default: false, doc: "Whether the panel is open on first render")
 
@@ -150,8 +145,6 @@ defmodule Pulsar.Components.Collapsible do
   """
   @spec collapsible(map()) :: Rendered.t()
   def collapsible(assigns) do
-    assigns = assign_new(assigns, :id, fn -> generate_id() end)
-
     assigns =
       assigns
       |> assign(:panel_id, "#{assigns.id}-panel")

@@ -13,7 +13,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash>Test message</Flash.flash>
+        <Flash.flash id="flash">Test message</Flash.flash>
         """)
 
       assert html =~ ~s(<div)
@@ -34,7 +34,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash>Saved</Flash.flash>
+        <Flash.flash id="flash">Saved</Flash.flash>
         """)
 
       assert html =~ "transition-[opacity,transform]"
@@ -46,7 +46,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash color="success">Success message</Flash.flash>
+        <Flash.flash id="flash" color="success">Success message</Flash.flash>
         """)
 
       assert html =~ "bg-success"
@@ -58,7 +58,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash variant="outline" color="danger">Error message</Flash.flash>
+        <Flash.flash id="flash" variant="outline" color="danger">Error message</Flash.flash>
         """)
 
       assert html =~ "border-danger"
@@ -72,7 +72,7 @@ defmodule Pulsar.Components.FlashTest do
       # Test ghost variant with primary color
       html_primary =
         rendered_to_string(~H"""
-        <Flash.flash variant="ghost" color="primary">Primary ghost</Flash.flash>
+        <Flash.flash id="flash" variant="ghost" color="primary">Primary ghost</Flash.flash>
         """)
 
       assert html_primary =~ "text-primary"
@@ -81,7 +81,7 @@ defmodule Pulsar.Components.FlashTest do
       # Test ghost variant with warning color
       html_warning =
         rendered_to_string(~H"""
-        <Flash.flash variant="ghost" color="warning">Warning ghost</Flash.flash>
+        <Flash.flash id="flash" variant="ghost" color="warning">Warning ghost</Flash.flash>
         """)
 
       assert html_warning =~ "text-warning"
@@ -93,7 +93,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html_sm =
         rendered_to_string(~H"""
-        <Flash.flash size="sm">Small flash</Flash.flash>
+        <Flash.flash id="flash" size="sm">Small flash</Flash.flash>
         """)
 
       # Small size class
@@ -101,7 +101,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html_lg =
         rendered_to_string(~H"""
-        <Flash.flash size="lg">Large flash</Flash.flash>
+        <Flash.flash id="flash" size="lg">Large flash</Flash.flash>
         """)
 
       # Large size class
@@ -116,7 +116,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash>Dismissible flash</Flash.flash>
+        <Flash.flash id="flash">Dismissible flash</Flash.flash>
         """)
 
       assert html =~ ~s(<button)
@@ -130,7 +130,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash dismissible={false}>Non-dismissible flash</Flash.flash>
+        <Flash.flash id="flash" dismissible={false}>Non-dismissible flash</Flash.flash>
         """)
 
       refute html =~ ~s(<button)
@@ -142,7 +142,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash dismiss_label="Cerrar">Localized flash</Flash.flash>
+        <Flash.flash id="flash" dismiss_label="Cerrar">Localized flash</Flash.flash>
         """)
 
       assert html =~ ~s(aria-label="Cerrar")
@@ -154,7 +154,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash on_dismiss={@on_dismiss}>Flash with event</Flash.flash>
+        <Flash.flash id="flash" on_dismiss={@on_dismiss}>Flash with event</Flash.flash>
         """)
 
       # The hook runs this via liveSocket.execJS on dismiss.
@@ -168,7 +168,7 @@ defmodule Pulsar.Components.FlashTest do
 
         html =
           rendered_to_string(~H"""
-          <Flash.flash size={@size}>Sized flash</Flash.flash>
+          <Flash.flash id="flash" size={@size}>Sized flash</Flash.flash>
           """)
 
         assert html =~ ~r/<button(?=[^>]*\baria-label="Dismiss")(?=[^>]*\bh-6 w-6\b)[^>]*>/,
@@ -181,7 +181,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash>Focus test</Flash.flash>
+        <Flash.flash id="flash">Focus test</Flash.flash>
         """)
 
       assert html =~ "focus-visible:ring-2"
@@ -193,7 +193,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash>Sizing test</Flash.flash>
+        <Flash.flash id="flash">Sizing test</Flash.flash>
         """)
 
       assert html =~ ~s(<svg class="h-full w-full")
@@ -206,7 +206,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash auto_dismiss={true} dismiss_after={3000}>Auto-dismiss flash</Flash.flash>
+        <Flash.flash id="flash" auto_dismiss={true} dismiss_after={3000}>Auto-dismiss flash</Flash.flash>
         """)
 
       assert html =~ ~s(data-auto-dismiss="true")
@@ -218,7 +218,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash auto_dismiss={false}>Manual flash</Flash.flash>
+        <Flash.flash id="flash" auto_dismiss={false}>Manual flash</Flash.flash>
         """)
 
       assert html =~ ~s(data-auto-dismiss="false")
@@ -229,7 +229,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash role="status">Status flash</Flash.flash>
+        <Flash.flash id="flash" role="status">Status flash</Flash.flash>
         """)
 
       assert html =~ ~s(data-auto-dismiss="true")
@@ -240,7 +240,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash role="alert">Urgent message</Flash.flash>
+        <Flash.flash id="flash" role="alert">Urgent message</Flash.flash>
         """)
 
       assert html =~ ~s(data-auto-dismiss="false")
@@ -251,7 +251,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash role="alert" auto_dismiss={true}>Urgent but timed</Flash.flash>
+        <Flash.flash id="flash" role="alert" auto_dismiss={true}>Urgent but timed</Flash.flash>
         """)
 
       assert html =~ ~s(data-auto-dismiss="true")
@@ -264,7 +264,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash>Accessible flash</Flash.flash>
+        <Flash.flash id="flash">Accessible flash</Flash.flash>
         """)
 
       assert html =~ ~s(role="status")
@@ -279,7 +279,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash>Single ring</Flash.flash>
+        <Flash.flash id="flash">Single ring</Flash.flash>
         """)
 
       refute html =~ "focus-within:ring"
@@ -290,7 +290,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash role="alert" live="assertive">Urgent flash</Flash.flash>
+        <Flash.flash id="flash" role="alert" live="assertive">Urgent flash</Flash.flash>
         """)
 
       assert html =~ ~s(role="alert")
@@ -303,7 +303,7 @@ defmodule Pulsar.Components.FlashTest do
       # Alert role should get assertive aria-live automatically
       html =
         rendered_to_string(~H"""
-        <Flash.flash role="alert" live="auto">Auto alert</Flash.flash>
+        <Flash.flash id="flash" role="alert" live="auto">Auto alert</Flash.flash>
         """)
 
       assert html =~ ~s(role="alert")
@@ -312,7 +312,7 @@ defmodule Pulsar.Components.FlashTest do
       # Status role should get polite aria-live automatically
       html =
         rendered_to_string(~H"""
-        <Flash.flash role="status" live="auto">Auto status</Flash.flash>
+        <Flash.flash id="flash" role="status" live="auto">Auto status</Flash.flash>
         """)
 
       assert html =~ ~s(role="status")
@@ -324,7 +324,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash>Hooked flash</Flash.flash>
+        <Flash.flash id="flash">Hooked flash</Flash.flash>
         """)
 
       assert html =~ ~s(PulsarFlash)
@@ -335,7 +335,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash>Flash with hook</Flash.flash>
+        <Flash.flash id="flash">Flash with hook</Flash.flash>
         """)
 
       # Check for phx-hook attribute instead of script content
@@ -349,7 +349,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash>
+        <Flash.flash id="flash">
           <:start_icon>
             <svg class="icon">...</svg>
           </:start_icon>
@@ -369,7 +369,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash>Flash without icon</Flash.flash>
+        <Flash.flash id="flash">Flash without icon</Flash.flash>
         """)
 
       # Should not have an icon container div, but close button still has h-5 w-5
@@ -382,7 +382,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html_sm =
         rendered_to_string(~H"""
-        <Flash.flash size="sm">
+        <Flash.flash id="flash" size="sm">
           <:start_icon>
             <svg>icon</svg>
           </:start_icon>
@@ -395,7 +395,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html_lg =
         rendered_to_string(~H"""
-        <Flash.flash size="lg">
+        <Flash.flash id="flash" size="lg">
           <:start_icon>
             <svg>icon</svg>
           </:start_icon>
@@ -414,7 +414,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash class="custom-class" data-testid="flash">Custom flash</Flash.flash>
+        <Flash.flash id="flash" class="custom-class" data-testid="flash">Custom flash</Flash.flash>
         """)
 
       assert html =~ ~s(class=")
@@ -427,7 +427,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash class="mt-4 custom-bg">Flash with custom classes</Flash.flash>
+        <Flash.flash id="flash" class="mt-4 custom-bg">Flash with custom classes</Flash.flash>
         """)
 
       # Should contain both component classes and custom classes
@@ -436,32 +436,6 @@ defmodule Pulsar.Components.FlashTest do
       # Should still have base component classes
       assert html =~ "font-medium"
       assert html =~ "shadow-dropdown"
-    end
-
-    test "generates unique IDs when not provided" do
-      assigns = %{}
-
-      html1 =
-        rendered_to_string(~H"""
-        <Flash.flash>Flash 1</Flash.flash>
-        """)
-
-      html2 =
-        rendered_to_string(~H"""
-        <Flash.flash>Flash 2</Flash.flash>
-        """)
-
-      # Check that IDs are present and unique
-      assert html1 =~ ~r/id="flash-\d+"/
-      assert html2 =~ ~r/id="flash-\d+"/
-
-      # Extract the actual ID values
-      [[_, id1]] = Regex.scan(~r/id="(flash-\d+)"/, html1)
-      [[_, id2]] = Regex.scan(~r/id="(flash-\d+)"/, html2)
-
-      assert id1 != id2
-      assert String.starts_with?(id1, "flash-")
-      assert String.starts_with?(id2, "flash-")
     end
 
     test "uses provided ID" do
@@ -485,7 +459,7 @@ defmodule Pulsar.Components.FlashTest do
 
         html =
           rendered_to_string(~H"""
-          <Flash.flash variant="solid" color={@color}>Solid {@color}</Flash.flash>
+          <Flash.flash id="flash" variant="solid" color={@color}>Solid {@color}</Flash.flash>
           """)
 
         assert html =~ "bg-#{color}"
@@ -501,7 +475,7 @@ defmodule Pulsar.Components.FlashTest do
 
         html =
           rendered_to_string(~H"""
-          <Flash.flash variant="outline" color={@color}>Outline {@color}</Flash.flash>
+          <Flash.flash id="flash" variant="outline" color={@color}>Outline {@color}</Flash.flash>
           """)
 
         assert html =~ "border-#{color}"
@@ -522,7 +496,7 @@ defmodule Pulsar.Components.FlashTest do
 
         html =
           rendered_to_string(~H"""
-          <Flash.flash variant="ghost" color={@color}>Ghost {@color}</Flash.flash>
+          <Flash.flash id="flash" variant="ghost" color={@color}>Ghost {@color}</Flash.flash>
           """)
 
         # Ghost uses different pattern for neutral vs other colors
@@ -544,7 +518,7 @@ defmodule Pulsar.Components.FlashTest do
       # Test normal value
       html_normal =
         rendered_to_string(~H"""
-        <Flash.flash dismiss_after={3000}>Normal timeout</Flash.flash>
+        <Flash.flash id="flash" dismiss_after={3000}>Normal timeout</Flash.flash>
         """)
 
       assert html_normal =~ ~s(data-dismiss-after="3000")
@@ -552,7 +526,7 @@ defmodule Pulsar.Components.FlashTest do
       # Very large value: rendered as given; the JS hook clamps to 60000 at runtime
       html_large =
         rendered_to_string(~H"""
-        <Flash.flash dismiss_after={120_000}>Large timeout</Flash.flash>
+        <Flash.flash id="flash" dismiss_after={120_000}>Large timeout</Flash.flash>
         """)
 
       assert html_large =~ ~s(data-dismiss-after="120000")
@@ -560,7 +534,7 @@ defmodule Pulsar.Components.FlashTest do
       # Very small value: rendered as given; the JS hook falls back to 5000 at runtime
       html_small =
         rendered_to_string(~H"""
-        <Flash.flash dismiss_after={50}>Small timeout</Flash.flash>
+        <Flash.flash id="flash" dismiss_after={50}>Small timeout</Flash.flash>
         """)
 
       assert html_small =~ ~s(data-dismiss-after="50")
@@ -572,7 +546,7 @@ defmodule Pulsar.Components.FlashTest do
       # Test enabled (default)
       html_enabled =
         rendered_to_string(~H"""
-        <Flash.flash auto_dismiss={true}>Auto dismiss enabled</Flash.flash>
+        <Flash.flash id="flash" auto_dismiss={true}>Auto dismiss enabled</Flash.flash>
         """)
 
       assert html_enabled =~ ~s(data-auto-dismiss="true")
@@ -580,7 +554,7 @@ defmodule Pulsar.Components.FlashTest do
       # Test disabled
       html_disabled =
         rendered_to_string(~H"""
-        <Flash.flash auto_dismiss={false}>Auto dismiss disabled</Flash.flash>
+        <Flash.flash id="flash" auto_dismiss={false}>Auto dismiss disabled</Flash.flash>
         """)
 
       assert html_disabled =~ ~s(data-auto-dismiss="false")
@@ -591,7 +565,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash on_dismiss={@on_dismiss}>Custom dismiss event</Flash.flash>
+        <Flash.flash id="flash" on_dismiss={@on_dismiss}>Custom dismiss event</Flash.flash>
         """)
 
       assert html =~ ~s(data-on-dismiss=)
@@ -605,7 +579,7 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash>Hooked flash</Flash.flash>
+        <Flash.flash id="flash">Hooked flash</Flash.flash>
         """)
 
       # Should use colocated hook notation (expanded to full module name)
@@ -618,6 +592,7 @@ defmodule Pulsar.Components.FlashTest do
       html =
         rendered_to_string(~H"""
         <Flash.flash
+          id="flash"
           auto_dismiss={true}
           dismiss_after={5000}
           on_dismiss={JS.push("handle_dismiss")}
@@ -638,13 +613,26 @@ defmodule Pulsar.Components.FlashTest do
 
       html =
         rendered_to_string(~H"""
-        <Flash.flash>Flash without dismiss handler</Flash.flash>
+        <Flash.flash id="flash">Flash without dismiss handler</Flash.flash>
         """)
 
       # The empty %JS{} default encodes to "[]"; the hook treats it as
       # "no callback" and removes the flash from the DOM instead.
       assert html =~ ~s(data-on-dismiss="[]")
       assert html =~ "Flash without dismiss handler"
+    end
+  end
+
+  describe "flash/1 id handling" do
+    test "renders the caller's id unchanged" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Flash.flash id="notice" color="info">Saved</Flash.flash>
+        """)
+
+      assert html =~ ~s(id="notice")
     end
   end
 end

@@ -41,19 +41,6 @@ defmodule Pulsar.Components.MenuTest do
       assert html =~ ~s(aria-label="Primary")
     end
 
-    test "auto-generates an id when omitted" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <Menu.menu>
-          <Menu.menu_item navigate="/">Home</Menu.menu_item>
-        </Menu.menu>
-        """)
-
-      assert html =~ ~s(id="menu-)
-    end
-
     test "passes through global/data attributes" do
       assigns = %{}
 
@@ -482,6 +469,64 @@ defmodule Pulsar.Components.MenuTest do
 
       assert html =~ "<button"
       refute html =~ ~s(method="delete")
+    end
+  end
+
+  describe "menu id handling" do
+    test "menu/1 renders the caller's id unchanged" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Menu.menu id="actions">
+          <Menu.menu_item>Edit</Menu.menu_item>
+        </Menu.menu>
+        """)
+
+      assert html =~ ~s(id="actions")
+    end
+
+    test "menu_group/1 derives its panel id from the caller's id" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Menu.menu_group id="more" label="More">
+          <Menu.menu_item>Edit</Menu.menu_item>
+        </Menu.menu_group>
+        """)
+
+      assert html =~ ~s(id="more-panel")
+      assert html =~ ~s(id="more-trigger")
+    end
+  end
+
+  describe "menu_section/1 id handling" do
+    test "renders no id when unlabelled" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Menu.menu_section>
+          <Menu.menu_item>Edit</Menu.menu_item>
+        </Menu.menu_section>
+        """)
+
+      refute html =~ ~s( id=")
+    end
+
+    test "generates an id when labelled so aria-labelledby resolves" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Menu.menu_section label="Actions">
+          <Menu.menu_item>Edit</Menu.menu_item>
+        </Menu.menu_section>
+        """)
+
+      assert [_, id] = Regex.run(~r/<p id="([^"]+)"/, html)
+      assert html =~ ~s(aria-labelledby="#{id}")
     end
   end
 end

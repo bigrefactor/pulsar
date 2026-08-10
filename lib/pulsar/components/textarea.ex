@@ -359,7 +359,7 @@ defmodule Pulsar.Components.Textarea do
   attr(:field, FormField, default: nil, doc: "Phoenix form field")
 
   # Core attributes
-  attr(:id, :string, doc: "Textarea ID (auto-generated if not provided)")
+  attr(:id, :string, doc: "Textarea ID (from field or name if not provided)")
 
   attr(:name, :string, doc: "Textarea name (from field if not provided)")
 
@@ -688,7 +688,10 @@ defmodule Pulsar.Components.Textarea do
 
   defp normalize_field_props(%{field: %FormField{} = field} = assigns) do
     assigns
-    |> assign(:id, assigns[:id] || field.id || generate_id("textarea"))
+    |> assign(
+      :id,
+      assigns[:id] || field.id || id_from_name(assigns[:name] || field.name) || generate_id("textarea")
+    )
     |> assign_new(:name, fn -> field.name end)
     |> assign_new(:value, fn -> field.value end)
     |> assign(:field_provided, true)
@@ -700,9 +703,17 @@ defmodule Pulsar.Components.Textarea do
     end
 
     assigns
-    |> assign(:id, assigns[:id] || assigns[:name] || generate_id("textarea"))
+    |> assign(:id, assigns[:id] || id_from_name(assigns[:name]))
     |> assign_new(:value, fn -> nil end)
     |> assign(:field_provided, false)
+  end
+
+  defp id_from_name(nil), do: nil
+
+  defp id_from_name(name) do
+    name
+    |> String.trim_trailing("]")
+    |> String.replace(~r/\W+/u, "_")
   end
 
   # ============================================================================

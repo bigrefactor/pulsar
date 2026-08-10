@@ -26,20 +26,6 @@ defmodule Pulsar.Components.PopoverTest do
       assert html =~ ~s(popover="auto")
       assert html =~ "PulsarPopover"
     end
-
-    test "auto-generates a panel id when omitted" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <Popover.popover>
-          <:trigger><button>Open</button></:trigger>
-          Body
-        </Popover.popover>
-        """)
-
-      assert html =~ ~s(id="popover-)
-    end
   end
 
   describe "popover/1 anchor attr" do
@@ -270,6 +256,22 @@ defmodule Pulsar.Components.PopoverTest do
 
       assert html =~ "bg-foreground"
       refute html =~ "bg-surface-1"
+    end
+  end
+
+  describe "popover/1 id handling" do
+    test "renders the caller's id unchanged" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Popover.popover id="tips">
+          <:trigger>Open</:trigger>
+          Body
+        </Popover.popover>
+        """)
+
+      assert html =~ ~s(id="tips")
     end
   end
 end

@@ -21,13 +21,13 @@ event, run pure client-side JS, or compose both in one pipeline.
 
 ```elixir
 # server event
-<.flash on_dismiss={JS.push("clear_flash", value: %{key: "info"})}>…</.flash>
+<.flash id="banner" on_dismiss={JS.push("clear_flash", value: %{key: "info"})}>…</.flash>
 
 # client-side only
-<.flash on_dismiss={JS.hide(to: "#banner")}>…</.flash>
+<.flash id="banner" on_dismiss={JS.hide(to: "#banner")}>…</.flash>
 
 # composed
-<.flash on_dismiss={JS.push("noted") |> JS.hide(to: "#banner")}>…</.flash>
+<.flash id="banner" on_dismiss={JS.push("noted") |> JS.hide(to: "#banner")}>…</.flash>
 ```
 
 There is no string form. "Send an event to the server" is `JS.push("event")`.

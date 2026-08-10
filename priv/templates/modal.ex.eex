@@ -58,11 +58,6 @@ alias <%= @component_namespace %>.Icon
 alias Phoenix.LiveView.JS
 alias Phoenix.LiveView.Rendered
 
-# Inline ID generator
-defp generate_id(prefix \\ "modal") do
-  "#{prefix}-#{System.unique_integer([:positive])}"
-end
-
 # ============================================================================
 # CONFIGURATION & CONSTANTS
 # ============================================================================
@@ -138,7 +133,7 @@ end
 # COMPONENT
 # ============================================================================
 
-attr(:id, :string, doc: "Dialog ID (auto-generated if omitted). Targeted by the open/close helpers.")
+attr(:id, :string, required: true, doc: "Dialog ID. Targeted by the open/close helpers.")
 
 attr(:variant, :string,
   default: "elevated",
@@ -225,8 +220,6 @@ elsewhere on the page.
 """
 @spec modal(map()) :: Rendered.t()
 def modal(assigns) do
-  assigns = assign_new(assigns, :id, fn -> generate_id() end)
-
   assigns =
     assign(
       assigns,

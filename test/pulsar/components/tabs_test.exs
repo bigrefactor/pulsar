@@ -314,4 +314,32 @@ defmodule Pulsar.Components.TabsTest do
       assert html =~ ~s(data-test="x")
     end
   end
+
+  describe "tabs/1 id handling" do
+    test "renders the caller's id unchanged" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Tabs.tabs id="settings">
+          <:tab id="one" label="One">Content</:tab>
+        </Tabs.tabs>
+        """)
+
+      assert html =~ ~s(id="settings")
+    end
+
+    test "derives slot child ids from the container id" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Tabs.tabs id="settings">
+          <:tab label="One">Content</:tab>
+        </Tabs.tabs>
+        """)
+
+      assert html =~ ~s(id="settings-tab-0")
+    end
+  end
 end

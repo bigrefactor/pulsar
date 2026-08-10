@@ -34,15 +34,15 @@ defmodule Mix.Tasks.Pulsar.Gen.Flash do
 
     ```elixir
     # Basic flash notification
-    <.flash color="success">Changes saved successfully!</.flash>
+    <.flash id="saved" color="success">Changes saved successfully!</.flash>
 
     # Flash with close button
-    <.flash color="danger" dismissible>
+    <.flash id="save-failed" color="danger" dismissible>
       Unable to save changes
     </.flash>
 
     # Flash with icon and auto-dismiss
-    <.flash color="info" auto_dismiss dismiss_after={3000}>
+    <.flash id="new-feature" color="info" auto_dismiss dismiss_after={3000}>
       <:start_icon>
         <.icon name="hero-information-circle-mini" size="sm" />
       </:start_icon>
@@ -50,7 +50,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Flash do
     </.flash>
 
     # Custom styled flash
-    <.flash variant="outline" color="warning" dismissible>
+    <.flash id="destructive-warning" variant="outline" color="warning" dismissible>
       <:start_icon>
         <.icon name="hero-exclamation-triangle-mini" size="sm" />
       </:start_icon>

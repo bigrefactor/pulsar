@@ -1,0 +1,130 @@
+defmodule <%= @component_namespace %>.SidebarTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Sidebar
+
+  # `sidebar` requires an `id`: it carries the colocated hook, and the toggle
+  # helpers target the panel by that id. The tests assert the server-rendered
+  # landmark, regions and state attributes, not the hook's runtime behavior.
+
+  describe "sidebar/1" do
+    test "renders a nav landmark carrying the caller's id" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Sidebar.sidebar id="nav" label="Main navigation">Links</Sidebar.sidebar>
+        """)
+
+      assert html =~ "<nav"
+      assert html =~ ~s(id="nav")
+      assert html =~ ~s(aria-label="Main navigation")
+      assert html =~ ~s(data-state="expanded")
+      assert html =~ "Links"
+    end
+
+    test "renders header, content and footer regions" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Sidebar.sidebar id="nav" label="Main navigation">
+          <:header>Acme</:header>
+          Links
+          <:footer>Signed in</:footer>
+        </Sidebar.sidebar>
+        """)
+
+      assert html =~ "Acme"
+      assert html =~ "Links"
+      assert html =~ "Signed in"
+    end
+
+    test "renders collapsed when open is false" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Sidebar.sidebar id="nav" label="Main navigation" open={false}>Links</Sidebar.sidebar>
+        """)
+
+      assert html =~ ~s(data-state="collapsed")
+    end
+
+    test "renders every side" do
+      for side <- ~w(left right) do
+        assigns = %{side: side}
+
+        html =
+          rendered_to_string(~H"""
+          <Sidebar.sidebar id="nav" label="Main navigation" side={@side}>Links</Sidebar.sidebar>
+          """)
+
+        assert html =~ ~s(data-side=) <> inspect(side)
+      end
+    end
+
+    test "renders every collapsible mode" do
+      for collapsible <- ~w(icon offcanvas none) do
+        assigns = %{collapsible: collapsible}
+
+        html =
+          rendered_to_string(~H"""
+          <Sidebar.sidebar id="nav" label="Main navigation" collapsible={@collapsible}>
+            Links
+          </Sidebar.sidebar>
+          """)
+
+        assert html =~ ~s(data-collapsible=) <> inspect(collapsible)
+      end
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(solid outline ghost elevated) do
+        assigns = %{variant: variant}
+
+        html =
+          rendered_to_string(~H"""
+          <Sidebar.sidebar id="nav" label="Main navigation" variant={@variant}>
+            Links
+          </Sidebar.sidebar>
+          """)
+
+        assert html =~ "Links"
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{color: color}
+
+        html =
+          rendered_to_string(~H"""
+          <Sidebar.sidebar id="nav" label="Main navigation" color={@color}>
+            Links
+          </Sidebar.sidebar>
+          """)
+
+        assert html =~ "Links"
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <Sidebar.sidebar id="nav" label="Main navigation" size={@size}>
+            Links
+          </Sidebar.sidebar>
+          """)
+
+        assert html =~ "Links"
+      end
+    end
+  end
+end

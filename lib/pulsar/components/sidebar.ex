@@ -71,11 +71,6 @@ defmodule Pulsar.Components.Sidebar do
   alias Phoenix.LiveView.JS
   alias Phoenix.LiveView.Rendered
 
-  # Inline ID generator
-  defp generate_id(prefix \\ "sidebar") do
-    "#{prefix}-#{System.unique_integer([:positive])}"
-  end
-
   # ============================================================================
   # CONFIGURATION & CONSTANTS
   # ============================================================================
@@ -173,7 +168,7 @@ defmodule Pulsar.Components.Sidebar do
   # COMPONENT
   # ============================================================================
 
-  attr(:id, :string, doc: "Panel ID (auto-generated if omitted). Targeted by the toggle helpers.")
+  attr(:id, :string, required: true, doc: "Panel ID. Targeted by the toggle helpers.")
 
   attr(:side, :string,
     default: "left",
@@ -250,8 +245,6 @@ defmodule Pulsar.Components.Sidebar do
   """
   @spec sidebar(map()) :: Rendered.t()
   def sidebar(assigns) do
-    assigns = assign_new(assigns, :id, fn -> generate_id() end)
-
     assigns =
       assign(
         assigns,

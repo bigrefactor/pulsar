@@ -1056,4 +1056,99 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ ~s(phx-value-option="elixir")
     end
   end
+
+  describe "select/1 id resolution" do
+    test "falls back to name when a bound field has no id" do
+      assigns = %{
+        field: %FormField{
+          id: nil,
+          name: "user[country]",
+          value: "",
+          errors: [],
+          field: :country,
+          form: nil
+        }
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select field={@field} options={["US", "CA"]} />
+        """)
+
+      assert html =~ ~s(id="user_country")
+    end
+
+    test "a caller-supplied id wins over the name" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select id="chosen" name="skills" options={["Elixir", "Erlang"]} />
+        """)
+
+      assert select_tag(html) =~ ~s(id="chosen")
+      refute select_tag(html) =~ ~s(id="skills")
+    end
+
+    test "a caller-supplied id wins over a bound field's id" do
+      assigns = %{
+        field: %FormField{
+          id: "user_country",
+          name: "user[country]",
+          value: "",
+          errors: [],
+          field: :country,
+          form: nil
+        }
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select id="chosen" field={@field} options={["US", "CA"]} />
+        """)
+
+      assert select_tag(html) =~ ~s(id="chosen")
+      refute select_tag(html) =~ ~s(id="user_country")
+    end
+
+    test "emits a caller-supplied id exactly once on the select element" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select id="chosen" name="skills" options={["Elixir", "Erlang"]} />
+        """)
+
+      assert count_attr(select_tag(html), "id") == 1
+    end
+
+    test "emits a caller-supplied id exactly once when bound to a field" do
+      assigns = %{
+        field: %FormField{
+          id: "user_country",
+          name: "user[country]",
+          value: "",
+          errors: [],
+          field: :country,
+          form: nil
+        }
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select id="chosen" field={@field} options={["US", "CA"]} />
+        """)
+
+      assert count_attr(select_tag(html), "id") == 1
+    end
+
+    defp select_tag(html) do
+      [tag] = Regex.run(~r/<select[^>]*>/, html)
+      tag
+    end
+
+    defp count_attr(html, name) do
+      html |> String.split(~s( #{name}=)) |> length() |> Kernel.-(1)
+    end
+  end
 end

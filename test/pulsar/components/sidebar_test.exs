@@ -25,17 +25,6 @@ defmodule Pulsar.Components.SidebarTest do
       assert html =~ "PulsarSidebar"
     end
 
-    test "auto-generates an id when omitted" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <Sidebar.sidebar>Content</Sidebar.sidebar>
-        """)
-
-      assert html =~ ~s(id="sidebar-)
-    end
-
     test "renders header, content, and footer slots" do
       assigns = %{}
 
@@ -296,6 +285,19 @@ defmodule Pulsar.Components.SidebarTest do
     test "helpers compose onto an existing JS pipeline" do
       assert %JS{ops: ops} = Sidebar.toggle(JS.add_class("foo", to: "#bar"), "nav")
       assert [["add_class", _], ["dispatch", %{event: "pulsar:sidebar-toggle", to: "#nav"}]] = ops
+    end
+  end
+
+  describe "sidebar/1 id handling" do
+    test "renders the caller's id unchanged" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Sidebar.sidebar id="nav">Links</Sidebar.sidebar>
+        """)
+
+      assert html =~ ~s(id="nav")
     end
   end
 end

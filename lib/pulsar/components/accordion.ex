@@ -55,11 +55,6 @@ defmodule Pulsar.Components.Accordion do
   alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Icon
 
-  @spec generate_id(String.t()) :: String.t()
-  defp generate_id(prefix \\ "accordion") do
-    "#{prefix}-#{System.unique_integer([:positive])}"
-  end
-
   # ============================================================================
   # CONFIGURATION & CONSTANTS
   # ============================================================================
@@ -134,7 +129,7 @@ defmodule Pulsar.Components.Accordion do
   # COMPONENT
   # ============================================================================
 
-  attr(:id, :string, doc: "Accordion container id (auto-generated if omitted)")
+  attr(:id, :string, required: true, doc: "Accordion container id")
 
   attr(:type, :string,
     default: "single",
@@ -203,8 +198,6 @@ defmodule Pulsar.Components.Accordion do
   """
   @spec accordion(map()) :: Rendered.t()
   def accordion(assigns) do
-    assigns = assign_new(assigns, :id, fn -> generate_id() end)
-
     prepared = prepare_items(assigns.item, assigns.id, assigns.value, assigns.type, assigns.color)
 
     assigns =

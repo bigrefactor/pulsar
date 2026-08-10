@@ -9,6 +9,12 @@ defmodule Pulsar.DevApp.Storybook.Components.Popover do
   def attributes do
     [
       %Attr{
+        id: :id,
+        type: :string,
+        required: true,
+        doc: "Panel ID. Wires the trigger to the panel."
+      },
+      %Attr{
         id: :placement,
         type: :string,
         values:
@@ -64,24 +70,25 @@ defmodule Pulsar.DevApp.Storybook.Components.Popover do
       %Variation{
         id: :default,
         description: "Default elevated neutral popover",
+        attributes: %{id: "sb-popover-default"},
         slots: [trigger, body]
       },
       %Variation{
         id: :outline_primary,
         description: "Outline primary surface",
-        attributes: %{variant: "outline", color: "primary"},
+        attributes: %{id: "sb-popover-outline-primary", variant: "outline", color: "primary"},
         slots: [trigger, body]
       },
       %Variation{
         id: :solid_danger,
         description: "Danger surface for confirmations",
-        attributes: %{variant: "solid", color: "danger"},
+        attributes: %{id: "sb-popover-solid-danger", variant: "solid", color: "danger"},
         slots: [trigger, body]
       },
       %Variation{
         id: :top_end,
         description: "Anchored above, end-aligned",
-        attributes: %{placement: "top-end"},
+        attributes: %{id: "sb-popover-top-end", placement: "top-end"},
         slots: [trigger, body]
       }
     ]

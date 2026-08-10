@@ -27,6 +27,7 @@ defmodule Pulsar.DevApp.FlashGroupLive do
       >
         <div class="relative h-40 w-full overflow-hidden rounded border border-border">
           <FlashGroup.flash_group
+            id={"flash-group-#{position}"}
             flash={@flash}
             position={position}
             data-fixture-cell={"position-#{position}"}

@@ -18,7 +18,7 @@ defmodule <%= @web_module %>.Storybook.Components.Table do
       %Attr{
         id: :id,
         type: :string,
-        default: nil,
+        required: true,
         doc: "Table ID"
       },
       %Attr{

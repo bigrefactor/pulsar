@@ -1,0 +1,101 @@
+defmodule <%= @component_namespace %>.DrawerTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+  import Phoenix.Component
+
+  alias <%= @component_namespace %>.Drawer
+
+  # `drawer` requires an `id` (the open/close helpers target it) and a default
+  # slot. It renders a native `<dialog>` that the `open/2` helper shows, so the
+  # markup under test is the closed panel; the tests assert the server-rendered
+  # id wiring, title, and slots, not open state.
+
+  describe "drawer/1" do
+    test "renders a dialog with the caller's id, title, and body" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Drawer.drawer id="filters" title="Filters">
+          <:description>Narrow the results.</:description>
+          Body content
+          <:footer>Apply</:footer>
+        </Drawer.drawer>
+        """)
+
+      assert html =~ "<dialog"
+      assert html =~ ~s(id="filters")
+      assert html =~ ~s(aria-labelledby="filters-title")
+      assert html =~ ~s(aria-describedby="filters-desc")
+      assert html =~ "Filters"
+      assert html =~ "Narrow the results."
+      assert html =~ "Body content"
+      assert html =~ "Apply"
+    end
+
+    test "renders every side" do
+      for side <- ~w(right left top bottom) do
+        assigns = %{side: side}
+
+        html =
+          rendered_to_string(~H"""
+          <Drawer.drawer id="d" title="Title" side={@side}>Body</Drawer.drawer>
+          """)
+
+        assert html =~ "<dialog"
+        assert html =~ "Body"
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(sm md lg xl) do
+        assigns = %{size: size}
+
+        html =
+          rendered_to_string(~H"""
+          <Drawer.drawer id="d" title="Title" size={@size}>Body</Drawer.drawer>
+          """)
+
+        assert html =~ "<dialog"
+      end
+    end
+
+    test "renders every variant" do
+      for variant <- ~w(solid outline ghost elevated) do
+        assigns = %{variant: variant}
+
+        html =
+          rendered_to_string(~H"""
+          <Drawer.drawer id="d" title="Title" variant={@variant}>Body</Drawer.drawer>
+          """)
+
+        assert html =~ "<dialog"
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{color: color}
+
+        html =
+          rendered_to_string(~H"""
+          <Drawer.drawer id="d" title="Title" color={@color}>Body</Drawer.drawer>
+          """)
+
+        assert html =~ "<dialog"
+      end
+    end
+
+    test "dismissable={false} drops the close button" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Drawer.drawer id="d" title="Confirm" dismissable={false}>Body</Drawer.drawer>
+        """)
+
+      refute html =~ ~s(aria-label="Close")
+    end
+  end
+end

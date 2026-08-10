@@ -628,4 +628,59 @@ defmodule Pulsar.Components.InputTest do
       assert html =~ "<span>Complex</span>"
     end
   end
+
+  describe "input/1 id resolution" do
+    test "falls back to name when unbound and given no id" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Input.input name="email" value="" />
+        """)
+
+      assert html =~ ~s(id="email")
+    end
+
+    test "falls back to name when a bound field has no id" do
+      assigns = %{
+        field: %FormField{
+          id: nil,
+          name: "user[email]",
+          value: "",
+          errors: [],
+          field: :email,
+          form: nil
+        }
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <Input.input field={@field} />
+        """)
+
+      assert html =~ ~s(id="user_email")
+    end
+
+    test "prefers field.id over name" do
+      assigns = %{field: to_form(%{"email" => ""}, as: :user)[:email]}
+
+      html =
+        rendered_to_string(~H"""
+        <Input.input field={@field} name="explicit" />
+        """)
+
+      assert html =~ ~s(id="user_email")
+    end
+
+    test "prefers a caller id over field.id and name" do
+      assigns = %{field: to_form(%{"email" => ""}, as: :user)[:email]}
+
+      html =
+        rendered_to_string(~H"""
+        <Input.input id="custom" field={@field} name="explicit" />
+        """)
+
+      assert html =~ ~s(id="custom")
+    end
+  end
 end

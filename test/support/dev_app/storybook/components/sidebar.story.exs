@@ -9,6 +9,12 @@ defmodule Pulsar.DevApp.Storybook.Components.Sidebar do
   def attributes do
     [
       %Attr{
+        id: :id,
+        type: :string,
+        required: true,
+        doc: "Panel ID. Targeted by the toggle helpers."
+      },
+      %Attr{
         id: :side,
         type: :string,
         values: ~w(left right),
@@ -85,13 +91,13 @@ defmodule Pulsar.DevApp.Storybook.Components.Sidebar do
       %Variation{
         id: :default,
         description: "Default solid neutral sidebar",
-        attributes: %{class: "h-96"},
+        attributes: %{id: "sb-sidebar-default", class: "h-96"},
         slots: [nav]
       },
       %Variation{
         id: :with_header_and_footer,
         description: "Sidebar with brand header and account footer",
-        attributes: %{class: "h-96"},
+        attributes: %{id: "sb-sidebar-header-footer", class: "h-96"},
         slots: [
           "<:header><span class=\"font-semibold\">Acme</span></:header>",
           nav,
@@ -101,25 +107,25 @@ defmodule Pulsar.DevApp.Storybook.Components.Sidebar do
       %Variation{
         id: :outline_primary,
         description: "Outline primary surface",
-        attributes: %{variant: "outline", color: "primary", class: "h-96"},
+        attributes: %{id: "sb-sidebar-outline-primary", variant: "outline", color: "primary", class: "h-96"},
         slots: [nav]
       },
       %Variation{
         id: :elevated,
         description: "Elevated surface with shadow",
-        attributes: %{variant: "elevated", class: "h-96"},
+        attributes: %{id: "sb-sidebar-elevated", variant: "elevated", class: "h-96"},
         slots: [nav]
       },
       %Variation{
         id: :icon_collapsible,
         description: "Collapses to an icon rail on desktop",
-        attributes: %{collapsible: "icon", class: "h-96"},
+        attributes: %{id: "sb-sidebar-icon-collapsible", collapsible: "icon", class: "h-96"},
         slots: [nav]
       },
       %Variation{
         id: :right_side,
         description: "Anchored to the right edge",
-        attributes: %{side: "right", class: "h-96"},
+        attributes: %{id: "sb-sidebar-right-side", side: "right", class: "h-96"},
         slots: [nav]
       }
     ]

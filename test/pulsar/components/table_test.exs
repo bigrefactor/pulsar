@@ -478,32 +478,18 @@ defmodule Pulsar.Components.TableTest do
     end
   end
 
-  describe "ID handling" do
-    test "generates ID when not provided" do
-      assigns = %{users: [%{name: "Alice"}]}
+  describe "table/1 id handling" do
+    test "derives internal ids from the caller's id" do
+      assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <Table.table rows={@users}>
-          <:col :let={user} label="Name">{user.name}</:col>
+        <Table.table id="users" rows={[%{name: "Ada"}]}>
+          <:col :let={u} label="Name">{u.name}</:col>
         </Table.table>
         """)
 
-      # Should have generated ID on tbody for stream updates
-      assert html =~ ~r/id="table-\d+-tbody"/
-    end
-
-    test "uses provided ID when given" do
-      assigns = %{users: [%{name: "Alice"}]}
-
-      html =
-        rendered_to_string(~H"""
-        <Table.table id="my-custom-table" rows={@users}>
-          <:col :let={user} label="Name">{user.name}</:col>
-        </Table.table>
-        """)
-
-      assert html =~ ~s(id="my-custom-table-tbody")
+      assert html =~ ~s(id="users-tbody")
     end
   end
 

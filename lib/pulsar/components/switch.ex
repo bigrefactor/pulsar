@@ -234,6 +234,19 @@ defmodule Pulsar.Components.Switch do
     "#{prefix}-#{System.unique_integer([:positive])}"
   end
 
+  defp id_from_name(nil), do: nil
+
+  defp id_from_name(name) do
+    name
+    |> String.trim_trailing("]")
+    |> String.replace(~r/\W+/u, "_")
+  end
+
+  defp resolve_id(assigns, nil), do: assigns[:id] || id_from_name(assigns[:name]) || generate_id("switch")
+
+  defp resolve_id(assigns, field),
+    do: assigns[:id] || field.id || id_from_name(assigns[:name] || field.name) || generate_id("switch")
+
   defp normalize_field_props(assigns) do
     field = assigns[:field]
 
@@ -241,14 +254,14 @@ defmodule Pulsar.Components.Switch do
       %{
         checked: checked?(field.value, assigns[:value] || "true"),
         errors: field.errors || [],
-        id: assigns[:id] || field.id || generate_id("switch"),
+        id: resolve_id(assigns, field),
         name: assigns[:name] || field.name
       }
     else
       %{
         checked: assigns[:checked] || false,
         errors: [],
-        id: assigns[:id] || generate_id("switch"),
+        id: resolve_id(assigns, nil),
         name: assigns[:name]
       }
     end
@@ -295,7 +308,7 @@ defmodule Pulsar.Components.Switch do
   # Core attributes
   attr(:id, :string,
     default: nil,
-    doc: "Switch ID (auto-generated if not provided)"
+    doc: "Switch ID (from field or name if not provided)"
   )
 
   attr(:name, :string,

@@ -136,4 +136,39 @@ defmodule Pulsar.Components.DatePickerTest do
       assert html =~ "bg-surface-2"
     end
   end
+
+  describe "date_picker/1 id resolution" do
+    test "raises when given neither an id nor a field" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/<\.date_picker> requires an :id/, fn ->
+        rendered_to_string(~H"""
+        <DatePicker.date_picker />
+        """)
+      end
+    end
+
+    test "derives its id from a bound field" do
+      form = to_form(%{"starts_on" => nil}, as: :user)
+      assigns = %{field: form[:starts_on]}
+
+      html =
+        rendered_to_string(~H"""
+        <DatePicker.date_picker field={@field} />
+        """)
+
+      assert html =~ ~s(id="date-picker-user_starts_on")
+    end
+
+    test "renders the caller's id unchanged" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DatePicker.date_picker id="picker" />
+        """)
+
+      assert html =~ ~s(id="picker")
+    end
+  end
 end
