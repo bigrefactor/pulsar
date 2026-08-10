@@ -73,3 +73,6 @@ pulsar-*.tar
 
 # Visual brainstorming companion (superpowers)
 .superpowers/
+
+# Isolated implementation worktrees
+/.worktrees/
