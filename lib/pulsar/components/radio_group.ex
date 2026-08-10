@@ -890,7 +890,7 @@ defmodule Pulsar.Components.RadioGroup do
   @spec card_state_classes(boolean(), boolean()) :: String.t()
   defp card_state_classes(disabled, invalid) do
     [
-      disabled && "opacity-disabled cursor-not-allowed",
+      disabled && "opacity-disabled cursor-not-allowed pointer-events-none",
       invalid && "border-danger ring-1 ring-danger ring-offset-1"
     ]
     |> Enum.filter(& &1)

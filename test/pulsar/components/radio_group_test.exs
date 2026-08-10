@@ -515,6 +515,24 @@ defmodule Pulsar.Components.RadioGroupTest do
       assert html =~ ~s(data-disabled="true")
     end
 
+    test "disabled cards do not respond to hover" do
+      assigns = %{}
+
+      for variant <- ~w(solid outline ghost) do
+        assigns = Map.put(assigns, :variant, variant)
+
+        html =
+          rendered_to_string(~H"""
+          <.radio_group name="plan" card variant={@variant} color="primary" disabled>
+            <:option value="basic">Basic Plan</:option>
+          </.radio_group>
+          """)
+
+        assert html =~ "pointer-events-none"
+        assert html =~ "cursor-not-allowed"
+      end
+    end
+
     test "individual option disabled state" do
       assigns = %{}
 
