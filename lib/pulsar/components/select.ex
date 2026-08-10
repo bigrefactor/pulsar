@@ -195,6 +195,8 @@ defmodule Pulsar.Components.Select do
   attr(:field, FormField, default: nil, doc: "Phoenix form field")
 
   # Core attributes
+  attr(:id, :string, doc: "Select ID (from field or name if not provided)")
+
   attr(:name, :string,
     default: nil,
     doc: "Select name (from field if not provided)"

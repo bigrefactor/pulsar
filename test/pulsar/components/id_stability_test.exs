@@ -1,4 +1,26 @@
 defmodule Pulsar.Components.IdStabilityTest do
+  @moduledoc """
+  Renders every component twice and asserts the markup is byte-identical, so a
+  component that starts minting a fresh id per render fails here immediately.
+
+  Four branches are deliberately left uncovered, because they still generate an
+  id on every render by design. Adding a case for any of them produces a red
+  test that reflects the design, not a bug — do not "complete the matrix":
+
+    * `alert` when `dismissible` — the id exists only so the dismiss button can
+      point `aria-controls` at it, within the same render.
+    * `menu_section` with a `label` — same, for the label's `aria-labelledby`.
+    * `dropdown_menu_group` with a `label` — same.
+    * `button` with `as={:a}` or `as={:div}` — LiveView requires an id on a
+      `phx-hook` root, and these branches accept `href`/`navigate`, so the id
+      cannot be made required. The hook attaches listeners and holds no client
+      state, so remounting it on a churned id costs nothing.
+
+  Every one of these is a branch of a component that IS covered here in its
+  other form, so a regression that reintroduces a generated id elsewhere in the
+  same component still fails.
+  """
+
   use ExUnit.Case, async: true
 
   import Phoenix.Component
@@ -331,6 +353,7 @@ defmodule Pulsar.Components.IdStabilityTest do
       {Menu, :menu_section},
       {Navbar, :navbar},
       {RadioGroup, :radio_group},
+      {Select, :select},
       {Switch, :switch},
       {Textarea, :textarea}
     ]
