@@ -181,7 +181,7 @@ defmodule Pulsar.Components.NavbarTest do
       assert html =~ "shadow-dropdown"
     end
 
-    test "neutral solid uses a panel surface token" do
+    test "neutral solid uses the strong border token for its shell seam" do
       assigns = %{}
 
       html =
@@ -192,6 +192,22 @@ defmodule Pulsar.Components.NavbarTest do
         """)
 
       assert html =~ "bg-surface-1"
+      [_, class] = Regex.run(~r/<header[^>]*class="([^"]*)"/, html)
+      assert "border-border-strong" in String.split(class)
+    end
+
+    test "neutral outline uses the strong border token for its shell seam" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Navbar.navbar id="bar" variant="outline" color="neutral">
+          <:left>x</:left>
+        </Navbar.navbar>
+        """)
+
+      [_, class] = Regex.run(~r/<header[^>]*class="([^"]*)"/, html)
+      assert "border-border-strong" in String.split(class)
     end
   end
 

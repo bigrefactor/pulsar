@@ -34,7 +34,7 @@
 
   --color-border: var(--color-gray-800);
   --color-border-subtle: var(--color-gray-800);
-  --color-border-strong: var(--color-gray-400);
+  --color-border-strong: var(--color-gray-500);
   --color-input: var(--color-gray-500);
   --color-ring: var(--color-primary-400);
 

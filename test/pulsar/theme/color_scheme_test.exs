@@ -51,6 +51,13 @@ defmodule Pulsar.Theme.ColorSchemeTest do
       assert css =~ ~r/\[data-theme="dark"\],\s*\.theme-dark\s*\{\s*color-scheme:\s*dark;/,
              "dark.css.eex must declare color-scheme: dark"
     end
+
+    test "uses the middle gray step for strong structural borders" do
+      css = File.read!(@dark)
+
+      assert css =~ "--color-border-strong: var(--color-gray-500);"
+      refute css =~ "--color-border-strong: var(--color-gray-400);"
+    end
   end
 
   describe "scaffold template" do

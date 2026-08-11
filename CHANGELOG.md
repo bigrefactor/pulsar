@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed - Neutral Sidebar Divider Uses the Standard Border Token
+### Fixed - Dark Shell Dividers Use a Softer Strong Border
 
-- **Neutral `solid` and `outline` sidebars now use `border-border` for their structural seam**: this prevents an overly bright divider in dark mode. Colored sidebar borders and the global token scale are unchanged.
+- **`--color-border-strong` now uses `gray-500` instead of `gray-400` in dark themes**: neutral sidebar and navbar shell seams remain visibly defined and retain at least 3:1 contrast, while no longer painting as near-white rules against the page. Light themes and colored borders are unchanged.
 
 ### Changed (Breaking) - Simplified Surface Token Hierarchy
 

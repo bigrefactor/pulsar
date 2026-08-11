@@ -88,8 +88,8 @@ responsive.
 - The menu button's focus ring uses `ring-ring` — `menu_button_classes/0`
 
 Browser measurement of the bordered cells: all pass — `outline-neutral` /
-`solid-neutral` / sizes 4.63:1 (light) via `border-border-strong`; colored
-borders 5.05–8.67:1 (light) / 6.22–10.3:1 (dark)
+`solid-neutral` / sizes 4.63:1 (light) / 3.67:1 (dark) via
+`border-border-strong`; colored borders 5.64–8.67:1 (light) / 6.22–10.3:1 (dark)
 ([light](measurements/navbar-light.md), [dark](measurements/navbar-dark.md)).
 The `--color-ring` token measures 5.02:1 (light) / 6.72:1 (dark) per the
 project ring audit.

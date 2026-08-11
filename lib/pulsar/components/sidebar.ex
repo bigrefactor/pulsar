@@ -120,7 +120,7 @@ defmodule Pulsar.Components.Sidebar do
   # Surface treatment per variant and color (semantic tokens only).
   @color_config %{
     "solid" => %{
-      "neutral" => "bg-surface-1 text-foreground border-border",
+      "neutral" => "bg-surface-1 text-foreground border-border-strong",
       "primary" => "bg-primary text-primary-foreground border-primary",
       "secondary" => "bg-secondary text-secondary-foreground border-secondary",
       "success" => "bg-success text-success-foreground border-success",
@@ -129,7 +129,7 @@ defmodule Pulsar.Components.Sidebar do
       "info" => "bg-info text-info-foreground border-info"
     },
     "outline" => %{
-      "neutral" => "bg-surface-1 text-foreground border-border",
+      "neutral" => "bg-surface-1 text-foreground border-border-strong",
       "primary" => "bg-surface-1 text-foreground border-primary",
       "secondary" => "bg-surface-1 text-foreground border-secondary",
       "success" => "bg-surface-1 text-foreground border-success",

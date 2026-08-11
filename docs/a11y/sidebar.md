@@ -75,17 +75,22 @@ rather than consuming inline width, so main content reflows to full width —
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS (decorative borders are out of scope)
 
 **Evidence:**
-- The neutral panel seam uses `border-border` in both `solid` and `outline` —
-  `lib/pulsar/components/sidebar.ex`, `color_classes/2`
+- The neutral separating border routes through `border-border-strong` (≥3:1) in
+  both `solid` and `outline` — `lib/pulsar/components/sidebar.ex`, `color_classes/2`
 - Colored `outline` borders use the saturated brand/status color —
   `color_classes/2`
+
+Browser measurement of the bordered cells: all pass — `outline-neutral` and
+`solid-neutral` 4.63:1 (light) / 3.67:1 (dark) via `border-border-strong`;
+colored borders 5.64–8.67:1 (light) / 6.22–10.3:1 (dark)
+([light](measurements/sidebar-light.md), [dark](measurements/sidebar-dark.md)).
 
 **Notes:** For colored `solid` panels the filled background provides the
 boundary and the same-hue border is decorative reinforcement; `ghost` has no
 boundary by design and `elevated` delineates with `shadow-dropdown` —
 `lib/pulsar/components/sidebar.ex`, `color_classes/2`. Per WCAG 1.4.11 understanding,
-the neutral panel seam is decorative structural separation and is not relied
-upon as the sole visual boundary of an interactive control.
+decorative container outlines are out of scope; the one neutral case where the
+border *is* the boundary uses `border-border-strong`.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
