@@ -1,10 +1,5 @@
 defmodule Pulsar.GeneratorTestHelpers do
   @moduledoc false
-  # Shared assertions for pulsar.gen.* task tests. source_content/2 reads the
-  # Igniter rewrite first. After Igniter.Test.apply_igniter!/1 clears and
-  # reloads rewrite state, it can read applied fixture content from
-  # igniter.assigns[:test_files].
-
   import ExUnit.Assertions
 
   # Asserts the file at `path` defines the module that Igniter's path
@@ -34,15 +29,9 @@ defmodule Pulsar.GeneratorTestHelpers do
   end
 
   def source_content(igniter, path) do
-    case Map.fetch(igniter.rewrite.sources, path) do
-      {:ok, source} ->
-        Rewrite.Source.get(source, :content)
+    assert {:ok, source} = Map.fetch(igniter.rewrite.sources, path),
+           "expected generated file #{path} in the igniter rewrite"
 
-      :error ->
-        assert {:ok, content} = Map.fetch(igniter.assigns[:test_files] || %{}, path),
-               "expected generated file #{path} in the igniter rewrite or test file map"
-
-        content
-    end
+    Rewrite.Source.get(source, :content)
   end
 end
