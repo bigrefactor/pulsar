@@ -6,6 +6,11 @@ defmodule Pulsar.Theme.BackgroundTokenContractTest do
   @dark Path.expand("../../../priv/templates/themes/dark.css.eex", __DIR__)
   @dev_app_css Path.expand("../../support/dev_app/assets/css/app.css", __DIR__)
   @login_story Path.expand("../../support/dev_app/storybook/examples/login.story.exs", __DIR__)
+  @reference_docs [
+    Path.expand("../../../context/pulsar-style-guide.md", __DIR__),
+    Path.expand("../../../context/pulsar-design-principles.md", __DIR__),
+    Path.expand("../../../.claude/skills/pulsar-component/references/theming-and-variants.md", __DIR__)
+  ]
 
   test "theme templates define the page ground without a redundant base surface" do
     for template <- [@light, @dark] do
@@ -34,5 +39,17 @@ defmodule Pulsar.Theme.BackgroundTokenContractTest do
 
     assert story =~ "border border-border bg-surface-1 p-8 shadow-card"
     refute story =~ "bg-surface-0"
+  end
+
+  test "contributor references describe the simplified surface hierarchy" do
+    for reference <- @reference_docs do
+      documentation = File.read!(reference)
+
+      assert documentation =~ "page ground and default control fill"
+      assert documentation =~ "first elevated surface"
+      assert documentation =~ "surface-3"
+      refute documentation =~ "surface-0"
+      refute documentation =~ "--color-surface-*"
+    end
   end
 end

@@ -91,9 +91,9 @@ All Pulsar components use semantic tokens that flip automatically with dark mode
 ### Available Semantic Tokens
 Every Pulsar theme provides these key semantic tokens:
 
-- `background` - Main background color
+- `background` - `background` is the page ground and default control fill
 - `foreground` - Main text color
-- `surface-0…3` - Surface elevation scale (0 canvas → 3 modal)
+- `surface-1…3` - Surface elevation scale (`surface-1` is the first elevated surface; `surface-3` is for modals/popovers)
 - `primary` - Primary brand color
 - `primary-foreground` - Text on primary
 - `secondary` - Secondary brand color
@@ -109,7 +109,7 @@ Every Pulsar theme provides these key semantic tokens:
 - `ring` - Focus ring color
 
 ### Switching Themes
-End‑users override tokens in their own theme CSS. Override brand palettes (`--color-primary-*`) or semantic tokens (`--color-background`, `--color-surface-*`, etc.). Components update automatically.
+End‑users override tokens in their own theme CSS. Override brand palettes (`--color-primary-*`) or semantic tokens (`--color-background`, `--color-surface-1`, `--color-surface-2`, `--color-surface-3`, etc.). Components update automatically.
 
 ## Typography with Tailwind
 

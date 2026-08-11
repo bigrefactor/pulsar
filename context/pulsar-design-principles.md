@@ -74,7 +74,7 @@ Pulsar extends Tailwind CSS's utility-first approach into the LiveView ecosystem
 ## 6. Theme System via Semantic Tokens
 **Themes use CSS custom properties exposed through Tailwind’s `@theme` and `@variant dark`.**
 
-- Semantic tokens (background, foreground, surface-*, primary, etc.) are defined in CSS
+- Semantic tokens (`background` for the page ground and default control fill, `foreground`, `surface-1`…`surface-3`, primary, etc.) are defined in CSS
 - Dark mode handled by Tailwind’s `dark` variant; consumers choose media/class/custom selector
 - Components reference semantic utilities like `bg-background`, `text-foreground`, `bg-primary`
 - Brands override tokens in their theme file; components update automatically
@@ -153,8 +153,8 @@ We use semantic color names that adapt to themes:
 
 ### Required Semantic Tokens
 Every theme provides:
-- `background`, `foreground` - Main colors
-- `surface-0…3`, `muted` / `muted-foreground` - Surfaces and subdued text
+- `background`, `foreground` - `background` is the page ground and default control fill; `foreground` is the main text color
+- `surface-1…3`, `muted` / `muted-foreground` - Elevated surfaces and subdued text; `surface-1` is the first elevated surface
 - `primary` / `primary-foreground`, `secondary` / `secondary-foreground`, `info`, `success`, `warning`, `danger`
 - `border`, `input`, `ring` - UI element colors
 

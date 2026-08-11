@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed - Page Background Token Documentation
+### Changed (Breaking) - Simplified Surface Token Hierarchy
 
-- **`--color-background` is now explicitly documented as the application/page ground**: apply `bg-background` to `<body>`. `--color-surface-0` remains independently customizable as the base of the surface elevation scale and is no longer described as the canvas/page background. Pulsar's development Storybook sandbox now demonstrates the same contract. Token names, built-in values, and default rendering are unchanged.
+- **`--color-surface-0` has been removed from generated themes**: `--color-background` is the application/page ground and default control fill, and `--color-surface-1`, `--color-surface-2`, and `--color-surface-3` are the elevation scale. **Migration:** replace `bg-surface-0` with `bg-background` and remove custom `--color-surface-0` overrides.
 
 ### Fixed - Ghost Variants No Longer Carry Card Elevation
 
