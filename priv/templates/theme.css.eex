@@ -32,8 +32,10 @@
 @import "./themes/light.css";
 @import "./themes/dark.css";
 
-body {
-  background-color: var(--color-background);
+@layer base {
+  body {
+    background-color: var(--color-background);
+  }
 }
 
 @theme inline {

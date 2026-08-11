@@ -1,5 +1,9 @@
 defmodule Pulsar.GeneratorTestHelpers do
   @moduledoc false
+
+  # Shared assertions for pulsar.gen.* task tests. Content is read from the
+  # Igniter rewrite, so calls belong between assert_creates/2 and
+  # apply_igniter!/1 in the pipe.
   import ExUnit.Assertions
 
   # Asserts the file at `path` defines the module that Igniter's path

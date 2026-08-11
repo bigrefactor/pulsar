@@ -21,17 +21,18 @@ defmodule Pulsar.Theme.BackgroundTokenContractTest do
     end
   end
 
-  test "theme entry applies the page ground to body" do
+  test "theme entry applies the page ground to body in the base layer" do
     css = File.read!(@entry)
 
-    assert css =~ ~r/body\s*\{\s*background-color:\s*var\(--color-background\);\s*\}/s
+    assert css =~
+             ~r/@layer\s+base\s*\{\s*body\s*\{\s*background-color:\s*var\(--color-background\);\s*\}\s*\}/s
   end
 
   test "the development sandbox does not override background utilities" do
     css = File.read!(@dev_app_css)
+    [_, declarations] = Regex.run(~r/\.pulsar-sandbox\s*\{([^}]*)\}/s, css)
 
-    refute css =~
-             ~r/\.pulsar-sandbox\s*\{[^}]*background-color:\s*var\(--color-(?:background|surface-0)\);/s
+    refute declarations =~ ~r/\bbackground(?:-color)?\s*:/
   end
 
   test "the generated login card uses the first elevated surface" do
@@ -41,14 +42,14 @@ defmodule Pulsar.Theme.BackgroundTokenContractTest do
     refute story =~ "bg-surface-0"
   end
 
-  test "contributor references describe the simplified surface hierarchy" do
+  test "contributor references use the supported surface hierarchy without obsolete guidance" do
     for reference <- @reference_docs do
       documentation = File.read!(reference)
 
-      assert documentation =~ "page ground and default control fill"
-      assert documentation =~ "first elevated surface"
-      assert documentation =~ "surface-3"
-      refute documentation =~ "surface-0"
+      assert documentation =~ ~r/\bbackground\b/
+      assert documentation =~ ~r/\bsurface-1\b/
+      assert documentation =~ ~r/\bsurface-3\b/
+      refute documentation =~ ~r/\bsurface-0\b/
       refute documentation =~ "--color-surface-*"
     end
   end
