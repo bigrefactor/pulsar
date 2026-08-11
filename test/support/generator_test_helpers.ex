@@ -1,8 +1,9 @@
 defmodule Pulsar.GeneratorTestHelpers do
   @moduledoc false
-  # Shared assertions for pulsar.gen.* task tests. Content is read from the
-  # Igniter rewrite, so calls belong between assert_creates/2 and
-  # apply_igniter!/1 in the pipe.
+  # Shared assertions for pulsar.gen.* task tests. source_content/2 reads the
+  # Igniter rewrite first. After Igniter.Test.apply_igniter!/1 clears and
+  # reloads rewrite state, it can read applied fixture content from
+  # igniter.assigns[:test_files].
 
   import ExUnit.Assertions
 
