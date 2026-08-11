@@ -2,148 +2,153 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Restore custom-theme discovery in the theme generator's current Igniter test environment without changing dependency versions or public behavior.
+**Goal:** Restore Igniter.Test relative-glob reload behavior and custom-theme discovery without changing Pulsar's public generator semantics.
 
-**Architecture:** Keep a canonical relative custom-theme glob for real filesystem discovery, but expand it when Igniter's `:test_mode?` assign is active so its in-memory fixture matcher compares absolute paths on both sides. Guard both branches with the existing in-memory regression and a new filesystem-backed regression, then verify the complete theme-generator test file.
+**Architecture:** Pin GlobEx to the last known-compatible release for Pulsar's development/test toolchain, then restore the ordinary relative glob in the production theme generator. Validate the dependency correction once against both independently failing in-memory generator paths; use a localized test-helper fallback only if the pin does not restore them.
 
-**Tech Stack:** Elixir, ExUnit, Igniter 0.8.3, GlobEx 0.1.12
+**Tech Stack:** Elixir, ExUnit, Igniter 0.8.3, GlobEx 0.1.11
 
 ## Global Constraints
 
-- Keep the current dependency versions.
-- Modify only custom-theme glob selection in `lib/mix/tasks/pulsar.gen.theme.ex`.
-- Retain the existing test at `test/mix/tasks/pulsar.gen.theme_test.exs` as the regression gate.
-- Add a filesystem-backed regression test that exercises Igniter outside test mode.
-- Do not preload the in-memory custom-theme fixture or change theme registration semantics.
-- Do not add a changelog entry; this restores existing intended behavior and does not change Pulsar's public contract.
+- Prefer exact `GlobEx 0.1.11` as a direct development/test dependency; do not downgrade Igniter.
+- Restore the relative custom-theme glob in `lib/mix/tasks/pulsar.gen.theme.ex`.
+- Keep the existing in-memory and filesystem-backed custom-theme tests.
+- Run one quick pin validation. If it fails at the same rewrite-reload boundary, revert the pin attempt and use the localized `source_content/2` fallback instead; never ship both.
+- Do not preload fixtures or change theme registration semantics.
+- Do not add a changelog entry; this corrects the repository's test/build dependency compatibility.
 
 ---
 
-### Task 1: Make custom-theme discovery path-compatible
+### Task 1: Correct the Igniter.Test dependency boundary
 
 **Files:**
-- Modify: `lib/mix/tasks/pulsar.gen.theme.ex:148-150`
-- Modify: `test/mix/tasks/pulsar.gen.theme_test.exs:253-285`
+- Modify: `mix.exs:110-125`
+- Modify: `mix.lock:22`
+- Modify: `lib/mix/tasks/pulsar.gen.theme.ex:148-152`
+- Preserve: `test/mix/tasks/pulsar.gen.theme_test.exs:253-295`
+- Fallback only if pin validation fails: `test/support/generator_test_helpers.ex:34-39`
 
 **Interfaces:**
-- Consumes: `Igniter.include_glob/2`, which receives an `Igniter.t()` and a glob path.
-- Produces: `reregister_custom_themes/1` supplies an absolute glob only in Igniter test mode and preserves a relative glob for production source keys; paired tests cover both branches.
+- Consumes: Igniter 0.8.3's `Igniter.Test.apply_igniter!/1`, which reloads fixture files through GlobEx; Pulsar's relative `assets/css/themes/*.css` production glob.
+- Produces: Populated `rewrite.sources` after Igniter test writes and unchanged relative source keys during real filesystem discovery.
 
-- [ ] **Step 1: Record the existing in-memory regression as green under the rejected unconditional fix**
+- [ ] **Step 1: Confirm both current regression boundaries**
 
 Run:
 
 ```bash
+mix test test/pulsar/generator_test.exs:100 --seed 652238
 mix test test/mix/tasks/pulsar.gen.theme_test.exs:253 --seed 0
 ```
 
-Expected: 1 test, 0 failures with the current unconditional `Path.expand/1` implementation. The implementer report already contains the original red evidence from the relative-glob implementation; do not revert merely to reproduce it.
+Expected before correction: the shared generator test fails because `source_content/2` cannot find the generated button after `apply_igniter!/1`; the theme test passes only because the current branch carries a theme-specific `:test_mode?` workaround.
 
-- [ ] **Step 2: Add a filesystem-backed regression test that fails under the unconditional absolute glob**
+- [ ] **Step 2: Add the exact development/test GlobEx dependency**
 
-Add this test beside the existing custom-theme re-registration test in `test/mix/tasks/pulsar.gen.theme_test.exs`:
+In `mix.exs`, directly after the `phx_new` test dependency, add:
 
 ```elixir
-@tag :tmp_dir
-test "re-registers a custom theme from the real filesystem", %{tmp_dir: tmp_dir} do
-  seeded =
-    phx_test_project()
-    |> Igniter.compose_task("pulsar.gen.theme", [])
-    |> apply_igniter!()
-    |> Igniter.compose_task("pulsar.gen.theme", ["cupcake"])
-    |> apply_igniter!()
+{:glob_ex, "0.1.11", only: [:dev, :test], runtime: false},
+```
 
-  for {path, content} <- seeded.assigns.test_files do
-    target = Path.join(tmp_dir, path)
-    File.mkdir_p!(Path.dirname(target))
-    File.write!(target, content)
+Run:
+
+```bash
+mix deps.update glob_ex
+```
+
+Expected: `mix.lock` changes GlobEx from 0.1.12 to 0.1.11 and leaves Igniter at 0.8.3.
+
+- [ ] **Step 3: Restore the ordinary relative theme glob**
+
+Replace the three-line conditional glob selection in `reregister_custom_themes/1` with:
+
+```elixir
+igniter = Igniter.include_glob(igniter, "assets/css/themes/*.css")
+```
+
+Do not change downstream path filtering or import registration.
+
+- [ ] **Step 4: Perform the one-pass pin validation**
+
+Run:
+
+```bash
+mix test test/pulsar/generator_test.exs:100 --seed 652238
+mix test test/mix/tasks/pulsar.gen.theme_test.exs:253 --seed 0
+mix test test/mix/tasks/pulsar.gen.theme_test.exs --only tmp_dir --seed 0
+```
+
+Expected preferred result: all three commands pass. If so, skip Step 5 entirely.
+
+If the shared generator or in-memory theme test still fails because `rewrite.sources` is empty after an Igniter test write, immediately revert only the attempted `mix.exs`, `mix.lock`, and theme-glob edits, then perform Step 5. Do not try another dependency version.
+
+- [ ] **Step 5: Fallback only if Step 4 fails — localize test-file lookup**
+
+Leave the original locked dependencies and theme-specific conditional glob unchanged. Replace `source_content/2` in `test/support/generator_test_helpers.ex` with:
+
+```elixir
+def source_content(igniter, path) do
+  case Map.fetch(igniter.rewrite.sources, path) do
+    {:ok, source} ->
+      Rewrite.Source.get(source, :content)
+
+    :error ->
+      assert {:ok, content} = Map.fetch(igniter.assigns[:test_files] || %{}, path),
+             "expected generated file #{path} in the igniter rewrite or test file map"
+
+      content
   end
-
-  igniter =
-    File.cd!(tmp_dir, fn ->
-      Igniter.new()
-      |> Igniter.compose_task("pulsar.gen.theme", [])
-    end)
-
-  content = source_content(igniter, "assets/css/theme.css")
-
-  assert has_import_line?(content, ~s(@import "./themes/cupcake.css";))
 end
 ```
 
-This test writes the already-generated project fixture to ExUnit's temporary directory, constructs a fresh `Igniter` without `:test_mode?`, and composes the default theme task from that project directory.
+Run the three Step 4 commands again. Expected fallback result: all pass. Do not retain the dependency pin when using this fallback.
 
-- [ ] **Step 3: Run the filesystem-backed test to verify it fails**
-
-Run:
-
-```bash
-mix test test/mix/tasks/pulsar.gen.theme_test.exs --only tmp_dir --seed 0
-```
-
-Expected: 1 failure because the unconditional absolute glob leaves absolute Rewrite source keys, which `custom_theme_file?/1` rejects.
-
-- [ ] **Step 4: Implement conditional glob selection**
-
-Replace the unconditional custom-theme glob call in `reregister_custom_themes/1` with:
-
-```elixir
-glob = "assets/css/themes/*.css"
-glob = if igniter.assigns[:test_mode?], do: Path.expand(glob), else: glob
-igniter = Igniter.include_glob(igniter, glob)
-```
-
-Do not change the downstream source-key filtering or import-registration logic.
-
-- [ ] **Step 5: Verify both discovery paths are green**
+- [ ] **Step 6: Run complete neighboring generator tests**
 
 Run:
 
 ```bash
-mix test test/mix/tasks/pulsar.gen.theme_test.exs:253 --seed 0
-mix test test/mix/tasks/pulsar.gen.theme_test.exs --only tmp_dir --seed 0
+mix test test/pulsar/generator_test.exs test/mix/tasks/pulsar.gen.theme_test.exs test/pulsar/theme/background_token_contract_test.exs test/pulsar/theme/color_scheme_test.exs
 ```
 
-Expected: both commands pass with 0 failures.
+Expected: all tests pass with 0 failures.
 
-- [ ] **Step 6: Run the complete theme-generator test file**
+- [ ] **Step 7: Verify formatting, dependency state, and template drift**
 
 Run:
 
 ```bash
-mix test test/mix/tasks/pulsar.gen.theme_test.exs
-```
-
-Expected: 27 tests, 0 failures.
-
-- [ ] **Step 7: Verify formatting and whitespace**
-
-Run:
-
-```bash
-mix format --check-formatted lib/mix/tasks/pulsar.gen.theme.ex test/mix/tasks/pulsar.gen.theme_test.exs
+mix format --check-formatted
+mix deps.unlock --check-unused
+mix pulsar.sync --check
 git diff --check
 ```
 
-Expected: both commands exit 0.
+Expected: every command exits 0; `git diff` contains either the dependency-pin route or the localized fallback route, never both.
 
-- [ ] **Step 8: Commit the corrected compatibility fix**
+- [ ] **Step 8: Commit the compatibility correction**
+
+Preferred pin route:
+
+```bash
+git add mix.exs mix.lock lib/mix/tasks/pulsar.gen.theme.ex
+git commit -m "Pin GlobEx for Igniter test compatibility"
+```
+
+Fallback route:
+
+```bash
+git add test/support/generator_test_helpers.ex
+git commit -m "Read applied Igniter test files from fixture state"
+```
+
+- [ ] **Step 9: Run the full repository gate**
 
 Run:
 
 ```bash
-git add lib/mix/tasks/pulsar.gen.theme.ex test/mix/tasks/pulsar.gen.theme_test.exs
-git commit -m "Cover custom theme discovery on the filesystem"
+mix check
 ```
 
-Expected: the commit replaces unconditional expansion with conditional glob selection and adds the filesystem regression test.
-
-- [ ] **Step 9: Re-run the original baseline selection**
-
-Run:
-
-```bash
-mix test test/pulsar/theme/color_scheme_test.exs test/mix/tasks/pulsar.gen.theme_test.exs
-```
-
-Expected: 33 tests, 0 failures; the optional built-CSS assertion may print its existing skip message when assets have not been built.
+Expected: compilation, template drift, formatting, Credo, Dialyzer, dependency audit, and all ExUnit tests pass.
