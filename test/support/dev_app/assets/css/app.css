@@ -26,7 +26,6 @@
 .pulsar-sandbox {
   font-family: var(--font-sans);
   color: var(--color-foreground);
-  background-color: var(--color-surface-0);
 }
 
 .pulsar-sandbox * {
@@ -36,7 +35,6 @@
 /* PSB stamps the selected theme class (e.g. `theme-dark`) onto the same
  * sandbox container that already wears .pulsar-sandbox. The .theme-dark
  * selector is matched in themes/dark.css, which overrides the semantic
- * color variables — so the `.pulsar-sandbox` rule above (which reads
- * those variables via var()) automatically picks up the dark values
- * when the class is applied. No theme-specific sandbox rule needed.
+ * color variables. Background utilities resolve those variables when the
+ * class is applied, so no theme-specific sandbox rule is needed.
  */

@@ -29,9 +29,9 @@ Use these utilities (`bg-*`, `text-*`, `border-*`, `ring-*`, `fill-*`). They all
 swap per theme:
 
 **Surfaces & text**
-- `background` / `foreground` — page base and primary text
+- `background` / `foreground` — `background` is the page ground and default control fill; `foreground` is primary text
 - `muted` / `muted-foreground` — subdued surface and secondary text
-- `surface-0` … `surface-3` (each with `-hover` / `-active` for `surface-1`/`-2`)
+- `surface-1` … `surface-3` (`surface-1` is the first elevated surface; `surface-1`/`-2` each have `-hover` / `-active`)
   — layered card/panel backgrounds
 - `input` — form-field background; `ring` — focus ring color
 

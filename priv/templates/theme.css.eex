@@ -18,12 +18,25 @@
      utility renders different colors when the attribute is set — no `dark:`
      variant required in component class strings.
 
+  Page and surface roles:
+
+  - `--color-background` is the application/page ground and default control
+    fill. Pulsar applies it to `<body>`.
+  - `--color-surface-1` is the first elevated surface, followed by
+    `--color-surface-2` and `--color-surface-3`.
+
   To add a theme: `mix pulsar.gen.theme <name>`. This scaffolds
   `themes/<name>.css` and inserts an `@import` line below.
 */
 
 @import "./themes/light.css";
 @import "./themes/dark.css";
+
+@layer base {
+  body {
+    background-color: var(--color-background);
+  }
+}
 
 @theme inline {
   /* Palette: Primary - References Tailwind's blue */

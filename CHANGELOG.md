@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed (Breaking) - Simplified Surface Token Hierarchy
+
+- **`--color-surface-0` has been removed from generated themes**: `--color-background` is the application/page ground and default control fill, and `--color-surface-1`, `--color-surface-2`, and `--color-surface-3` are the elevation scale. **Migration:** replace `bg-surface-0` with `bg-background` and remove custom `--color-surface-0` overrides.
+
 ### Fixed - `form` Ships a Default Vertical Rhythm
 
 - **`form` now stacks its children with `space-y-6`**: it applied no classes at all, so it was the only layout-bearing component in the library with no opinion about its own internal rhythm — `card`'s body is `flex flex-col p-5 gap-5`, `field` is `flex flex-col gap-2`, `header` is `flex flex-col gap-4`. A `field` followed by a `button` were siblings with no spacing between them: the field wrapper's bottom edge and the button's top edge sat at the same y-coordinate, and the button's `shadow-card` bled over the input's border, reading as an overlap. The class is merged through Twm, so a caller's own spacing wins: `class="space-y-4"` replaces the default outright. To lay a form out some other way, pass `space-y-0` alongside your own classes — `space-y` and `gap` are different Twm groups, so `class="grid grid-cols-2 gap-4"` on its own leaves both the margins and the gaps in play.
