@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - Neutral Sidebar Divider Uses the Standard Border Token
+
+- **Neutral `solid` and `outline` sidebars now use `border-border` for their structural seam**: this prevents an overly bright divider in dark mode. Colored sidebar borders and the global token scale are unchanged.
+
 ### Changed (Breaking) - Simplified Surface Token Hierarchy
 
 - **`--color-surface-0` has been removed from generated themes**: `--color-background` is the application/page ground and default control fill, and `--color-surface-1`, `--color-surface-2`, and `--color-surface-3` are the elevation scale. **Migration:** replace `bg-surface-0` with `bg-background` and remove custom `--color-surface-0` overrides.

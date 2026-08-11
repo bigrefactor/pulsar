@@ -162,7 +162,7 @@ defmodule Pulsar.Components.SidebarTest do
       assert html =~ "shadow-dropdown"
     end
 
-    test "neutral solid uses a panel surface token" do
+    test "neutral solid uses the standard border token for its panel seam" do
       assigns = %{}
 
       html =
@@ -171,6 +171,20 @@ defmodule Pulsar.Components.SidebarTest do
         """)
 
       assert html =~ "bg-surface-1"
+      assert html =~ "border-border"
+      refute html =~ "border-border-strong"
+    end
+
+    test "neutral outline uses the standard border token for its panel seam" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Sidebar.sidebar id="nav" variant="outline" color="neutral">Content</Sidebar.sidebar>
+        """)
+
+      assert html =~ "border-border"
+      refute html =~ "border-border-strong"
     end
   end
 
