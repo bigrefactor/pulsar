@@ -41,22 +41,22 @@ Columns:
 | `ghost-secondary` | `header` | 926 | 64 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `ghost-success` | `header` | 926 | 64 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
 | `ghost-warning` | `header` | 926 | 64 | ✓ | 16.98:1 ✓ | — (no-border) | — (not-focusable-in-state) |
-| `menu-button` | `header` | 926 | 64 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ (bottom) | — (not-focusable-in-state) |
+| `menu-button` | `header` | 926 | 64 | ✓ | 16.98:1 ✓ | 3.67:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `outline-danger` | `header` | 926 | 64 | ✓ | 16.98:1 ✓ | 9.25:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `outline-info` | `header` | 926 | 64 | ✓ | 16.98:1 ✓ | 9.81:1 ✓ (bottom) | — (not-focusable-in-state) |
-| `outline-neutral` | `header` | 926 | 64 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ (bottom) | — (not-focusable-in-state) |
+| `outline-neutral` | `header` | 926 | 64 | ✓ | 16.98:1 ✓ | 3.67:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `outline-primary` | `header` | 926 | 64 | ✓ | 16.98:1 ✓ | 6.72:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `outline-secondary` | `header` | 926 | 64 | ✓ | 16.98:1 ✓ | 6.22:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `outline-success` | `header` | 926 | 64 | ✓ | 16.98:1 ✓ | 9.98:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `outline-warning` | `header` | 926 | 64 | ✓ | 16.98:1 ✓ | 10.3:1 ✓ (bottom) | — (not-focusable-in-state) |
-| `size-lg` | `header` | 926 | 80 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ (bottom) | — (not-focusable-in-state) |
-| `size-md` | `header` | 926 | 64 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ (bottom) | — (not-focusable-in-state) |
-| `size-sm` | `header` | 926 | 56 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ (bottom) | — (not-focusable-in-state) |
-| `size-xl` | `header` | 926 | 96 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ (bottom) | — (not-focusable-in-state) |
-| `size-xs` | `header` | 926 | 48 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ (bottom) | — (not-focusable-in-state) |
+| `size-lg` | `header` | 926 | 80 | ✓ | 16.98:1 ✓ | 3.67:1 ✓ (bottom) | — (not-focusable-in-state) |
+| `size-md` | `header` | 926 | 64 | ✓ | 16.98:1 ✓ | 3.67:1 ✓ (bottom) | — (not-focusable-in-state) |
+| `size-sm` | `header` | 926 | 56 | ✓ | 16.98:1 ✓ | 3.67:1 ✓ (bottom) | — (not-focusable-in-state) |
+| `size-xl` | `header` | 926 | 96 | ✓ | 16.98:1 ✓ | 3.67:1 ✓ (bottom) | — (not-focusable-in-state) |
+| `size-xs` | `header` | 926 | 48 | ✓ | 16.98:1 ✓ | 3.67:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `solid-danger` | `header` | 926 | 64 | ✓ | 10.49:1 ✓ | 9.25:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `solid-info` | `header` | 926 | 64 | ✓ | 11.13:1 ✓ | 9.81:1 ✓ (bottom) | — (not-focusable-in-state) |
-| `solid-neutral` | `header` | 926 | 64 | ✓ | 16.98:1 ✓ | 6.82:1 ✓ (bottom) | — (not-focusable-in-state) |
+| `solid-neutral` | `header` | 926 | 64 | ✓ | 16.98:1 ✓ | 3.67:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `solid-primary` | `header` | 926 | 64 | ✓ | 7.63:1 ✓ | 6.72:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `solid-secondary` | `header` | 926 | 64 | ✓ | 7.06:1 ✓ | 6.22:1 ✓ (bottom) | — (not-focusable-in-state) |
 | `solid-success` | `header` | 926 | 64 | ✓ | 11.32:1 ✓ | 9.98:1 ✓ (bottom) | — (not-focusable-in-state) |

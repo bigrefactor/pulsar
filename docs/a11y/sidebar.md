@@ -81,9 +81,9 @@ rather than consuming inline width, so main content reflows to full width —
   `color_classes/2`
 
 Browser measurement of the bordered cells: all pass — `outline-neutral` and
-`solid-neutral` 4.63:1 (light) via `border-border-strong`; colored borders 5.05–8.67:1
-(light) / 6.22–9.81:1 (dark) ([light](measurements/sidebar-light.md),
-[dark](measurements/sidebar-dark.md)).
+`solid-neutral` 4.63:1 (light) / 3.67:1 (dark) via `border-border-strong`;
+colored borders 5.64–8.67:1 (light) / 6.22–10.3:1 (dark)
+([light](measurements/sidebar-light.md), [dark](measurements/sidebar-dark.md)).
 
 **Notes:** For colored `solid` panels the filled background provides the
 boundary and the same-hue border is decorative reinforcement; `ghost` has no

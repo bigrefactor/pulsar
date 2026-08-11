@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - Dark Shell Dividers Use a Softer Strong Border
+
+- **`--color-border-strong` now uses `gray-500` instead of `gray-400` in dark themes**: neutral sidebar and navbar shell seams remain visibly defined and retain at least 3:1 contrast, while no longer painting as near-white rules against the page. Light themes and colored borders are unchanged.
+
 ### Changed (Breaking) - Simplified Surface Token Hierarchy
 
 - **`--color-surface-0` has been removed from generated themes**: `--color-background` is the application/page ground and default control fill, and `--color-surface-1`, `--color-surface-2`, and `--color-surface-3` are the elevation scale. **Migration:** replace `bg-surface-0` with `bg-background` and remove custom `--color-surface-0` overrides.
