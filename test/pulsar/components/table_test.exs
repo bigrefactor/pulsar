@@ -448,7 +448,7 @@ defmodule Pulsar.Components.TableTest do
     test "adds keyboard accessibility attributes when row_click provided" do
       assigns = %{
         handle_click: fn _user -> nil end,
-        users: [%{id: 1, name: "Alice"}]
+        users: [%{id: 1, name: "Alice"}, %{id: 2, name: "Bob"}]
       }
 
       html =
@@ -460,8 +460,80 @@ defmodule Pulsar.Components.TableTest do
 
       assert html =~ ~s(tabindex="0")
       assert html =~ ~s(role="button")
-      assert html =~ ~s(phx-hook=".PulsarTableRow")
+      assert html =~ ~s(id="users-row-0")
+      assert html =~ ~s(id="users-row-1")
+      assert html =~ ~s(phx-hook="Pulsar.Components.Table.PulsarTableRow")
+      assert length(Regex.scan(~r/phx-hook="Pulsar\.Components\.Table\.PulsarTableRow"/, html)) == 1
+      assert html =~ ~r/<tbody[^>]*phx-hook="Pulsar\.Components\.Table\.PulsarTableRow"/
+      assert html =~ ~s(data-row-click="true")
+      refute html =~ ~s(phx-hook=".PulsarTableRow")
       assert html =~ ~s(focus-visible:outline-none focus-visible:ring-2)
+    end
+
+    test "renders a non-clickable row without row interaction markers" do
+      assigns = %{users: [%{name: "Alice"}]}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="users" rows={@users}>
+          <:col :let={user} label="Name">{user.name}</:col>
+        </Table.table>
+        """)
+
+      assert html =~ ~s(id="users-row-0")
+      assert html =~ ~s(phx-hook="Pulsar.Components.Table.PulsarTableRow")
+      refute html =~ ~s(data-row-click)
+      refute html =~ ~s(role="button")
+      refute html =~ ~s(tabindex="0")
+    end
+
+    test "treats false row_click as non-interactive" do
+      assigns = %{users: [%{name: "Alice"}], row_click: false}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="users" rows={@users} row_click={@row_click}>
+          <:col :let={user} label="Name">{user.name}</:col>
+        </Table.table>
+        """)
+
+      assert html =~ ~s(id="users-row-0")
+      assert html =~ ~s(phx-hook="Pulsar.Components.Table.PulsarTableRow")
+      refute html =~ ~s(data-row-click)
+      refute html =~ ~s(role="button")
+      refute html =~ ~s(tabindex="0")
+    end
+
+    test "uses row_id instead of the fallback row id" do
+      assigns = %{users: [%{id: 1, name: "Alice"}], row_id: fn user -> "custom-user-#{user.id}" end}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="users" rows={@users} row_id={@row_id}>
+          <:col :let={user} label="Name">{user.name}</:col>
+        </Table.table>
+        """)
+
+      assert html =~ ~s(id="custom-user-1")
+      refute html =~ ~s(id="users-row-0")
+    end
+
+    test "falls back when row_id returns nil or an empty string" do
+      assigns = %{
+        users: [%{name: "Alice", dom_id: nil}, %{name: "Bob", dom_id: ""}],
+        row_id: & &1.dom_id
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="users" rows={@users} row_id={@row_id} row_click={fn _user -> nil end}>
+          <:col :let={user} label="Name">{user.name}</:col>
+        </Table.table>
+        """)
+
+      assert html =~ ~s(id="users-row-0")
+      assert html =~ ~s(id="users-row-1")
+      assert html =~ ~s(phx-hook="Pulsar.Components.Table.PulsarTableRow")
     end
 
     test "decorative SVG has aria-hidden" do
@@ -546,6 +618,37 @@ defmodule Pulsar.Components.TableTest do
         """)
 
       assert html =~ ~s(phx-update="stream")
+      assert html =~ ~s(id="users-1")
+    end
+
+    test "preserves stream ids while mounting the clickable-row hook" do
+      stream = LiveStream.new(:users, 0, [%{id: 1, name: "Alice"}], dom_id: &"users-#{&1.id}")
+      assigns = %{users: stream, row_click: fn _row -> nil end}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="users" rows={@users} row_click={@row_click}>
+          <:col :let={{_id, user}} label="Name">{user.name}</:col>
+        </Table.table>
+        """)
+
+      assert html =~ ~s(id="users-1")
+      assert html =~ ~s(phx-hook="Pulsar.Components.Table.PulsarTableRow")
+    end
+
+    test "preserves a caller-provided row_id for streams" do
+      stream = LiveStream.new(:users, 0, [%{id: 1, name: "Alice"}], dom_id: &"users-#{&1.id}")
+      assigns = %{users: stream, row_id: fn {_stream_id, user} -> "custom-user-#{user.id}" end}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="users" rows={@users} row_id={@row_id}>
+          <:col :let={{_id, user}} label="Name">{user.name}</:col>
+        </Table.table>
+        """)
+
+      assert html =~ ~s(id="custom-user-1")
+      refute html =~ ~s(id="users-1")
     end
   end
 

@@ -124,9 +124,9 @@ neutral `--color-ring` token at full opacity and using `focus-visible:`
 **Evidence:**
 - Row with `row_click` gets `tabindex="0"` and `role="button"` —
   `lib/pulsar/components/table.ex`, `table/1`
-- Colocated `.PulsarTableRow` hook activates on Enter or Space —
-  `lib/pulsar/components/table.ex`, `table/1`
-- Hook checks `role === "button"` before binding —
+- Colocated `.PulsarTableRow` hook delegates from the `<tbody>` to rows
+  marked `data-row-click="true"` and activates them on Enter, keypad
+  Enter, or Space —
   `lib/pulsar/components/table.ex`, `table/1`
 - Test `adds keyboard accessibility attributes when row_click provided` —
   `test/pulsar/components/table_test.exs`
@@ -214,15 +214,16 @@ Test `applies size-appropriate scroll-margin on rows so focus is not obscured` �
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 
-**Evidence:** Hook listens for `keydown` Enter/Space and triggers
-`el.click()` — `lib/pulsar/components/table.ex`, `table/1`. Native click on
-the row uses `mouseup`.
+**Evidence:** Delegated hook triggers `row.click()` for Enter and keypad
+Enter on `keydown`, and for Space on `keyup` —
+`lib/pulsar/components/table.ex`, `table/1`. Native click on the row uses
+`mouseup`.
 
 ### 2.5.3 Label in Name (A) — ✓ PASS
 
 **Evidence:** Clickable row has no `aria-label` injected by the
-component; accessible name is computed from cell text content. Callers
-can override via `rest` — `lib/pulsar/components/table.ex`, `table/1`.
+component; accessible name is computed from cell text content —
+`lib/pulsar/components/table.ex`, `table/1`.
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 

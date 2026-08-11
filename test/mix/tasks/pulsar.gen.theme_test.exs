@@ -257,6 +257,7 @@ defmodule Mix.Tasks.Pulsar.Gen.ThemeTest do
         |> apply_igniter!()
         |> Igniter.compose_task("pulsar.gen.theme", ["cupcake"])
         |> apply_igniter!()
+        |> Igniter.include_existing_file("assets/css/themes/cupcake.css")
         |> Igniter.compose_task("pulsar.gen.theme", [])
 
       {:ok, source} = Map.fetch(igniter.rewrite.sources, "assets/css/theme.css")

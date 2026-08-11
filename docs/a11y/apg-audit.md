@@ -408,17 +408,17 @@ widely used by Phoenix and React table libraries for this purpose.
 
 | APG key | Action | Status | Evidence |
 |---------|--------|:------:|----------|
-| Enter | Activate | ✓ | Hook calls `el.click()` on keydown (`table.ex`, `table/1`). |
-| Space | Activate | ✓ | Hook calls `el.click()` on **keyup**, matching `button.ex`'s pseudo-button hook. Keydown is reserved for `preventDefault()` (prevent scroll) and the disabled/busy short-circuit. |
+| Enter | Activate | ✓ | Delegated hook calls `row.click()` on keydown for Enter and keypad Enter (`table.ex`, `table/1`). |
+| Space | Activate | ✓ | Delegated hook calls `row.click()` on **keyup**, matching `button.ex`'s pseudo-button hook. Keydown is reserved for `preventDefault()` to prevent scrolling. |
 
 ### WAI-ARIA roles, states, properties
 
 | APG requirement | Status | Evidence |
 |-----------------|:------:|----------|
 | Role: `button` | ✓ | `role="button"` on clickable `<tr>` (`table.ex`, `table/1`). |
-| Accessible name | ✓ | Computed from cell text content; callers can override via `{@rest}` (`table.ex`, `table/1` attr `:rest`). |
+| Accessible name | ✓ | Computed from the clickable row's cell text content (`table.ex`, `table/1`). |
 | Focusable | ✓ | `tabindex="0"` (`table.ex`, `table/1`). |
-| `aria-disabled` / `aria-busy` honored | ✓ | Hook's `isDisabledOrBusy()` short-circuits keydown, keyup, and click when the `<tr>` carries either attr. Callers can set these via `{@rest}` on the row. |
+| `aria-disabled` / `aria-busy` | N/A | Table does not expose a disabled or busy state for individual clickable rows. Table-level `aria-busy` describes loading state separately. |
 
 ### Divergences
 
