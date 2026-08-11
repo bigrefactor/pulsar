@@ -799,6 +799,34 @@ defmodule Pulsar.Components.FlashGroupTest do
   end
 
   describe "flash_group/1 id handling" do
+    test "collapses atom and string keys for the same logical flash type" do
+      assigns = %{flash: %{"info" => "String message", info: "Atom message"}}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={@flash} />
+        """)
+
+      assert length(Regex.scan(~r/id="flash-group-info"/, html)) == 1
+      assert html =~ "String message"
+      refute html =~ "Atom message"
+    end
+
+    test "preserves logical priority when equivalent keys collapse" do
+      assigns = %{
+        flash: %{"error" => "String error", error: "Atom error", info: "Info message"}
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={@flash} max_items={1} />
+        """)
+
+      assert html =~ "String error"
+      refute html =~ "Atom error"
+      refute html =~ "Info message"
+    end
+
     test "derives child ids from the default group id" do
       assigns = %{flash: %{"info" => "Saved"}}
 

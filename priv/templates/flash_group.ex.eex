@@ -498,7 +498,20 @@ defp extract_flash_messages(flash, max_items) when is_map(flash) do
   |> Enum.reject(fn {_type, message} ->
     is_nil(message) or (is_binary(message) and String.trim(message) == "")
   end)
-  |> Enum.sort_by(fn {type, _message} -> flash_priority(type) end)
+  |> Enum.reduce(%{}, fn {type, message}, messages ->
+    key = comparable_flash_key(type)
+
+    Map.update(messages, key, {flash_priority(type), type, message}, fn {priority, current_type, current_message} ->
+      if is_binary(type) do
+        {min(priority, flash_priority(type)), type, message}
+      else
+        {min(priority, flash_priority(type)), current_type, current_message}
+      end
+    end)
+  end)
+  |> Map.values()
+  |> Enum.sort_by(fn {priority, _type, _message} -> priority end)
+  |> Enum.map(fn {_priority, type, message} -> {normalize_flash_key(type), message} end)
   |> Enum.take(max_items)
 end
 
@@ -565,6 +578,9 @@ defp normalize_type(_), do: :info
 defp normalize_flash_key(type) when is_atom(type), do: Atom.to_string(type)
 defp normalize_flash_key(type) when is_binary(type), do: type
 defp normalize_flash_key(_), do: "info"
+
+defp comparable_flash_key(type) when is_atom(type) or is_binary(type), do: normalize_flash_key(type)
+defp comparable_flash_key(type), do: type
 
 # Build the per-flash dismiss callback. The default pushes "clear_flash" with
 # the dismissed key; a caller-supplied %JS{} is used as-is for every flash, and

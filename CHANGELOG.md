@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - Flash Groups Collapse Equivalent Keys
+
+- **`flash_group` now treats atom and string forms of a flash key as one logical type**: a manually assembled map containing both `:info` and `"info"` previously rendered two hook roots with the same child id. Equivalent keys now collapse before rendering, with the Phoenix-native string-keyed value taking precedence.
+
 ### Fixed - Dark Shell Dividers Use a Softer Strong Border
 
 - **`--color-border-strong` now uses `gray-500` instead of `gray-400` in dark themes**: neutral sidebar and navbar shell seams remain visibly defined and retain at least 3:1 contrast, while no longer painting as near-white rules against the page. Light themes and colored borders are unchanged.
