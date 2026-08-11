@@ -6,11 +6,7 @@ defmodule Pulsar.Theme.BackgroundTokenContractTest do
   @dark Path.expand("../../../priv/templates/themes/dark.css.eex", __DIR__)
   @dev_app_css Path.expand("../../support/dev_app/assets/css/app.css", __DIR__)
   @login_story Path.expand("../../support/dev_app/storybook/examples/login.story.exs", __DIR__)
-  @reference_docs [
-    Path.expand("../../../context/pulsar-style-guide.md", __DIR__),
-    Path.expand("../../../context/pulsar-design-principles.md", __DIR__),
-    Path.expand("../../../.claude/skills/pulsar-component/references/theming-and-variants.md", __DIR__)
-  ]
+  @reference_docs [Path.expand("../../../.claude/skills/pulsar-component/references/theming-and-variants.md", __DIR__)]
 
   test "theme templates define the page ground without a redundant base surface" do
     for template <- [@light, @dark] do

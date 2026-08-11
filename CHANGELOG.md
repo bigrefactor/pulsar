@@ -11,6 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **`--color-surface-0` has been removed from generated themes**: `--color-background` is the application/page ground and default control fill, and `--color-surface-1`, `--color-surface-2`, and `--color-surface-3` are the elevation scale. **Migration:** replace `bg-surface-0` with `bg-background` and remove custom `--color-surface-0` overrides.
 
+### Fixed - `form` Ships a Default Vertical Rhythm
+
+- **`form` now stacks its children with `space-y-6`**: it applied no classes at all, so it was the only layout-bearing component in the library with no opinion about its own internal rhythm — `card`'s body is `flex flex-col p-5 gap-5`, `field` is `flex flex-col gap-2`, `header` is `flex flex-col gap-4`. A `field` followed by a `button` were siblings with no spacing between them: the field wrapper's bottom edge and the button's top edge sat at the same y-coordinate, and the button's `shadow-card` bled over the input's border, reading as an overlap. The class is merged through Twm, so a caller's own spacing wins: `class="space-y-4"` replaces the default outright. To lay a form out some other way, pass `space-y-0` alongside your own classes — `space-y` and `gap` are different Twm groups, so `class="grid grid-cols-2 gap-4"` on its own leaves both the margins and the gaps in play.
+
+  `space-y-6` rather than `flex flex-col gap-6` deliberately: a flex column stretches its children on the cross axis, which would have made every submit button in every consuming app full-width. That is the right look for an auth card and the wrong one for a settings form, so it should not arrive as a side effect of a spacing fix. Margin-based spacing leaves intrinsic widths alone.
+- **`form`'s `required_legend` paragraph no longer carries `mb-4`**: Tailwind v4 compiles `space-y-*` to a `margin-block-end` on `:where(& > :not(:last-child))` — zero specificity — so the legend's own margin beat the form's rhythm and pinned that one gap at 16px while every other gap sat at 24px. The legend is now spaced by the form like any other child.
+- **`simple_form` no longer wraps its children in `<div class="space-y-8">`**: Pulsar had already stripped Phoenix's `mt-10 bg-white` from that element, leaving it as pure spacing indirection duplicating what the form itself now provides. Between-field spacing goes from 32px to 24px, and the gap above the `:actions` row from 32px to 24px, so a `simple_form` and a plain `form` on the same screen now agree. The actions row's `mt-2` went with it: adjacent sibling margins collapse to the larger of the two, so its 8px never had any effect — inside the old `space-y-8` wrapper either.
+
+These are rendering changes to the shipped `Pulsar.Components.Form` and `Pulsar.CoreComponents` modules, so apps that consume Pulsar as a dependency pick them up on `mix deps.update pulsar`. Apps that generated their own copies keep them until they regenerate. Any form where you had added your own spacing to work around the missing default should have that workaround removed, or it will now compose with the default.
+
+### Changed - Storybook Form Examples Use the Pulsar Form
+
+- **The generated `login` and `settings_panel` storybook examples now render `Form.form` instead of Phoenix's `<.form>`**: both are form-shaped examples, and neither demonstrated the focus-on-error hook that is the component's reason to exist. Both also dropped the spacing classes they carried, since the form now supplies that rhythm itself.
+
 ### Fixed - Ghost Variants No Longer Carry Card Elevation
 
 - **`button`'s `ghost` variant no longer renders `shadow-card hover:shadow-dropdown`**: ghost is flat chrome — no fill, no border, no lift — so it can sit in a header or toolbar without competing with the controls around it. `solid` and `outline` are unchanged and keep their elevation; `link` is unaffected. Ghost keeps its `hover:scale-[1.02] active:scale-[0.98]` press affordance — only the resting and hover shadow are gone. Anyone who wants an elevated ghost button can pass `class="shadow-card"`, which Twm composes normally.

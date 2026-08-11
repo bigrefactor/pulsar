@@ -4,6 +4,7 @@ defmodule <%= @web_module %>.Storybook.Examples.SettingsPanel do
   alias <%= @components_module %>.Button
   alias <%= @components_module %>.Divider
   alias <%= @components_module %>.Field
+  alias <%= @components_module %>.Form
   alias <%= @components_module %>.Header
 
   def doc, do: "Settings panel"
@@ -40,11 +41,7 @@ defmodule <%= @web_module %>.Storybook.Examples.SettingsPanel do
         </:actions>
       </Header.header>
 
-      <.form
-        for={@form}
-        phx-submit="save"
-        class="mt-8 space-y-6"
-      >
+      <Form.form for={@form} phx-submit="save" class="mt-8">
         <section>
           <h2 class="mb-4 text-lg font-semibold text-foreground">Profile</h2>
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -101,7 +98,7 @@ defmodule <%= @web_module %>.Storybook.Examples.SettingsPanel do
           <Button.button variant="outline" color="neutral" phx-click="cancel">Cancel</Button.button>
           <Button.button type="submit" variant="solid" color="primary">Save changes</Button.button>
         </div>
-      </.form>
+      </Form.form>
     </div>
     """
   end

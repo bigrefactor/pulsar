@@ -5,6 +5,7 @@ defmodule Pulsar.DevApp.Storybook.Examples.Login do
   alias Pulsar.Components.Button
   alias Pulsar.Components.Divider
   alias Pulsar.Components.Field
+  alias Pulsar.Components.Form
   alias Pulsar.Components.Link
 
   def doc, do: "Login form"
@@ -29,11 +30,7 @@ defmodule Pulsar.DevApp.Storybook.Examples.Login do
           </p>
         </div>
 
-        <.form
-          for={@form}
-          phx-submit="submit"
-          class="space-y-4"
-        >
+        <Form.form for={@form} phx-submit="submit">
           <Field.field field={@form[:email]} type="email" required>
             <:label>Email address</:label>
           </Field.field>
@@ -55,7 +52,7 @@ defmodule Pulsar.DevApp.Storybook.Examples.Login do
           <Button.button type="submit" variant="solid" color="primary" class="w-full">
             Sign in
           </Button.button>
-        </.form>
+        </Form.form>
 
         <Divider.divider class="my-6" />
 
