@@ -33,9 +33,15 @@ defmodule Pulsar.GeneratorTestHelpers do
   end
 
   def source_content(igniter, path) do
-    assert {:ok, source} = Map.fetch(igniter.rewrite.sources, path),
-           "expected generated file #{path} in the igniter rewrite"
+    case Map.fetch(igniter.rewrite.sources, path) do
+      {:ok, source} ->
+        Rewrite.Source.get(source, :content)
 
-    Rewrite.Source.get(source, :content)
+      :error ->
+        assert {:ok, content} = Map.fetch(igniter.assigns[:test_files] || %{}, path),
+               "expected generated file #{path} in the igniter rewrite or test file map"
+
+        content
+    end
   end
 end
