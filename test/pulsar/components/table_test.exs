@@ -581,6 +581,7 @@ defmodule Pulsar.Components.TableTest do
         """)
 
       assert html =~ ~s(phx-update="stream")
+      assert html =~ ~s(id="users-1")
     end
   end
 

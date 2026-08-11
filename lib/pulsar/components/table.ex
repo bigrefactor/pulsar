@@ -551,7 +551,6 @@ defmodule Pulsar.Components.Table do
       export default {
         mounted() {
           const el = this.el
-          if (this.el.dataset.rowClick !== "true") return
 
           const isDisabledOrBusy = () =>
             el.getAttribute("aria-disabled") === "true" ||
@@ -578,15 +577,38 @@ defmodule Pulsar.Components.Table do
             }
           }
 
-          el.addEventListener("keydown", this._onKeydown)
-          el.addEventListener("keyup", this._onKeyup)
-          el.addEventListener("click", this._onClick)
+          this._removeRowClickListeners = () => {
+            if (!this._rowClickListenersInstalled) return
+
+            el.removeEventListener("keydown", this._onKeydown)
+            el.removeEventListener("keyup", this._onKeyup)
+            el.removeEventListener("click", this._onClick)
+            this._rowClickListenersInstalled = false
+          }
+
+          this._syncRowClickListeners = () => {
+            if (this.el.dataset.rowClick !== "true") {
+              this._removeRowClickListeners()
+              return
+            }
+
+            if (this._rowClickListenersInstalled) return
+
+            el.addEventListener("keydown", this._onKeydown)
+            el.addEventListener("keyup", this._onKeyup)
+            el.addEventListener("click", this._onClick)
+            this._rowClickListenersInstalled = true
+          }
+
+          this._syncRowClickListeners()
+        },
+
+        updated() {
+          this._syncRowClickListeners()
         },
 
         destroyed() {
-          if (this._onKeydown) this.el.removeEventListener("keydown", this._onKeydown)
-          if (this._onKeyup) this.el.removeEventListener("keyup", this._onKeyup)
-          if (this._onClick) this.el.removeEventListener("click", this._onClick)
+          if (this._removeRowClickListeners) this._removeRowClickListeners()
         }
       }
     </script>
