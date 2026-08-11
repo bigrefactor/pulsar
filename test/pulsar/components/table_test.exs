@@ -448,7 +448,7 @@ defmodule Pulsar.Components.TableTest do
     test "adds keyboard accessibility attributes when row_click provided" do
       assigns = %{
         handle_click: fn _user -> nil end,
-        users: [%{id: 1, name: "Alice"}]
+        users: [%{id: 1, name: "Alice"}, %{id: 2, name: "Bob"}]
       }
 
       html =
@@ -460,8 +460,43 @@ defmodule Pulsar.Components.TableTest do
 
       assert html =~ ~s(tabindex="0")
       assert html =~ ~s(role="button")
-      assert html =~ ~s(phx-hook=".PulsarTableRow")
+      assert html =~ ~s(id="users-row-0")
+      assert html =~ ~s(id="users-row-1")
+      assert html =~ ~s(phx-hook="Pulsar.Components.Table.PulsarTableRow")
+      assert html =~ ~s(data-row-click="true")
+      refute html =~ ~s(phx-hook=".PulsarTableRow")
       assert html =~ ~s(focus-visible:outline-none focus-visible:ring-2)
+    end
+
+    test "renders a non-clickable row with fallback id and inert keyboard hook" do
+      assigns = %{users: [%{name: "Alice"}]}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="users" rows={@users}>
+          <:col :let={user} label="Name">{user.name}</:col>
+        </Table.table>
+        """)
+
+      assert html =~ ~s(id="users-row-0")
+      assert html =~ ~s(phx-hook="Pulsar.Components.Table.PulsarTableRow")
+      assert html =~ ~s(data-row-click="false")
+      refute html =~ ~s(role="button")
+      refute html =~ ~s(tabindex="0")
+    end
+
+    test "uses row_id instead of the fallback row id" do
+      assigns = %{users: [%{id: 1, name: "Alice"}], row_id: fn user -> "custom-user-#{user.id}" end}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="users" rows={@users} row_id={@row_id}>
+          <:col :let={user} label="Name">{user.name}</:col>
+        </Table.table>
+        """)
+
+      assert html =~ ~s(id="custom-user-1")
+      refute html =~ ~s(id="users-row-0")
     end
 
     test "decorative SVG has aria-hidden" do

@@ -464,29 +464,57 @@ def table(assigns) do
           </td>
         </tr>
 
-        <tr
-          :for={row <- @rows}
-          id={@row_id && @row_id.(row)}
-          phx-click={@row_click && @row_click.(@row_item.(row))}
-          phx-hook={@row_click && ".PulsarTableRow"}
-          tabindex={@row_click && "0"}
-          role={@row_click && "button"}
-          class={@row_classes}
-        >
-          <td
-            :for={col <- @col}
-            class={build_data_cell_classes(@size, col[:align], col[:class])}
+        <%%= if @is_stream do %>
+          <tr
+            :for={row <- @rows}
+            id={@row_id.(row)}
+            phx-click={@row_click && @row_click.(@row_item.(row))}
+            phx-hook=".PulsarTableRow"
+            data-row-click={to_string(@row_click != nil)}
+            tabindex={@row_click && "0"}
+            role={@row_click && "button"}
+            class={@row_classes}
           >
-            {render_slot(col, @row_item.(row))}
-          </td>
-          <td :if={@action != []} class={build_data_cell_classes(@size, "right", "w-0")}>
-            <div class="flex items-center gap-2 justify-end">
-              <span :for={action <- @action}>
-                {render_slot(action, @row_item.(row))}
-              </span>
-            </div>
-          </td>
-        </tr>
+            <td
+              :for={col <- @col}
+              class={build_data_cell_classes(@size, col[:align], col[:class])}
+            >
+              {render_slot(col, @row_item.(row))}
+            </td>
+            <td :if={@action != []} class={build_data_cell_classes(@size, "right", "w-0")}>
+              <div class="flex items-center gap-2 justify-end">
+                <span :for={action <- @action}>
+                  {render_slot(action, @row_item.(row))}
+                </span>
+              </div>
+            </td>
+          </tr>
+        <%% else %>
+          <tr
+            :for={{row, row_index} <- Enum.with_index(@rows)}
+            id={if @row_id, do: @row_id.(row), else: "#{@id}-row-#{row_index}"}
+            phx-click={@row_click && @row_click.(@row_item.(row))}
+            phx-hook=".PulsarTableRow"
+            data-row-click={to_string(@row_click != nil)}
+            tabindex={@row_click && "0"}
+            role={@row_click && "button"}
+            class={@row_classes}
+          >
+            <td
+              :for={col <- @col}
+              class={build_data_cell_classes(@size, col[:align], col[:class])}
+            >
+              {render_slot(col, @row_item.(row))}
+            </td>
+            <td :if={@action != []} class={build_data_cell_classes(@size, "right", "w-0")}>
+              <div class="flex items-center gap-2 justify-end">
+                <span :for={action <- @action}>
+                  {render_slot(action, @row_item.(row))}
+                </span>
+              </div>
+            </td>
+          </tr>
+        <%% end %>
       </tbody>
       <tbody :if={@loading} class={@tbody_classes}>
         <tr :for={_ <- 1..5} class={@row_classes}>
@@ -523,7 +551,7 @@ def table(assigns) do
     export default {
       mounted() {
         const el = this.el
-        if (el.getAttribute("role") !== "button") return
+        if (this.el.dataset.rowClick !== "true") return
 
         const isDisabledOrBusy = () =>
           el.getAttribute("aria-disabled") === "true" ||
