@@ -39,12 +39,53 @@ defmodule Pulsar.Integration.A11y.Keyboard.TableTest do
       |> assert_has("#kbd-table-activation-count", text: "0")
     end
 
+    test "a plain nested link does not activate its clickable row", %{conn: conn} do
+      session =
+        conn
+        |> visit("/keyboard/table")
+        |> A11y.await_live_connected()
+        |> press("#kbd-table-link-ada", "Enter")
+        |> assert_has("#kbd-table-selection", text: "None")
+        |> assert_has("#kbd-table-activation-count", text: "0")
+
+      PhoenixTest.Playwright.evaluate(session, "window.location.hash", fn hash ->
+        assert hash == "#plain-link-target"
+      end)
+    end
+
+    test "keypad Enter activates a clickable row", %{conn: conn} do
+      session =
+        conn
+        |> visit("/keyboard/table")
+        |> A11y.await_live_connected()
+
+      PhoenixTest.Playwright.evaluate(
+        session,
+        """
+        (() => {
+          const row = document.getElementById("kbd-table-row-0");
+          row.focus();
+          row.dispatchEvent(new KeyboardEvent("keydown", {
+            bubbles: true,
+            cancelable: true,
+            code: "NumpadEnter",
+            key: "Enter"
+          }));
+        })()
+        """
+      )
+
+      session
+      |> assert_has("#kbd-table-selection", text: "Ada")
+      |> assert_has("#kbd-table-activation-count", text: "1")
+    end
+
     test "row click listener follows updates without duplicate activation", %{conn: conn} do
       session =
         conn
         |> visit("/keyboard/table")
         |> A11y.await_live_connected()
-        |> assert_has(~s|#kbd-table-lifecycle-row-0[data-row-click="false"]|)
+        |> refute_has(~s|#kbd-table-lifecycle-row-0[data-row-click]|)
         |> click("#kbd-table-toggle-row-click")
         |> assert_has(~s|#kbd-table-lifecycle-row-0[data-row-click="true"]|)
 
@@ -69,7 +110,7 @@ defmodule Pulsar.Integration.A11y.Keyboard.TableTest do
         |> assert_has("#kbd-table-selection", text: "Ada")
         |> assert_has("#kbd-table-activation-count", text: "1")
         |> click("#kbd-table-toggle-row-click")
-        |> assert_has(~s|#kbd-table-lifecycle-row-0[data-row-click="false"]|)
+        |> refute_has(~s|#kbd-table-lifecycle-row-0[data-row-click]|)
 
       PhoenixTest.Playwright.evaluate(
         session,
@@ -90,7 +131,7 @@ defmodule Pulsar.Integration.A11y.Keyboard.TableTest do
       |> click("#kbd-table-toggle-row-click")
       |> assert_has(~s|#kbd-table-lifecycle-row-0[data-row-click="true"]|)
       |> click("#kbd-table-toggle-row-click")
-      |> assert_has(~s|#kbd-table-lifecycle-row-0[data-row-click="false"]|)
+      |> refute_has(~s|#kbd-table-lifecycle-row-0[data-row-click]|)
       |> click("#kbd-table-toggle-row-click")
       |> assert_has(~s|#kbd-table-lifecycle-row-1[data-row-click="true"]|)
       |> press("#kbd-table-lifecycle-row-1", "Enter")

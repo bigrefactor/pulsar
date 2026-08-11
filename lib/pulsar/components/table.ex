@@ -437,6 +437,7 @@ defmodule Pulsar.Components.Table do
           :if={!@loading}
           id={"#{@id}-tbody"}
           phx-update={@is_stream && "stream"}
+          phx-hook=".PulsarTableRow"
           class={@tbody_classes}
         >
           <!-- Empty state row for streams (shown via CSS :only-child when no data) -->
@@ -464,57 +465,17 @@ defmodule Pulsar.Components.Table do
             </td>
           </tr>
 
-          <%= if @is_stream do %>
-            <tr
-              :for={row <- @rows}
-              id={@row_id.(row)}
-              phx-click={@row_click && @row_click.(@row_item.(row))}
-              phx-hook=".PulsarTableRow"
-              data-row-click={to_string(!!@row_click)}
-              tabindex={@row_click && "0"}
-              role={@row_click && "button"}
-              class={@row_classes}
-            >
-              <td
-                :for={col <- @col}
-                class={build_data_cell_classes(@size, col[:align], col[:class])}
-              >
-                {render_slot(col, @row_item.(row))}
-              </td>
-              <td :if={@action != []} class={build_data_cell_classes(@size, "right", "w-0")}>
-                <div class="flex items-center gap-2 justify-end">
-                  <span :for={action <- @action}>
-                    {render_slot(action, @row_item.(row))}
-                  </span>
-                </div>
-              </td>
-            </tr>
-          <% else %>
-            <tr
-              :for={{row, row_index} <- Enum.with_index(@rows)}
-              id={if @row_id, do: @row_id.(row), else: "#{@id}-row-#{row_index}"}
-              phx-click={@row_click && @row_click.(@row_item.(row))}
-              phx-hook=".PulsarTableRow"
-              data-row-click={to_string(!!@row_click)}
-              tabindex={@row_click && "0"}
-              role={@row_click && "button"}
-              class={@row_classes}
-            >
-              <td
-                :for={col <- @col}
-                class={build_data_cell_classes(@size, col[:align], col[:class])}
-              >
-                {render_slot(col, @row_item.(row))}
-              </td>
-              <td :if={@action != []} class={build_data_cell_classes(@size, "right", "w-0")}>
-                <div class="flex items-center gap-2 justify-end">
-                  <span :for={action <- @action}>
-                    {render_slot(action, @row_item.(row))}
-                  </span>
-                </div>
-              </td>
-            </tr>
-          <% end %>
+          <.table_row
+            :for={{row_dom_id, _item} = row <- @rows_for_render}
+            row_dom_id={rendered_row_id(@is_stream, @row_id, row_dom_id, row)}
+            row={if @is_stream, do: row, else: elem(row, 1)}
+            row_click={@row_click}
+            row_item={@row_item}
+            row_classes={@row_classes}
+            size={@size}
+            col={@col}
+            action={@action}
+          />
         </tbody>
         <tbody :if={@loading} class={@tbody_classes}>
           <tr :for={_ <- 1..5} class={@row_classes}>
@@ -552,30 +513,37 @@ defmodule Pulsar.Components.Table do
         mounted() {
           const el = this.el
 
-          const isDisabledOrBusy = () =>
-            el.getAttribute("aria-disabled") === "true" ||
-            el.getAttribute("aria-busy") === "true"
+          const clickableRow = (target) => target.closest("tr[data-row-click='true']")
 
           this._onKeydown = (e) => {
-            if (e.target !== el) return
-            if (isDisabledOrBusy()) { e.preventDefault(); return }
+            const row = clickableRow(e.target)
+            if (!row || e.target !== row || !el.contains(row)) return
             if (e.code === "Space" || e.key === " ") { e.preventDefault() } // prevent scroll
-            if (e.code === "Enter") { e.preventDefault(); el.click() }
+            if (e.code === "Enter" || e.code === "NumpadEnter" || e.key === "Enter") {
+              e.preventDefault()
+              row.click()
+            }
           }
 
           this._onKeyup = (e) => {
-            if (e.target !== el) return
-            if (isDisabledOrBusy()) return
-            if (e.code === "Space" || e.key === " ") { e.preventDefault(); el.click() }
+            const row = clickableRow(e.target)
+            if (!row || e.target !== row || !el.contains(row)) return
+            if (e.code === "Space" || e.key === " ") { e.preventDefault(); row.click() }
           }
 
           this._onClick = (e) => {
-            // stopImmediatePropagation is required: LiveView binds phx-click
-            // via a bubble-phase window listener that does not check
-            // defaultPrevented, so preventDefault alone would not block it.
-            if (isDisabledOrBusy()) {
-              e.preventDefault()
-              e.stopImmediatePropagation()
+            const row = clickableRow(e.target)
+            if (!row || e.target === row || !el.contains(row)) return
+
+            const control = e.target.closest(
+              "a[href], button, input, select, textarea, summary, [role='button'], [role='link']"
+            )
+
+            // LiveView's delegated listener otherwise walks from a plain nested
+            // control up to the row and executes the row's phx-click. Descendant
+            // phx-click bindings must keep bubbling so LiveView can run them.
+            if (control && !control.hasAttribute("phx-click")) {
+              e.stopPropagation()
             }
           }
 
@@ -588,25 +556,14 @@ defmodule Pulsar.Components.Table do
             this._rowClickListenersInstalled = false
           }
 
-          this._syncRowClickListeners = () => {
-            if (this.el.dataset.rowClick !== "true") {
-              this._removeRowClickListeners()
-              return
-            }
-
-            if (this._rowClickListenersInstalled) return
-
+          this._installRowClickListeners = () => {
             el.addEventListener("keydown", this._onKeydown)
             el.addEventListener("keyup", this._onKeyup)
             el.addEventListener("click", this._onClick)
             this._rowClickListenersInstalled = true
           }
 
-          this._syncRowClickListeners()
-        },
-
-        updated() {
-          this._syncRowClickListeners()
+          this._installRowClickListeners()
         },
 
         destroyed() {
@@ -620,6 +577,62 @@ defmodule Pulsar.Components.Table do
   # ============================================================================
   # HELPER FUNCTIONS
   # ============================================================================
+
+  attr :row_dom_id, :any, required: true
+  attr :row, :any, required: true
+  attr :row_click, :any, required: true
+  attr :row_item, :any, required: true
+  attr :row_classes, :string, required: true
+  attr :size, :string, required: true
+  attr :col, :list, required: true
+  attr :action, :list, required: true
+
+  defp table_row(%{row_click: row_click} = assigns) when row_click not in [nil, false] do
+    ~H"""
+    <tr
+      id={@row_dom_id}
+      phx-click={@row_click.(@row_item.(@row))}
+      data-row-click="true"
+      tabindex="0"
+      role="button"
+      class={@row_classes}
+    >
+      <.table_row_cells row={@row} row_item={@row_item} size={@size} col={@col} action={@action} />
+    </tr>
+    """
+  end
+
+  defp table_row(assigns) do
+    ~H"""
+    <tr id={@row_dom_id} class={@row_classes}>
+      <.table_row_cells row={@row} row_item={@row_item} size={@size} col={@col} action={@action} />
+    </tr>
+    """
+  end
+
+  attr :row, :any, required: true
+  attr :row_item, :any, required: true
+  attr :size, :string, required: true
+  attr :col, :list, required: true
+  attr :action, :list, required: true
+
+  defp table_row_cells(assigns) do
+    ~H"""
+    <td
+      :for={col <- @col}
+      class={build_data_cell_classes(@size, col[:align], col[:class])}
+    >
+      {render_slot(col, @row_item.(@row))}
+    </td>
+    <td :if={@action != []} class={build_data_cell_classes(@size, "right", "w-0")}>
+      <div class="flex items-center gap-2 justify-end">
+        <span :for={action <- @action}>
+          {render_slot(action, @row_item.(@row))}
+        </span>
+      </div>
+    </td>
+    """
+  end
 
   # Emit a dev-time nudge when no accessible name is provided.
   #
@@ -663,10 +676,46 @@ defmodule Pulsar.Components.Table do
       %LiveStream{} ->
         assigns
         |> assign(:is_stream, true)
-        |> assign(:row_id, assigns.row_id || fn {id, _item} -> id end)
+        |> assign(:rows_for_render, assigns.rows)
 
-      _ ->
-        assign(assigns, :is_stream, false)
+      rows ->
+        rows_for_render =
+          rows
+          |> Enum.with_index()
+          |> Enum.map(fn {row, index} ->
+            {resolve_row_id(assigns.row_id, row, assigns.id, index), row}
+          end)
+
+        assigns
+        |> assign(:is_stream, false)
+        |> assign(:rows_for_render, rows_for_render)
+    end
+  end
+
+  defp resolve_row_id(nil, _row, table_id, index), do: "#{table_id}-row-#{index}"
+
+  defp resolve_row_id(row_id, row, table_id, index) do
+    resolve_row_id_value(row_id, row, "#{table_id}-row-#{index}")
+  end
+
+  defp rendered_row_id(false, _row_id, row_dom_id, _row), do: row_dom_id
+
+  defp rendered_row_id(true, row_id, stream_dom_id, row) do
+    resolve_row_id_value(row_id, row, stream_dom_id)
+  end
+
+  defp resolve_row_id_value(nil, _row, fallback), do: fallback
+
+  defp resolve_row_id_value(row_id, row, fallback) do
+    case row_id.(row) do
+      value when is_binary(value) ->
+        if String.trim(value) == "", do: fallback, else: value
+
+      value when value in [nil, false] ->
+        fallback
+
+      value ->
+        value
     end
   end
 
