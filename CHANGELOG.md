@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - Table Row Keyboard Activation
+
+- **`row_click` tables now resolve and mount their row hook, assign deterministic fallback IDs to non-stream rows, and activate rows with Enter or Space**: rows without an explicit or stream-supplied id receive a stable zero-based id, while custom and LiveView stream ids remain unchanged.
+
 ### Fixed - Dark Shell Dividers Use a Softer Strong Border
 
 - **`--color-border-strong` now uses `gray-500` instead of `gray-400` in dark themes**: neutral sidebar and navbar shell seams remain visibly defined and retain at least 3:1 contrast, while no longer painting as near-white rules against the page. Light themes and colored borders are unchanged.
