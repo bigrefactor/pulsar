@@ -24,6 +24,21 @@ defmodule Pulsar.Integration.A11y.Keyboard.TableTest do
       |> assert_has("#kbd-table-selection", text: "Grace")
     end
 
+    test "nested action buttons keep their keyboard activation", %{conn: conn} do
+      conn
+      |> visit("/keyboard/table")
+      |> A11y.await_live_connected()
+      |> press("#kbd-table-action-ada", "Enter")
+      |> assert_has("#kbd-table-action-selection", text: "Ada")
+      |> assert_has("#kbd-table-action-count", text: "1")
+      |> assert_has("#kbd-table-selection", text: "None")
+      |> assert_has("#kbd-table-activation-count", text: "0")
+      |> press("#kbd-table-action-ada", "Space")
+      |> assert_has("#kbd-table-action-count", text: "2")
+      |> assert_has("#kbd-table-selection", text: "None")
+      |> assert_has("#kbd-table-activation-count", text: "0")
+    end
+
     test "row click listener follows updates without duplicate activation", %{conn: conn} do
       session =
         conn

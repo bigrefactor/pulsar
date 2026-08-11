@@ -485,6 +485,22 @@ defmodule Pulsar.Components.TableTest do
       refute html =~ ~s(tabindex="0")
     end
 
+    test "treats false row_click as non-interactive" do
+      assigns = %{users: [%{name: "Alice"}], row_click: false}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="users" rows={@users} row_click={@row_click}>
+          <:col :let={user} label="Name">{user.name}</:col>
+        </Table.table>
+        """)
+
+      assert html =~ ~s(id="users-row-0")
+      assert html =~ ~s(data-row-click="false")
+      refute html =~ ~s(role="button")
+      refute html =~ ~s(tabindex="0")
+    end
+
     test "uses row_id instead of the fallback row id" do
       assigns = %{users: [%{id: 1, name: "Alice"}], row_id: fn user -> "custom-user-#{user.id}" end}
 

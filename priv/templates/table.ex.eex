@@ -470,7 +470,7 @@ def table(assigns) do
             id={@row_id.(row)}
             phx-click={@row_click && @row_click.(@row_item.(row))}
             phx-hook=".PulsarTableRow"
-            data-row-click={to_string(@row_click != nil)}
+            data-row-click={to_string(!!@row_click)}
             tabindex={@row_click && "0"}
             role={@row_click && "button"}
             class={@row_classes}
@@ -495,7 +495,7 @@ def table(assigns) do
             id={if @row_id, do: @row_id.(row), else: "#{@id}-row-#{row_index}"}
             phx-click={@row_click && @row_click.(@row_item.(row))}
             phx-hook=".PulsarTableRow"
-            data-row-click={to_string(@row_click != nil)}
+            data-row-click={to_string(!!@row_click)}
             tabindex={@row_click && "0"}
             role={@row_click && "button"}
             class={@row_classes}
@@ -557,12 +557,14 @@ def table(assigns) do
           el.getAttribute("aria-busy") === "true"
 
         this._onKeydown = (e) => {
+          if (e.target !== el) return
           if (isDisabledOrBusy()) { e.preventDefault(); return }
           if (e.code === "Space" || e.key === " ") { e.preventDefault() } // prevent scroll
           if (e.code === "Enter") { e.preventDefault(); el.click() }
         }
 
         this._onKeyup = (e) => {
+          if (e.target !== el) return
           if (isDisabledOrBusy()) return
           if (e.code === "Space" || e.key === " ") { e.preventDefault(); el.click() }
         }
