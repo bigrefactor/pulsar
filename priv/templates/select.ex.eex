@@ -348,8 +348,7 @@ def select(assigns) do
         <:end_addon>
           <button
             type="button"
-            phx-click={remove_badge_js(@on_remove_badge, @id, option.value)}
-            phx-value-option={option.value}
+            phx-click={remove_badge_js(@on_remove_badge, option.value)}
             class="ml-1 cursor-pointer hover:bg-foreground/10 rounded-full p-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current transition-colors duration-fast ease-standard"
             aria-label={"#{@remove_label} #{option.label}"}
           >
@@ -406,8 +405,8 @@ def select(assigns) do
         if (!this.selectEl) return;
 
         this.handleRemoveSelection = (e) => {
-          // Get value from detail or target attribute
-          const optionValue = e.detail?.option || e.target?.getAttribute('phx-value-option');
+          // Get value from the event detail
+          const optionValue = e.detail?.option;
 
           if (!this.selectEl.multiple || !optionValue) return;
 
@@ -611,8 +610,6 @@ end
 # Badge removal JS command. Runs the caller's on_remove_badge commands (the
 # empty %JS{} default is a no-op), then dispatches the internal event the hook
 # listens for to drop the badge.
-defp remove_badge_js(handler, _wrapper_id, option_value) do
-  JS.dispatch(handler, "pulsar:remove-selection",
-    detail: %{option: option_value}
-  )
+defp remove_badge_js(handler, option_value) do
+  JS.dispatch(handler, "pulsar:remove-selection", detail: %{option: option_value})
 end

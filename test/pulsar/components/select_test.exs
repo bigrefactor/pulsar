@@ -377,12 +377,13 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select id="skills" name="skills" options={["Elixir"]} value={["Elixir"]} multiple={true} />
+        <Select.select id="skills-select" name="skills" options={["Elixir"]} value={["Elixir"]} multiple={true} />
         """)
 
       assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
       assert html =~ ~s(&quot;option&quot;:&quot;Elixir&quot;)
-      refute html =~ ~s(&quot;to&quot;:&quot;#skills-wrapper&quot;)
+      refute html =~ ~s(&quot;to&quot;:)
+      refute html =~ "phx-value-option"
     end
 
     test "remove button uses 'Remove' label by default" do
@@ -499,7 +500,7 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ ~s(&quot;custom_remove&quot;)
     end
 
-    test "badge component doesn't have unused phx-value-option attribute" do
+    test "badge remove button includes option in event detail" do
       assigns = %{}
 
       html =
@@ -513,22 +514,8 @@ defmodule Pulsar.Components.SelectTest do
         />
         """)
 
-      # Extract the badge portion (before the button)
-      badge_section =
-        html
-        |> String.split("<button")
-        |> List.first()
-
-      # Badge itself should not have phx-value-option
-      refute badge_section =~ ~s(phx-value-option="elixir")
-
-      # But button should have it
-      button_section =
-        html
-        |> String.split("<button")
-        |> List.last()
-
-      assert button_section =~ ~s(phx-value-option="elixir")
+      refute html =~ "phx-value-option"
+      assert html =~ ~s(&quot;option&quot;:&quot;elixir&quot;)
     end
 
     test "grouped options work correctly with badge display" do
@@ -551,9 +538,9 @@ defmodule Pulsar.Components.SelectTest do
       # Should show correct labels for grouped options
       assert html =~ "United States"
       assert html =~ "United Kingdom"
-      # Should have remove buttons for both
-      assert html =~ ~s(phx-value-option="US")
-      assert html =~ ~s(phx-value-option="UK")
+      # Should include both values in the remove event details
+      assert html =~ ~s(&quot;option&quot;:&quot;US&quot;)
+      assert html =~ ~s(&quot;option&quot;:&quot;UK&quot;)
     end
 
     test "handles mixed option formats in multi-select badges" do
@@ -578,10 +565,10 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ "Simple"
       assert html =~ "Complex Label"
       assert html =~ "atom_label"
-      # Should have correct values in buttons
-      assert html =~ ~s(phx-value-option="Simple")
-      assert html =~ ~s(phx-value-option="complex_value")
-      assert html =~ ~s(phx-value-option="atom_value")
+      # Should have correct values in the remove event details
+      assert html =~ ~s(&quot;option&quot;:&quot;Simple&quot;)
+      assert html =~ ~s(&quot;option&quot;:&quot;complex_value&quot;)
+      assert html =~ ~s(&quot;option&quot;:&quot;atom_value&quot;)
     end
   end
 
@@ -625,8 +612,8 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ "Phoenix"
       # Should have remove buttons with JS dispatch event handling
       assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
-      assert html =~ ~s(phx-value-option="elixir")
-      assert html =~ ~s(phx-value-option="phoenix")
+      assert html =~ ~s(&quot;option&quot;:&quot;elixir&quot;)
+      assert html =~ ~s(&quot;option&quot;:&quot;phoenix&quot;)
     end
 
     test "handles mixed option formats for badges" do
@@ -681,7 +668,7 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ ~s(aria-label="Remove Elixir")
       # Should have remove button with JS dispatch event handler
       assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
-      assert html =~ ~s(phx-value-option="elixir")
+      assert html =~ ~s(&quot;option&quot;:&quot;elixir&quot;)
     end
 
     test "omits the dropdown chevron and its reserved padding in multi-select mode" do
@@ -1095,7 +1082,7 @@ defmodule Pulsar.Components.SelectTest do
 
       # Should use custom badge event with JS dispatch + push handling
       assert html =~ ~s(&quot;custom_remove&quot;)
-      assert html =~ ~s(phx-value-option="elixir")
+      assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
     end
   end
 
