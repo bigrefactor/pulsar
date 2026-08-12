@@ -68,35 +68,60 @@ defmodule Pulsar.Integration.A11y.EventScopingTest do
     end)
   end
 
-  test "Sidebar backdrop closes only the nearest Sidebar", %{conn: conn} do
+  test "nested Sidebar backdrop state belongs only to its Sidebar", %{conn: conn} do
     session =
       conn
       |> visit("/components/event-scoping")
       |> A11y.await_live_connected()
       |> click("#scope-sidebar-open-outer")
       |> assert_has(~s|#scope-sidebar-outer[data-mobile="open"]|)
+      |> assert_has(~s|#scope-sidebar-inner[data-mobile="closed"]|)
 
     PhoenixTest.Playwright.evaluate(
       session,
-      "document.getElementById('scope-sidebar-open-inner').click()"
+      """
+      (async () => {
+        const outerBackdrop = document.querySelector('#scope-sidebar-outer > [data-sidebar-backdrop]');
+        const innerBackdrop = document.querySelector('#scope-sidebar-inner > [data-sidebar-backdrop]');
+
+        for (let frame = 0; frame < 120 && getComputedStyle(outerBackdrop).opacity !== '1'; frame++) {
+          await new Promise(requestAnimationFrame);
+        }
+
+        const style = getComputedStyle(innerBackdrop);
+        return {opacity: style.opacity, pointerEvents: style.pointerEvents};
+      })()
+      """,
+      fn state -> assert state == %{"opacity" => "0", "pointerEvents" => "none"} end
     )
 
     session =
       session
+      |> click("#scope-sidebar-open-inner")
       |> assert_has(~s|#scope-sidebar-inner[data-mobile="open"]|)
+      |> click("#scope-sidebar-inner > [data-sidebar-backdrop]")
+      |> assert_has(~s|#scope-sidebar-inner[data-mobile="closed"]|)
+      |> assert_has(~s|#scope-sidebar-outer[data-mobile="open"]|)
 
     PhoenixTest.Playwright.evaluate(
       session,
       """
-      (() => {
-        const panel = document.getElementById('scope-sidebar-inner');
-        panel.closest('[data-sidebar-root]').querySelector('[data-sidebar-backdrop]').click();
+      (async () => {
+        const backdrop = document.querySelector('#scope-sidebar-inner > [data-sidebar-backdrop]');
+
+        for (let frame = 0; frame < 120 && getComputedStyle(backdrop).opacity !== '0'; frame++) {
+          await new Promise(requestAnimationFrame);
+        }
+
+        const style = getComputedStyle(backdrop);
+        return {opacity: style.opacity, pointerEvents: style.pointerEvents};
       })()
-      """
+      """,
+      fn state -> assert state == %{"opacity" => "0", "pointerEvents" => "none"} end
     )
 
     session
-    |> assert_has(~s|#scope-sidebar-inner[data-mobile="closed"]|)
-    |> assert_has(~s|#scope-sidebar-outer[data-mobile="open"]|)
+    |> click("#scope-sidebar-outer > [data-sidebar-backdrop]")
+    |> assert_has(~s|#scope-sidebar-outer[data-mobile="closed"]|)
   end
 end

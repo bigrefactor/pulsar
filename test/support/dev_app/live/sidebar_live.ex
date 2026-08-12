@@ -90,19 +90,19 @@ defmodule Pulsar.DevApp.SidebarLive do
             id="sidebar-layout-panel"
             label="Layout contract sidebar"
             collapsible="icon"
-            class="order-last basis-80 self-stretch h-48 relative !translate-x-0"
+            class="order-last basis-auto lg:basis-80 self-stretch h-48 relative !translate-x-0"
             panel_class="overflow-visible flex-row"
             data-layout-sidebar="true"
           >
             Layout contract navigation
           </Sidebar.sidebar>
 
-          <main
+          <div
             data-layout-main
-            class="flex-1 peer-data-[state=collapsed]/sidebar:opacity-50"
+            class="min-w-0 flex-1 peer-data-[state=collapsed]/sidebar:opacity-50"
           >
             Layout contract content
-          </main>
+          </div>
         </div>
       </.fixture_section>
     </.fixture_page>

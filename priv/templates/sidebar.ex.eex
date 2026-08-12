@@ -113,9 +113,9 @@ alias Phoenix.LiveView.Rendered
   "opacity-0 pointer-events-none",
   # Exit timing by default; enter timing while the drawer is open.
   "transition-opacity duration-fast ease-accelerate",
-  "group-data-[mobile=open]/sidebar:opacity-100",
-  "group-data-[mobile=open]/sidebar:duration-normal group-data-[mobile=open]/sidebar:ease-decelerate",
-  "group-data-[mobile=open]/sidebar:pointer-events-auto"
+  "data-[mobile=open]:opacity-100",
+  "data-[mobile=open]:duration-normal data-[mobile=open]:ease-decelerate",
+  "data-[mobile=open]:pointer-events-auto"
 ]
 
 @valid_variants ~w(solid outline ghost elevated)
@@ -319,6 +319,7 @@ def sidebar(assigns) do
 
     <div
       data-sidebar-backdrop
+      data-mobile="closed"
       aria-hidden="true"
       phx-click={JS.dispatch("pulsar:sidebar-hide")}
       class={backdrop_classes()}
@@ -334,6 +335,7 @@ def sidebar(assigns) do
       mounted() {
         this.mql = window.matchMedia(MOBILE_QUERY)
         this.panel = this.el.querySelector("[data-sidebar-panel]")
+        this.backdrop = this.el.querySelector(":scope > [data-sidebar-backdrop]")
         this.state = this.el.dataset.state === "collapsed" ? "collapsed" : "expanded"
         this.mobileOpen = false
         this.previousFocus = null
@@ -401,6 +403,7 @@ def sidebar(assigns) do
         this.previousFocus = document.activeElement
         this.el.dataset.mobile = "open"
         this.panel.dataset.mobile = "open"
+        this.backdrop.dataset.mobile = "open"
         this.lockScroll()
         this.focusFirst()
         this.runCallback("onOpen")
@@ -411,6 +414,7 @@ def sidebar(assigns) do
         this.mobileOpen = false
         this.el.dataset.mobile = "closed"
         this.panel.dataset.mobile = "closed"
+        this.backdrop.dataset.mobile = "closed"
         this.unlockScroll()
         if (this.previousFocus && this.previousFocus.focus) this.previousFocus.focus()
         this.previousFocus = null
@@ -475,6 +479,7 @@ def sidebar(assigns) do
         this.el.dataset.mobile = this.mobileOpen ? "open" : "closed"
         this.panel.dataset.state = this.state
         this.panel.dataset.mobile = this.mobileOpen ? "open" : "closed"
+        this.backdrop.dataset.mobile = this.mobileOpen ? "open" : "closed"
       },
 
       destroyed() {
