@@ -592,10 +592,7 @@ defmodule Pulsar.Components.Select do
   # Badge removal JS command. Runs the caller's on_remove_badge commands (the
   # empty %JS{} default is a no-op), then dispatches the internal event the hook
   # listens for to drop the badge.
-  defp remove_badge_js(handler, wrapper_id, option_value) do
-    JS.dispatch(handler, "pulsar:remove-selection",
-      to: "##{wrapper_id}-wrapper",
-      detail: %{option: option_value}
-    )
+  defp remove_badge_js(handler, _wrapper_id, option_value) do
+    JS.dispatch(handler, "pulsar:remove-selection", detail: %{option: option_value})
   end
 end

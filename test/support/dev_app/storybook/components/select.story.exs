@@ -171,7 +171,7 @@ defmodule Pulsar.DevApp.Storybook.Components.Select do
         id: :multiple_with_badges,
         description: "Multi-select with pre-selected removable badges",
         attributes: %{
-          name: "skills",
+          name: "skills_badges",
           multiple: true,
           value: ["elixir", "phoenix"],
           options: [{"Elixir", "elixir"}, {"Phoenix", "phoenix"}, {"LiveView", "liveview"}]

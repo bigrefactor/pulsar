@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - Select Badge Removal Stays Within Its Select
+
+- **Removing a multi-select badge no longer updates every select whose wrapper shares the same id**: the internal removal event now bubbles from the clicked badge button to its containing select hook instead of globally dispatching to all wrappers matching an id selector. Generated Select Storybook variations also use distinct names, so the shipped page no longer renders duplicate `skills` and `skills-wrapper` ids.
+
 ### Fixed - Table Row Keyboard Activation
 
 - **`row_click` tables now resolve and mount their row hook, assign deterministic fallback IDs to non-stream rows, and activate rows with Enter or Space**: rows without an explicit or stream-supplied id receive a stable zero-based id, while custom and LiveView stream ids remain unchanged.

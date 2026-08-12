@@ -31,17 +31,28 @@ defmodule Pulsar.Integration.A11y.SelectTest do
   @moduletag :integration
 
   describe "Select multi-select badge removal" do
-    test "clicking a badge remove button deselects that option", %{conn: conn} do
-      conn
-      |> visit("/components/select/removable")
-      |> A11y.await_live_connected()
-      |> assert_has("#sel-remove-count", text: "2")
-      |> assert_has(~s|button[aria-label="Remove One"]|)
-      |> assert_has(~s|button[aria-label="Remove Two"]|)
-      |> click(~s|button[aria-label="Remove One"]|)
-      |> assert_has("#sel-remove-count", text: "1")
-      |> refute_has(~s|button[aria-label="Remove One"]|)
-      |> assert_has(~s|button[aria-label="Remove Two"]|)
+    test "clicking a badge remove button only updates its containing select", %{conn: conn} do
+      session =
+        conn
+        |> visit("/components/select/removable")
+        |> A11y.await_live_connected()
+        |> assert_has("#sel-remove-primary-count", text: "2")
+        |> assert_has("#sel-remove-sibling-count", text: "2")
+        |> PhoenixTest.Playwright.evaluate("""
+        window.pulsarRemoveTargets = [];
+        document.addEventListener("pulsar:remove-selection", event => {
+          window.pulsarRemoveTargets.push(event.target.id || event.target.ariaLabel);
+        }, true);
+        """)
+        |> click(~s|[data-fixture-section="primary"] button[aria-label="Remove One"]|)
+        |> assert_has("#sel-remove-primary-count", text: "1")
+        |> assert_has("#sel-remove-sibling-count", text: "2")
+        |> refute_has(~s|[data-fixture-section="primary"] button[aria-label="Remove One"]|)
+        |> assert_has(~s|[data-fixture-section="sibling"] button[aria-label="Remove One"]|)
+
+      PhoenixTest.Playwright.evaluate(session, "window.pulsarRemoveTargets", fn targets ->
+        assert targets == ["Remove One"]
+      end)
     end
   end
 end

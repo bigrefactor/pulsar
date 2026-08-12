@@ -2,11 +2,12 @@ defmodule Pulsar.DevApp.SelectRemoveLive do
   @moduledoc """
   Interaction fixture for `Pulsar.Components.Select` multi-select badge removal.
 
-  Pre-selects two options so their badges render, and wires the select to a
+  Pre-selects two options so their badges render, and wires each select to a
   form with `phx-change`. Clicking a badge's remove button fires the
   `.PulsarSelect` colocated hook, which deselects the matching `<option>`
   client-side and dispatches a `change` event; the form then re-renders
-  without that badge. This isolates the hook: there is no server-side
+  without that badge. A second select deliberately shares the same derived
+  wrapper id to cover event isolation. This isolates the hook: there is no server-side
   `remove_tag` handler, so removal only happens if the hook actually mounts
   and runs in the browser.
   """
@@ -17,27 +18,42 @@ defmodule Pulsar.DevApp.SelectRemoveLive do
   @options [{"One", "1"}, {"Two", "2"}, {"Three", "3"}]
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, options: @options, selected: ["1", "2"])}
+    {:ok, assign(socket, options: @options, primary_selected: ["1", "2"], sibling_selected: ["1", "2"])}
   end
 
-  def handle_event("validate", params, socket) do
-    {:noreply, assign(socket, selected: params["sel_remove"] || [])}
+  def handle_event("validate-primary", params, socket) do
+    {:noreply, assign(socket, primary_selected: params["shared_skills"] || [])}
+  end
+
+  def handle_event("validate-sibling", params, socket) do
+    {:noreply, assign(socket, sibling_selected: params["shared_skills"] || [])}
   end
 
   def render(assigns) do
     ~H"""
     <.fixture_page name="select-remove" title="Select (multi) badge removal">
-      <p>Selected: <span id="sel-remove-count">{length(@selected)}</span></p>
-
-      <.fixture_section name="multi" title="Multi-select with removable badges">
-        <form phx-change="validate">
+      <.fixture_section name="primary" title="Primary multi-select">
+        <p>Selected: <span id="sel-remove-primary-count">{length(@primary_selected)}</span></p>
+        <form id="sel-remove-primary-form" phx-change="validate-primary">
           <Select.select
-            id="sel-remove"
-            name="sel_remove"
+            name="shared_skills"
             multiple
             options={@options}
-            value={@selected}
-            aria-label="removable multi-select"
+            value={@primary_selected}
+            aria-label="primary removable multi-select"
+          />
+        </form>
+      </.fixture_section>
+
+      <.fixture_section name="sibling" title="Sibling multi-select with the same name">
+        <p>Selected: <span id="sel-remove-sibling-count">{length(@sibling_selected)}</span></p>
+        <form id="sel-remove-sibling-form" phx-change="validate-sibling">
+          <Select.select
+            name="shared_skills"
+            multiple
+            options={@options}
+            value={@sibling_selected}
+            aria-label="sibling removable multi-select"
           />
         </form>
       </.fixture_section>

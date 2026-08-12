@@ -48,6 +48,27 @@ defmodule Pulsar.Generator.StoryTemplatesTest do
                  "#{template}:\n#{message}"
                end)
     end
+
+    test "Select multiple variations use distinct names" do
+      template =
+        story_templates()
+        |> Enum.find(&String.ends_with?(&1, "/components/select.story.exs.eex"))
+
+      source = EEx.eval_file(template, assigns: @assigns, engine: EEx.SmartEngine)
+      [{story_module, _bin}] = Code.compile_string(source, template)
+
+      on_exit(fn ->
+        :code.purge(story_module)
+        :code.delete(story_module)
+      end)
+
+      names =
+        story_module.variations()
+        |> Enum.filter(&(&1.id in [:multiple, :multiple_with_badges]))
+        |> Enum.map(& &1.attributes.name)
+
+      assert Enum.uniq(names) == names
+    end
   end
 
   defp story_templates do

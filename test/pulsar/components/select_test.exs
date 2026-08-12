@@ -346,6 +346,19 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ ~s(id="skills-wrapper")
     end
 
+    test "badge removal dispatches only through the containing select wrapper" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select name="skills" options={["Elixir"]} value={["Elixir"]} multiple={true} />
+        """)
+
+      assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
+      assert html =~ ~s(&quot;option&quot;:&quot;Elixir&quot;)
+      refute html =~ ~s(&quot;to&quot;:&quot;#skills-wrapper&quot;)
+    end
+
     test "remove button uses 'Remove' label by default" do
       assigns = %{}
 
@@ -387,21 +400,6 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ "<!-- JavaScript hook for multi-select badge removal -->"
       # Should contain script tag reference (even if script content is not rendered)
       # The hook functionality is tested by integration testing in the showcase app
-    end
-
-    test "JS dispatch targets wrapper element for proper event bubbling" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <Select.select name="skills" options={[{"Elixir", "elixir"}]} value={["elixir"]} multiple={true} />
-        """)
-
-      # Should dispatch to wrapper element
-      assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
-      # Should target wrapper element
-      assert html =~ ~s(to&quot;:&quot;#)
-      assert html =~ ~s(-wrapper&quot;)
     end
 
     test "data_has_value correctly handles empty arrays" do
