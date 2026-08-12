@@ -270,7 +270,7 @@ defmodule Pulsar.Components.Modal do
           :if={@dismissable && @show_close_button}
           type="button"
           aria-label={@close_label}
-          phx-click={JS.dispatch("pulsar:modal-close", to: "##{@id}")}
+          phx-click={JS.dispatch("pulsar:modal-close")}
           class="-m-1 shrink-0 rounded-field p-1 text-muted-foreground hover:bg-surface-2 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <Icon.icon name="hero-x-mark" size="sm" />

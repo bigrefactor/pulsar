@@ -47,11 +47,14 @@ How the `%JS{}` runs depends on what triggers the callback.
 The simplest case — there is no hook. Compose the callback into the binding:
 
 ```elixir
-phx-click={JS.dispatch(@on_remove_badge, "pulsar:remove-selection", to: ..., detail: ...)}
+phx-click={JS.dispatch(@on_remove_badge, "pulsar:remove-selection", detail: ...)}
 ```
 
 The empty `%JS{}` default contributes nothing, so the component's own commands
-run either way.
+run either way. Internal controls nested below a component hook root use an
+untargeted dispatch so the event bubbles to that hook. Reserve `to:` for
+triggers outside the hook subtree, such as public helpers that target a
+component by ID.
 
 ### Programmatic trigger
 

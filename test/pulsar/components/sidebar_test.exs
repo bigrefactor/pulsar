@@ -51,6 +51,8 @@ defmodule Pulsar.Components.SidebarTest do
         """)
 
       assert html =~ "data-sidebar-backdrop"
+      assert html =~ ~s(&quot;pulsar:sidebar-hide&quot;)
+      refute html =~ ~s(&quot;to&quot;:&quot;#nav&quot;)
     end
   end
 

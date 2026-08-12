@@ -259,39 +259,41 @@ def sidebar(assigns) do
     )
 
   ~H"""
-  <nav
-    id={@id}
-    phx-hook=".PulsarSidebar"
-    tabindex="-1"
-    aria-label={@label}
-    data-side={@side}
-    data-collapsible={@collapsible}
-    data-state={if @open, do: "expanded", else: "collapsed"}
-    data-mobile="closed"
-    data-on-open={@on_open}
-    data-on-close={@on_close}
-    class={@panel_classes}
-    {@rest}
-  >
-    <div :if={@header != []} class={["shrink-0", header_classes(@size)]}>
-      {render_slot(@header)}
-    </div>
+  <div id={"#{@id}-root"} phx-hook=".PulsarSidebar" data-sidebar-root>
+    <nav
+      id={@id}
+      data-sidebar-panel
+      tabindex="-1"
+      aria-label={@label}
+      data-side={@side}
+      data-collapsible={@collapsible}
+      data-state={if @open, do: "expanded", else: "collapsed"}
+      data-mobile="closed"
+      data-on-open={@on_open}
+      data-on-close={@on_close}
+      class={@panel_classes}
+      {@rest}
+    >
+      <div :if={@header != []} class={["shrink-0", header_classes(@size)]}>
+        {render_slot(@header)}
+      </div>
 
-    <div class={["flex flex-col flex-1 min-h-0 overflow-y-auto", content_classes(@size)]}>
-      {render_slot(@inner_block)}
-    </div>
+      <div class={["flex flex-col flex-1 min-h-0 overflow-y-auto", content_classes(@size)]}>
+        {render_slot(@inner_block)}
+      </div>
 
-    <div :if={@footer != []} class={["shrink-0", footer_classes(@size)]}>
-      {render_slot(@footer)}
-    </div>
-  </nav>
+      <div :if={@footer != []} class={["shrink-0", footer_classes(@size)]}>
+        {render_slot(@footer)}
+      </div>
+    </nav>
 
-  <div
-    data-sidebar-backdrop
-    aria-hidden="true"
-    phx-click={JS.dispatch("pulsar:sidebar-hide", to: "##{@id}")}
-    class={backdrop_classes()}
-  />
+    <div
+      data-sidebar-backdrop
+      aria-hidden="true"
+      phx-click={JS.dispatch("pulsar:sidebar-hide")}
+      class={backdrop_classes()}
+    />
+  </div>
 
   <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarSidebar">
     const MOBILE_QUERY = "(max-width: 1023px)"
@@ -301,7 +303,8 @@ def sidebar(assigns) do
     export default {
       mounted() {
         this.mql = window.matchMedia(MOBILE_QUERY)
-        this.state = this.el.dataset.state === "collapsed" ? "collapsed" : "expanded"
+        this.panel = this.el.querySelector("[data-sidebar-panel]")
+        this.state = this.panel.dataset.state === "collapsed" ? "collapsed" : "expanded"
         this.mobileOpen = false
         this.previousFocus = null
         this.bodyOverflow = ""
@@ -348,7 +351,7 @@ def sidebar(assigns) do
       setState(value) {
         if (this.state === value) return
         this.state = value
-        this.el.dataset.state = value
+        this.panel.dataset.state = value
         this.runCallback(value === "expanded" ? "onOpen" : "onClose")
       },
 
@@ -356,7 +359,7 @@ def sidebar(assigns) do
         if (this.mobileOpen) return
         this.mobileOpen = true
         this.previousFocus = document.activeElement
-        this.el.dataset.mobile = "open"
+        this.panel.dataset.mobile = "open"
         this.lockScroll()
         this.focusFirst()
         this.runCallback("onOpen")
@@ -365,7 +368,7 @@ def sidebar(assigns) do
       closeDrawer() {
         if (!this.mobileOpen) return
         this.mobileOpen = false
-        this.el.dataset.mobile = "closed"
+        this.panel.dataset.mobile = "closed"
         this.unlockScroll()
         if (this.previousFocus && this.previousFocus.focus) this.previousFocus.focus()
         this.previousFocus = null
@@ -383,19 +386,19 @@ def sidebar(assigns) do
       },
 
       focusableItems() {
-        return Array.from(this.el.querySelectorAll(FOCUSABLE)).filter((el) => el.offsetParent !== null)
+        return Array.from(this.panel.querySelectorAll(FOCUSABLE)).filter((el) => el.offsetParent !== null)
       },
 
       focusFirst() {
         const items = this.focusableItems()
-        ;(items[0] || this.el).focus()
+        ;(items[0] || this.panel).focus()
       },
 
       trapFocus(e) {
         const items = this.focusableItems()
         if (items.length === 0) {
           e.preventDefault()
-          this.el.focus()
+          this.panel.focus()
           return
         }
         const first = items[0]
@@ -419,15 +422,15 @@ def sidebar(assigns) do
       },
 
       runCallback(name) {
-        const encoded = this.el.dataset[name]
+        const encoded = this.panel.dataset[name]
         if (encoded && encoded !== "[]" && this.liveSocket) {
-          this.liveSocket.execJS(this.el, encoded)
+          this.liveSocket.execJS(this.panel, encoded)
         }
       },
 
       updated() {
-        this.el.dataset.state = this.state
-        this.el.dataset.mobile = this.mobileOpen ? "open" : "closed"
+        this.panel.dataset.state = this.state
+        this.panel.dataset.mobile = this.mobileOpen ? "open" : "closed"
       },
 
       destroyed() {
