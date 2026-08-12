@@ -15,15 +15,30 @@ defmodule Pulsar.Generator.StoryTemplatesTest do
   # Rendered under a namespace no other module uses, so compiling the stories
   # cannot redefine the dev app's own storybook modules.
   @assigns [web_module: "PulsarStoryTemplateTest", components_module: "Pulsar.Components"]
-  @form_control_story_templates ~w(
+  @identity_candidate_story_templates MapSet.new(~w(
+    avatar.story.exs.eex
     checkbox.story.exs.eex
+    date_picker.story.exs.eex
+    dropzone.story.exs.eex
+    field.story.exs.eex
     input.story.exs.eex
     input_otp.story.exs.eex
     radio_group.story.exs.eex
     select.story.exs.eex
     switch.story.exs.eex
     textarea.story.exs.eex
-  )
+  ))
+  @identity_exclusions %{
+    "avatar.story.exs.eex" => "its :name is display content rather than a form-control identity",
+    "field.story.exs.eex" => "its template/0 injects the same f[:demo] field into each separately rendered variation"
+  }
+  @normalized_name_identity_story_templates MapSet.new(~w(
+    checkbox.story.exs.eex
+    input.story.exs.eex
+    radio_group.story.exs.eex
+    switch.story.exs.eex
+    textarea.story.exs.eex
+  ))
 
   describe "generated story templates" do
     test "every story template compiles and form controls have distinct DOM identities" do
@@ -58,7 +73,7 @@ defmodule Pulsar.Generator.StoryTemplatesTest do
 
       identity_failures =
         compiled_stories
-        |> Enum.filter(fn {template, _story_module} -> form_control_story?(template) end)
+        |> form_control_stories()
         |> Enum.flat_map(&identity_failures/1)
 
       assert identity_failures == [],
@@ -74,29 +89,94 @@ defmodule Pulsar.Generator.StoryTemplatesTest do
   end
 
   defp identity_failures({template, story_module}) do
-    variation_identities =
-      Enum.map(story_module.variations(), fn variation ->
-        identity = variation.attributes[:id] || id_from_name(variation.attributes[:name])
-        {variation.id, identity}
+    {variation_identities, identity_failures} =
+      Enum.reduce(story_module.variations(), {[], []}, fn variation, {identities, failures} ->
+        case identity_for(template, variation.attributes) do
+          {:ok, identity} -> {[{variation.id, identity} | identities], failures}
+          {:error, reason} -> {identities, ["#{template}: variation #{inspect(variation.id)} #{reason}" | failures]}
+        end
       end)
 
     assert length(variation_identities) >= 2,
            "expected at least two form-control identities in #{template}, found #{length(variation_identities)}"
 
-    variation_identities
-    |> Enum.group_by(fn {_variation_id, identity} -> identity end, fn {variation_id, _identity} -> variation_id end)
-    |> Enum.filter(fn {_identity, variation_ids} -> length(variation_ids) > 1 end)
-    |> Enum.map(fn {identity, variation_ids} ->
-      "#{template}: #{inspect(identity)} is used by variations #{Enum.map_join(variation_ids, ", ", &inspect/1)}"
+    duplicate_failures =
+      variation_identities
+      |> Enum.group_by(fn {_variation_id, identity} -> identity end, fn {variation_id, _identity} -> variation_id end)
+      |> Enum.filter(fn {_identity, variation_ids} -> length(variation_ids) > 1 end)
+      |> Enum.map(fn {identity, variation_ids} ->
+        "#{template}: #{inspect(identity)} is used by variations #{Enum.map_join(variation_ids, ", ", &inspect/1)}"
+      end)
+
+    identity_failures ++ duplicate_failures
+  end
+
+  defp form_control_stories(compiled_stories) do
+    identity_candidates =
+      Enum.filter(compiled_stories, fn {template, _story_module} ->
+        Path.basename(template) in @identity_candidate_story_templates
+      end)
+
+    discovered_templates =
+      identity_candidates
+      |> MapSet.new(fn {template, _story_module} -> Path.basename(template) end)
+
+    assert discovered_templates == @identity_candidate_story_templates,
+           "expected identity candidates #{inspect(@identity_candidate_story_templates)}, found #{inspect(discovered_templates)}"
+
+    excluded_templates = Map.keys(@identity_exclusions) |> MapSet.new()
+
+    assert MapSet.subset?(excluded_templates, discovered_templates),
+           "expected explicitly excluded identity candidates #{inspect(excluded_templates)} to be discovered"
+
+    Enum.reject(identity_candidates, fn {template, _story_module} ->
+      Path.basename(template) in excluded_templates
     end)
   end
 
-  defp form_control_story?(template) do
+  defp identity_for(template, attributes) do
     basename = Path.basename(template)
 
-    # Avatar's :name is display content rather than a form-control identity.
-    basename != "avatar.story.exs.eex" and basename in @form_control_story_templates
+    cond do
+      basename == "select.story.exs.eex" ->
+        explicit_identity(attributes, "requires an explicit :id because unbound Selects do not derive one from :name")
+
+      basename == "date_picker.story.exs.eex" ->
+        explicit_identity(attributes, "requires an explicit :id because this standalone story has no bound field")
+
+      basename == "dropzone.story.exs.eex" ->
+        dropzone_identity(attributes)
+
+      basename == "input_otp.story.exs.eex" ->
+        raw_name_identity(attributes, "requires :id or :name to avoid a generated, non-deterministic identity")
+
+      basename in @normalized_name_identity_story_templates ->
+        normalized_name_identity(attributes)
+    end
   end
+
+  defp explicit_identity(attributes, missing_id_reason) do
+    case attributes[:id] do
+      nil -> {:error, missing_id_reason}
+      id -> {:ok, id}
+    end
+  end
+
+  defp dropzone_identity(%{id: id}) when not is_nil(id), do: {:ok, id}
+
+  defp dropzone_identity(%{upload: %{name: name}}), do: {:ok, "dropzone-#{name}"}
+
+  defp dropzone_identity(_attributes), do: {:error, "requires :id or an upload with a name"}
+
+  defp raw_name_identity(%{id: id}, _reason) when not is_nil(id), do: {:ok, id}
+  defp raw_name_identity(%{name: name}, _reason) when not is_nil(name), do: {:ok, name}
+  defp raw_name_identity(_attributes, reason), do: {:error, reason}
+
+  defp normalized_name_identity(%{id: id}) when not is_nil(id), do: {:ok, id}
+
+  defp normalized_name_identity(%{name: name}) when not is_nil(name), do: {:ok, id_from_name(name)}
+
+  defp normalized_name_identity(_attributes), do: {:error, "requires :id or :name to derive a stable identity"}
 
   defp id_from_name(name) do
     name
