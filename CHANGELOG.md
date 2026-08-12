@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed - Select Badge Removal Stays Within Its Select
+### Changed (Breaking) - Explicit Select IDs and Scoped Internal Actions
 
-- **Removing a multi-select badge no longer updates every select whose wrapper shares the same id**: the internal removal event now bubbles from the clicked badge button to its containing select hook instead of globally dispatching to all wrappers matching an id selector. Generated Select Storybook variations also use distinct names, so the shipped page no longer renders duplicate `skills` and `skills-wrapper` ids.
+- **Unbound `select` calls now require an explicit `id` as well as a `name`**: deriving the DOM id from `name` could not distinguish same-named controls and produced duplicate select and hook-wrapper ids. Bound fields still prefer a caller `id`, then the field id, then a generated fallback. Add a stable, unique `id` to each direct unbound Select call.
+- **Select badge removal is isolated by DOM ancestry instead of a global id selector**: the internal removal event bubbles from the clicked badge button to its containing Select hook, so same-named Selects with distinct ids cannot update one another. The generated Storybook Select variations now carry stable explicit ids, and a generalized story-template guard rejects duplicate derived form-control identities.
+- **Flash dismiss, Modal close, and Sidebar backdrop actions use the same bubbling rule**: each nested internal action is handled by its own component hook rather than dispatching through a potentially shared id selector. Public Modal and Sidebar helpers invoked from outside the component subtree remain explicitly id-targeted.
 
 ### Fixed - Table Row Keyboard Activation
 

@@ -283,9 +283,9 @@ defmodule Pulsar.Components.IdStabilityTest do
       assert rendered_to_string(m) == rendered_to_string(m)
     end
 
-    test "select, unbound with a name" do
+    test "select, unbound with an explicit id" do
       assigns = %{}
-      m = ~H|<Select.select name="country" options={[{"US", "us"}]} />|
+      m = ~H|<Select.select id="country-select" name="country" options={[{"US", "us"}]} />|
       assert rendered_to_string(m) == rendered_to_string(m)
     end
 
@@ -420,13 +420,6 @@ defmodule Pulsar.Components.IdStabilityTest do
       html = rendered_to_string(~H|<Switch.switch name="user[notifications]" />|)
       assert html =~ ~s(id="user_notifications")
       refute html =~ ~s(id="user[notifications]")
-    end
-
-    test "select" do
-      assigns = %{}
-      html = rendered_to_string(~H|<Select.select name="user[country]" options={["US"]} />|)
-      assert html =~ ~s(id="user_country")
-      refute html =~ ~s(id="user[country]")
     end
 
     test "textarea" do
