@@ -25,6 +25,21 @@ defmodule Pulsar.Components.SidebarTest do
       assert html =~ "PulsarSidebar"
     end
 
+    test "the nav remains the direct hook and layout root" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Sidebar.sidebar id="nav" class="order-last" data-layout-sidebar="true">
+          Content
+        </Sidebar.sidebar>
+        """)
+
+      refute html =~ ~s(id="nav-root")
+      assert html =~ ~r/<nav\s[^>]*id="nav"[^>]*phx-hook="[^"]*PulsarSidebar"[^>]*data-sidebar-root/s
+      assert html =~ ~r/<nav\s[^>]*id="nav"[^>]*class="[^"]*order-last[^"]*"[^>]*data-layout-sidebar="true"/s
+    end
+
     test "renders header, content, and footer slots" do
       assigns = %{}
 
@@ -51,6 +66,8 @@ defmodule Pulsar.Components.SidebarTest do
         """)
 
       assert html =~ "data-sidebar-backdrop"
+      assert html =~ ~s(&quot;pulsar:sidebar-hide&quot;)
+      refute html =~ ~s(&quot;to&quot;:&quot;#nav&quot;)
     end
   end
 
@@ -171,7 +188,7 @@ defmodule Pulsar.Components.SidebarTest do
         """)
 
       assert html =~ "bg-surface-1"
-      [_, class] = Regex.run(~r/<nav[^>]*class="([^"]*)"/, html)
+      [_, class] = Regex.run(~r/<div[^>]*data-sidebar-panel[^>]*class="([^"]*)"/, html)
       assert "border-border-strong" in String.split(class)
     end
 
@@ -183,7 +200,7 @@ defmodule Pulsar.Components.SidebarTest do
         <Sidebar.sidebar id="nav" variant="outline" color="neutral">Content</Sidebar.sidebar>
         """)
 
-      [_, class] = Regex.run(~r/<nav[^>]*class="([^"]*)"/, html)
+      [_, class] = Regex.run(~r/<div[^>]*data-sidebar-panel[^>]*class="([^"]*)"/, html)
       assert "border-border-strong" in String.split(class)
     end
   end
@@ -277,6 +294,32 @@ defmodule Pulsar.Components.SidebarTest do
 
       assert html =~ "w-96"
       refute html =~ "w-64"
+    end
+
+    test "panel_class overrides visible surface and structural defaults" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Sidebar.sidebar
+          id="nav"
+          class="order-last"
+          panel_class="bg-danger overflow-visible flex-row"
+        >
+          Content
+        </Sidebar.sidebar>
+        """)
+
+      [_, root_class] = Regex.run(~r/<nav[^>]*\sclass="([^"]*)"/, html)
+      [_, panel_class] = Regex.run(~r/<div[^>]*data-sidebar-panel[^>]*\sclass="([^"]*)"/, html)
+
+      assert "order-last" in String.split(root_class)
+      assert "bg-danger" in String.split(panel_class)
+      assert "overflow-visible" in String.split(panel_class)
+      assert "flex-row" in String.split(panel_class)
+      refute "bg-surface-1" in String.split(panel_class)
+      refute "overflow-hidden" in String.split(panel_class)
+      refute "flex-col" in String.split(panel_class)
     end
   end
 

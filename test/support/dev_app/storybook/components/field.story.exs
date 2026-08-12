@@ -3,7 +3,8 @@ defmodule Pulsar.DevApp.Storybook.Components.Field do
   # We use PSB's template/0 feature to wrap variations in a <.form> context
   # and pass the form field to each variation via <.psb-variation field={...}/>.
   # Every variation uses f[:demo] so labels auto-humanize to "Demo" unless
-  # overridden by a <:label> slot.
+  # overridden by a <:label> slot. Explicit variation IDs keep the controls
+  # unique when all previews render on the same story page.
   use PhoenixStorybook.Story, :component
 
   alias Pulsar.Components.Field
@@ -129,25 +130,26 @@ defmodule Pulsar.DevApp.Storybook.Components.Field do
       %Variation{
         id: :text_input,
         description: "Text input field",
-        attributes: %{type: "text"},
+        attributes: %{id: "sb-field-text-input", type: "text"},
         slots: ["<:label>Full Name</:label>", "<:description>Your legal full name</:description>"]
       },
       %Variation{
         id: :email_input,
         description: "Email input field",
-        attributes: %{type: "email"},
+        attributes: %{id: "sb-field-email-input", type: "email"},
         slots: ["<:label>Email Address</:label>"]
       },
       %Variation{
         id: :textarea_input,
         description: "Textarea field",
-        attributes: %{type: "textarea", rows: 3},
+        attributes: %{id: "sb-field-textarea-input", type: "textarea", rows: 3},
         slots: ["<:label>Bio</:label>", "<:description>Tell us about yourself</:description>"]
       },
       %Variation{
         id: :select_input,
         description: "Select field with options",
         attributes: %{
+          id: "sb-field-select-input",
           type: "select",
           options: [{"Option One", "1"}, {"Option Two", "2"}, {"Option Three", "3"}]
         },
@@ -156,25 +158,25 @@ defmodule Pulsar.DevApp.Storybook.Components.Field do
       %Variation{
         id: :checkbox_input,
         description: "Checkbox field",
-        attributes: %{type: "checkbox"},
+        attributes: %{id: "sb-field-checkbox-input", type: "checkbox"},
         slots: ["<:label>Accept Terms</:label>"]
       },
       %Variation{
         id: :switch_input,
         description: "Switch field",
-        attributes: %{type: "switch"},
+        attributes: %{id: "sb-field-switch-input", type: "switch"},
         slots: ["<:label>Enable Notifications</:label>"]
       },
       %Variation{
         id: :required_field,
         description: "Required text field",
-        attributes: %{type: "text", required: true},
+        attributes: %{id: "sb-field-required", type: "text", required: true},
         slots: ["<:label>Required Field</:label>"]
       },
       %Variation{
         id: :disabled_field,
         description: "Disabled field",
-        attributes: %{type: "text", disabled: true},
+        attributes: %{id: "sb-field-disabled", type: "text", disabled: true},
         slots: ["<:label>Disabled Field</:label>"]
       }
     ]

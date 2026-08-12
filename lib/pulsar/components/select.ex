@@ -41,7 +41,7 @@ defmodule Pulsar.Components.Select do
         field={@form[:tags]}
         options={@tags}
         multiple
-        on_remove_badge={JS.push("remove_tag")}
+        on_remove_badge={fn option -> JS.push("remove_tag", value: %{option: option}) end}
       />
 
       # Select with option groups
@@ -57,7 +57,7 @@ defmodule Pulsar.Components.Select do
       <.select field={@form[:size]} options={@sizes} size="lg" />
 
       # Without Phoenix form
-      <.select name="category" options={["Tech", "Design", "Marketing"]} value="Tech" />
+      <.select id="category" name="category" options={["Tech", "Design", "Marketing"]} value="Tech" />
 
   ## Error State Handling
 
@@ -195,7 +195,7 @@ defmodule Pulsar.Components.Select do
   attr(:field, FormField, default: nil, doc: "Phoenix form field")
 
   # Core attributes
-  attr(:id, :string, doc: "Select ID (from field or name if not provided)")
+  attr(:id, :string, doc: "Select ID; required unless a form field supplies one")
 
   attr(:name, :string,
     default: nil,
@@ -232,9 +232,9 @@ defmodule Pulsar.Components.Select do
   )
 
   # Multi-select badge removal
-  attr(:on_remove_badge, JS,
-    default: %JS{},
-    doc: "JS commands to run when a badge is removed in multi-select mode"
+  attr(:on_remove_badge, :any,
+    default: nil,
+    doc: "A 1-arity function `(option_value) -> %JS{}` run for the removed badge"
   )
 
   attr(:remove_label, :string,
@@ -329,8 +329,7 @@ defmodule Pulsar.Components.Select do
           <:end_addon>
             <button
               type="button"
-              phx-click={remove_badge_js(@on_remove_badge, @id, option.value)}
-              phx-value-option={option.value}
+              phx-click={remove_badge_js(@on_remove_badge, option.value)}
               class="ml-1 cursor-pointer hover:bg-foreground/10 rounded-full p-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current transition-colors duration-fast ease-standard"
               aria-label={"#{@remove_label} #{option.label}"}
             >
@@ -387,13 +386,18 @@ defmodule Pulsar.Components.Select do
           if (!this.selectEl) return;
 
           this.handleRemoveSelection = (e) => {
-            // Get value from detail or target attribute
-            const optionValue = e.detail?.option || e.target?.getAttribute('phx-value-option');
+            // This hook owns the first matching Select ancestor. Consume the
+            // internal event before validation so malformed events cannot fall
+            // through to a nested Select's ancestor.
+            e.stopPropagation();
 
-            if (!this.selectEl.multiple || !optionValue) return;
+            // Get value from the event detail
+            const optionValue = e.detail?.option;
+
+            if (!this.selectEl.multiple || optionValue == null) return;
 
             // Find and deselect the option (with CSS escaping for security)
-            const option = this.selectEl.querySelector(`option[value="${CSS.escape(optionValue)}"]`);
+            const option = this.selectEl.querySelector(`option[value="${CSS.escape(String(optionValue))}"]`);
             if (option) {
               option.selected = false;
 
@@ -522,7 +526,7 @@ defmodule Pulsar.Components.Select do
     assigns
     |> assign(
       :id,
-      assigns[:id] || field.id || id_from_name(assigns[:name] || field.name) || generate_id("select")
+      assigns[:id] || field.id || generate_id("select")
     )
     |> assign_new(:name, fn -> field.name end)
     |> assign_new(:value, fn -> field.value end)
@@ -532,22 +536,23 @@ defmodule Pulsar.Components.Select do
   defp normalize_field_props(assigns) do
     assigns
     |> ensure_name!()
-    |> assign(:id, assigns[:id] || id_from_name(assigns[:name]))
+    |> ensure_id!()
     |> assign_new(:value, fn -> nil end)
     |> assign(:field_provided, false)
-  end
-
-  defp id_from_name(nil), do: nil
-
-  defp id_from_name(name) do
-    name
-    |> String.trim_trailing("]")
-    |> String.replace(~r/\W+/u, "_")
   end
 
   defp ensure_name!(assigns) do
     if is_nil(assigns[:name]) do
       raise ArgumentError, "Select component requires :name when :field is not provided"
+    end
+
+    assigns
+  end
+
+  defp ensure_id!(assigns) do
+    if is_nil(assigns[:id]) do
+      raise ArgumentError,
+            "Select component requires :id when :field is not provided; each Select id must be unique within the rendered page"
     end
 
     assigns
@@ -589,13 +594,14 @@ defmodule Pulsar.Components.Select do
     assign(assigns, :name, final_name)
   end
 
-  # Badge removal JS command. Runs the caller's on_remove_badge commands (the
-  # empty %JS{} default is a no-op), then dispatches the internal event the hook
-  # listens for to drop the badge.
-  defp remove_badge_js(handler, wrapper_id, option_value) do
-    JS.dispatch(handler, "pulsar:remove-selection",
-      to: "##{wrapper_id}-wrapper",
-      detail: %{option: option_value}
-    )
+  # Badge removal JS command. A callback is resolved per badge so a server push
+  # can include the clicked option without relying on a `phx-value-*` fallback.
+  defp remove_badge_js(nil, option_value) do
+    JS.dispatch("pulsar:remove-selection", detail: %{option: option_value})
+  end
+
+  defp remove_badge_js(callback, option_value) when is_function(callback, 1) do
+    callback.(option_value)
+    |> JS.dispatch("pulsar:remove-selection", detail: %{option: option_value})
   end
 end

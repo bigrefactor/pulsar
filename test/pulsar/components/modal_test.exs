@@ -61,6 +61,8 @@ defmodule Pulsar.Components.ModalTest do
 
       assert html =~ ~s(data-dismissable="true")
       assert html =~ ~s(aria-label="Close")
+      assert html =~ ~s(&quot;pulsar:modal-close&quot;)
+      refute html =~ ~s(&quot;to&quot;:&quot;#m&quot;)
     end
 
     test "dismissable={false} locks the dialog and hides the close button" do

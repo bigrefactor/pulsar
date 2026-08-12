@@ -13,7 +13,7 @@ defmodule Pulsar.DevApp.SidebarLive do
   # reflow gates only care about its colors and content, so positioning is
   # neutralized here (`relative`, no transform) and the box is bounded, letting
   # the cells tile in the fixture grid at both 1280px and 320px viewports.
-  @cell "relative !translate-x-0 h-44 w-40"
+  @cell "relative h-44 w-40 [&>[data-sidebar-panel]]:!translate-x-0"
 
   def render(assigns) do
     assigns = assign(assigns, variants: @variants, colors: @colors, sizes: @sizes, cell: @cell)
@@ -74,6 +74,36 @@ defmodule Pulsar.DevApp.SidebarLive do
         >
           <.demo_menu id={"sb-side-#{side}-nav"} label={"side #{side} nav"} />
         </Sidebar.sidebar>
+      </.fixture_section>
+
+      <.fixture_section name="layout-contract" title="flex layout contract">
+        <button
+          id="sidebar-layout-toggle"
+          type="button"
+          phx-click={Sidebar.toggle("sidebar-layout-panel")}
+        >
+          Toggle layout sidebar
+        </button>
+
+        <div id="sidebar-layout-contract" class="flex h-48 w-full">
+          <Sidebar.sidebar
+            id="sidebar-layout-panel"
+            label="Layout contract sidebar"
+            collapsible="icon"
+            class="order-last basis-auto lg:basis-80 self-stretch h-48 relative !translate-x-0"
+            panel_class="overflow-visible flex-row"
+            data-layout-sidebar="true"
+          >
+            Layout contract navigation
+          </Sidebar.sidebar>
+
+          <div
+            data-layout-main
+            class="min-w-0 flex-1 peer-data-[state=collapsed]/sidebar:opacity-50"
+          >
+            Layout contract content
+          </div>
+        </div>
       </.fixture_section>
     </.fixture_page>
     """

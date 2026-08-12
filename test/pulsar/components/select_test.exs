@@ -9,13 +9,40 @@ defmodule Pulsar.Components.SelectTest do
   alias Phoenix.LiveView.JS
   alias Pulsar.Components.Select
 
+  describe "identity contract" do
+    test "requires id when field is not provided" do
+      assigns = %{}
+
+      assert_raise ArgumentError,
+                   "Select component requires :id when :field is not provided; each Select id must be unique within the rendered page",
+                   fn ->
+                     rendered_to_string(~H"""
+                     <Select.select name="skills" options={["Elixir"]} />
+                     """)
+                   end
+    end
+
+    test "same-named unbound selects use their explicit unique ids" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select id="primary-skills" name="skills" options={["Elixir"]} />
+        <Select.select id="secondary-skills" name="skills" options={["Elixir"]} />
+        """)
+
+      assert html =~ ~s(id="primary-skills")
+      assert html =~ ~s(id="secondary-skills")
+    end
+  end
+
   describe "select/1 basic functionality" do
     test "follows the motion contract" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["Option 1", "Option 2"]} />
+        <Select.select id="test" name="test" options={["Option 1", "Option 2"]} />
         """)
 
       assert html =~ "transition-[color,background-color,border-color,box-shadow]"
@@ -30,7 +57,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["Option 1", "Option 2", "Option 3"]} />
+        <Select.select id="test" name="test" options={["Option 1", "Option 2", "Option 3"]} />
         """)
 
       assert html =~ ~s(<select)
@@ -48,7 +75,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} />
+        <Select.select id="test" name="test" options={["A", "B", "C"]} />
         """)
 
       # Default solid variant with neutral color
@@ -60,7 +87,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} variant="outline" />
+        <Select.select id="test" name="test" options={["A", "B", "C"]} variant="outline" />
         """)
 
       assert html =~ "border-2"
@@ -73,7 +100,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} variant="ghost" />
+        <Select.select id="test" name="test" options={["A", "B", "C"]} variant="ghost" />
         """)
 
       assert html =~ "bg-transparent"
@@ -85,7 +112,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} size="lg" />
+        <Select.select id="test" name="test" options={["A", "B", "C"]} size="lg" />
         """)
 
       # Large size class
@@ -99,7 +126,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} required={true} disabled={true} multiple={true} />
+        <Select.select id="test" name="test" options={["A", "B", "C"]} required={true} disabled={true} multiple={true} />
         """)
 
       assert html =~ ~s(required)
@@ -113,7 +140,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} class="w-full custom-class" />
+        <Select.select id="test" name="test" options={["A", "B", "C"]} class="w-full custom-class" />
         """)
 
       # Should contain both component classes and custom classes
@@ -132,7 +159,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} variant="outline" />
+        <Select.select id="test" name="test" options={["A", "B", "C"]} variant="outline" />
         """)
 
       assert html =~ "border-2"
@@ -145,7 +172,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} variant="ghost" />
+        <Select.select id="test" name="test" options={["A", "B", "C"]} variant="ghost" />
         """)
 
       assert html =~ "bg-transparent"
@@ -158,7 +185,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} variant="solid" />
+        <Select.select id="test" name="test" options={["A", "B", "C"]} variant="solid" />
         """)
 
       assert html =~ "bg-neutral/10"
@@ -175,7 +202,7 @@ defmodule Pulsar.Components.SelectTest do
 
         html =
           rendered_to_string(~H"""
-          <Select.select name="test" options={["A", "B", "C"]} color={@color} />
+          <Select.select id="test" name="test" options={["A", "B", "C"]} color={@color} />
           """)
 
         case color do
@@ -220,7 +247,7 @@ defmodule Pulsar.Components.SelectTest do
 
         html =
           rendered_to_string(~H"""
-          <Select.select name="test" options={["A", "B", "C"]} size={@size} />
+          <Select.select id="test" name="test" options={["A", "B", "C"]} size={@size} />
           """)
 
         case size do
@@ -258,7 +285,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["Option 1", "Option 2", "Option 3"]} />
+        <Select.select id="test" name="test" options={["Option 1", "Option 2", "Option 3"]} />
         """)
 
       assert html =~ "Option 1"
@@ -271,7 +298,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={[Admin: "admin", User: "user", Guest: "guest"]} />
+        <Select.select id="test" name="test" options={[Admin: "admin", User: "user", Guest: "guest"]} />
         """)
 
       assert html =~ ~s(value="admin")
@@ -287,7 +314,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={[{"United States", "US"}, {"Canada", "CA"}]} />
+        <Select.select id="test" name="test" options={[{"United States", "US"}, {"Canada", "CA"}]} />
         """)
 
       assert html =~ ~s(value="US")
@@ -302,6 +329,7 @@ defmodule Pulsar.Components.SelectTest do
       html =
         rendered_to_string(~H"""
         <Select.select
+          id="test"
           name="test"
           options={[
             "North America": [{"United States", "US"}, {"Canada", "CA"}],
@@ -322,7 +350,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} prompt="Choose option..." />
+        <Select.select id="test" name="test" options={["A", "B", "C"]} prompt="Choose option..." />
         """)
 
       assert html =~ "Choose option..."
@@ -337,7 +365,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="skills" options={["Elixir", "Phoenix"]} value={["Elixir"]} multiple={true} />
+        <Select.select id="skills" name="skills" options={["Elixir", "Phoenix"]} value={["Elixir"]} multiple={true} />
         """)
 
       # Hook should be on wrapper div, not select element
@@ -346,12 +374,26 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ ~s(id="skills-wrapper")
     end
 
+    test "badge removal dispatches only through the containing select wrapper" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select id="skills-select" name="skills" options={["Elixir"]} value={["Elixir"]} multiple={true} />
+        """)
+
+      assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
+      assert html =~ ~s(&quot;option&quot;:&quot;Elixir&quot;)
+      refute html =~ ~s(&quot;to&quot;:)
+      refute html =~ "phx-value-option"
+    end
+
     test "remove button uses 'Remove' label by default" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="skills" options={["Elixir"]} value={["Elixir"]} multiple={true} />
+        <Select.select id="skills" name="skills" options={["Elixir"]} value={["Elixir"]} multiple={true} />
         """)
 
       assert html =~ ~s(aria-label="Remove Elixir")
@@ -363,6 +405,7 @@ defmodule Pulsar.Components.SelectTest do
       html =
         rendered_to_string(~H"""
         <Select.select
+          id="skills"
           name="skills"
           options={["Elixir"]}
           value={["Elixir"]}
@@ -380,7 +423,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="skills" options={["Elixir", "Phoenix"]} value={["Elixir"]} multiple={true} />
+        <Select.select id="skills" name="skills" options={["Elixir", "Phoenix"]} value={["Elixir"]} multiple={true} />
         """)
 
       # Should contain JavaScript hook comment
@@ -389,28 +432,13 @@ defmodule Pulsar.Components.SelectTest do
       # The hook functionality is tested by integration testing in the showcase app
     end
 
-    test "JS dispatch targets wrapper element for proper event bubbling" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <Select.select name="skills" options={[{"Elixir", "elixir"}]} value={["elixir"]} multiple={true} />
-        """)
-
-      # Should dispatch to wrapper element
-      assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
-      # Should target wrapper element
-      assert html =~ ~s(to&quot;:&quot;#)
-      assert html =~ ~s(-wrapper&quot;)
-    end
-
     test "data_has_value correctly handles empty arrays" do
       assigns = %{}
 
       # Test with empty array
       html =
         rendered_to_string(~H"""
-        <Select.select name="skills" options={["Elixir", "Phoenix"]} value={[]} multiple={true} />
+        <Select.select id="skills" name="skills" options={["Elixir", "Phoenix"]} value={[]} multiple={true} />
         """)
 
       assert html =~ ~s(data-has-value="false")
@@ -418,7 +446,7 @@ defmodule Pulsar.Components.SelectTest do
       # Test with nil
       html =
         rendered_to_string(~H"""
-        <Select.select name="skills" options={["Elixir", "Phoenix"]} value={nil} multiple={true} />
+        <Select.select id="skills" name="skills" options={["Elixir", "Phoenix"]} value={nil} multiple={true} />
         """)
 
       assert html =~ ~s(data-has-value="false")
@@ -426,58 +454,48 @@ defmodule Pulsar.Components.SelectTest do
       # Test with actual values
       html =
         rendered_to_string(~H"""
-        <Select.select name="skills" options={["Elixir", "Phoenix"]} value={["Elixir"]} multiple={true} />
+        <Select.select id="skills" name="skills" options={["Elixir", "Phoenix"]} value={["Elixir"]} multiple={true} />
         """)
 
       assert html =~ ~s(data-has-value="true")
     end
 
-    test "supports %JS{} command for on_remove_badge" do
+    test "passes each option to its on_remove_badge callback" do
+      test_pid = self()
+
       assigns = %{
-        custom_js: %JS{} |> JS.hide(to: "#modal")
+        callback: fn option ->
+          send(test_pid, {:removed_option, option})
+          JS.push("custom_remove", value: %{option: option})
+        end
       }
 
       html =
         rendered_to_string(~H"""
         <Select.select
+          id="skills"
           name="skills"
           options={[{"Elixir", "elixir"}]}
           value={["elixir"]}
           multiple={true}
-          on_remove_badge={@custom_js}
+          on_remove_badge={@callback}
         />
         """)
 
-      # Should handle %JS{} command and dispatch event
+      assert_receive {:removed_option, "elixir"}
       assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
-      assert html =~ ~s(&quot;hide&quot;)
-    end
-
-    test "supports a JS.push command for on_remove_badge" do
-      assigns = %{custom_js: JS.push("custom_remove")}
-
-      html =
-        rendered_to_string(~H"""
-        <Select.select
-          name="skills"
-          options={[{"Elixir", "elixir"}]}
-          value={["elixir"]}
-          multiple={true}
-          on_remove_badge={@custom_js}
-        />
-        """)
-
-      # Should run the caller's push and dispatch the internal event
       assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
       assert html =~ ~s(&quot;custom_remove&quot;)
+      assert html =~ ~s(&quot;option&quot;:&quot;elixir&quot;)
     end
 
-    test "badge component doesn't have unused phx-value-option attribute" do
+    test "badge remove button includes option in event detail" do
       assigns = %{}
 
       html =
         rendered_to_string(~H"""
         <Select.select
+          id="skills"
           name="skills"
           options={[{"Elixir", "elixir"}]}
           value={["elixir"]}
@@ -485,22 +503,8 @@ defmodule Pulsar.Components.SelectTest do
         />
         """)
 
-      # Extract the badge portion (before the button)
-      badge_section =
-        html
-        |> String.split("<button")
-        |> List.first()
-
-      # Badge itself should not have phx-value-option
-      refute badge_section =~ ~s(phx-value-option="elixir")
-
-      # But button should have it
-      button_section =
-        html
-        |> String.split("<button")
-        |> List.last()
-
-      assert button_section =~ ~s(phx-value-option="elixir")
+      refute html =~ "phx-value-option"
+      assert html =~ ~s(&quot;option&quot;:&quot;elixir&quot;)
     end
 
     test "grouped options work correctly with badge display" do
@@ -509,6 +513,7 @@ defmodule Pulsar.Components.SelectTest do
       html =
         rendered_to_string(~H"""
         <Select.select
+          id="location"
           name="location"
           options={[
             "North America": [{"United States", "US"}, {"Canada", "CA"}],
@@ -522,9 +527,9 @@ defmodule Pulsar.Components.SelectTest do
       # Should show correct labels for grouped options
       assert html =~ "United States"
       assert html =~ "United Kingdom"
-      # Should have remove buttons for both
-      assert html =~ ~s(phx-value-option="US")
-      assert html =~ ~s(phx-value-option="UK")
+      # Should include both values in the remove event details
+      assert html =~ ~s(&quot;option&quot;:&quot;US&quot;)
+      assert html =~ ~s(&quot;option&quot;:&quot;UK&quot;)
     end
 
     test "handles mixed option formats in multi-select badges" do
@@ -533,6 +538,7 @@ defmodule Pulsar.Components.SelectTest do
       html =
         rendered_to_string(~H"""
         <Select.select
+          id="mixed"
           name="mixed"
           options={[
             "Simple",
@@ -548,10 +554,10 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ "Simple"
       assert html =~ "Complex Label"
       assert html =~ "atom_label"
-      # Should have correct values in buttons
-      assert html =~ ~s(phx-value-option="Simple")
-      assert html =~ ~s(phx-value-option="complex_value")
-      assert html =~ ~s(phx-value-option="atom_value")
+      # Should have correct values in the remove event details
+      assert html =~ ~s(&quot;option&quot;:&quot;Simple&quot;)
+      assert html =~ ~s(&quot;option&quot;:&quot;complex_value&quot;)
+      assert html =~ ~s(&quot;option&quot;:&quot;atom_value&quot;)
     end
   end
 
@@ -561,7 +567,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="skills" options={["Elixir", "Phoenix", "LiveView"]} multiple={true} />
+        <Select.select id="skills" name="skills" options={["Elixir", "Phoenix", "LiveView"]} multiple={true} />
         """)
 
       assert html =~ ~s(multiple)
@@ -576,6 +582,7 @@ defmodule Pulsar.Components.SelectTest do
       html =
         rendered_to_string(~H"""
         <Select.select
+          id="skills"
           name="skills"
           options={[
             {"Elixir", "elixir"},
@@ -594,8 +601,8 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ "Phoenix"
       # Should have remove buttons with JS dispatch event handling
       assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
-      assert html =~ ~s(phx-value-option="elixir")
-      assert html =~ ~s(phx-value-option="phoenix")
+      assert html =~ ~s(&quot;option&quot;:&quot;elixir&quot;)
+      assert html =~ ~s(&quot;option&quot;:&quot;phoenix&quot;)
     end
 
     test "handles mixed option formats for badges" do
@@ -604,6 +611,7 @@ defmodule Pulsar.Components.SelectTest do
       html =
         rendered_to_string(~H"""
         <Select.select
+          id="mixed"
           name="mixed"
           options={[
             "Simple",
@@ -624,7 +632,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="skills" options={["A", "B", "C"]} value={[]} multiple={true} />
+        <Select.select id="skills" name="skills" options={["A", "B", "C"]} value={[]} multiple={true} />
         """)
 
       # Should not show badges container when empty
@@ -637,6 +645,7 @@ defmodule Pulsar.Components.SelectTest do
       html =
         rendered_to_string(~H"""
         <Select.select
+          id="skills"
           name="skills"
           options={[{"Elixir", "elixir"}, {"Phoenix", "phoenix"}]}
           value={["elixir"]}
@@ -648,7 +657,7 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ ~s(aria-label="Remove Elixir")
       # Should have remove button with JS dispatch event handler
       assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
-      assert html =~ ~s(phx-value-option="elixir")
+      assert html =~ ~s(&quot;option&quot;:&quot;elixir&quot;)
     end
 
     test "omits the dropdown chevron and its reserved padding in multi-select mode" do
@@ -656,7 +665,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="skills" options={["Elixir", "Phoenix", "LiveView"]} multiple={true} />
+        <Select.select id="skills" name="skills" options={["Elixir", "Phoenix", "LiveView"]} multiple={true} />
         """)
 
       # Native multi-select renders as a listbox; the single-select chevron and
@@ -672,7 +681,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} disabled={true} />
+        <Select.select id="test" name="test" options={["A", "B", "C"]} disabled={true} />
         """)
 
       assert html =~ ~s(disabled)
@@ -686,7 +695,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} disabled={true} />
+        <Select.select id="test" name="test" options={["A", "B", "C"]} disabled={true} />
         """)
 
       # Should have arrow container with opacity-disabled when disabled
@@ -699,7 +708,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} required={true} />
+        <Select.select id="test" name="test" options={["A", "B", "C"]} required={true} />
         """)
 
       assert html =~ ~s(required)
@@ -711,7 +720,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} />
+        <Select.select id="test" name="test" options={["A", "B", "C"]} />
         """)
 
       assert html =~ "focus-visible:ring-2"
@@ -764,7 +773,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} color="primary" />
+        <Select.select id="test" name="test" options={["A", "B", "C"]} color="primary" />
         """)
 
       # Should have arrow container
@@ -875,7 +884,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={[{"US", "us"}, {"CA", "ca"}]} />
+        <Select.select id="test" name="test" options={[{"US", "us"}, {"CA", "ca"}]} />
         """)
 
       # Should not have aria-invalid when no field provided (reduces noise)
@@ -912,7 +921,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="category" value="tech" options={[{"Tech", "tech"}, {"Design", "design"}]} />
+        <Select.select id="category" name="category" value="tech" options={[{"Tech", "tech"}, {"Design", "design"}]} />
         """)
 
       assert html =~ ~s(name="category")
@@ -926,7 +935,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} class="border-red-500 min-h-16" />
+        <Select.select id="test" name="test" options={["A", "B", "C"]} class="border-red-500 min-h-16" />
         """)
 
       # Twm should resolve conflicts
@@ -941,7 +950,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} class="w-full shadow-lg" />
+        <Select.select id="test" name="test" options={["A", "B", "C"]} class="w-full shadow-lg" />
         """)
 
       # Should include both original and custom classes
@@ -958,7 +967,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} multiple={false} required={true} />
+        <Select.select id="test" name="test" options={["A", "B", "C"]} multiple={false} required={true} />
         """)
 
       # Should include standard data attributes
@@ -972,7 +981,7 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} />
+        <Select.select id="test" name="test" options={["A", "B", "C"]} />
         """)
 
       # Should include data-state attribute for styling
@@ -996,7 +1005,14 @@ defmodule Pulsar.Components.SelectTest do
 
       html =
         rendered_to_string(~H"""
-        <Select.select name="test" options={["A", "B", "C"]} phx-change="validate" phx-debounce="300" data-testid="test-select" />
+        <Select.select
+          id="test"
+          name="test"
+          options={["A", "B", "C"]}
+          phx-change="validate"
+          phx-debounce="300"
+          data-testid="test-select"
+        />
         """)
 
       assert html =~ ~s(phx-change="validate")
@@ -1010,6 +1026,7 @@ defmodule Pulsar.Components.SelectTest do
       html =
         rendered_to_string(~H"""
         <Select.select
+          id="location"
           name="location"
           options={[
             "North America": [
@@ -1038,27 +1055,30 @@ defmodule Pulsar.Components.SelectTest do
     end
 
     test "handles badges with custom on_remove_badge command" do
-      assigns = %{custom_js: JS.push("custom_remove")}
+      assigns = %{
+        callback: fn option -> JS.push("custom_remove", value: %{option: option}) end
+      }
 
       html =
         rendered_to_string(~H"""
         <Select.select
+          id="skills"
           name="skills"
           options={[{"Elixir", "elixir"}, {"Phoenix", "phoenix"}]}
           value={["elixir"]}
           multiple={true}
-          on_remove_badge={@custom_js}
+          on_remove_badge={@callback}
         />
         """)
 
       # Should use custom badge event with JS dispatch + push handling
       assert html =~ ~s(&quot;custom_remove&quot;)
-      assert html =~ ~s(phx-value-option="elixir")
+      assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
     end
   end
 
   describe "select/1 id resolution" do
-    test "falls back to name when a bound field has no id" do
+    test "generates an id when a bound field has no id" do
       assigns = %{
         field: %FormField{
           id: nil,
@@ -1075,7 +1095,7 @@ defmodule Pulsar.Components.SelectTest do
         <Select.select field={@field} options={["US", "CA"]} />
         """)
 
-      assert html =~ ~s(id="user_country")
+      assert html =~ ~s(id="select-)
     end
 
     test "a caller-supplied id wins over the name" do

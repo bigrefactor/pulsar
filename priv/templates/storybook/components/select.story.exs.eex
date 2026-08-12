@@ -98,6 +98,7 @@ defmodule <%= @web_module %>.Storybook.Components.Select do
         id: :default,
         description: "Default select",
         attributes: %{
+          id: "sb-select-country",
           name: "country",
           options: [{"United States", "us"}, {"Canada", "ca"}, {"Mexico", "mx"}]
         }
@@ -106,6 +107,7 @@ defmodule <%= @web_module %>.Storybook.Components.Select do
         id: :with_prompt,
         description: "Select with placeholder prompt",
         attributes: %{
+          id: "sb-select-role",
           name: "role",
           prompt: "Choose a role…",
           options: [{"Admin", "admin"}, {"Editor", "editor"}, {"Viewer", "viewer"}]
@@ -115,6 +117,7 @@ defmodule <%= @web_module %>.Storybook.Components.Select do
         id: :with_selected_value,
         description: "Select with pre-selected value",
         attributes: %{
+          id: "sb-select-plan",
           name: "plan",
           value: "pro",
           options: [{"Starter", "starter"}, {"Pro", "pro"}, {"Enterprise", "enterprise"}]
@@ -124,6 +127,7 @@ defmodule <%= @web_module %>.Storybook.Components.Select do
         id: :outline_variant,
         description: "Outline variant",
         attributes: %{
+          id: "sb-select-category",
           name: "category",
           variant: "outline",
           options: [{"Elixir", "elixir"}, {"Phoenix", "phoenix"}, {"LiveView", "liveview"}]
@@ -133,6 +137,7 @@ defmodule <%= @web_module %>.Storybook.Components.Select do
         id: :primary_color,
         description: "Primary color select",
         attributes: %{
+          id: "sb-select-priority",
           name: "priority",
           color: "primary",
           options: [{"High", "high"}, {"Medium", "medium"}, {"Low", "low"}]
@@ -142,6 +147,7 @@ defmodule <%= @web_module %>.Storybook.Components.Select do
         id: :disabled_state,
         description: "Disabled select",
         attributes: %{
+          id: "sb-select-locked",
           name: "locked",
           disabled: true,
           value: "pro",
@@ -152,6 +158,7 @@ defmodule <%= @web_module %>.Storybook.Components.Select do
         id: :invalid_state,
         description: "Invalid/error state",
         attributes: %{
+          id: "sb-select-required",
           name: "required_select",
           invalid: true,
           prompt: "Please select an option",
@@ -162,6 +169,7 @@ defmodule <%= @web_module %>.Storybook.Components.Select do
         id: :multiple,
         description: "Multi-select listbox (no chevron)",
         attributes: %{
+          id: "sb-select-skills",
           name: "skills",
           multiple: true,
           options: [{"Elixir", "elixir"}, {"Phoenix", "phoenix"}, {"LiveView", "liveview"}]
@@ -171,7 +179,8 @@ defmodule <%= @web_module %>.Storybook.Components.Select do
         id: :multiple_with_badges,
         description: "Multi-select with pre-selected removable badges",
         attributes: %{
-          name: "skills",
+          id: "sb-select-skills-badges",
+          name: "skills_badges",
           multiple: true,
           value: ["elixir", "phoenix"],
           options: [{"Elixir", "elixir"}, {"Phoenix", "phoenix"}, {"LiveView", "liveview"}]

@@ -55,6 +55,7 @@ defmodule Pulsar.DevApp.Router do
     live "/components/dropzone/outline", DropzoneLive, :outline
     live "/components/dropzone/ghost", DropzoneLive, :ghost
     live "/components/dropzone/elevated", DropzoneLive, :elevated
+    live "/components/event-scoping", EventScopingLive, :index
     live "/components/field", FieldLive, :index
     live "/components/flash", FlashLive, :index
     live "/components/flash/trigger", FlashTriggerLive, :index
@@ -87,6 +88,7 @@ defmodule Pulsar.DevApp.Router do
     live "/components/select/solid", SelectLive, :solid
     live "/components/select/multi", SelectMultiLive, :index
     live "/components/select/removable", SelectRemoveLive, :index
+    live "/components/select/callback", SelectCallbackLive, :index
     live "/components/sidebar", SidebarLive, :index
     live "/components/skeleton", SkeletonLive, :index
     live "/components/spinner", SpinnerLive, :index

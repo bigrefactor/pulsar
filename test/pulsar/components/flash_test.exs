@@ -123,6 +123,8 @@ defmodule Pulsar.Components.FlashTest do
       assert html =~ ~s(type="button")
       assert html =~ ~s(aria-label="Dismiss")
       assert html =~ "phx-click"
+      assert html =~ ~s(&quot;pulsar:flash-dismiss&quot;)
+      refute html =~ ~s(&quot;to&quot;:&quot;#flash&quot;)
     end
 
     test "hides dismiss button when dismissible=false" do

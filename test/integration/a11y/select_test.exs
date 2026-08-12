@@ -31,17 +31,60 @@ defmodule Pulsar.Integration.A11y.SelectTest do
   @moduletag :integration
 
   describe "Select multi-select badge removal" do
-    test "clicking a badge remove button deselects that option", %{conn: conn} do
+    test "clicking a badge remove button only updates its containing select", %{conn: conn} do
+      session =
+        conn
+        |> visit("/components/select/removable")
+        |> A11y.await_live_connected()
+        |> assert_has("#sel-remove-primary-count", text: "2")
+        |> assert_has("#sel-remove-sibling-count", text: "2")
+        |> PhoenixTest.Playwright.evaluate("""
+        window.pulsarRemoveTargets = [];
+        document.addEventListener("pulsar:remove-selection", event => {
+          window.pulsarRemoveTargets.push(event.target.id || event.target.ariaLabel);
+        }, true);
+        """)
+        |> click(~s|[data-fixture-section="primary"] button[aria-label="Remove One"]|)
+        |> refute_has(~s|[data-fixture-section="primary"] button[aria-label="Remove One"]|)
+        |> assert_has(~s|[data-fixture-section="sibling"] button[aria-label="Remove One"]|)
+
+      PhoenixTest.Playwright.evaluate(
+        session,
+        """
+        ({
+          primary: document.querySelector('#sel-remove-primary-count').textContent,
+          sibling: document.querySelector('#sel-remove-sibling-count').textContent,
+          targets: window.pulsarRemoveTargets
+        })
+        """,
+        fn state ->
+          assert state == %{"primary" => "1", "sibling" => "2", "targets" => ["Remove One"]}
+        end
+      )
+    end
+
+    test "a per-badge callback receives the clicked option on the server", %{conn: conn} do
+      conn
+      |> visit("/components/select/callback")
+      |> A11y.await_live_connected()
+      |> assert_has("#sel-callback-option", text: "none")
+      |> click(~s|button[aria-label="Remove Elixir"]|)
+      |> assert_has("#sel-callback-option", text: "elixir")
+    end
+
+    test "zero, false, and empty-string option values can each be removed", %{conn: conn} do
       conn
       |> visit("/components/select/removable")
       |> A11y.await_live_connected()
-      |> assert_has("#sel-remove-count", text: "2")
-      |> assert_has(~s|button[aria-label="Remove One"]|)
-      |> assert_has(~s|button[aria-label="Remove Two"]|)
-      |> click(~s|button[aria-label="Remove One"]|)
-      |> assert_has("#sel-remove-count", text: "1")
-      |> refute_has(~s|button[aria-label="Remove One"]|)
-      |> assert_has(~s|button[aria-label="Remove Two"]|)
+      |> assert_has("#sel-remove-zero-count", text: "1")
+      |> assert_has("#sel-remove-false-count", text: "1")
+      |> assert_has("#sel-remove-empty-count", text: "1")
+      |> click(~s|button[aria-label="Remove Zero"]|)
+      |> assert_has("#sel-remove-zero-count", text: "0")
+      |> click(~s|button[aria-label="Remove False"]|)
+      |> assert_has("#sel-remove-false-count", text: "0")
+      |> click(~s|button[aria-label="Remove Empty"]|)
+      |> assert_has("#sel-remove-empty-count", text: "0")
     end
   end
 end
