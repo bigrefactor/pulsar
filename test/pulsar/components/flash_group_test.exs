@@ -234,19 +234,8 @@ defmodule Pulsar.Components.FlashGroupTest do
         """)
 
       assert html =~ "bg-neutral"
-      assert html =~ "Custom message"
-    end
-
-    test "maps an uncommon custom string type to neutral with the bell icon" do
-      assigns = %{}
-
-      html =
-        rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{"__pulsar_review_unknown_type_7f3a__" => "Custom message"}} />
-        """)
-
-      assert html =~ "bg-neutral"
       assert html =~ "hero-bell-mini"
+      assert html =~ "Custom message"
       refute html =~ "bg-info"
       refute html =~ "hero-information-circle-mini"
     end
@@ -480,7 +469,7 @@ defmodule Pulsar.Components.FlashGroupTest do
   end
 
   describe "flash_group/1 event handling" do
-    test "defaults to pushing clear_flash with the dismissed key" do
+    test "defaults to pushing LiveView's native clear-flash event with the dismissed key" do
       assigns = %{}
 
       html =
@@ -488,9 +477,8 @@ defmodule Pulsar.Components.FlashGroupTest do
         <FlashGroup.flash_group flash={%{"error" => "Error"}} />
         """)
 
-      # Default dismiss callback: JS.push("clear_flash", value: %{key: "error"})
       assert html =~ ~s(data-on-dismiss=)
-      assert html =~ "clear_flash"
+      assert html =~ "lv:clear-flash"
       assert html =~ ~s(&quot;key&quot;:&quot;error&quot;)
     end
 
@@ -669,6 +657,31 @@ defmodule Pulsar.Components.FlashGroupTest do
       assert html1 =~ ~s(id="group-1-info")
       assert html2 =~ ~s(id="group-2-info")
     end
+
+    test "encodes custom flash keys as unique selector-safe child ids" do
+      assigns = %{
+        flash: %{
+          "search:results" => "Colon",
+          "search.results" => "Period",
+          "search results" => "Space"
+        }
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={@flash} />
+        """)
+
+      ids =
+        ~r/id="(flash-group-[^"]+)"/
+        |> Regex.scan(html, capture: :all_but_first)
+        |> List.flatten()
+
+      assert length(ids) == 3
+      assert length(Enum.uniq(ids)) == 3
+      assert Enum.all?(ids, &Regex.match?(~r/^flash-group-[A-Za-z0-9_-]+$/, &1))
+      assert Enum.all?(ids, fn id -> html =~ ~s(aria-controls="#{id}") end)
+    end
   end
 
   describe "flash_group/1 flash message ordering" do
@@ -816,14 +829,19 @@ defmodule Pulsar.Components.FlashGroupTest do
     test "ignores atom keys when the same string key is present" do
       assigns = %{flash: %{"info" => "String message", info: "Atom message"}}
 
-      html =
-        rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={@flash} />
-        """)
+      log =
+        capture_log(fn ->
+          html =
+            rendered_to_string(~H"""
+            <FlashGroup.flash_group flash={@flash} />
+            """)
 
-      assert length(Regex.scan(~r/id="flash-group-info"/, html)) == 1
-      assert html =~ "String message"
-      refute html =~ "Atom message"
+          assert length(Regex.scan(~r/id="flash-group-info"/, html)) == 1
+          assert html =~ "String message"
+          refute html =~ "Atom message"
+        end)
+
+      assert log =~ "Ignoring flash group entry with non-string key: :info"
     end
 
     test "prioritizes warning ahead of info when max_items limits string keys" do
@@ -841,14 +859,36 @@ defmodule Pulsar.Components.FlashGroupTest do
     test "ignores non-binary flash keys" do
       assigns = %{flash: %{123 => "Integer message", "info" => "Info message"}}
 
-      html =
-        rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={@flash} />
-        """)
+      log =
+        capture_log(fn ->
+          html =
+            rendered_to_string(~H"""
+            <FlashGroup.flash_group flash={@flash} />
+            """)
 
-      assert html =~ ~s(id="flash-group-info")
-      assert html =~ "Info message"
-      refute html =~ "Integer message"
+          assert html =~ ~s(id="flash-group-info")
+          assert html =~ "Info message"
+          refute html =~ "Integer message"
+        end)
+
+      assert log =~ "Ignoring flash group entry with non-string key: 123"
+    end
+
+    test "warns when every flash entry has a non-string key" do
+      assigns = %{flash: %{error: "Payment declined"}}
+
+      log =
+        capture_log(fn ->
+          html =
+            rendered_to_string(~H"""
+            <FlashGroup.flash_group flash={@flash} />
+            """)
+
+          refute html =~ "Payment declined"
+          refute html =~ ~s(<div)
+        end)
+
+      assert log =~ "Ignoring flash group entry with non-string key: :error"
     end
 
     test "derives child ids from the default group id" do

@@ -21,7 +21,7 @@ event, run pure client-side JS, or compose both in one pipeline.
 
 ```elixir
 # server event
-<.flash id="banner" on_dismiss={JS.push("clear_flash", value: %{key: "info"})}>…</.flash>
+<.flash id="banner" on_dismiss={JS.push("lv:clear-flash", value: %{key: "info"})}>…</.flash>
 
 # client-side only
 <.flash id="banner" on_dismiss={JS.hide(to: "#banner")}>…</.flash>
@@ -88,9 +88,9 @@ attr :on_dismiss, :any,
   doc: "%JS{} for every child, or a 1-arity function (flash_key) -> %JS{}"
 
 # per child:
-on_dismiss={dismiss_callback(@on_dismiss, normalize_flash_key(type))}
+on_dismiss={dismiss_callback(@on_dismiss, type)}
 
-defp dismiss_callback(nil, key), do: JS.push("clear_flash", value: %{key: key})
+defp dismiss_callback(nil, key), do: JS.push("lv:clear-flash", value: %{key: key})
 defp dismiss_callback(%JS{} = js, _key), do: js
 defp dismiss_callback(fun, key) when is_function(fun, 1), do: fun.(key)
 ```

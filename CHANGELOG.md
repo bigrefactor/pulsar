@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed - Flash Groups Require String Keys
 
-- **`flash_group` now accepts only Phoenix-native string flash keys**: non-string keys are ignored before rendering, so a manually assembled map cannot create duplicate child ids by mixing atom and string forms of the same key. Migrate manually assembled maps from `%{info: "..."}` to `%{"info" => "..."}`.
+- **`flash_group` now accepts only Phoenix-native string flash keys**: non-string keys are ignored with a warning before rendering, so a manually assembled map cannot create duplicate child ids by mixing atom and string forms of the same key. Migrate manually assembled maps from `%{info: "..."}` to `%{"info" => "..."}`. `put_flash/3` already converts atom kinds to strings.
+- **Flash dismissal now uses LiveView's native `"lv:clear-flash"` event**: the default close button clears the string-keyed flash without requiring a host `handle_event/3`. Custom keys that are unsafe in CSS selectors are encoded into unique child ids while the original key remains in dismiss payloads.
 
 ### Fixed - Dark Shell Dividers Use a Softer Strong Border
 
