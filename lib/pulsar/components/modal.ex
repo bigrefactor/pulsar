@@ -299,8 +299,14 @@ defmodule Pulsar.Components.Modal do
             // open state for dialogs pre-opened via the `open` attribute.
             this.el.dataset.state = this.el.open ? "open" : "closed"
 
-            this._onOpen = () => this.open()
-            this._onClose = () => this.close()
+            this._onOpen = (event) => {
+              event.stopPropagation()
+              this.open()
+            }
+            this._onClose = (event) => {
+              event.stopPropagation()
+              this.close()
+            }
             this._onCancel = (e) => this.handleCancel(e)
             this._onNativeClose = () => this.handleClose()
             this._onMouseDown = (e) => { this.downTarget = e.target }

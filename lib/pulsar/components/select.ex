@@ -41,7 +41,7 @@ defmodule Pulsar.Components.Select do
         field={@form[:tags]}
         options={@tags}
         multiple
-        on_remove_badge={JS.push("remove_tag")}
+        on_remove_badge={fn option -> JS.push("remove_tag", value: %{option: option}) end}
       />
 
       # Select with option groups
@@ -57,7 +57,7 @@ defmodule Pulsar.Components.Select do
       <.select field={@form[:size]} options={@sizes} size="lg" />
 
       # Without Phoenix form
-      <.select name="category" options={["Tech", "Design", "Marketing"]} value="Tech" />
+      <.select id="category" name="category" options={["Tech", "Design", "Marketing"]} value="Tech" />
 
   ## Error State Handling
 
@@ -232,9 +232,9 @@ defmodule Pulsar.Components.Select do
   )
 
   # Multi-select badge removal
-  attr(:on_remove_badge, JS,
-    default: %JS{},
-    doc: "JS commands to run when a badge is removed in multi-select mode"
+  attr(:on_remove_badge, :any,
+    default: nil,
+    doc: "A 1-arity function `(option_value) -> %JS{}` run for the removed badge"
   )
 
   attr(:remove_label, :string,
@@ -386,13 +386,18 @@ defmodule Pulsar.Components.Select do
           if (!this.selectEl) return;
 
           this.handleRemoveSelection = (e) => {
+            // This hook owns the first matching Select ancestor. Consume the
+            // internal event before validation so malformed events cannot fall
+            // through to a nested Select's ancestor.
+            e.stopPropagation();
+
             // Get value from the event detail
             const optionValue = e.detail?.option;
 
-            if (!this.selectEl.multiple || !optionValue) return;
+            if (!this.selectEl.multiple || optionValue == null) return;
 
             // Find and deselect the option (with CSS escaping for security)
-            const option = this.selectEl.querySelector(`option[value="${CSS.escape(optionValue)}"]`);
+            const option = this.selectEl.querySelector(`option[value="${CSS.escape(String(optionValue))}"]`);
             if (option) {
               option.selected = false;
 
@@ -546,7 +551,8 @@ defmodule Pulsar.Components.Select do
 
   defp ensure_id!(assigns) do
     if is_nil(assigns[:id]) do
-      raise ArgumentError, "Select component requires :id when :field is not provided"
+      raise ArgumentError,
+            "Select component requires :id when :field is not provided; each Select id must be unique within the rendered page"
     end
 
     assigns
@@ -588,10 +594,14 @@ defmodule Pulsar.Components.Select do
     assign(assigns, :name, final_name)
   end
 
-  # Badge removal JS command. Runs the caller's on_remove_badge commands (the
-  # empty %JS{} default is a no-op), then dispatches the internal event the hook
-  # listens for to drop the badge.
-  defp remove_badge_js(handler, option_value) do
-    JS.dispatch(handler, "pulsar:remove-selection", detail: %{option: option_value})
+  # Badge removal JS command. A callback is resolved per badge so a server push
+  # can include the clicked option without relying on a `phx-value-*` fallback.
+  defp remove_badge_js(nil, option_value) do
+    JS.dispatch("pulsar:remove-selection", detail: %{option: option_value})
+  end
+
+  defp remove_badge_js(callback, option_value) when is_function(callback, 1) do
+    callback.(option_value)
+    |> JS.dispatch("pulsar:remove-selection", detail: %{option: option_value})
   end
 end

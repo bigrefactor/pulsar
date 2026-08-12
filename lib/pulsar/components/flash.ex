@@ -380,7 +380,10 @@ defmodule Pulsar.Components.Flash do
           this._onMouseLeave = () => this.resume()
           this._onFocusIn = () => this.pause()
           this._onFocusOut = () => this.resume()
-          this._onManualDismiss = () => this.dismiss()
+          this._onManualDismiss = (event) => {
+            event.stopPropagation()
+            this.dismiss()
+          }
           // Escape dismisses, but only when the flash is dismissible (i.e.
           // it renders a close button). A non-dismissible flash exposes no
           // close affordance, so Escape must not provide a hidden one. No

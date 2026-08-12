@@ -5,10 +5,10 @@ Cross-cutting patterns every Pulsar component follows. This document covers
 when something happens inside it (a flash is dismissed, a sidebar opens, a badge
 is removed).
 
-## Outgoing callbacks are `%JS{}`
+## Outgoing callbacks resolve to `%JS{}`
 
-A component's callback attr is a `Phoenix.LiveView.JS` command, never a string
-event name:
+A leaf component's callback attr is usually a `Phoenix.LiveView.JS` command,
+never a string event name:
 
 ```elixir
 attr :on_dismiss, JS, default: %JS{}
@@ -31,29 +31,36 @@ event, run pure client-side JS, or compose both in one pipeline.
 ```
 
 There is no string form. "Send an event to the server" is `JS.push("event")`.
+When one component renders several item-specific triggers, the callback can be
+a 1-arity function that receives the item value and returns `%JS{}`.
 
-## Three mechanisms, one attr type
+## Three mechanisms, one callback contract
 
 How the `%JS{}` runs depends on what triggers the callback.
 
 | Trigger | Mechanism | Example |
 |---|---|---|
-| Real DOM event (click, change) | Compose the attr straight into a `phx-*` binding — `phx-click` already runs `%JS{}` | `select` badge-remove button |
+| Real DOM event (click, change) | Compose the resolved callback straight into a `phx-*` binding — `phx-click` already runs `%JS{}` | `select` badge-remove button |
 | Programmatic (timer, hook logic) | Store the attr in a `data-on-*` attribute; run it from the hook with `liveSocket.execJS` | `flash` auto/close dismiss, `sidebar` open/close |
 | Fan-out over N items needing per-item data | Attr is a 1-arity function `(item) -> %JS{}`; the wrapper calls it per item and passes the result to the leaf | `flash_group` over Phoenix.Flash keys |
 
 ### Real DOM event
 
-The simplest case — there is no hook. Compose the callback into the binding:
+When every trigger shares one callback value, compose it directly into the
+binding. When the trigger needs item-specific data, resolve a 1-arity callback
+first, then compose the returned `%JS{}`:
 
 ```elixir
-phx-click={JS.dispatch(@on_remove_badge, "pulsar:remove-selection", detail: ...)}
+on_remove_badge={fn option -> JS.push("remove_tag", value: %{option: option}) end}
+
+phx-click={remove_badge_js(@on_remove_badge, option.value)}
 ```
 
-The empty `%JS{}` default contributes nothing, so the component's own commands
-run either way. Internal controls nested below a component hook root use an
-untargeted dispatch so the event bubbles to that hook. Reserve `to:` for
-triggers outside the hook subtree, such as public helpers that target a
+The component's own commands run whether the callback is present or not.
+Internal controls nested below a component hook root use an untargeted dispatch
+so the event bubbles to that hook. The nearest matching hook consumes the event
+before acting so nested same-type components cannot both respond. Reserve `to:`
+for triggers outside the hook subtree, such as public helpers that target a
 component by ID.
 
 ### Programmatic trigger

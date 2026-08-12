@@ -62,5 +62,29 @@ defmodule Pulsar.Integration.A11y.SelectTest do
         end
       )
     end
+
+    test "a per-badge callback receives the clicked option on the server", %{conn: conn} do
+      conn
+      |> visit("/components/select/callback")
+      |> A11y.await_live_connected()
+      |> assert_has("#sel-callback-option", text: "none")
+      |> click(~s|button[aria-label="Remove Elixir"]|)
+      |> assert_has("#sel-callback-option", text: "elixir")
+    end
+
+    test "zero, false, and empty-string option values can each be removed", %{conn: conn} do
+      conn
+      |> visit("/components/select/removable")
+      |> A11y.await_live_connected()
+      |> assert_has("#sel-remove-zero-count", text: "1")
+      |> assert_has("#sel-remove-false-count", text: "1")
+      |> assert_has("#sel-remove-empty-count", text: "1")
+      |> click(~s|button[aria-label="Remove Zero"]|)
+      |> assert_has("#sel-remove-zero-count", text: "0")
+      |> click(~s|button[aria-label="Remove False"]|)
+      |> assert_has("#sel-remove-false-count", text: "0")
+      |> click(~s|button[aria-label="Remove Empty"]|)
+      |> assert_has("#sel-remove-empty-count", text: "0")
+    end
   end
 end

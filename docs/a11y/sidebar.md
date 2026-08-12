@@ -69,7 +69,7 @@ utilities — `lib/pulsar/components/sidebar.ex`, `width_classes/1`,
 
 **Evidence:** Below `lg` the panel becomes a fixed off-canvas drawer overlay
 rather than consuming inline width, so main content reflows to full width —
-`lib/pulsar/components/sidebar.ex`, `base_classes/0`. The body scrolls vertically
+`lib/pulsar/components/sidebar.ex`, `root_base_classes/0` and `panel_base_classes/0`. The body scrolls vertically
 (`overflow-y-auto`) — `sidebar/1`.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS (decorative borders are out of scope)
@@ -119,7 +119,7 @@ Escape exits).
 
 **Evidence:** Only finite, token-driven transitions are used
 (`transition-transform`, `lg:transition-[width]`, `transition-opacity`) —
-`lib/pulsar/components/sidebar.ex`, `base_classes/0` and `backdrop_classes/0`. Reduced motion is honored
+`lib/pulsar/components/sidebar.ex`, `root_base_classes/0`, `panel_base_classes/0`, and `backdrop_classes/0`. Reduced motion is honored
 globally: a single `@media (prefers-reduced-motion: reduce)` rule in the theme
 near-zeroes all transition durations, so the panel and backdrop snap to their end
 state without animation. No looping motion.
@@ -127,7 +127,7 @@ state without animation. No looping motion.
 ### 2.3.1 Three Flashes or Below Threshold (A) — ✓ PASS
 
 **Evidence:** No flashing; only smooth slide/width/opacity transitions —
-`lib/pulsar/components/sidebar.ex`, `base_classes/0` and `backdrop_classes/0`.
+`lib/pulsar/components/sidebar.ex`, `root_base_classes/0`, `panel_base_classes/0`, and `backdrop_classes/0`.
 
 ### 2.4.1 Bypass Blocks (A) — ✓ PASS
 
@@ -151,7 +151,7 @@ Test `label overrides the navigation accessible name (i18n)` assert default and 
 
 **Evidence:** The component does not suppress focus indicators on interactive
 slot content; `focus-visible:outline-none` is scoped to the `tabindex="-1"` root
-only — `lib/pulsar/components/sidebar.ex`, `base_classes/0` and `sidebar/1`. Caller links/buttons keep
+only — `lib/pulsar/components/sidebar.ex`, `root_base_classes/0` and `sidebar/1`. Caller links/buttons keep
 their own focus rings.
 
 **Notes:** The root is only programmatically focusable (drawer fallback), so it
@@ -165,7 +165,7 @@ interactive content.
 
 **Evidence:** While the drawer is open, focus is trapped inside the on-top panel
 (`z-modal`) above the backdrop (`z-overlay`), so the focused element is never
-obscured — `lib/pulsar/components/sidebar.ex`, `base_classes/0`,
+obscured — `lib/pulsar/components/sidebar.ex`, `panel_base_classes/0`,
 `backdrop_classes/0`, and the hook's `trapFocus`.
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS

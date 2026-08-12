@@ -13,11 +13,13 @@ defmodule Pulsar.Components.SelectTest do
     test "requires id when field is not provided" do
       assigns = %{}
 
-      assert_raise ArgumentError, ~r/requires :id when :field is not provided/, fn ->
-        rendered_to_string(~H"""
-        <Select.select name="skills" options={["Elixir"]} />
-        """)
-      end
+      assert_raise ArgumentError,
+                   "Select component requires :id when :field is not provided; each Select id must be unique within the rendered page",
+                   fn ->
+                     rendered_to_string(~H"""
+                     <Select.select name="skills" options={["Elixir"]} />
+                     """)
+                   end
     end
 
     test "same-named unbound selects use their explicit unique ids" do
@@ -458,9 +460,14 @@ defmodule Pulsar.Components.SelectTest do
       assert html =~ ~s(data-has-value="true")
     end
 
-    test "supports %JS{} command for on_remove_badge" do
+    test "passes each option to its on_remove_badge callback" do
+      test_pid = self()
+
       assigns = %{
-        custom_js: %JS{} |> JS.hide(to: "#modal")
+        callback: fn option ->
+          send(test_pid, {:removed_option, option})
+          JS.push("custom_remove", value: %{option: option})
+        end
       }
 
       html =
@@ -471,33 +478,15 @@ defmodule Pulsar.Components.SelectTest do
           options={[{"Elixir", "elixir"}]}
           value={["elixir"]}
           multiple={true}
-          on_remove_badge={@custom_js}
+          on_remove_badge={@callback}
         />
         """)
 
-      # Should handle %JS{} command and dispatch event
+      assert_receive {:removed_option, "elixir"}
       assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
-      assert html =~ ~s(&quot;hide&quot;)
-    end
-
-    test "supports a JS.push command for on_remove_badge" do
-      assigns = %{custom_js: JS.push("custom_remove")}
-
-      html =
-        rendered_to_string(~H"""
-        <Select.select
-          id="skills"
-          name="skills"
-          options={[{"Elixir", "elixir"}]}
-          value={["elixir"]}
-          multiple={true}
-          on_remove_badge={@custom_js}
-        />
-        """)
-
-      # Should run the caller's push and dispatch the internal event
       assert html =~ ~s(&quot;pulsar:remove-selection&quot;)
       assert html =~ ~s(&quot;custom_remove&quot;)
+      assert html =~ ~s(&quot;option&quot;:&quot;elixir&quot;)
     end
 
     test "badge remove button includes option in event detail" do
@@ -1066,7 +1055,9 @@ defmodule Pulsar.Components.SelectTest do
     end
 
     test "handles badges with custom on_remove_badge command" do
-      assigns = %{custom_js: JS.push("custom_remove")}
+      assigns = %{
+        callback: fn option -> JS.push("custom_remove", value: %{option: option}) end
+      }
 
       html =
         rendered_to_string(~H"""
@@ -1076,7 +1067,7 @@ defmodule Pulsar.Components.SelectTest do
           options={[{"Elixir", "elixir"}, {"Phoenix", "phoenix"}]}
           value={["elixir"]}
           multiple={true}
-          on_remove_badge={@custom_js}
+          on_remove_badge={@callback}
         />
         """)
 

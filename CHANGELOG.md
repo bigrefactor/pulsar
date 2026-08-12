@@ -10,8 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed (Breaking) - Explicit Select IDs and Scoped Internal Actions
 
 - **Unbound `select` calls now require an explicit `id` as well as a `name`**: deriving the DOM id from `name` could not distinguish same-named controls and produced duplicate select and hook-wrapper ids. Bound fields still prefer a caller `id`, then the field id, then a generated fallback. Add a stable, unique `id` to each direct unbound Select call.
+- **`select`'s `on_remove_badge` now takes a 1-arity function**: the callback receives the clicked option value and returns a `%JS{}` command, so server pushes can include the option without relying on a `phx-value-option` DOM fallback. Migrate `on_remove_badge={JS.push("remove_tag")}` to `on_remove_badge={fn option -> JS.push("remove_tag", value: %{option: option}) end}`.
 - **Select badge removal is isolated by DOM ancestry instead of a global id selector**: the internal removal event bubbles from the clicked badge button to its containing Select hook, so same-named Selects with distinct ids cannot update one another. The generated Storybook Select variations now carry stable explicit ids, and a generalized story-template guard rejects duplicate derived form-control identities.
 - **Flash dismiss, Modal close, and Sidebar backdrop actions use the same bubbling rule**: each nested internal action is handled by its own component hook rather than dispatching through a potentially shared id selector. Public Modal and Sidebar helpers invoked from outside the component subtree remain explicitly id-targeted.
+- **Sidebar separates layout and visual customization across its new root/panel DOM**: `class` and global attributes remain on the direct `<nav>` flex/hook root; use the new `panel_class` attr for background, border, overflow, flex-direction, and other visible-panel overrides that previously went through `class`.
 
 ### Fixed - Table Row Keyboard Activation
 

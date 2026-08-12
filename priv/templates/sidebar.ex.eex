@@ -83,24 +83,29 @@ alias Phoenix.LiveView.Rendered
   "xl" => %{width: "w-80", header: "p-6", content: "p-6 gap-1", footer: "p-6"}
 }
 
-# Layout, positioning, and the CSS contract shared by every sidebar.
-# Mobile: fixed off-canvas drawer above the backdrop. Desktop: in-flow column
-# so sibling content reflows on collapse. Mobile drawer transform uses
-# emphasized slow-in / accelerate fast-out; desktop collapse animates width.
-@panel_base_classes "group/sidebar peer/sidebar " <>
-                      "flex flex-col shrink-0 h-svh overflow-hidden " <>
-                      "focus-visible:outline-none " <>
-                      "fixed inset-y-0 z-modal " <>
-                      "lg:static lg:z-auto lg:translate-x-0 " <>
+# The nav remains the public layout root and direct flex item. It owns width,
+# collapse state, caller classes/rest attributes, and the named group/peer
+# contract. On mobile it is a transparent fixed containing root; the visual
+# panel below moves off-canvas independently so its fixed backdrop stays
+# viewport-relative.
+@root_base_classes "group/sidebar peer/sidebar " <>
+                     "shrink-0 h-svh fixed inset-y-0 z-modal pointer-events-none focus-visible:outline-none " <>
+                     "lg:static lg:z-auto lg:pointer-events-auto " <>
+                     "lg:transition-[width] lg:duration-normal lg:ease-emphasized"
+
+@panel_base_classes "relative z-modal flex h-full w-full flex-col overflow-hidden pointer-events-auto " <>
                       "transition-transform duration-fast ease-accelerate " <>
                       "data-[mobile=open]:duration-slow data-[mobile=open]:ease-emphasized " <>
-                      "lg:transition-[width] lg:duration-normal lg:ease-emphasized"
+                      "lg:translate-x-0"
 
 # Desktop collapse behaviour, keyed off the panel's own data attributes.
 @collapse_classes "data-[collapsible=icon]:data-[state=collapsed]:lg:w-16 " <>
+                    "data-[collapsible=icon]:data-[state=collapsed]:lg:basis-16 " <>
                     "data-[collapsible=offcanvas]:data-[state=collapsed]:lg:w-0 " <>
-                    "data-[collapsible=offcanvas]:data-[state=collapsed]:lg:border-0 " <>
-                    "data-[collapsible=offcanvas]:data-[state=collapsed]:lg:overflow-hidden"
+                    "data-[collapsible=offcanvas]:data-[state=collapsed]:lg:basis-0"
+
+@panel_collapse_classes "data-[collapsible=offcanvas]:data-[state=collapsed]:lg:border-0 " <>
+                          "data-[collapsible=offcanvas]:data-[state=collapsed]:lg:overflow-hidden"
 
 # Backdrop shown only while the mobile drawer is open.
 @backdrop_classes [
@@ -108,9 +113,9 @@ alias Phoenix.LiveView.Rendered
   "opacity-0 pointer-events-none",
   # Exit timing by default; enter timing while the drawer is open.
   "transition-opacity duration-fast ease-accelerate",
-  "peer-data-[mobile=open]/sidebar:opacity-100",
-  "peer-data-[mobile=open]/sidebar:duration-normal peer-data-[mobile=open]/sidebar:ease-decelerate",
-  "peer-data-[mobile=open]/sidebar:pointer-events-auto"
+  "group-data-[mobile=open]/sidebar:opacity-100",
+  "group-data-[mobile=open]/sidebar:duration-normal group-data-[mobile=open]/sidebar:ease-decelerate",
+  "group-data-[mobile=open]/sidebar:pointer-events-auto"
 ]
 
 @valid_variants ~w(solid outline ghost elevated)
@@ -219,9 +224,14 @@ attr(:on_close, JS,
   doc: "JS commands to run when the panel closes/collapses"
 )
 
-attr(:class, :string, default: "", doc: "Additional CSS classes")
+attr(:class, :string, default: "", doc: "Additional CSS classes for the direct nav/layout root")
 
-attr(:rest, :global, doc: "Additional HTML attributes")
+attr(:panel_class, :string,
+  default: "",
+  doc: "Additional CSS classes for the visual panel (merged last)"
+)
+
+attr(:rest, :global, doc: "Additional HTML attributes for the direct nav/layout root")
 
 slot(:header, doc: "Pinned top region (brand, logo)")
 slot(:inner_block, required: true, doc: "Scrollable main content (navigation)")
@@ -247,32 +257,52 @@ def sidebar(assigns) do
   assigns =
     assign(
       assigns,
-      :panel_classes,
+      :root_classes,
       merge([
-        base_classes(),
+        root_base_classes(),
         collapse_classes(),
-        side_classes(assigns.side),
+        root_side_classes(assigns.side),
         width_classes(assigns.size),
-        color_classes(assigns.variant, assigns.color),
         assigns.class
       ])
     )
 
+  assigns =
+    assign(
+      assigns,
+      :panel_classes,
+      merge([
+        panel_base_classes(),
+        panel_collapse_classes(),
+        panel_side_classes(assigns.side),
+        color_classes(assigns.variant, assigns.color),
+        assigns.panel_class
+      ])
+    )
+
   ~H"""
-  <div id={"#{@id}-root"} phx-hook=".PulsarSidebar" data-sidebar-root>
-    <nav
-      id={@id}
+  <nav
+    id={@id}
+    phx-hook=".PulsarSidebar"
+    data-sidebar-root
+    tabindex="-1"
+    aria-label={@label}
+    data-side={@side}
+    data-collapsible={@collapsible}
+    data-state={if @open, do: "expanded", else: "collapsed"}
+    data-mobile="closed"
+    data-on-open={@on_open}
+    data-on-close={@on_close}
+    class={@root_classes}
+    {@rest}
+  >
+    <div
       data-sidebar-panel
-      tabindex="-1"
-      aria-label={@label}
       data-side={@side}
       data-collapsible={@collapsible}
       data-state={if @open, do: "expanded", else: "collapsed"}
       data-mobile="closed"
-      data-on-open={@on_open}
-      data-on-close={@on_close}
       class={@panel_classes}
-      {@rest}
     >
       <div :if={@header != []} class={["shrink-0", header_classes(@size)]}>
         {render_slot(@header)}
@@ -285,7 +315,7 @@ def sidebar(assigns) do
       <div :if={@footer != []} class={["shrink-0", footer_classes(@size)]}>
         {render_slot(@footer)}
       </div>
-    </nav>
+    </div>
 
     <div
       data-sidebar-backdrop
@@ -293,7 +323,7 @@ def sidebar(assigns) do
       phx-click={JS.dispatch("pulsar:sidebar-hide")}
       class={backdrop_classes()}
     />
-  </div>
+  </nav>
 
   <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarSidebar">
     const MOBILE_QUERY = "(max-width: 1023px)"
@@ -304,14 +334,23 @@ def sidebar(assigns) do
       mounted() {
         this.mql = window.matchMedia(MOBILE_QUERY)
         this.panel = this.el.querySelector("[data-sidebar-panel]")
-        this.state = this.panel.dataset.state === "collapsed" ? "collapsed" : "expanded"
+        this.state = this.el.dataset.state === "collapsed" ? "collapsed" : "expanded"
         this.mobileOpen = false
         this.previousFocus = null
         this.bodyOverflow = ""
 
-        this._onToggle = () => this.toggle()
-        this._onShow = () => this.show()
-        this._onHide = () => this.hide()
+        this._onToggle = (event) => {
+          event.stopPropagation()
+          this.toggle()
+        }
+        this._onShow = (event) => {
+          event.stopPropagation()
+          this.show()
+        }
+        this._onHide = (event) => {
+          event.stopPropagation()
+          this.hide()
+        }
         this._onKeydown = (e) => this.handleKeydown(e)
 
         this.el.addEventListener("pulsar:sidebar-toggle", this._onToggle)
@@ -351,6 +390,7 @@ def sidebar(assigns) do
       setState(value) {
         if (this.state === value) return
         this.state = value
+        this.el.dataset.state = value
         this.panel.dataset.state = value
         this.runCallback(value === "expanded" ? "onOpen" : "onClose")
       },
@@ -359,6 +399,7 @@ def sidebar(assigns) do
         if (this.mobileOpen) return
         this.mobileOpen = true
         this.previousFocus = document.activeElement
+        this.el.dataset.mobile = "open"
         this.panel.dataset.mobile = "open"
         this.lockScroll()
         this.focusFirst()
@@ -368,6 +409,7 @@ def sidebar(assigns) do
       closeDrawer() {
         if (!this.mobileOpen) return
         this.mobileOpen = false
+        this.el.dataset.mobile = "closed"
         this.panel.dataset.mobile = "closed"
         this.unlockScroll()
         if (this.previousFocus && this.previousFocus.focus) this.previousFocus.focus()
@@ -391,14 +433,14 @@ def sidebar(assigns) do
 
       focusFirst() {
         const items = this.focusableItems()
-        ;(items[0] || this.panel).focus()
+        ;(items[0] || this.el).focus()
       },
 
       trapFocus(e) {
         const items = this.focusableItems()
         if (items.length === 0) {
           e.preventDefault()
-          this.panel.focus()
+          this.el.focus()
           return
         }
         const first = items[0]
@@ -422,13 +464,15 @@ def sidebar(assigns) do
       },
 
       runCallback(name) {
-        const encoded = this.panel.dataset[name]
+        const encoded = this.el.dataset[name]
         if (encoded && encoded !== "[]" && this.liveSocket) {
-          this.liveSocket.execJS(this.panel, encoded)
+          this.liveSocket.execJS(this.el, encoded)
         }
       },
 
       updated() {
+        this.el.dataset.state = this.state
+        this.el.dataset.mobile = this.mobileOpen ? "open" : "closed"
         this.panel.dataset.state = this.state
         this.panel.dataset.mobile = this.mobileOpen ? "open" : "closed"
       },
@@ -489,23 +533,34 @@ def hide(js, id), do: JS.dispatch(js, "pulsar:sidebar-hide", to: "##{id}")
 # HELPER FUNCTIONS
 # ============================================================================
 
-@spec base_classes() :: String.t()
-defp base_classes, do: @panel_base_classes
+@spec root_base_classes() :: String.t()
+defp root_base_classes, do: @root_base_classes
+
+@spec panel_base_classes() :: String.t()
+defp panel_base_classes, do: @panel_base_classes
 
 @spec collapse_classes() :: String.t()
 defp collapse_classes, do: @collapse_classes
 
+@spec panel_collapse_classes() :: String.t()
+defp panel_collapse_classes, do: @panel_collapse_classes
+
 @spec backdrop_classes() :: [String.t()]
 defp backdrop_classes, do: @backdrop_classes
 
-# Edge anchoring, separating border, and the off-canvas drawer transform.
-@spec side_classes(String.t()) :: String.t()
-defp side_classes("right") do
-  "right-0 border-l data-[mobile=closed]:translate-x-full lg:data-[mobile=closed]:translate-x-0"
+# Root anchoring stays fixed while the visual panel moves, which keeps the
+# fixed backdrop relative to the viewport rather than a transformed ancestor.
+@spec root_side_classes(String.t()) :: String.t()
+defp root_side_classes("right"), do: "right-0"
+defp root_side_classes(_left), do: "left-0"
+
+@spec panel_side_classes(String.t()) :: String.t()
+defp panel_side_classes("right") do
+  "border-l data-[mobile=closed]:translate-x-full lg:data-[mobile=closed]:translate-x-0"
 end
 
-defp side_classes(_left) do
-  "left-0 border-r data-[mobile=closed]:-translate-x-full lg:data-[mobile=closed]:translate-x-0"
+defp panel_side_classes(_left) do
+  "border-r data-[mobile=closed]:-translate-x-full lg:data-[mobile=closed]:translate-x-0"
 end
 
 @spec width_classes(String.t()) :: String.t()

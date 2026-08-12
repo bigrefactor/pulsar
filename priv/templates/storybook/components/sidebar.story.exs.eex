@@ -65,7 +65,13 @@ defmodule <%= @web_module %>.Storybook.Components.Sidebar do
         id: :class,
         type: :string,
         default: "",
-        doc: "Additional CSS classes"
+        doc: "Additional CSS classes for the direct nav/layout root"
+      },
+      %Attr{
+        id: :panel_class,
+        type: :string,
+        default: "",
+        doc: "Additional CSS classes for the visual panel"
       }
     ]
   end

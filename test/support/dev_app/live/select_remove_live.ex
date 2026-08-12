@@ -19,7 +19,15 @@ defmodule Pulsar.DevApp.SelectRemoveLive do
   @options [{"One", "1"}, {"Two", "2"}, {"Three", "3"}]
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, options: @options, primary_selected: ["1", "2"], sibling_selected: ["1", "2"])}
+    {:ok,
+     assign(socket,
+       options: @options,
+       primary_selected: ["1", "2"],
+       sibling_selected: ["1", "2"],
+       zero_selected: [0],
+       false_selected: [false],
+       empty_selected: [""]
+     )}
   end
 
   def handle_event("validate-primary", params, socket) do
@@ -28,6 +36,18 @@ defmodule Pulsar.DevApp.SelectRemoveLive do
 
   def handle_event("validate-sibling", params, socket) do
     {:noreply, assign(socket, sibling_selected: params["shared_skills"] || [])}
+  end
+
+  def handle_event("validate-zero", params, socket) do
+    {:noreply, assign(socket, zero_selected: params["zero_value"] || [])}
+  end
+
+  def handle_event("validate-false", params, socket) do
+    {:noreply, assign(socket, false_selected: params["false_value"] || [])}
+  end
+
+  def handle_event("validate-empty", params, socket) do
+    {:noreply, assign(socket, empty_selected: params["empty_value"] || [])}
   end
 
   def render(assigns) do
@@ -59,6 +79,46 @@ defmodule Pulsar.DevApp.SelectRemoveLive do
             aria-label="sibling removable multi-select"
           />
         </form>
+      </.fixture_section>
+
+      <.fixture_section name="falsy-values" title="Falsy option values">
+        <div class="grid gap-4">
+          <form id="sel-remove-zero-form" phx-change="validate-zero">
+            <span id="sel-remove-zero-count">{length(@zero_selected)}</span>
+            <Select.select
+              id="zero-value"
+              name="zero_value"
+              multiple
+              options={[{"Zero", 0}]}
+              value={@zero_selected}
+              aria-label="zero value multi-select"
+            />
+          </form>
+
+          <form id="sel-remove-false-form" phx-change="validate-false">
+            <span id="sel-remove-false-count">{length(@false_selected)}</span>
+            <Select.select
+              id="false-value"
+              name="false_value"
+              multiple
+              options={[{"False", false}]}
+              value={@false_selected}
+              aria-label="false value multi-select"
+            />
+          </form>
+
+          <form id="sel-remove-empty-form" phx-change="validate-empty">
+            <span id="sel-remove-empty-count">{length(@empty_selected)}</span>
+            <Select.select
+              id="empty-value"
+              name="empty_value"
+              multiple
+              options={[{"Empty", ""}]}
+              value={@empty_selected}
+              aria-label="empty value multi-select"
+            />
+          </form>
+        </div>
       </.fixture_section>
     </.fixture_page>
     """

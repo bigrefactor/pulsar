@@ -29,8 +29,7 @@ defmodule Pulsar.Generator.StoryTemplatesTest do
     textarea.story.exs.eex
   ))
   @identity_exclusions %{
-    "avatar.story.exs.eex" => "its :name is display content rather than a form-control identity",
-    "field.story.exs.eex" => "its template/0 injects the same f[:demo] field into each separately rendered variation"
+    "avatar.story.exs.eex" => "its :name is display content rather than a form-control identity"
   }
   @normalized_name_identity_story_templates MapSet.new(~w(
     checkbox.story.exs.eex
@@ -80,6 +79,30 @@ defmodule Pulsar.Generator.StoryTemplatesTest do
              "form-control story variations must have distinct DOM identities:\n" <>
                Enum.join(identity_failures, "\n")
     end
+
+    test "the Field story guard catches duplicate injected form-field identities" do
+      template = Enum.find(story_templates(), &(Path.basename(&1) == "field.story.exs.eex"))
+      {^template, story_module} = compile_story_template(template)
+
+      on_exit(fn ->
+        :code.purge(story_module)
+        :code.delete(story_module)
+      end)
+
+      [first, second | remaining] = story_module.variations()
+
+      collided_variations =
+        [
+          %{first | attributes: Map.delete(first.attributes, :id)},
+          %{second | attributes: Map.delete(second.attributes, :id)}
+          | remaining
+        ]
+
+      assert [failure] = identity_failures(template, collided_variations)
+      assert failure =~ "#{template}: \"demo_demo\" is used by variations"
+      assert failure =~ inspect(first.id)
+      assert failure =~ inspect(second.id)
+    end
   end
 
   defp compile_story_template(template) do
@@ -88,9 +111,11 @@ defmodule Pulsar.Generator.StoryTemplatesTest do
     {template, story_module}
   end
 
-  defp identity_failures({template, story_module}) do
+  defp identity_failures({template, story_module}), do: identity_failures(template, story_module.variations())
+
+  defp identity_failures(template, variations) do
     {variation_identities, identity_failures} =
-      Enum.reduce(story_module.variations(), {[], []}, fn variation, {identities, failures} ->
+      Enum.reduce(variations, {[], []}, fn variation, {identities, failures} ->
         case identity_for(template, variation.attributes) do
           {:ok, identity} -> {[{variation.id, identity} | identities], failures}
           {:error, reason} -> {identities, ["#{template}: variation #{inspect(variation.id)} #{reason}" | failures]}
@@ -147,6 +172,9 @@ defmodule Pulsar.Generator.StoryTemplatesTest do
       basename == "dropzone.story.exs.eex" ->
         dropzone_identity(attributes)
 
+      basename == "field.story.exs.eex" ->
+        field_identity(attributes)
+
       basename == "input_otp.story.exs.eex" ->
         raw_name_identity(attributes, "requires :id or :name to avoid a generated, non-deterministic identity")
 
@@ -167,6 +195,11 @@ defmodule Pulsar.Generator.StoryTemplatesTest do
   defp dropzone_identity(%{upload: %{name: name}}), do: {:ok, "dropzone-#{name}"}
 
   defp dropzone_identity(_attributes), do: {:error, "requires :id or an upload with a name"}
+
+  # The Field story template injects `f[:demo]` from a form named `demo`.
+  # Without a caller override, Field therefore renders the stable id `demo_demo`.
+  defp field_identity(%{id: id}) when not is_nil(id), do: {:ok, id}
+  defp field_identity(_attributes), do: {:ok, "demo_demo"}
 
   defp raw_name_identity(%{id: id}, _reason) when not is_nil(id), do: {:ok, id}
   defp raw_name_identity(%{name: name}, _reason) when not is_nil(name), do: {:ok, name}
