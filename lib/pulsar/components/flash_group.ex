@@ -9,6 +9,7 @@ defmodule Pulsar.Components.FlashGroup do
   ## Features
 
   - **Phoenix.Flash Integration**: Reads flash messages directly from @flash assigns
+  - **String Flash Keys**: Accepts Phoenix-native string keys; non-string keys are ignored with a warning
   - **Intelligent Positioning**: 6 position options with automatic stacking
   - **Type-to-Color Mapping**: Automatic mapping of flash types to semantic colors
     - **Item Limiting**: Configurable maximum number of flash messages to display
@@ -35,11 +36,14 @@ defmodule Pulsar.Components.FlashGroup do
   ## Flash Type Mapping
 
   FlashGroup automatically maps Phoenix flash types to appropriate colors:
-  - `:error` → `danger` color
-  - `:warning` → `warning` color
-  - `:info` → `info` color
-  - `:success` → `success` color
+  - `"error"` → `danger` color
+  - `"warning"` → `warning` color
+  - `"info"` → `info` color
+  - `"success"` → `success` color
   - Custom types → `neutral` color
+
+  Flash maps must use string keys, such as `%{"info" => "Changes saved!"}`. `put_flash/3`
+  already converts atom kinds to strings, so this only constrains maps assembled by hand.
 
     ## Usage in Phoenix Applications
 
@@ -73,24 +77,8 @@ defmodule Pulsar.Components.FlashGroup do
 
           # Optional: Handle dismissal events for analytics/tracking
           def handle_event("track_dismissal", %{"key" => key}, socket) do
-            # Safe atom handling to prevent atom exhaustion attacks
-            case safe_to_existing_atom(key) do
-              {:ok, key_atom} ->
-                # Track the dismissal with the actual flash type
-                :telemetry.execute([:my_app, :flash, :dismissed], %{}, %{type: key_atom})
-                {:noreply, socket}
-
-              :error ->
-                # Invalid key, log or track as unknown but don't crash
-                :telemetry.execute([:my_app, :flash, :dismissed], %{}, %{type: :invalid_key})
-                {:noreply, socket}
-            end
-          end
-
-          defp safe_to_existing_atom(string) when is_binary(string) do
-            {:ok, String.to_existing_atom(string)}
-          rescue
-            ArgumentError -> :error
+            :telemetry.execute([:my_app, :flash, :dismissed], %{}, %{type: key})
+            {:noreply, socket}
           end
         end
 
@@ -118,70 +106,18 @@ defmodule Pulsar.Components.FlashGroup do
 
     ## Testing FlashGroup Components
 
-    ### Testing Flash Messages in LiveView Tests
+    ### Testing Flash Messages
 
-        test "displays flash messages with appropriate icons and colors", %{conn: conn} do
-          {:ok, view, _html} = live(conn, "/")
+        test "displays flash messages with appropriate icons and colors" do
+          html =
+            rendered_to_string(~H\"\"\"
+            <.flash_group flash={%{"success" => "Changes saved!", "error" => "Something went wrong"}} />
+            \"\"\")
 
-          # Set flash messages
-          view |> put_flash(:success, "Changes saved!")
-          view |> put_flash(:error, "Something went wrong")
-
-          # Assert flash messages are displayed
-          assert has_element?(view, "[role='status']", "Changes saved!")
-          assert has_element?(view, "[role='alert']", "Something went wrong")
-
-          # Assert icons are present
-          assert has_element?(view, ".hero-check-circle") # success icon
-          assert has_element?(view, ".hero-x-circle")     # error icon
-        end
-
-    ### Testing Flash Dismissal
-
-        test "handles flash dismissal correctly", %{conn: conn} do
-          {:ok, view, _html} = live(conn, "/")
-
-          view |> put_flash(:info, "Test message")
-          assert has_element?(view, "[role='status']", "Test message")
-
-          # Simulate manual dismiss
-          view |> element("[aria-label='Dismiss']") |> render_click()
-
-          # Flash should be cleared
-          refute has_element?(view, "[role='status']", "Test message")
-        end
-
-    ### Testing Custom Configuration
-
-        test "respects custom positioning and styling", %{conn: conn} do
-          {:ok, view, _html} = live(conn, "/custom-flash")
-
-          view |> put_flash(:warning, "Custom styled flash")
-
-          # Assert custom positioning
-          assert has_element?(view, ".bottom-4.left-4")   # bottom-left position
-          assert has_element?(view, ".z-30")              # custom z-index
-
-          # Assert custom variant
-          assert has_element?(view, ".border.border-warning") # outline variant
-        end
-
-    ### Helper Functions for Testing
-
-    Add these helpers to your test support modules:
-
-        def put_flash(view, type, message) do
-          Phoenix.LiveViewTest.put_flash(view, type, message)
-        end
-
-        def assert_flash(view, type, message) do
-          role = if type in [:error, :warning], do: "alert", else: "status"
-          assert has_element?(view, "[role='\#{role}']", message)
-        end
-
-        def refute_flash(view, type, message) do
-          role = if type in [:error, :warning], do: "alert", else: "status"
-          refute has_element?(view, "[role='\#{role}']", message)
+          assert html =~ "Changes saved!"
+          assert html =~ "Something went wrong"
+          assert html =~ "hero-check-circle-mini"
+          assert html =~ "hero-x-circle-mini"
         end
 
   ## Positioning
@@ -213,32 +149,34 @@ defmodule Pulsar.Components.FlashGroup do
   alias Pulsar.Components.Flash
   alias Pulsar.Components.Icon
 
+  require Logger
+
   # ============================================================================
   # CONFIGURATION & CONSTANTS
   # ============================================================================
 
   # Type to color mapping for Phoenix flash types
   @type_colors %{
-    error: "danger",
-    warning: "warning",
-    info: "info",
-    success: "success"
+    "error" => "danger",
+    "warning" => "warning",
+    "info" => "info",
+    "success" => "success"
     # All other types map to neutral (see get_flash_color/1)
   }
 
   # Type to ARIA role mapping
   @type_roles %{
-    error: "alert",
-    warning: "alert"
+    "error" => "alert",
+    "warning" => "alert"
     # All other types use "status" (see get_flash_role/1)
   }
 
   # Type to icon mapping
   @type_icons %{
-    error: "hero-x-circle-mini",
-    warning: "hero-exclamation-triangle-mini",
-    info: "hero-information-circle-mini",
-    success: "hero-check-circle-mini"
+    "error" => "hero-x-circle-mini",
+    "warning" => "hero-exclamation-triangle-mini",
+    "info" => "hero-information-circle-mini",
+    "success" => "hero-check-circle-mini"
     # All other types use "hero-bell-mini" (see get_flash_icon/1)
   }
 
@@ -303,7 +241,7 @@ defmodule Pulsar.Components.FlashGroup do
 
   attr(:flash, :map,
     required: true,
-    doc: "Flash messages map from Phoenix.Flash (typically @flash)"
+    doc: "Flash messages map from Phoenix.Flash (typically @flash); keys must be strings"
   )
 
   attr(:variant, :string,
@@ -356,7 +294,7 @@ defmodule Pulsar.Components.FlashGroup do
     default: nil,
     doc:
       "A `%JS{}` applied to every flash, or a 1-arity function `(flash_key) -> %JS{}` " <>
-        "for per-key payloads. Defaults to pushing \"clear_flash\" with the dismissed key."
+        "for per-key payloads. Defaults to pushing LiveView's native \"lv:clear-flash\" event."
   )
 
   attr(:z_index, :string,
@@ -381,7 +319,7 @@ defmodule Pulsar.Components.FlashGroup do
 
   ## Flash Message Processing
 
-    1. **Read Flash Messages**: Extracts all messages from the @flash map
+    1. **Read Flash Messages**: Extracts messages with string keys from the @flash map
     2. **Apply Item Limit**: Limits displayed messages to max_items (Phoenix.Flash stores one message per type)
     3. **Type Mapping**: Maps each flash type to appropriate color and ARIA role
     4. **Render Components**: Creates Flash components with consistent styling
@@ -389,29 +327,9 @@ defmodule Pulsar.Components.FlashGroup do
 
   ## Event Handling
 
-  By default, dismissing a flash pushes a "clear_flash" event carrying the
-  dismissed key. Your LiveView should handle this event:
-
-      def handle_event("clear_flash", %{"key" => key}, socket) do
-        # Safe atom handling to prevent atom exhaustion attacks
-        # Only clear flash if the key is a valid existing atom AND exists in flash
-        with {:ok, key_atom} <- safe_to_existing_atom(key),
-              true <- Map.has_key?(socket.assigns.flash, key_atom) do
-          {:noreply, clear_flash(socket, key_atom)}
-        else
-          _ -> {:noreply, socket}
-        end
-      end
-
-      def handle_event("clear_flash", _params, socket) do
-        {:noreply, clear_flash(socket)}
-      end
-
-      defp safe_to_existing_atom(string) when is_binary(string) do
-        {:ok, String.to_existing_atom(string)}
-      rescue
-        ArgumentError -> :error
-      end
+  By default, dismissing a flash pushes LiveView's native `"lv:clear-flash"` event
+  with the dismissed string key. LiveView handles this event automatically. Pass
+  `on_dismiss` when the host application needs custom tracking or behavior.
 
   ## Examples
 
@@ -459,7 +377,7 @@ defmodule Pulsar.Components.FlashGroup do
     >
       <Flash.flash
         :for={{{type, message}, index} <- Enum.with_index(@flash_messages)}
-        id={"#{@id}-#{type}"}
+        id={"#{@id}-#{flash_dom_key(type)}"}
         variant={@variant}
         color={get_flash_color(type)}
         size={@size}
@@ -467,7 +385,7 @@ defmodule Pulsar.Components.FlashGroup do
         auto_dismiss={@auto_dismiss}
         dismiss_after={@dismiss_after}
         dismissible={@dismissible}
-        on_dismiss={dismiss_callback(@on_dismiss, normalize_flash_key(type))}
+        on_dismiss={dismiss_callback(@on_dismiss, type)}
         phx-mounted={
           JS.show(
             time: @entry_duration_ms + stagger_ms(index, @stagger_delay),
@@ -496,6 +414,14 @@ defmodule Pulsar.Components.FlashGroup do
   defp extract_flash_messages(flash, max_items) when is_map(flash) do
     flash
     |> Map.to_list()
+    |> Enum.filter(fn
+      {type, _message} when is_binary(type) ->
+        true
+
+      {type, _message} ->
+        Logger.warning("Ignoring flash group entry with non-string key: #{inspect(type)}")
+        false
+    end)
     |> Enum.reject(fn {_type, message} ->
       is_nil(message) or (is_binary(message) and String.trim(message) == "")
     end)
@@ -506,20 +432,20 @@ defmodule Pulsar.Components.FlashGroup do
   defp extract_flash_messages(_, _), do: []
 
   # Define flash message display priority (lower numbers show first)
-  defp flash_priority(:error), do: 1
-  defp flash_priority(:warning), do: 2
-  defp flash_priority(:info), do: 3
-  defp flash_priority(:success), do: 4
+  defp flash_priority("error"), do: 1
+  defp flash_priority("warning"), do: 2
+  defp flash_priority("info"), do: 3
+  defp flash_priority("success"), do: 4
   defp flash_priority(_), do: 5
 
   # Get color for flash type
   defp get_flash_color(type) do
-    @type_colors[normalize_type(type)] || "neutral"
+    @type_colors[type] || "neutral"
   end
 
   # Get ARIA role for flash type
   defp get_flash_role(type) do
-    @type_roles[normalize_type(type)] || "status"
+    @type_roles[type] || "status"
   end
 
   # Get entry animation start position
@@ -531,8 +457,6 @@ defmodule Pulsar.Components.FlashGroup do
   defp get_position_config(position) do
     case @position_config[position] do
       nil ->
-        require Logger
-
         Logger.warning("Invalid flash group position '#{position}', falling back to 'top-right'")
         @position_config["top-right"]
 
@@ -548,29 +472,23 @@ defmodule Pulsar.Components.FlashGroup do
 
   # Get icon for flash type
   defp get_flash_icon(type) do
-    @type_icons[normalize_type(type)] || "hero-bell-mini"
+    @type_icons[type] || "hero-bell-mini"
   end
 
-  # Normalize flash type to atom for consistent lookups
-  defp normalize_type(type) when is_atom(type), do: type
-
-  defp normalize_type(type) when is_binary(type) do
-    String.to_existing_atom(type)
-  rescue
-    ArgumentError -> :info
+  # Preserve readable ids for ordinary keys. Encode unsafe keys and keys in the
+  # reserved namespace so every resulting id is unique and valid in a CSS selector.
+  defp flash_dom_key(type) do
+    if Regex.match?(~r/^[A-Za-z0-9_-]+$/, type) and not String.starts_with?(type, "pulsar-key-") do
+      type
+    else
+      "pulsar-key-" <> Base.url_encode64(type, padding: false)
+    end
   end
 
-  defp normalize_type(_), do: :info
-
-  # Normalize flash key to a string for the dismiss payload
-  defp normalize_flash_key(type) when is_atom(type), do: Atom.to_string(type)
-  defp normalize_flash_key(type) when is_binary(type), do: type
-  defp normalize_flash_key(_), do: "info"
-
-  # Build the per-flash dismiss callback. The default pushes "clear_flash" with
+  # Build the per-flash dismiss callback. The default pushes LiveView's native clear event with
   # the dismissed key; a caller-supplied %JS{} is used as-is for every flash, and
   # a 1-arity function gets the key and returns its own %JS{}.
-  defp dismiss_callback(nil, key), do: JS.push("clear_flash", value: %{key: key})
+  defp dismiss_callback(nil, key), do: JS.push("lv:clear-flash", value: %{key: key})
   defp dismiss_callback(%JS{} = js, _key), do: js
   defp dismiss_callback(fun, key) when is_function(fun, 1), do: fun.(key)
 

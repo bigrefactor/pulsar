@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **`row_click` tables now resolve and mount their row hook, assign deterministic fallback IDs to non-stream rows, and activate rows with Enter or Space**: rows without an explicit or stream-supplied id receive a stable zero-based id, while custom and LiveView stream ids remain unchanged.
 
+### Changed - Flash Groups Require String Keys
+
+- **`flash_group` now accepts only Phoenix-native string flash keys**: non-string keys are ignored with a warning before rendering, so a manually assembled map cannot create duplicate child ids by mixing atom and string forms of the same key. Migrate manually assembled maps from `%{info: "..."}` to `%{"info" => "..."}`. `put_flash/3` already converts atom kinds to strings.
+- **Flash dismissal now uses LiveView's native `"lv:clear-flash"` event**: the default close button clears the string-keyed flash without requiring a host `handle_event/3`. Custom keys that are unsafe in CSS selectors are encoded into unique child ids while the original key remains in dismiss payloads.
+
 ### Fixed - Dark Shell Dividers Use a Softer Strong Border
 
 - **`--color-border-strong` now uses `gray-500` instead of `gray-400` in dark themes**: neutral sidebar and navbar shell seams remain visibly defined and retain at least 3:1 contrast, while no longer painting as near-white rules against the page. Light themes and colored borders are unchanged.
