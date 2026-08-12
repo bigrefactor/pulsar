@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - Table Row Keyboard Activation
+
+- **`row_click` tables now resolve and mount their row hook, assign deterministic fallback IDs to non-stream rows, and activate rows with Enter or Space**: rows without an explicit or stream-supplied id receive a stable zero-based id, while custom and LiveView stream ids remain unchanged.
+
 ### Changed - Flash Groups Require String Keys
 
 - **`flash_group` now accepts only Phoenix-native string flash keys**: non-string keys are ignored with a warning before rendering, so a manually assembled map cannot create duplicate child ids by mixing atom and string forms of the same key. Migrate manually assembled maps from `%{info: "..."}` to `%{"info" => "..."}`. `put_flash/3` already converts atom kinds to strings.

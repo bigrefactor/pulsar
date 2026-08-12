@@ -104,12 +104,13 @@ defmodule Pulsar.GeneratorTest do
         |> apply_igniter!()
 
       path = "lib/test_web/components/button.ex"
-      original = source_content(first, path)
+      original = first |> Igniter.include_existing_file(path) |> source_content(path)
 
       second =
         first
         |> Igniter.compose_task("pulsar.gen.button", [])
         |> apply_igniter!()
+        |> Igniter.include_existing_file(path)
 
       assert source_content(second, path) == original
       assert original =~ "\n  def button(assigns) do"
