@@ -8,6 +8,7 @@ Container component for managing multiple flash notifications from Phoenix.Flash
 ## Features
 
 - **Phoenix.Flash Integration**: Reads flash messages directly from @flash assigns
+- **String Flash Keys**: Accepts Phoenix-native string keys; non-string keys are ignored
 - **Intelligent Positioning**: 6 position options with automatic stacking
 - **Type-to-Color Mapping**: Automatic mapping of flash types to semantic colors
   - **Item Limiting**: Configurable maximum number of flash messages to display
@@ -34,11 +35,13 @@ Container component for managing multiple flash notifications from Phoenix.Flash
 ## Flash Type Mapping
 
 FlashGroup automatically maps Phoenix flash types to appropriate colors:
-- `:error` → `danger` color
-- `:warning` → `warning` color
-- `:info` → `info` color
-- `:success` → `success` color
+- `"error"` → `danger` color
+- `"warning"` → `warning` color
+- `"info"` → `info` color
+- `"success"` → `success` color
 - Custom types → `neutral` color
+
+Flash maps must use string keys, such as `%{"info" => "Changes saved!"}`.
 
   ## Usage in Phoenix Applications
 
@@ -302,7 +305,7 @@ attr(:id, :string,
 
 attr(:flash, :map,
   required: true,
-  doc: "Flash messages map from Phoenix.Flash (typically @flash)"
+  doc: "Flash messages map from Phoenix.Flash (typically @flash); keys must be strings"
 )
 
 attr(:variant, :string,
@@ -380,7 +383,7 @@ positioning and behavior.
 
 ## Flash Message Processing
 
-  1. **Read Flash Messages**: Extracts all messages from the @flash map
+  1. **Read Flash Messages**: Extracts messages with string keys from the @flash map
   2. **Apply Item Limit**: Limits displayed messages to max_items (Phoenix.Flash stores one message per type)
   3. **Type Mapping**: Maps each flash type to appropriate color and ARIA role
   4. **Render Components**: Creates Flash components with consistent styling
@@ -466,7 +469,7 @@ def flash_group(assigns) do
       auto_dismiss={@auto_dismiss}
       dismiss_after={@dismiss_after}
       dismissible={@dismissible}
-      on_dismiss={dismiss_callback(@on_dismiss, normalize_flash_key(type))}
+      on_dismiss={dismiss_callback(@on_dismiss, type)}
       phx-mounted={
         JS.show(
           time: @entry_duration_ms + stagger_ms(index, @stagger_delay),
@@ -495,33 +498,21 @@ end
 defp extract_flash_messages(flash, max_items) when is_map(flash) do
   flash
   |> Map.to_list()
+  |> Enum.filter(fn {type, _message} -> is_binary(type) end)
   |> Enum.reject(fn {_type, message} ->
     is_nil(message) or (is_binary(message) and String.trim(message) == "")
   end)
-  |> Enum.reduce(%{}, fn {type, message}, messages ->
-    key = comparable_flash_key(type)
-
-    Map.update(messages, key, {flash_priority(type), type, message}, fn {priority, current_type, current_message} ->
-      if is_binary(type) do
-        {min(priority, flash_priority(type)), type, message}
-      else
-        {min(priority, flash_priority(type)), current_type, current_message}
-      end
-    end)
-  end)
-  |> Map.values()
-  |> Enum.sort_by(fn {priority, _type, _message} -> priority end)
-  |> Enum.map(fn {_priority, type, message} -> {normalize_flash_key(type), message} end)
+  |> Enum.sort_by(fn {type, _message} -> flash_priority(type) end)
   |> Enum.take(max_items)
 end
 
 defp extract_flash_messages(_, _), do: []
 
 # Define flash message display priority (lower numbers show first)
-defp flash_priority(:error), do: 1
-defp flash_priority(:warning), do: 2
-defp flash_priority(:info), do: 3
-defp flash_priority(:success), do: 4
+defp flash_priority("error"), do: 1
+defp flash_priority("warning"), do: 2
+defp flash_priority("info"), do: 3
+defp flash_priority("success"), do: 4
 defp flash_priority(_), do: 5
 
 # Get color for flash type
@@ -573,14 +564,6 @@ rescue
 end
 
 defp normalize_type(_), do: :info
-
-# Normalize flash key to a string for the dismiss payload
-defp normalize_flash_key(type) when is_atom(type), do: Atom.to_string(type)
-defp normalize_flash_key(type) when is_binary(type), do: type
-defp normalize_flash_key(_), do: "info"
-
-defp comparable_flash_key(type) when is_atom(type) or is_binary(type), do: normalize_flash_key(type)
-defp comparable_flash_key(type), do: type
 
 # Build the per-flash dismiss callback. The default pushes "clear_flash" with
 # the dismissed key; a caller-supplied %JS{} is used as-is for every flash, and

@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed - Flash Groups Collapse Equivalent Keys
+### Changed - Flash Groups Require String Keys
 
-- **`flash_group` now treats atom and string forms of a flash key as one logical type**: a manually assembled map containing both `:info` and `"info"` previously rendered two hook roots with the same child id. Equivalent keys now collapse before rendering, with the Phoenix-native string-keyed value taking precedence.
+- **`flash_group` now accepts only Phoenix-native string flash keys**: non-string keys are ignored before rendering, so a manually assembled map cannot create duplicate child ids by mixing atom and string forms of the same key. Migrate manually assembled maps from `%{info: "..."}` to `%{"info" => "..."}`.
 
 ### Fixed - Dark Shell Dividers Use a Softer Strong Border
 

@@ -15,7 +15,7 @@ defmodule Pulsar.Components.FlashGroupTest do
       html =
         rendered_to_string(~H"""
         <FlashGroup.flash_group
-          flash={%{info: "Message 1", success: "Message 2"}}
+          flash={%{"info" => "Message 1", "success" => "Message 2"}}
           stagger_delay={100}
         />
         """)
@@ -33,7 +33,7 @@ defmodule Pulsar.Components.FlashGroupTest do
       html =
         rendered_to_string(~H"""
         <FlashGroup.flash_group
-          flash={%{info: "Message 1", success: "Message 2"}}
+          flash={%{"info" => "Message 1", "success" => "Message 2"}}
           stagger_delay={90}
         />
         """)
@@ -51,7 +51,7 @@ defmodule Pulsar.Components.FlashGroupTest do
       html =
         rendered_to_string(~H"""
         <FlashGroup.flash_group
-          flash={%{info: "Message 1", success: "Message 2"}}
+          flash={%{"info" => "Message 1", "success" => "Message 2"}}
           stagger_delay={@delay}
         />
         """)
@@ -65,7 +65,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{info: "Message 1", success: "Message 2"}} />
+        <FlashGroup.flash_group flash={%{"info" => "Message 1", "success" => "Message 2"}} />
         """)
 
       refute html =~ ~s( style=)
@@ -76,7 +76,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{info: "Test message"}} />
+        <FlashGroup.flash_group flash={%{"info" => "Test message"}} />
         """)
 
       # Container should have pointer-events-none for click-through
@@ -104,7 +104,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{info: "Test message"}} />
+        <FlashGroup.flash_group flash={%{"info" => "Test message"}} />
         """)
 
       assert html =~ ~s(<div)
@@ -120,9 +120,9 @@ defmodule Pulsar.Components.FlashGroupTest do
       assigns = %{}
 
       flash = %{
-        error: "Error message",
-        info: "Info message",
-        success: "Success message"
+        "error" => "Error message",
+        "info" => "Info message",
+        "success" => "Success message"
       }
 
       assigns = Map.put(assigns, :flash, flash)
@@ -149,7 +149,7 @@ defmodule Pulsar.Components.FlashGroupTest do
       html =
         rendered_to_string(~H"""
         <FlashGroup.flash_group
-          flash={%{info: "Message", error: "Error"}}
+          flash={%{"info" => "Message", "error" => "Error"}}
           variant="outline"
         />
         """)
@@ -165,7 +165,7 @@ defmodule Pulsar.Components.FlashGroupTest do
       html =
         rendered_to_string(~H"""
         <FlashGroup.flash_group
-          flash={%{info: "Message"}}
+          flash={%{"info" => "Message"}}
           size="lg"
         />
         """)
@@ -182,7 +182,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{error: "Error message"}} />
+        <FlashGroup.flash_group flash={%{"error" => "Error message"}} />
         """)
 
       assert html =~ "bg-danger"
@@ -194,7 +194,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{warning: "Warning message"}} />
+        <FlashGroup.flash_group flash={%{"warning" => "Warning message"}} />
         """)
 
       assert html =~ "bg-warning"
@@ -206,7 +206,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{info: "Info message"}} />
+        <FlashGroup.flash_group flash={%{"info" => "Info message"}} />
         """)
 
       assert html =~ "bg-info"
@@ -218,7 +218,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{success: "Success message"}} />
+        <FlashGroup.flash_group flash={%{"success" => "Success message"}} />
         """)
 
       assert html =~ "bg-success"
@@ -230,7 +230,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{custom: "Custom message"}} />
+        <FlashGroup.flash_group flash={%{"custom" => "Custom message"}} />
         """)
 
       assert html =~ "bg-neutral"
@@ -241,11 +241,11 @@ defmodule Pulsar.Components.FlashGroupTest do
       assigns = %{}
 
       flash = %{
-        custom: "Custom",
-        error: "Error",
-        info: "Info",
-        success: "Success",
-        warning: "Warning"
+        "custom" => "Custom",
+        "error" => "Error",
+        "info" => "Info",
+        "success" => "Success",
+        "warning" => "Warning"
       }
 
       assigns = Map.put(assigns, :flash, flash)
@@ -274,7 +274,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{error: "Error", warning: "Warning"}} />
+        <FlashGroup.flash_group flash={%{"error" => "Error", "warning" => "Warning"}} />
         """)
 
       # Should have alert roles
@@ -287,7 +287,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{info: "Info", success: "Success"}} />
+        <FlashGroup.flash_group flash={%{"info" => "Info", "success" => "Success"}} />
         """)
 
       # Should have status roles and polite live region behavior
@@ -303,7 +303,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{info: "Message"}} />
+        <FlashGroup.flash_group flash={%{"info" => "Message"}} />
         """)
 
       assert html =~ "top-4"
@@ -317,7 +317,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{info: "Message"}} position="top-center" />
+        <FlashGroup.flash_group flash={%{"info" => "Message"}} position="top-center" />
         """)
 
       assert html =~ "top-4"
@@ -331,7 +331,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{info: "Message"}} position="bottom-right" />
+        <FlashGroup.flash_group flash={%{"info" => "Message"}} position="bottom-right" />
         """)
 
       assert html =~ "bottom-4"
@@ -345,7 +345,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{info: "Message"}} position="bottom-center" />
+        <FlashGroup.flash_group flash={%{"info" => "Message"}} position="bottom-center" />
         """)
 
       assert html =~ "bottom-4"
@@ -360,7 +360,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html_top_left =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{info: "Message"}} position="top-left" />
+        <FlashGroup.flash_group flash={%{"info" => "Message"}} position="top-left" />
         """)
 
       assert html_top_left =~ "top-4"
@@ -369,7 +369,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html_bottom_left =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{info: "Message"}} position="bottom-left" />
+        <FlashGroup.flash_group flash={%{"info" => "Message"}} position="bottom-left" />
         """)
 
       assert html_bottom_left =~ "bottom-4"
@@ -384,7 +384,7 @@ defmodule Pulsar.Components.FlashGroupTest do
       # Top positions should slide from top
       html_top =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{info: "Message"}} position="top-center" />
+        <FlashGroup.flash_group flash={%{"info" => "Message"}} position="top-center" />
         """)
 
       assert html_top =~ "phx-mounted="
@@ -396,7 +396,7 @@ defmodule Pulsar.Components.FlashGroupTest do
       # Bottom positions should slide from bottom
       html_bottom =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{info: "Message"}} position="bottom-center" />
+        <FlashGroup.flash_group flash={%{"info" => "Message"}} position="bottom-center" />
         """)
 
       assert html_bottom =~ "translate-y-full"
@@ -409,13 +409,13 @@ defmodule Pulsar.Components.FlashGroupTest do
       assigns = %{}
 
       flash = %{
-        error: "Error message",
-        warning: "Warning message",
-        info: "Info message",
-        success: "Success message",
-        custom1: "Custom message 1",
+        "error" => "Error message",
+        "warning" => "Warning message",
+        "info" => "Info message",
+        "success" => "Success message",
+        "custom1" => "Custom message 1",
         # Should be excluded with max_items=3
-        custom2: "Custom message 2"
+        "custom2" => "Custom message 2"
       }
 
       assigns = Map.put(assigns, :flash, flash)
@@ -439,12 +439,12 @@ defmodule Pulsar.Components.FlashGroupTest do
       assigns = %{}
 
       flash = %{
-        error: "Error message",
+        "error" => "Error message",
         # Empty string should be filtered
-        info: "",
+        "info" => "",
         # Nil should be filtered
-        warning: nil,
-        success: "Success message"
+        "warning" => nil,
+        "success" => "Success message"
       }
 
       assigns = Map.put(assigns, :flash, flash)
@@ -471,7 +471,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{error: "Error"}} />
+        <FlashGroup.flash_group flash={%{"error" => "Error"}} />
         """)
 
       # Default dismiss callback: JS.push("clear_flash", value: %{key: "error"})
@@ -487,7 +487,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{error: "Error"}} on_dismiss={@on_dismiss} />
+        <FlashGroup.flash_group flash={%{"error" => "Error"}} on_dismiss={@on_dismiss} />
         """)
 
       assert html =~ "custom_clear"
@@ -499,7 +499,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{error: "Error"}} on_dismiss={@on_dismiss} />
+        <FlashGroup.flash_group flash={%{"error" => "Error"}} on_dismiss={@on_dismiss} />
         """)
 
       assert html =~ ~s(data-on-dismiss=)
@@ -511,7 +511,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{info: "Info message"}} />
+        <FlashGroup.flash_group flash={%{"info" => "Info message"}} />
         """)
 
       assert html =~ ~s(<button)
@@ -527,7 +527,7 @@ defmodule Pulsar.Components.FlashGroupTest do
       html =
         rendered_to_string(~H"""
         <FlashGroup.flash_group
-          flash={%{info: "Message"}}
+          flash={%{"info" => "Message"}}
           auto_dismiss={false}
         />
         """)
@@ -540,7 +540,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{error: "Boom"}} />
+        <FlashGroup.flash_group flash={%{"error" => "Boom"}} />
         """)
 
       assert html =~ ~s(role="alert")
@@ -552,7 +552,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{info: "Hi"}} />
+        <FlashGroup.flash_group flash={%{"info" => "Hi"}} />
         """)
 
       assert html =~ ~s(role="status")
@@ -564,7 +564,7 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group flash={%{error: "Boom"}} auto_dismiss={true} />
+        <FlashGroup.flash_group flash={%{"error" => "Boom"}} auto_dismiss={true} />
         """)
 
       assert html =~ ~s(role="alert")
@@ -577,7 +577,7 @@ defmodule Pulsar.Components.FlashGroupTest do
       html =
         rendered_to_string(~H"""
         <FlashGroup.flash_group
-          flash={%{info: "Message"}}
+          flash={%{"info" => "Message"}}
           dismiss_after={10000}
         />
         """)
@@ -591,7 +591,7 @@ defmodule Pulsar.Components.FlashGroupTest do
       html =
         rendered_to_string(~H"""
         <FlashGroup.flash_group
-          flash={%{info: "Message"}}
+          flash={%{"info" => "Message"}}
           dismissible={false}
         />
         """)
@@ -609,7 +609,7 @@ defmodule Pulsar.Components.FlashGroupTest do
       html =
         rendered_to_string(~H"""
         <FlashGroup.flash_group
-          flash={%{info: "Message"}}
+          flash={%{"info" => "Message"}}
           class="custom-container"
           data-testid="flash-group"
         />
@@ -625,7 +625,7 @@ defmodule Pulsar.Components.FlashGroupTest do
       html =
         rendered_to_string(~H"""
         <FlashGroup.flash_group
-          flash={%{info: "Message"}}
+          flash={%{"info" => "Message"}}
           class="custom-spacing"
         />
         """)
@@ -644,12 +644,12 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       html1 =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group id="group-1" flash={%{info: "Message 1"}} />
+        <FlashGroup.flash_group id="group-1" flash={%{"info" => "Message 1"}} />
         """)
 
       html2 =
         rendered_to_string(~H"""
-        <FlashGroup.flash_group id="group-2" flash={%{info: "Message 2"}} />
+        <FlashGroup.flash_group id="group-2" flash={%{"info" => "Message 2"}} />
         """)
 
       assert html1 =~ ~s(id="group-1-info")
@@ -663,11 +663,11 @@ defmodule Pulsar.Components.FlashGroupTest do
 
       # Mix flash types to test ordering
       flash = %{
-        custom: "Custom message",
-        error: "Error message",
-        info: "Info message",
-        success: "Success message",
-        warning: "Warning message"
+        "custom" => "Custom message",
+        "error" => "Error message",
+        "info" => "Info message",
+        "success" => "Success message",
+        "warning" => "Warning message"
       }
 
       assigns = Map.put(assigns, :flash, flash)
@@ -689,9 +689,9 @@ defmodule Pulsar.Components.FlashGroupTest do
       assigns = %{}
 
       flash = %{
-        error: "Error",
-        success: "Success",
-        warning: "Warning"
+        "error" => "Error",
+        "success" => "Success",
+        "warning" => "Warning"
       }
 
       assigns = Map.put(assigns, :flash, flash)
@@ -747,7 +747,7 @@ defmodule Pulsar.Components.FlashGroupTest do
       assigns = %{}
 
       # Phoenix.Flash can store any term, not just strings
-      flash = %{info: :some_atom}
+      flash = %{"info" => :some_atom}
 
       assigns = Map.put(assigns, :flash, flash)
 
@@ -762,7 +762,7 @@ defmodule Pulsar.Components.FlashGroupTest do
     test "generates unique flash IDs" do
       assigns = %{}
 
-      flash = %{error: "Error", info: "Info"}
+      flash = %{"error" => "Error", "info" => "Info"}
 
       assigns = Map.put(assigns, :flash, flash)
 
@@ -785,7 +785,7 @@ defmodule Pulsar.Components.FlashGroupTest do
         capture_log(fn ->
           html =
             rendered_to_string(~H"""
-            <FlashGroup.flash_group flash={%{info: "Message"}} position="invalid" />
+            <FlashGroup.flash_group flash={%{"info" => "Message"}} position="invalid" />
             """)
 
           # Should fall back to top-right (default)
@@ -798,8 +798,8 @@ defmodule Pulsar.Components.FlashGroupTest do
     end
   end
 
-  describe "flash_group/1 id handling" do
-    test "collapses atom and string keys for the same logical flash type" do
+  describe "flash_group/1 string flash keys" do
+    test "ignores atom keys when the same string key is present" do
       assigns = %{flash: %{"info" => "String message", info: "Atom message"}}
 
       html =
@@ -812,19 +812,29 @@ defmodule Pulsar.Components.FlashGroupTest do
       refute html =~ "Atom message"
     end
 
-    test "preserves logical priority when equivalent keys collapse" do
-      assigns = %{
-        flash: %{"error" => "String error", error: "Atom error", info: "Info message"}
-      }
+    test "prioritizes warning ahead of info when max_items limits string keys" do
+      assigns = %{flash: %{"warning" => "Session expiring", "info" => "Saved"}}
 
       html =
         rendered_to_string(~H"""
         <FlashGroup.flash_group flash={@flash} max_items={1} />
         """)
 
-      assert html =~ "String error"
-      refute html =~ "Atom error"
-      refute html =~ "Info message"
+      assert html =~ "Session expiring"
+      refute html =~ "Saved"
+    end
+
+    test "ignores non-binary flash keys" do
+      assigns = %{flash: %{123 => "Integer message", "info" => "Info message"}}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={@flash} />
+        """)
+
+      assert html =~ ~s(id="flash-group-info")
+      assert html =~ "Info message"
+      refute html =~ "Integer message"
     end
 
     test "derives child ids from the default group id" do
