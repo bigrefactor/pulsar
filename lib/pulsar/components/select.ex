@@ -195,7 +195,7 @@ defmodule Pulsar.Components.Select do
   attr(:field, FormField, default: nil, doc: "Phoenix form field")
 
   # Core attributes
-  attr(:id, :string, doc: "Select ID (from field or name if not provided)")
+  attr(:id, :string, doc: "Select ID; required unless a form field supplies one")
 
   attr(:name, :string,
     default: nil,
@@ -522,7 +522,7 @@ defmodule Pulsar.Components.Select do
     assigns
     |> assign(
       :id,
-      assigns[:id] || field.id || id_from_name(assigns[:name] || field.name) || generate_id("select")
+      assigns[:id] || field.id || generate_id("select")
     )
     |> assign_new(:name, fn -> field.name end)
     |> assign_new(:value, fn -> field.value end)
@@ -532,22 +532,22 @@ defmodule Pulsar.Components.Select do
   defp normalize_field_props(assigns) do
     assigns
     |> ensure_name!()
-    |> assign(:id, assigns[:id] || id_from_name(assigns[:name]))
+    |> ensure_id!()
     |> assign_new(:value, fn -> nil end)
     |> assign(:field_provided, false)
-  end
-
-  defp id_from_name(nil), do: nil
-
-  defp id_from_name(name) do
-    name
-    |> String.trim_trailing("]")
-    |> String.replace(~r/\W+/u, "_")
   end
 
   defp ensure_name!(assigns) do
     if is_nil(assigns[:name]) do
       raise ArgumentError, "Select component requires :name when :field is not provided"
+    end
+
+    assigns
+  end
+
+  defp ensure_id!(assigns) do
+    if is_nil(assigns[:id]) do
+      raise ArgumentError, "Select component requires :id when :field is not provided"
     end
 
     assigns
