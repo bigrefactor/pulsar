@@ -237,6 +237,20 @@ defmodule Pulsar.Components.FlashGroupTest do
       assert html =~ "Custom message"
     end
 
+    test "maps an uncommon custom string type to neutral with the bell icon" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <FlashGroup.flash_group flash={%{"__pulsar_review_unknown_type_7f3a__" => "Custom message"}} />
+        """)
+
+      assert html =~ "bg-neutral"
+      assert html =~ "hero-bell-mini"
+      refute html =~ "bg-info"
+      refute html =~ "hero-information-circle-mini"
+    end
+
     test "maps multiple types correctly" do
       assigns = %{}
 

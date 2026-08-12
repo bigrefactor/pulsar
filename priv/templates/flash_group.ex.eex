@@ -554,16 +554,12 @@ defp get_flash_icon(type) do
   @type_icons[normalize_type(type)] || "hero-bell-mini"
 end
 
-# Normalize flash type to atom for consistent lookups
-defp normalize_type(type) when is_atom(type), do: type
-
-defp normalize_type(type) when is_binary(type) do
-  String.to_existing_atom(type)
-rescue
-  ArgumentError -> :info
-end
-
-defp normalize_type(_), do: :info
+# Normalize supported flash types for the semantic lookup maps.
+defp normalize_type("error"), do: :error
+defp normalize_type("warning"), do: :warning
+defp normalize_type("info"), do: :info
+defp normalize_type("success"), do: :success
+defp normalize_type(_), do: :unknown
 
 # Build the per-flash dismiss callback. The default pushes "clear_flash" with
 # the dismissed key; a caller-supplied %JS{} is used as-is for every flash, and
