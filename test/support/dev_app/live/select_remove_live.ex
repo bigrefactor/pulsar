@@ -6,10 +6,11 @@ defmodule Pulsar.DevApp.SelectRemoveLive do
   form with `phx-change`. Clicking a badge's remove button fires the
   `.PulsarSelect` colocated hook, which deselects the matching `<option>`
   client-side and dispatches a `change` event; the form then re-renders
-  without that badge. A second select deliberately shares the same derived
-  wrapper id to cover event isolation. This isolates the hook: there is no server-side
-  `remove_tag` handler, so removal only happens if the hook actually mounts
-  and runs in the browser.
+  without that badge. The selects deliberately share a form field name but
+  use distinct explicit IDs, covering event isolation under the explicit-ID
+  contract. This isolates the hook: there is no server-side `remove_tag`
+  handler, so removal only happens if the hook actually mounts and runs in
+  the browser.
   """
   use Pulsar.DevApp.Web, :live_view
 
@@ -36,6 +37,7 @@ defmodule Pulsar.DevApp.SelectRemoveLive do
         <p>Selected: <span id="sel-remove-primary-count">{length(@primary_selected)}</span></p>
         <form id="sel-remove-primary-form" phx-change="validate-primary">
           <Select.select
+            id="primary-skills"
             name="shared_skills"
             multiple
             options={@options}
@@ -49,6 +51,7 @@ defmodule Pulsar.DevApp.SelectRemoveLive do
         <p>Selected: <span id="sel-remove-sibling-count">{length(@sibling_selected)}</span></p>
         <form id="sel-remove-sibling-form" phx-change="validate-sibling">
           <Select.select
+            id="sibling-skills"
             name="shared_skills"
             multiple
             options={@options}

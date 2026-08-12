@@ -45,14 +45,22 @@ defmodule Pulsar.Integration.A11y.SelectTest do
         }, true);
         """)
         |> click(~s|[data-fixture-section="primary"] button[aria-label="Remove One"]|)
-        |> assert_has("#sel-remove-primary-count", text: "1")
-        |> assert_has("#sel-remove-sibling-count", text: "2")
         |> refute_has(~s|[data-fixture-section="primary"] button[aria-label="Remove One"]|)
         |> assert_has(~s|[data-fixture-section="sibling"] button[aria-label="Remove One"]|)
 
-      PhoenixTest.Playwright.evaluate(session, "window.pulsarRemoveTargets", fn targets ->
-        assert targets == ["Remove One"]
-      end)
+      PhoenixTest.Playwright.evaluate(
+        session,
+        """
+        ({
+          primary: document.querySelector('#sel-remove-primary-count').textContent,
+          sibling: document.querySelector('#sel-remove-sibling-count').textContent,
+          targets: window.pulsarRemoveTargets
+        })
+        """,
+        fn state ->
+          assert state == %{"primary" => "1", "sibling" => "2", "targets" => ["Remove One"]}
+        end
+      )
     end
   end
 end
