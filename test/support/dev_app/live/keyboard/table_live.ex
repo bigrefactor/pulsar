@@ -13,8 +13,13 @@ defmodule Pulsar.DevApp.Keyboard.TableLive do
        activation_count: 0,
        action_selected: "None",
        action_count: 0,
-       lifecycle_row_click?: false
+       lifecycle_row_click?: false,
+       name_sort_direction: nil
      )}
+  end
+
+  def handle_event("sort-name", _params, socket) do
+    {:noreply, update(socket, :name_sort_direction, &next_sort_direction/1)}
   end
 
   def handle_event("select-row", %{"name" => name}, socket) do
@@ -64,6 +69,21 @@ defmodule Pulsar.DevApp.Keyboard.TableLive do
       </:action>
     </Table.table>
 
+    <div id="kbd-table-sortable">
+      <Table.table id="kbd-table-sortable-inner" aria_label="Sortable table" rows={@rows}>
+        <:col
+          :let={row}
+          label="Name"
+          sortable
+          sort_direction={@name_sort_direction}
+          on_sort={JS.push("sort-name")}
+        >
+          {row.name}
+        </:col>
+        <:col :let={row} label="Role" sortable on_sort={JS.push("sort-name")}>{row.name}</:col>
+      </Table.table>
+    </div>
+
     <button id="kbd-table-toggle-row-click" phx-click="toggle-row-click">Toggle row click</button>
     <Table.table
       id="kbd-table-lifecycle"
@@ -79,4 +99,8 @@ defmodule Pulsar.DevApp.Keyboard.TableLive do
     </Table.table>
     """
   end
+
+  defp next_sort_direction(nil), do: "ascending"
+  defp next_sort_direction("ascending"), do: "descending"
+  defp next_sort_direction("descending"), do: nil
 end

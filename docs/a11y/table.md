@@ -33,6 +33,12 @@ programmatic name even though it has no visible header text.
 - Sortable column headers keep `<th scope="col">` and put `aria-sort` on that
   owning `<th>`; `ascending`, `descending`, `other`, and `none` are supported —
   `lib/pulsar/components/table.ex`, `table/1`
+- A column with no current direction reports `aria-sort="none"` rather than
+  dropping the attribute, so the sort state stays exposed on every sortable
+  header — `lib/pulsar/components/table.ex`, `sort_direction/1`
+- Test `treats a dynamic nil sort direction as none` covers the runtime `nil`
+  that the slot's compile-time `values:` list cannot catch —
+  `test/pulsar/components/table_test.exs`
 - Test `renders table headers correctly` asserts `scope="col"` —
   `test/pulsar/components/table_test.exs`
 - Test `includes proper semantic markup` asserts `<table>`/`<thead>`/`<tbody>`/`scope="col"` —
@@ -145,6 +151,9 @@ neutral `--color-ring` token at full opacity and using `focus-visible:`
   handler — `lib/pulsar/components/table.ex`, `table/1`
 - Test `renders the sortable affordance and state inside the semantic column header`
   asserts the native button — `test/pulsar/components/table_test.exs`
+- Real-browser test `Space and Enter cycle a sortable column header` drives the
+  header button with both keys and asserts the resulting `aria-sort` value and
+  visible chevron — `test/integration/a11y/keyboard/table_test.exs`
 
 **Notes:** Static (non-clickable) tables are inherently keyboard-safe —
 no interactive elements added by the component.
@@ -211,8 +220,15 @@ the global-`:rest` passthrough path.
 `--color-ring` token at 5.02:1 (light) / 6.72:1 (dark).
 
 Sortable header buttons use `hover:bg-foreground/10` and
-`focus-visible:ring-2 focus-visible:ring-ring` —
-`lib/pulsar/components/table.ex`, `build_sort_button_classes/1`. Test
+`focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-current` —
+`lib/pulsar/components/table.ex`, `build_sort_button_classes/1`. These buttons
+sit on the header surface, which the `solid` variant paints with a full-strength
+accent (`bg-primary`, `bg-danger`, …). `ring-current` draws the indicator in the
+header's own foreground token — the same color as the header label beside it —
+so the indicator carries that pair's contrast on every variant and color instead
+of the fixed `--color-ring` blue, which measures below 3:1 on a solid header.
+The ring is inset so it tracks the button box without overflowing the header
+cell padding. Test
 `renders the sortable affordance and state inside the semantic column header`
 asserts those focus-visible ring classes on the rendered native sortable button —
 `test/pulsar/components/table_test.exs`.

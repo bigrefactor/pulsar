@@ -49,7 +49,8 @@ defmodule Pulsar.Components.Table do
   hover UI plus a default decorative Heroicon. Pulsar owns that affordance and
   places the current `aria-sort` state on the containing column header. Callers
   own the next sort direction and the action to take, such as patching a URL,
-  pushing an event, or updating a query.
+  pushing an event, or updating a query. A column whose `sort_direction` is
+  omitted or `nil` reports `none`, so only the active column needs a direction.
 
       # With variant and size
       <.table
@@ -129,6 +130,7 @@ defmodule Pulsar.Components.Table do
 
   import Twm, only: [merge: 1]
 
+  alias Phoenix.LiveView.JS
   alias Phoenix.LiveView.LiveStream
   alias Phoenix.LiveView.Rendered
   alias Pulsar.Components.Icon
@@ -448,7 +450,7 @@ defmodule Pulsar.Components.Table do
             <th
               :for={col <- @col}
               scope="col"
-              aria-sort={Map.get(col, :sortable, false) && Map.get(col, :sort_direction, "none")}
+              aria-sort={Map.get(col, :sortable, false) && sort_direction(col)}
               class={build_header_cell_classes(@size, col[:align], col[:class])}
             >
               <button
@@ -459,7 +461,7 @@ defmodule Pulsar.Components.Table do
               >
                 <span>{col[:label]}</span>
                 <Icon.icon
-                  name={sort_icon(Map.get(col, :sort_direction, "none"))}
+                  name={sort_icon(sort_direction(col))}
                   size="sm"
                   color="current"
                   class="shrink-0"
@@ -618,21 +620,33 @@ defmodule Pulsar.Components.Table do
   # ============================================================================
 
   defp validate_sortable_column!(col) do
-    if Map.get(col, :sortable, false) and Map.get(col, :on_sort) in [nil, false] do
+    if Map.get(col, :sortable, false) and inert_sort_action?(Map.get(col, :on_sort)) do
       raise ArgumentError, "table/1 sortable columns require an on_sort action"
     end
 
     :ok
   end
 
+  defp inert_sort_action?(nil), do: true
+  defp inert_sort_action?(false), do: true
+  defp inert_sort_action?(%JS{} = on_sort), do: on_sort == %JS{}
+  defp inert_sort_action?(_on_sort), do: false
+
+  defp sort_direction(col) do
+    case Map.get(col, :sort_direction) do
+      direction when direction in ~w(ascending descending other) -> direction
+      _other -> "none"
+    end
+  end
+
   defp sort_icon("ascending"), do: "hero-chevron-up"
   defp sort_icon("descending"), do: "hero-chevron-down"
-  defp sort_icon(direction) when direction in ~w(other none), do: "hero-chevron-up-down"
+  defp sort_icon(_direction), do: "hero-chevron-up-down"
 
   defp build_sort_button_classes(align) do
     merge([
-      "-m-1 inline-flex w-full cursor-pointer items-center gap-1 rounded-field p-1",
-      "hover:bg-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+      "-m-1 inline-flex w-[calc(100%+0.5rem)] cursor-pointer items-center gap-1 rounded-field p-1",
+      "hover:bg-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-current",
       sort_button_justify_class(align)
     ])
   end

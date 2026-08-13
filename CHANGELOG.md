@@ -12,9 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Table columns can opt into a complete sortable-header affordance with
   `sortable`, `sort_direction`, and `on_sort`**: Pulsar renders a native button
   and default Heroicon inside the column header and applies the valid WAI-ARIA
-  sort state to the owning `<th>`. Callers continue to own sort transitions,
-  URLs, events, and query integration. Existing non-sortable columns are
-  unchanged.
+  sort state to the owning `<th>`. Columns with no current direction report
+  `none`, so only the active column needs a `sort_direction`. Callers continue
+  to own sort transitions, URLs, events, and query integration. Existing
+  non-sortable columns are unchanged.
 
 ### Changed (Breaking) - Explicit Select IDs and Scoped Internal Actions
 
