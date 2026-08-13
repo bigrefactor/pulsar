@@ -7,8 +7,96 @@ defmodule Pulsar.Components.TableTest do
   import Phoenix.Component
   import Phoenix.LiveViewTest
 
+  alias Phoenix.LiveView.JS
   alias Phoenix.LiveView.LiveStream
   alias Pulsar.Components.Table
+
+  describe "sortable column headers" do
+    test "renders the sortable affordance and state inside the semantic column header" do
+      assigns = %{rows: [%{name: "Ada"}]}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="people" rows={@rows} aria_label="People">
+          <:col
+            :let={row}
+            label="Name"
+            sortable
+            sort_direction="ascending"
+            on_sort={JS.push("sort-name")}
+          >
+            {row.name}
+          </:col>
+        </Table.table>
+        """)
+
+      document = LazyHTML.from_fragment(html)
+      [header] = find(document, "thead th[scope=col]")
+
+      assert LazyHTML.attribute(header, "aria-sort") == ["ascending"]
+      assert find(header, "button[type=button][phx-click]") != []
+      assert find(header, ".hero-chevron-up[aria-hidden=true]") != []
+      assert LazyHTML.text(header) =~ "Name"
+      assert find(header, "button[aria-sort]") == []
+    end
+
+    test "supports every valid aria-sort value with the default Heroicons" do
+      expected_icons = %{
+        "none" => "hero-chevron-up-down",
+        "ascending" => "hero-chevron-up",
+        "descending" => "hero-chevron-down",
+        "other" => "hero-chevron-up-down"
+      }
+
+      for {direction, icon} <- expected_icons do
+        assigns = %{direction: direction}
+
+        html =
+          rendered_to_string(~H"""
+          <Table.table id="people" rows={[]} aria_label="People">
+            <:col label="Name" sortable sort_direction={@direction} on_sort="sort" />
+          </Table.table>
+          """)
+
+        document = LazyHTML.from_fragment(html)
+        [header] = find(document, "thead th[aria-sort='#{direction}']")
+        assert find(header, ".#{icon}[aria-hidden=true]") != []
+      end
+    end
+
+    test "keeps ordinary headers non-interactive and omits aria-sort" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="people" rows={[]} aria_label="People">
+          <:col label="Name" />
+        </Table.table>
+        """)
+
+      document = LazyHTML.from_fragment(html)
+      [header] = find(document, "thead th[scope=col]")
+      assert LazyHTML.attribute(header, "aria-sort") == []
+      assert find(header, "button") == []
+      assert LazyHTML.text(header) =~ "Name"
+    end
+
+    test "rejects a sortable header without an action" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/sortable.*on_sort/, fn ->
+        rendered_to_string(~H"""
+        <Table.table id="people" rows={[]} aria_label="People">
+          <:col label="Name" sortable />
+        </Table.table>
+        """)
+      end
+    end
+  end
+
+  defp find(document, selector) do
+    document |> LazyHTML.query(selector) |> Enum.to_list()
+  end
 
   describe "table/1 basic functionality" do
     test "renders basic table with defaults" do
