@@ -235,6 +235,9 @@ jobs:
           MIX_ENV: test
         run: mix assets.build
 
+      - name: Run built-CSS guards
+        run: mix test --only built_css
+
       - name: Install Playwright npm package
         run: npm --prefix test/support/dev_app/assets ci
 
