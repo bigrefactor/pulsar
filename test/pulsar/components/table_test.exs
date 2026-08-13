@@ -1,5 +1,7 @@
 defmodule Pulsar.Components.TableTest do
-  use ExUnit.Case, async: true
+  # Not async: the accessible-name tests inspect global Logger output with
+  # capture_log/1, so concurrent warnings can bleed into their capture windows.
+  use ExUnit.Case, async: false
 
   import ExUnit.CaptureLog
   import Phoenix.Component
