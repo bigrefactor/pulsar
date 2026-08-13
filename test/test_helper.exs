@@ -25,4 +25,10 @@ end
 
 Application.put_env(:phoenix_test, :base_url, Pulsar.DevApp.Endpoint.url())
 
-ExUnit.start(exclude: [:integration, :measure])
+# `:built_css` tests read test/support/dev_app/priv/static/assets/app.css and
+# assert on its contents, so they require `mix assets.build` first. They are
+# excluded by default and run explicitly via `mix test --only built_css` (the
+# Browser a11y CI job does this right after building the assets). Excluding
+# them — rather than letting each test skip itself when the file is missing —
+# keeps a missing artifact a hard failure instead of a silent pass.
+ExUnit.start(exclude: [:integration, :measure, :built_css])
