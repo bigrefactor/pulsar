@@ -66,22 +66,21 @@ defmodule Pulsar.Theme.ColorSchemeTest do
     end
   end
 
-  describe "built CSS (only when assets have been built)" do
+  describe "built CSS (requires mix assets.build)" do
     @describetag :built_css
 
     test "both declarations survive compilation, dark last" do
-      if File.exists?(@built_css) do
-        css = File.read!(@built_css)
+      assert File.exists?(@built_css),
+             "#{@built_css} is missing — run `mix assets.build` before `mix test --only built_css`"
 
-        light_at = match_index!(css, ~r/:root[^{}]*\{[^}]*color-scheme:\s*light/)
-        dark_at = match_index!(css, ~r/\[data-theme="dark"\][^{]*\{[^}]*color-scheme:\s*dark/)
+      css = File.read!(@built_css)
 
-        assert dark_at > light_at,
-               "themes/dark.css must be imported after themes/light.css — " <>
-                 "the two rules have equal specificity, so source order decides"
-      else
-        IO.puts(:stderr, "skip: build assets (mix assets.build) to verify generated CSS")
-      end
+      light_at = match_index!(css, ~r/:root[^{}]*\{[^}]*color-scheme:\s*light/)
+      dark_at = match_index!(css, ~r/\[data-theme="dark"\][^{]*\{[^}]*color-scheme:\s*dark/)
+
+      assert dark_at > light_at,
+             "themes/dark.css must be imported after themes/light.css — " <>
+               "the two rules have equal specificity, so source order decides"
     end
   end
 
