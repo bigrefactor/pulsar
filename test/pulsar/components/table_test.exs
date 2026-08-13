@@ -67,6 +67,22 @@ defmodule Pulsar.Components.TableTest do
       end
     end
 
+    test "defaults an omitted sort direction to none with the neutral Heroicon" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="people" rows={[]} aria_label="People">
+          <:col label="Name" sortable on_sort="sort" />
+        </Table.table>
+        """)
+
+      document = LazyHTML.from_fragment(html)
+      [header] = find(document, "thead th[aria-sort=none]")
+
+      assert find(header, ".hero-chevron-up-down[aria-hidden=true]") != []
+    end
+
     test "keeps ordinary headers non-interactive and omits aria-sort" do
       assigns = %{}
 
@@ -91,6 +107,18 @@ defmodule Pulsar.Components.TableTest do
         rendered_to_string(~H"""
         <Table.table id="people" rows={[]} aria_label="People">
           <:col label="Name" sortable />
+        </Table.table>
+        """)
+      end
+    end
+
+    test "rejects a sortable header with a false action" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/sortable.*on_sort/, fn ->
+        rendered_to_string(~H"""
+        <Table.table id="people" rows={[]} aria_label="People">
+          <:col label="Name" sortable on_sort={false} />
         </Table.table>
         """)
       end

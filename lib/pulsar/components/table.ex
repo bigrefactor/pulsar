@@ -618,7 +618,7 @@ defmodule Pulsar.Components.Table do
   # ============================================================================
 
   defp validate_sortable_column!(col) do
-    if Map.get(col, :sortable, false) and is_nil(Map.get(col, :on_sort)) do
+    if Map.get(col, :sortable, false) and Map.get(col, :on_sort) in [nil, false] do
       raise ArgumentError, "table/1 sortable columns require an on_sort action"
     end
 
