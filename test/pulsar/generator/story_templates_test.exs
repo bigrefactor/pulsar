@@ -103,6 +103,45 @@ defmodule Pulsar.Generator.StoryTemplatesTest do
       assert failure =~ inspect(first.id)
       assert failure =~ inspect(second.id)
     end
+
+    test "the Themes story scaffold excerpt matches generator output except for its abbreviated TODO" do
+      expected =
+        :pulsar
+        |> :code.priv_dir()
+        |> Path.join("templates/themes/scaffold.css.eex")
+        |> EEx.eval_file(assigns: [theme_name: "purple", color_scheme: "light"])
+        |> normalize_scaffold_excerpt()
+
+      actual =
+        theme_story_scaffold_output()
+        |> normalize_scaffold_excerpt()
+
+      assert actual == expected
+    end
+  end
+
+  defp theme_story_scaffold_output do
+    template = Enum.find(story_templates(), &(Path.basename(&1) == "themes.story.exs.eex"))
+    source = EEx.eval_file(template, assigns: @assigns, engine: EEx.SmartEngine)
+    {:ok, ast} = Code.string_to_quoted(source)
+    {_ast, scaffold_output} = Macro.prewalk(ast, nil, &find_scaffold_output/2)
+
+    scaffold_output
+  end
+
+  defp find_scaffold_output({:@, _, [{:scaffold_output, _, [scaffold_output]}]} = node, _acc)
+       when is_binary(scaffold_output), do: {node, scaffold_output}
+
+  defp find_scaffold_output(node, acc), do: {node, acc}
+
+  defp normalize_scaffold_excerpt(output) do
+    ~r/\/\* TODO: override semantic tokens for this theme\..*?\*\//s
+    |> Regex.replace(
+      output,
+      "/* TODO: override semantic tokens for this theme. */"
+    )
+    |> String.split()
+    |> Enum.join(" ")
   end
 
   defp compile_story_template(template) do
