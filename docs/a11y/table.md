@@ -214,7 +214,7 @@ Sortable header buttons use `hover:bg-foreground/10` and
 `focus-visible:ring-2 focus-visible:ring-ring` —
 `lib/pulsar/components/table.ex`, `build_sort_button_classes/1`. Test
 `renders the sortable affordance and state inside the semantic column header`
-structurally covers that sortable control —
+asserts those focus-visible ring classes on the rendered native sortable button —
 `test/pulsar/components/table_test.exs`.
 
 **Notes:** Uses `focus-visible:` (keyboard-only) consistent with

@@ -32,9 +32,12 @@ defmodule Pulsar.Components.TableTest do
 
       document = LazyHTML.from_fragment(html)
       [header] = find(document, "thead th[scope=col]")
+      [button] = find(header, "button[type=button][phx-click]")
+      button_classes = button |> LazyHTML.attribute("class") |> Enum.join(" ")
 
       assert LazyHTML.attribute(header, "aria-sort") == ["ascending"]
-      assert find(header, "button[type=button][phx-click]") != []
+      assert button_classes =~ "focus-visible:ring-2"
+      assert button_classes =~ "focus-visible:ring-ring"
       assert find(header, ".hero-chevron-up[aria-hidden=true]") != []
       assert LazyHTML.text(header) =~ "Name"
       assert find(header, "button[aria-sort]") == []
