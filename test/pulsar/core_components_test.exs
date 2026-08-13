@@ -119,6 +119,25 @@ defmodule Pulsar.CoreComponentsTest do
     end
   end
 
+  describe "table/1 sortable headers" do
+    test "forwards the complete sortable column contract" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <CoreComponents.table id="people" rows={[]} aria-label="People">
+          <:col label="Name" sortable sort_direction="descending" on_sort="sort-name" />
+        </CoreComponents.table>
+        """)
+
+      document = LazyHTML.from_fragment(html)
+      [header] = document |> LazyHTML.query("thead th[aria-sort=descending]") |> Enum.to_list()
+
+      assert LazyHTML.query(header, "button[phx-click=sort-name]") |> Enum.to_list() != []
+      assert LazyHTML.query(header, ".hero-chevron-down[aria-hidden=true]") |> Enum.to_list() != []
+    end
+  end
+
   describe "simple_form/1 layout" do
     test "renders children as direct form children under the form's own rhythm" do
       assigns = %{form: to_form(%{}, as: :test)}

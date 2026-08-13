@@ -540,6 +540,9 @@ defmodule Pulsar.CoreComponents do
   # Phoenix core_components compatibility slots
   slot :col, required: true do
     attr :label, :string
+    attr :sortable, :boolean
+    attr :sort_direction, :string, values: ~w(ascending descending other none)
+    attr :on_sort, :any
   end
 
   slot :action, doc: "The slot for showing user actions in the last table column"
@@ -626,7 +629,7 @@ defmodule Pulsar.CoreComponents do
       {@extra}
       {@rest}
     >
-      <:col :let={row} :for={col <- @col} {col |> Map.take([:label])}>
+      <:col :let={row} :for={col <- @col} {col |> Map.take([:label, :sortable, :sort_direction, :on_sort])}>
         {render_slot(col, row)}
       </:col>
       <:action :let={row} :for={action <- @action}>
