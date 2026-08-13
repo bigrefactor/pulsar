@@ -613,7 +613,7 @@ defmodule Pulsar.Components.Table do
   defp build_sort_button_classes(align) do
     merge([
       "-m-1 inline-flex w-full cursor-pointer items-center gap-1 rounded-field p-1",
-      "hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+      "hover:bg-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
       sort_button_justify_class(align)
     ])
   end
