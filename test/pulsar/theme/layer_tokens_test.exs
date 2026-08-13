@@ -38,26 +38,25 @@ defmodule Pulsar.Theme.LayerTokensTest do
     end
   end
 
-  describe "built CSS (only when assets have been built)" do
+  describe "built CSS (requires mix assets.build)" do
     @describetag :built_css
 
     test "z-* utilities actually emit rules" do
-      if File.exists?(@built_css) do
-        css = File.read!(@built_css)
+      assert File.exists?(@built_css),
+             "#{@built_css} is missing — run `mix assets.build` before `mix test --only built_css`"
 
-        # Tailwind v4 may keep the var() reference or inline the @theme value;
-        # match both forms whitespace-tolerantly. Both anchor on the
-        # `.z-<layer>` selector so a stray arbitrary value or unrelated rule
-        # using the token elsewhere can't satisfy the guard.
-        for {layer, z} <- @layer_values do
-          via_var = ~r/\.z-#{layer}\s*\{\s*z-index:\s*var\(\s*--z-#{layer}\s*\)/
-          inlined = ~r/\.z-#{layer}\s*\{\s*z-index:\s*#{z}\s*;?\s*\}/
+      css = File.read!(@built_css)
 
-          assert css =~ via_var or css =~ inlined,
-                 "z-#{layer} utility not found in built CSS"
-        end
-      else
-        IO.puts(:stderr, "skip: build assets (mix assets.build) to verify generated CSS")
+      # Tailwind v4 may keep the var() reference or inline the @theme value;
+      # match both forms whitespace-tolerantly. Both anchor on the
+      # `.z-<layer>` selector so a stray arbitrary value or unrelated rule
+      # using the token elsewhere can't satisfy the guard.
+      for {layer, z} <- @layer_values do
+        via_var = ~r/\.z-#{layer}\s*\{\s*z-index:\s*var\(\s*--z-#{layer}\s*\)/
+        inlined = ~r/\.z-#{layer}\s*\{\s*z-index:\s*#{z}\s*;?\s*\}/
+
+        assert css =~ via_var or css =~ inlined,
+               "z-#{layer} utility not found in built CSS"
       end
     end
   end
