@@ -15,6 +15,7 @@ defmodule Pulsar.Generator.StoryTemplatesTest do
   # Rendered under a namespace no other module uses, so compiling the stories
   # cannot redefine the dev app's own storybook modules.
   @assigns [web_module: "PulsarStoryTemplateTest", components_module: "Pulsar.Components"]
+  @story_scaffold_todo "/* TODO: override semantic tokens for this theme. */"
   @identity_candidate_story_templates MapSet.new(~w(
     avatar.story.exs.eex
     checkbox.story.exs.eex
@@ -103,7 +104,55 @@ defmodule Pulsar.Generator.StoryTemplatesTest do
       assert failure =~ inspect(first.id)
       assert failure =~ inspect(second.id)
     end
+
+    test "the Themes story scaffold excerpt matches generator output except for its abbreviated TODO" do
+      expected =
+        :pulsar
+        |> :code.priv_dir()
+        |> Path.join("templates/themes/scaffold.css.eex")
+        |> EEx.eval_file(assigns: [theme_name: "purple", color_scheme: "light"])
+        |> elide_scaffold_todo()
+        |> normalize_whitespace()
+
+      actual =
+        theme_story_scaffold_output()
+        |> assert_story_scaffold_todo!()
+        |> normalize_whitespace()
+
+      assert actual == expected
+    end
   end
+
+  defp theme_story_scaffold_output do
+    template = Enum.find(story_templates(), &(Path.basename(&1) == "themes.story.exs.eex"))
+    source = EEx.eval_file(template, assigns: @assigns, engine: EEx.SmartEngine)
+    {:ok, ast} = Code.string_to_quoted(source)
+    {_ast, scaffold_output} = Macro.prewalk(ast, nil, &find_scaffold_output/2)
+
+    assert is_binary(scaffold_output),
+           "couldn't find a literal @scaffold_output in themes.story.exs.eex"
+
+    scaffold_output
+  end
+
+  defp find_scaffold_output({:@, _, [{:scaffold_output, _, [scaffold_output]}]} = node, _acc)
+       when is_binary(scaffold_output), do: {node, scaffold_output}
+
+  defp find_scaffold_output(node, acc), do: {node, acc}
+
+  defp elide_scaffold_todo(output) do
+    ~r/\/\* TODO: override semantic tokens for this theme\..*?\*\//s
+    |> Regex.replace(output, @story_scaffold_todo)
+  end
+
+  defp assert_story_scaffold_todo!(output) do
+    assert output =~ @story_scaffold_todo,
+           "expected the Themes story scaffold TODO to be exactly #{@story_scaffold_todo}"
+
+    output
+  end
+
+  defp normalize_whitespace(output), do: output |> String.split() |> Enum.join(" ")
 
   defp compile_story_template(template) do
     source = EEx.eval_file(template, assigns: @assigns, engine: EEx.SmartEngine)
