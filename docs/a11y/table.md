@@ -30,9 +30,19 @@ programmatic name even though it has no visible header text.
 - Native `<table>` with `<thead>` and `<tbody>` —
   `lib/pulsar/components/table.ex`, `table/1`
 - Column headers use `<th scope="col">` — `lib/pulsar/components/table.ex`, `table/1`
+- Sortable column headers keep `<th scope="col">` and put `aria-sort` on that
+  owning `<th>`; `ascending`, `descending`, `other`, and `none` are supported —
+  `lib/pulsar/components/table.ex`, `table/1`
 - Test `renders table headers correctly` asserts `scope="col"` —
   `test/pulsar/components/table_test.exs`
 - Test `includes proper semantic markup` asserts `<table>`/`<thead>`/`<tbody>`/`scope="col"` —
+  `test/pulsar/components/table_test.exs`
+- Test `renders the sortable affordance and state inside the semantic column header`
+  asserts the state remains on the header — `test/pulsar/components/table_test.exs`
+- Test `supports every valid aria-sort value with the default Heroicons` covers
+  every supported `aria-sort` value — `test/pulsar/components/table_test.exs`
+- Test `keeps ordinary headers non-interactive and omits aria-sort` verifies
+  non-sortable headers retain their existing semantics —
   `test/pulsar/components/table_test.exs`
 
 **Notes:** No row headers — the component treats all data cells as
@@ -130,6 +140,11 @@ neutral `--color-ring` token at full opacity and using `focus-visible:`
   `lib/pulsar/components/table.ex`, `table/1`
 - Test `adds keyboard accessibility attributes when row_click provided` —
   `test/pulsar/components/table_test.exs`
+- Sortable headers contain a native `<button type="button">` inside their
+  `<th scope="col">`, so they are keyboard-operable without a custom key
+  handler — `lib/pulsar/components/table.ex`, `table/1`
+- Test `renders the sortable affordance and state inside the semantic column header`
+  asserts the native button — `test/pulsar/components/table_test.exs`
 
 **Notes:** Static (non-clickable) tables are inherently keyboard-safe —
 no interactive elements added by the component.
@@ -195,6 +210,13 @@ the global-`:rest` passthrough path.
 — `lib/pulsar/components/table.ex`, `build_row_classes/1`. Ring resolves to the standard
 `--color-ring` token at 5.02:1 (light) / 6.72:1 (dark).
 
+Sortable header buttons use `hover:bg-foreground/10` and
+`focus-visible:ring-2 focus-visible:ring-ring` —
+`lib/pulsar/components/table.ex`, `build_sort_button_classes/1`. Test
+`renders the sortable affordance and state inside the semantic column header`
+structurally covers that sortable control —
+`test/pulsar/components/table_test.exs`.
+
 **Notes:** Uses `focus-visible:` (keyboard-only) consistent with
 Button/Input. Mouse activation no longer paints a focus ring on the
 row.
@@ -253,6 +275,13 @@ metrics; sm/md/lg sizes exceed 32 px.
   `lib/pulsar/components/table.ex`, `table/1`
 - Column headers carry `scope="col"` —
   `lib/pulsar/components/table.ex`, `table/1`
+- Sortable headers expose their state with `aria-sort` on the `<th>`, while
+  the nested native button supplies the role and name from its label —
+  `lib/pulsar/components/table.ex`, `table/1`
+- The built-in Heroicons are decorative (`aria-hidden="true"`); assistive
+  technology receives the sort state from `aria-sort` instead. Test
+  `supports every valid aria-sort value with the default Heroicons` verifies
+  each state and icon — `test/pulsar/components/table_test.exs`
 
 **Notes:** Empty state row uses `class="only:table-row hidden"` —
 `lib/pulsar/components/table.ex`, `table/1`. The `only:` Tailwind variant

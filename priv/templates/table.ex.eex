@@ -31,6 +31,25 @@ via Phoenix LiveView LiveStream.
       </:col>
     </.table>
 
+    # Sortable column
+    <.table id="users" rows={@users} aria_label="Users">
+      <:col
+        :let={user}
+        label="Name"
+        sortable
+        sort_direction={@name_sort_direction}
+        on_sort={JS.patch(@name_sort_path)}
+      >
+        <%%= user.name %>
+      </:col>
+    </.table>
+
+Sortable columns render their label as a native button, including focus and
+hover UI plus a default decorative Heroicon. Pulsar owns that affordance and
+places the current `aria-sort` state on the containing column header. Callers
+own the next sort direction and the action to take, such as patching a URL,
+pushing an event, or updating a query.
+
     # With variant and size
     <.table
       id="products"
