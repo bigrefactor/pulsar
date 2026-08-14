@@ -133,24 +133,26 @@ rather than forcing horizontal scroll — `render/1`. The results
 container scrolls vertically only (`overflow-y-auto`) —
 `render/1`.
 
-### 1.4.11 Non-text Contrast (AA) — ⚠ GAP (serious) — no visible focus ring on the query input
+### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
-**Evidence:** The query input's class list is
-`"w-full bg-transparent text-foreground placeholder:text-muted-foreground focus-visible:outline-none"`
-— `render/1`. It removes the native focus outline but pairs it
-with no replacement ring utility. Every other Pulsar leaf input (Input,
-Select, Textarea, RadioGroup) pairs `focus-visible:outline-none` with a
-`focus-visible:ring-2 focus-visible:ring-ring` (or per-color equivalent).
-The active-row highlight (`data-[active=true]:bg-{color}/10`,
-`@accent`) is not a substitute: it is driven by `data-active`
-bookkeeping unconditionally and renders identically whether or not the
-input actually has DOM focus, so it does not answer "does this element
-currently have keyboard focus."
+**Evidence:** The query input keeps `focus-visible:outline-none` (removing
+the native outline), but its wrapper carries the replacement ring —
+`class="flex items-center gap-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"`
+— `render/1`. This is the house convention for text-input focus rings:
+`Input`'s base container classes put the ring on the wrapper the same way
+(`focus-within:ring-2 focus-within:ring-offset-2` plus a per-color
+`focus-within:ring-{color}`/`focus-within:ring-ring` for neutral) —
+`lib/pulsar/components/input.ex`, `input/1`. `--color-ring` measures
+5.02:1 (light) / 6.72:1 (dark) against the page background (established
+house-wide; see [`calendar.md`](calendar.md)), well above the 3:1
+non-text minimum. Test "the query field's wrapper carries a visible focus
+ring".
 
-**Notes:** Real DOM focus never leaves the query input during keyboard use
-(see 2.4.3), so a visible ring on the input is the *only* focus indicator
-this component needs to render — and currently does not. This is a real
-code gap, not a caller responsibility; see the matching entry under 2.4.7.
+**Notes:** The active-row highlight (`data-[active=true]:bg-{color}/10`,
+`@accent`) is a separate, correctly-scoped indicator: it marks *which row
+is current*, not *whether the input has focus* (see 2.4.3 — real DOM
+focus never leaves the input, so the two concerns don't overlap). Its
+contrast is covered under 1.4.3 above.
 
 ### 1.4.12 Text Spacing (AA) — ✓ PASS
 
@@ -223,13 +225,17 @@ the group via `aria-labelledby` — `render/1`,
 a real, descriptive `<label>` (`@label`, default `"Search"`, documented as
 i18n-overridable) — `render/1`.
 
-### 2.4.7 Focus Visible (AA) — ⚠ GAP (serious) — same root cause as 1.4.11
+### 2.4.7 Focus Visible (AA) — ✓ PASS
 
-**Evidence:** See 1.4.11: the query input pairs `focus-visible:outline-none`
-with no replacement ring, so tabbing to the input (or landing on it via any
-means) produces no visible change at all. Because focus never leaves the
-input during keyboard use (2.4.3), this is the one focus event a sighted
-keyboard user needs signaled, and today nothing signals it.
+**Evidence:** See 1.4.11: the query input's wrapper carries
+`focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2`
+— `render/1` — so tabbing to (or otherwise focusing) the input renders a
+visible ring around it, matching the `Input` component's own focus-ring
+convention (`lib/pulsar/components/input.ex`, `input/1`). Because focus
+never leaves the input during keyboard use (2.4.3), this single ring is
+the only focus event a sighted keyboard user needs signaled, and it now
+renders on every focus. Test "the query field's wrapper carries a visible
+focus ring".
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
@@ -370,15 +376,22 @@ result count on every render via `result_announcement/3` —
 - **2.5.5 Target Size (Enhanced) (AAA)** — the `xl` row size (`py-2.5` on
   `text-base` ≈ 44px tall) meets the AAA 44×44 px floor —
   `row_classes/2`.
+- **2.4.13 Focus Appearance (AAA, new in 2.2)** — the query input's wrapper
+  ring is `ring-2` (2px), meeting the AAA minimum ring thickness, and
+  `--color-ring` clears AAA contrast (5.02:1 light / 6.72:1 dark) —
+  `render/1`.
 
 ## Browser a11y findings
 
-Not independently re-run for this audit — the `:integration` suite takes
-roughly 11 minutes and is out of scope for this documentation pass. The
-`/components/command` fixture is registered in `@fixture_groups`
+The `/components/command` fixture is registered in `@fixture_groups`
 (`test/support/dev_app/components.ex`), so it participates in CI's
-axe-core browser gate. The real gap this audit surfaces — the missing
-focus-visible ring on the query input (1.4.11 / 2.4.7) — is not something
-axe-core detects: axe checks ARIA validity and the computed contrast of
-elements that exist, not whether a focused element renders any visible
-focus indicator at all, so a clean axe run would not have caught it.
+axe-core browser gate. Fix round 1 (see below) added a `focus-within`
+ring to the query input's wrapper; the axe-core gate was re-run in full
+after that change and found no violations for the Command fixture in
+either theme. Note, though, that axe-core would not have caught the
+original missing-ring defect on its own even before the fix — it checks
+ARIA validity and the computed contrast of elements that exist, not
+whether a focused element renders any visible focus indicator at all.
+The regression coverage for that specific defect is the unit test "the
+query field's wrapper carries a visible focus ring"
+(`test/pulsar/components/command_test.exs`), not the axe gate.

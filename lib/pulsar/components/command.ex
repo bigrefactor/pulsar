@@ -482,7 +482,7 @@ defmodule Pulsar.Components.Command do
       {@rest}
     >
       <label for={"#{@id}-input"} class="sr-only">{@label}</label>
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
         <input
           type="text"
           id={"#{@id}-input"}

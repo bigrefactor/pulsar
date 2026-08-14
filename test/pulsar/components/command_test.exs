@@ -241,6 +241,14 @@ defmodule Pulsar.Components.CommandTest do
       assert html =~ ~s(phx-hook="Pulsar.Components.Command.PulsarCommand")
     end
 
+    test "the query field's wrapper carries a visible focus ring" do
+      html = render_component(Command, id: "cmd", options: [])
+
+      assert html =~ "focus-within:ring-2"
+      assert html =~ "focus-within:ring-ring"
+      assert html =~ "focus-within:ring-offset-2"
+    end
+
     test "the result count is announced politely" do
       html = render_component(Command, id: "cmd", options: ["Alpha", "Beta"])
 
