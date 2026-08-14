@@ -34,9 +34,9 @@ defmodule Pulsar.Components.Command do
   def update(assigns, socket) do
     socket =
       socket
-      |> assign(:class, "")
-      |> assign(:rest, %{})
       |> assign(assigns)
+      |> assign_new(:class, fn -> "" end)
+      |> assign_new(:rest, fn -> %{} end)
 
     {:ok, socket}
   end
