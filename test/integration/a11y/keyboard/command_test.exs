@@ -43,6 +43,24 @@ defmodule Pulsar.Integration.A11y.Keyboard.CommandTest do
       |> assert_has("#kbd-cmd-listbox", text: "No results found")
       |> refute_has("#kbd-cmd-listbox", text: "Alpha")
     end
+
+    test "selecting a row with Enter clears the typed query from the input", %{conn: conn} do
+      conn =
+        conn
+        |> visit("/keyboard/command")
+        |> A11y.await_live_connected()
+        |> fill_in("Search commands", with: "beta")
+        |> press("#kbd-cmd-input", "Enter")
+        |> assert_has("#kbd-cmd-received", text: "beta")
+
+      PhoenixTest.Playwright.evaluate(
+        conn,
+        "document.querySelector('#kbd-cmd-input').value",
+        fn value ->
+          assert value == ""
+        end
+      )
+    end
   end
 
   describe "arrow keys" do

@@ -54,6 +54,14 @@ defmodule Pulsar.DevApp.CommandLiveTest do
     end
   end
 
+  describe "global attributes through the command/1 wrapper" do
+    test "an unrecognized attribute reaches the rendered root element", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/components/command")
+
+      assert render(element(view, "#cmd-globals")) =~ ~s(data-testid="cmd-globals-marker")
+    end
+  end
+
   describe "slots through the command/1 wrapper" do
     test "a custom :item slot replaces the default row markup", %{conn: conn} do
       {:ok, _view, html} = live(conn, "/components/command")

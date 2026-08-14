@@ -2,8 +2,8 @@ defmodule Pulsar.DevApp.Keyboard.CommandLive do
   @moduledoc """
   Interaction-test fixture for `Pulsar.Components.Command`.
 
-  A fixed option list with one disabled row and one group, so the integration
-  suite can type, arrow, Enter and Escape and assert real filtering, roving
+  A fixed option list with one disabled row, so the integration suite can
+  type, arrow, Enter and Escape and assert real filtering, roving
   activedescendant and selection. Behavior comes from the `.PulsarCommand`
   colocated hook.
   """

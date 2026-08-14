@@ -72,6 +72,15 @@ defmodule Pulsar.DevApp.CommandLive do
         <Command.command id="cmd-filter" label="Search filterable" options={@filterable} />
       </.fixture_section>
 
+      <.fixture_section name="globals" title="Global attributes">
+        <Command.command
+          id="cmd-globals"
+          label="Search globals"
+          options={@flat}
+          data-testid="cmd-globals-marker"
+        />
+      </.fixture_section>
+
       <.fixture_section name="slots" title="Custom item and empty slots">
         <Command.command id="cmd-item-slot" label="Search custom rows" options={@slotted}>
           <:item :let={option}>ROW[{option.value}]</:item>

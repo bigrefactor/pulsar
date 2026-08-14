@@ -8,6 +8,9 @@ defmodule Pulsar.Components.Command do
 
   Use it inline, or inside a popover or modal that provides the surface.
 
+  With `async`, results refresh when a query is submitted, not on every parent
+  re-render.
+
   ## Examples
 
       <.command id="fields" options={@fields} on_select={JS.push("field_chosen")} />
@@ -327,7 +330,7 @@ defmodule Pulsar.Components.Command do
       result_label={@result_label}
       results_label={@results_label}
       class={@class}
-      {@rest}
+      rest={@rest}
     >
       <:item :let={option} :for={item <- @item}>
         {render_slot(item, option)}
@@ -451,7 +454,6 @@ defmodule Pulsar.Components.Command do
   end
 
   defp group_label([{option, _index} | _rest]), do: option.group
-  defp group_label([]), do: nil
 
   defp surface_classes(variant, color, size, class) do
     merge(
@@ -561,8 +563,10 @@ defmodule Pulsar.Components.Command do
             this.timer = null
             this._onInput = (e) => this.handleInput(e)
             this._onKeydown = (e) => this.handleKeydown(e)
+            this._onClick = (e) => this.handleClick(e)
             this.input.addEventListener("input", this._onInput)
             this.el.addEventListener("keydown", this._onKeydown)
+            this.el.addEventListener("click", this._onClick)
           },
 
           destroyed() {
@@ -590,6 +594,14 @@ defmodule Pulsar.Components.Command do
             clearTimeout(this.timer)
             const push = () => this.pushEventTo(this.el, "query", { query: this.input.value })
             wait > 0 ? (this.timer = setTimeout(push, wait)) : push()
+          },
+
+          // Handles both a real mouse click and the synthetic click Enter
+          // dispatches on the active row, so selection clears the query field
+          // the same way regardless of input method.
+          handleClick(e) {
+            const row = e.target.closest("[data-command-option]")
+            if (row && row.getAttribute("aria-disabled") !== "true") this.input.value = ""
           },
 
           handleKeydown(e) {
