@@ -17,6 +17,66 @@ defmodule Pulsar.Components.Command do
 
   import Twm, only: [merge: 1]
 
+  alias Pulsar.Components.Icon
+
+  @surface %{
+    "solid" => %{
+      "neutral" => "bg-surface-2",
+      "primary" => "bg-surface-2",
+      "secondary" => "bg-surface-2",
+      "success" => "bg-surface-2",
+      "danger" => "bg-surface-2",
+      "warning" => "bg-surface-2",
+      "info" => "bg-surface-2"
+    },
+    "outline" => %{
+      "neutral" => "bg-surface-1 border border-border-strong",
+      "primary" => "bg-surface-1 border border-border-strong",
+      "secondary" => "bg-surface-1 border border-border-strong",
+      "success" => "bg-surface-1 border border-border-strong",
+      "danger" => "bg-surface-1 border border-border-strong",
+      "warning" => "bg-surface-1 border border-border-strong",
+      "info" => "bg-surface-1 border border-border-strong"
+    },
+    "ghost" => %{
+      "neutral" => "bg-transparent border border-transparent",
+      "primary" => "bg-transparent border border-transparent",
+      "secondary" => "bg-transparent border border-transparent",
+      "success" => "bg-transparent border border-transparent",
+      "danger" => "bg-transparent border border-transparent",
+      "warning" => "bg-transparent border border-transparent",
+      "info" => "bg-transparent border border-transparent"
+    },
+    "elevated" => %{
+      "neutral" => "bg-surface-1 shadow-dropdown",
+      "primary" => "bg-surface-1 shadow-dropdown",
+      "secondary" => "bg-surface-1 shadow-dropdown",
+      "success" => "bg-surface-1 shadow-dropdown",
+      "danger" => "bg-surface-1 shadow-dropdown",
+      "warning" => "bg-surface-1 shadow-dropdown",
+      "info" => "bg-surface-1 shadow-dropdown"
+    }
+  }
+
+  # Active-row accent, keyed off the data-active attribute the hook flips.
+  @accent %{
+    "neutral" => "data-[active=true]:bg-foreground/10",
+    "primary" => "data-[active=true]:bg-primary/10 data-[active=true]:text-primary",
+    "secondary" => "data-[active=true]:bg-secondary/10 data-[active=true]:text-secondary",
+    "success" => "data-[active=true]:bg-success/10 data-[active=true]:text-success",
+    "danger" => "data-[active=true]:bg-danger/10 data-[active=true]:text-danger",
+    "warning" => "data-[active=true]:bg-warning/10 data-[active=true]:text-warning",
+    "info" => "data-[active=true]:bg-info/10 data-[active=true]:text-info"
+  }
+
+  @row_size %{
+    "xs" => "px-1.5 py-1 text-xs",
+    "sm" => "px-2 py-1 text-sm",
+    "md" => "px-2 py-1.5 text-sm",
+    "lg" => "px-3 py-2 text-base",
+    "xl" => "px-3 py-2.5 text-base"
+  }
+
   defmodule Option do
     @moduledoc """
     One row in a `command` list.
@@ -184,10 +244,49 @@ defmodule Pulsar.Components.Command do
     doc: "2-arity fun `(query, options)` returning options. Defaults to the built-in matcher."
   )
 
-  attr(:label, :string, default: nil, doc: ~s{Accessible name for the query field. Defaults to a translated "Search".})
-  attr(:placeholder, :string, default: nil, doc: "Placeholder for the query field.")
+  attr(:label, :string,
+    default: "Search",
+    doc: ~s{Accessible name for the query field. Use with i18n: gettext("Search")}
+  )
+
+  attr(:placeholder, :string,
+    default: "Search",
+    doc: ~s{Placeholder for the query field. Use with i18n: gettext("Search")}
+  )
+
+  attr(:variant, :string,
+    default: "ghost",
+    values: ~w(solid outline ghost elevated),
+    doc: "Visual style of the list surface"
+  )
+
+  attr(:color, :string,
+    default: "primary",
+    values: ~w(neutral primary secondary success danger warning info),
+    doc: "Accent for the active row"
+  )
+
+  attr(:size, :string, default: "md", values: ~w(xs sm md lg xl), doc: "Row scale")
+
+  attr(:empty_text, :string,
+    default: "No results found",
+    doc: ~s{Message shown when nothing matches. Use with i18n: gettext("No results found")}
+  )
+
+  attr(:result_label, :string,
+    default: "result",
+    doc: ~s{Word after the result count when there is exactly one. Use with i18n: gettext("result")}
+  )
+
+  attr(:results_label, :string,
+    default: "results",
+    doc: ~s{Word after the result count when there is not exactly one. Use with i18n: gettext("results")}
+  )
+
   attr(:class, :string, default: "", doc: "Additional CSS classes")
   attr(:rest, :global, doc: "Additional HTML attributes")
+  slot(:item, doc: "Custom row markup. Receives the option.")
+  slot(:empty, doc: "Custom empty state.")
 
   @doc """
   Renders a searchable, keyboard-navigable option list.
@@ -201,9 +300,22 @@ defmodule Pulsar.Components.Command do
       filter={@filter}
       label={@label}
       placeholder={@placeholder}
+      variant={@variant}
+      color={@color}
+      size={@size}
+      empty_text={@empty_text}
+      result_label={@result_label}
+      results_label={@results_label}
       class={@class}
       {@rest}
-    />
+    >
+      <:item :let={option} :for={item <- @item}>
+        {render_slot(item, option)}
+      </:item>
+      <:empty :for={empty <- @empty}>
+        {render_slot(empty)}
+      </:empty>
+    </.live_component>
     """
   end
 
@@ -221,8 +333,16 @@ defmodule Pulsar.Components.Command do
       |> assign_new(:rest, fn -> %{} end)
       |> assign_new(:options, fn -> [] end)
       |> assign_new(:filter, fn -> nil end)
-      |> assign_new(:label, fn -> nil end)
-      |> assign_new(:placeholder, fn -> nil end)
+      |> assign_new(:label, fn -> "Search" end)
+      |> assign_new(:placeholder, fn -> "Search" end)
+      |> assign_new(:variant, fn -> "ghost" end)
+      |> assign_new(:color, fn -> "primary" end)
+      |> assign_new(:size, fn -> "md" end)
+      |> assign_new(:empty_text, fn -> "No results found" end)
+      |> assign_new(:result_label, fn -> "result" end)
+      |> assign_new(:results_label, fn -> "results" end)
+      |> assign_new(:item, fn -> [] end)
+      |> assign_new(:empty, fn -> [] end)
 
     normalized = options(socket.assigns.options)
 
@@ -254,19 +374,42 @@ defmodule Pulsar.Components.Command do
     Enum.find_value(indexed, fn {option, index} -> if !option.disabled, do: index end)
   end
 
-  defp default_label, do: "Search"
-  defp default_placeholder, do: "Search..."
+  defp result_announcement(results, singular, plural) do
+    count = length(results)
+    word = if count == 1, do: singular, else: plural
 
-  defp result_announcement(results), do: "#{length(results)} results"
+    "#{count} #{word}"
+  end
 
   defp group_label([{option, _index} | _rest]), do: option.group
   defp group_label([]), do: nil
 
+  defp surface_classes(variant, color, size, class) do
+    merge(
+      "flex flex-col " <>
+        (Map.get(@surface, variant, %{})[color] || "") <>
+        " " <> (@row_size[size] || "") <> " " <> class
+    )
+  end
+
+  defp row_classes(color, size) do
+    "flex cursor-default items-center gap-2 text-foreground " <>
+      (@accent[color] || "") <> " " <> (@row_size[size] || "")
+  end
+
+  defp disabled_classes(true), do: "cursor-not-allowed opacity-50"
+  defp disabled_classes(false), do: ""
+
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
-    <div id={@id} phx-hook=".PulsarCommand" class={merge("flex flex-col " <> @class)} {@rest}>
-      <label for={"#{@id}-input"} class="sr-only">{@label || default_label()}</label>
+    <div
+      id={@id}
+      phx-hook=".PulsarCommand"
+      class={surface_classes(@variant, @color, @size, @class)}
+      {@rest}
+    >
+      <label for={"#{@id}-input"} class="sr-only">{@label}</label>
       <input
         type="text"
         id={"#{@id}-input"}
@@ -276,7 +419,7 @@ defmodule Pulsar.Components.Command do
         aria-activedescendant={@active && "#{@id}-option-#{@active}"}
         aria-autocomplete="list"
         autocomplete="off"
-        placeholder={@placeholder || default_placeholder()}
+        placeholder={@placeholder}
         class="w-full bg-transparent text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
       />
       <div id={"#{@id}-listbox"} role="listbox" aria-busy={@loading} class="overflow-y-auto">
@@ -300,13 +443,31 @@ defmodule Pulsar.Components.Command do
             data-active={to_string(index == @active)}
             aria-selected={to_string(index == @active)}
             aria-disabled={option.disabled && "true"}
-            class="flex cursor-default items-center gap-2 px-2 py-1.5 text-sm text-foreground"
+            class={merge(row_classes(@color, @size) <> " " <> disabled_classes(option.disabled))}
           >
-            {option.label}
+            <span :if={@item == []} class="contents">
+              <Icon.icon :if={option.icon} name={option.icon} class="size-4 shrink-0" />
+              <span class="flex min-w-0 flex-col">
+                <span class="truncate">{option.label}</span>
+                <span :if={option.description} class="truncate text-xs text-muted-foreground">
+                  {option.description}
+                </span>
+              </span>
+              <kbd :if={option.shortcut} class="ml-auto text-xs text-muted-foreground">
+                {option.shortcut}
+              </kbd>
+            </span>
+            {render_slot(@item, option)}
           </div>
         </div>
+        <div :if={@results == []} class="px-2 py-6 text-center text-sm text-muted-foreground">
+          <span :if={@empty == []}>{@empty_text}</span>
+          {render_slot(@empty)}
+        </div>
       </div>
-      <div role="status" aria-live="polite" class="sr-only">{result_announcement(@results)}</div>
+      <div role="status" aria-live="polite" class="sr-only">
+        {result_announcement(@results, @result_label, @results_label)}
+      </div>
       <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarCommand">
         export default {
           mounted() {}

@@ -257,5 +257,79 @@ defmodule Pulsar.Components.CommandTest do
     end
   end
 
+  describe "variants, colors and sizes" do
+    test "defaults to a ghost surface so a host panel shows through" do
+      html = render_component(Command, id: "cmd", options: [])
+
+      assert html =~ "bg-transparent"
+    end
+
+    test "the elevated variant draws its own surface" do
+      html = render_component(Command, id: "cmd", options: [], variant: "elevated")
+
+      assert html =~ "bg-surface-1"
+      assert html =~ "shadow-dropdown"
+    end
+
+    test "color drives the active-row accent" do
+      html = render_component(Command, id: "cmd", options: ["Alpha"], color: "success")
+
+      assert html =~ "data-[active=true]:bg-success"
+    end
+
+    test "size drives row scale" do
+      html = render_component(Command, id: "cmd", options: ["Alpha"], size: "lg")
+
+      assert html =~ "text-base"
+    end
+
+    test "a custom class overrides a conflicting default via Twm" do
+      html = render_component(Command, id: "cmd", options: [], class: "flex-row")
+
+      refute html =~ "flex-col"
+    end
+  end
+
+  describe "option decorations" do
+    test "renders an option icon" do
+      html = render_component(Command, id: "cmd", options: [[key: "Home", value: "h", icon: "hero-home"]])
+
+      assert html =~ "hero-home"
+    end
+
+    test "renders a shortcut hint" do
+      html = render_component(Command, id: "cmd", options: [[key: "Home", value: "h", shortcut: "G H"]])
+
+      assert html =~ "G H"
+    end
+
+    test "renders a description" do
+      html = render_component(Command, id: "cmd", options: [[key: "Home", value: "h", description: "Go home"]])
+
+      assert html =~ "Go home"
+    end
+  end
+
+  describe "empty state" do
+    test "renders the default empty message when nothing matches" do
+      html = render_component(Command, id: "cmd", options: [])
+
+      assert html =~ "No results"
+    end
+
+    test "empty_text overrides the default" do
+      html = render_component(Command, id: "cmd", options: [], empty_text: "Nothing here")
+
+      assert html =~ "Nothing here"
+      refute html =~ "No results"
+    end
+
+    test "no empty message renders while results exist" do
+      html = render_component(Command, id: "cmd", options: ["Alpha"])
+
+      refute html =~ "No results"
+    end
+  end
+
   defp occurrences(html, needle), do: length(String.split(html, needle)) - 1
 end
