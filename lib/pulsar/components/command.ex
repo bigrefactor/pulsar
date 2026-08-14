@@ -80,7 +80,7 @@ defmodule Pulsar.Components.Command do
     else
       raise ArgumentError,
             "unsupported option: #{inspect(entry)} (expected a scalar, a {label, value} tuple, " <>
-              "or a self-describing keyword list with a :key)"
+              "or a keyword list with :key and :value)"
     end
   end
 
@@ -95,7 +95,7 @@ defmodule Pulsar.Components.Command do
   defp normalize_entry(entry, _group) do
     raise ArgumentError,
           "unsupported option: #{inspect(entry)} (expected a scalar, a {label, value} tuple, " <>
-            "or a self-describing keyword list with a :key)"
+            "or a keyword list with :key and :value)"
   end
 
   defp keyword_option?(entry) when is_list(entry), do: Keyword.keyword?(entry) and Keyword.has_key?(entry, :key)
@@ -104,13 +104,24 @@ defmodule Pulsar.Components.Command do
   defp build_option(kw, group) do
     %Option{
       label: kw |> Keyword.fetch!(:key) |> to_string(),
-      value: Keyword.get(kw, :value),
+      value: fetch_option_value!(kw),
       group: Keyword.get(kw, :group, group),
       icon: Keyword.get(kw, :icon),
       shortcut: Keyword.get(kw, :shortcut),
       description: Keyword.get(kw, :description),
       disabled: Keyword.get(kw, :disabled, false)
     }
+  end
+
+  defp fetch_option_value!(kw) do
+    case Keyword.fetch(kw, :value) do
+      {:ok, value} ->
+        value
+
+      :error ->
+        raise ArgumentError,
+              "keyword option #{inspect(kw)} is missing :value; keyword options require both :key and :value"
+    end
   end
 
   attr(:id, :string, required: true, doc: "Root ID. Wires the query field to the list and its options.")

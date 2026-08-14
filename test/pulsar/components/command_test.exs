@@ -98,8 +98,17 @@ defmodule Pulsar.Components.CommandTest do
       end
     end
 
-    test "an unrecognized entry raises with the offending term" do
-      assert_raise ArgumentError, ~r/self/, fn -> Command.options([%{a: 1, b: 2}]) end
+    test "an unrecognized entry raises naming the offending term" do
+      error = assert_raise ArgumentError, fn -> Command.options([%{a: 1, b: 2}]) end
+
+      assert error.message =~ "unsupported option"
+      assert error.message =~ inspect(%{a: 1, b: 2})
+    end
+
+    test "a keyword option missing :value raises" do
+      assert_raise ArgumentError, ~r/missing :value/, fn ->
+        Command.options([[key: "Admin"]])
+      end
     end
   end
 end
