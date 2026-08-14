@@ -463,6 +463,11 @@ defmodule Pulsar.Components.Command do
     )
   end
 
+  defp field_classes(size) do
+    "flex items-center gap-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 " <>
+      (@row_size[size] || "")
+  end
+
   defp row_classes(color, size) do
     "flex cursor-default items-center gap-2 text-foreground " <>
       (@accent[color] || "") <> " " <> (@row_size[size] || "")
@@ -484,7 +489,7 @@ defmodule Pulsar.Components.Command do
       {@rest}
     >
       <label for={"#{@id}-input"} class="sr-only">{@label}</label>
-      <div class="flex items-center gap-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+      <div class={field_classes(@size)}>
         <input
           type="text"
           id={"#{@id}-input"}
