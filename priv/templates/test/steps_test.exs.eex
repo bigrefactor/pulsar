@@ -112,5 +112,37 @@ defmodule <%= @component_namespace %>.StepsTest do
       assert html =~ "3 items"
       assert html =~ "Payment"
     end
+
+    test "renders every marker style" do
+      for marker <- ~w(number dot) do
+        assigns = %{marker: marker}
+
+        html =
+          rendered_to_string(~H"""
+          <Steps.steps current={1} marker={@marker}>
+            <:step label="Cart" />
+            <:step label="Payment" />
+          </Steps.steps>
+          """)
+
+        assert html =~ "Cart"
+      end
+    end
+
+    test "renders every connector style" do
+      for connector <- ~w(solid dashed) do
+        assigns = %{connector: connector}
+
+        html =
+          rendered_to_string(~H"""
+          <Steps.steps current={1} connector={@connector}>
+            <:step label="Cart" />
+            <:step label="Payment" />
+          </Steps.steps>
+          """)
+
+        assert html =~ "Cart"
+      end
+    end
   end
 end

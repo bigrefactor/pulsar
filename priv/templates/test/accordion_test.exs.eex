@@ -120,5 +120,52 @@ defmodule <%= @component_namespace %>.AccordionTest do
       assert html =~ ~s(aria-expanded="true")
       assert html =~ ~s(aria-expanded="false")
     end
+
+    test "a disabled section stays focusable and is marked, not removed" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Accordion.accordion id="faq">
+          <:item title="Shipping" disabled>We ship worldwide.</:item>
+          <:item title="Returns">30-day returns.</:item>
+        </Accordion.accordion>
+        """)
+
+      # Disabled sections are marked with aria-disabled rather than the native
+      # `disabled` attribute, so keyboard navigation can still land on them.
+      assert html =~ ~s(aria-disabled="true")
+      refute html =~ ~s(<button disabled)
+      assert html =~ "Shipping"
+    end
+
+    test "a disabled section never renders expanded" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Accordion.accordion id="acc" value="one">
+          <:item id="one" title="One" disabled>First</:item>
+        </Accordion.accordion>
+        """)
+
+      assert html =~ ~s(aria-expanded="false")
+      refute html =~ ~s(aria-expanded="true")
+    end
+
+    test "renders collapsible true and false" do
+      for value <- [true, false] do
+        assigns = %{value: value}
+
+        html =
+          rendered_to_string(~H"""
+          <Accordion.accordion id="acc" collapsible={@value}>
+            <:item title="One">First</:item>
+          </Accordion.accordion>
+          """)
+
+        assert html =~ "One"
+      end
+    end
   end
 end

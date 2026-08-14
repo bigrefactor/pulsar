@@ -9,6 +9,10 @@ defmodule Pulsar.Generator.ComponentTestProbe do
       import Phoenix.Component
       import Phoenix.LiveViewTest
       import unquote(__MODULE__), only: [describe: 2, test: 2, test: 3]
+
+      # Generated tests may carry `@tag`, which ExUnit consumes. Register it here
+      # so the probe absorbs it too, rather than warning "set but never used".
+      Module.register_attribute(__MODULE__, :tag, accumulate: true)
     end
   end
 

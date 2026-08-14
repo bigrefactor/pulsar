@@ -71,5 +71,68 @@ defmodule <%= @component_namespace %>.DatePickerTest do
       html = rendered_to_string(~H"<DatePicker.date_picker field={@field} invalid />")
       assert html =~ ~s(aria-invalid="true")
     end
+
+    test "renders required true and false as aria-required" do
+      for value <- [true, false] do
+        assigns = %{field: single_field(), value: value}
+        html = rendered_to_string(~H"<DatePicker.date_picker field={@field} required={@value} />")
+        assert html =~ ~s(aria-required="#{value}")
+      end
+    end
+
+    test "renders disabled and disable_weekends true and false" do
+      for value <- [true, false] do
+        assigns = %{field: single_field(), value: value}
+
+        html =
+          rendered_to_string(~H"""
+          <DatePicker.date_picker field={@field} disabled={@value} disable_weekends={@value} />
+          """)
+
+        assert html =~ ~s(data-dp-display="single")
+      end
+    end
+
+    test "labelled_externally suppresses the default aria-label" do
+      assigns = %{field: single_field()}
+
+      html =
+        rendered_to_string(~H"<DatePicker.date_picker field={@field} labelled_externally />")
+
+      refute html =~ ~s(aria-label="Date")
+    end
+
+    test "raises without an id when no form field is bound" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/requires an :id/, fn ->
+        rendered_to_string(~H"<DatePicker.date_picker />")
+      end
+    end
+
+    test "raises when range mode binds only one end of the range" do
+      assigns = %{
+        start_field: Phoenix.Component.to_form(%{"from" => ~D[2026-06-15]}, as: :trip)[:from]
+      }
+
+      assert_raise ArgumentError, ~r/range binding needs both/, fn ->
+        rendered_to_string(~H"""
+        <DatePicker.date_picker mode="range" start_field={@start_field} />
+        """)
+      end
+    end
+
+    test "raises when single mode is given range fields" do
+      assigns = %{
+        start_field: Phoenix.Component.to_form(%{"from" => ~D[2026-06-15]}, as: :trip)[:from],
+        end_field: Phoenix.Component.to_form(%{"to" => ~D[2026-06-20]}, as: :trip)[:to]
+      }
+
+      assert_raise ArgumentError, ~r/binds field, not start_field/, fn ->
+        rendered_to_string(~H"""
+        <DatePicker.date_picker start_field={@start_field} end_field={@end_field} />
+        """)
+      end
+    end
   end
 end

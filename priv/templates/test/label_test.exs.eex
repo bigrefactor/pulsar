@@ -27,5 +27,38 @@ defmodule <%= @component_namespace %>.LabelTest do
         assert html =~ "Email"
       end
     end
+
+    test "marks the required indicator without adding it to the label text" do
+      for value <- [true, false] do
+        assigns = %{value: value}
+
+        html =
+          rendered_to_string(
+            ~H[<Label.label for="email" required={@value}>Email</Label.label>]
+          )
+
+        # The asterisk is a CSS pseudo-element, so it never lands in the label's
+        # text content or accessible name — `fill_in("Email", ...)` keeps working.
+        refute html =~ ">Email *<"
+        refute html =~ "(required)"
+
+        assert html =~ ~s(data-required="#{value}")
+
+        if value do
+          # The apostrophes are HTML-escaped in the rendered class attribute.
+          assert html =~ "after:content-[&#39;*&#39;]"
+        else
+          refute html =~ "after:content-"
+        end
+      end
+    end
+
+    test "renders error true and false" do
+      for value <- [true, false] do
+        assigns = %{value: value}
+        html = rendered_to_string(~H[<Label.label for="email" error={@value}>Email</Label.label>])
+        assert html =~ ~s(data-error="#{value}")
+      end
+    end
   end
 end

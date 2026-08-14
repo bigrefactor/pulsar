@@ -252,7 +252,7 @@ defmodule Pulsar.Components.Switch do
 
     if field do
       %{
-        checked: checked?(field.value, assigns[:value] || "true"),
+        checked: resolve_checked(assigns[:checked], field.value, assigns[:value] || "true"),
         errors: field.errors || [],
         id: resolve_id(assigns, field),
         name: assigns[:name] || field.name
@@ -266,6 +266,9 @@ defmodule Pulsar.Components.Switch do
       }
     end
   end
+
+  defp resolve_checked(nil, field_value, switch_value), do: checked?(field_value, switch_value)
+  defp resolve_checked(checked, _field_value, _switch_value), do: checked
 
   defp checked?(field_value, switch_value) do
     to_string(field_value) == to_string(switch_value)
@@ -321,10 +324,7 @@ defmodule Pulsar.Components.Switch do
     doc: "Value when switch is checked"
   )
 
-  attr(:checked, :boolean,
-    default: false,
-    doc: "Switch state (from field if not provided)"
-  )
+  attr(:checked, :boolean, doc: "Switch state. Overrides the bound field's value; omit to derive it from the field.")
 
   attr(:unchecked_value, :string,
     default: "false",

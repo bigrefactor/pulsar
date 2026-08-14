@@ -90,5 +90,56 @@ defmodule <%= @component_namespace %>.RadioGroupTest do
         assert html =~ ~s(role="radiogroup")
       end
     end
+
+    test "renders disabled and invalid true and false" do
+      for value <- [true, false] do
+        assigns = %{field: form_field(), value: value}
+
+        html =
+          rendered_to_string(~H"""
+          <RadioGroup.radio_group field={@field} disabled={@value} invalid={@value} required={@value}>
+            <:option value="basic">Basic</:option>
+          </RadioGroup.radio_group>
+          """)
+
+        assert html =~ ~s(role="radiogroup")
+
+        if value do
+          assert html =~ ~s(aria-invalid="true")
+          assert html =~ ~s(aria-required="true")
+        end
+      end
+    end
+
+    test "renders hide_radios true and false" do
+      for value <- [true, false] do
+        assigns = %{field: form_field(), value: value}
+
+        html =
+          rendered_to_string(~H"""
+          <RadioGroup.radio_group field={@field} hide_radios={@value}>
+            <:option value="basic">Basic</:option>
+          </RadioGroup.radio_group>
+          """)
+
+        assert html =~ ~s(role="radiogroup")
+        assert html =~ "Basic"
+      end
+    end
+
+    test "renders every label_color" do
+      for label_color <- ~w(neutral inherit) do
+        assigns = %{field: form_field(), label_color: label_color}
+
+        html =
+          rendered_to_string(~H"""
+          <RadioGroup.radio_group field={@field} label_color={@label_color}>
+            <:option value="basic">Basic</:option>
+          </RadioGroup.radio_group>
+          """)
+
+        assert html =~ ~s(role="radiogroup")
+      end
+    end
   end
 end

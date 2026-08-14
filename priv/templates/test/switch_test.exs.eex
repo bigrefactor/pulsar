@@ -44,5 +44,87 @@ defmodule <%= @component_namespace %>.SwitchTest do
         assert html =~ ~s(role="switch")
       end
     end
+
+    test "a bound switch derives aria-checked from the field value" do
+      on = Phoenix.Component.to_form(%{"notifications" => "true"}, as: :user)[:notifications]
+      off = Phoenix.Component.to_form(%{"notifications" => "false"}, as: :user)[:notifications]
+
+      assigns = %{field: on}
+      assert rendered_to_string(~H"<Switch.switch field={@field} />") =~ ~s(aria-checked="true")
+
+      assigns = %{field: off}
+      assert rendered_to_string(~H"<Switch.switch field={@field} />") =~ ~s(aria-checked="false")
+    end
+
+    test "an unbound switch reflects the checked attr" do
+      for value <- [true, false] do
+        assigns = %{value: value}
+
+        html =
+          rendered_to_string(~H|<Switch.switch name="notifications" checked={@value} />|)
+
+        assert html =~ ~s(aria-checked="#{value}")
+      end
+    end
+
+    test "an explicit checked attr overrides the bound field in both directions" do
+      on = Phoenix.Component.to_form(%{"notifications" => "true"}, as: :user)[:notifications]
+      off = Phoenix.Component.to_form(%{"notifications" => "false"}, as: :user)[:notifications]
+
+      for {field, override} <- [{on, false}, {off, true}] do
+        assigns = %{field: field, override: override}
+
+        html =
+          rendered_to_string(~H"<Switch.switch field={@field} checked={@override} />")
+
+        assert html =~ ~s(aria-checked="#{override}")
+      end
+    end
+
+    test "renders disabled, required and invalid true and false" do
+      for value <- [true, false] do
+        assigns = %{field: form_field(), value: value}
+
+        html =
+          rendered_to_string(~H"""
+          <Switch.switch field={@field} disabled={@value} required={@value} invalid={@value} />
+          """)
+
+        assert html =~ ~s(role="switch")
+
+        if value do
+          assert html =~ ~s(aria-invalid="true")
+          assert html =~ "required"
+        else
+          refute html =~ "aria-invalid"
+        end
+      end
+    end
+
+    test "renders loading and show_loading_spinner true and false" do
+      for value <- [true, false] do
+        assigns = %{field: form_field(), value: value}
+
+        html =
+          rendered_to_string(~H"""
+          <Switch.switch field={@field} loading={@value} show_loading_spinner={@value} />
+          """)
+
+        assert html =~ ~s(role="switch")
+      end
+    end
+
+    test "render_hidden emits an unchecked companion input" do
+      for value <- [true, false] do
+        assigns = %{field: form_field(), value: value}
+        html = rendered_to_string(~H"<Switch.switch field={@field} render_hidden={@value} />")
+
+        if value do
+          assert html =~ ~s(type="hidden")
+        else
+          refute html =~ ~s(type="hidden")
+        end
+      end
+    end
   end
 end

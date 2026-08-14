@@ -547,8 +547,8 @@ defp normalize_field_props(%{field: %FormField{} = field} = assigns) do
     :id,
     assigns[:id] || field.id || generate_id("select")
   )
-  |> assign_new(:name, fn -> field.name end)
-  |> assign_new(:value, fn -> field.value end)
+  |> assign(:name, assigns[:name] || field.name)
+  |> assign(:value, value_or_field(assigns[:value], field))
   |> assign(:field_provided, true)
 end
 
@@ -556,7 +556,6 @@ defp normalize_field_props(assigns) do
   assigns
   |> ensure_name!()
   |> ensure_id!()
-  |> assign_new(:value, fn -> nil end)
   |> assign(:field_provided, false)
 end
 

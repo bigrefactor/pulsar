@@ -27,5 +27,47 @@ defmodule <%= @component_namespace %>.InputTest do
         assert html =~ ~s(name="user[name]")
       end
     end
+
+    test "renders every variant" do
+      for variant <- ~w(outline ghost solid) do
+        assigns = %{field: form_field(), variant: variant}
+        html = rendered_to_string(~H"<Input.input field={@field} variant={@variant} />")
+        assert html =~ ~s(name="user[name]")
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{field: form_field(), size: size}
+        html = rendered_to_string(~H"<Input.input field={@field} size={@size} />")
+        assert html =~ ~s(name="user[name]")
+      end
+    end
+
+    test "renders disabled, readonly, required and invalid true and false" do
+      for value <- [true, false] do
+        assigns = %{field: form_field(), value: value}
+
+        html =
+          rendered_to_string(~H"""
+          <Input.input
+            field={@field}
+            disabled={@value}
+            readonly={@value}
+            required={@value}
+            invalid={@value}
+          />
+          """)
+
+        assert html =~ ~s(name="user[name]")
+
+        if value do
+          assert html =~ ~s(aria-invalid="true")
+          assert html =~ "disabled"
+          assert html =~ "readonly"
+          assert html =~ "required"
+        end
+      end
+    end
   end
 end

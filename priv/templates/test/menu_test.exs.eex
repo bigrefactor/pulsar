@@ -85,6 +85,24 @@ defmodule <%= @component_namespace %>.MenuTest do
       html = rendered_to_string(~H|<Menu.menu_item navigate="/" active>Home</Menu.menu_item>|)
       assert html =~ ~s(aria-current="page")
     end
+
+    test "carries method and csrf_token on an href item" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H|<Menu.menu_item href="/logout" method="delete">Sign out</Menu.menu_item>|)
+
+      assert html =~ ~s(data-method="delete")
+      assert html =~ "data-csrf"
+    end
+
+    test "raises when method is combined with navigate" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/:method cannot be used with :navigate/, fn ->
+        rendered_to_string(~H|<Menu.menu_item navigate="/x" method="delete">Go</Menu.menu_item>|)
+      end
+    end
   end
 
   describe "menu_section/1" do

@@ -42,5 +42,26 @@ defmodule <%= @component_namespace %>.ProgressTest do
         assert html =~ ~s(role="progressbar")
       end
     end
+
+    test "renders show_value true and false" do
+      for value <- [true, false] do
+        assigns = %{value: value}
+        html = rendered_to_string(~H[<Progress.progress show_value={@value} value={50} />])
+        assert html =~ ~s(role="progressbar")
+      end
+    end
+
+    test "renders no inline style attributes" do
+      assigns = %{}
+
+      for value <- [0, 37, 100] do
+        assigns = Map.put(assigns, :value, value)
+        html = rendered_to_string(~H[<Progress.progress value={@value} show_value />])
+
+        # The fill width is expressed with utility classes, not an inline style;
+        # an inline style would require a `style-src 'unsafe-inline'` CSP relaxation.
+        refute html =~ ~s( style=")
+      end
+    end
   end
 end

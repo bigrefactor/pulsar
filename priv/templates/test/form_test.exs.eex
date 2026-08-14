@@ -39,5 +39,53 @@ defmodule <%= @component_namespace %>.FormTest do
       assert html =~ "<form"
       assert html =~ "user[email]"
     end
+
+    test "ships a default vertical rhythm and merges a caller class" do
+      assigns = %{for: form_source()}
+
+      html =
+        rendered_to_string(~H"""
+        <Form.form for={@for} class="max-w-md">Pulsar</Form.form>
+        """)
+
+      assert html =~ "space-y-6"
+      assert html =~ "max-w-md"
+    end
+
+    test "renders required_legend true and false" do
+      for value <- [true, false] do
+        assigns = %{for: form_source(), value: value}
+
+        html =
+          rendered_to_string(~H"""
+          <Form.form for={@for} required_legend={@value}>Pulsar</Form.form>
+          """)
+
+        assert html =~ "<form"
+
+        if value do
+          assert html =~ "indicates a required field"
+          # The legend explains a glyph assistive tech never encounters, so it is
+          # hidden from the accessibility tree rather than announced.
+          assert html =~ ~s(aria-hidden="true")
+        else
+          refute html =~ "indicates a required field"
+        end
+      end
+    end
+
+    test "required_legend_text overrides the legend copy" do
+      assigns = %{for: form_source()}
+
+      html =
+        rendered_to_string(~H"""
+        <Form.form for={@for} required_legend required_legend_text="champ obligatoire">
+          Pulsar
+        </Form.form>
+        """)
+
+      assert html =~ "champ obligatoire"
+      refute html =~ "indicates a required field"
+    end
   end
 end

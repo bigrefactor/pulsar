@@ -13,6 +13,11 @@ defmodule <%= @component_namespace %>.SelectTest do
     Phoenix.Component.to_form(%{"country" => "us"}, as: :user)[:country]
   end
 
+  # Multi-select renders a removable badge per selected option.
+  defp multi_field do
+    Phoenix.Component.to_form(%{"countries" => ["us", "ca"]}, as: :user)[:countries]
+  end
+
   @options [{"United States", "us"}, {"Canada", "ca"}]
 
   describe "select/1" do
@@ -20,6 +25,9 @@ defmodule <%= @component_namespace %>.SelectTest do
       assigns = %{field: form_field(), options: @options}
       html = rendered_to_string(~H"<Select.select field={@field} options={@options} />")
       assert html =~ ~s(id="user_country")
+      # The bound field supplies the submitted name; without it nothing posts.
+      assert html =~ ~s(name="user[country]")
+      assert html =~ ~s(data-has-value="true")
       assert html =~ "<select"
       assert html =~ "<option"
       assert html =~ "United States"
@@ -46,6 +54,86 @@ defmodule <%= @component_namespace %>.SelectTest do
         assigns = %{field: form_field(), options: @options, size: size}
         html = rendered_to_string(~H"<Select.select field={@field} options={@options} size={@size} />")
         assert html =~ "<select"
+      end
+    end
+
+    test "renders disabled, invalid and required" do
+      for value <- [true, false] do
+        assigns = %{field: form_field(), options: @options, value: value}
+
+        html =
+          rendered_to_string(~H"""
+          <Select.select
+            field={@field}
+            options={@options}
+            disabled={@value}
+            invalid={@value}
+            required={@value}
+          />
+          """)
+
+        assert html =~ ~s(data-disabled="#{value}")
+        assert html =~ ~s(data-required="#{value}")
+      end
+    end
+
+    test "multi-select appends [] to the name unless auto_name_array is off" do
+      assigns = %{field: multi_field(), options: @options}
+
+      html =
+        rendered_to_string(~H"<Select.select field={@field} options={@options} multiple />")
+
+      assert html =~ ~s(name="user[countries][]")
+      assert html =~ ~s(data-multiple="true")
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select field={@field} options={@options} multiple auto_name_array={false} />
+        """)
+
+      assert html =~ ~s(name="user[countries]")
+    end
+
+    test "multi-select renders a labelled remove control per selected badge" do
+      assigns = %{field: multi_field(), options: @options}
+
+      html =
+        rendered_to_string(~H"<Select.select field={@field} options={@options} multiple />")
+
+      assert html =~ "data-has-badges"
+      assert html =~ ~s(aria-label="Remove United States")
+      assert html =~ ~s(aria-label="Remove Canada")
+    end
+
+    test "on_remove_badge composes a callback with the option value" do
+      assigns = %{
+        field: multi_field(),
+        options: @options,
+        on_remove: fn option ->
+          Phoenix.LiveView.JS.push("remove_tag", value: %{option: option})
+        end
+      }
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select
+          field={@field}
+          options={@options}
+          multiple
+          on_remove_badge={@on_remove}
+        />
+        """)
+
+      assert html =~ "remove_tag"
+      # The callback's push runs alongside the built-in removal dispatch.
+      assert html =~ "pulsar:remove-selection"
+    end
+
+    test "raises without an id when no form field is bound" do
+      assigns = %{options: @options}
+
+      assert_raise ArgumentError, ~r/requires :id/, fn ->
+        rendered_to_string(~H|<Select.select name="country" options={@options} />|)
       end
     end
   end

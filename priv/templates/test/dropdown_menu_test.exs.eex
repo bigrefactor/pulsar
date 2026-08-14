@@ -82,6 +82,23 @@ defmodule <%= @component_namespace %>.DropdownMenuTest do
         assert html =~ ~s(role="menu")
       end
     end
+
+    test "renders every placement" do
+      for placement <- ~w(top top-start top-end bottom bottom-start bottom-end
+                          left left-start left-end right right-start right-end) do
+        assigns = %{placement: placement}
+
+        html =
+          rendered_to_string(~H"""
+          <DropdownMenu.dropdown_menu id="m" label="Menu" placement={@placement}>
+            <:trigger><button type="button">Open</button></:trigger>
+            <DropdownMenu.dropdown_menu_item href="/a">Item</DropdownMenu.dropdown_menu_item>
+          </DropdownMenu.dropdown_menu>
+          """)
+
+        assert html =~ ~s(role="menu")
+      end
+    end
   end
 
   describe "dropdown_menu_item/1" do
@@ -110,6 +127,51 @@ defmodule <%= @component_namespace %>.DropdownMenuTest do
         assert html =~ ~s(role="menuitem")
       end
     end
+
+    test "carries method and csrf_token on an href item" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(
+          ~H|<DropdownMenu.dropdown_menu_item href="/logout" method="delete">Sign out</DropdownMenu.dropdown_menu_item>|
+        )
+
+      assert html =~ ~s(data-method="delete")
+      assert html =~ "data-csrf"
+    end
+
+    test "raises when method is combined with navigate" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/:method cannot be used with :navigate/, fn ->
+        rendered_to_string(
+          ~H|<DropdownMenu.dropdown_menu_item navigate="/x" method="delete">Go</DropdownMenu.dropdown_menu_item>|
+        )
+      end
+    end
+
+    test "a disabled item stays focusable and is marked, not removed" do
+      for value <- [true, false] do
+        assigns = %{value: value}
+
+        html =
+          rendered_to_string(
+            ~H|<DropdownMenu.dropdown_menu_item phx-click="act" disabled={@value}>Act</DropdownMenu.dropdown_menu_item>|
+          )
+
+        # Disabled items stay in the DOM as menu items so keyboard navigation can
+        # still land on them; they are marked with aria-disabled rather than the
+        # native `disabled` attribute, which would make them unfocusable.
+        assert html =~ ~s(data-menu-item)
+        refute html =~ ~s(<button disabled)
+
+        if value do
+          assert html =~ ~s(aria-disabled="true")
+        else
+          refute html =~ "aria-disabled"
+        end
+      end
+    end
   end
 
   describe "dropdown_menu_checkbox_item/1" do
@@ -124,6 +186,150 @@ defmodule <%= @component_namespace %>.DropdownMenuTest do
       assert html =~ ~s(role="menuitemcheckbox")
       assert html =~ ~s(aria-checked="true")
       assert html =~ "Pinned"
+    end
+
+    test "renders disabled true and false" do
+      for value <- [true, false] do
+        assigns = %{value: value}
+
+        html =
+          rendered_to_string(
+            ~H|<DropdownMenu.dropdown_menu_checkbox_item disabled={@value}>Pinned</DropdownMenu.dropdown_menu_checkbox_item>|
+          )
+
+        assert html =~ ~s(role="menuitemcheckbox")
+      end
+    end
+  end
+
+  describe "dropdown_menu_radio_group/1" do
+    test "renders a labelled group of radio items reflecting the selection" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu_radio_group label="Sort by">
+          <DropdownMenu.dropdown_menu_radio_item checked={true}>Newest</DropdownMenu.dropdown_menu_radio_item>
+          <DropdownMenu.dropdown_menu_radio_item>Oldest</DropdownMenu.dropdown_menu_radio_item>
+        </DropdownMenu.dropdown_menu_radio_group>
+        """)
+
+      assert html =~ ~s(role="group")
+      assert html =~ ~s(aria-label="Sort by")
+      assert html =~ ~s(role="menuitemradio")
+      assert html =~ ~s(aria-checked="true")
+      assert html =~ ~s(aria-checked="false")
+      assert html =~ "Newest"
+      assert html =~ "Oldest"
+    end
+  end
+
+  describe "dropdown_menu_radio_item/1" do
+    test "renders disabled true and false" do
+      for value <- [true, false] do
+        assigns = %{value: value}
+
+        html =
+          rendered_to_string(
+            ~H|<DropdownMenu.dropdown_menu_radio_item disabled={@value}>Newest</DropdownMenu.dropdown_menu_radio_item>|
+          )
+
+        assert html =~ ~s(role="menuitemradio")
+        assert html =~ ~s(data-menu-item)
+      end
+    end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{color: color}
+
+        html =
+          rendered_to_string(
+            ~H|<DropdownMenu.dropdown_menu_radio_item color={@color}>Newest</DropdownMenu.dropdown_menu_radio_item>|
+          )
+
+        assert html =~ ~s(role="menuitemradio")
+      end
+    end
+  end
+
+  describe "dropdown_menu_label/1" do
+    test "renders non-interactive label text" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(
+          ~H|<DropdownMenu.dropdown_menu_label>Signed in as Ada</DropdownMenu.dropdown_menu_label>|
+        )
+
+      assert html =~ "Signed in as Ada"
+      refute html =~ ~s(role="menuitem")
+    end
+  end
+
+  describe "dropdown_menu_group/1" do
+    test "associates a group heading with its group" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu_group id="workspace" label="Workspace">
+          <DropdownMenu.dropdown_menu_item href="/projects">Projects</DropdownMenu.dropdown_menu_item>
+        </DropdownMenu.dropdown_menu_group>
+        """)
+
+      assert html =~ ~s(role="group")
+      assert html =~ ~s(aria-labelledby="workspace-label")
+      assert html =~ ~s(id="workspace-label")
+      assert html =~ "Workspace"
+    end
+
+    test "renders without a label" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu_group>
+          <DropdownMenu.dropdown_menu_item href="/projects">Projects</DropdownMenu.dropdown_menu_item>
+        </DropdownMenu.dropdown_menu_group>
+        """)
+
+      assert html =~ ~s(role="group")
+      refute html =~ "aria-labelledby"
+    end
+  end
+
+  describe "dropdown_menu_submenu/1" do
+    test "renders a submenu trigger wired to a nested menu" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <DropdownMenu.dropdown_menu_submenu id="share" label="Share" icon="hero-share">
+          <DropdownMenu.dropdown_menu_item phx-click="share_email">Email</DropdownMenu.dropdown_menu_item>
+        </DropdownMenu.dropdown_menu_submenu>
+        """)
+
+      assert html =~ ~s(id="share-trigger")
+      assert html =~ ~s(aria-haspopup="menu")
+      assert html =~ ~s(data-submenu-trigger)
+      assert html =~ "Share"
+      assert html =~ "Email"
+    end
+
+    test "renders disabled true and false" do
+      for value <- [true, false] do
+        assigns = %{value: value}
+
+        html =
+          rendered_to_string(~H"""
+          <DropdownMenu.dropdown_menu_submenu id="share" label="Share" disabled={@value}>
+            <DropdownMenu.dropdown_menu_item phx-click="a">Email</DropdownMenu.dropdown_menu_item>
+          </DropdownMenu.dropdown_menu_submenu>
+          """)
+
+        assert html =~ ~s(data-submenu-trigger)
+      end
     end
   end
 

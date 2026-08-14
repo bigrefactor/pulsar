@@ -25,6 +25,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Flash dismiss, Modal close, and Sidebar backdrop actions use the same bubbling rule**: each nested internal action is handled by its own component hook rather than dispatching through a potentially shared id selector. Public Modal and Sidebar helpers invoked from outside the component subtree remain explicitly id-targeted.
 - **Sidebar separates layout and visual customization across its new root/panel DOM**: `class` and global attributes remain on the direct `<nav>` flex/hook root; use the new `panel_class` attr for background, border, overflow, flex-direction, and other visible-panel overrides that previously went through `class`.
 
+### Fixed - Checkbox and Switch Honor an Explicit `checked`
+
+- **`checkbox` and `switch` now let an explicit `checked` override the bound field in both directions**: both attrs declared `default: false`, so the component could not tell "not provided" from "provided as `false`" and simply ignored the attr whenever a field was bound — `checked={false}` on a checked field still rendered checked. The attr no longer carries a default, and the field value is used only when the caller omits it. Callers that never passed `checked` are unaffected.
+
+### Fixed - `field type="daterange"` Reports Its Own Contract
+
+- **A `daterange` field without an `end_field` now raises naming `<.field type="daterange">`**: previously the missing binding surfaced from the wrapped date picker as `<.date_picker mode="range"> was given start_field but not end_field`, pointing at an internal component the caller never wrote.
+
+### Fixed - Field-Bound Selects Submit Their Value
+
+- **`select` now derives `name` and `value` from a bound form field again**: both attrs declare `default: nil`, which made the `assign_new/3` fallbacks no-ops, so a direct `<.select field={@form[:x]} />` rendered no `name` attribute at all and submitted nothing, and reported `data-has-value="false"` regardless of the field's value. Both are now resolved with an explicit caller-wins check. Selects rendered through `field/1` were unaffected, since `Field` passes `name` and `value` explicitly.
+
 ### Fixed - Table Row Keyboard Activation
 
 - **`row_click` tables now resolve and mount their row hook, assign deterministic fallback IDs to non-stream rows, and activate rows with Enter or Space**: rows without an explicit or stream-supplied id receive a stable zero-based id, while custom and LiveView stream ids remain unchanged.

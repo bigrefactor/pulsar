@@ -40,5 +40,21 @@ defmodule <%= @component_namespace %>.DropzoneTest do
       html = rendered_to_string(~H[<Dropzone.dropzone upload={@upload} class="rounded-none" />])
       assert html =~ "rounded-none"
     end
+
+    test "renders every color" do
+      for color <- ~w(neutral primary secondary success danger warning info) do
+        assigns = %{upload: upload_config(), color: color}
+        html = rendered_to_string(~H[<Dropzone.dropzone upload={@upload} color={@color} />])
+        assert html != ""
+      end
+    end
+
+    test "renders every size" do
+      for size <- ~w(xs sm md lg xl) do
+        assigns = %{upload: upload_config(), size: size}
+        html = rendered_to_string(~H[<Dropzone.dropzone upload={@upload} size={@size} />])
+        assert html != ""
+      end
+    end
   end
 end

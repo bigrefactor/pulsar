@@ -43,5 +43,20 @@ defmodule <%= @component_namespace %>.LinkTest do
         assert html =~ "<a"
       end
     end
+
+    test "renders replace true and false on a navigate link" do
+      for value <- [true, false] do
+        assigns = %{value: value}
+        html = rendered_to_string(~H[<Link.a navigate="/x" replace={@value}>Home</Link.a>])
+
+        assert html =~ "<a"
+
+        if value do
+          assert html =~ ~s(data-phx-link-state="replace")
+        else
+          assert html =~ ~s(data-phx-link-state="push")
+        end
+      end
+    end
   end
 end

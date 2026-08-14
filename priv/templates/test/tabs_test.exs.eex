@@ -109,5 +109,40 @@ defmodule <%= @component_namespace %>.TabsTest do
       assert html =~ ~s(id="two")
       assert html =~ ~s(aria-selected="true")
     end
+
+    test "a disabled tab stays focusable and is never auto-selected" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Tabs.tabs id="settings" aria_label="Settings">
+          <:tab id="profile" label="Profile" disabled>Profile content</:tab>
+          <:tab id="billing" label="Billing">Billing content</:tab>
+        </Tabs.tabs>
+        """)
+
+      # Disabled tabs are marked with aria-disabled rather than the native
+      # `disabled` attribute, so keyboard navigation can still land on them.
+      assert html =~ ~s(aria-disabled="true")
+      refute html =~ ~s(<button disabled)
+      # Selection skips the disabled tab and lands on the first enabled one.
+      assert html =~ ~r/id="billing"[^>]*aria-selected="true"/
+      assert html =~ ~r/id="profile"[^>]*aria-selected="false"/
+    end
+
+    test "the active attr cannot select a disabled tab" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Tabs.tabs id="t" active="two" aria_label="Tabs">
+          <:tab id="one" label="One">First</:tab>
+          <:tab id="two" label="Two" disabled>Second</:tab>
+        </Tabs.tabs>
+        """)
+
+      assert html =~ ~r/id="one"[^>]*aria-selected="true"/
+      assert html =~ ~r/id="two"[^>]*aria-selected="false"/
+    end
   end
 end

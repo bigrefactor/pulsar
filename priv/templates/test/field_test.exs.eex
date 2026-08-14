@@ -14,6 +14,12 @@ defmodule <%= @component_namespace %>.FieldTest do
     Phoenix.Component.to_form(%{"email" => "a@b.com"}, as: :user)[:email]
   end
 
+  # `type="daterange"` binds two form fields, so it needs an `end_field` alongside
+  # the primary one; every other type is driven by `field` alone.
+  defp end_form_field do
+    Phoenix.Component.to_form(%{"ends_on" => nil}, as: :user)[:ends_on]
+  end
+
   describe "field/1" do
     test "wraps a text input with a generated, associated label" do
       assigns = %{field: form_field()}
@@ -40,10 +46,101 @@ defmodule <%= @component_namespace %>.FieldTest do
 
     test "renders every input type" do
       for type <-
-            ~w(text email password number tel url search time datetime-local month week color file range
-               select textarea checkbox radio switch) do
+            ~w(text email password number tel url search date time datetime-local month week
+               color file range otp select textarea checkbox radio switch) do
         assigns = %{field: form_field(), type: type}
         html = rendered_to_string(~H"<Field.field field={@field} type={@type} />")
+        assert html =~ ~s(name="user[email]")
+      end
+    end
+
+    test "renders the daterange type across both bound fields" do
+      assigns = %{field: form_field(), end_field: end_form_field()}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} end_field={@end_field} type="daterange" />
+        """)
+
+      assert html =~ ~s(name="user[email]")
+      assert html =~ ~s(name="user[ends_on]")
+    end
+
+    test "daterange without an end_field raises naming the field, not the date picker" do
+      assigns = %{field: form_field()}
+
+      assert_raise ArgumentError, ~r/<\.field type="daterange">/, fn ->
+        rendered_to_string(~H|<Field.field field={@field} type="daterange" />|)
+      end
+    end
+
+    test "forwards required to the control, including the date type" do
+      for type <- ~w(text select textarea checkbox radio switch date) do
+        assigns = %{field: form_field(), type: type}
+        html = rendered_to_string(~H"<Field.field field={@field} type={@type} required />")
+
+        assert html =~ "required" or html =~ ~s(aria-required="true")
+      end
+    end
+
+    test "renders every show_errors mode" do
+      for mode <- [:touched, :always, :never] do
+        assigns = %{field: form_field(), mode: mode}
+
+        html =
+          rendered_to_string(~H|<Field.field field={@field} type="text" show_errors={@mode} />|)
+
+        assert html =~ ~s(name="user[email]")
+      end
+    end
+
+    test "renders disabled and readonly true and false" do
+      for value <- [true, false] do
+        assigns = %{field: form_field(), value: value}
+
+        html =
+          rendered_to_string(~H"""
+          <Field.field field={@field} type="text" disabled={@value} readonly={@value} />
+          """)
+
+        assert html =~ ~s(name="user[email]")
+      end
+    end
+
+    test "renders checked, multiple and mask" do
+      assigns = %{field: form_field()}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="checkbox" checked />
+        """)
+
+      assert html =~ ~s(name="user[email]")
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="select" multiple options={["a", "b"]} />
+        """)
+
+      assert html =~ "multiple"
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="text" mask="(999) 999-9999" />
+        """)
+
+      assert html =~ ~s(name="user[email]")
+    end
+
+    test "forwards disable_weekends to the date types" do
+      for value <- [true, false] do
+        assigns = %{field: form_field(), value: value}
+
+        html =
+          rendered_to_string(~H"""
+          <Field.field field={@field} type="date" disable_weekends={@value} />
+          """)
+
         assert html =~ ~s(name="user[email]")
       end
     end
