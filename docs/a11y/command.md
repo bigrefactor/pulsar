@@ -8,7 +8,7 @@
 A searchable, keyboard-navigable option list. A `role="combobox"` query
 input filters a `role="listbox"` of `role="group"`/`role="option"` rows with
 a roving `aria-activedescendant` — real DOM focus never leaves the input.
-The `.PulsarCommand` colocated hook owns arrow/Home/End navigation, dispatches
+The `.PulsarCommand` colocated hook owns arrow navigation, dispatches
 a real click on Enter, and runs the caller's `on_cancel` `%JS{}` on Escape
 without `preventDefault` so an enclosing `<dialog>`/`[popover]` can still
 close itself. The component holds no value of its own: selecting an option
@@ -169,7 +169,9 @@ deliberate overflow-ellipsis design choice, not a spacing-override bug —
 full contract inside `render/1`:
 - `ArrowDown`/`ArrowUp` move the active row, wrapping at both ends —
   `render/1`
-- `Home`/`End` jump to the first/last enabled row — `render/1`
+- `Home`/`End` are deliberately left unhandled: the query field is an
+  editable combobox, so those keys (and Shift+Home/Shift+End selection)
+  stay with the caret — `render/1`
 - `Enter` dispatches a real `click()` on the active row, so the row's own
   `phx-click` (and the caller's `on_select`) run exactly as they would for
   a mouse click — `render/1`
@@ -182,13 +184,13 @@ Real-browser keyboard tests in `test/integration/a11y/keyboard/command_test.exs`
 test "ArrowDown moves the active row, and Enter selects it",
 test "ArrowDown skips the disabled row",
 test "ArrowUp from the first row wraps to the last enabled row",
-test "End jumps to the last enabled row and Home returns to the first",
+test "Home leaves the rows alone and moves the caret instead",
 test "Enter with no movement selects the first row".
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 
 **Evidence:** `handleKeydown`'s `switch` only branches on `ArrowDown`,
-`ArrowUp`, `Home`, `End`, `Enter`, and `Escape` — `render/1`. Tab and
+`ArrowUp`, `Enter`, and `Escape` — `render/1`. Tab and
 Shift+Tab match no case and fall through untouched, so native Tab
 behavior is preserved; the query input is a single tab stop and rows are
 never independently focusable. `Escape` deliberately does not call

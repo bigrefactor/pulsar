@@ -17,7 +17,13 @@ defmodule Pulsar.DevApp.CommandLive do
 
   # Deliberately slow, so a test can observe the in-flight state before it
   # resolves; and deliberately raising, to exercise the failure branch.
-  defp slow_filter, do: fn _query, _options -> Process.sleep(50) && [{"Remote result", "remote"}] end
+  defp slow_filter do
+    fn _query, _options ->
+      Process.sleep(50)
+      [{"Remote result", "remote"}]
+    end
+  end
+
   defp failing_filter, do: fn _query, _options -> raise "upstream down" end
 
   def mount(_params, _session, socket) do

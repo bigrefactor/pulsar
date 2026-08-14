@@ -11,8 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **New `command` component**: a query field over a filtered, optionally grouped
   option list, with combobox semantics (`role="combobox"` + `role="listbox"` and a
-  roving `aria-activedescendant`), ↑/↓/Home/End navigation, Enter to choose, and
-  Escape to dismiss. It holds no value of its own — choosing a row runs your
+  roving `aria-activedescendant`), ↑/↓ navigation, Enter to choose, and
+  Escape to dismiss. Home and End stay with the caret, as they should in an
+  editable combobox. It holds no value of its own — choosing a row runs your
   `on_select` callback and clears the query — so it fits action lists and command
   palettes as naturally as pickers. Use it inline, or inside a popover or modal
   that provides the surface.
@@ -23,9 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Filtering is a function you supply**: `filter` is `(query, options)` and
   defaults to a built-in case-insensitive subsequence matcher ranked by how
   tightly the match is packed. Pass `async` to run an I/O-bound source
-  off-process, which cancels the in-flight request on the next keystroke and
-  shows a spinner while it runs; with `async`, results refresh when a query is
-  submitted rather than on every parent re-render.
+  off-process, which cancels the in-flight request on the next keystroke — and
+  on selection — and shows a spinner while it runs; with `async`, results refresh
+  when a query is submitted rather than on every parent re-render, and selecting
+  a row never runs your filter on the LiveView process.
 - **`:item` and `:empty` slots** replace the default row and empty-state markup.
 - Ships with a generator (`mix pulsar.gen.command`), a Storybook story, and a
   WCAG 2.2 AA audit at `docs/a11y/command.md`.

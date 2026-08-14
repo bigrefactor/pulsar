@@ -156,6 +156,33 @@ defmodule Pulsar.DevApp.CommandLiveTest do
 
       assert render(element(view, "#cmd-ghost-listbox")) =~ "Alpha"
     end
+
+    test "an async command does not run the caller's filter on select", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/components/command")
+
+      render_hook(element(view, "#cmd-async-error"), "select", %{"value" => "Egret"})
+
+      settled = render(element(view, "#cmd-async-error"))
+
+      assert settled =~ "Egret"
+      refute settled =~ ~s(aria-busy="true")
+    end
+
+    test "an async filter still in flight is cancelled rather than applied", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/components/command")
+
+      render_hook(element(view, "#cmd-async"), "query", %{"query" => "r"})
+      assert render(element(view, "#cmd-async")) =~ ~s(aria-busy="true")
+
+      render_hook(element(view, "#cmd-async"), "select", %{"value" => "Cormorant"})
+      render_async(view)
+
+      settled = render(element(view, "#cmd-async"))
+
+      assert settled =~ "Cormorant"
+      refute settled =~ "Remote result"
+      refute settled =~ ~s(aria-busy="true")
+    end
   end
 
   defp listbox(view), do: render(element(view, "#cmd-filter-listbox"))

@@ -103,15 +103,24 @@ defmodule Pulsar.Integration.A11y.Keyboard.CommandTest do
       |> assert_has("#kbd-cmd-received", text: "betamax")
     end
 
-    test "End jumps to the last enabled row and Home returns to the first", %{conn: conn} do
-      conn
-      |> visit("/keyboard/command")
-      |> A11y.await_live_connected()
-      |> press("#kbd-cmd-input", "End")
-      |> assert_has(~s|#kbd-cmd-input[aria-activedescendant="kbd-cmd-option-3"]|)
-      |> press("#kbd-cmd-input", "Home")
-      |> press("#kbd-cmd-input", "Enter")
-      |> assert_has("#kbd-cmd-received", text: "alpha")
+    test "Home leaves the rows alone and moves the caret instead", %{conn: conn} do
+      conn =
+        conn
+        |> visit("/keyboard/command")
+        |> A11y.await_live_connected()
+        |> fill_in("Search commands", with: "beta")
+        |> press("#kbd-cmd-input", "ArrowDown")
+        |> assert_has(~s|#kbd-cmd-option-1[data-active="true"]|)
+        |> press("#kbd-cmd-input", "Home")
+        |> assert_has(~s|#kbd-cmd-option-1[data-active="true"]|)
+
+      PhoenixTest.Playwright.evaluate(
+        conn,
+        "document.querySelector('#kbd-cmd-input').selectionStart",
+        fn caret ->
+          assert caret == 0
+        end
+      )
     end
   end
 

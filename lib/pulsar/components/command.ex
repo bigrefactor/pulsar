@@ -406,15 +406,30 @@ defmodule Pulsar.Components.Command do
 
   @impl Phoenix.LiveComponent
   def handle_event("select", _params, socket) do
+    %{async: async, filter: filter, normalized: normalized} = socket.assigns
+
+    socket =
+      if async do
+        socket |> cancel_async(:filter) |> assign(:loading, false)
+      else
+        socket
+      end
+
     {:noreply,
      socket
      |> assign(:query, "")
-     |> assign_results(run_filter(socket.assigns.filter, "", socket.assigns.normalized))}
+     |> assign_results(initial_results(async, filter, "", normalized))}
   end
 
   @impl Phoenix.LiveComponent
   def handle_async(:filter, {:ok, results}, socket) do
     {:noreply, socket |> assign(:loading, false) |> assign_results(results)}
+  end
+
+  # A cancelled filter is a filter the caller replaced or reset, so its results
+  # are simply dropped. Only a genuine failure falls through to the empty state.
+  def handle_async(:filter, {:exit, {:shutdown, :cancel}}, socket) do
+    {:noreply, socket}
   end
 
   def handle_async(:filter, {:exit, _reason}, socket) do
@@ -504,7 +519,12 @@ defmodule Pulsar.Components.Command do
         />
         <Spinner.spinner :if={@loading} decorative size="sm" class="shrink-0" />
       </div>
-      <div id={"#{@id}-listbox"} role="listbox" aria-busy={to_string(@loading)} class="overflow-y-auto">
+      <div
+        id={"#{@id}-listbox"}
+        role="listbox"
+        aria-busy={to_string(@loading)}
+        class="flex-1 min-h-0 overflow-y-auto"
+      >
         <div
           :for={{chunk, group_index} <- @groups}
           role="group"
@@ -606,7 +626,11 @@ defmodule Pulsar.Components.Command do
           // the same way regardless of input method.
           handleClick(e) {
             const row = e.target.closest("[data-command-option]")
-            if (row && row.getAttribute("aria-disabled") !== "true") this.input.value = ""
+            if (!row || row.getAttribute("aria-disabled") === "true") return
+            // Drop any debounced query still pending, or it fires after the reset
+            // and refills the list for a query the user has already left behind.
+            clearTimeout(this.timer)
+            this.input.value = ""
           },
 
           handleKeydown(e) {
@@ -624,14 +648,8 @@ defmodule Pulsar.Components.Command do
                 this.activate(options, previous < 0 ? options.length - 1 : previous)
                 break
               }
-              case "Home":
-                e.preventDefault()
-                this.activate(options, 0)
-                break
-              case "End":
-                e.preventDefault()
-                this.activate(options, options.length - 1)
-                break
+              // Home and End are deliberately not handled: the query field is
+              // editable, so they belong to the caret.
               case "Enter": {
                 e.preventDefault()
                 const active = options[this.activeIndex(options)]
