@@ -29,6 +29,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **`checkbox` and `switch` now let an explicit `checked` override the bound field in both directions**: both attrs declared `default: false`, so the component could not tell "not provided" from "provided as `false`" and simply ignored the attr whenever a field was bound — `checked={false}` on a checked field still rendered checked. The attr no longer carries a default, and the field value is used only when the caller omits it. Callers that never passed `checked` are unaffected.
 
+### Fixed - `field` Accepts the Native Input Constraints It Forwards
+
+- **`field` now declares `minlength`, `maxlength`, `list`, `accept`, `capture`, and `form`**: `field` curates its input surface with explicit attrs and already covered the numeric bounds (`min`, `max`, `step`) and `pattern`/`autocomplete`, but the string-length bounds and the remaining form attributes were neither declared nor opted into its `:global`. Each reached the rendered element anyway, so the omission never showed up at render time — it showed up as an `undefined attribute` warning at every call site, failing the build for host apps compiling with `--warnings-as-errors`. `<.field type="password" minlength="12" maxlength="72" />` and `<.field type="file" accept="image/*" capture="user" />` now compile clean. `size` is deliberately not included: `field`'s `size` is the component scale (`"sm"`/`"md"`/`"lg"`) and shadows the HTML attribute of the same name.
+
 ### Fixed - `field type="daterange"` Reports Its Own Contract
 
 - **A `daterange` field without an `end_field` now raises naming `<.field type="daterange">`**: previously the missing binding surfaced from the wrapped date picker as `<.date_picker mode="range"> was given start_field but not end_field`, pointing at an internal component the caller never wrote.

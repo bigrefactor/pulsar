@@ -516,6 +516,117 @@ defmodule Pulsar.Components.FieldTest do
     end
   end
 
+  describe "native constraint attributes" do
+    # An attribute `field/1` neither declares nor opts into its `:global` still
+    # reaches the rendered element at runtime, so the render assertions below pass
+    # either way. What an undeclared attribute costs is an "undefined attribute"
+    # warning at every call site — a build failure for a host app compiling with
+    # `--warnings-as-errors`. This declaration check is the assertion that fails
+    # when the attr surface regresses; the render tests guard the other half,
+    # that declaring an attr does not drop it from the forwarded `@rest`.
+    for name <- [:minlength, :maxlength, :list, :accept, :capture, :form] do
+      test "field/1 declares :#{name}" do
+        attrs = Field.__components__()[:field].attrs
+
+        assert Enum.find(attrs, &(&1.name == unquote(name))),
+               "field/1 declares no :#{unquote(name)} attr, so call sites warn"
+      end
+    end
+
+    test "passes minlength and maxlength through to the input element" do
+      field = create_field(:password)
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="password" minlength="12" maxlength="72" />
+        """)
+
+      assert html =~ ~r/<input[^>]*minlength="12"/
+      assert html =~ ~r/<input[^>]*maxlength="72"/
+    end
+
+    test "accepts integer minlength and maxlength" do
+      field = create_field(:password)
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="password" minlength={12} maxlength={72} />
+        """)
+
+      assert html =~ ~r/<input[^>]*minlength="12"/
+      assert html =~ ~r/<input[^>]*maxlength="72"/
+    end
+
+    test "passes minlength and maxlength through to the textarea element" do
+      field = create_field(:bio)
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="textarea" minlength="10" maxlength="280" />
+        """)
+
+      assert html =~ ~r/<textarea[^>]*minlength="10"/
+      assert html =~ ~r/<textarea[^>]*maxlength="280"/
+    end
+
+    test "passes list through to the input element" do
+      field = create_field(:browser)
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} list="browsers" />
+        """)
+
+      assert html =~ ~r/<input[^>]*list="browsers"/
+    end
+
+    test "passes accept and capture through to a file input" do
+      field = create_field(:avatar)
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="file" accept="image/png,image/jpeg" capture="user" />
+        """)
+
+      assert html =~ ~r/<input[^>]*accept="image\/png,image\/jpeg"/
+      assert html =~ ~r/<input[^>]*capture="user"/
+    end
+
+    test "passes form through to the input element" do
+      field = create_field(:email)
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} type="email" form="signup-form" />
+        """)
+
+      assert html =~ ~r/<input[^>]*form="signup-form"/
+    end
+
+    test "omits constraint attributes that were not given" do
+      field = create_field(:name)
+      assigns = %{field: field}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@field} />
+        """)
+
+      refute html =~ "minlength"
+      refute html =~ "maxlength"
+      refute html =~ ~s(list=)
+      refute html =~ ~s(accept=)
+      refute html =~ ~s(capture=)
+      refute html =~ ~s(form=)
+    end
+  end
+
   describe "slot customization" do
     test "label slot with custom class" do
       field = create_field(:name)

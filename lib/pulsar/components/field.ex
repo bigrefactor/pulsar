@@ -52,7 +52,12 @@ defmodule Pulsar.Components.Field do
           <:description>Receive email updates about your account activity</:description>
         </.field>
 
-        # File upload field (HTML attributes like accept pass through via rest)
+        # Text field with native length constraints
+        <.field field={@form[:username]} type="text" minlength="3" maxlength="32">
+          <:label>Username</:label>
+        </.field>
+
+        # File upload field
         <.field field={@form[:avatar]} type="file" accept="image/*">
           <:label>Profile Picture</:label>
           <:description>Upload a profile image (JPG, PNG, or GIF)</:description>
@@ -208,6 +213,23 @@ defmodule Pulsar.Components.Field do
   # Label section wrapper classes
   @label_section_classes "flex flex-col gap-1"
 
+  # Declared attributes forwarded onto the rendered input alongside `@rest`.
+  # Declaring an attribute removes it from `@rest`, so every entry here must also
+  # be listed in the `include:` of the input's own `:global`.
+  @forwarded_input_attrs [
+    :min,
+    :max,
+    :step,
+    :minlength,
+    :maxlength,
+    :pattern,
+    :autocomplete,
+    :list,
+    :accept,
+    :capture,
+    :form
+  ]
+
   # Inline label base classes for checkbox/switch.
   # Note: `text-{size}` is added by `size_class` and would reset line-height in
   # Tailwind v4, so `leading-none` is appended AFTER `size_class` in the merge
@@ -263,8 +285,14 @@ defmodule Pulsar.Components.Field do
   attr(:min, :any, default: nil, doc: "Minimum value (number, date)")
   attr(:max, :any, default: nil, doc: "Maximum value (number, date)")
   attr(:step, :any, default: nil, doc: "Step increment (number)")
+  attr(:minlength, :any, default: nil, doc: "Minimum length (text, textarea)")
+  attr(:maxlength, :any, default: nil, doc: "Maximum length (text, textarea)")
   attr(:pattern, :string, default: nil, doc: "Validation pattern")
   attr(:autocomplete, :string, default: nil, doc: "Autocomplete hint")
+  attr(:list, :string, default: nil, doc: "ID of a datalist supplying suggestions")
+  attr(:accept, :string, default: nil, doc: "Accepted file types (file)")
+  attr(:capture, :string, default: nil, doc: "Camera capture source (file)")
+  attr(:form, :string, default: nil, doc: "ID of the form this field belongs to")
   attr(:checked, :boolean, default: nil, doc: "Checked state (checkbox/switch)")
 
   # OTP-specific attributes
@@ -395,6 +423,8 @@ defmodule Pulsar.Components.Field do
       name={@field_name}
       value={@field_value}
       rows={@rows}
+      minlength={@minlength}
+      maxlength={@maxlength}
       placeholder={@placeholder}
       variant={@variant}
       color={@color}
@@ -576,14 +606,10 @@ defmodule Pulsar.Components.Field do
   # Default case: render as Input component (text, email, password, number, etc.)
   defp render_input(assigns) do
     # Build HTML attributes for the Input component
-    html_attrs = assigns.rest
-    html_attrs = if assigns[:min], do: Map.put(html_attrs, :min, assigns.min), else: html_attrs
-    html_attrs = if assigns[:max], do: Map.put(html_attrs, :max, assigns.max), else: html_attrs
-    html_attrs = if assigns[:step], do: Map.put(html_attrs, :step, assigns.step), else: html_attrs
-    html_attrs = if assigns[:pattern], do: Map.put(html_attrs, :pattern, assigns.pattern), else: html_attrs
-
     html_attrs =
-      if assigns[:autocomplete], do: Map.put(html_attrs, :autocomplete, assigns.autocomplete), else: html_attrs
+      Enum.reduce(@forwarded_input_attrs, assigns.rest, fn key, attrs ->
+        if assigns[key], do: Map.put(attrs, key, assigns[key]), else: attrs
+      end)
 
     assigns = assign(assigns, :html_attrs, html_attrs)
 
