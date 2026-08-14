@@ -252,7 +252,7 @@ defmodule Pulsar.Components.Select do
   attr(:"aria-describedby", :string, default: nil, doc: "Id(s) of elements that describe the select")
 
   # Global attributes (allows all Phoenix and HTML attributes)
-  attr(:rest, :global, doc: "Additional HTML attributes")
+  attr(:rest, :global, include: ~w(autocomplete form), doc: "Additional HTML attributes")
 
   @doc """
   Renders a styled select component with optional multi-select badges.

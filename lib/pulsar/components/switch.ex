@@ -375,7 +375,7 @@ defmodule Pulsar.Components.Switch do
   )
 
   # Global attributes (allows all Phoenix and HTML attributes)
-  attr(:rest, :global, doc: "Additional HTML attributes")
+  attr(:rest, :global, include: ~w(form), doc: "Additional HTML attributes")
 
   slot(:loading_content,
     required: false,

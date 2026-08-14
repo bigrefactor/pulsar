@@ -609,6 +609,58 @@ defmodule Pulsar.Components.FieldTest do
       assert html =~ ~r/<input[^>]*form="signup-form"/
     end
 
+    # `form` and `autocomplete` are valid on every control `field/1` dispatches to,
+    # not just the ones the default Input branch renders. Declaring an attr removes
+    # it from `@rest`, so each branch has to forward them explicitly or they are
+    # dropped without a warning — a quieter failure than the undeclared-attr warning
+    # that preceded it.
+    # `autocomplete` is only asserted where HTML defines it. It does not apply to
+    # the checkbox and radio input types, so a switch or checkbox field is checked
+    # for `form` alone.
+    for {type, element, options, autocomplete?} <- [
+          {"select", "select", [{"US", "us"}], true},
+          {"textarea", "textarea", [], true},
+          {"otp", "input", [], true},
+          {"checkbox", "input", [], false},
+          {"switch", "input", [], false}
+        ] do
+      test "type=#{type} forwards form to its control" do
+        type = unquote(type)
+        element = unquote(element)
+        field = create_field(:thing)
+        assigns = %{field: field, type: type, options: unquote(options)}
+
+        html =
+          rendered_to_string(~H"""
+          <Field.field field={@field} type={@type} options={@options} form="signup-form" />
+          """)
+
+        tags = Regex.scan(~r/<#{element}[^>]*/, html) |> Enum.map(&hd/1)
+
+        assert Enum.any?(tags, &(&1 =~ ~s(form="signup-form"))),
+               ~s(no <#{element}> carries form= for type=#{type})
+      end
+
+      if autocomplete? do
+        test "type=#{type} forwards autocomplete to its control" do
+          type = unquote(type)
+          element = unquote(element)
+          field = create_field(:thing)
+          assigns = %{field: field, type: type, options: unquote(options)}
+
+          html =
+            rendered_to_string(~H"""
+            <Field.field field={@field} type={@type} options={@options} autocomplete="off" />
+            """)
+
+          tags = Regex.scan(~r/<#{element}[^>]*/, html) |> Enum.map(&hd/1)
+
+          assert Enum.any?(tags, &(&1 =~ ~s(autocomplete="off"))),
+                 ~s(no <#{element}> carries autocomplete= for type=#{type})
+        end
+      end
+    end
+
     test "omits constraint attributes that were not given" do
       field = create_field(:name)
       assigns = %{field: field}

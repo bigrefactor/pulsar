@@ -112,7 +112,7 @@ defmodule Pulsar.Components.InputOtp do
 
   attr(:class, :string, default: "", doc: "Additional CSS classes for the container")
   attr(:"aria-describedby", :string, default: nil, doc: "Id(s) of elements that describe the input")
-  attr(:rest, :global, doc: "Additional attributes for the input")
+  attr(:rest, :global, include: ~w(autocomplete form), doc: "Additional attributes for the input")
 
   def input_otp(assigns) do
     assigns = normalize_field_props(assigns)

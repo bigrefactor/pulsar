@@ -1171,4 +1171,33 @@ defmodule Pulsar.Components.SelectTest do
       html |> String.split(~s( #{name}=)) |> length() |> Kernel.-(1)
     end
   end
+
+  describe "select/1 form attributes" do
+    # These names are not LiveView globals, so an omitted `include:` costs an
+    # "undefined attribute" warning at every call site. The attribute still reaches
+    # the element via `@rest` either way, so the render assertions below cannot
+    # catch the regression — this one can.
+    test "the :global opts them in so call sites do not warn" do
+      attrs = Select.__components__()[:select].attrs
+      global = Enum.find(attrs, &(&1.type == :global))
+      include = Keyword.get(global.opts, :include, [])
+
+      for name <- [:autocomplete, :form] do
+        assert to_string(name) in include,
+               "select/1 does not include #{name} in its :global"
+      end
+    end
+
+    test "autocomplete and form reach the select element" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select id="country" name="country" options={[{"US", "us"}]} autocomplete="off" form="signup" />
+        """)
+
+      assert html =~ ~r/<select[^>]*autocomplete="off"/
+      assert html =~ ~r/<select[^>]*form="signup"/
+    end
+  end
 end

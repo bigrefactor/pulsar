@@ -933,4 +933,33 @@ defmodule Pulsar.Components.TextareaTest do
       assert html =~ ~s(id="user_bio")
     end
   end
+
+  describe "textarea/1 form attributes" do
+    # These names are not LiveView globals, so an omitted `include:` costs an
+    # "undefined attribute" warning at every call site. The attribute still reaches
+    # the element via `@rest` either way, so the render assertions below cannot
+    # catch the regression — this one can.
+    test "the :global opts them in so call sites do not warn" do
+      attrs = Textarea.__components__()[:textarea].attrs
+      global = Enum.find(attrs, &(&1.type == :global))
+      include = Keyword.get(global.opts, :include, [])
+
+      for name <- [:autocomplete, :form] do
+        assert to_string(name) in include,
+               "textarea/1 does not include #{name} in its :global"
+      end
+    end
+
+    test "autocomplete and form reach the textarea element" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Textarea.textarea name="bio" autocomplete="off" form="signup" />
+        """)
+
+      assert html =~ ~r/<textarea[^>]*autocomplete="off"/
+      assert html =~ ~r/<textarea[^>]*form="signup"/
+    end
+  end
 end

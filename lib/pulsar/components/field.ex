@@ -213,9 +213,6 @@ defmodule Pulsar.Components.Field do
   # Label section wrapper classes
   @label_section_classes "flex flex-col gap-1"
 
-  # Declared attributes forwarded onto the rendered input alongside `@rest`.
-  # Declaring an attribute removes it from `@rest`, so every entry here must also
-  # be listed in the `include:` of the input's own `:global`.
   @forwarded_input_attrs [
     :min,
     :max,
@@ -403,6 +400,8 @@ defmodule Pulsar.Components.Field do
       options={@options || []}
       prompt={@prompt}
       multiple={@multiple}
+      autocomplete={@autocomplete}
+      form={@form}
       variant={@variant}
       color={@color}
       size={@size}
@@ -425,6 +424,8 @@ defmodule Pulsar.Components.Field do
       rows={@rows}
       minlength={@minlength}
       maxlength={@maxlength}
+      autocomplete={@autocomplete}
+      form={@form}
       placeholder={@placeholder}
       variant={@variant}
       color={@color}
@@ -450,6 +451,8 @@ defmodule Pulsar.Components.Field do
       groups={@groups}
       mode={@mode}
       mask={@mask}
+      autocomplete={@autocomplete}
+      form={@form}
       variant={@variant}
       color={@color}
       size={@size}
@@ -472,6 +475,7 @@ defmodule Pulsar.Components.Field do
         name={@field_name}
         value={@field_value}
         checked={@checked}
+        form={@form}
         variant={@variant}
         color={@color}
         size={@size}
@@ -502,6 +506,7 @@ defmodule Pulsar.Components.Field do
           name={@field_name}
           value={@field_value}
           checked={@checked}
+          form={@form}
           variant={@variant}
           color={@color}
           size={@size}
