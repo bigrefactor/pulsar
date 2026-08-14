@@ -80,6 +80,56 @@ defmodule Pulsar.Integration.A11y.Keyboard.TableTest do
       |> assert_has("#kbd-table-activation-count", text: "1")
     end
 
+    test "Space and Enter cycle a sortable column header", %{conn: conn} do
+      conn
+      |> visit("/keyboard/table")
+      |> A11y.await_live_connected()
+      |> assert_has(~s|#kbd-table-sortable th[aria-sort="none"] .hero-chevron-up-down|)
+      |> press(~s|#kbd-table-sortable thead button|, "Enter")
+      |> assert_has(~s|#kbd-table-sortable th[aria-sort="ascending"] .hero-chevron-up|)
+      |> press(~s|#kbd-table-sortable thead button|, "Space")
+      |> assert_has(~s|#kbd-table-sortable th[aria-sort="descending"] .hero-chevron-down|)
+      |> press(~s|#kbd-table-sortable thead button|, "Enter")
+      |> assert_has(~s|#kbd-table-sortable th[aria-sort="none"] .hero-chevron-up-down|)
+    end
+
+    test "a sortable header label aligns with its own data cells", %{conn: conn} do
+      session =
+        conn
+        |> visit("/components/table/solid")
+        |> A11y.await_live_connected()
+
+      PhoenixTest.Playwright.evaluate(
+        session,
+        """
+        (() => {
+          const table = document.querySelector("table[data-fixture-cell='sortable-solid-neutral']");
+          const edges = (el) => {
+            const rect = el.getBoundingClientRect();
+            const style = getComputedStyle(el);
+            return [
+              rect.left + parseFloat(style.paddingLeft),
+              rect.right - parseFloat(style.paddingRight)
+            ];
+          };
+          return [...table.querySelectorAll("thead th")].map((header) => {
+            const [headerLeft, headerRight] = edges(header);
+            const [buttonLeft, buttonRight] = edges(header.querySelector("button"));
+            return [buttonLeft - headerLeft, buttonRight - headerRight];
+          });
+        })()
+        """,
+        fn deltas ->
+          assert length(deltas) == 3
+
+          for [left_delta, right_delta] <- deltas do
+            assert_in_delta left_delta, 0, 0.5
+            assert_in_delta right_delta, 0, 0.5
+          end
+        end
+      )
+    end
+
     test "row click listener follows updates without duplicate activation", %{conn: conn} do
       session =
         conn

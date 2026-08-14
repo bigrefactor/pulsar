@@ -2,6 +2,7 @@ defmodule Pulsar.DevApp.TableLive do
   @moduledoc false
   use Pulsar.DevApp.Web, :live_view
 
+  alias Phoenix.LiveView.JS
   alias Pulsar.Components.Table
 
   @rows [
@@ -34,6 +35,43 @@ defmodule Pulsar.DevApp.TableLive do
               <:col :let={row} label="Name">{row.name}</:col>
               <:col :let={row} label="Role">{row.role}</:col>
               <:col :let={row} label="Status">{row.status}</:col>
+            </Table.table>
+          <% end %>
+        </div>
+      </.fixture_section>
+      <.fixture_section name={"sortable-#{@variant}"} title="Sortable headers">
+        <div class="grid w-full grid-cols-1 gap-6">
+          <%= for color <- @colors do %>
+            <Table.table
+              id={"tbl-sortable-#{@variant}-#{color}"}
+              variant={@variant}
+              color={color}
+              rows={@rows}
+              aria_label={"Sortable roster — #{@variant} #{color}"}
+              data-fixture-cell={"sortable-#{@variant}-#{color}"}
+            >
+              <:col
+                :let={row}
+                label="Name"
+                sortable
+                sort_direction="ascending"
+                on_sort={JS.dispatch("pulsar:sort")}
+              >
+                {row.name}
+              </:col>
+              <:col
+                :let={row}
+                label="Role"
+                align="right"
+                sortable
+                sort_direction="descending"
+                on_sort={JS.dispatch("pulsar:sort")}
+              >
+                {row.role}
+              </:col>
+              <:col :let={row} label="Status" sortable on_sort={JS.dispatch("pulsar:sort")}>
+                {row.status}
+              </:col>
             </Table.table>
           <% end %>
         </div>

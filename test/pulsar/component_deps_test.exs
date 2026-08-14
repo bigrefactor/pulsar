@@ -17,6 +17,7 @@ defmodule Pulsar.ComponentDepsTest do
 
   test "deps/1 returns direct dependencies" do
     assert ComponentDeps.deps(:dropzone) == [:icon, :progress]
+    assert ComponentDeps.deps(:table) == [:icon]
     assert ComponentDeps.deps(:badge) == []
   end
 

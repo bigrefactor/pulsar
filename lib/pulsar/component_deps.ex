@@ -65,7 +65,7 @@ defmodule Pulsar.ComponentDeps do
     status: [],
     steps: [:icon],
     switch: [],
-    table: [],
+    table: [:icon],
     tabs: [:icon],
     textarea: [],
     tooltip: [:popover]

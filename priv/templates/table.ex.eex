@@ -31,6 +31,26 @@ via Phoenix LiveView LiveStream.
       </:col>
     </.table>
 
+    # Sortable column
+    <.table id="users" rows={@users} aria_label="Users">
+      <:col
+        :let={user}
+        label="Name"
+        sortable
+        sort_direction={@name_sort_direction}
+        on_sort={JS.patch(@name_sort_path)}
+      >
+        <%%= user.name %>
+      </:col>
+    </.table>
+
+Sortable columns render their label as a native button, including focus and
+hover UI plus a default decorative Heroicon. Pulsar owns that affordance and
+places the current `aria-sort` state on the containing column header. Callers
+own the next sort direction and the action to take, such as patching a URL,
+pushing an event, or updating a query. A column whose `sort_direction` is
+omitted or `nil` reports `none`, so only the active column needs a direction.
+
     # With variant and size
     <.table
       id="products"
@@ -109,8 +129,10 @@ use Phoenix.Component
 
 import Twm, only: [merge: 1]
 
+alias Phoenix.LiveView.JS
 alias Phoenix.LiveView.LiveStream
 alias Phoenix.LiveView.Rendered
+alias <%= @component_namespace %>.Icon
 
 # ============================================================================
 # CONFIGURATION & CONSTANTS
@@ -304,6 +326,9 @@ slot :col, required: true do
   attr :label, :string, required: true
   attr :align, :string, values: ~w(left center right)
   attr :class, :string
+  attr :sortable, :boolean
+  attr :sort_direction, :string, values: ~w(ascending descending other none)
+  attr :on_sort, :any
 end
 
 slot :action,
@@ -387,6 +412,7 @@ caller; rendering is not blocked.
 @spec table(map()) :: Rendered.t()
 def table(assigns) do
   warn_if_missing_accessible_name(assigns)
+  Enum.each(assigns.col, &validate_sortable_column!/1)
 
   # Detect LiveStream and set up row handling
   assigns = setup_stream_handling(assigns)
@@ -424,9 +450,24 @@ def table(assigns) do
           <th
             :for={col <- @col}
             scope="col"
+            aria-sort={Map.get(col, :sortable, false) && sort_direction(col)}
             class={build_header_cell_classes(@size, col[:align], col[:class])}
           >
-            {col[:label]}
+            <button
+              :if={Map.get(col, :sortable, false)}
+              type="button"
+              phx-click={col[:on_sort]}
+              class={build_sort_button_classes(col[:align])}
+            >
+              <span>{col[:label]}</span>
+              <Icon.icon
+                name={sort_icon(sort_direction(col))}
+                size="sm"
+                color="current"
+                class="shrink-0"
+              />
+            </button>
+            <span :if={!Map.get(col, :sortable, false)}>{col[:label]}</span>
           </th>
           <th :if={@action != []} scope="col" class={build_header_cell_classes(@size, "right", "")}>
             <span class="sr-only">Actions</span>
@@ -577,6 +618,42 @@ end
 # ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
+
+defp validate_sortable_column!(col) do
+  if Map.get(col, :sortable, false) and inert_sort_action?(Map.get(col, :on_sort)) do
+    raise ArgumentError, "table/1 sortable columns require an on_sort action"
+  end
+
+  :ok
+end
+
+defp inert_sort_action?(nil), do: true
+defp inert_sort_action?(false), do: true
+defp inert_sort_action?(%JS{} = on_sort), do: on_sort == %JS{}
+defp inert_sort_action?(_on_sort), do: false
+
+defp sort_direction(col) do
+  case Map.get(col, :sort_direction) do
+    direction when direction in ~w(ascending descending other) -> direction
+    _other -> "none"
+  end
+end
+
+defp sort_icon("ascending"), do: "hero-chevron-up"
+defp sort_icon("descending"), do: "hero-chevron-down"
+defp sort_icon(_direction), do: "hero-chevron-up-down"
+
+defp build_sort_button_classes(align) do
+  merge([
+    "-m-1 inline-flex w-[calc(100%+0.5rem)] cursor-pointer items-center gap-1 rounded-field p-1",
+    "hover:bg-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-current",
+    sort_button_justify_class(align)
+  ])
+end
+
+defp sort_button_justify_class("center"), do: "justify-center"
+defp sort_button_justify_class("right"), do: "justify-end"
+defp sort_button_justify_class(_align), do: "justify-start"
 
 attr :row_dom_id, :any, required: true
 attr :row, :any, required: true

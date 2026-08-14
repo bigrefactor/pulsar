@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Accessible Sortable Table Headers
+
+- **Table columns can opt into a complete sortable-header affordance with
+  `sortable`, `sort_direction`, and `on_sort`**: Pulsar renders a native button
+  and default Heroicon inside the column header and applies the valid WAI-ARIA
+  sort state to the owning `<th>`. Columns with no current direction report
+  `none`, so only the active column needs a `sort_direction`. Callers continue
+  to own sort transitions, URLs, events, and query integration. Existing
+  non-sortable columns are unchanged.
+
 ### Changed (Breaking) - Explicit Select IDs and Scoped Internal Actions
 
 - **Unbound `select` calls now require an explicit `id` as well as a `name`**: deriving the DOM id from `name` could not distinguish same-named controls and produced duplicate select and hook-wrapper ids. Bound fields still prefer a caller `id`, then the field id, then a generated fallback. Add a stable, unique `id` to each direct unbound Select call.
