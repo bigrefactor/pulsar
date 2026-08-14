@@ -5,6 +5,7 @@ defmodule <%= @component_namespace %>.TableTest do
   import Phoenix.Component
 
   alias <%= @component_namespace %>.Table
+  alias Phoenix.LiveView.JS
 
   # `table` requires a `rows` list and one or more `:col` slots, each with a
   # required `label` attr and `:let`-bound cell content, so the smoke test
@@ -111,7 +112,7 @@ defmodule <%= @component_namespace %>.TableTest do
     end
 
     test "a sortable column renders a sort button and its aria-sort state" do
-      assigns = %{rows: rows(), on_sort: Phoenix.LiveView.JS.push("sort", value: %{by: "name"})}
+      assigns = %{rows: rows(), on_sort: JS.push("sort", value: %{by: "name"})}
 
       html =
         rendered_to_string(~H"""
@@ -132,7 +133,7 @@ defmodule <%= @component_namespace %>.TableTest do
         assigns = %{
           rows: rows(),
           direction: direction,
-          on_sort: Phoenix.LiveView.JS.push("sort", value: %{by: "name"})
+          on_sort: JS.push("sort", value: %{by: "name"})
         }
 
         html =
@@ -175,7 +176,7 @@ defmodule <%= @component_namespace %>.TableTest do
     end
 
     test "row_click rows are activatable by keyboard" do
-      assigns = %{rows: rows(), row_click: fn row -> Phoenix.LiveView.JS.push("open", value: %{id: row.id}) end}
+      assigns = %{rows: rows(), row_click: fn row -> JS.push("open", value: %{id: row.id}) end}
 
       html =
         rendered_to_string(~H"""
