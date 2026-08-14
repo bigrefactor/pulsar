@@ -138,5 +138,17 @@ defmodule Pulsar.DevApp.CommandLiveTest do
     end
   end
 
+  describe "select event" do
+    test "selecting resets the query", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/components/command")
+      render_hook(element(view, "#cmd-ghost"), "query", %{"query" => "beta"})
+      refute render(element(view, "#cmd-ghost-listbox")) =~ ">Alpha<"
+
+      render_hook(element(view, "#cmd-ghost"), "select", %{"value" => "Beta"})
+
+      assert render(element(view, "#cmd-ghost-listbox")) =~ "Alpha"
+    end
+  end
+
   defp listbox(view), do: render(element(view, "#cmd-filter-listbox"))
 end

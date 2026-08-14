@@ -17,6 +17,7 @@ defmodule Pulsar.Components.Command do
 
   import Twm, only: [merge: 1]
 
+  alias Phoenix.LiveView.JS
   alias Pulsar.Components.Icon
   alias Pulsar.Components.Spinner
 
@@ -271,6 +272,13 @@ defmodule Pulsar.Components.Command do
 
   attr(:size, :string, default: "md", values: ~w(xs sm md lg xl), doc: "Row scale")
 
+  attr(:on_select, JS,
+    default: %JS{},
+    doc: "JS commands to run when an option is chosen. Receives phx-value-value and phx-value-label."
+  )
+
+  attr(:on_cancel, JS, default: %JS{}, doc: "JS commands to run when the list is dismissed with Escape.")
+
   attr(:empty_text, :string,
     default: "No results found",
     doc: ~s{Message shown when nothing matches. Use with i18n: gettext("No results found")}
@@ -307,6 +315,8 @@ defmodule Pulsar.Components.Command do
       variant={@variant}
       color={@color}
       size={@size}
+      on_select={@on_select}
+      on_cancel={@on_cancel}
       empty_text={@empty_text}
       result_label={@result_label}
       results_label={@results_label}
@@ -333,6 +343,8 @@ defmodule Pulsar.Components.Command do
     socket =
       socket
       |> assign(assigns)
+      |> assign_new(:on_select, fn -> %JS{} end)
+      |> assign_new(:on_cancel, fn -> %JS{} end)
       |> assign_new(:class, fn -> "" end)
       |> assign_new(:rest, fn -> %{} end)
       |> assign_new(:options, fn -> [] end)
@@ -380,6 +392,14 @@ defmodule Pulsar.Components.Command do
     else
       {:noreply, assign_results(socket, run_filter(filter, query, options))}
     end
+  end
+
+  @impl Phoenix.LiveComponent
+  def handle_event("select", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:query, "")
+     |> assign_results(run_filter(socket.assigns.filter, "", socket.assigns.normalized))}
   end
 
   @impl Phoenix.LiveComponent
@@ -489,6 +509,12 @@ defmodule Pulsar.Components.Command do
             data-active={to_string(index == @active)}
             aria-selected={to_string(index == @active)}
             aria-disabled={option.disabled && "true"}
+            phx-click={
+              !option.disabled &&
+                JS.push(@on_select, "select", target: @myself, value: %{value: to_string(option.value)})
+            }
+            phx-value-value={!option.disabled && to_string(option.value)}
+            phx-value-label={!option.disabled && option.label}
             class={merge(row_classes(@color, @size) <> " " <> disabled_classes(option.disabled))}
           >
             <span :if={@item == []} class="contents">

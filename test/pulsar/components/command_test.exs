@@ -3,6 +3,7 @@ defmodule Pulsar.Components.CommandTest do
 
   import Phoenix.LiveViewTest
 
+  alias Phoenix.LiveView.JS
   alias Pulsar.Components.Command
   alias Pulsar.Components.Command.Option
 
@@ -332,5 +333,43 @@ defmodule Pulsar.Components.CommandTest do
     end
   end
 
+  describe "selection" do
+    test "each row carries its value and label for the caller's push" do
+      html = render_component(Command, id: "cmd", options: [{"Alpha", "a"}])
+
+      assert html =~ ~s(phx-value-value="a")
+      assert html =~ ~s(phx-value-label="Alpha")
+    end
+
+    test "a row's click runs the caller's JS, then the component's own reset" do
+      html = render_component(Command, id: "cmd", options: [{"Alpha", "a"}], on_select: JS.push("chosen"))
+
+      click = phx_click(html)
+
+      assert click =~ "chosen"
+      assert click =~ "select"
+      assert :binary.match(click, "chosen") < :binary.match(click, "select")
+    end
+
+    test "values stringify onto the binding" do
+      html = render_component(Command, id: "cmd", options: [{"Alpha", :alpha}])
+
+      assert html =~ ~s(phx-value-value="alpha")
+    end
+
+    test "a disabled row is not clickable" do
+      html = render_component(Command, id: "cmd", options: [[key: "Alpha", value: "a", disabled: true]])
+
+      refute html =~ "phx-click"
+    end
+  end
+
   defp occurrences(html, needle), do: length(String.split(html, needle)) - 1
+
+  defp phx_click(html) do
+    case Regex.run(~r/phx-click="([^"]*)"/, html) do
+      [_, value] -> value
+      nil -> ""
+    end
+  end
 end
