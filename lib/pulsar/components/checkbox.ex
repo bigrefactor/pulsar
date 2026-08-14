@@ -151,7 +151,7 @@ defmodule Pulsar.Components.Checkbox do
 
     if field do
       %{
-        checked: checked?(field.value, assigns[:value] || "true"),
+        checked: resolve_checked(assigns[:checked], field.value, assigns[:value] || "true"),
         errors: field.errors || [],
         id: resolve_id(assigns, field),
         name: assigns[:name] || field.name
@@ -165,6 +165,9 @@ defmodule Pulsar.Components.Checkbox do
       }
     end
   end
+
+  defp resolve_checked(nil, field_value, checkbox_value), do: checked?(field_value, checkbox_value)
+  defp resolve_checked(checked, _field_value, _checkbox_value), do: checked
 
   defp checked?(field_value, checkbox_value) when is_list(field_value) do
     to_string(checkbox_value) in Enum.map(field_value, &to_string/1)
@@ -267,10 +270,7 @@ defmodule Pulsar.Components.Checkbox do
     doc: "Value when checkbox is checked"
   )
 
-  attr(:checked, :boolean,
-    default: false,
-    doc: "Checkbox state (from field if not provided)"
-  )
+  attr(:checked, :boolean, doc: "Checkbox state. Overrides the bound field's value; omit to derive it from the field.")
 
   attr(:unchecked_value, :string,
     default: "false",

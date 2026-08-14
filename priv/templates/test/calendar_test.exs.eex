@@ -56,5 +56,47 @@ defmodule <%= @component_namespace %>.CalendarTest do
       assert html =~ ~s(value="2026-06-15")
       assert html =~ ~s(value="2026-06-20")
     end
+
+    test "renders disable_weekends true and false" do
+      for value <- [true, false] do
+        assigns = %{field: single_field(), value: value}
+
+        html =
+          rendered_to_string(~H"<Calendar.calendar field={@field} disable_weekends={@value} />")
+
+        assert html =~ ~s(role="application")
+      end
+    end
+
+    test "raises without an id when no form field is bound" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/requires an :id/, fn ->
+        rendered_to_string(~H"<Calendar.calendar />")
+      end
+    end
+
+    test "raises when range mode binds only one end of the range" do
+      assigns = %{
+        start_field: Phoenix.Component.to_form(%{"from" => ~D[2026-06-15]}, as: :trip)[:from]
+      }
+
+      assert_raise ArgumentError, ~r/range binding needs both/, fn ->
+        rendered_to_string(~H|<Calendar.calendar mode="range" start_field={@start_field} />|)
+      end
+    end
+
+    test "raises when single mode is given range fields" do
+      assigns = %{
+        start_field: Phoenix.Component.to_form(%{"from" => ~D[2026-06-15]}, as: :trip)[:from],
+        end_field: Phoenix.Component.to_form(%{"to" => ~D[2026-06-20]}, as: :trip)[:to]
+      }
+
+      assert_raise ArgumentError, ~r/binds field, not start_field/, fn ->
+        rendered_to_string(~H"""
+        <Calendar.calendar start_field={@start_field} end_field={@end_field} />
+        """)
+      end
+    end
   end
 end

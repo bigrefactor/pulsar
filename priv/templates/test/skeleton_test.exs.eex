@@ -42,5 +42,19 @@ defmodule <%= @component_namespace %>.SkeletonTest do
         assert html =~ ~s(aria-hidden="true")
       end
     end
+
+    test "animate_text pulses real text instead of a decorative bar" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H[<Skeleton.skeleton animate_text>Thinking…</Skeleton.skeleton>])
+
+      # The animated variant renders the caller's text so it can be announced,
+      # unlike the decorative shapes which are aria-hidden.
+      assert html =~ "Thinking…"
+
+      html = rendered_to_string(~H[<Skeleton.skeleton kind="text" />])
+      assert html =~ ~s(aria-hidden="true")
+    end
   end
 end

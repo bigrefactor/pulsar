@@ -58,5 +58,57 @@ defmodule <%= @component_namespace %>.FlashGroupTest do
         assert html =~ "Saved"
       end
     end
+
+    # Non-string keys are logged as a warning; @tag :capture_log keeps that
+    # expected output from being mistaken for a failure.
+    @tag :capture_log
+    test "ignores flash entries whose key is not a string" do
+      assigns = %{flash: %{:info => "Atom keyed", "error" => "String keyed"}}
+      html = rendered_to_string(~H[<FlashGroup.flash_group flash={@flash} />])
+
+      assert html =~ "String keyed"
+      refute html =~ "Atom keyed"
+    end
+
+    test "orders messages by severity and honors max_items" do
+      assigns = %{
+        flash: %{"info" => "Info msg", "error" => "Error msg", "warning" => "Warning msg"}
+      }
+
+      html = rendered_to_string(~H[<FlashGroup.flash_group flash={@flash} max_items={2} />])
+
+      # error (1) then warning (2); info (3) falls outside max_items.
+      assert html =~ "Error msg"
+      assert html =~ "Warning msg"
+      refute html =~ "Info msg"
+    end
+
+    test "drops blank messages" do
+      assigns = %{flash: %{"info" => "   ", "error" => "Real"}}
+      html = rendered_to_string(~H[<FlashGroup.flash_group flash={@flash} />])
+
+      assert html =~ "Real"
+    end
+
+    test "renders no inline style attributes" do
+      assigns = %{flash: %{"info" => "Saved"}}
+      html = rendered_to_string(~H[<FlashGroup.flash_group flash={@flash} z_index={80} />])
+
+      # Inline styles would require a `style-src 'unsafe-inline'` CSP relaxation.
+      refute html =~ ~s( style=")
+    end
+
+    test "renders dismissible and auto_dismiss true and false" do
+      for value <- [true, false] do
+        assigns = %{flash: %{"info" => "Saved"}, value: value}
+
+        html =
+          rendered_to_string(
+            ~H[<FlashGroup.flash_group flash={@flash} dismissible={@value} auto_dismiss={@value} />]
+          )
+
+        assert html =~ "Saved"
+      end
+    end
   end
 end

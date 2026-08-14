@@ -109,5 +109,120 @@ defmodule <%= @component_namespace %>.TableTest do
 
       assert html =~ "Nothing here yet"
     end
+
+    test "a sortable column renders a sort button and its aria-sort state" do
+      assigns = %{rows: rows(), on_sort: Phoenix.LiveView.JS.push("sort", value: %{by: "name"})}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="people" rows={@rows} aria_label="People">
+          <:col :let={row} label="Name" sortable sort_direction="ascending" on_sort={@on_sort}>
+            {row.name}
+          </:col>
+        </Table.table>
+        """)
+
+      assert html =~ ~s(aria-sort="ascending")
+      assert html =~ ~s(<button)
+      assert html =~ ~s(type="button")
+    end
+
+    test "renders every sort_direction" do
+      for direction <- ~w(ascending descending other none) do
+        assigns = %{
+          rows: rows(),
+          direction: direction,
+          on_sort: Phoenix.LiveView.JS.push("sort", value: %{by: "name"})
+        }
+
+        html =
+          rendered_to_string(~H"""
+          <Table.table id="people" rows={@rows} aria_label="People">
+            <:col :let={row} label="Name" sortable sort_direction={@direction} on_sort={@on_sort}>
+              {row.name}
+            </:col>
+          </Table.table>
+          """)
+
+        assert html =~ ~s(aria-sort="#{direction}")
+      end
+    end
+
+    test "a non-sortable column carries no aria-sort and no sort button" do
+      assigns = %{rows: rows()}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="people" rows={@rows} aria_label="People">
+          <:col :let={row} label="Name">{row.name}</:col>
+        </Table.table>
+        """)
+
+      refute html =~ "aria-sort"
+      refute html =~ "<button"
+    end
+
+    test "a sortable column without an on_sort action raises" do
+      assigns = %{rows: rows()}
+
+      assert_raise ArgumentError, ~r/on_sort/, fn ->
+        rendered_to_string(~H"""
+        <Table.table id="people" rows={@rows} aria_label="People">
+          <:col :let={row} label="Name" sortable>{row.name}</:col>
+        </Table.table>
+        """)
+      end
+    end
+
+    test "row_click rows are activatable by keyboard" do
+      assigns = %{rows: rows(), row_click: fn row -> Phoenix.LiveView.JS.push("open", value: %{id: row.id}) end}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="people" rows={@rows} row_click={@row_click} aria_label="People">
+          <:col :let={row} label="Name">{row.name}</:col>
+        </Table.table>
+        """)
+
+      assert html =~ ~s(data-row-click="true")
+      assert html =~ ~s(tabindex="0")
+      assert html =~ ~s(role="button")
+    end
+
+    test "row_id derives a stable row element id" do
+      assigns = %{rows: rows(), row_id: fn row -> "person-#{row.id}" end}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="people" rows={@rows} row_id={@row_id} aria_label="People">
+          <:col :let={row} label="Name">{row.name}</:col>
+        </Table.table>
+        """)
+
+      assert html =~ ~s(id="person-1")
+      assert html =~ ~s(id="person-2")
+    end
+
+    test "renders loading, striped and sticky_header true and false" do
+      for value <- [true, false] do
+        assigns = %{rows: rows(), value: value}
+
+        html =
+          rendered_to_string(~H"""
+          <Table.table
+            id="people"
+            rows={@rows}
+            loading={@value}
+            striped={@value}
+            sticky_header={@value}
+            aria_label="People"
+          >
+            <:col :let={row} label="Name">{row.name}</:col>
+          </Table.table>
+          """)
+
+        assert html =~ "<table"
+      end
+    end
   end
 end

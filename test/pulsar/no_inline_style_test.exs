@@ -11,7 +11,12 @@ defmodule Pulsar.NoInlineStyleTest do
   # host apps, plus the dev_app storybook mirror used for local development.
   #
   # The lookbehind is required: a bare `style=` also matches `line_style="..."`.
+  #
+  # `priv/templates/test` is excluded: those are ExUnit sources that *assert
+  # about* markup rather than emit it, so their `refute html =~ ~s( style=")`
+  # guards would otherwise be reported as the very thing they prevent.
   @roots ["lib/pulsar/components", "priv/templates", "test/support/dev_app/storybook"]
+  @excluded_dirs ["priv/templates/test"]
   @pattern ~r/(?<![-\w])style=/
 
   test "no component source renders an inline style attribute" do
@@ -19,6 +24,7 @@ defmodule Pulsar.NoInlineStyleTest do
       @roots
       |> Enum.flat_map(&Path.wildcard(Path.join(&1, "**/*")))
       |> Enum.filter(&File.regular?/1)
+      |> Enum.reject(fn path -> Enum.any?(@excluded_dirs, &String.starts_with?(path, &1)) end)
       |> Enum.flat_map(fn path ->
         path
         |> File.read!()

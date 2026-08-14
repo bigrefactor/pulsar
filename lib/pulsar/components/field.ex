@@ -541,6 +541,11 @@ defmodule Pulsar.Components.Field do
     """
   end
 
+  defp render_input(%{type: "daterange", end_field: nil}) do
+    raise ArgumentError,
+          ~s(<.field type="daterange"> binds two form fields; pass end_field alongside field)
+  end
+
   defp render_input(%{type: "daterange"} = assigns) do
     ~H"""
     <DatePicker.date_picker

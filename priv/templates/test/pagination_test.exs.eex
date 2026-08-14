@@ -93,5 +93,23 @@ defmodule <%= @component_namespace %>.PaginationTest do
 
       assert html =~ "Page 3 of 10"
     end
+
+    test "renders every link_type" do
+      for link_type <- ~w(navigate patch href) do
+        assigns = %{page_href: page_href(), link_type: link_type}
+
+        html =
+          rendered_to_string(~H"""
+          <Pagination.pagination
+            page={3}
+            total_pages={10}
+            page_href={@page_href}
+            link_type={@link_type}
+          />
+          """)
+
+        assert html =~ "<a"
+      end
+    end
   end
 end

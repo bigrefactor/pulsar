@@ -49,5 +49,95 @@ defmodule <%= @component_namespace %>.CheckboxTest do
         assert html =~ "Pulsar"
       end
     end
+
+    test "renders disabled, required and invalid true and false" do
+      for value <- [true, false] do
+        assigns = %{field: form_field(), value: value}
+
+        html =
+          rendered_to_string(~H"""
+          <Checkbox.checkbox
+            field={@field}
+            disabled={@value}
+            required={@value}
+            invalid={@value}
+          />
+          """)
+
+        assert html =~ ~s(type="checkbox")
+
+        if value do
+          assert html =~ "disabled"
+          assert html =~ "required"
+        end
+      end
+    end
+
+    test "marks the indeterminate state for assistive tech" do
+      for value <- [true, false] do
+        assigns = %{field: form_field(), value: value}
+
+        html =
+          rendered_to_string(~H"<Checkbox.checkbox field={@field} indeterminate={@value} />")
+
+        if value do
+          assert html =~ ~s(data-indeterminate="true")
+        else
+          refute html =~ "data-indeterminate"
+        end
+      end
+    end
+
+    test "render_hidden emits an unchecked companion input" do
+      for value <- [true, false] do
+        assigns = %{field: form_field(), value: value}
+
+        html =
+          rendered_to_string(~H"<Checkbox.checkbox field={@field} render_hidden={@value} />")
+
+        if value do
+          assert html =~ ~s(type="hidden")
+        else
+          refute html =~ ~s(type="hidden")
+        end
+      end
+    end
+
+    test "an explicit checked attr overrides the bound field in both directions" do
+      on = Phoenix.Component.to_form(%{"terms" => "true"}, as: :user)[:terms]
+      off = Phoenix.Component.to_form(%{"terms" => "false"}, as: :user)[:terms]
+
+      # Omitted, the state comes from the field.
+      assigns = %{field: on}
+      assert rendered_to_string(~H"<Checkbox.checkbox field={@field} />") =~ ~r/<input[^>]*\schecked/
+
+      assigns = %{field: off}
+      refute rendered_to_string(~H"<Checkbox.checkbox field={@field} />") =~ ~r/<input[^>]*\schecked/
+
+      # Supplied, the caller wins — including an explicit false over a checked field.
+      assigns = %{field: on}
+
+      refute rendered_to_string(~H"<Checkbox.checkbox field={@field} checked={false} />") =~
+               ~r/<input[^>]*\schecked/
+
+      assigns = %{field: off}
+
+      assert rendered_to_string(~H"<Checkbox.checkbox field={@field} checked={true} />") =~
+               ~r/<input[^>]*\schecked/
+    end
+
+    test "renders hide_checkbox true and false in card mode" do
+      for value <- [true, false] do
+        assigns = %{field: form_field(), value: value}
+
+        html =
+          rendered_to_string(~H"""
+          <Checkbox.checkbox field={@field} card hide_checkbox={@value}>Pulsar</Checkbox.checkbox>
+          """)
+
+        assert html =~ ~s(name="user[terms]")
+        assert html =~ "Pulsar"
+      end
+    end
   end
 end

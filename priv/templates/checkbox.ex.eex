@@ -150,7 +150,7 @@ defp normalize_field_props(assigns) do
 
   if field do
     %{
-      checked: checked?(field.value, assigns[:value] || "true"),
+      checked: resolve_checked(assigns[:checked], field.value, assigns[:value] || "true"),
       errors: field.errors || [],
       id: resolve_id(assigns, field),
       name: assigns[:name] || field.name
@@ -164,6 +164,9 @@ defp normalize_field_props(assigns) do
     }
   end
 end
+
+defp resolve_checked(nil, field_value, checkbox_value), do: checked?(field_value, checkbox_value)
+defp resolve_checked(checked, _field_value, _checkbox_value), do: checked
 
 defp checked?(field_value, checkbox_value) when is_list(field_value) do
   to_string(checkbox_value) in Enum.map(field_value, &to_string/1)
@@ -267,8 +270,7 @@ attr(:value, :any,
 )
 
 attr(:checked, :boolean,
-  default: false,
-  doc: "Checkbox state (from field if not provided)"
+  doc: "Checkbox state. Overrides the bound field's value; omit to derive it from the field."
 )
 
 attr(:unchecked_value, :string,

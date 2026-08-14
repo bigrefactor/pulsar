@@ -105,5 +105,22 @@ defmodule <%= @component_namespace %>.ListTest do
 
       assert html =~ "Nothing to display"
     end
+
+    test "renders dividers and striped true and false" do
+      for value <- [true, false] do
+        assigns = %{value: value}
+
+        html =
+          rendered_to_string(~H"""
+          <List.list dividers={@value} striped={@value}>
+            <:item title="Name">First</:item>
+            <:item title="Email">Second</:item>
+          </List.list>
+          """)
+
+        assert html =~ "First"
+        assert html =~ "Second"
+      end
+    end
   end
 end

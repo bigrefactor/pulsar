@@ -77,4 +77,14 @@ defmodule <%= @component_namespace %>.StatusTest do
       end
     end
   end
+
+  describe "status/1 ping" do
+    test "renders ping true and false" do
+      for value <- [true, false] do
+        assigns = %{value: value}
+        html = rendered_to_string(~H[<Status.status color="success" ping={@value} />])
+        assert html != ""
+      end
+    end
+  end
 end

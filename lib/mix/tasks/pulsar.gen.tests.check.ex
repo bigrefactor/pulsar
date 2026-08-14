@@ -2,8 +2,8 @@ defmodule Mix.Tasks.Pulsar.Gen.Tests.Check do
   @moduledoc false
   use Mix.Task
 
+  alias Pulsar.ComponentDeps
   alias Pulsar.Generator.ComponentTest
-  alias Pulsar.Generator.Storybook
 
   @dir "tmp/gen_test_check"
 
@@ -14,7 +14,7 @@ defmodule Mix.Tasks.Pulsar.Gen.Tests.Check do
     File.rm_rf!(@dir)
     File.mkdir_p!(@dir)
 
-    components = Storybook.components()
+    components = Enum.filter(ComponentDeps.all(), &ComponentTest.generates_test?/1)
 
     Enum.each(components, fn component ->
       src = ComponentTest.render(component, "Pulsar.Components")

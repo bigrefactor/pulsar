@@ -43,5 +43,48 @@ defmodule <%= @component_namespace %>.TextareaTest do
         assert html =~ "<textarea"
       end
     end
+
+    test "renders disabled, readonly, required and invalid true and false" do
+      for value <- [true, false] do
+        assigns = %{field: form_field(), value: value}
+
+        html =
+          rendered_to_string(~H"""
+          <Textarea.textarea
+            field={@field}
+            disabled={@value}
+            readonly={@value}
+            required={@value}
+            invalid={@value}
+          />
+          """)
+
+        assert html =~ ~s(aria-invalid="#{value}")
+
+        if value do
+          assert html =~ "disabled"
+          assert html =~ "readonly"
+          assert html =~ "required"
+        end
+      end
+    end
+
+    test "renders auto_resize and show_character_count true and false" do
+      for value <- [true, false] do
+        assigns = %{field: form_field(), value: value}
+
+        html =
+          rendered_to_string(~H"""
+          <Textarea.textarea
+            field={@field}
+            max_length={100}
+            auto_resize={@value}
+            show_character_count={@value}
+          />
+          """)
+
+        assert html =~ "<textarea"
+      end
+    end
   end
 end

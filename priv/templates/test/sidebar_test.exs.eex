@@ -126,5 +126,24 @@ defmodule <%= @component_namespace %>.SidebarTest do
         assert html =~ "Links"
       end
     end
+
+    test "class targets the root and panel_class targets the inner panel" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Sidebar.sidebar
+          id="nav"
+          label="Main navigation"
+          class="z-40"
+          panel_class="bg-surface-2"
+        >
+          Links
+        </Sidebar.sidebar>
+        """)
+
+      assert html =~ ~r/<(nav|aside|div)[^>]*class="[^"]*z-40/
+      assert html =~ ~r/data-sidebar-panel[^>]*class="[^"]*bg-surface-2/
+    end
   end
 end

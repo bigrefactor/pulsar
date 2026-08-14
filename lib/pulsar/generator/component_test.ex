@@ -31,7 +31,7 @@ defmodule Pulsar.Generator.ComponentTest do
       Igniter.exists?(igniter, path) ->
         igniter
 
-      not testable?(component_name, override) ->
+      not generates_test?(component_name, override) ->
         igniter
 
       true ->
@@ -40,13 +40,25 @@ defmodule Pulsar.Generator.ComponentTest do
     end
   end
 
-  # A component gets a generated test when it ships an override template, or when
-  # its bundled module exposes the `__components__/0` introspection the default
-  # engine reads. Aggregate modules like `core_components` have neither and are
-  # skipped — mirroring how the storybook generator skips components with no story.
-  defp testable?(_component_name, {:ok, _path}), do: true
+  @doc """
+  Whether `component_name` gets a generated test: true when it ships an override
+  template, or when its bundled module exposes the `__components__/0`
+  introspection the default engine reads. Aggregate modules like
+  `core_components` have neither and are skipped — mirroring how the storybook
+  generator skips components with no story.
 
-  defp testable?(component_name, :none) do
+  `mix pulsar.gen.tests.check` filters the component registry through this so the
+  probe covers exactly what the generator emits.
+  """
+  def generates_test?(component_name, override \\ nil)
+
+  def generates_test?(component_name, nil) do
+    generates_test?(component_name, override_template_path(component_name))
+  end
+
+  def generates_test?(_component_name, {:ok, _path}), do: true
+
+  def generates_test?(component_name, :none) do
     module = component_module(component_name)
     Code.ensure_loaded?(module) and function_exported?(module, :__components__, 0)
   end

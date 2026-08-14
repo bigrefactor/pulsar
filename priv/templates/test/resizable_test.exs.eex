@@ -44,5 +44,21 @@ defmodule <%= @component_namespace %>.ResizableTest do
         assert html =~ "Primary content"
       end
     end
+
+    test "renders no inline style attributes" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Resizable.resizable id="dock" default_size={30} min_size={20} max_size={70}>
+          <:panel>Primary content</:panel>
+          <:panel label="Resize side panel">Side content</:panel>
+        </Resizable.resizable>
+        """)
+
+      # Panel sizing is expressed with utility classes, not an inline style;
+      # an inline style would require a `style-src 'unsafe-inline'` CSP relaxation.
+      refute html =~ ~s( style=")
+    end
   end
 end

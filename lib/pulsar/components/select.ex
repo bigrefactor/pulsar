@@ -528,8 +528,8 @@ defmodule Pulsar.Components.Select do
       :id,
       assigns[:id] || field.id || generate_id("select")
     )
-    |> assign_new(:name, fn -> field.name end)
-    |> assign_new(:value, fn -> field.value end)
+    |> assign(:name, assigns[:name] || field.name)
+    |> assign(:value, value_or_field(assigns[:value], field))
     |> assign(:field_provided, true)
   end
 
@@ -537,7 +537,6 @@ defmodule Pulsar.Components.Select do
     assigns
     |> ensure_name!()
     |> ensure_id!()
-    |> assign_new(:value, fn -> nil end)
     |> assign(:field_provided, false)
   end
 

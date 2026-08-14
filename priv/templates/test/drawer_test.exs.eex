@@ -97,5 +97,26 @@ defmodule <%= @component_namespace %>.DrawerTest do
 
       refute html =~ ~s(aria-label="Close")
     end
+
+    test "renders backdrop_close and show_close_button true and false" do
+      for value <- [true, false] do
+        assigns = %{value: value}
+
+        html =
+          rendered_to_string(~H"""
+          <Drawer.drawer id="d" title="Confirm" backdrop_close={@value} show_close_button={@value}>
+            Body
+          </Drawer.drawer>
+          """)
+
+        assert html =~ "Body"
+
+        if value do
+          assert html =~ ~s(aria-label="Close")
+        else
+          refute html =~ ~s(aria-label="Close")
+        end
+      end
+    end
   end
 end
