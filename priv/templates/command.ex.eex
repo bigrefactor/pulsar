@@ -238,6 +238,7 @@ attr(:id, :string, required: true, doc: "Root ID. Wires the query field to the l
 attr(:options, :any, default: [], doc: "Options in Phoenix format. See `options/1` for accepted shapes.")
 attr(:filter, :any, default: nil, doc: "2-arity fun `(query, options)` returning options. Defaults to the built-in matcher.")
 attr(:async, :boolean, default: false, doc: "Run `filter` off-process. Use for I/O-bound sources.")
+attr(:debounce, :integer, default: nil, doc: "Milliseconds to wait before pushing a query. Defaults to 0 (sync) or 250 (async).")
 
 attr(:label, :string,
   default: "Search",
@@ -301,6 +302,7 @@ def command(assigns) do
     options={@options}
     filter={@filter}
     async={@async}
+    debounce={@debounce}
     label={@label}
     placeholder={@placeholder}
     variant={@variant}
@@ -341,6 +343,7 @@ def update(assigns, socket) do
     |> assign_new(:options, fn -> [] end)
     |> assign_new(:filter, fn -> nil end)
     |> assign_new(:async, fn -> false end)
+    |> assign_new(:debounce, fn -> nil end)
     |> assign_new(:label, fn -> "Search" end)
     |> assign_new(:placeholder, fn -> "Search" end)
     |> assign_new(:variant, fn -> "ghost" end)
@@ -460,6 +463,8 @@ def render(assigns) do
     id={@id}
     phx-hook=".PulsarCommand"
     phx-target={@myself}
+    data-debounce={@debounce || if(@async, do: 250, else: 0)}
+    data-on-cancel={@on_cancel}
     class={surface_classes(@variant, @color, @size, @class)}
     {@rest}
   >
@@ -538,7 +543,109 @@ def render(assigns) do
     </div>
     <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarCommand">
       export default {
-        mounted() {}
+        mounted() {
+          this.input = this.el.querySelector("input[role='combobox']")
+          this.timer = null
+          this._onInput = (e) => this.handleInput(e)
+          this._onKeydown = (e) => this.handleKeydown(e)
+          this.input.addEventListener("input", this._onInput)
+          this.el.addEventListener("keydown", this._onKeydown)
+        },
+
+        destroyed() {
+          clearTimeout(this.timer)
+        },
+
+        updated() {
+          // The server re-renders the whole list on every keystroke and marks the
+          // first enabled row active. Keep the caret and re-anchor the view.
+          this.input = this.el.querySelector("input[role='combobox']")
+          this.scrollActiveIntoView()
+        },
+
+        options() {
+          return Array.from(this.el.querySelectorAll("[data-command-option]"))
+            .filter((el) => el.getAttribute("aria-disabled") !== "true")
+        },
+
+        activeIndex(options) {
+          return options.findIndex((el) => el.dataset.active === "true")
+        },
+
+        handleInput() {
+          const wait = parseInt(this.el.dataset.debounce || "0", 10)
+          clearTimeout(this.timer)
+          const push = () => this.pushEventTo(this.el, "query", { query: this.input.value })
+          wait > 0 ? (this.timer = setTimeout(push, wait)) : push()
+        },
+
+        handleKeydown(e) {
+          const options = this.options()
+          if (options.length === 0 && e.key !== "Escape") return
+
+          switch (e.key) {
+            case "ArrowDown":
+              e.preventDefault()
+              this.activate(options, (this.activeIndex(options) + 1) % options.length)
+              break
+            case "ArrowUp": {
+              e.preventDefault()
+              const previous = this.activeIndex(options) - 1
+              this.activate(options, previous < 0 ? options.length - 1 : previous)
+              break
+            }
+            case "Home":
+              e.preventDefault()
+              this.activate(options, 0)
+              break
+            case "End":
+              e.preventDefault()
+              this.activate(options, options.length - 1)
+              break
+            case "Enter": {
+              e.preventDefault()
+              const active = options[this.activeIndex(options)]
+              // Dispatching a click runs the row's own phx-click, so the caller's
+              // JS and its phx-value-* travel exactly as they do for a mouse.
+              if (active) active.click()
+              break
+            }
+            case "Escape":
+              // Deliberately not preventDefault: an enclosing dialog or popover
+              // still gets to close itself.
+              this.runCancel()
+              break
+          }
+        },
+
+        activate(options, index) {
+          options.forEach((el) => {
+            el.dataset.active = "false"
+            el.setAttribute("aria-selected", "false")
+          })
+          const next = options[index]
+          if (!next) return
+          next.dataset.active = "true"
+          next.setAttribute("aria-selected", "true")
+          this.input.setAttribute("aria-activedescendant", next.id)
+          next.scrollIntoView({ block: "nearest" })
+        },
+
+        scrollActiveIntoView() {
+          const active = this.el.querySelector("[data-command-option][data-active='true']")
+          if (active) active.scrollIntoView({ block: "nearest" })
+        },
+
+        runCancel() {
+          const encoded = this.el.dataset.onCancel
+          // Run from the query input, not this.el: the root carries
+          // phx-target (routing this hook's own "query" pushes to this
+          // LiveComponent), and execJS inherits phx-target from whatever
+          // element it runs on. Running from the input — which carries no
+          // phx-target — lets an un-targeted on_cancel push reach the parent
+          // LiveView instead of being misrouted back into this component.
+          if (encoded && encoded !== "[]" && this.liveSocket) this.liveSocket.execJS(this.input, encoded)
+        }
       }
     </script>
   </div>

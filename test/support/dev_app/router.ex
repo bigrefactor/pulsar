@@ -114,6 +114,7 @@ defmodule Pulsar.DevApp.Router do
     live "/keyboard/date_picker", Keyboard.DatePickerLive, :index
     live "/keyboard/card", Keyboard.CardLive, :index
     live "/keyboard/collapsible", Keyboard.CollapsibleLive, :index
+    live "/keyboard/command", Keyboard.CommandLive, :index
     live "/keyboard/drawer", Keyboard.DrawerLive, :index
     live "/keyboard/dropdown_menu", Keyboard.DropdownMenuLive, :index
     live "/keyboard/dropzone", Keyboard.DropzoneLive, :index
