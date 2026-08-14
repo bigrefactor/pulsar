@@ -11,9 +11,17 @@ defmodule Pulsar.DevApp.CommandLive do
     [key: "Settings", value: "settings", icon: "hero-cog-6-tooth", description: "Workspace preferences"]
   ]
   @slotted [[key: "Zulu", value: "zulu", description: "SLOT-DEFAULT-MARKER"]]
+  @filterable ["Aardvark", "Beetle", "Beetlejuice"]
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, flat: @flat, grouped: @grouped, decorated: @decorated, slotted: @slotted)}
+    {:ok,
+     assign(socket,
+       flat: @flat,
+       grouped: @grouped,
+       decorated: @decorated,
+       slotted: @slotted,
+       filterable: @filterable
+     )}
   end
 
   def render(assigns) do
@@ -42,6 +50,10 @@ defmodule Pulsar.DevApp.CommandLive do
 
       <.fixture_section name="empty" title="Empty">
         <Command.command id="cmd-empty" label="Search nothing" options={[]} />
+      </.fixture_section>
+
+      <.fixture_section name="filterable" title="Filtering target">
+        <Command.command id="cmd-filter" label="Search filterable" options={@filterable} />
       </.fixture_section>
 
       <.fixture_section name="slots" title="Custom item and empty slots">

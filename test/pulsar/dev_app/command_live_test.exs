@@ -13,30 +13,44 @@ defmodule Pulsar.DevApp.CommandLiveTest do
   end
 
   describe "query event" do
-    test "filtering narrows the rendered rows and resets the active row", %{conn: conn} do
-      {:ok, view, html} = live(conn, "/components/command")
-      assert html =~ "Alpha"
+    test "filtering drops non-matching rows from the listbox", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/components/command")
+      assert listbox(view) =~ "Aardvark"
 
-      filtered = render_hook(element(view, "#cmd-ghost"), "query", %{"query" => "beta"})
+      render_hook(element(view, "#cmd-filter"), "query", %{"query" => "beetle"})
 
-      assert filtered =~ "Beta"
-      assert filtered =~ ~s(aria-activedescendant="cmd-ghost-option-0")
+      assert listbox(view) =~ "Beetle"
+      assert listbox(view) =~ "Beetlejuice"
+      refute listbox(view) =~ "Aardvark"
     end
 
-    test "an unmatched query renders the empty state", %{conn: conn} do
+    test "the active row follows the filtered results", %{conn: conn} do
       {:ok, view, _html} = live(conn, "/components/command")
 
-      filtered = render_hook(element(view, "#cmd-ghost"), "query", %{"query" => "zzz"})
+      render_hook(element(view, "#cmd-filter"), "query", %{"query" => "beetlejuice"})
 
-      assert filtered =~ "No results"
+      assert listbox(view) =~ "Beetlejuice"
+      refute listbox(view) =~ "Aardvark"
+      refute listbox(view) =~ ">Beetle<"
+      assert render(element(view, "#cmd-filter")) =~ ~s(aria-activedescendant="cmd-filter-option-0")
+    end
+
+    test "an unmatched query empties the listbox and shows the empty state", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/components/command")
+
+      render_hook(element(view, "#cmd-filter"), "query", %{"query" => "zzz"})
+
+      refute listbox(view) =~ "Aardvark"
+      refute listbox(view) =~ "Beetle"
+      assert listbox(view) =~ "No results found"
     end
 
     test "filtering one instance leaves its siblings alone", %{conn: conn} do
       {:ok, view, _html} = live(conn, "/components/command")
 
-      filtered = render_hook(element(view, "#cmd-ghost"), "query", %{"query" => "beta"})
+      render_hook(element(view, "#cmd-filter"), "query", %{"query" => "zzz"})
 
-      assert filtered =~ ~s(id="cmd-solid-option-0")
+      assert render(element(view, "#cmd-solid-listbox")) =~ "Alpha"
     end
   end
 
@@ -60,4 +74,6 @@ defmodule Pulsar.DevApp.CommandLiveTest do
       assert html =~ "No results found"
     end
   end
+
+  defp listbox(view), do: render(element(view, "#cmd-filter-listbox"))
 end
