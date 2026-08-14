@@ -14,6 +14,7 @@ defmodule Pulsar.DevApp.Components do
        {"Calendar (primary)", "/components/calendar/primary"},
        {"Calendar (neutral)", "/components/calendar/neutral"},
        {"Checkbox", "/components/checkbox"},
+       {"Command", "/components/command"},
        {"DatePicker (single)", "/components/date_picker/single"},
        {"DatePicker (range)", "/components/date_picker/range"},
        {"Dropzone (solid)", "/components/dropzone/solid"},

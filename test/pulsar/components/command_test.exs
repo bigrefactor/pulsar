@@ -286,6 +286,7 @@ defmodule Pulsar.Components.CommandTest do
     test "a custom class overrides a conflicting default via Twm" do
       html = render_component(Command, id: "cmd", options: [], class: "flex-row")
 
+      assert html =~ "flex-row"
       refute html =~ "flex-col"
     end
   end

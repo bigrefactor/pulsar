@@ -352,6 +352,13 @@ defmodule Pulsar.Components.Command do
      |> assign_results(run_filter(socket.assigns.filter, socket.assigns.query, normalized))}
   end
 
+  @impl Phoenix.LiveComponent
+  def handle_event("query", %{"query" => query}, socket) do
+    results = run_filter(socket.assigns.filter, query, socket.assigns.normalized)
+
+    {:noreply, socket |> assign(:query, query) |> assign_results(results)}
+  end
+
   defp run_filter(nil, query, options), do: default_filter(query, options)
   defp run_filter(filter, query, options) when is_function(filter, 2), do: options(filter.(query, options))
 
@@ -406,6 +413,7 @@ defmodule Pulsar.Components.Command do
     <div
       id={@id}
       phx-hook=".PulsarCommand"
+      phx-target={@myself}
       class={surface_classes(@variant, @color, @size, @class)}
       {@rest}
     >
@@ -460,7 +468,12 @@ defmodule Pulsar.Components.Command do
             {render_slot(@item, option)}
           </div>
         </div>
-        <div :if={@results == []} class="px-2 py-6 text-center text-sm text-muted-foreground">
+        <div
+          :if={@results == []}
+          role="option"
+          aria-disabled="true"
+          class="px-2 py-6 text-center text-sm text-muted-foreground"
+        >
           <span :if={@empty == []}>{@empty_text}</span>
           {render_slot(@empty)}
         </div>
