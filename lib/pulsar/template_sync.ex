@@ -57,6 +57,7 @@ defmodule Pulsar.TemplateSync do
     {:card, "lib/pulsar/components/card.ex", "Pulsar.Components", "Pulsar.Components.Card"},
     {:checkbox, "lib/pulsar/components/checkbox.ex", "Pulsar.Components", "Pulsar.Components.Checkbox"},
     {:collapsible, "lib/pulsar/components/collapsible.ex", "Pulsar.Components", "Pulsar.Components.Collapsible"},
+    {:command, "lib/pulsar/components/command.ex", "Pulsar.Components", "Pulsar.Components.Command"},
     {:date_picker, "lib/pulsar/components/date_picker.ex", "Pulsar.Components", "Pulsar.Components.DatePicker"},
     {:divider, "lib/pulsar/components/divider.ex", "Pulsar.Components", "Pulsar.Components.Divider"},
     {:drawer, "lib/pulsar/components/drawer.ex", "Pulsar.Components", "Pulsar.Components.Drawer"},

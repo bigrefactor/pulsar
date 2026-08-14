@@ -62,6 +62,7 @@ defmodule Pulsar.Components.IdStabilityTest do
   alias Pulsar.Components.Calendar
   alias Pulsar.Components.Checkbox
   alias Pulsar.Components.Collapsible
+  alias Pulsar.Components.Command
   alias Pulsar.Components.DatePicker
   alias Pulsar.Components.Drawer
   alias Pulsar.Components.DropdownMenu
@@ -345,6 +346,7 @@ defmodule Pulsar.Components.IdStabilityTest do
       {Accordion, :accordion},
       {AlertDialog, :alert_dialog},
       {Collapsible, :collapsible},
+      {Command, :command},
       {Drawer, :drawer},
       {DropdownMenu, :dropdown_menu},
       {DropdownMenu, :dropdown_menu_submenu},
