@@ -374,8 +374,13 @@ defmodule Pulsar.Components.Switch do
     doc: "Additional CSS classes"
   )
 
+  attr(:form, :string,
+    default: nil,
+    doc: "ID of the form this switch belongs to"
+  )
+
   # Global attributes (allows all Phoenix and HTML attributes)
-  attr(:rest, :global, include: ~w(form), doc: "Additional HTML attributes")
+  attr(:rest, :global, doc: "Additional HTML attributes")
 
   slot(:loading_content,
     required: false,
@@ -468,6 +473,7 @@ defmodule Pulsar.Components.Switch do
         name={@name}
         value={@unchecked_value}
         disabled={@disabled}
+        form={@form}
       />
       <input
         type="checkbox"
@@ -478,6 +484,7 @@ defmodule Pulsar.Components.Switch do
         class="sr-only peer"
         required={@required}
         disabled={@disabled}
+        form={@form}
         role="switch"
         aria-checked={if @checked, do: "true", else: "false"}
         aria-label={@aria_label}

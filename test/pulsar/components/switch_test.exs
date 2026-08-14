@@ -484,18 +484,13 @@ defmodule Pulsar.Components.SwitchTest do
     # "undefined attribute" warning at every call site. The attribute still reaches
     # the element via `@rest` either way, so the render assertions below cannot
     # catch the regression — this one can.
-    test "the :global opts them in so call sites do not warn" do
+    test "declares form so call sites do not warn" do
       attrs = Switch.__components__()[:switch].attrs
-      global = Enum.find(attrs, &(&1.type == :global))
-      include = Keyword.get(global.opts, :include, [])
 
-      for name <- [:form] do
-        assert to_string(name) in include,
-               "switch/1 does not include #{name} in its :global"
-      end
+      assert Enum.find(attrs, &(&1.name == :form))
     end
 
-    test "form reaches the switch input" do
+    test "form reaches both the checkbox and hidden unchecked-value input" do
       assigns = %{}
 
       html =
@@ -503,7 +498,10 @@ defmodule Pulsar.Components.SwitchTest do
         <Switch.switch name="notifications" form="signup" />
         """)
 
-      assert html =~ ~r/<input[^>]*form="signup"/
+      inputs = Regex.scan(~r/<input[^>]*>/, html) |> Enum.map(&hd/1)
+
+      assert length(inputs) == 2
+      assert Enum.all?(inputs, &(&1 =~ ~s(form="signup")))
     end
   end
 end
