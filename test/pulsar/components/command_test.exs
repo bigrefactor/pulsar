@@ -152,4 +152,110 @@ defmodule Pulsar.Components.CommandTest do
       assert [%{group: "People"}] = Command.default_filter("own", opts)
     end
   end
+
+  describe "render/1 structure and ARIA" do
+    test "the query field is a combobox wired to the listbox" do
+      html = render_component(Command, id: "cmd", options: ["Alpha"])
+
+      assert html =~ ~s(role="combobox")
+      assert html =~ ~s(id="cmd-input")
+      assert html =~ ~s(aria-controls="cmd-listbox")
+      assert html =~ ~s(aria-expanded="true")
+      assert html =~ ~s(aria-autocomplete="list")
+      assert html =~ ~s(autocomplete="off")
+    end
+
+    test "the query field has an accessible name from a real label element" do
+      html = render_component(Command, id: "cmd", label: "Search fields", options: [])
+
+      assert html =~ ~s(for="cmd-input")
+      assert html =~ "Search fields"
+    end
+
+    test "results render as a listbox of options" do
+      html = render_component(Command, id: "cmd", options: ["Alpha", "Beta"])
+
+      assert html =~ ~s(id="cmd-listbox")
+      assert html =~ ~s(role="listbox")
+      assert html =~ ~s(role="option")
+      assert html =~ ~s(id="cmd-option-0")
+      assert html =~ ~s(id="cmd-option-1")
+      assert html =~ "Alpha"
+      assert html =~ "Beta"
+    end
+
+    test "the first option starts active and selected, and only it" do
+      html = render_component(Command, id: "cmd", options: ["Alpha", "Beta"])
+
+      assert html =~ ~s(aria-activedescendant="cmd-option-0")
+      assert occurrences(html, ~s(data-active="true")) == 1
+      assert occurrences(html, ~s(aria-selected="true")) == 1
+    end
+
+    test "groups render as labelled groups inside the listbox" do
+      html = render_component(Command, id: "cmd", options: [{"Europe", ["UK"]}])
+
+      assert html =~ ~s(role="group")
+      assert html =~ ~s(aria-labelledby="cmd-group-0")
+      assert html =~ ~s(id="cmd-group-0")
+      assert html =~ "Europe"
+    end
+
+    test "option ids stay sequential across groups" do
+      html = render_component(Command, id: "cmd", options: [{"A", ["a1"]}, {"B", ["b1"]}])
+
+      assert html =~ ~s(id="cmd-option-0")
+      assert html =~ ~s(id="cmd-option-1")
+    end
+
+    test "a disabled option is marked and never starts active" do
+      html = render_component(Command, id: "cmd", options: [[key: "Alpha", value: "a", disabled: true], "Beta"])
+
+      assert html =~ ~s(aria-disabled="true")
+      assert html =~ ~s(aria-activedescendant="cmd-option-1")
+      refute html =~ ~s(aria-activedescendant="cmd-option-0")
+    end
+
+    test "aria-activedescendant points at the active option" do
+      html = render_component(Command, id: "cmd", options: ["Alpha"])
+
+      assert html =~ ~s(aria-activedescendant="cmd-option-0")
+    end
+
+    test "with no results there is no activedescendant" do
+      html = render_component(Command, id: "cmd", options: [])
+
+      refute html =~ "aria-activedescendant=\"cmd-option"
+    end
+
+    test "the query field carries no server-controlled value" do
+      html = render_component(Command, id: "cmd", options: ["Alpha"])
+
+      refute html =~ ~r/<input[^>]*\svalue=/
+    end
+
+    test "the root carries the keyboard hook" do
+      html = render_component(Command, id: "cmd", options: [])
+
+      assert html =~ ~s(phx-hook="Pulsar.Components.Command.PulsarCommand")
+    end
+
+    test "the result count is announced politely" do
+      html = render_component(Command, id: "cmd", options: ["Alpha", "Beta"])
+
+      assert html =~ ~s(role="status")
+      assert html =~ ~s(aria-live="polite")
+      assert html =~ "2"
+    end
+
+    test "a custom filter replaces the built-in one" do
+      only_beta = fn _query, options -> Enum.filter(options, &(&1.label == "Beta")) end
+      html = render_component(Command, id: "cmd", options: ["Alpha", "Beta"], filter: only_beta)
+
+      assert html =~ "Beta"
+      refute html =~ "Alpha"
+    end
+  end
+
+  defp occurrences(html, needle), do: length(String.split(html, needle)) - 1
 end

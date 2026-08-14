@@ -177,6 +177,15 @@ defmodule Pulsar.Components.Command do
   end
 
   attr(:id, :string, required: true, doc: "Root ID. Wires the query field to the list and its options.")
+  attr(:options, :any, default: [], doc: "Options in Phoenix format. See `options/1` for accepted shapes.")
+
+  attr(:filter, :any,
+    default: nil,
+    doc: "2-arity fun `(query, options)` returning options. Defaults to the built-in matcher."
+  )
+
+  attr(:label, :string, default: nil, doc: ~s{Accessible name for the query field. Defaults to a translated "Search".})
+  attr(:placeholder, :string, default: nil, doc: "Placeholder for the query field.")
   attr(:class, :string, default: "", doc: "Additional CSS classes")
   attr(:rest, :global, doc: "Additional HTML attributes")
 
@@ -185,8 +194,22 @@ defmodule Pulsar.Components.Command do
   """
   def command(assigns) do
     ~H"""
-    <.live_component module={__MODULE__} id={@id} class={@class} {@rest} />
+    <.live_component
+      module={__MODULE__}
+      id={@id}
+      options={@options}
+      filter={@filter}
+      label={@label}
+      placeholder={@placeholder}
+      class={@class}
+      {@rest}
+    />
     """
+  end
+
+  @impl Phoenix.LiveComponent
+  def mount(socket) do
+    {:ok, assign(socket, query: "", loading: false)}
   end
 
   @impl Phoenix.LiveComponent
@@ -196,14 +219,100 @@ defmodule Pulsar.Components.Command do
       |> assign(assigns)
       |> assign_new(:class, fn -> "" end)
       |> assign_new(:rest, fn -> %{} end)
+      |> assign_new(:options, fn -> [] end)
+      |> assign_new(:filter, fn -> nil end)
+      |> assign_new(:label, fn -> nil end)
+      |> assign_new(:placeholder, fn -> nil end)
 
-    {:ok, socket}
+    normalized = options(socket.assigns.options)
+
+    {:ok,
+     socket
+     |> assign(:normalized, normalized)
+     |> assign_results(run_filter(socket.assigns.filter, socket.assigns.query, normalized))}
   end
+
+  defp run_filter(nil, query, options), do: default_filter(query, options)
+  defp run_filter(filter, query, options) when is_function(filter, 2), do: options(filter.(query, options))
+
+  defp assign_results(socket, results) do
+    indexed = Enum.with_index(results)
+
+    socket
+    |> assign(:results, indexed)
+    |> assign(:groups, group_results(indexed))
+    |> assign(:active, first_enabled_index(indexed))
+  end
+
+  defp group_results(indexed) do
+    indexed
+    |> Enum.chunk_by(fn {option, _index} -> option.group end)
+    |> Enum.with_index()
+  end
+
+  defp first_enabled_index(indexed) do
+    Enum.find_value(indexed, fn {option, index} -> if !option.disabled, do: index end)
+  end
+
+  defp default_label, do: "Search"
+  defp default_placeholder, do: "Search..."
+
+  defp result_announcement(results), do: "#{length(results)} results"
+
+  defp group_label([{option, _index} | _rest]), do: option.group
+  defp group_label([]), do: nil
 
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
-    <div id={@id} class={merge("flex flex-col " <> @class)} {@rest}></div>
+    <div id={@id} phx-hook=".PulsarCommand" class={merge("flex flex-col " <> @class)} {@rest}>
+      <label for={"#{@id}-input"} class="sr-only">{@label || default_label()}</label>
+      <input
+        type="text"
+        id={"#{@id}-input"}
+        role="combobox"
+        aria-expanded="true"
+        aria-controls={"#{@id}-listbox"}
+        aria-activedescendant={@active && "#{@id}-option-#{@active}"}
+        aria-autocomplete="list"
+        autocomplete="off"
+        placeholder={@placeholder || default_placeholder()}
+        class="w-full bg-transparent text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
+      />
+      <div id={"#{@id}-listbox"} role="listbox" aria-busy={@loading} class="overflow-y-auto">
+        <div
+          :for={{chunk, group_index} <- @groups}
+          role="group"
+          aria-labelledby={group_label(chunk) && "#{@id}-group-#{group_index}"}
+        >
+          <div
+            :if={group_label(chunk)}
+            id={"#{@id}-group-#{group_index}"}
+            class="px-2 py-1.5 text-xs font-medium text-muted-foreground"
+          >
+            {group_label(chunk)}
+          </div>
+          <div
+            :for={{option, index} <- chunk}
+            id={"#{@id}-option-#{index}"}
+            role="option"
+            data-command-option
+            data-active={to_string(index == @active)}
+            aria-selected={to_string(index == @active)}
+            aria-disabled={option.disabled && "true"}
+            class="flex cursor-default items-center gap-2 px-2 py-1.5 text-sm text-foreground"
+          >
+            {option.label}
+          </div>
+        </div>
+      </div>
+      <div role="status" aria-live="polite" class="sr-only">{result_announcement(@results)}</div>
+      <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarCommand">
+        export default {
+          mounted() {}
+        }
+      </script>
+    </div>
     """
   end
 end
