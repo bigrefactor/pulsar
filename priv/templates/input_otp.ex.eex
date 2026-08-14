@@ -2,7 +2,7 @@
 A one-time-code input for 2FA / MFA flows.
 
 Renders a row of single-character slots backed by one form value, with
-auto-advance and paste handling. Plugs into `Pulsar.Components.Field` for
+auto-advance and paste handling. Plugs into `<%= @components_namespace %>.Field` for
 labels, errors, and ARIA wiring.
 
 ## Examples
@@ -26,7 +26,7 @@ labels, errors, and ARIA wiring.
 `on_complete` is a `%JS{}` command run once every character is entered. Use it to
 submit the surrounding form, e.g. `JS.dispatch("submit", to: "#otp-form")`.
 
-Keep `input_otp` inside a form (directly or via `Pulsar.Components.Field`) so the
+Keep `input_otp` inside a form (directly or via `<%= @components_namespace %>.Field`) so the
 typed value reaches the server through the form's `phx-change`/`phx-submit`.
 `JS.push("verify")` sends the event but not the field value, so it can't carry the
 code on its own — pair it with a form when the handler needs to read the code.

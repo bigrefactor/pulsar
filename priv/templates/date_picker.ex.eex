@@ -5,7 +5,7 @@ The visible input(s) accept typed dates in the visitor's locale format and the
 chosen value is mirrored into hidden ISO-8601 inputs — those are what the form
 submits. A calendar button opens a `popover` containing a `calendar` for
 point-and-click selection. Single mode binds one field; range mode binds a
-start and end field. Plugs into `Pulsar.Components.Field` as `type="date"` and
+start and end field. Plugs into `<%= @components_namespace %>.Field` as `type="date"` and
 `type="daterange"`.
 
 ## Examples
