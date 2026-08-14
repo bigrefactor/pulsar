@@ -29,6 +29,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **`checkbox` and `switch` now let an explicit `checked` override the bound field in both directions**: both attrs declared `default: false`, so the component could not tell "not provided" from "provided as `false`" and simply ignored the attr whenever a field was bound — `checked={false}` on a checked field still rendered checked. The attr no longer carries a default, and the field value is used only when the caller omits it. Callers that never passed `checked` are unaffected.
 
+### Fixed - Form Controls Accept the Native HTML Attributes They Forward
+
+LiveView 1.2 dropped form attributes from the default global set. A component that neither declares such an attribute nor opts it into its `:global` still renders it — it arrives through `@rest` regardless — so the gap never surfaced at render time. It surfaced as an `undefined attribute` warning at every call site, failing the build for host apps compiling with `--warnings-as-errors`.
+
+- **`field` now declares `minlength`, `maxlength`, `list`, `accept`, `capture`, and `form`**: `field` curates its input surface with explicit attrs and already covered the numeric bounds (`min`, `max`, `step`) and `pattern`/`autocomplete`, but the string-length bounds and the remaining form attributes were absent. `<.field type="password" minlength="12" maxlength="72" />` and `<.field type="file" accept="image/*" capture="user" />` now compile clean. `size` is deliberately not included: `field`'s `size` is the component scale (`"sm"`/`"md"`/`"lg"`) and shadows the HTML attribute of the same name.
+- **`textarea`, `select`, and `input_otp` accept `autocomplete` and `form`; `switch` accepts `form`**: each was declaring a bare `:global` with no `include:`, so the same set was unreachable when calling these components directly. `input_otp` gains the one that matters most for it — `autocomplete="one-time-code"`, which is what drives SMS code autofill on iOS and Android.
+- **`checkbox` accepts `form`**: declared as an explicit attr rather than a `:global` include, because the card variant puts `@rest` on the wrapping `<label>`, where a `form` attribute is inert. Both variants now place it on the `<input>`, including the hidden unchecked-value input.
+- **`field` forwards `form` and `autocomplete` to every control it dispatches to**: declaring an attribute removes it from `@rest`, so `select`, `textarea`, `checkbox`, `switch`, and `otp` fields needed these passed explicitly. Previously `<.field type="select" autocomplete="off" />` dropped the attribute silently.
+
+`date_picker` and `radio_group` still do not accept these: both put `@rest` on a wrapper element rather than on the control, so opting the attributes in would place them where they have no effect. Forwarding them onto the inner elements is tracked separately.
+
 ### Fixed - `field type="daterange"` Reports Its Own Contract
 
 - **A `daterange` field without an `end_field` now raises naming `<.field type="daterange">`**: previously the missing binding surfaced from the wrapped date picker as `<.date_picker mode="range"> was given start_field but not end_field`, pointing at an internal component the caller never wrote.

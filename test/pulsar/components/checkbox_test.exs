@@ -1016,4 +1016,54 @@ defmodule Pulsar.Components.CheckboxTest do
       assert html =~ ~s(id="custom")
     end
   end
+
+  describe "checkbox/1 form association" do
+    # `form` is a declared attr rather than a `:global` include because the card
+    # variant puts `@rest` on the wrapping <label>, where a `form` attribute is
+    # inert. Both variants must place it on the <input> itself.
+    test "form lands on the input in the default variant" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox name="terms" form="signup" />
+        """)
+
+      assert html =~ ~r/<input[^>]*type="checkbox"[^>]*form="signup"/
+    end
+
+    test "form lands on the input in the card variant, not the label" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox name="terms" card form="signup">Accept</.checkbox>
+        """)
+
+      assert html =~ ~r/<input[^>]*type="checkbox"[^>]*form="signup"/
+      refute html =~ ~r/<label[^>]*form="signup"/
+    end
+
+    test "form lands on the hidden unchecked-value input" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox name="terms" render_hidden form="signup" />
+        """)
+
+      assert html =~ ~r/<input[^>]*type="hidden"[^>]*form="signup"/
+    end
+
+    test "no form attribute is rendered when none is given" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <.checkbox name="terms" render_hidden />
+        """)
+
+      refute html =~ ~s(form=)
+    end
+  end
 end

@@ -310,6 +310,11 @@ defmodule Pulsar.Components.Checkbox do
     doc: "Additional CSS classes"
   )
 
+  attr(:form, :string,
+    default: nil,
+    doc: "ID of the form this checkbox belongs to"
+  )
+
   # Global attributes (applies to container in card mode, input in default mode)
   attr(:rest, :global, doc: "Additional HTML attributes")
 
@@ -387,6 +392,7 @@ defmodule Pulsar.Components.Checkbox do
       name={@name}
       value={@unchecked_value}
       disabled={@disabled}
+      form={@form}
     />
     <input
       type="checkbox"
@@ -401,6 +407,7 @@ defmodule Pulsar.Components.Checkbox do
       class={@input_class}
       required={@required}
       disabled={@disabled}
+      form={@form}
       aria-invalid={@invalid && "true"}
       phx-hook=".PulsarCheckbox"
       {@rest}
@@ -446,6 +453,7 @@ defmodule Pulsar.Components.Checkbox do
         name={@name}
         value={@unchecked_value}
         disabled={@disabled}
+        form={@form}
       />
       <input
         type="checkbox"
@@ -460,6 +468,7 @@ defmodule Pulsar.Components.Checkbox do
         class={@checkbox_class}
         required={@required}
         disabled={@disabled}
+        form={@form}
         aria-invalid={@invalid && "true"}
         aria-describedby={"#{@id}-content"}
         phx-hook=".PulsarCheckbox"

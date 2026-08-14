@@ -127,4 +127,33 @@ defmodule Pulsar.Components.InputOtpTest do
       assert default =~ ~s(data-on-complete="[]")
     end
   end
+
+  describe "input_otp/1 form attributes" do
+    # These names are not LiveView globals, so an omitted `include:` costs an
+    # "undefined attribute" warning at every call site. The attribute still reaches
+    # the element via `@rest` either way, so the render assertions below cannot
+    # catch the regression — this one can.
+    test "declares autocomplete and opts form into :global so call sites do not warn" do
+      attrs = InputOtp.__components__()[:input_otp].attrs
+      global = Enum.find(attrs, &(&1.type == :global))
+      include = Keyword.get(global.opts, :include, [])
+
+      assert Enum.find(attrs, &(&1.name == :autocomplete))
+      assert "form" in include
+    end
+
+    test "caller autocomplete overrides the default without duplicating the attribute" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <InputOtp.input_otp id="otp" name="code" autocomplete="off" form="signup" />
+        """)
+
+      [input] = Regex.run(~r/<input[^>]*>/, html)
+
+      assert input =~ ~s(autocomplete="off")
+      assert input |> String.split(~s( autocomplete=)) |> length() == 2
+    end
+  end
 end

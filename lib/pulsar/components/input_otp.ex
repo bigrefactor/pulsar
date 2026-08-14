@@ -104,6 +104,7 @@ defmodule Pulsar.Components.InputOtp do
   attr(:disabled, :boolean, default: false, doc: "Disable the input")
   attr(:invalid, :boolean, default: false, doc: "Force invalid state")
   attr(:autofocus, :boolean, default: false, doc: "Focus the input on mount")
+  attr(:autocomplete, :string, default: "one-time-code", doc: "Autocomplete hint")
 
   attr(:on_complete, JS,
     default: %JS{},
@@ -112,7 +113,7 @@ defmodule Pulsar.Components.InputOtp do
 
   attr(:class, :string, default: "", doc: "Additional CSS classes for the container")
   attr(:"aria-describedby", :string, default: nil, doc: "Id(s) of elements that describe the input")
-  attr(:rest, :global, doc: "Additional attributes for the input")
+  attr(:rest, :global, include: ~w(form), doc: "Additional attributes for the input")
 
   def input_otp(assigns) do
     assigns = normalize_field_props(assigns)
@@ -140,7 +141,7 @@ defmodule Pulsar.Components.InputOtp do
         value={@value}
         maxlength={@length}
         inputmode={input_mode(@mode)}
-        autocomplete="one-time-code"
+        autocomplete={@autocomplete}
         autocorrect="off"
         spellcheck="false"
         required={@required}

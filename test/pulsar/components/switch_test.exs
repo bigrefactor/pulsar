@@ -478,4 +478,30 @@ defmodule Pulsar.Components.SwitchTest do
       assert html =~ ~s(id="custom")
     end
   end
+
+  describe "switch/1 form attributes" do
+    # These names are not LiveView globals, so an omitted `include:` costs an
+    # "undefined attribute" warning at every call site. The attribute still reaches
+    # the element via `@rest` either way, so the render assertions below cannot
+    # catch the regression — this one can.
+    test "declares form so call sites do not warn" do
+      attrs = Switch.__components__()[:switch].attrs
+
+      assert Enum.find(attrs, &(&1.name == :form))
+    end
+
+    test "form reaches both the checkbox and hidden unchecked-value input" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Switch.switch name="notifications" form="signup" />
+        """)
+
+      inputs = Regex.scan(~r/<input[^>]*>/, html) |> Enum.map(&hd/1)
+
+      assert length(inputs) == 2
+      assert Enum.all?(inputs, &(&1 =~ ~s(form="signup")))
+    end
+  end
 end

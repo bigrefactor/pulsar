@@ -5,6 +5,7 @@ defmodule <%= @component_namespace %>.SelectTest do
   import Phoenix.Component
 
   alias <%= @component_namespace %>.Select
+  alias Phoenix.LiveView.JS
 
   # `select` renders its name/value/options from a bound Phoenix form field plus a
   # required `options` list, so the smoke test supplies both rather than relying on
@@ -110,7 +111,7 @@ defmodule <%= @component_namespace %>.SelectTest do
         field: multi_field(),
         options: @options,
         on_remove: fn option ->
-          Phoenix.LiveView.JS.push("remove_tag", value: %{option: option})
+          JS.push("remove_tag", value: %{option: option})
         end
       }
 
