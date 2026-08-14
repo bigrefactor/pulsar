@@ -35,6 +35,11 @@ defmodule Pulsar.DevApp.CommandLive do
      )}
   end
 
+  def handle_event("touch_async", _params, socket) do
+    send_update(Command, id: "cmd-async", class: "ring-0")
+    {:noreply, socket}
+  end
+
   def render(assigns) do
     ~H"""
     <.fixture_page name="command" title="Command">
@@ -85,6 +90,7 @@ defmodule Pulsar.DevApp.CommandLive do
           filter={@slow}
           async
         />
+        <button id="cmd-async-touch" type="button" phx-click="touch_async">Touch</button>
       </.fixture_section>
 
       <.fixture_section name="async-error" title="Async source that fails">

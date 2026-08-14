@@ -122,6 +122,20 @@ defmodule Pulsar.DevApp.CommandLiveTest do
       refute settled =~ "Egret"
       refute settled =~ ~s(aria-busy="true")
     end
+
+    test "a parent re-render does not discard resolved async results", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/components/command")
+
+      render_hook(element(view, "#cmd-async"), "query", %{"query" => "r"})
+      render_async(view)
+      assert render(element(view, "#cmd-async")) =~ "Remote result"
+
+      render_click(element(view, "#cmd-async-touch"))
+
+      settled = render(element(view, "#cmd-async"))
+      assert settled =~ "Remote result"
+      refute settled =~ "Cormorant"
+    end
   end
 
   defp listbox(view), do: render(element(view, "#cmd-filter-listbox"))

@@ -350,13 +350,19 @@ defmodule Pulsar.Components.Command do
       |> assign_new(:empty, fn -> [] end)
 
     normalized = options(socket.assigns.options)
+    socket = assign(socket, :normalized, normalized)
 
-    results = initial_results(socket.assigns.async, socket.assigns.filter, socket.assigns.query, normalized)
+    socket =
+      if socket.assigns.async and Map.has_key?(socket.assigns, :results) do
+        socket
+      else
+        assign_results(
+          socket,
+          initial_results(socket.assigns.async, socket.assigns.filter, socket.assigns.query, normalized)
+        )
+      end
 
-    {:ok,
-     socket
-     |> assign(:normalized, normalized)
-     |> assign_results(results)}
+    {:ok, socket}
   end
 
   @impl Phoenix.LiveComponent
