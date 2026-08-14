@@ -111,4 +111,45 @@ defmodule Pulsar.Components.CommandTest do
       end
     end
   end
+
+  describe "default_filter/2" do
+    test "an empty or whitespace query returns every option unchanged" do
+      opts = Command.options(["Alpha", "Beta"])
+
+      assert Command.default_filter("", opts) == opts
+      assert Command.default_filter("   ", opts) == opts
+    end
+
+    test "matches a case-insensitive subsequence, not just a prefix" do
+      opts = Command.options(["Created at", "Updated at", "Owner"])
+
+      assert Enum.map(Command.default_filter("ua", opts), & &1.label) == ["Updated at"]
+    end
+
+    test "drops options with no subsequence match" do
+      opts = Command.options(["Owner", "Status"])
+
+      assert Command.default_filter("zzz", opts) == []
+    end
+
+    test "ranks a contiguous match above a scattered one" do
+      opts = Command.options(["Status", "Sorted by attribute"])
+
+      assert Enum.map(Command.default_filter("stat", opts), & &1.label) ==
+               ["Status", "Sorted by attribute"]
+    end
+
+    test "ranks an earlier match above a later one when both are contiguous" do
+      opts = Command.options(["Last owner", "Owner"])
+
+      assert Enum.map(Command.default_filter("owner", opts), & &1.label) ==
+               ["Owner", "Last owner"]
+    end
+
+    test "preserves the group label on matched options" do
+      opts = Command.options([{"People", ["Owner"]}])
+
+      assert [%{group: "People"}] = Command.default_filter("own", opts)
+    end
+  end
 end

@@ -124,6 +124,54 @@ defp fetch_option_value!(kw) do
   end
 end
 
+@doc """
+The built-in matcher: a case-insensitive subsequence match on each label.
+
+Options whose label contains the query's characters in order are kept, ranked
+by how tightly the match is packed and then by how early it starts. An empty
+query keeps everything.
+"""
+@spec default_filter(String.t(), [Option.t()]) :: [Option.t()]
+def default_filter(query, options) do
+  case query |> to_string() |> String.trim() |> String.downcase() do
+    "" ->
+      options
+
+    trimmed ->
+      needle = String.graphemes(trimmed)
+
+      options
+      |> Enum.map(fn option -> {rank(option.label, needle), option} end)
+      |> Enum.reject(fn {rank, _option} -> rank == nil end)
+      |> Enum.sort_by(fn {rank, option} -> {rank, option.label} end)
+      |> Enum.map(fn {_rank, option} -> option end)
+  end
+end
+
+# {span beyond the needle, index of the first match}. Lower sorts first, so a
+# contiguous match beats a scattered one and an early match beats a late one.
+defp rank(label, needle) do
+  label
+  |> String.downcase()
+  |> String.graphemes()
+  |> match_positions(needle, 0, [])
+  |> case do
+    nil -> nil
+    positions -> {List.last(positions) - hd(positions) - length(positions) + 1, hd(positions)}
+  end
+end
+
+defp match_positions(_haystack, [], _index, acc), do: Enum.reverse(acc)
+defp match_positions([], _needle, _index, _acc), do: nil
+
+defp match_positions([char | rest], [char | needle_rest], index, acc) do
+  match_positions(rest, needle_rest, index + 1, [index | acc])
+end
+
+defp match_positions([_char | rest], needle, index, acc) do
+  match_positions(rest, needle, index + 1, acc)
+end
+
 attr(:id, :string, required: true, doc: "Root ID. Wires the query field to the list and its options.")
 attr(:class, :string, default: "", doc: "Additional CSS classes")
 attr(:rest, :global, doc: "Additional HTML attributes")
