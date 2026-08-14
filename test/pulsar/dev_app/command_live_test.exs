@@ -75,5 +75,54 @@ defmodule Pulsar.DevApp.CommandLiveTest do
     end
   end
 
+  describe "async filtering" do
+    test "marks its own listbox busy in flight, keeps prior rows, and shows a spinner", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/components/command")
+
+      render_hook(element(view, "#cmd-async"), "query", %{"query" => "r"})
+      in_flight = render(element(view, "#cmd-async"))
+
+      assert in_flight =~ ~s(aria-busy="true")
+      assert in_flight =~ "Cormorant"
+      assert in_flight =~ "animate-spin"
+    end
+
+    test "a sync sibling is not marked busy by an async neighbour", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/components/command")
+
+      render_hook(element(view, "#cmd-async"), "query", %{"query" => "r"})
+
+      refute render(element(view, "#cmd-filter")) =~ ~s(aria-busy="true")
+    end
+
+    test "replaces rows and clears busy when the filter resolves", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/components/command")
+
+      render_hook(element(view, "#cmd-async"), "query", %{"query" => "r"})
+      render_async(view)
+      settled = render(element(view, "#cmd-async"))
+
+      assert settled =~ "Remote result"
+      refute settled =~ "Cormorant"
+      refute settled =~ ~s(aria-busy="true")
+      refute settled =~ "animate-spin"
+    end
+
+    test "a failing async filter clears busy and shows the empty state", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/components/command")
+
+      ExUnit.CaptureLog.capture_log(fn ->
+        render_hook(element(view, "#cmd-async-error"), "query", %{"query" => "r"})
+        render_async(view)
+      end)
+
+      settled = render(element(view, "#cmd-async-error"))
+
+      assert settled =~ "No results found"
+      refute settled =~ "Egret"
+      refute settled =~ ~s(aria-busy="true")
+    end
+  end
+
   defp listbox(view), do: render(element(view, "#cmd-filter-listbox"))
 end

@@ -12,6 +12,13 @@ defmodule Pulsar.DevApp.CommandLive do
   ]
   @slotted [[key: "Zulu", value: "zulu", description: "SLOT-DEFAULT-MARKER"]]
   @filterable ["Aardvark", "Beetle", "Beetlejuice"]
+  @async_options ["Cormorant", "Dugong"]
+  @async_error_options ["Egret", "Flamingo"]
+
+  # Deliberately slow, so a test can observe the in-flight state before it
+  # resolves; and deliberately raising, to exercise the failure branch.
+  defp slow_filter, do: fn _query, _options -> Process.sleep(50) && [{"Remote result", "remote"}] end
+  defp failing_filter, do: fn _query, _options -> raise "upstream down" end
 
   def mount(_params, _session, socket) do
     {:ok,
@@ -20,7 +27,11 @@ defmodule Pulsar.DevApp.CommandLive do
        grouped: @grouped,
        decorated: @decorated,
        slotted: @slotted,
-       filterable: @filterable
+       filterable: @filterable,
+       slow: slow_filter(),
+       failing: failing_filter(),
+       async_options: @async_options,
+       async_error_options: @async_error_options
      )}
   end
 
@@ -64,6 +75,26 @@ defmodule Pulsar.DevApp.CommandLive do
         <Command.command id="cmd-empty-slot" label="Search custom empty" options={[]}>
           <:empty>CUSTOM-EMPTY</:empty>
         </Command.command>
+      </.fixture_section>
+
+      <.fixture_section name="async" title="Async source">
+        <Command.command
+          id="cmd-async"
+          label="Search remote"
+          options={@async_options}
+          filter={@slow}
+          async
+        />
+      </.fixture_section>
+
+      <.fixture_section name="async-error" title="Async source that fails">
+        <Command.command
+          id="cmd-async-error"
+          label="Search failing remote"
+          options={@async_error_options}
+          filter={@failing}
+          async
+        />
       </.fixture_section>
     </.fixture_page>
     """

@@ -18,6 +18,7 @@ defmodule Pulsar.Components.Command do
   import Twm, only: [merge: 1]
 
   alias Pulsar.Components.Icon
+  alias Pulsar.Components.Spinner
 
   @surface %{
     "solid" => %{
@@ -244,6 +245,8 @@ defmodule Pulsar.Components.Command do
     doc: "2-arity fun `(query, options)` returning options. Defaults to the built-in matcher."
   )
 
+  attr(:async, :boolean, default: false, doc: "Run `filter` off-process. Use for I/O-bound sources.")
+
   attr(:label, :string,
     default: "Search",
     doc: ~s{Accessible name for the query field. Use with i18n: gettext("Search")}
@@ -298,6 +301,7 @@ defmodule Pulsar.Components.Command do
       id={@id}
       options={@options}
       filter={@filter}
+      async={@async}
       label={@label}
       placeholder={@placeholder}
       variant={@variant}
@@ -333,6 +337,7 @@ defmodule Pulsar.Components.Command do
       |> assign_new(:rest, fn -> %{} end)
       |> assign_new(:options, fn -> [] end)
       |> assign_new(:filter, fn -> nil end)
+      |> assign_new(:async, fn -> false end)
       |> assign_new(:label, fn -> "Search" end)
       |> assign_new(:placeholder, fn -> "Search" end)
       |> assign_new(:variant, fn -> "ghost" end)
@@ -346,18 +351,42 @@ defmodule Pulsar.Components.Command do
 
     normalized = options(socket.assigns.options)
 
+    results = initial_results(socket.assigns.async, socket.assigns.filter, socket.assigns.query, normalized)
+
     {:ok,
      socket
      |> assign(:normalized, normalized)
-     |> assign_results(run_filter(socket.assigns.filter, socket.assigns.query, normalized))}
+     |> assign_results(results)}
   end
 
   @impl Phoenix.LiveComponent
   def handle_event("query", %{"query" => query}, socket) do
-    results = run_filter(socket.assigns.filter, query, socket.assigns.normalized)
+    socket = assign(socket, :query, query)
+    filter = socket.assigns.filter
+    options = socket.assigns.normalized
 
-    {:noreply, socket |> assign(:query, query) |> assign_results(results)}
+    if socket.assigns.async do
+      {:noreply,
+       socket
+       |> assign(:loading, true)
+       |> cancel_async(:filter)
+       |> start_async(:filter, fn -> run_filter(filter, query, options) end)}
+    else
+      {:noreply, assign_results(socket, run_filter(filter, query, options))}
+    end
   end
+
+  @impl Phoenix.LiveComponent
+  def handle_async(:filter, {:ok, results}, socket) do
+    {:noreply, socket |> assign(:loading, false) |> assign_results(results)}
+  end
+
+  def handle_async(:filter, {:exit, _reason}, socket) do
+    {:noreply, socket |> assign(:loading, false) |> assign_results([])}
+  end
+
+  defp initial_results(true, _filter, query, options), do: default_filter(query, options)
+  defp initial_results(false, filter, query, options), do: run_filter(filter, query, options)
 
   defp run_filter(nil, query, options), do: default_filter(query, options)
   defp run_filter(filter, query, options) when is_function(filter, 2), do: options(filter.(query, options))
@@ -418,19 +447,22 @@ defmodule Pulsar.Components.Command do
       {@rest}
     >
       <label for={"#{@id}-input"} class="sr-only">{@label}</label>
-      <input
-        type="text"
-        id={"#{@id}-input"}
-        role="combobox"
-        aria-expanded="true"
-        aria-controls={"#{@id}-listbox"}
-        aria-activedescendant={@active && "#{@id}-option-#{@active}"}
-        aria-autocomplete="list"
-        autocomplete="off"
-        placeholder={@placeholder}
-        class="w-full bg-transparent text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
-      />
-      <div id={"#{@id}-listbox"} role="listbox" aria-busy={@loading} class="overflow-y-auto">
+      <div class="flex items-center gap-2">
+        <input
+          type="text"
+          id={"#{@id}-input"}
+          role="combobox"
+          aria-expanded="true"
+          aria-controls={"#{@id}-listbox"}
+          aria-activedescendant={@active && "#{@id}-option-#{@active}"}
+          aria-autocomplete="list"
+          autocomplete="off"
+          placeholder={@placeholder}
+          class="w-full bg-transparent text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
+        />
+        <Spinner.spinner :if={@loading} decorative size="sm" class="shrink-0" />
+      </div>
+      <div id={"#{@id}-listbox"} role="listbox" aria-busy={to_string(@loading)} class="overflow-y-auto">
         <div
           :for={{chunk, group_index} <- @groups}
           role="group"
