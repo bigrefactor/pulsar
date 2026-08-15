@@ -123,8 +123,9 @@ defmodule Pulsar.CoreComponents do
   """
   # Phoenix core_components compatibility attributes
   attr(:rest, :global,
-    include: ~w(href navigate patch method download name value disabled),
-    doc: "Phoenix navigation and form attributes"
+    include:
+      ~w(href navigate patch method download name value disabled popovertarget popovertargetaction command commandfor),
+    doc: "Phoenix navigation, form, and invoker attributes"
   )
 
   attr(:class, :string, default: "", doc: "Additional CSS classes")

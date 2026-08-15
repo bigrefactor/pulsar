@@ -50,6 +50,11 @@ defmodule Pulsar.Components.Button do
         Options
       </.button>
 
+      # Dismissing a popover from inside it, with no JavaScript
+      <.button variant="ghost" popovertarget="filters" popovertargetaction="hide">
+        Cancel
+      </.button>
+
   ## Polymorphic Behavior
 
   The component automatically chooses the appropriate HTML element:
@@ -312,7 +317,10 @@ defmodule Pulsar.Components.Button do
     doc: "Show automatic spinner when loading (can be disabled for custom loading content)"
   )
 
-  attr(:rest, :global, doc: "Additional HTML attributes")
+  attr(:rest, :global,
+    include: ~w(popovertarget popovertargetaction command commandfor),
+    doc: "Additional HTML attributes"
+  )
 
   slot(:inner_block,
     required: true,
