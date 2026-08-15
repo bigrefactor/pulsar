@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed - `badge` Is Now a Two-Action Token
+
+- **`on_remove` + `remove_label` render a labeled dismiss control**, so a
+  removable token no longer means hand-rolling a button, an icon, and an
+  `aria-label` at every call site. `badge/1` raises when `on_remove` arrives
+  without `remove_label` — the control is icon-only, so the label is its only
+  accessible name. `select`'s multi-select tokens now use it, dropping their own
+  copy.
+- **`as` (`:span` | `:div`) lets the badge host flow content.** A popover panel
+  is a `<div>`, which is not legal inside the default `<span>`, so a token whose
+  label opens a filter editor had no valid markup. With `as={:div}` the trigger
+  and panel land as siblings inside the badge and the popover wires up normally.
+- **The focus ring moved from the badge to its controls.** It was
+  `focus-within` on the wrapper, which rings the whole token no matter which
+  control has focus — ambiguous as soon as a token carries two. Each direct
+  `<button>`/`<a>` now rings itself on `focus-visible`. Visible change: a
+  dismissible badge rings the dismiss control rather than the whole badge, and
+  `select`'s tokens no longer draw two nested rings.
+- **The ≥24px target floor (WCAG 2.5.8) reaches the label region**, not just the
+  addon slots, so an interactive label meets it too. Both are scoped to direct
+  children, leaving the contents of a hosted popover panel alone.
+
 ### Added - Command: A Searchable, Keyboard-Navigable Option List
 
 - **New `command` component**: a query field over a filtered, optionally grouped
