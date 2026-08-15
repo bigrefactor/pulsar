@@ -1,6 +1,7 @@
 defmodule Pulsar.DevApp.Storybook.Components.Badge do
   use PhoenixStorybook.Story, :component
 
+  alias Phoenix.LiveView.JS
   alias Pulsar.Components.Badge
 
   def function, do: &Badge.badge/1
@@ -28,6 +29,19 @@ defmodule Pulsar.DevApp.Storybook.Components.Badge do
         values: ~w(xs sm md lg xl),
         default: "md",
         doc: "Size of the badge"
+      },
+      %Attr{
+        id: :as,
+        type: :atom,
+        values: [:span, :div],
+        default: :span,
+        doc: "Element type to render as. Use :div when the badge hosts a popover panel"
+      },
+      %Attr{
+        id: :remove_label,
+        type: :string,
+        default: nil,
+        doc: "Accessible label for the remove control, naming what it removes"
       },
       %Attr{
         id: :class,
@@ -95,6 +109,29 @@ defmodule Pulsar.DevApp.Storybook.Components.Badge do
         description: "Info outline badge",
         attributes: %{variant: "outline", color: "info"},
         slots: ["Info"]
+      },
+      %Variation{
+        id: :removable,
+        description: "Removable token with a labeled dismiss control",
+        attributes: %{
+          color: "primary",
+          on_remove: JS.push("remove_tag", value: %{id: 7}),
+          remove_label: "Remove tag Draft"
+        },
+        slots: ["Draft"]
+      },
+      %Variation{
+        id: :two_action,
+        description: "Two-action token: the label is a button, the × removes it",
+        attributes: %{
+          variant: "outline",
+          color: "primary",
+          on_remove: JS.push("remove_filter"),
+          remove_label: "Remove filter Status"
+        },
+        slots: [
+          ~s|<button type="button" phx-click="edit_filter">Status: Published</button>|
+        ]
       }
     ]
   end

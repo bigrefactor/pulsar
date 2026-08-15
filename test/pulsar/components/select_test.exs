@@ -388,6 +388,21 @@ defmodule Pulsar.Components.SelectTest do
       refute html =~ "phx-value-option"
     end
 
+    test "tokens use badge's built-in remove control rather than a hand-rolled one" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Select.select id="skills" name="skills" options={["Elixir"]} value={["Elixir"]} multiple={true} />
+        """)
+
+      # Badge supplies the dismiss control, so the token no longer carries its
+      # own icon or its own focus ring stacked inside badge's.
+      refute html =~ "hero-x-mark"
+      refute html =~ "focus-visible:ring-1"
+      assert html =~ "[&amp;&gt;button]:focus-visible:ring-2"
+    end
+
     test "remove button uses 'Remove' label by default" do
       assigns = %{}
 
