@@ -309,6 +309,16 @@ defmodule Pulsar.Components.BadgeTest do
         rendered_to_string(~H[<Badge.badge on_remove={@on_remove}>Draft</Badge.badge>])
       end
     end
+
+    test "raises when on_remove is set with a blank remove_label" do
+      for remove_label <- ["", "   "] do
+        assigns = %{on_remove: JS.push("remove_tag"), remove_label: remove_label}
+
+        assert_raise ArgumentError, ~r/on_remove.*remove_label/s, fn ->
+          rendered_to_string(~H[<Badge.badge on_remove={@on_remove} remove_label={@remove_label}>Draft</Badge.badge>])
+        end
+      end
+    end
   end
 
   describe "badge customization" do

@@ -234,7 +234,7 @@ defmodule Pulsar.Components.Badge do
 
   # The dismiss control is icon-only, so remove_label is its only accessible name.
   defp validate_remove!(on_remove, remove_label) do
-    if on_remove != %JS{} and is_nil(remove_label) do
+    if on_remove != %JS{} and (not is_binary(remove_label) or String.trim(remove_label) == "") do
       raise ArgumentError,
             "<.badge on_remove={...}> requires remove_label naming what is removed, " <>
               "e.g. remove_label={gettext(\"Remove filter Status\")}"
