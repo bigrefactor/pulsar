@@ -158,4 +158,34 @@ defmodule Pulsar.CoreComponentsTest do
       refute html =~ "space-y-8"
     end
   end
+
+  describe "button/1 invoker attributes" do
+    # The drop-in splats `@rest` into `Button.button`, so it needs the same opt-in
+    # its delegate has — otherwise a call site through core_components warns even
+    # though the attribute renders.
+    test "the :global opts them in so call sites do not warn" do
+      attrs = CoreComponents.__components__()[:button].attrs
+      global = Enum.find(attrs, &(&1.type == :global))
+      include = Keyword.get(global.opts, :include, [])
+
+      for name <- ~w(popovertarget popovertargetaction command commandfor) do
+        assert name in include,
+               "core_components button/1 does not include #{name} in its :global"
+      end
+    end
+
+    test "the invoker attributes survive the delegation to Button.button" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <CoreComponents.button popovertarget="filters" popovertargetaction="hide">
+          Cancel
+        </CoreComponents.button>
+        """)
+
+      assert html =~ ~r/<button[^>]*popovertarget="filters"/
+      assert html =~ ~r/<button[^>]*popovertargetaction="hide"/
+    end
+  end
 end

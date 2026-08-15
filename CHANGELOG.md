@@ -32,6 +32,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ships with a generator (`mix pulsar.gen.command`), a Storybook story, and a
   WCAG 2.2 AA audit at `docs/a11y/command.md`.
 
+### Fixed - `button` Accepts the Native Invoker Attributes
+
+- **`<.button popovertarget="filters" popovertargetaction="hide">` warned at every
+  call site**: `popovertarget`, `popovertargetaction`, `command`, and `commandfor`
+  are not LiveView globals, and `button/1` did not opt them into its `:global`.
+  The attributes always reached the rendered `<button>` — the cost was an
+  `undefined attribute` warning per call site, which fails any application
+  compiling with `--warnings-as-errors`. Both `button/1` and the
+  `core_components` drop-in now accept all four, so a button can dismiss the
+  popover that contains it, or open a dialog, with no JavaScript.
+
 ### Fixed - Generated Templates Name Your Application's Namespace
 
 - **Four component templates emitted Pulsar's own module names into generated

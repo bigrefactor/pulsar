@@ -952,4 +952,44 @@ defmodule Pulsar.Components.ButtonTest do
       assert html =~ ~s(id=")
     end
   end
+
+  describe "button/1 invoker attributes" do
+    # None of these are LiveView globals, so an omitted `include:` costs an
+    # "undefined attribute" warning at every call site. The attribute still reaches
+    # the element via `@rest` either way, so the render assertion below cannot catch
+    # the regression — this one can.
+    test "the :global opts them in so call sites do not warn" do
+      attrs = Button.__components__()[:button].attrs
+      global = Enum.find(attrs, &(&1.type == :global))
+      include = Keyword.get(global.opts, :include, [])
+
+      for name <- ~w(popovertarget popovertargetaction command commandfor) do
+        assert name in include, "button/1 does not include #{name} in its :global"
+      end
+    end
+
+    test "the popover invoker attributes reach the button element" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Button.button popovertarget="filters" popovertargetaction="hide">Cancel</Button.button>
+        """)
+
+      assert html =~ ~r/<button[^>]*popovertarget="filters"/
+      assert html =~ ~r/<button[^>]*popovertargetaction="hide"/
+    end
+
+    test "the command invoker attributes reach the button element" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Button.button command="show-modal" commandfor="confirm">Delete</Button.button>
+        """)
+
+      assert html =~ ~r/<button[^>]*command="show-modal"/
+      assert html =~ ~r/<button[^>]*commandfor="confirm"/
+    end
+  end
 end
