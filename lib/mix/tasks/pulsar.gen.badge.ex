@@ -3,11 +3,12 @@ defmodule Mix.Tasks.Pulsar.Gen.Badge do
     component: :badge,
     example: "mix pulsar.gen.badge",
     long_doc: """
-    Generates a badge component for displaying labels, tags, and status indicators
+    Generates a badge component for displaying labels, tags, and removable tokens
 
     Creates a flexible badge component with start and end addon slots for icons,
-    buttons, or other content. Perfect for tags, status indicators, multi-select
-    displays, and any labeled content that needs visual decoration.
+    buttons, or other content, plus an optional built-in remove control. Perfect
+    for tags, status indicators, filter chips, multi-select tokens, and any
+    labeled content that needs visual decoration.
 
     ## Example
 
@@ -24,6 +25,8 @@ defmodule Mix.Tasks.Pulsar.Gen.Badge do
     - Colors: neutral, primary, secondary, success, danger, warning, info
     - Sizes: xs, sm, md, lg, xl
     - Start/end addon slots for icons and buttons
+    - Built-in labeled remove control via `on_remove`
+    - `as={:div}` for tokens whose label opens a popover
     - Automatic dark mode support
     - Accessibility built-in
 
@@ -44,14 +47,17 @@ defmodule Mix.Tasks.Pulsar.Gen.Badge do
       Completed
     </.badge>
 
-    # Badge with remove button
-    <.badge color="danger">
-      Error
-      <:end_addon>
-        <button phx-click="remove_error">
-          <.icon name="hero-x-mark-micro" size="xs" />
-        </button>
-      </:end_addon>
+    # Removable token
+    <.badge on_remove={JS.push("remove_tag", value: %{id: 7})} remove_label="Remove tag Draft">
+      Draft
+    </.badge>
+
+    # Two-action token: the label opens a popover, the × removes it
+    <.badge as={:div} on_remove={JS.push("remove_filter")} remove_label="Remove filter Status">
+      <.popover id="filter-status-panel">
+        <:trigger><button type="button">Status: Published</button></:trigger>
+        <.filter_editor />
+      </.popover>
     </.badge>
     ```
 

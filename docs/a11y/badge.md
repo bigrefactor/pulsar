@@ -2,11 +2,11 @@
 
 **Source:** [`lib/pulsar/components/badge.ex`](../../lib/pulsar/components/badge.ex)
 **Tests:** [`test/pulsar/components/badge_test.exs`](../../test/pulsar/components/badge_test.exs)
-**Audited:** 2026-05-24 (code-only)
+**Audited:** 2026-08-15 (code-only)
 
-Non-interactive display marker — renders a `<span>` with variant
-(solid/outline/ghost), color, and size, plus optional start/end addon
-slots for icons or interactive controls.
+Display marker and removable token — renders a `<span>` (or a `<div>` via
+`as`) with variant (solid/outline/ghost), color, and size, plus optional
+start/end addon slots and an optional built-in remove control (`on_remove`).
 
 ## Applicable criteria
 
@@ -15,25 +15,30 @@ slots for icons or interactive controls.
 **Evidence:** Badge is text-first: `inner_block` is `required: true` —
 `lib/pulsar/components/badge.ex`, `badge/1`. Addon slots are optional and
 expected to contain icons (decorative by default via the Icon
-component's `aria-hidden="true"` default).
+component's `aria-hidden="true"` default). The built-in remove control's
+`<svg>` is `aria-hidden="true"`, with the accessible name supplied by the
+required `remove_label` — `lib/pulsar/components/badge.ex`, `badge/1`.
 
 **Notes:** The badge body always carries text content; non-text addons
 inherit the Icon component's hidden-by-default behavior, so the
-accessible name comes from the inner text.
+accessible name comes from the inner text. `badge/1` raises when
+`on_remove` is set without `remove_label`, so the icon-only dismiss
+control cannot ship unnamed — `validate_remove!/2`; test
+`test "raises when on_remove is set without remove_label"`.
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
-**Evidence:** Single semantic `<span>` wrapping inline addon/text/addon
-flow — `lib/pulsar/components/badge.ex`, `badge/1`. No grouping
-relationships to preserve.
+**Evidence:** Single semantic `<span>`/`<div>` wrapping inline
+addon/text/addon/remove flow — `lib/pulsar/components/badge.ex`, `badge/1`. No
+grouping relationships to preserve.
 
 **Notes:** Badge is a presentational marker; no implicit ARIA role is
 required. Text content is exposed directly to AT.
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
 
-**Evidence:** DOM order is `start_addon` → `inner_block` → `end_addon`,
-matching visual `inline-flex items-center` order —
+**Evidence:** DOM order is `start_addon` → `inner_block` → `end_addon` →
+remove control, matching visual `inline-flex items-center` order —
 `lib/pulsar/components/badge.ex`, `base_badge_classes/0`, `badge/1`.
 
 **Notes:** No `flex-direction: row-reverse` or absolute positioning.
@@ -96,9 +101,10 @@ resizes without clipping.
 **Evidence:** Outline variant uses `border border-*` against
 `bg-background` — `lib/pulsar/components/badge.ex`, `variant_color_classes/2`. The
 `outline-neutral` variant routes through `border-border-strong` —
-`lib/pulsar/components/badge.ex`, `variant_color_classes/2`. Focus-within ring is
-`focus-within:ring-2 focus-within:ring-current focus-within:ring-offset-2`
-— `lib/pulsar/components/badge.ex`, `base_badge_classes/0`. Browser measurement: 30 cells
+`lib/pulsar/components/badge.ex`, `variant_color_classes/2`. The control focus ring is
+`[&>button]:focus-visible:ring-2 [&>button]:focus-visible:ring-current`
+(and the `[&>a]` equivalent) — `lib/pulsar/components/badge.ex`,
+`base_badge_classes/0`. Browser measurement: 30 cells
 with measurable borders, all pass in both themes (min 4.63:1 light /
 6.22:1 dark) ([light](measurements/badge-light.md),
 [dark](measurements/badge-dark.md)).
@@ -116,19 +122,24 @@ page background.
 **Notes:** Badge adapts to user-overridden line-height/letter-spacing
 because vertical size is driven by padding, not a fixed height.
 
-### 2.4.7 Focus Visible (AA) — ✓ PASS (caller-driven)
+### 2.4.7 Focus Visible (AA) — ✓ PASS
 
-**Evidence:** `focus-within:outline-none focus-within:ring-2
-focus-within:ring-current focus-within:ring-offset-2` —
-`lib/pulsar/components/badge.ex`, `base_badge_classes/0`. The badge itself is not
-focusable; the ring appears when a focusable addon child (e.g., a
-remove button) is focused. Measurement reads `not-focusable-in-state`
-for every cell because the wrapping `<span>` doesn't receive focus.
+**Evidence:** `[&>button]:focus-visible:outline-none
+[&>button]:focus-visible:ring-2 [&>button]:focus-visible:ring-current`, and the
+matching `[&>a]` rules — `lib/pulsar/components/badge.ex`,
+`base_badge_classes/0`. The badge itself is not focusable; each control it
+contains rings itself. A token carrying two controls (an interactive label and
+a remove control) therefore shows which one holds focus, rather than ringing
+the whole token for either. Measurement reads `not-focusable-in-state`
+for every cell because the badge wrapper doesn't receive focus.
 
 **Notes:** `ring-current` adopts the inherited text color. On solid
 badges the ring color equals the foreground text color, which meets
 4.5:1 against the badge background (1.4.3 measurement above) — that
 satisfies the 3:1 non-text minimum by a wide margin in every cell.
+
+The selectors are scoped to direct children (`>`), so a popover panel hosted
+inside an `as={:div}` badge keeps its own focus styling for its own controls.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 
@@ -140,43 +151,52 @@ component-level gap.
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 
-**Evidence:** Badge itself has no click handlers. Any interactive
-controls live in caller-provided `start_addon`/`end_addon` slots and
-inherit their own activation semantics (native buttons, etc.).
+**Evidence:** The built-in remove control is a native `<button>` carrying
+`phx-click={@on_remove}` — `lib/pulsar/components/badge.ex`, `badge/1`. Any
+other interactive controls live in caller-provided slots and inherit their
+own activation semantics (native buttons, etc.).
 
-**Notes:** Sample usage in module docs (`lib/pulsar/components/badge.ex`)
-uses `<button phx-click="...">` which fires on mouseup.
+**Notes:** `phx-click` fires on mouseup, so a pointer-down that moves off
+the control does not activate it.
 
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** The badge body is non-interactive, so 2.5.8 does not apply
 to the wrapper `<span>` — the body-cell matrix still measures the `xs`
 body at 20px (73/91 body cells ≥24×24; the 18 sub-floor cells are `xs`
-bodies, which carry no pointer action). The *interactive* target is a
-caller-supplied control in `start_addon`/`end_addon`
-(`lib/pulsar/components/badge.ex`, `badge/1`). Those slots are now wrapped
-so any direct `<button>`/`<a>` is sized to a ≥24px floor
+bodies, which carry no pointer action). The *interactive* targets are the
+built-in remove control rendered by `on_remove`, plus any caller-supplied
+control in the default slot or in `start_addon`/`end_addon`
+(`lib/pulsar/components/badge.ex`, `badge/1`). The badge root and both addon
+wrappers size any direct `<button>`/`<a>` to a ≥24px floor
 (`[&>button]:min-h-6 [&>button]:min-w-6`,
-`lib/pulsar/components/badge.ex`, `badge/1`), so a dismissible badge
-meets the floor even at `xs`.
+`lib/pulsar/components/badge.ex`, `base_badge_classes/0`), so both a
+dismissible badge and a two-action token meet the floor even at `xs`.
 
 **Notes:** A decorative addon (icon, status dot) is left untouched — only
 interactive direct children are sized up, so the floor applies exactly
 where 2.5.8 does. Caveat: the selector targets *direct* `<button>`/`<a>`
-children; a control nested deeper inside custom addon markup should set
-its own ≥24px target.
+children; a control nested deeper inside custom slot markup should set
+its own ≥24px target. That scoping is deliberate — it keeps the floor off
+the contents of a popover panel an `as={:div}` badge hosts, which sets its
+own targets.
 
 ### 4.1.2 Name, Role, Value (A) — ✓ PASS
 
-**Evidence:** Semantic `<span>` with no implicit role —
+**Evidence:** Semantic `<span>` (or `<div>`) with no implicit role —
 `lib/pulsar/components/badge.ex`, `badge/1`. Accessible name comes from inner
 text content; `@rest` allows callers to pass `aria-label`, `id`, or
-other ARIA properties — `lib/pulsar/components/badge.ex`, `badge/1`.
+other ARIA properties — `lib/pulsar/components/badge.ex`, `badge/1`. The
+built-in remove control is a native `<button type="button">` named by
+`remove_label` — `lib/pulsar/components/badge.ex`, `badge/1`.
 
 **Notes:** Test confirms global attribute pass-through —
 `test "accepts global attributes"` —
-`test/pulsar/components/badge_test.exs`. Badge has no state, so
-no state attributes are needed.
+`test/pulsar/components/badge_test.exs`. The wrapper has no state, so no
+state attributes are needed. When the badge hosts a popover, `aria-expanded`
+and `aria-controls` live on the caller's trigger button, wired by Popover —
+real-browser coverage in
+`test/integration/a11y/keyboard/badge_test.exs`.
 
 ## Not applicable
 

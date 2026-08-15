@@ -324,18 +324,10 @@ defmodule Pulsar.Components.Select do
           variant={@variant}
           color={@effective_color}
           size={get_badge_size(@size)}
+          on_remove={remove_badge_js(@on_remove_badge, option.value)}
+          remove_label={"#{@remove_label} #{option.label}"}
         >
           {option.label}
-          <:end_addon>
-            <button
-              type="button"
-              phx-click={remove_badge_js(@on_remove_badge, option.value)}
-              class="ml-1 cursor-pointer hover:bg-foreground/10 rounded-full p-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current transition-colors duration-fast ease-standard"
-              aria-label={"#{@remove_label} #{option.label}"}
-            >
-              <.icon name="hero-x-mark-micro" size="xs" color="current" aria-hidden="true" />
-            </button>
-          </:end_addon>
         </Badge.badge>
       </div>
 

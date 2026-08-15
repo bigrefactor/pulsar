@@ -109,6 +109,7 @@ defmodule Pulsar.DevApp.Router do
     live "/components/tooltip", TooltipLive, :index
 
     live "/keyboard/accordion", Keyboard.AccordionLive, :index
+    live "/keyboard/badge", Keyboard.BadgeLive, :index
     live "/keyboard/button", Keyboard.ButtonLive, :index
     live "/keyboard/calendar", Keyboard.CalendarLive, :index
     live "/keyboard/date_picker", Keyboard.DatePickerLive, :index

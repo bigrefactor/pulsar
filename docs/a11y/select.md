@@ -16,10 +16,11 @@ options via a `pulsar:remove-selection` event.
 - Custom chevron icon is rendered in a `pointer-events-none` div without
   an accessible name; semantically decorative —
   `lib/pulsar/components/select.ex`, `select/1`
-- Badge remove button uses `hero-x-mark` icon with explicit
-  `aria-hidden="true"` and the button itself has
-  `aria-label="Remove #{option.label}"` —
-  `lib/pulsar/components/select.ex`, `select/1`
+- The token remove control comes from Badge's `on_remove`, whose icon is
+  `aria-hidden="true"` and whose button is named by the `remove_label`
+  Select passes (`"Remove #{option.label}"`) —
+  `lib/pulsar/components/select.ex`, `select/1`;
+  `lib/pulsar/components/badge.ex`, `badge/1`
 - Test `badge close buttons have aria-label for accessibility` —
   `test/pulsar/components/select_test.exs`
 
@@ -150,9 +151,9 @@ Per-badge remove buttons have `aria-label="Remove …"` —
 `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2` —
 `lib/pulsar/components/select.ex`, `base_select_classes/0`. All color variants resolve
 the ring to `--color-ring` —
-`color_classes/2`. Remove button has
-`focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-current` —
-`select/1`. Browser measurement: focus
+`color_classes/2`. The token remove control is ringed by Badge —
+`[&>button]:focus-visible:ring-2 [&>button]:focus-visible:ring-current`,
+`lib/pulsar/components/badge.ex`, `base_badge_classes/0`. Browser measurement: focus
 ring 5.02:1 (light) / 6.72:1 (dark) across every variant — passes
 the 3:1 minimum.
 
@@ -165,14 +166,15 @@ Button/Input. Mouse activation no longer paints a focus ring.
 
 ### 2.5.2 Pointer Cancellation (A) — ✓ PASS
 
-**Evidence:** Native `<select>` interaction; remove buttons use
+**Evidence:** Native `<select>` interaction; the token remove control uses
 `phx-click` which fires on click (mouseup) —
-`lib/pulsar/components/select.ex`, `select/1`.
+`lib/pulsar/components/badge.ex`, `badge/1`.
 
 ### 2.5.3 Label in Name (A) — ✓ PASS
 
-**Evidence:** Remove button `aria-label` is built from the option label
-(`"Remove #{option.label}"`) — `lib/pulsar/components/select.ex`, `select/1`.
+**Evidence:** The `remove_label` Select passes to Badge is built from the
+option label (`"Remove #{option.label}"`) —
+`lib/pulsar/components/select.ex`, `select/1`.
 Visible text "Remove" + option name are reflected in the accessible
 name (where the X icon is the visible identifier, the aria-label
 expands it).
@@ -180,17 +182,15 @@ expands it).
 ### 2.5.8 Target Size (Minimum) (AA, new in 2.2) — ✓ PASS
 
 **Evidence:** Select `xs` is `min-h-6` (24px) exactly at floor —
-`lib/pulsar/components/select.ex`, `size_classes/1`. Badge remove button has `p-0.5`
-padding around an `xs` icon — `select/1`.
+`lib/pulsar/components/select.ex`, `size_classes/1`. The token remove control is
+sized to the floor by Badge — `[&>button]:min-h-6 [&>button]:min-w-6`,
+`lib/pulsar/components/badge.ex`, `base_badge_classes/0`.
 Browser measurement of 289 cells: 289/289 pass ≥ 24×24
 ([light](measurements/select-light.md),
-[dark](measurements/select-dark.md)). The remove button receives the
-WCAG spacing exception (inline control in a badge with surrounding
-gap).
+[dark](measurements/select-dark.md)).
 
-**Notes:** The remove button at `p-0.5` around an `xs` icon renders
-≈24×24 due to padding contribution; combined with the spacing
-exception, it meets AA.
+**Notes:** The remove control now meets the 24×24 floor outright rather
+than relying on the WCAG spacing exception.
 
 ### 3.2.1 On Focus (A) — ✓ PASS
 

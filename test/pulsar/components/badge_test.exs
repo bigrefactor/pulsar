@@ -4,6 +4,7 @@ defmodule Pulsar.Components.BadgeTest do
   import Phoenix.Component
   import Phoenix.LiveViewTest
 
+  alias Phoenix.LiveView.JS
   alias Pulsar.Components.Badge
 
   describe "badge/1 basic functionality" do
@@ -204,6 +205,109 @@ defmodule Pulsar.Components.BadgeTest do
       assert html =~ "[&amp;&gt;button]:min-h-6"
       assert html =~ "[&amp;&gt;button]:min-w-6"
       assert html =~ "[&amp;&gt;a]:min-h-6"
+    end
+  end
+
+  describe "badge element type" do
+    test "renders a div when as={:div}" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge as={:div}>Token</Badge.badge>])
+
+      assert html =~ ~s(<div)
+      refute html =~ ~s(<span)
+    end
+
+    test "as={:div} keeps the badge styling" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge as={:div} color="primary">Token</Badge.badge>])
+
+      assert html =~ ~s(inline-flex items-center)
+      assert html =~ ~s(bg-primary text-primary-foreground)
+      assert html =~ ~s(text-sm px-2.5 py-0.5)
+    end
+  end
+
+  describe "badge focus indicator" do
+    test "rings the focused control rather than the whole badge" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Badge.badge>
+          Content
+          <:end_addon>
+            <button type="button">Remove</button>
+          </:end_addon>
+        </Badge.badge>
+        """)
+
+      assert html =~ "[&amp;&gt;button]:focus-visible:ring-2"
+      assert html =~ "[&amp;&gt;button]:focus-visible:ring-current"
+      refute html =~ "focus-within:ring-2"
+    end
+
+    test "gives an interactive control in the label region a ≥24px target (WCAG 2.5.8)" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Badge.badge size="xs">
+          <button type="button">Status: Published</button>
+        </Badge.badge>
+        """)
+
+      assert html =~ "[&amp;&gt;button]:min-h-6"
+      assert html =~ "[&amp;&gt;button]:min-w-6"
+      assert html =~ "[&amp;&gt;button]:focus-visible:ring-2"
+    end
+  end
+
+  describe "badge remove control" do
+    test "renders no remove control by default" do
+      assigns = %{}
+      html = rendered_to_string(~H[<Badge.badge>Plain</Badge.badge>])
+
+      refute html =~ ~s(<button)
+    end
+
+    test "renders a labeled remove control when on_remove is set" do
+      assigns = %{on_remove: JS.push("remove_tag", value: %{id: 7})}
+
+      html =
+        rendered_to_string(~H[<Badge.badge on_remove={@on_remove} remove_label="Remove tag Draft">Draft</Badge.badge>])
+
+      assert html =~ ~s(<button)
+      assert html =~ ~s(type="button")
+      assert html =~ ~s(aria-label="Remove tag Draft")
+      assert html =~ "remove_tag"
+    end
+
+    test "renders the remove control after the end addon" do
+      assigns = %{on_remove: JS.push("remove_tag")}
+
+      html =
+        rendered_to_string(~H"""
+        <Badge.badge on_remove={@on_remove} remove_label="Remove tag Draft">
+          Draft
+          <:end_addon>
+            <span>ADDON</span>
+          </:end_addon>
+        </Badge.badge>
+        """)
+
+      assert html =~ "ADDON"
+
+      addon_at = :binary.match(html, "ADDON") |> elem(0)
+      remove_at = :binary.match(html, ~s(aria-label="Remove tag Draft")) |> elem(0)
+      assert addon_at < remove_at
+    end
+
+    test "raises when on_remove is set without remove_label" do
+      assigns = %{on_remove: JS.push("remove_tag")}
+
+      assert_raise ArgumentError, ~r/on_remove.*remove_label/s, fn ->
+        rendered_to_string(~H[<Badge.badge on_remove={@on_remove}>Draft</Badge.badge>])
+      end
     end
   end
 
