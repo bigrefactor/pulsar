@@ -23,6 +23,7 @@ defmodule Pulsar.ComponentDeps do
     card: [],
     checkbox: [],
     collapsible: [:icon],
+    command: [:icon, :spinner],
     date_picker: [:calendar, :popover, :icon],
     divider: [],
     drawer: [:modal],

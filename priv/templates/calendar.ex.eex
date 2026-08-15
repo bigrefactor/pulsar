@@ -8,7 +8,7 @@ localized with no server-side configuration. The selectable value the server
 receives is always ISO `YYYY-MM-DD`.
 
 Use it inline (a scheduling panel, a dashboard filter) or inside
-`Pulsar.Components.DatePicker`, which wraps it in a popover.
+`<%= @components_namespace %>.DatePicker`, which wraps it in a popover.
 
 ## Examples
 

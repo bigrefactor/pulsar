@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Command: A Searchable, Keyboard-Navigable Option List
+
+- **New `command` component**: a query field over a filtered, optionally grouped
+  option list, with combobox semantics (`role="combobox"` + `role="listbox"` and a
+  roving `aria-activedescendant`), ↑/↓ navigation, Enter to choose, and
+  Escape to dismiss. Home and End stay with the caret, as they should in an
+  editable combobox. It holds no value of its own — choosing a row runs your
+  `on_select` callback and clears the query — so it fits action lists and command
+  palettes as naturally as pickers. Use it inline, or inside a popover or modal
+  that provides the surface.
+- **`options` takes the same shapes as `select`**: scalars, `{label, value}`
+  tuples, keyword options with `:key` and `:value` (plus optional `:icon`,
+  `:shortcut`, `:description`, and `:disabled`), and `{group_label, options}`
+  pairs, which render as labelled `role="group"` sections.
+- **Filtering is a function you supply**: `filter` is `(query, options)` and
+  defaults to a built-in case-insensitive subsequence matcher ranked by how
+  tightly the match is packed. Pass `async` to run an I/O-bound source
+  off-process, which cancels the in-flight request on the next keystroke — and
+  on selection — and shows a spinner while it runs; with `async`, results refresh
+  when a query is submitted rather than on every parent re-render, and selecting
+  a row never runs your filter on the LiveView process.
+- **`:item` and `:empty` slots** replace the default row and empty-state markup.
+- Ships with a generator (`mix pulsar.gen.command`), a Storybook story, and a
+  WCAG 2.2 AA audit at `docs/a11y/command.md`.
+
+### Fixed - Generated Templates Name Your Application's Namespace
+
+- **Four component templates emitted Pulsar's own module names into generated
+  code**: `form`, `input_otp`, `calendar`, and `date_picker` referred to
+  `Pulsar.Components.*` in code copied into your application. Most were
+  documentation examples, but `form` also raised a runtime `ArgumentError` naming
+  `Pulsar.Components.Form.form/1` — a module your application does not have. All
+  four now interpolate your own components namespace, and a guard test keeps them
+  that way.
+
 ### Added - Accessible Sortable Table Headers
 
 - **Table columns can opt into a complete sortable-header affordance with

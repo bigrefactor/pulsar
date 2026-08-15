@@ -21,16 +21,16 @@ focus, because the flag is only set on `submit`.
 The form stacks its children vertically with `space-y-6`. Pass your own
 spacing class to change the rhythm:
 
-    <Pulsar.Components.Form.form :let={f} for={@form} class="space-y-4">
+    <<%= @components_namespace %>.Form.form :let={f} for={@form} class="space-y-4">
       <Field.field field={f[:name]} type="text">
         <:label>Name</:label>
       </Field.field>
-    </Pulsar.Components.Form.form>
+    </<%= @components_namespace %>.Form.form>
 
 To lay the form out some other way, pass `space-y-0` alongside your own
 layout classes so the default spacing does not apply on top of them:
 
-    <Pulsar.Components.Form.form
+    <<%= @components_namespace %>.Form.form
       :let={f}
       for={@form}
       class="space-y-0 grid grid-cols-2 gap-4"
@@ -38,14 +38,14 @@ layout classes so the default spacing does not apply on top of them:
       <Field.field field={f[:name]} type="text">
         <:label>Name</:label>
       </Field.field>
-    </Pulsar.Components.Form.form>
+    </<%= @components_namespace %>.Form.form>
 
 To change the spacing between two children, put a `mb-*` utility on the
 first of the two.
 
 ## Examples
 
-    <Pulsar.Components.Form.form
+    <<%= @components_namespace %>.Form.form
       :let={f}
       for={@form}
       phx-change="validate"
@@ -54,14 +54,14 @@ first of the two.
       <Field.field field={f[:name]} type="text">
         <:label>Name</:label>
       </Field.field>
-    </Pulsar.Components.Form.form>
+    </<%= @components_namespace %>.Form.form>
 
     # With a legend explaining the required-field asterisk
-    <Pulsar.Components.Form.form :let={f} for={@form} required_legend>
+    <<%= @components_namespace %>.Form.form :let={f} for={@form} required_legend>
       <Field.field field={f[:name]} type="text" required>
         <:label>Name</:label>
       </Field.field>
-    </Pulsar.Components.Form.form>
+    </<%= @components_namespace %>.Form.form>
 """
 
 use Phoenix.Component
@@ -182,7 +182,7 @@ defp derive_form_id(other, as) do
 
     _ ->
       raise ArgumentError, """
-      Pulsar.Components.Form.form/1 requires a stable id for its colocated \
+      <%= @components_namespace %>.Form.form/1 requires a stable id for its colocated \
       hook to survive re-renders. The given `for=` source does not provide \
       one. Pass one of:
         * `id="..."` to <.form>

@@ -1,0 +1,702 @@
+defmodule Pulsar.Components.Command do
+  @moduledoc """
+  A searchable, keyboard-navigable list of options.
+
+  Renders a query field over a filtered list and reports the chosen option to
+  the caller. It holds no value of its own: pick an option, the caller acts on
+  it, and the query resets.
+
+  Use it inline, or inside a popover or modal that provides the surface.
+
+  With `async`, results refresh when a query is submitted, not on every parent
+  re-render.
+
+  ## Examples
+
+      <.command id="fields" options={@fields} on_select={JS.push("field_chosen")} />
+  """
+
+  use Phoenix.LiveComponent
+
+  import Twm, only: [merge: 1]
+
+  alias Phoenix.LiveView.JS
+  alias Pulsar.Components.Icon
+  alias Pulsar.Components.Spinner
+
+  @surface %{
+    "solid" => %{
+      "neutral" => "bg-surface-2",
+      "primary" => "bg-surface-2",
+      "secondary" => "bg-surface-2",
+      "success" => "bg-surface-2",
+      "danger" => "bg-surface-2",
+      "warning" => "bg-surface-2",
+      "info" => "bg-surface-2"
+    },
+    "outline" => %{
+      "neutral" => "bg-surface-1 border border-border-strong",
+      "primary" => "bg-surface-1 border border-border-strong",
+      "secondary" => "bg-surface-1 border border-border-strong",
+      "success" => "bg-surface-1 border border-border-strong",
+      "danger" => "bg-surface-1 border border-border-strong",
+      "warning" => "bg-surface-1 border border-border-strong",
+      "info" => "bg-surface-1 border border-border-strong"
+    },
+    "ghost" => %{
+      "neutral" => "bg-transparent border border-transparent",
+      "primary" => "bg-transparent border border-transparent",
+      "secondary" => "bg-transparent border border-transparent",
+      "success" => "bg-transparent border border-transparent",
+      "danger" => "bg-transparent border border-transparent",
+      "warning" => "bg-transparent border border-transparent",
+      "info" => "bg-transparent border border-transparent"
+    },
+    "elevated" => %{
+      "neutral" => "bg-surface-1 shadow-dropdown",
+      "primary" => "bg-surface-1 shadow-dropdown",
+      "secondary" => "bg-surface-1 shadow-dropdown",
+      "success" => "bg-surface-1 shadow-dropdown",
+      "danger" => "bg-surface-1 shadow-dropdown",
+      "warning" => "bg-surface-1 shadow-dropdown",
+      "info" => "bg-surface-1 shadow-dropdown"
+    }
+  }
+
+  # Active-row accent, keyed off the data-active attribute the hook flips.
+  @accent %{
+    "neutral" => "data-[active=true]:bg-foreground/10",
+    "primary" => "data-[active=true]:bg-primary/10 data-[active=true]:text-primary",
+    "secondary" => "data-[active=true]:bg-secondary/10 data-[active=true]:text-secondary",
+    "success" => "data-[active=true]:bg-success/10 data-[active=true]:text-success",
+    "danger" => "data-[active=true]:bg-danger/10 data-[active=true]:text-danger",
+    "warning" => "data-[active=true]:bg-warning/10 data-[active=true]:text-warning",
+    "info" => "data-[active=true]:bg-info/10 data-[active=true]:text-info"
+  }
+
+  @row_size %{
+    "xs" => "px-1.5 py-1 text-xs",
+    "sm" => "px-2 py-1 text-sm",
+    "md" => "px-2 py-1.5 text-sm",
+    "lg" => "px-3 py-2 text-base",
+    "xl" => "px-3 py-2.5 text-base"
+  }
+
+  defmodule Option do
+    @moduledoc """
+    One row in a `command` list.
+
+    `label` is the text shown and matched against; `value` is what the caller
+    receives on select. `group` places the row under a heading.
+    """
+
+    @enforce_keys [:label, :value]
+    defstruct [:description, :group, :icon, :label, :shortcut, :value, disabled: false]
+
+    @type t :: %__MODULE__{
+            label: String.t(),
+            value: term(),
+            group: String.t() | nil,
+            icon: String.t() | nil,
+            shortcut: String.t() | nil,
+            description: String.t() | nil,
+            disabled: boolean()
+          }
+  end
+
+  @doc """
+  Normalizes any accepted option shape into a flat list of `Option` structs.
+
+  Accepts scalars, `{label, value}` tuples, keyword options with `:key` and
+  `:value`, and `{group_label, options}` pairs whose second element is a list or
+  map. Grouped input flattens, with each row carrying its group label.
+
+  ## Examples
+
+      options(["Admin", {"User", "user"}])
+      options([{"Europe", ["UK", "Sweden"]}])
+      options([[key: "Admin", value: "admin", icon: "hero-user"]])
+  """
+  @spec options(term()) :: [Option.t()]
+  def options(input) when is_list(input) or is_map(input) do
+    Enum.flat_map(input, &normalize_entry(&1, nil))
+  end
+
+  defp normalize_entry(%Option{} = option, group) do
+    [%{option | label: to_string(option.label), group: option.group || group}]
+  end
+
+  defp normalize_entry({key, members}, nil) when is_list(members) or is_map(members) do
+    if keyword_option?(members) do
+      [build_option(members, nil)]
+    else
+      Enum.flat_map(members, &normalize_entry(&1, to_string(key)))
+    end
+  end
+
+  defp normalize_entry({_key, members}, group) when (is_list(members) or is_map(members)) and is_binary(group) do
+    raise ArgumentError,
+          "nested groups are not supported; flatten the options under #{inspect(group)}"
+  end
+
+  defp normalize_entry(entry, group) when is_list(entry) or is_map(entry) do
+    if keyword_option?(entry) do
+      [build_option(entry, group)]
+    else
+      raise ArgumentError,
+            "unsupported option: #{inspect(entry)} (expected a scalar, a {label, value} tuple, " <>
+              "or a keyword list with :key and :value)"
+    end
+  end
+
+  defp normalize_entry({label, value}, group) do
+    [%Option{label: to_string(label), value: value, group: group}]
+  end
+
+  defp normalize_entry(scalar, group) when is_binary(scalar) or is_atom(scalar) or is_integer(scalar) do
+    [%Option{label: to_string(scalar), value: scalar, group: group}]
+  end
+
+  defp normalize_entry(entry, _group) do
+    raise ArgumentError,
+          "unsupported option: #{inspect(entry)} (expected a scalar, a {label, value} tuple, " <>
+            "or a keyword list with :key and :value)"
+  end
+
+  defp keyword_option?(entry) when is_list(entry), do: Keyword.keyword?(entry) and Keyword.has_key?(entry, :key)
+  defp keyword_option?(_entry), do: false
+
+  defp build_option(kw, group) do
+    %Option{
+      label: kw |> Keyword.fetch!(:key) |> to_string(),
+      value: fetch_option_value!(kw),
+      group: Keyword.get(kw, :group, group),
+      icon: Keyword.get(kw, :icon),
+      shortcut: Keyword.get(kw, :shortcut),
+      description: Keyword.get(kw, :description),
+      disabled: Keyword.get(kw, :disabled, false)
+    }
+  end
+
+  defp fetch_option_value!(kw) do
+    case Keyword.fetch(kw, :value) do
+      {:ok, value} ->
+        value
+
+      :error ->
+        raise ArgumentError,
+              "keyword option #{inspect(kw)} is missing :value; keyword options require both :key and :value"
+    end
+  end
+
+  @doc """
+  The built-in matcher: a case-insensitive subsequence match on each label.
+
+  Options whose label contains the query's characters in order are kept, ranked
+  by how tightly the match is packed and then by how early it starts. An empty
+  query keeps everything.
+  """
+  @spec default_filter(String.t(), [Option.t()]) :: [Option.t()]
+  def default_filter(query, options) do
+    query
+    |> to_string()
+    |> String.trim()
+    |> String.downcase()
+    |> case do
+      "" ->
+        options
+
+      trimmed ->
+        needle = String.graphemes(trimmed)
+
+        options
+        |> Enum.map(fn option -> {rank(option.label, needle), option} end)
+        |> Enum.reject(fn {rank, _option} -> rank == nil end)
+        |> Enum.sort_by(fn {rank, option} -> {rank, option.label} end)
+        |> Enum.map(fn {_rank, option} -> option end)
+    end
+  end
+
+  # {span beyond the needle, index of the first match}. Lower sorts first, so a
+  # contiguous match beats a scattered one and an early match beats a late one.
+  defp rank(label, needle) do
+    label
+    |> String.downcase()
+    |> String.graphemes()
+    |> match_positions(needle, 0, [])
+    |> case do
+      nil -> nil
+      positions -> {List.last(positions) - hd(positions) - length(positions) + 1, hd(positions)}
+    end
+  end
+
+  defp match_positions(_haystack, [], _index, acc), do: Enum.reverse(acc)
+  defp match_positions([], _needle, _index, _acc), do: nil
+
+  defp match_positions([char | rest], [char | needle_rest], index, acc) do
+    match_positions(rest, needle_rest, index + 1, [index | acc])
+  end
+
+  defp match_positions([_char | rest], needle, index, acc) do
+    match_positions(rest, needle, index + 1, acc)
+  end
+
+  attr(:id, :string, required: true, doc: "Root ID. Wires the query field to the list and its options.")
+  attr(:options, :any, default: [], doc: "Options in Phoenix format. See `options/1` for accepted shapes.")
+
+  attr(:filter, :any,
+    default: nil,
+    doc: "2-arity fun `(query, options)` returning options. Defaults to the built-in matcher."
+  )
+
+  attr(:async, :boolean, default: false, doc: "Run `filter` off-process. Use for I/O-bound sources.")
+
+  attr(:debounce, :integer,
+    default: nil,
+    doc: "Milliseconds to wait before pushing a query. Defaults to 0 (sync) or 250 (async)."
+  )
+
+  attr(:label, :string,
+    default: "Search",
+    doc: ~s{Accessible name for the query field. Use with i18n: gettext("Search")}
+  )
+
+  attr(:placeholder, :string,
+    default: "Search",
+    doc: ~s{Placeholder for the query field. Use with i18n: gettext("Search")}
+  )
+
+  attr(:variant, :string,
+    default: "ghost",
+    values: ~w(solid outline ghost elevated),
+    doc: "Visual style of the list surface"
+  )
+
+  attr(:color, :string,
+    default: "primary",
+    values: ~w(neutral primary secondary success danger warning info),
+    doc: "Accent for the active row"
+  )
+
+  attr(:size, :string, default: "md", values: ~w(xs sm md lg xl), doc: "Row scale")
+
+  attr(:on_select, JS,
+    default: %JS{},
+    doc: "JS commands to run when an option is chosen. Receives phx-value-value and phx-value-label."
+  )
+
+  attr(:on_cancel, JS, default: %JS{}, doc: "JS commands to run when the list is dismissed with Escape.")
+
+  attr(:empty_text, :string,
+    default: "No results found",
+    doc: ~s{Message shown when nothing matches. Use with i18n: gettext("No results found")}
+  )
+
+  attr(:result_label, :string,
+    default: "result",
+    doc: ~s{Word after the result count when there is exactly one. Use with i18n: gettext("result")}
+  )
+
+  attr(:results_label, :string,
+    default: "results",
+    doc: ~s{Word after the result count when there is not exactly one. Use with i18n: gettext("results")}
+  )
+
+  attr(:class, :string, default: "", doc: "Additional CSS classes")
+  attr(:rest, :global, doc: "Additional HTML attributes")
+  slot(:item, doc: "Custom row markup. Receives the option.")
+  slot(:empty, doc: "Custom empty state.")
+
+  @doc """
+  Renders a searchable, keyboard-navigable option list.
+  """
+  def command(assigns) do
+    ~H"""
+    <.live_component
+      module={__MODULE__}
+      id={@id}
+      options={@options}
+      filter={@filter}
+      async={@async}
+      debounce={@debounce}
+      label={@label}
+      placeholder={@placeholder}
+      variant={@variant}
+      color={@color}
+      size={@size}
+      on_select={@on_select}
+      on_cancel={@on_cancel}
+      empty_text={@empty_text}
+      result_label={@result_label}
+      results_label={@results_label}
+      class={@class}
+      rest={@rest}
+    >
+      <:item :let={option} :for={item <- @item}>
+        {render_slot(item, option)}
+      </:item>
+      <:empty :for={empty <- @empty}>
+        {render_slot(empty)}
+      </:empty>
+    </.live_component>
+    """
+  end
+
+  @impl Phoenix.LiveComponent
+  def mount(socket) do
+    {:ok, assign(socket, query: "", loading: false)}
+  end
+
+  @impl Phoenix.LiveComponent
+  def update(assigns, socket) do
+    socket =
+      socket
+      |> assign(assigns)
+      |> assign_new(:on_select, fn -> %JS{} end)
+      |> assign_new(:on_cancel, fn -> %JS{} end)
+      |> assign_new(:class, fn -> "" end)
+      |> assign_new(:rest, fn -> %{} end)
+      |> assign_new(:options, fn -> [] end)
+      |> assign_new(:filter, fn -> nil end)
+      |> assign_new(:async, fn -> false end)
+      |> assign_new(:debounce, fn -> nil end)
+      |> assign_new(:label, fn -> "Search" end)
+      |> assign_new(:placeholder, fn -> "Search" end)
+      |> assign_new(:variant, fn -> "ghost" end)
+      |> assign_new(:color, fn -> "primary" end)
+      |> assign_new(:size, fn -> "md" end)
+      |> assign_new(:empty_text, fn -> "No results found" end)
+      |> assign_new(:result_label, fn -> "result" end)
+      |> assign_new(:results_label, fn -> "results" end)
+      |> assign_new(:item, fn -> [] end)
+      |> assign_new(:empty, fn -> [] end)
+
+    normalized = options(socket.assigns.options)
+    socket = assign(socket, :normalized, normalized)
+
+    socket =
+      if socket.assigns.async and Map.has_key?(socket.assigns, :results) do
+        socket
+      else
+        assign_results(
+          socket,
+          initial_results(socket.assigns.async, socket.assigns.filter, socket.assigns.query, normalized)
+        )
+      end
+
+    {:ok, socket}
+  end
+
+  @impl Phoenix.LiveComponent
+  def handle_event("query", %{"query" => query}, socket) do
+    socket = assign(socket, :query, query)
+    filter = socket.assigns.filter
+    options = socket.assigns.normalized
+
+    if socket.assigns.async do
+      {:noreply,
+       socket
+       |> assign(:loading, true)
+       |> cancel_async(:filter)
+       |> start_async(:filter, fn -> run_filter(filter, query, options) end)}
+    else
+      {:noreply, assign_results(socket, run_filter(filter, query, options))}
+    end
+  end
+
+  @impl Phoenix.LiveComponent
+  def handle_event("select", _params, socket) do
+    %{async: async, filter: filter, normalized: normalized} = socket.assigns
+
+    socket =
+      if async do
+        socket |> cancel_async(:filter) |> assign(:loading, false)
+      else
+        socket
+      end
+
+    {:noreply,
+     socket
+     |> assign(:query, "")
+     |> assign_results(initial_results(async, filter, "", normalized))}
+  end
+
+  @impl Phoenix.LiveComponent
+  def handle_async(:filter, {:ok, results}, socket) do
+    {:noreply, socket |> assign(:loading, false) |> assign_results(results)}
+  end
+
+  # A cancelled filter is a filter the caller replaced or reset, so its results
+  # are simply dropped. Only a genuine failure falls through to the empty state.
+  def handle_async(:filter, {:exit, {:shutdown, :cancel}}, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_async(:filter, {:exit, _reason}, socket) do
+    {:noreply, socket |> assign(:loading, false) |> assign_results([])}
+  end
+
+  defp initial_results(true, _filter, query, options), do: default_filter(query, options)
+  defp initial_results(false, filter, query, options), do: run_filter(filter, query, options)
+
+  defp run_filter(nil, query, options), do: default_filter(query, options)
+  defp run_filter(filter, query, options) when is_function(filter, 2), do: options(filter.(query, options))
+
+  defp assign_results(socket, results) do
+    indexed = Enum.with_index(results)
+
+    socket
+    |> assign(:results, indexed)
+    |> assign(:groups, group_results(indexed))
+    |> assign(:active, first_enabled_index(indexed))
+  end
+
+  defp group_results(indexed) do
+    indexed
+    |> Enum.chunk_by(fn {option, _index} -> option.group end)
+    |> Enum.with_index()
+  end
+
+  defp first_enabled_index(indexed) do
+    Enum.find_value(indexed, fn {option, index} -> if !option.disabled, do: index end)
+  end
+
+  defp result_announcement(results, singular, plural) do
+    count = length(results)
+    word = if count == 1, do: singular, else: plural
+
+    "#{count} #{word}"
+  end
+
+  defp group_label([{option, _index} | _rest]), do: option.group
+
+  defp surface_classes(variant, color, size, class) do
+    merge(
+      "flex flex-col " <>
+        (Map.get(@surface, variant, %{})[color] || "") <>
+        " " <> (@row_size[size] || "") <> " " <> class
+    )
+  end
+
+  defp field_classes(size) do
+    "flex items-center gap-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 " <>
+      (@row_size[size] || "")
+  end
+
+  defp row_classes(color, size) do
+    "flex cursor-default items-center gap-2 text-foreground " <>
+      (@accent[color] || "") <> " " <> (@row_size[size] || "")
+  end
+
+  defp disabled_classes(true), do: "cursor-not-allowed opacity-50"
+  defp disabled_classes(false), do: ""
+
+  @impl Phoenix.LiveComponent
+  def render(assigns) do
+    ~H"""
+    <div
+      id={@id}
+      phx-hook=".PulsarCommand"
+      phx-target={@myself}
+      data-debounce={@debounce || if(@async, do: 250, else: 0)}
+      data-on-cancel={@on_cancel}
+      class={surface_classes(@variant, @color, @size, @class)}
+      {@rest}
+    >
+      <label for={"#{@id}-input"} class="sr-only">{@label}</label>
+      <div class={field_classes(@size)}>
+        <input
+          type="text"
+          id={"#{@id}-input"}
+          role="combobox"
+          aria-expanded="true"
+          aria-controls={"#{@id}-listbox"}
+          aria-activedescendant={@active && "#{@id}-option-#{@active}"}
+          aria-autocomplete="list"
+          autocomplete="off"
+          placeholder={@placeholder}
+          class="w-full bg-transparent text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
+        />
+        <Spinner.spinner :if={@loading} decorative size="sm" class="shrink-0" />
+      </div>
+      <div
+        id={"#{@id}-listbox"}
+        role="listbox"
+        aria-busy={to_string(@loading)}
+        class="flex-1 min-h-0 overflow-y-auto"
+      >
+        <div
+          :for={{chunk, group_index} <- @groups}
+          role="group"
+          aria-labelledby={group_label(chunk) && "#{@id}-group-#{group_index}"}
+        >
+          <div
+            :if={group_label(chunk)}
+            id={"#{@id}-group-#{group_index}"}
+            class="px-2 py-1.5 text-xs font-medium text-muted-foreground"
+          >
+            {group_label(chunk)}
+          </div>
+          <div
+            :for={{option, index} <- chunk}
+            id={"#{@id}-option-#{index}"}
+            role="option"
+            data-command-option
+            data-active={to_string(index == @active)}
+            aria-selected={to_string(index == @active)}
+            aria-disabled={option.disabled && "true"}
+            phx-click={
+              !option.disabled &&
+                JS.push(@on_select, "select", target: @myself, value: %{value: to_string(option.value)})
+            }
+            phx-value-value={!option.disabled && to_string(option.value)}
+            phx-value-label={!option.disabled && option.label}
+            class={merge(row_classes(@color, @size) <> " " <> disabled_classes(option.disabled))}
+          >
+            <span :if={@item == []} class="contents">
+              <Icon.icon :if={option.icon} name={option.icon} class="size-4 shrink-0" />
+              <span class="flex min-w-0 flex-col">
+                <span class="truncate">{option.label}</span>
+                <span :if={option.description} class="truncate text-xs text-muted-foreground">
+                  {option.description}
+                </span>
+              </span>
+              <kbd :if={option.shortcut} class="ml-auto text-xs text-muted-foreground">
+                {option.shortcut}
+              </kbd>
+            </span>
+            {render_slot(@item, option)}
+          </div>
+        </div>
+        <div
+          :if={@results == []}
+          role="option"
+          aria-disabled="true"
+          class="px-2 py-6 text-center text-sm text-muted-foreground"
+        >
+          <span :if={@empty == []}>{@empty_text}</span>
+          {render_slot(@empty)}
+        </div>
+      </div>
+      <div role="status" aria-live="polite" class="sr-only">
+        {result_announcement(@results, @result_label, @results_label)}
+      </div>
+      <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarCommand">
+        export default {
+          mounted() {
+            this.input = this.el.querySelector("input[role='combobox']")
+            this.timer = null
+            this._onInput = (e) => this.handleInput(e)
+            this._onKeydown = (e) => this.handleKeydown(e)
+            this._onClick = (e) => this.handleClick(e)
+            this.input.addEventListener("input", this._onInput)
+            this.el.addEventListener("keydown", this._onKeydown)
+            this.el.addEventListener("click", this._onClick)
+          },
+
+          destroyed() {
+            clearTimeout(this.timer)
+          },
+
+          updated() {
+            // The server re-renders the whole list on every keystroke and marks the
+            // first enabled row active. Keep the caret and re-anchor the view.
+            this.input = this.el.querySelector("input[role='combobox']")
+            this.scrollActiveIntoView()
+          },
+
+          options() {
+            return Array.from(this.el.querySelectorAll("[data-command-option]"))
+              .filter((el) => el.getAttribute("aria-disabled") !== "true")
+          },
+
+          activeIndex(options) {
+            return options.findIndex((el) => el.dataset.active === "true")
+          },
+
+          handleInput() {
+            const wait = parseInt(this.el.dataset.debounce || "0", 10)
+            clearTimeout(this.timer)
+            const push = () => this.pushEventTo(this.el, "query", { query: this.input.value })
+            wait > 0 ? (this.timer = setTimeout(push, wait)) : push()
+          },
+
+          // Handles both a real mouse click and the synthetic click Enter
+          // dispatches on the active row, so selection clears the query field
+          // the same way regardless of input method.
+          handleClick(e) {
+            const row = e.target.closest("[data-command-option]")
+            if (!row || row.getAttribute("aria-disabled") === "true") return
+            // Drop any debounced query still pending, or it fires after the reset
+            // and refills the list for a query the user has already left behind.
+            clearTimeout(this.timer)
+            this.input.value = ""
+          },
+
+          handleKeydown(e) {
+            const options = this.options()
+            if (options.length === 0 && e.key !== "Escape") return
+
+            switch (e.key) {
+              case "ArrowDown":
+                e.preventDefault()
+                this.activate(options, (this.activeIndex(options) + 1) % options.length)
+                break
+              case "ArrowUp": {
+                e.preventDefault()
+                const previous = this.activeIndex(options) - 1
+                this.activate(options, previous < 0 ? options.length - 1 : previous)
+                break
+              }
+              // Home and End are deliberately not handled: the query field is
+              // editable, so they belong to the caret.
+              case "Enter": {
+                e.preventDefault()
+                const active = options[this.activeIndex(options)]
+                // Dispatching a click runs the row's own phx-click, so the caller's
+                // JS and its phx-value-* travel exactly as they do for a mouse.
+                if (active) active.click()
+                break
+              }
+              case "Escape":
+                // Deliberately not preventDefault: an enclosing dialog or popover
+                // still gets to close itself.
+                this.runCancel()
+                break
+            }
+          },
+
+          activate(options, index) {
+            options.forEach((el) => {
+              el.dataset.active = "false"
+              el.setAttribute("aria-selected", "false")
+            })
+            const next = options[index]
+            if (!next) return
+            next.dataset.active = "true"
+            next.setAttribute("aria-selected", "true")
+            this.input.setAttribute("aria-activedescendant", next.id)
+            next.scrollIntoView({ block: "nearest" })
+          },
+
+          scrollActiveIntoView() {
+            const active = this.el.querySelector("[data-command-option][data-active='true']")
+            if (active) active.scrollIntoView({ block: "nearest" })
+          },
+
+          runCancel() {
+            const encoded = this.el.dataset.onCancel
+            // Run from the query input, not this.el: the root carries
+            // phx-target (routing this hook's own "query" pushes to this
+            // LiveComponent), and execJS inherits phx-target from whatever
+            // element it runs on. Running from the input — which carries no
+            // phx-target — lets an un-targeted on_cancel push reach the parent
+            // LiveView instead of being misrouted back into this component.
+            if (encoded && encoded !== "[]" && this.liveSocket) this.liveSocket.execJS(this.input, encoded)
+          }
+        }
+      </script>
+    </div>
+    """
+  end
+end

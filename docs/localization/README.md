@@ -41,6 +41,7 @@ Components expose their default labels as attributes. Pass `gettext/1` (or
 | `select`   | `remove_label`                     | `"Remove"`     |
 | `form`     | `required_legend_text`             | `"indicates a required field"` |
 | `textarea` | `remaining_label`, `over_label`    | `"remaining"`, `"over"` |
+| `command`  | `label`, `placeholder`, `empty_text`, `result_label`, `results_label` | `"Search"`, `"Search"`, `"No results found"`, `"result"`, `"results"` |
 
 ## Form error messages
 

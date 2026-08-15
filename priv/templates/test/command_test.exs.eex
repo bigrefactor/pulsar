@@ -1,0 +1,32 @@
+defmodule <%= @component_namespace %>.CommandTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+
+  alias <%= @component_namespace %>.Command
+
+  describe "command/1" do
+    test "renders a combobox over the given options" do
+      html = render_component(Command, id: "cmd", options: ["Alpha", "Beta"])
+
+      assert html =~ ~s(role="combobox")
+      assert html =~ ~s(role="listbox")
+      assert html =~ "Alpha"
+      assert html =~ "Beta"
+    end
+
+    test "groups options under their labels" do
+      html = render_component(Command, id: "cmd", options: [{"Europe", ["UK"]}])
+
+      assert html =~ ~s(role="group")
+      assert html =~ "Europe"
+    end
+
+    test "renders the empty state with no options" do
+      html = render_component(Command, id: "cmd", options: [])
+
+      assert html =~ "No results found"
+      refute html =~ "data-command-option"
+    end
+  end
+end
