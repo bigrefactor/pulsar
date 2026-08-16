@@ -284,6 +284,15 @@ defmodule Pulsar.Components.Popover do
           this.anchorEl = match || this.trigger
         },
 
+        // The trigger lives outside the hook's element, so the attributes wired
+        // onto it here are absent from the server's markup and a patch that
+        // re-renders the trigger reverts them — permanently, since `updated()`
+        // fires only when the panel itself changes. Mark them ignored so patches
+        // leave the client-owned values in place.
+        ignoreTriggerAttrs(attrs) {
+          this.js().ignoreAttributes(this.trigger, attrs)
+        },
+
         // Click mode: the native [popover="auto"] toggle wired through the
         // browser's popovertarget invoker; the toggle event drives state.
         setupClick() {
@@ -291,6 +300,7 @@ defmodule Pulsar.Components.Popover do
             this.trigger.setAttribute("popovertarget", this.el.id)
             this.trigger.setAttribute("aria-controls", this.el.id)
             this.trigger.setAttribute("aria-expanded", "false")
+            this.ignoreTriggerAttrs(["popovertarget", "aria-controls", "aria-expanded"])
           }
           this._onToggle = (e) => this.onStateChange(e.newState)
           this.el.addEventListener("toggle", this._onToggle)
@@ -303,7 +313,10 @@ defmodule Pulsar.Components.Popover do
           this.closeDelay = 100
           this._dismissed = false
 
-          if (this.trigger) this.trigger.setAttribute("aria-describedby", this.el.id)
+          if (this.trigger) {
+            this.trigger.setAttribute("aria-describedby", this.el.id)
+            this.ignoreTriggerAttrs(["aria-describedby"])
+          }
 
           // Hover waits before opening so passing the pointer over a control
           // doesn't flash the panel; focus opens immediately.

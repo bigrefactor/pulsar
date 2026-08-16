@@ -54,8 +54,11 @@ is persistent until dismissed — `lib/pulsar/components/popover.ex`, `popover/1
 
 **Evidence:** The trigger is a native `<button>`; Enter/Space toggle the popover
 via the browser's `popovertarget` invoker (stamped by the hook —
-`lib/pulsar/components/popover.ex`, `popover/1`); Escape closes natively. The keyboard
-fixture exercises Enter-to-open and Escape-to-close — `test/integration/a11y/keyboard/popover_test.exs`.
+`lib/pulsar/components/popover.ex`, `popover/1`); Escape closes natively. The
+hook marks the attributes it stamps on the trigger as ignored, so a LiveView
+patch that re-renders the trigger cannot revert them and leave the control
+inert. The keyboard fixture exercises Enter-to-open, Escape-to-close, and
+activation after a patch — `test/integration/a11y/keyboard/popover_test.exs`.
 
 ### 2.1.2 No Keyboard Trap (A) — ✓ PASS
 

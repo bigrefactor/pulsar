@@ -31,7 +31,9 @@ itself is caller-supplied text.
 trigger→hint relationship is programmatic — `lib/pulsar/components/tooltip.ex`,
 `tooltip/1`,
 `lib/pulsar/components/popover.ex`, `popover/1` (hover-mode `setupHover`, `updated`
-re-sync). The keyboard fixture asserts the `aria-describedby` linkage —
+re-sync). The hook marks the attribute ignored, so a LiveView patch that
+re-renders the trigger cannot drop the linkage. The keyboard fixture asserts it
+holds both on load and across a patch —
 `test/integration/a11y/keyboard/tooltip_test.exs`.
 
 ### 1.4.3 Contrast (Minimum) (AA) — ✓ PASS
