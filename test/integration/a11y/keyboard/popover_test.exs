@@ -45,6 +45,31 @@ defmodule Pulsar.Integration.A11y.Keyboard.PopoverTest do
       |> A11y.assert_focused("kbd-pop-trigger")
     end
 
+    # The `kbd-pop-patch` cell pairs a popover with a `bump` button that
+    # re-renders only the trigger's label. The trigger's `popovertarget` /
+    # `aria-controls` / `aria-expanded` are client-applied and absent from the
+    # server's markup, and the panel — the hook's own element — is byte-identical
+    # across that patch, so `updated()` never runs. Without the hook marking
+    # those attributes ignored, morphdom reverts the trigger to the server's
+    # markup and the control is dead for the rest of the page's life.
+    #
+    # Verification: remove the `ignoreTriggerAttrs` call from `setupClick` in the
+    # `.PulsarPopover` hook (priv/templates/popover.ex.eex + `mix pulsar.sync`),
+    # run `MIX_ENV=test mix assets.build`, re-run — this test fails while every
+    # other test in this file still passes.
+
+    test "the trigger still opens the panel after a patch re-renders it", %{conn: conn} do
+      conn
+      |> visit("/keyboard/popover")
+      |> A11y.await_live_connected()
+      |> click("#kbd-pop-patch-bump")
+      |> assert_has("#kbd-pop-patch-trigger", text: "Patched 1")
+      |> assert_has(~s|#kbd-pop-patch-trigger[popovertarget="kbd-pop-patch"]|)
+      |> click("#kbd-pop-patch-trigger")
+      |> assert_has(~s|#kbd-pop-patch[data-state="open"]|)
+      |> A11y.assert_visible("kbd-pop-patch")
+    end
+
     test "Tab from inside the open panel is not trapped", %{conn: conn} do
       conn
       |> visit("/keyboard/popover")

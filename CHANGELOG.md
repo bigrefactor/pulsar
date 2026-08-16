@@ -54,6 +54,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ships with a generator (`mix pulsar.gen.command`), a Storybook story, and a
   WCAG 2.2 AA audit at `docs/a11y/command.md`.
 
+### Fixed - `popover` Triggers Survive a LiveView Patch
+
+- **A `popover` whose trigger was re-rendered went dead, permanently.** The hook
+  wires `popovertarget`, `aria-controls`, and `aria-expanded` onto the trigger,
+  which sits outside the hook's own element and carries none of them in the
+  server's markup. Any patch that re-rendered the trigger reverted it, and the
+  hook's `updated()` repair could not run — LiveView calls it only when the
+  hook's element, the panel, is itself patched. Native invoking is the only thing
+  that opens the panel in click mode, so one patch was enough to kill the
+  control for the life of the page. The hook now marks those attributes ignored
+  (`JS.ignore_attributes`), so patches leave the client-owned values in place.
+  `trigger_mode="hover"` got the same treatment for `aria-describedby`, which
+  was silently dropping the tooltip's description off its trigger. This reaches
+  everything built on the primitive — `dropdown_menu`, `tooltip`, `date_picker`,
+  and `menu`'s horizontal groups.
+- **Every trigger Pulsar renders itself now carries its own invoker.**
+  `menu`'s horizontal group trigger, `dropdown_menu`'s submenu trigger, and
+  `date_picker`'s calendar button emit `popovertarget`, `aria-controls`, and
+  `aria-expanded` from the server rather than waiting for the hook to stamp
+  them. These controls no longer depend on client wiring at all — they work
+  before the hook mounts, and they survive a patch that replaces the trigger
+  element outright, which the ignore marker above cannot. A caller-supplied
+  `:trigger` is still wired by the hook; only Pulsar-authored markup can carry
+  the attribute directly.
+
 ### Fixed - `button` Accepts the Native Invoker Attributes
 
 - **`<.button popovertarget="filters" popovertargetaction="hide">` warned at every

@@ -119,7 +119,8 @@ click/Enter, never on hover — `menu/1`.
 
 **Evidence:** Items are native `<a>`/`<button>` elements; group triggers are
 native `<button>`s — vertical toggles on Enter/Space through the hook, horizontal
-toggles via the native `popovertarget` — `menu_item/1`, `menu_group/1`.
+toggles via the native `popovertarget`, which the trigger carries in the server's
+markup so a patch cannot strip it — `menu_item/1`, `menu_group/1`.
 Arrow keys add roving focus (Up/Down vertical, Left/Right horizontal) and
 Home/End — `menu/1`. A keyboard fixture exercises ArrowDown, Enter-to-expand,
 and Escape — `test/integration/a11y/keyboard/menu_test.exs`.

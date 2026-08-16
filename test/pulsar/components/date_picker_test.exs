@@ -26,6 +26,12 @@ defmodule Pulsar.Components.DatePickerTest do
       # composes the calendar
       assert html =~ ~s(phx-hook="Pulsar.Components.Calendar.PulsarCalendar")
       assert html =~ ~s(data-mode="single")
+      # The calendar button invokes the panel from the server's markup: a
+      # client-applied popovertarget is reverted by the first patch that
+      # re-renders the trigger, which leaves the button dead.
+      assert html =~ ~s(popovertarget="dp-pop")
+      assert html =~ ~s(aria-expanded="false")
+      assert html =~ ~s(aria-controls="dp-pop")
     end
   end
 

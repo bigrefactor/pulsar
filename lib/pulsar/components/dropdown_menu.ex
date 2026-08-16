@@ -780,7 +780,10 @@ defmodule Pulsar.Components.DropdownMenu do
           data-menu-item
           data-submenu-trigger
           tabindex="-1"
+          popovertarget={@id}
           aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls={@id}
           aria-disabled={(@disabled && "true") || nil}
           data-disabled={(@disabled && "") || nil}
           class={@row_classes}

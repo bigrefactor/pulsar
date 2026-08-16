@@ -40,6 +40,17 @@ defmodule Pulsar.Integration.A11y.Keyboard.TooltipTest do
       |> assert_has(~s|#kbd-tip[data-state="open"]|)
     end
 
+    test "the trigger keeps aria-describedby after a patch re-renders it", %{conn: conn} do
+      conn
+      |> visit("/keyboard/tooltip")
+      |> A11y.await_live_connected()
+      |> click("#kbd-tip-patch-bump")
+      |> assert_has("#kbd-tip-patch-trigger", text: "Patched 1")
+      |> assert_has(~s|#kbd-tip-patch-trigger[aria-describedby="kbd-tip-patch"]|)
+      |> A11y.focus("kbd-tip-patch-trigger")
+      |> assert_has(~s|#kbd-tip-patch[data-state="open"]|)
+    end
+
     test "Escape dismisses the open tooltip", %{conn: conn} do
       conn
       |> visit("/keyboard/tooltip")

@@ -61,8 +61,11 @@ icon SVG is decorative (name provides the label). No images are rendered.
   are the only submitted values — `lib/pulsar/components/date_picker.ex`, `date_picker/1`
 - The calendar trigger button carries `aria-label="Open calendar"` —
   `lib/pulsar/components/date_picker.ex`, `date_picker/1`
-- `Popover` contributes `aria-controls` / `aria-expanded` on the trigger and
-  manages the panel `id` linkage — see [`popover.md`](popover.md)
+- The trigger carries `popovertarget` / `aria-controls` / `aria-expanded` in the
+  server's markup, so a patch that re-renders it cannot leave the button unable
+  to open the panel — `lib/pulsar/components/date_picker.ex`, `date_picker/1`.
+  `Popover` keeps `aria-expanded` in sync from there and manages the panel `id`
+  linkage — see [`popover.md`](popover.md)
 
 **Note:** The range-mode end input carries a fixed `aria-label="End date"` that
 is not caller-overridable — `lib/pulsar/components/date_picker.ex`, `date_picker/1`. This is
