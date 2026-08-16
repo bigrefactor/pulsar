@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - `popover` Can Be Closed and Opened From a `JS` Command
+
+- **`Popover.show/1` and `Popover.hide/1` open and close a panel by id**, from
+  the server or from any `Phoenix.LiveView.JS` chain, with `show/2` and `hide/2`
+  composing onto an existing pipeline. Until now a panel in click mode could
+  only be worked by its trigger, Escape, or an outside click, and there was no
+  correct way to close it from code: `JS.hide` sets `display: none`, which
+  leaves the element open in the top layer — still suppressing light-dismiss for
+  panels beneath it, and throwing on the next `showPopover()`. The helpers call
+  `hidePopover()`/`showPopover()`, the only correct close and open.
+- **A form inside a panel can now submit and dismiss it** —
+  `phx-submit={JS.push("apply") |> Popover.hide("filters")}` — which the native
+  invoker attributes cannot express: the browser ignores `popovertarget` on any
+  button that submits a form. That case previously took an app-level hook on the
+  form's `submit` event.
+- **A programmatic close returns focus to the trigger** when the panel owned
+  focus, the way Escape does. This matters most for the submit case: LiveView
+  blurs the active element while submitting, so the browser's own focus
+  restoration has nothing left to restore and focus would land on `<body>`. A
+  panel the user never focused into leaves focus where it is.
+- The helpers work in either `trigger_mode`, and reach `dropdown_menu` and
+  `tooltip` as well — both pass their own `id` to the panel they render, so
+  `Popover.hide(id)` closes those too.
+
 ### Fixed - Table Keeps Focus and Streamed Rows Across a Load; Focus Rings Follow the Theme
 
 - **A keyboard user no longer loses focus when a sortable header reloads the

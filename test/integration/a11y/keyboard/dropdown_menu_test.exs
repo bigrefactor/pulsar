@@ -162,5 +162,24 @@ defmodule Pulsar.Integration.A11y.Keyboard.DropdownMenuTest do
       |> press("#kbd-dm3-sub-trigger", "Enter")
       |> A11y.refute_visible("kbd-dm3-email")
     end
+
+    # `dropdown_menu` renders its panel through `popover`, passing its own id
+    # straight through, so `Popover.hide/1` closes the menu. The reopen guards
+    # against a close that leaves the panel stranded in the top layer.
+
+    test "Popover.hide closes the menu and the trigger still reopens it", %{conn: conn} do
+      conn
+      |> visit("/keyboard/dropdown_menu")
+      |> A11y.await_live_connected()
+      |> click("#kbd-dm-trigger")
+      |> A11y.assert_visible("kbd-dm")
+      |> PhoenixTest.Playwright.evaluate(
+        ~s|document.getElementById("kbd-dm").dispatchEvent(new CustomEvent("pulsar:popover-hide", {bubbles: true}))|
+      )
+      |> A11y.refute_visible("kbd-dm")
+      |> assert_has(~s|#kbd-dm-trigger[aria-expanded="false"]|)
+      |> click("#kbd-dm-trigger")
+      |> A11y.assert_visible("kbd-dm")
+    end
   end
 end

@@ -7,7 +7,8 @@
 Anchored, dismissible, non-modal overlay built on the native HTML Popover API.
 A trigger button (wired with `aria-controls`/`aria-expanded` by the
 `.PulsarPopover` colocated hook) opens a `popover="auto"` panel anchored to it;
-the browser handles light-dismiss (outside click + Escape); Escape returns focus to the trigger.
+the browser handles light-dismiss (outside click + Escape); Escape returns focus to the trigger,
+and so does a programmatic close through `hide/1`.
 The panel imposes no role; callers pass `role="dialog"` and a name when needed.
 
 ## Applicable criteria
@@ -70,7 +71,15 @@ leaves it — `test/integration/a11y/keyboard/popover_test.exs`.
 
 **Evidence:** A closed panel is `display:none` (native `[popover]` rule), so its
 content is out of the tab order until opened; no positive `tabindex` is used —
-`lib/pulsar/components/popover.ex`, `popover/1`.
+`lib/pulsar/components/popover.ex`, `popover/1`. Closing the panel through
+`hide/1` returns focus to the trigger when the panel owned focus, matching
+Escape. That covers the case a form submit inside the panel creates: LiveView
+blurs the active element before the close arrives, so the browser has nothing
+left to restore and focus would otherwise land on `<body>`. A panel that never
+held focus leaves focus where it is. The keyboard fixture asserts both — see
+"submitting a form inside the panel pushes the event and closes the panel" and
+"closing a panel that never held focus leaves focus alone" in
+`test/integration/a11y/keyboard/popover_test.exs`.
 
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 

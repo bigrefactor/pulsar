@@ -4,6 +4,7 @@ defmodule <%= @component_namespace %>.PopoverTest do
   import Phoenix.LiveViewTest
   import Phoenix.Component
 
+  alias Phoenix.LiveView.JS
   alias <%= @component_namespace %>.Popover
 
   # `popover` requires a `:trigger` slot (a single button) and the default slot
@@ -125,6 +126,23 @@ defmodule <%= @component_namespace %>.PopoverTest do
 
       assert html =~ ~s(role="dialog")
       assert html =~ ~s(aria-label="Confirm delete")
+    end
+  end
+
+  describe "popover show/hide JS commands" do
+    test "show/1 and hide/1 dispatch the popover events at the panel" do
+      assert Popover.show("filters") == JS.dispatch("pulsar:popover-show", to: "#filters")
+      assert Popover.hide("filters") == JS.dispatch("pulsar:popover-hide", to: "#filters")
+    end
+
+    test "show/2 and hide/2 compose onto an existing JS pipeline" do
+      base = JS.push("apply")
+
+      assert Popover.show(base, "filters") ==
+               JS.dispatch(base, "pulsar:popover-show", to: "#filters")
+
+      assert Popover.hide(base, "filters") ==
+               JS.dispatch(base, "pulsar:popover-hide", to: "#filters")
     end
   end
 end

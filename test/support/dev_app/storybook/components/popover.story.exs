@@ -90,6 +90,16 @@ defmodule Pulsar.DevApp.Storybook.Components.Popover do
         description: "Anchored above, end-aligned",
         attributes: %{id: "sb-popover-top-end", placement: "top-end"},
         slots: [trigger, body]
+      },
+      %Variation{
+        id: :dismiss_from_content,
+        description: "A control inside the panel closes it with Popover.hide/1",
+        attributes: %{id: "sb-popover-dismiss"},
+        slots: [
+          trigger,
+          body <>
+            ~s|<button type="button" class="mt-2 rounded border border-border px-3 py-1.5 text-sm" phx-click={Phoenix.LiveView.JS.dispatch("pulsar:popover-hide", to: "#sb-popover-dismiss")}>Done</button>|
+        ]
       }
     ]
   end
