@@ -246,7 +246,25 @@ defmodule Pulsar.Components.CommandTest do
 
       assert html =~ "focus-within:ring-2"
       assert html =~ "focus-within:ring-ring"
-      assert html =~ "focus-within:ring-offset-2"
+    end
+
+    test "the query field's focus ring takes no offset" do
+      html = render_component(Command, id: "cmd", options: [])
+
+      refute html =~ "ring-offset"
+    end
+
+    test "the query field is bounded at rest, not only on focus" do
+      html = render_component(Command, id: "cmd", options: [])
+
+      assert html =~ ~r/class="[^"]*\bborder-b border-border-strong\b/
+    end
+
+    test "the query field carries a decorative search icon" do
+      html = render_component(Command, id: "cmd", options: [])
+
+      assert html =~ "hero-magnifying-glass"
+      assert html =~ ~r/<span[^>]*hero-magnifying-glass[^>]*aria-hidden="true"/
     end
 
     test "the result count is announced politely" do

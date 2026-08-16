@@ -27,7 +27,13 @@ loading spinner (`Spinner.spinner :if={@loading} decorative`) is explicitly
 marked `decorative` rather than exposing its own accessible name: the
 component already carries a `role="status"` live region announcing the
 result count, and a second announcing element (the spinner) would compete
-with it — `render/1`. No other images render.
+with it — `render/1`. The query field's leading search icon
+(`Icon.icon name="hero-magnifying-glass"`) renders `aria-hidden="true"`
+by `Icon`'s default, so it adds nothing to the field's accessible name,
+which comes from the `<label>` (see 3.3.2). It is a visual reinforcement
+of the field's purpose, not the sole carrier of it — the label and
+placeholder both state that purpose in text. Test "the query field
+carries a decorative search icon". No other images render.
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
 
@@ -135,18 +141,33 @@ container scrolls vertically only (`overflow-y-auto`) —
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
-**Evidence:** The query input keeps `focus-visible:outline-none` (removing
-the native outline), but its wrapper carries the replacement ring —
-`class="flex items-center gap-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"`
-— `render/1`. This is the house convention for text-input focus rings:
-`Input`'s base container classes put the ring on the wrapper the same way
-(`focus-within:ring-2 focus-within:ring-offset-2` plus a per-color
-`focus-within:ring-{color}`/`focus-within:ring-ring` for neutral) —
-`lib/pulsar/components/input.ex`, `input/1`. `--color-ring` measures
-5.02:1 (light) / 6.72:1 (dark) against the page background (established
-house-wide; see [`calendar.md`](calendar.md)), well above the 3:1
-non-text minimum. Test "the query field's wrapper carries a visible focus
-ring".
+**Evidence:** Two boundaries carry the query field, both above the 3:1
+non-text minimum.
+
+*At rest*, the wrapper's bottom rule marks the field's extent —
+`field_classes/1` emits `border-b border-border-strong`. This is the same
+token `Input`'s neutral outline uses (`border-border-strong bg-background`
+— `lib/pulsar/components/input.ex`, `input/1`), and it is what identifies
+the control once the placeholder has been replaced by the user's query.
+`--color-border-strong` is `gray-500` in both themes, measuring against
+every surface a `command` can sit on: 4.83:1 on `background`, 4.63:1 on
+`surface-1`, 4.39:1 on `surface-2` (light); 4.16:1 / 3.67:1 / 3.04:1
+(dark). The dark `surface-2` pairing is the tightest and still clears 3:1.
+Test "the query field is bounded at rest, not only on focus".
+
+*On focus*, the input keeps `focus-visible:outline-none` (removing the
+native outline) and the wrapper carries the replacement ring —
+`focus-within:ring-2 focus-within:ring-ring`, `field_classes/1`. This is
+the house convention for text-input focus rings: `Input` puts the ring on
+the wrapper the same way. `--color-ring` measures 5.02:1 (light) /
+6.72:1 (dark) against the page background (established house-wide; see
+[`calendar.md`](calendar.md)). Test "the query field's wrapper carries a
+visible focus ring".
+
+The ring deliberately takes no `ring-offset`. `--tw-ring-offset-color`
+resolves to `--color-background`, but a `command` sits on `surface-1` or
+`surface-2`, so an offset would paint a band of the wrong surface around
+the field. Test "the query field's focus ring takes no offset".
 
 **Notes:** The active-row highlight (`data-[active=true]:bg-{color}/10`,
 `@accent`) is a separate, correctly-scoped indicator: it marks *which row
@@ -230,14 +251,18 @@ i18n-overridable) — `render/1`.
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
 **Evidence:** See 1.4.11: the query input's wrapper carries
-`focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2`
-— `render/1` — so tabbing to (or otherwise focusing) the input renders a
-visible ring around it, matching the `Input` component's own focus-ring
-convention (`lib/pulsar/components/input.ex`, `input/1`). Because focus
-never leaves the input during keyboard use (2.4.3), this single ring is
-the only focus event a sighted keyboard user needs signaled, and it now
-renders on every focus. Test "the query field's wrapper carries a visible
-focus ring".
+`focus-within:ring-2 focus-within:ring-ring` — `field_classes/1` — so
+tabbing to (or otherwise focusing) the input renders a visible ring
+around it, matching the `Input` component's own focus-ring convention
+(`lib/pulsar/components/input.ex`, `input/1`). Because focus never leaves
+the input during keyboard use (2.4.3), this single ring is the only focus
+event a sighted keyboard user needs signaled, and it renders on every
+focus. Test "the query field's wrapper carries a visible focus ring".
+
+**Notes:** SC 2.4.13 Focus Appearance — which would additionally require
+the indicator to cover the area of a 2 CSS px perimeter — is Level AAA in
+WCAG 2.2 and therefore out of scope for this AA audit. The ring meets it
+regardless.
 
 ### 2.4.11 Focus Not Obscured (Minimum) (AA, new in 2.2) — ✓ PASS
 

@@ -479,7 +479,7 @@ defmodule Pulsar.Components.Command do
   end
 
   defp field_classes(size) do
-    "flex items-center gap-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 " <>
+    "flex items-center gap-2 border-b border-border-strong focus-within:ring-2 focus-within:ring-ring " <>
       (@row_size[size] || "")
   end
 
@@ -505,6 +505,7 @@ defmodule Pulsar.Components.Command do
     >
       <label for={"#{@id}-input"} class="sr-only">{@label}</label>
       <div class={field_classes(@size)}>
+        <Icon.icon name="hero-magnifying-glass" class="size-4 shrink-0 text-muted-foreground" />
         <input
           type="text"
           id={"#{@id}-input"}
