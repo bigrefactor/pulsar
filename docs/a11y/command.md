@@ -141,19 +141,24 @@ container scrolls vertically only (`overflow-y-auto`) —
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
-**Evidence:** Two boundaries carry the query field, both above the 3:1
-non-text minimum.
+**Evidence:** *At rest*, the query field is identified by its leading
+search icon, which renders in `text-muted-foreground` — 6.0:1 to 7.23:1
+across Pulsar's surfaces — well above the 3:1 non-text minimum. This is
+the criterion's stated allowance: where a control carries "visible
+content (such as text or a sufficiently contrasting icon), which helps
+users identify the presence of the control, then a border or other
+indication of the overall boundary of the hit area is not required."
 
-*At rest*, the wrapper's bottom rule marks the field's extent —
-`field_classes/1` emits `border-b border-border-strong`. This is the same
-token `Input`'s neutral outline uses (`border-border-strong bg-background`
-— `lib/pulsar/components/input.ex`, `input/1`), and it is what identifies
-the control once the placeholder has been replaced by the user's query.
-`--color-border-strong` is `gray-500` in both themes, measuring against
-every surface a `command` can sit on: 4.83:1 on `background`, 4.63:1 on
-`surface-1`, 4.39:1 on `surface-2` (light); 4.16:1 / 3.67:1 / 3.04:1
-(dark). The dark `surface-2` pairing is the tightest and still clears 3:1.
-Test "the query field is bounded at rest, not only on focus".
+The wrapper's bottom rule (`border-b border-border-strong/50`,
+`field_classes/1`) therefore reinforces the field's extent rather than
+being the sole identifier, and is deliberately a hairline: `gray-500` at
+50% measures 1.98:1 on `background`, 1.95:1 on `surface-1`, 1.91:1 on
+`surface-2` (light); 1.84:1 / 1.84:1 / 1.73:1 (dark). It stays visible on
+every surface a `command` can sit on. The lighter `--color-border` is
+*not* usable here: it resolves to `gray-800` in the dark theme, which is
+also `--color-surface-2`, so the rule would vanish entirely on a dark
+`solid` command. Test "the query field is bounded at rest, not only on
+focus".
 
 *On focus*, the input keeps `focus-visible:outline-none` (removing the
 native outline) and the wrapper carries the replacement ring —

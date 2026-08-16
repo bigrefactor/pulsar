@@ -257,7 +257,25 @@ defmodule Pulsar.Components.CommandTest do
     test "the query field is bounded at rest, not only on focus" do
       html = render_component(Command, id: "cmd", options: [])
 
-      assert html =~ ~r/class="[^"]*\bborder-b border-border-strong\b/
+      assert html =~ ~r{class="[^"]*\bborder-b border-border-strong/50}
+    end
+
+    test "the query field's rule spans the full width at every size" do
+      for {size, pad} <- [
+            {"xs", "1.5"},
+            {"sm", "2"},
+            {"md", "2"},
+            {"lg", "3"},
+            {"xl", "3"}
+          ] do
+        html = render_component(Command, id: "cmd", options: [], size: size)
+
+        assert html =~ ~r/class="[^"]*\bborder-b\b[^"]*\B-mx-#{Regex.escape(pad)}\b/,
+               "size #{size}: the field should bleed -mx-#{pad} to cancel the surface's px-#{pad}"
+
+        assert html =~ ~r/class="[^"]*\bpx-#{Regex.escape(pad)}\b/,
+               "size #{size}: the surface should still pad px-#{pad}"
+      end
     end
 
     test "the query field carries a decorative search icon" do

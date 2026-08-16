@@ -82,6 +82,16 @@ defmodule Pulsar.Components.Command do
     "xl" => "px-3 py-2.5 text-base"
   }
 
+  # Cancels the surface's own horizontal padding so the query field's rule
+  # reaches the panel edge while its content stays aligned with the rows.
+  @field_bleed %{
+    "xs" => "-mx-1.5",
+    "sm" => "-mx-2",
+    "md" => "-mx-2",
+    "lg" => "-mx-3",
+    "xl" => "-mx-3"
+  }
+
   defmodule Option do
     @moduledoc """
     One row in a `command` list.
@@ -479,8 +489,8 @@ defmodule Pulsar.Components.Command do
   end
 
   defp field_classes(size) do
-    "flex items-center gap-2 border-b border-border-strong focus-within:ring-2 focus-within:ring-ring " <>
-      (@row_size[size] || "")
+    "flex items-center gap-2 border-b border-border-strong/50 focus-within:ring-2 focus-within:ring-ring " <>
+      (@field_bleed[size] || "") <> " " <> (@row_size[size] || "")
   end
 
   defp row_classes(color, size) do
