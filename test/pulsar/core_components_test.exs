@@ -91,7 +91,7 @@ defmodule Pulsar.CoreComponentsTest do
       assert count_attr(html, "id") == 1
     end
 
-    test "table/1 derives a single tbody id from the caller-supplied id" do
+    test "table/1 derives its ids from the caller-supplied id without repeating one" do
       assigns = %{}
 
       html =
@@ -101,8 +101,11 @@ defmodule Pulsar.CoreComponentsTest do
         </CoreComponents.table>
         """)
 
-      assert html =~ ~s(id="users-tbody")
-      assert count_attr(html, "id") == 1
+      ids = Regex.scan(~r/ id="([^"]*)"/, html, capture: :all_but_first) |> List.flatten()
+
+      assert "users-tbody" in ids
+      assert ids == Enum.uniq(ids)
+      assert Enum.all?(ids, &String.starts_with?(&1, "users"))
     end
 
     test "list/1 emits a caller-supplied id exactly once" do

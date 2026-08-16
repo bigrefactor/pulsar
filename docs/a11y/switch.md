@@ -93,8 +93,10 @@ values (e.g., `translate-x-[24px]`) — `lib/pulsar/components/switch.ex`,
   (`bg-{color}/90` solid, `bg-{color}/10 border-{color}` outline,
   `bg-{color}/15` ghost) — `lib/pulsar/components/switch.ex`, `track_variant_classes/2`
 - Focus ring on the **visible track** (not the `sr-only` input) uses
-  `peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background`
-  — `lib/pulsar/components/switch.ex`, `base_switch_classes/0`
+  `peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2`
+  — `lib/pulsar/components/switch.ex`, `base_switch_classes/0`. The 2px offset
+  draws in `--color-background` under every theme via the library-wide default
+  in `assets/css/theme.css`.
 - Thumb has shadow rings —
   `lib/pulsar/components/switch.ex`, `thumb_variant_classes/1`
 

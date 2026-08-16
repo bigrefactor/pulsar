@@ -93,6 +93,30 @@ defmodule Pulsar.Integration.A11y.Keyboard.TableTest do
       |> assert_has(~s|#kbd-table-sortable th[aria-sort="none"] .hero-chevron-up-down|)
     end
 
+    test "a sortable header keeps focus across an async reload", %{conn: conn} do
+      conn
+      |> visit("/keyboard/table")
+      |> A11y.await_live_connected()
+      |> assert_has("#kbd-table-async-reloads", text: "0")
+      |> press(~s|#kbd-table-async thead button|, "Enter")
+      |> assert_has("#kbd-table-async-reloads", text: "1")
+      |> assert_has(~s|#kbd-table-async th[aria-sort="ascending"]|)
+      |> A11y.assert_focused("kbd-table-async-inner-sort-0")
+    end
+
+    test "a streamed table keeps its rows across a load", %{conn: conn} do
+      conn
+      |> visit("/keyboard/table")
+      |> A11y.await_live_connected()
+      |> assert_has("#kbd-table-stream tbody tr#people-ada")
+      |> assert_has("#kbd-table-stream tbody tr#people-grace")
+      |> click("#kbd-table-stream-reload")
+      |> assert_has("#kbd-table-stream-reloads", text: "1")
+      |> assert_has("#kbd-table-stream tbody tr#people-ada")
+      |> assert_has("#kbd-table-stream tbody tr#people-grace")
+      |> refute_has("#kbd-table-stream .animate-pulse-subtle")
+    end
+
     test "a sortable header label aligns with its own data cells", %{conn: conn} do
       session =
         conn

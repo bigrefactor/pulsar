@@ -214,7 +214,6 @@ defmodule Pulsar.Components.Switch do
                          "transform-gpu " <>
                          "peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 " <>
                          "peer-focus-visible:ring-ring " <>
-                         "peer-focus-visible:ring-offset-background " <>
                          "data-[disabled=true]:opacity-disabled data-[disabled=true]:cursor-not-allowed data-[disabled=true]:pointer-events-none " <>
                          "data-[loading=true]:cursor-wait " <>
                          "shadow-inner shadow-black/5 " <>

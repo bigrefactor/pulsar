@@ -36,6 +36,14 @@
   body {
     background-color: var(--color-background);
   }
+
+  /* Focus-ring offset default. Declared per element, not on `:root` —
+     `--tw-ring-offset-color` is registered with `inherits: false`. */
+  *,
+  ::before,
+  ::after {
+    --tw-ring-offset-color: var(--color-background);
+  }
 }
 
 @theme inline {

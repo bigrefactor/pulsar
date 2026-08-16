@@ -215,9 +215,11 @@ the global-`:rest` passthrough path.
 ### 2.4.7 Focus Visible (AA) — ✓ PASS
 
 **Evidence:** Row focus uses
-`focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background`
+`focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`
 — `lib/pulsar/components/table.ex`, `build_row_classes/1`. Ring resolves to the standard
-`--color-ring` token at 5.02:1 (light) / 6.72:1 (dark).
+`--color-ring` token at 5.02:1 (light) / 6.72:1 (dark). The 2px offset draws in
+`--color-background` under every theme via the library-wide default in
+`assets/css/theme.css`.
 
 Sortable header buttons use `hover:bg-foreground/10` and
 `focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-current` —
@@ -309,13 +311,23 @@ noting.
 ### 4.1.3 Status Messages (AA) — ✓ PASS
 
 **Evidence:**
-- Loading state renders a visually-hidden `role="status" aria-live="polite"`
-  region announcing "Loading rows" — `lib/pulsar/components/table.ex`, `table/1`
+- A visually-hidden `role="status" aria-live="polite"` region is always
+  present, gaining the text "Loading rows" while loading —
+  `lib/pulsar/components/table.ex`, `table/1`
 - `aria-busy="true"` set on the `<table>` while loading —
+  `lib/pulsar/components/table.ex`, `table/1`
+- The previous rows stay mounted but `hidden` during a load, so assistive
+  technology reads neither stale data nor the decorative skeleton rows —
   `lib/pulsar/components/table.ex`, `table/1`
 
 **Notes:** Loading skeletons are visual; the SR announcement and
-`aria-busy` together convey state programmatically.
+`aria-busy` together convey state programmatically. The region is in the
+DOM before its text changes, which is what makes the change announceable —
+a live region inserted together with its content is announced
+inconsistently. Keeping it mounted also keeps the sibling `<table>` in
+place across a load, so a keyboard user's focus on a sort header survives
+the patch — `test/integration/a11y/keyboard/table_test.exs`, "a sortable
+header keeps focus across an async reload".
 
 ## Not applicable
 
