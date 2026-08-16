@@ -70,6 +70,65 @@ defmodule Pulsar.Integration.A11y.Keyboard.PopoverTest do
       |> A11y.assert_visible("kbd-pop-patch")
     end
 
+    # The `kbd-pop-form` cell holds a form whose `phx-submit` pushes the event
+    # and then dispatches `pulsar:popover-hide` at the panel. The native
+    # `popovertarget` attributes can't close a panel from a submit button, so
+    # this path exists only through the hook's event listener.
+    #
+    # The reopen at the end is the part that matters: a `display: none` close
+    # (what `JS.hide` would do) leaves the panel in the top layer, and the next
+    # `showPopover()` throws — the panel never comes back.
+    #
+    # Verification: remove the `pulsar:popover-hide` listener from `mounted()`
+    # in the `.PulsarPopover` hook (priv/templates/popover.ex.eex +
+    # `mix pulsar.sync`), run `MIX_ENV=test mix assets.build`, re-run — the
+    # panel stays open after submit.
+
+    test "submitting a form inside the panel pushes the event and closes the panel", %{conn: conn} do
+      conn
+      |> visit("/keyboard/popover")
+      |> A11y.await_live_connected()
+      |> click("#kbd-pop-form-trigger")
+      |> A11y.assert_visible("kbd-pop-form")
+      |> click("#kbd-pop-form-submit")
+      |> assert_has("#kbd-pop-form-applied", text: "blue")
+      |> assert_has(~s|#kbd-pop-form-trigger[aria-expanded="false"]|)
+      |> A11y.refute_visible("kbd-pop-form")
+      |> A11y.assert_focused("kbd-pop-form-trigger")
+      |> click("#kbd-pop-form-trigger")
+      |> A11y.assert_visible("kbd-pop-form")
+    end
+
+    # The other half of the close-focus rule: a panel the user never focused
+    # into doesn't own focus, so closing it must leave focus where it is rather
+    # than pulling it to the trigger. The event is dispatched directly here
+    # because clicking any control outside an open `popover="auto"` panel
+    # light-dismisses it before a `phx-click` could run.
+
+    test "closing a panel that never held focus leaves focus alone", %{conn: conn} do
+      conn
+      |> visit("/keyboard/popover")
+      |> A11y.await_live_connected()
+      |> click("#kbd-pop-form-trigger")
+      |> A11y.assert_visible("kbd-pop-form")
+      |> A11y.focus("kbd-pop-before")
+      |> PhoenixTest.Playwright.evaluate(
+        ~s|document.getElementById("kbd-pop-form").dispatchEvent(new CustomEvent("pulsar:popover-hide", {bubbles: true}))|
+      )
+      |> A11y.refute_visible("kbd-pop-form")
+      |> A11y.assert_focused("kbd-pop-before")
+    end
+
+    test "a JS.dispatch from outside the panel opens it", %{conn: conn} do
+      conn
+      |> visit("/keyboard/popover")
+      |> A11y.await_live_connected()
+      |> click("#kbd-pop-form-show-outside")
+      |> assert_has(~s|#kbd-pop-form[data-state="open"]|)
+      |> assert_has(~s|#kbd-pop-form-trigger[aria-expanded="true"]|)
+      |> A11y.assert_visible("kbd-pop-form")
+    end
+
     test "Tab from inside the open panel is not trapped", %{conn: conn} do
       conn
       |> visit("/keyboard/popover")

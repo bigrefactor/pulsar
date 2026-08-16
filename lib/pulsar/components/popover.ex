@@ -48,6 +48,28 @@ defmodule Pulsar.Components.Popover do
     or the panel, and dismisses on leave, blur, or Escape. Use it for
     tooltip-style, non-interactive overlays.
 
+  ## Programmatic control
+
+  `show/1` and `hide/1` return `Phoenix.LiveView.JS` commands that open and close
+  the panel by `id`, for the cases the trigger can't cover. The most common is a
+  form inside the panel that should submit *and* dismiss it — a submit button
+  can't use the native `popovertarget` attributes, because the browser ignores
+  them on any button that submits a form:
+
+      <.popover id="filters">
+        <:trigger>
+          <.button>Filters</.button>
+        </:trigger>
+
+        <.form for={@form} phx-submit={JS.push("apply") |> Popover.hide("filters")}>
+          <.input field={@form[:query]} label="Query" />
+          <.button type="submit">Apply</.button>
+        </.form>
+      </.popover>
+
+  Both helpers take an optional leading `JS` command to compose onto an existing
+  pipeline, and both work in either `trigger_mode`.
+
   ## Accessibility
 
   - In `trigger_mode="click"`, the trigger exposes `aria-controls` and
@@ -264,6 +286,25 @@ defmodule Pulsar.Components.Popover do
           this.mode = this.el.dataset.trigger || "click"
           this._reposition = () => this.position()
 
+          // Popovers nest, so a dispatch aimed at this panel must not bubble to
+          // an ancestor panel and close that one too.
+          this._onShowEvent = (event) => {
+            event.stopPropagation()
+            this.show()
+          }
+          this._onHideEvent = (event) => {
+            event.stopPropagation()
+            this.hide()
+          }
+          this.el.addEventListener("pulsar:popover-show", this._onShowEvent)
+          this.el.addEventListener("pulsar:popover-hide", this._onHideEvent)
+
+          this._heldFocus = false
+          this._onPanelFocusIn = () => {
+            this._heldFocus = true
+          }
+          this.el.addEventListener("focusin", this._onPanelFocusIn)
+
           if (this.mode === "hover") {
             this.setupHover()
           } else {
@@ -376,7 +417,16 @@ defmodule Pulsar.Components.Popover do
 
         hide() {
           if (!this.el.matches(":popover-open")) return
+          // Closing a panel that owns focus has to hand it back to the trigger,
+          // the way Escape does. A form submit inside the panel blurs before the
+          // close reaches us, so a panel focused earlier in this open still
+          // counts while nothing else has claimed focus.
+          const active = document.activeElement
+          const ownsFocus =
+            this.el.contains(active) ||
+            (this._heldFocus && (!active || active === document.body))
           this.el.hidePopover()
+          if (ownsFocus && this.trigger) this.trigger.focus()
           this.onStateChange("closed")
         },
 
@@ -395,11 +445,16 @@ defmodule Pulsar.Components.Popover do
 
         onStateChange(newState) {
           const open = newState === "open"
+          // In click mode a programmatic show/hide reports the new state here and
+          // the browser queues a `toggle` event that reports it again; run the
+          // callbacks once per real transition.
+          if (this.el.dataset.state === (open ? "open" : "closed")) return
           this.el.dataset.state = open ? "open" : "closed"
           if (this.mode === "click" && this.trigger) {
             this.trigger.setAttribute("aria-expanded", open ? "true" : "false")
           }
           if (open) {
+            this._heldFocus = false
             this.addRepositionListeners()
             this.position()
             this.runCallback("onOpen")
@@ -506,6 +561,9 @@ defmodule Pulsar.Components.Popover do
         },
 
         destroyed() {
+          this.el.removeEventListener("pulsar:popover-show", this._onShowEvent)
+          this.el.removeEventListener("pulsar:popover-hide", this._onHideEvent)
+          this.el.removeEventListener("focusin", this._onPanelFocusIn)
           if (this.mode === "click") {
             this.el.removeEventListener("toggle", this._onToggle)
           } else {
@@ -530,6 +588,39 @@ defmodule Pulsar.Components.Popover do
     </script>
     """
   end
+
+  # ============================================================================
+  # PUBLIC API
+  # ============================================================================
+
+  # Each helper is two explicit arities instead of `js \\ %JS{}`: the one-arg form
+  # lets `JS.dispatch/2` build the empty pipeline *inside* the JS module, so we
+  # never construct the opaque `JS.t()` here (which would trip
+  # `call_without_opaque`). The two-arg form composes onto a caller's JS pipeline.
+
+  @doc """
+  Opens the panel. Pass the popover `id`.
+
+      <button phx-click={Popover.show("filters")}>Show filters</button>
+  """
+  def show(id), do: JS.dispatch("pulsar:popover-show", to: "##{id}")
+
+  @doc """
+  Opens the panel, composing onto an existing `Phoenix.LiveView.JS` pipeline.
+  """
+  def show(js, id), do: JS.dispatch(js, "pulsar:popover-show", to: "##{id}")
+
+  @doc """
+  Closes the panel. Pass the popover `id`.
+
+      <.form phx-submit={JS.push("apply") |> Popover.hide("filters")}>
+  """
+  def hide(id), do: JS.dispatch("pulsar:popover-hide", to: "##{id}")
+
+  @doc """
+  Closes the panel, composing onto an existing `Phoenix.LiveView.JS` pipeline.
+  """
+  def hide(js, id), do: JS.dispatch(js, "pulsar:popover-hide", to: "##{id}")
 
   # ============================================================================
   # HELPER FUNCTIONS

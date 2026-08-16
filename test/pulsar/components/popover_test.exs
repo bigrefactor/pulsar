@@ -259,6 +259,23 @@ defmodule Pulsar.Components.PopoverTest do
     end
   end
 
+  describe "popover/1 show/hide JS commands" do
+    test "show/1 and hide/1 dispatch the popover events at the panel" do
+      assert Popover.show("filters") == JS.dispatch("pulsar:popover-show", to: "#filters")
+      assert Popover.hide("filters") == JS.dispatch("pulsar:popover-hide", to: "#filters")
+    end
+
+    test "show/2 and hide/2 compose onto an existing JS pipeline" do
+      base = JS.push("apply")
+
+      assert Popover.show(base, "filters") ==
+               JS.dispatch(base, "pulsar:popover-show", to: "#filters")
+
+      assert Popover.hide(base, "filters") ==
+               JS.dispatch(base, "pulsar:popover-hide", to: "#filters")
+    end
+  end
+
   describe "popover/1 id handling" do
     test "renders the caller's id unchanged" do
       assigns = %{}
