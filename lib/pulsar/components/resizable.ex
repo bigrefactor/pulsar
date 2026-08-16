@@ -448,13 +448,13 @@ defmodule Pulsar.Components.Resizable do
   defp handle_classes("vertical") do
     "group/handle absolute inset-0 flex cursor-row-resize items-center " <>
       "justify-center touch-none select-none outline-none focus-visible:ring-2 focus-visible:ring-ring " <>
-      "focus-visible:ring-offset-1 focus-visible:ring-offset-background"
+      "focus-visible:ring-offset-1"
   end
 
   defp handle_classes(_) do
     "group/handle absolute inset-0 flex cursor-col-resize items-center " <>
       "justify-center touch-none select-none outline-none focus-visible:ring-2 focus-visible:ring-ring " <>
-      "focus-visible:ring-offset-1 focus-visible:ring-offset-background"
+      "focus-visible:ring-offset-1"
   end
 
   @spec line_classes(String.t()) :: String.t()

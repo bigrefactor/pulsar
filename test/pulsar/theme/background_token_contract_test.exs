@@ -21,7 +21,14 @@ defmodule Pulsar.Theme.BackgroundTokenContractTest do
     css = File.read!(@entry)
 
     assert css =~
-             ~r/@layer\s+base\s*\{\s*body\s*\{\s*background-color:\s*var\(--color-background\);\s*\}\s*\}/s
+             ~r/@layer\s+base\s*\{\s*body\s*\{\s*background-color:\s*var\(--color-background\);\s*\}/s
+  end
+
+  test "theme entry points the focus-ring offset at the page ground" do
+    css = File.read!(@entry)
+
+    assert css =~
+             ~r/\*,\s*::before,\s*::after\s*\{\s*--tw-ring-offset-color:\s*var\(--color-background\);\s*\}/s
   end
 
   test "the development sandbox does not override background utilities" do

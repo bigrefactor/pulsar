@@ -44,6 +44,28 @@ defmodule Pulsar.Components.TableTest do
       assert find(header, "button[aria-sort]") == []
     end
 
+    test "gives every column header and sort button an id derived from the table id" do
+      assigns = %{rows: []}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="people" rows={@rows} aria_label="People">
+          <:col label="Name" sortable on_sort="sort" />
+          <:col label="Email" />
+          <:col label="Role" sortable on_sort="sort" />
+        </Table.table>
+        """)
+
+      document = LazyHTML.from_fragment(html)
+
+      ids = fn selector ->
+        document |> find(selector) |> Enum.flat_map(&LazyHTML.attribute(&1, "id"))
+      end
+
+      assert ids.("thead th[scope=col]") == ~w(people-col-0 people-col-1 people-col-2)
+      assert ids.("thead button") == ~w(people-sort-0 people-sort-2)
+    end
+
     test "supports every valid aria-sort value with the default Heroicons" do
       expected_icons = %{
         "none" => "hero-chevron-up-down",
@@ -557,8 +579,56 @@ defmodule Pulsar.Components.TableTest do
         </Table.table>
         """)
 
-      refute html =~ ~s(Alice)
-      assert html =~ ~s(animate-pulse-subtle)
+      document = LazyHTML.from_fragment(html)
+
+      [data_body] = find(document, "tbody#users-tbody")
+      assert LazyHTML.attribute(data_body, "hidden") == [""]
+      assert LazyHTML.text(data_body) =~ "Alice"
+
+      assert find(document, "tbody#users-loading .animate-pulse-subtle") != []
+    end
+
+    test "keeps the data body mounted and unhidden when not loading" do
+      assigns = %{users: [%{name: "Alice"}]}
+
+      html =
+        rendered_to_string(~H"""
+        <Table.table id="users" rows={@users} loading={false}>
+          <:col :let={user} label="Name">{user.name}</:col>
+        </Table.table>
+        """)
+
+      document = LazyHTML.from_fragment(html)
+
+      [data_body] = find(document, "tbody#users-tbody")
+      assert LazyHTML.attribute(data_body, "hidden") == []
+      assert find(document, "tbody#users-loading") == []
+    end
+
+    test "keeps the status region in the DOM when idle so the table is not rebuilt on load" do
+      assigns = %{users: [%{name: "Alice"}]}
+
+      idle =
+        rendered_to_string(~H"""
+        <Table.table id="users" rows={@users} loading={false} aria_label="Users">
+          <:col :let={user} label="Name">{user.name}</:col>
+        </Table.table>
+        """)
+
+      loading =
+        rendered_to_string(~H"""
+        <Table.table id="users" rows={@users} loading={true} aria_label="Users">
+          <:col :let={user} label="Name">{user.name}</:col>
+        </Table.table>
+        """)
+
+      for html <- [idle, loading] do
+        [region] = html |> LazyHTML.from_fragment() |> find(~s(div[role=status][aria-live=polite]))
+        assert LazyHTML.attribute(region, "class") == ["sr-only"]
+      end
+
+      refute idle =~ ~s(Loading rows)
+      assert loading =~ ~s(Loading rows)
     end
   end
 

@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - Table Keeps Focus and Streamed Rows Across a Load; Focus Rings Follow the Theme
+
+- **A keyboard user no longer loses focus when a sortable header reloads the
+  table.** The loading region rendered as a sibling before `<table>`, so
+  flipping it rebuilt the table and destroyed the header the user had just
+  activated — focus landed on `<body>`, and every subsequent Tab restarted from
+  the top of the document. The region is now always mounted with only its text
+  conditional, which also makes the announcement reliable: a live region
+  inserted together with its content is announced inconsistently.
+- **Column headers and sort buttons carry ids derived from the table id**
+  (`<table-id>-col-<n>`, `<table-id>-sort-<n>`), keeping `aria-sort` attached to
+  the same element across a reload.
+- **A streamed table no longer loses every row after a load.** Setting
+  `loading` on a table backed by `@streams.*` emptied it: a stream's inserts are
+  consumed on their first render and never re-sent, so the rows exist only in
+  the client's DOM, and the data `<tbody>` was being replaced by the skeleton
+  one. The data body now stays mounted and `hidden` while loading. Visible
+  change: the previous rows are in the DOM during a load rather than removed,
+  though `hidden` keeps them out of the render and the accessibility tree.
+- **Focus rings no longer paint a white halo in dark themes.** `ring-offset-2`
+  is used across 19 components, but no theme defined
+  `--tw-ring-offset-color`, so every offset drew Tailwind's `#fff` default —
+  correct against a light surface, a bright halo against a dark one. Themes now
+  default it to `--color-background`, so the prevailing
+  `focus-visible:ring-2 ring-ring ring-offset-2` idiom is theme-correct
+  wherever it is copied, including into your own markup. Light themes are
+  unchanged; no per-call-site class is needed, and any explicit
+  `ring-offset-*` still wins.
+
 ### Changed - `badge` Is Now a Two-Action Token
 
 - **`on_remove` + `remove_label` render a labeled dismiss control**, so a

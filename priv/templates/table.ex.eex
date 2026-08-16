@@ -427,14 +427,7 @@ def table(assigns) do
   ~H"""
   <div class={@container_classes} data-reflow-allowed>
     <!-- Loading status announcement for screen readers -->
-    <div
-      :if={@loading}
-      role="status"
-      aria-live="polite"
-      class="sr-only"
-    >
-      Loading rows
-    </div>
+    <div role="status" aria-live="polite" class="sr-only">{if @loading, do: "Loading rows"}</div>
     <table
       {@rest}
       aria-busy={to_string(@loading)}
@@ -448,13 +441,15 @@ def table(assigns) do
       <thead class={@header_classes}>
         <tr>
           <th
-            :for={col <- @col}
+            :for={{col, index} <- Enum.with_index(@col)}
+            id={"#{@id}-col-#{index}"}
             scope="col"
             aria-sort={Map.get(col, :sortable, false) && sort_direction(col)}
             class={build_header_cell_classes(@size, col[:align], col[:class])}
           >
             <button
               :if={Map.get(col, :sortable, false)}
+              id={"#{@id}-sort-#{index}"}
               type="button"
               phx-click={col[:on_sort]}
               class={build_sort_button_classes(col[:align])}
@@ -475,8 +470,8 @@ def table(assigns) do
         </tr>
       </thead>
       <tbody
-        :if={!@loading}
         id={"#{@id}-tbody"}
+        hidden={@loading}
         phx-update={@is_stream && "stream"}
         phx-hook=".PulsarTableRow"
         class={@tbody_classes}
@@ -518,7 +513,7 @@ def table(assigns) do
           action={@action}
         />
       </tbody>
-      <tbody :if={@loading} class={@tbody_classes}>
+      <tbody :if={@loading} id={"#{@id}-loading"} class={@tbody_classes}>
         <tr :for={_ <- 1..5} class={@row_classes}>
           <td :for={_col <- @col} class={build_data_cell_classes(@size, "left", "")}>
             <div class="animate-pulse-subtle bg-surface-1 h-4 rounded"></div>
@@ -853,7 +848,7 @@ defp build_row_classes(assigns) do
       [
         "cursor-pointer",
         "hover:bg-surface-1-hover",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       ]
   ]
   |> Enum.filter(& &1)
