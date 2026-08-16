@@ -552,6 +552,7 @@ defmodule Pulsar.Components.Menu do
             id={"#{@id}-trigger"}
             data-menu-trigger
             data-menu-item
+            popovertarget={"#{@id}-panel"}
             aria-expanded="false"
             aria-controls={"#{@id}-panel"}
             class={[@trigger_classes, "group/trigger"]}

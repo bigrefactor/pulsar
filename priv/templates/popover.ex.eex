@@ -303,6 +303,11 @@ def popover(assigns) do
         }
         this._onToggle = (e) => this.onStateChange(e.newState)
         this.el.addEventListener("toggle", this._onToggle)
+        // A trigger carrying `popovertarget` in the server's markup can invoke
+        // the panel before this hook mounts, and that `toggle` fired with no
+        // listener attached — adopt the open panel rather than leaving it
+        // unpositioned and reporting itself closed.
+        if (this.el.matches(":popover-open")) this.onStateChange("open")
       },
 
       // Hover mode: a [popover="manual"] panel opened on hover/focus and closed

@@ -376,8 +376,11 @@ defmodule Pulsar.Components.MenuTest do
       assert html =~ ~s(popover="auto")
       assert html =~ ~s(id="grp-panel")
       assert html =~ ~s(data-menu-panel)
-      # The trigger keeps the APG disclosure wiring server-side.
+      # The trigger keeps the APG disclosure wiring server-side, including the
+      # native invoker: a client-applied popovertarget is reverted by the first
+      # patch that re-renders the trigger, which leaves the control dead.
       assert html =~ ~s(data-menu-trigger)
+      assert html =~ ~s(popovertarget="grp-panel")
       assert html =~ ~s(aria-expanded="false")
       assert html =~ ~s(aria-controls="grp-panel")
       # The trigger is a roving menu item (arrow nav + callback bridge depend on it).

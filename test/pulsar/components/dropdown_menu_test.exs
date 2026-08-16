@@ -375,6 +375,12 @@ defmodule Pulsar.Components.DropdownMenuTest do
       # The submenu trigger is itself a menuitem that announces a popup menu.
       assert html =~ ~s(aria-haspopup="menu")
       assert html =~ "data-menu-item"
+      # It invokes its own panel from the server's markup: a client-applied
+      # popovertarget is reverted by the first patch that re-renders the
+      # trigger, which leaves the submenu unopenable.
+      assert html =~ ~s(popovertarget="sub")
+      assert html =~ ~s(aria-expanded="false")
+      assert html =~ ~s(aria-controls="sub")
       # A nested role="menu" panel (root + submenu => the role appears twice).
       assert html =~ "hero-chevron-right"
       assert length(String.split(html, ~s(role="menu"))) - 1 >= 2

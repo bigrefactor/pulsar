@@ -69,6 +69,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   was silently dropping the tooltip's description off its trigger. This reaches
   everything built on the primitive — `dropdown_menu`, `tooltip`, `date_picker`,
   and `menu`'s horizontal groups.
+- **Every trigger Pulsar renders itself now carries its own invoker.**
+  `menu`'s horizontal group trigger, `dropdown_menu`'s submenu trigger, and
+  `date_picker`'s calendar button emit `popovertarget`, `aria-controls`, and
+  `aria-expanded` from the server rather than waiting for the hook to stamp
+  them. These controls no longer depend on client wiring at all — they work
+  before the hook mounts, and they survive a patch that replaces the trigger
+  element outright, which the ignore marker above cannot. A caller-supplied
+  `:trigger` is still wired by the hook; only Pulsar-authored markup can carry
+  the attribute directly.
 
 ### Fixed - `button` Accepts the Native Invoker Attributes
 

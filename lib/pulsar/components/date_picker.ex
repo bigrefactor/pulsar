@@ -166,6 +166,9 @@ defmodule Pulsar.Components.DatePicker do
             <button
               type="button"
               aria-label="Open calendar"
+              popovertarget={@id <> "-pop"}
+              aria-expanded="false"
+              aria-controls={@id <> "-pop"}
               disabled={@disabled}
               class="flex items-center text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-field"
             >

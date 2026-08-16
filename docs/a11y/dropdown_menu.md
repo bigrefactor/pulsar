@@ -36,7 +36,10 @@ the panel is `role="menu"`
 `role="menuitemradio"` with `aria-checked` (`dropdown_menu_radio_item/1`); groups are `role="group"`
 with `aria-labelledby` to their heading (`dropdown_menu_group/1`); separators are
 `role="separator"` (`dropdown_menu_separator/1`). The trigger exposes `aria-haspopup="menu"` and (via
-the popover hook) `aria-expanded` (`dropdown_menu/1`, `lib/pulsar/components/popover.ex`, `popover/1`).
+the popover hook) `aria-expanded` (`dropdown_menu/1`, `lib/pulsar/components/popover.ex`, `popover/1`);
+a submenu trigger carries `popovertarget`, `aria-controls`, and `aria-expanded` in
+the server's markup, so a patch that re-renders it cannot leave the submenu
+unopenable (`dropdown_menu_submenu/1`).
 Unit tests assert each role/state — `test/pulsar/components/dropdown_menu_test.exs`.
 
 ### 1.3.2 Meaningful Sequence (A) — ✓ PASS
