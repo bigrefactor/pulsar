@@ -7,6 +7,9 @@ defmodule Pulsar.Components.CommandTest do
   alias Pulsar.Components.Command
   alias Pulsar.Components.Command.Option
 
+  # Each size's horizontal surface padding, which the bleed must cancel.
+  @sizes_with_padding [{"xs", "1.5"}, {"sm", "2"}, {"md", "2"}, {"lg", "3"}, {"xl", "3"}]
+
   describe "render/1 skeleton" do
     test "renders a root element carrying the given id" do
       html = render_component(Command, id: "cmd")
@@ -246,7 +249,54 @@ defmodule Pulsar.Components.CommandTest do
 
       assert html =~ "focus-within:ring-2"
       assert html =~ "focus-within:ring-ring"
-      assert html =~ "focus-within:ring-offset-2"
+    end
+
+    test "the query field's focus ring takes no offset" do
+      html = render_component(Command, id: "cmd", options: [])
+
+      refute html =~ "ring-offset"
+    end
+
+    test "the query field is bounded at rest, not only on focus" do
+      html = render_component(Command, id: "cmd", options: [])
+
+      assert html =~ ~r{class="[^"]*\bborder-b border-border-strong/50}
+    end
+
+    test "the query field's rule spans the full width at every size" do
+      for {size, pad} <- @sizes_with_padding do
+        html = render_component(Command, id: "cmd", options: [], size: size)
+
+        assert html =~ ~r/class="[^"]*\bborder-b\b[^"]*\B-mx-#{Regex.escape(pad)}\b/,
+               "size #{size}: the field should bleed -mx-#{pad} to cancel the surface's px-#{pad}"
+
+        assert html =~ ~r/class="[^"]*\bpx-#{Regex.escape(pad)}\b/,
+               "size #{size}: the surface should still pad px-#{pad}"
+      end
+    end
+
+    test "the row highlight spans the full width at every size" do
+      for {size, pad} <- @sizes_with_padding do
+        html = render_component(Command, id: "cmd", options: ["Alpha"], size: size)
+
+        assert html =~ ~r/role="listbox"[^>]*class="[^"]*\B-mx-#{Regex.escape(pad)}\b/s,
+               "size #{size}: the list should bleed -mx-#{pad} so a row's background reaches the panel edge"
+      end
+    end
+
+    test "the row highlight bleeds via the list, not the rows themselves" do
+      html = render_component(Command, id: "cmd", options: ["Alpha"])
+
+      refute html =~ ~r/data-command-option[^>]*class="[^"]*-mx-/,
+             "rows must not carry negative margins: the list is overflow-y-auto, " <>
+               "so horizontal overflow would compute to auto and add a scrollbar"
+    end
+
+    test "the query field carries a decorative search icon" do
+      html = render_component(Command, id: "cmd", options: [])
+
+      assert html =~ "hero-magnifying-glass"
+      assert html =~ ~r/<span[^>]*hero-magnifying-glass[^>]*aria-hidden="true"/
     end
 
     test "the result count is announced politely" do

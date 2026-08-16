@@ -82,6 +82,17 @@ defmodule Pulsar.Components.Command do
     "xl" => "px-3 py-2.5 text-base"
   }
 
+  # Cancels the surface's own horizontal padding. The query field's rule and
+  # the rows' highlight reach the panel edge; their own padding keeps the
+  # content aligned.
+  @bleed %{
+    "xs" => "-mx-1.5",
+    "sm" => "-mx-2",
+    "md" => "-mx-2",
+    "lg" => "-mx-3",
+    "xl" => "-mx-3"
+  }
+
   defmodule Option do
     @moduledoc """
     One row in a `command` list.
@@ -479,8 +490,12 @@ defmodule Pulsar.Components.Command do
   end
 
   defp field_classes(size) do
-    "flex items-center gap-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 " <>
-      (@row_size[size] || "")
+    "flex items-center gap-2 border-b border-border-strong/50 focus-within:ring-2 focus-within:ring-ring " <>
+      (@bleed[size] || "") <> " " <> (@row_size[size] || "")
+  end
+
+  defp list_classes(size) do
+    "flex-1 min-h-0 overflow-y-auto " <> (@bleed[size] || "")
   end
 
   defp row_classes(color, size) do
@@ -505,6 +520,7 @@ defmodule Pulsar.Components.Command do
     >
       <label for={"#{@id}-input"} class="sr-only">{@label}</label>
       <div class={field_classes(@size)}>
+        <Icon.icon name="hero-magnifying-glass" class="size-4 shrink-0 text-muted-foreground" />
         <input
           type="text"
           id={"#{@id}-input"}
@@ -523,7 +539,7 @@ defmodule Pulsar.Components.Command do
         id={"#{@id}-listbox"}
         role="listbox"
         aria-busy={to_string(@loading)}
-        class="flex-1 min-h-0 overflow-y-auto"
+        class={list_classes(@size)}
       >
         <div
           :for={{chunk, group_index} <- @groups}
