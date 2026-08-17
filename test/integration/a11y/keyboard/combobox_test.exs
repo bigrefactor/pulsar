@@ -30,8 +30,6 @@ defmodule Pulsar.Integration.A11y.Keyboard.ComboboxTest do
       |> A11y.await_live_connected()
       |> fill_in("Pick an owner", with: "beta")
       |> A11y.assert_visible("kbd-form-listbox")
-      # The server renders the closed state on every keystroke, so the open
-      # state has to survive the patch that the keystroke itself provokes.
       |> assert_has(~s|#kbd-form[aria-expanded="true"]|)
       |> assert_has("#kbd-form-listbox", text: "Betamax")
       |> refute_has("#kbd-form-listbox", text: "Alpha")
@@ -212,6 +210,19 @@ defmodule Pulsar.Integration.A11y.Keyboard.ComboboxTest do
       |> assert_has("#kbd-multi-field", text: "Alpha")
     end
 
+    # The badges come from the server pushes; only the enclosing form's
+    # phx-change observes the hidden <select> the hook writes to.
+    test "picks and removals reach the host form through phx-change", %{conn: conn} do
+      conn
+      |> visit("/keyboard/combobox")
+      |> A11y.await_live_connected()
+      |> click("#kbd-multi")
+      |> click("#kbd-multi-option-0")
+      |> assert_has("#kbd-multi-received", text: "alpha")
+      |> click("#kbd-multi-option-1")
+      |> assert_has("#kbd-multi-received", text: "alpha beta")
+    end
+
     test "Backspace on an empty query removes the last badge", %{conn: conn} do
       conn
       |> visit("/keyboard/combobox")
@@ -219,8 +230,10 @@ defmodule Pulsar.Integration.A11y.Keyboard.ComboboxTest do
       |> click("#kbd-multi")
       |> click("#kbd-multi-option-0")
       |> assert_has("#kbd-multi-field", text: "Alpha")
+      |> assert_has("#kbd-multi-received", text: "alpha")
       |> press("#kbd-multi", "Backspace")
       |> refute_has("#kbd-multi-field", text: "Alpha")
+      |> refute_has("#kbd-multi-received", text: "alpha")
     end
   end
 

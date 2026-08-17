@@ -891,8 +891,8 @@ def render(assigns) do
           if (this.multiple()) {
             this.input.value = ""
           } else {
-            // Close first: closing restores the resting display, and the picked
-            // label is what that display now is.
+            // Write the display before closing: closing restores the resting
+            // display, and the picked label is what that display now is.
             this.setDisplay(label)
             this.closeList()
           }
