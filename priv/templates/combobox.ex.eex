@@ -700,6 +700,25 @@ def render(assigns) do
 end
 
 @impl Phoenix.LiveComponent
+def handle_event("select", %{"value" => value}, socket) do
+  selected =
+    if socket.assigns.multiple do
+      Enum.uniq(socket.assigns.selected ++ [value])
+    else
+      [value]
+    end
+
+  {:noreply, put_selected(socket, selected)}
+end
+
+def handle_event("remove", %{"value" => value}, socket) do
+  {:noreply, put_selected(socket, socket.assigns.selected -- [value])}
+end
+
+def handle_event("clear", _params, socket) do
+  {:noreply, put_selected(socket, [])}
+end
+
 def handle_event("query", %{"query" => query}, socket) do
   socket = assign(socket, :query, query)
   %{filter: filter, normalized: options} = socket.assigns
@@ -713,6 +732,21 @@ def handle_event("query", %{"query" => query}, socket) do
   else
     {:noreply, assign_results(socket, run_filter(filter, query, options))}
   end
+end
+
+# Picking resets the query so a reopen starts from the full list, and the
+# locally-held selection stands until the parent sends a different one.
+defp put_selected(socket, selected) do
+  socket = socket |> assign(:selected, selected) |> assign(:query, "")
+
+  socket =
+    if socket.assigns.async do
+      socket |> cancel_async(:filter) |> assign(:loading, false)
+    else
+      socket
+    end
+
+  assign_results(socket, initial_results(socket.assigns))
 end
 
 @impl Phoenix.LiveComponent

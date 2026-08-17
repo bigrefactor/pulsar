@@ -52,4 +52,67 @@ defmodule Pulsar.DevApp.ComboboxLiveTest do
       assert render(element(view, "#cb-async-listbox")) =~ "Remote One"
     end
   end
+
+  describe "select event" do
+    test "selecting a value displays its label", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/components/combobox")
+
+      render_hook(element(view, "#cb-outline-cb"), "select", %{"value" => "beta"})
+
+      assert render(element(view, "#cb-outline")) =~ ~s(value="Beta")
+    end
+
+    test "selecting marks the row aria-selected, not merely active", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/components/combobox")
+
+      render_hook(element(view, "#cb-outline-cb"), "select", %{"value" => "beta"})
+
+      assert render(element(view, "#cb-outline-option-1")) =~ ~s(aria-selected="true")
+      assert render(element(view, "#cb-outline-option-0")) =~ ~s(aria-selected="false")
+    end
+
+    test "selecting resets the query so a reopen starts from the full list", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/components/combobox")
+
+      render_hook(element(view, "#cb-outline-cb"), "query", %{"query" => "beta"})
+      render_hook(element(view, "#cb-outline-cb"), "select", %{"value" => "beta"})
+
+      assert render(element(view, "#cb-outline-listbox")) =~ "Alpha"
+    end
+
+    test "selecting in multiple mode accumulates values", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/components/combobox")
+
+      render_hook(element(view, "#cb-multiple-cb"), "select", %{"value" => "beta"})
+
+      assert render(element(view, "#cb-multiple-cb")) =~ "2 selected"
+    end
+
+    test "selecting the same value twice in multiple mode does not duplicate it", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/components/combobox")
+
+      render_hook(element(view, "#cb-multiple-cb"), "select", %{"value" => "alpha"})
+
+      assert render(element(view, "#cb-multiple-cb")) =~ "1 selected"
+    end
+  end
+
+  describe "remove and clear events" do
+    test "removing drops the value and its badge", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/components/combobox")
+
+      render_hook(element(view, "#cb-multiple-cb"), "remove", %{"value" => "alpha"})
+
+      refute render(element(view, "#cb-multiple-cb")) =~ "data-combobox-badge"
+    end
+
+    test "clearing empties a single-select value", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/components/combobox")
+      assert render(element(view, "#cb-selected")) =~ ~s(value="Beta")
+
+      render_hook(element(view, "#cb-selected-cb"), "clear", %{})
+
+      refute render(element(view, "#cb-selected")) =~ ~s(value="Beta")
+    end
+  end
 end
