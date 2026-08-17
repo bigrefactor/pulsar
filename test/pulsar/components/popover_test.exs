@@ -276,6 +276,63 @@ defmodule Pulsar.Components.PopoverTest do
     end
   end
 
+  describe "trigger_mode=\"manual\"" do
+    test "renders a manual popover with no trigger" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Popover.popover id="pop" trigger_mode="manual" anchor="#field">
+          <p>Panel</p>
+        </Popover.popover>
+        """)
+
+      assert html =~ ~s(popover="manual")
+      assert html =~ ~s(data-trigger="manual")
+      assert html =~ ~s(data-anchor="#field")
+      refute html =~ "popovertarget"
+    end
+
+    test "raises when anchor is omitted in manual mode" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/requires an :anchor/, fn ->
+        rendered_to_string(~H"""
+        <Popover.popover id="pop" trigger_mode="manual">
+          <p>Panel</p>
+        </Popover.popover>
+        """)
+      end
+    end
+
+    test "raises when the trigger slot is omitted in click mode" do
+      assigns = %{}
+
+      assert_raise ArgumentError, ~r/requires a :trigger/, fn ->
+        rendered_to_string(~H"""
+        <Popover.popover id="pop">
+          <p>Panel</p>
+        </Popover.popover>
+        """)
+      end
+    end
+
+    test "click mode still renders an auto popover with its trigger" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Popover.popover id="pop">
+          <:trigger><button>Open</button></:trigger>
+          <p>Panel</p>
+        </Popover.popover>
+        """)
+
+      assert html =~ ~s(popover="auto")
+      assert html =~ "Open"
+    end
+  end
+
   describe "popover/1 id handling" do
     test "renders the caller's id unchanged" do
       assigns = %{}

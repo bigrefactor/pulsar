@@ -715,4 +715,27 @@ defmodule Pulsar.Components.RadioGroupTest do
       assert html =~ ~s(id="custom")
     end
   end
+
+  # Each radio is its own submitted control, so an external association has to
+  # reach every one of them, in both the default and card renders.
+  describe "radio_group/1 form association" do
+    for {label, card} <- [{"default", false}, {"card", true}] do
+      test "#{label} radios carry form" do
+        assigns = %{card: unquote(card)}
+
+        html =
+          rendered_to_string(~H"""
+          <.radio_group name="plan" card={@card} form="signup-form">
+            <:option value="basic">Basic</:option>
+            <:option value="pro">Pro</:option>
+          </.radio_group>
+          """)
+
+        radios = Regex.scan(~r/<input[^>]*type="radio"[^>]*>/, html) |> Enum.map(&hd/1)
+
+        assert length(radios) == 2
+        assert Enum.all?(radios, &(&1 =~ ~s(form="signup-form"))), "not every radio carries form="
+      end
+    end
+  end
 end

@@ -7,6 +7,83 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Combobox: A Typeahead Form Control
+
+- **New `combobox` component**: a text input that filters a list of options as
+  you type and writes the picked option into a form field. The input holds the
+  query, a popover anchored to the field lists the matches, and picking one
+  makes it the field's value. It carries combobox semantics
+  (`role="combobox"` + `role="listbox"` with a roving `aria-activedescendant`),
+  ↑/↓ to move, Enter to pick, Escape to dismiss, a chevron that opens the list
+  without typing, and a clear button. Unlike `command` — which holds no value
+  and runs a callback — `combobox` is a form control: it renders the hidden
+  input (or hidden `<select multiple>`) your form submits.
+- **`multiple` collects several values as removable badges**, each with a
+  labeled dismiss control, and Backspace on an empty query removes the last one.
+  The list stays open across picks so a run of selections is one interaction.
+- **Filtering is a function you supply**: `filter` is `(query, options)` and
+  defaults to a built-in case-insensitive subsequence matcher ranked by how
+  tightly the match is packed. Pass `async` to run an I/O-bound source
+  off-process — it cancels the in-flight request on the next keystroke and shows
+  a spinner while it runs — and `display` to name the labels of values a remote
+  source has not listed. `debounce` defaults to 0 when synchronous and 250ms
+  when `async`.
+- **`options` takes the same shapes as `select`**: scalars, `{label, value}`
+  tuples, keyword options with `:key` and `:value` (plus optional `:icon`,
+  `:description`, and `:disabled`), and `{group_label, options}` pairs, which
+  render as labelled `role="group"` sections.
+- **`field` dispatches to it with `type="combobox"`**, so a combobox gets the
+  same label, error, and `aria-describedby` wiring as every other input type;
+  `filter`, `async`, and `display` pass through.
+- **`:item` and `:empty` slots** replace the default row and empty-state markup,
+  and every string it renders — the empty text, the result counts, the button
+  labels — is an overridable attr for `gettext`.
+- Ships with a generator (`mix pulsar.gen.combobox`), a Storybook story, and a
+  WCAG 2.2 AA audit at `docs/a11y/combobox.md`.
+
+### Fixed - Form Controls Honor `disabled` and `form` on the Element the Form Submits
+
+- **A disabled `date_picker` no longer submits its value.** `disabled` reached
+  the visible display input and the calendar trigger but not the hidden inputs
+  the form actually reads, so a disabled picker still appeared in the submitted
+  params — unlike every native disabled control, and unlike `select`, which has
+  always been left out of the submission when disabled. Both bound inputs are
+  covered in range mode.
+- **`form` reaches the controls that carry it.** `radio_group`, `date_picker`,
+  and `calendar` now declare a `form` attr and put it on the radios and hidden
+  inputs. Previously `calendar` and `date_picker` let it fall through `:global`
+  onto their container `<div>`, where it does nothing, and `radio_group` had no
+  way to accept it at all — so a control rendered outside its `<form>` and
+  associated by id submitted nothing.
+- **`field` forwards `form` for `type="radio"`, `"date"`, and `"daterange"`.**
+  Declaring an attr on `field` removes it from `@rest`, so a dispatch branch
+  that does not forward it drops it silently. These three did not; the six other
+  types already did.
+
+### Changed (Breaking) - `popover` Gains a Trigger-Less `"manual"` Mode, and Validates Its Trigger
+
+- **`trigger_mode="manual"` renders a panel with no trigger at all**, positioned
+  against whatever `anchor` points at and opened and closed entirely through
+  `show/1` and `hide/1`. It exists for controls that own their own open state —
+  `combobox` is the first — where the thing that opens the panel is an input the
+  caller renders, not a button the popover can wire. In manual mode the panel
+  exposes no `aria-expanded`/`aria-controls`/`aria-describedby` relationship of
+  its own; the caller owns that relationship for the element `anchor` names.
+- **The `:trigger` slot is no longer `required: true`** at the attr level, since
+  manual mode has none.
+- **`popover/1` now raises on a trigger/mode mismatch**, where it previously
+  rendered something inert:
+  - a `"click"` or `"hover"` popover with no `:trigger` raises `ArgumentError`.
+    **This changes behavior for existing callers**: a host rendering a
+    conditionally-empty `<:trigger :if={...}>` used to get a panel nothing could
+    open, and now raises at render time. If you relied on that, guard the whole
+    `<.popover>` rather than its trigger slot.
+  - a `"manual"` popover with no `:anchor` raises — it has no trigger to
+    position against, so without an anchor the panel would sit at the viewport
+    origin.
+  - a `"manual"` popover that *does* pass a `:trigger` raises, since nothing
+    would wire it.
+
 ### Added - `popover` Can Be Closed and Opened From a `JS` Command
 
 - **`Popover.show/1` and `Popover.hide/1` open and close a panel by id**, from

@@ -1,0 +1,53 @@
+defmodule <%= @component_namespace %>.ComboboxTest do
+  use ExUnit.Case, async: true
+
+  import Phoenix.LiveViewTest
+
+  alias <%= @component_namespace %>.Combobox
+
+  describe "combobox/1" do
+    test "renders a combobox over the given options" do
+      html = render_component(Combobox, id: "cb", options: ["Alpha", "Beta"])
+
+      assert html =~ ~s(role="combobox")
+      assert html =~ ~s(role="listbox")
+      assert html =~ "Alpha"
+      assert html =~ "Beta"
+    end
+
+    test "groups options under their labels" do
+      html = render_component(Combobox, id: "cb", options: [{"Europe", ["UK"]}])
+
+      assert html =~ ~s(role="group")
+      assert html =~ "Europe"
+    end
+
+    test "binds a hidden input carrying the value" do
+      html = render_component(Combobox, id: "cb", name: "user[owner_id]", value: "42", options: [])
+
+      assert html =~ ~s(name="user[owner_id]")
+      assert html =~ ~s(value="42")
+    end
+
+    test "multiple mode binds a hidden multiple select" do
+      html =
+        render_component(Combobox,
+          id: "cb",
+          multiple: true,
+          name: "user[skills][]",
+          value: ["ex"],
+          options: [{"Elixir", "ex"}]
+        )
+
+      assert html =~ ~s(aria-multiselectable="true")
+      assert html =~ ~s(<option value="ex" selected)
+    end
+
+    test "renders the empty state with no options" do
+      html = render_component(Combobox, id: "cb", options: [])
+
+      assert html =~ "No results found"
+      refute html =~ "data-combobox-option"
+    end
+  end
+end

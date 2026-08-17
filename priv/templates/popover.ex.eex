@@ -37,15 +37,18 @@ opposite side and shifts to stay on screen.
 
 ## Trigger
 
-The `:trigger` slot must contain a single `<button>`. How the panel opens
-depends on `trigger_mode`:
+How the panel opens depends on `trigger_mode`:
 
-- `"click"` (the default) — the trigger toggles the panel; clicking outside or
-  pressing Escape closes it, and focus returns to the trigger on Escape.
-- `"hover"` — the panel opens on pointer hover (after a short delay) and on
-  keyboard focus (immediately), stays open while the pointer is over the trigger
-  or the panel, and dismisses on leave, blur, or Escape. Use it for
-  tooltip-style, non-interactive overlays.
+- `"click"` (the default) — the `:trigger` slot holds a single `<button>` that
+  toggles the panel; clicking outside or pressing Escape closes it, and focus
+  returns to the trigger on Escape.
+- `"hover"` — the `:trigger` slot holds a single `<button>`; the panel opens on
+  pointer hover (after a short delay) and on keyboard focus (immediately),
+  stays open while the pointer is over the trigger or the panel, and dismisses
+  on leave, blur, or Escape. Use it for tooltip-style, non-interactive
+  overlays.
+- `"manual"` — no `:trigger` slot. Requires `anchor` to position the panel,
+  and is opened and closed entirely through `show/1` and `hide/1`.
 
 ## Programmatic control
 
@@ -67,7 +70,7 @@ them on any button that submits a form:
     </.popover>
 
 Both helpers take an optional leading `JS` command to compose onto an existing
-pipeline, and both work in either `trigger_mode`.
+pipeline, and both work in any `trigger_mode`.
 
 ## Accessibility
 
@@ -76,6 +79,9 @@ pipeline, and both work in either `trigger_mode`.
 - In `trigger_mode="hover"`, the trigger instead exposes `aria-describedby`
   pointing at the panel, so its content is announced as the trigger's
   description.
+- In `trigger_mode="manual"`, there is no trigger, so the panel exposes no
+  `aria-expanded`/`aria-controls`/`aria-describedby` relationship of its own —
+  the caller owns that relationship for whatever element `anchor` points to.
 - The panel imposes no role; pass `role="dialog"` and a name
   (`aria-label`/`aria-labelledby`) via attributes when appropriate.
 """
@@ -183,9 +189,9 @@ attr(:offset, :integer,
 
 attr(:trigger_mode, :string,
   default: "click",
-  values: ~w(click hover),
+  values: ~w(click hover manual),
   doc:
-    ~s{How the panel opens. "click" toggles it from the trigger button. "hover" opens it on pointer hover and keyboard focus and closes on leave/blur or Escape — for tooltip-style, non-interactive overlays.}
+    ~s{How the panel opens. "click" toggles it from the trigger button. "hover" opens it on pointer hover and keyboard focus and closes on leave/blur or Escape — for tooltip-style, non-interactive overlays. "manual" has no trigger: open and close it with `show/1` and `hide/1`, and pass `anchor` to position it.}
 )
 
 attr(:variant, :string,
@@ -228,7 +234,7 @@ attr(:rest, :global,
   doc: "Additional panel attributes (e.g. role, aria-label, aria-labelledby)"
 )
 
-slot(:trigger, required: true, doc: "The activating control — a single <button>")
+slot(:trigger, doc: "The activating control — a single <button>. Omitted in manual mode.")
 slot(:inner_block, required: true, doc: "Panel content")
 
 @doc """
@@ -245,6 +251,8 @@ The `:trigger` slot holds a button; the default slot holds the panel content.
 """
 @spec popover(map()) :: Rendered.t()
 def popover(assigns) do
+  validate_trigger!(assigns)
+
   assigns =
     assign(
       assigns,
@@ -260,7 +268,7 @@ def popover(assigns) do
   ~H"""
   {render_slot(@trigger)}<div
     id={@id}
-    popover={if @trigger_mode == "hover", do: "manual", else: "auto"}
+    popover={if @trigger_mode == "click", do: "auto", else: "manual"}
     phx-hook=".PulsarPopover"
     data-placement={@placement}
     data-offset={@offset}
@@ -278,11 +286,11 @@ def popover(assigns) do
   <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarPopover">
     export default {
       mounted() {
-        // The trigger is the element immediately before the panel (the
-        // rendered :trigger slot). Wire it once the hook mounts.
-        this.trigger = this.el.previousElementSibling
-        this.resolveAnchor()
         this.mode = this.el.dataset.trigger || "click"
+        // Manual mode has no trigger element; every trigger-touching path
+        // below is reached only from the modes that do.
+        this.trigger = this.mode === "manual" ? null : this.el.previousElementSibling
+        this.resolveAnchor()
         this._reposition = () => this.position()
 
         // Popovers nest, so a dispatch aimed at this panel must not bubble to
@@ -306,6 +314,8 @@ def popover(assigns) do
 
         if (this.mode === "hover") {
           this.setupHover()
+        } else if (this.mode === "manual") {
+          this.setupManual()
         } else {
           this.setupClick()
         }
@@ -348,6 +358,16 @@ def popover(assigns) do
         // the panel before this hook mounts, and that `toggle` fired with no
         // listener attached — adopt the open panel rather than leaving it
         // unpositioned and reporting itself closed.
+        if (this.el.matches(":popover-open")) this.onStateChange("open")
+      },
+
+      // Manual mode: no invoker and no trigger attributes. The panel is opened
+      // and closed through the show/hide dispatch helpers wired up in
+      // mounted(); the toggle listener only keeps data-state reconciled if
+      // something else moves it.
+      setupManual() {
+        this._onToggle = (e) => this.onStateChange(e.newState)
+        this.el.addEventListener("toggle", this._onToggle)
         if (this.el.matches(":popover-open")) this.onStateChange("open")
       },
 
@@ -470,8 +490,8 @@ def popover(assigns) do
 
       position() {
         if (!this.el.matches(":popover-open")) return
-        if (!this.trigger) return
-        const t = (this.anchorEl || this.trigger).getBoundingClientRect()
+        if (!this.anchorEl) return
+        const t = this.anchorEl.getBoundingClientRect()
         const p = this.el.getBoundingClientRect()
         // A zero-size rect means the panel isn't laid out yet; retry next frame.
         if (p.width === 0 && p.height === 0) {
@@ -540,7 +560,7 @@ def popover(assigns) do
         this.resolveAnchor()
         const open = this.el.matches(":popover-open")
         this.el.dataset.state = open ? "open" : "closed"
-        if (this.trigger) {
+        if (this.mode !== "manual" && this.trigger) {
           if (this.mode === "click") {
             this.trigger.setAttribute("popovertarget", this.el.id)
             this.trigger.setAttribute("aria-controls", this.el.id)
@@ -563,7 +583,7 @@ def popover(assigns) do
         this.el.removeEventListener("pulsar:popover-show", this._onShowEvent)
         this.el.removeEventListener("pulsar:popover-hide", this._onHideEvent)
         this.el.removeEventListener("focusin", this._onPanelFocusIn)
-        if (this.mode === "click") {
+        if (this.mode === "click" || this.mode === "manual") {
           this.el.removeEventListener("toggle", this._onToggle)
         } else {
           clearTimeout(this._openTimer)
@@ -624,6 +644,25 @@ def hide(js, id), do: JS.dispatch(js, "pulsar:popover-hide", to: "##{id}")
 # ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
+
+defp validate_trigger!(%{trigger_mode: "manual"} = assigns) do
+  if assigns.trigger != [] do
+    raise ArgumentError,
+          ~s(<.popover trigger_mode="manual"> has no trigger; open it with show/1 and hide/1)
+  end
+
+  if is_nil(assigns.anchor) do
+    raise ArgumentError,
+          ~s(<.popover trigger_mode="manual"> requires an :anchor — it has no trigger to position against)
+  end
+end
+
+defp validate_trigger!(assigns) do
+  if assigns.trigger == [] do
+    raise ArgumentError,
+          ~s(<.popover> requires a :trigger slot unless trigger_mode is "manual")
+  end
+end
 
 @spec base_classes() :: String.t()
 defp base_classes, do: @panel_base_classes

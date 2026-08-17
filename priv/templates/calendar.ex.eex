@@ -87,6 +87,7 @@ attr(:locale, :string, default: nil, doc: "BCP-47 locale tag (nil → browser lo
 attr(:color, :string, default: "primary", values: ~w(neutral primary secondary success danger warning info), doc: "Selection accent")
 attr(:size, :string, default: "md", values: ~w(xs sm md lg xl), doc: "Cell size")
 attr(:on_select, JS, default: %JS{}, doc: ~s{JS run when a date/range is chosen. Server: JS.push("event")})
+attr(:form, :string, default: nil, doc: "ID of the form this field belongs to")
 attr(:field, FormField, default: nil, doc: "Single-mode form field (writes a hidden ISO input)")
 attr(:start_field, FormField, default: nil, doc: "Range start form field")
 attr(:end_field, FormField, default: nil, doc: "Range end form field")
@@ -122,9 +123,9 @@ def calendar(assigns) do
     class={merge(["inline-flex flex-col gap-3 rounded-box border border-border bg-surface-1 p-3", @class])}
     {@rest}
   >
-    <input :if={@single_name} type="hidden" name={@single_name} value={@single_value} data-cal-value="single" />
-    <input :if={@start_name} type="hidden" name={@start_name} value={@start_value} data-cal-value="start" />
-    <input :if={@end_name} type="hidden" name={@end_name} value={@end_value} data-cal-value="end" />
+    <input :if={@single_name} type="hidden" name={@single_name} value={@single_value} form={@form} data-cal-value="single" />
+    <input :if={@start_name} type="hidden" name={@start_name} value={@start_value} form={@form} data-cal-value="start" />
+    <input :if={@end_name} type="hidden" name={@end_name} value={@end_value} form={@form} data-cal-value="end" />
     <div data-cal-grids class="flex flex-wrap gap-4"></div>
     <div data-cal-announce aria-live="polite" aria-atomic="true" class="sr-only"></div>
 

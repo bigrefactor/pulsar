@@ -73,7 +73,7 @@ defmodule Mix.Tasks.Pulsar.Install.Docs do
 
     ## Available Components
 
-    Form components: badge, button, calendar, checkbox, date_picker, dropzone, field, input, input_otp, label, radio_group, select, switch, textarea
+    Form components: badge, button, calendar, checkbox, combobox, date_picker, dropzone, field, input, input_otp, label, radio_group, select, switch, textarea
 
     UI components: accordion, alert, alert_dialog, avatar, breadcrumb, card, collapsible, command, divider, drawer, dropdown_menu, flash, flash_group, header, icon, link, list, menu, modal, navbar, popover, progress, sidebar, skeleton, spinner, status, steps, table, tabs, tooltip
 
@@ -136,6 +136,7 @@ if Code.ensure_loaded?(Igniter) do
           "pulsar.gen.card",
           "pulsar.gen.checkbox",
           "pulsar.gen.collapsible",
+          "pulsar.gen.combobox",
           "pulsar.gen.command",
           "pulsar.gen.date_picker",
           "pulsar.gen.divider",

@@ -226,6 +226,7 @@ defmodule Pulsar.Components.RadioGroup do
   # Core attributes
   attr(:id, :string, default: nil, doc: "Radio group ID (auto-generated if not provided)")
   attr(:name, :string, default: nil, doc: "Name for the radio group")
+  attr(:form, :string, default: nil, doc: "ID of the form this field belongs to")
   attr(:value, :any, default: nil, doc: "Currently selected value")
 
   # Radio group-specific attributes
@@ -328,6 +329,7 @@ defmodule Pulsar.Components.RadioGroup do
     # Create a mock group object with the required properties
     group = %{
       disabled: assigns.disabled,
+      form: assigns.form,
       id: normalized.id,
       invalid: invalid,
       name: normalized.name,
@@ -452,6 +454,7 @@ defmodule Pulsar.Components.RadioGroup do
         name={@group.name}
         value={@option.value}
         checked={@option_checked}
+        form={@group.form}
         required={@group.required}
         disabled={@option_disabled}
         aria-invalid={@group.invalid && "true"}
@@ -507,6 +510,7 @@ defmodule Pulsar.Components.RadioGroup do
         name={@group.name}
         value={@option.value}
         checked={@option_checked}
+        form={@group.form}
         required={@group.required}
         disabled={@option_disabled}
         aria-invalid={@group.invalid && "true"}

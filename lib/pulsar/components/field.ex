@@ -106,6 +106,7 @@ defmodule Pulsar.Components.Field do
   - **Switch**: Renders Pulsar.Components.Switch with iOS-style toggle
   - **Radio**: Renders Pulsar.Components.RadioGroup with grouped options
   - **OTP**: Renders Pulsar.Components.InputOtp for one-time codes (2FA / MFA)
+  - **Combobox**: Renders Pulsar.Components.Combobox, a searchable input that filters options as you type (set multiple to collect several as removable badges)
 
   ## Layout Customization
 
@@ -159,6 +160,7 @@ defmodule Pulsar.Components.Field do
 
   # Import all the Pulsar components we'll be rendering
   alias Pulsar.Components.Checkbox
+  alias Pulsar.Components.Combobox
   alias Pulsar.Components.DatePicker
   alias Pulsar.Components.Icon
   alias Pulsar.Components.Input
@@ -306,6 +308,11 @@ defmodule Pulsar.Components.Field do
   attr(:disable_weekends, :boolean, default: false, doc: "Disable weekend days (date types)")
   attr(:locale, :string, default: nil, doc: "BCP-47 locale for date display")
   attr(:on_change, JS, default: %JS{}, doc: "JS run when a date changes")
+
+  # Combobox-specific attributes
+  attr(:filter, :any, default: nil, doc: "Combobox: 2-arity fun `(query, options)` returning options")
+  attr(:async, :boolean, default: false, doc: "Combobox: run `filter` off-process")
+  attr(:display, :any, default: nil, doc: "Combobox: options used only to resolve selected labels")
 
   # Global attributes passed through to inputs
   attr(:rest, :global, doc: "Additional HTML attributes passed to the input")
@@ -535,6 +542,7 @@ defmodule Pulsar.Components.Field do
       id={@field_id}
       name={@field_name}
       value={@field_value}
+      form={@form}
       variant={@variant}
       color={@color}
       size={@size}
@@ -550,12 +558,38 @@ defmodule Pulsar.Components.Field do
     """
   end
 
+  defp render_input(%{type: "combobox"} = assigns) do
+    ~H"""
+    <Combobox.combobox
+      field={@field}
+      id={@field_id}
+      multiple={@multiple}
+      options={@options}
+      filter={@filter}
+      async={@async}
+      display={@display}
+      form={@form}
+      labelled_externally
+      variant={@variant}
+      color={@color}
+      size={@size}
+      required={@required}
+      disabled={@disabled}
+      invalid={@has_errors}
+      on_change={@on_change}
+      aria-describedby={@aria_describedby}
+      {@rest}
+    />
+    """
+  end
+
   defp render_input(%{type: "date"} = assigns) do
     ~H"""
     <DatePicker.date_picker
       field={@field}
       id={@field_id}
       mode="single"
+      form={@form}
       labelled_externally
       months={@months}
       min={@min}
@@ -588,6 +622,7 @@ defmodule Pulsar.Components.Field do
       end_field={@end_field}
       id={@field_id}
       mode="range"
+      form={@form}
       labelled_externally
       months={@months}
       min={@min}

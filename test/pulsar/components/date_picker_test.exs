@@ -177,4 +177,65 @@ defmodule Pulsar.Components.DatePickerTest do
       assert html =~ ~s(id="picker")
     end
   end
+
+  # `disabled` and `form` govern whether and where a value is submitted, so they
+  # have to reach the hidden inputs the form actually reads — the visible
+  # display input carries no name and is never submitted.
+  describe "date_picker/1 submitted inputs" do
+    defp submitted_inputs(html) do
+      ~r/<input[^>]*data-dp-value[^>]*>/ |> Regex.scan(html) |> Enum.map(&hd/1)
+    end
+
+    test "a disabled picker does not submit its value" do
+      form = to_form(%{"on" => "2026-06-10"}, as: :ev)
+      assigns = %{field: form[:on]}
+
+      html =
+        rendered_to_string(~H"""
+        <DatePicker.date_picker field={@field} disabled />
+        """)
+
+      assert [input] = submitted_inputs(html)
+      assert input =~ "disabled"
+    end
+
+    test "an enabled picker leaves its value submittable" do
+      form = to_form(%{"on" => "2026-06-10"}, as: :ev)
+      assigns = %{field: form[:on]}
+
+      html =
+        rendered_to_string(~H"""
+        <DatePicker.date_picker field={@field} />
+        """)
+
+      assert [input] = submitted_inputs(html)
+      refute input =~ "disabled"
+    end
+
+    test "a disabled range picker does not submit either bound value" do
+      form = to_form(%{"from" => "2026-06-10", "to" => "2026-06-20"}, as: :trip)
+      assigns = %{form: form}
+
+      html =
+        rendered_to_string(~H"""
+        <DatePicker.date_picker mode="range" start_field={@form[:from]} end_field={@form[:to]} disabled />
+        """)
+
+      assert [_, _] = inputs = submitted_inputs(html)
+      assert Enum.all?(inputs, &(&1 =~ "disabled"))
+    end
+
+    test "form associates the hidden input with an external form" do
+      form = to_form(%{"on" => "2026-06-10"}, as: :ev)
+      assigns = %{field: form[:on]}
+
+      html =
+        rendered_to_string(~H"""
+        <DatePicker.date_picker field={@field} form="signup-form" />
+        """)
+
+      assert [input] = submitted_inputs(html)
+      assert input =~ ~s(form="signup-form")
+    end
+  end
 end

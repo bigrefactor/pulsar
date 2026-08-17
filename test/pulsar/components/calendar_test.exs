@@ -146,4 +146,36 @@ defmodule Pulsar.Components.CalendarTest do
       assert html =~ ~s(id="picker")
     end
   end
+
+  # `rest` is a global, so a caller's `form` would otherwise land on the
+  # container div and leave the input the form actually submits unassociated.
+  describe "calendar/1 submitted inputs" do
+    test "form associates the hidden input with an external form" do
+      form = to_form(%{"on" => "2026-06-10"}, as: :ev)
+      assigns = %{field: form[:on]}
+
+      html =
+        rendered_to_string(~H"""
+        <Calendar.calendar field={@field} form="signup-form" />
+        """)
+
+      assert [input] = Regex.scan(~r/<input[^>]*data-cal-value[^>]*>/, html) |> Enum.map(&hd/1)
+      assert input =~ ~s(form="signup-form")
+    end
+
+    test "form associates both bound inputs in range mode" do
+      form = to_form(%{"from" => "2026-06-10", "to" => "2026-06-20"}, as: :trip)
+      assigns = %{form: form}
+
+      html =
+        rendered_to_string(~H"""
+        <Calendar.calendar mode="range" start_field={@form[:from]} end_field={@form[:to]} form="signup-form" />
+        """)
+
+      inputs = Regex.scan(~r/<input[^>]*data-cal-value[^>]*>/, html) |> Enum.map(&hd/1)
+
+      assert length(inputs) == 2
+      assert Enum.all?(inputs, &(&1 =~ ~s(form="signup-form")))
+    end
+  end
 end
