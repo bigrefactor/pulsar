@@ -106,6 +106,7 @@ defmodule Pulsar.Components.Field do
   - **Switch**: Renders Pulsar.Components.Switch with iOS-style toggle
   - **Radio**: Renders Pulsar.Components.RadioGroup with grouped options
   - **OTP**: Renders Pulsar.Components.InputOtp for one-time codes (2FA / MFA)
+  - **Combobox**: Renders Pulsar.Components.Combobox, a searchable input that filters options as you type (set multiple to collect several as removable badges)
 
   ## Layout Customization
 

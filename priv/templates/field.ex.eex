@@ -105,6 +105,7 @@ All input types support the full range of styling attributes including `variant`
 - **Switch**: Renders <%= @component_namespace %>.Switch with iOS-style toggle
 - **Radio**: Renders <%= @component_namespace %>.RadioGroup with grouped options
 - **OTP**: Renders <%= @component_namespace %>.InputOtp for one-time codes (2FA / MFA)
+- **Combobox**: Renders <%= @component_namespace %>.Combobox, a searchable input that filters options as you type (set multiple to collect several as removable badges)
 
 ## Layout Customization
 
