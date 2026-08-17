@@ -41,6 +41,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ships with a generator (`mix pulsar.gen.combobox`), a Storybook story, and a
   WCAG 2.2 AA audit at `docs/a11y/combobox.md`.
 
+### Fixed - Form Controls Honor `disabled` and `form` on the Element the Form Submits
+
+- **A disabled `date_picker` no longer submits its value.** `disabled` reached
+  the visible display input and the calendar trigger but not the hidden inputs
+  the form actually reads, so a disabled picker still appeared in the submitted
+  params — unlike every native disabled control, and unlike `select`, which has
+  always been left out of the submission when disabled. Both bound inputs are
+  covered in range mode.
+- **`form` reaches the controls that carry it.** `radio_group`, `date_picker`,
+  and `calendar` now declare a `form` attr and put it on the radios and hidden
+  inputs. Previously `calendar` and `date_picker` let it fall through `:global`
+  onto their container `<div>`, where it does nothing, and `radio_group` had no
+  way to accept it at all — so a control rendered outside its `<form>` and
+  associated by id submitted nothing.
+- **`field` forwards `form` for `type="radio"`, `"date"`, and `"daterange"`.**
+  Declaring an attr on `field` removes it from `@rest`, so a dispatch branch
+  that does not forward it drops it silently. These three did not; the six other
+  types already did.
+
 ### Changed (Breaking) - `popover` Gains a Trigger-Less `"manual"` Mode, and Validates Its Trigger
 
 - **`trigger_mode="manual"` renders a panel with no trigger at all**, positioned

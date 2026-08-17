@@ -6,6 +6,17 @@ defmodule Pulsar.Components.ComboboxTest do
   alias Pulsar.Components.Combobox
   alias Pulsar.Components.Combobox.Option
 
+  # The tag carrying data-combobox-value is the one the form submits: a hidden
+  # <input> in single mode, a hidden <select> in multiple mode. Attributes that
+  # govern whether and where a value is submitted have to land on it, and the
+  # visible query input — which carries no name — is not it.
+  defp submitted_control(html) do
+    case Regex.run(~r/<(?:input|select)[^>]*data-combobox-value[^>]*>/, html) do
+      [tag] -> tag
+      nil -> flunk("no element carries data-combobox-value:\n#{html}")
+    end
+  end
+
   describe "options/1" do
     test "normalizes scalars, tuples, and keyword options" do
       assert [%Option{label: "Admin", value: "Admin"}] = Combobox.options(["Admin"])
@@ -313,6 +324,108 @@ defmodule Pulsar.Components.ComboboxTest do
     end
   end
 
+  describe "the submitted control" do
+    test "a disabled combobox does not submit its value" do
+      html =
+        render_component(Combobox,
+          id: "cb",
+          name: "user[owner_id]",
+          value: "42",
+          options: [{"Alice", "42"}],
+          disabled: true
+        )
+
+      assert submitted_control(html) =~ "disabled"
+    end
+
+    test "a disabled multiple combobox does not submit its values" do
+      html =
+        render_component(Combobox,
+          id: "cb",
+          name: "user[skill_ids][]",
+          multiple: true,
+          value: ["ex"],
+          options: [{"Elixir", "ex"}],
+          disabled: true
+        )
+
+      assert submitted_control(html) =~ "disabled"
+    end
+
+    test "an enabled combobox leaves its control submittable" do
+      html = render_component(Combobox, id: "cb", name: "user[owner_id]", value: "42", options: [{"Alice", "42"}])
+
+      refute submitted_control(html) =~ "disabled"
+    end
+
+    # The chevron and clear buttons take `disabled`, and the query input takes it
+    # too — so Backspace-to-remove is already unreachable. A badge's dismiss
+    # button is its own focusable control and needs its own gate, or a disabled
+    # multi-select still lets you take values out of it.
+    test "a disabled multiple combobox drops the badge dismiss controls" do
+      html =
+        render_component(Combobox,
+          id: "cb",
+          name: "user[skill_ids][]",
+          multiple: true,
+          value: ["ex"],
+          options: [{"Elixir", "ex"}],
+          disabled: true
+        )
+
+      assert html =~ "data-combobox-badge"
+      refute html =~ "Remove Elixir"
+    end
+
+    test "an enabled multiple combobox keeps them" do
+      html =
+        render_component(Combobox,
+          id: "cb",
+          name: "user[skill_ids][]",
+          multiple: true,
+          value: ["ex"],
+          options: [{"Elixir", "ex"}]
+        )
+
+      assert html =~ "Remove Elixir"
+    end
+
+    test "form associates the hidden input with an external form" do
+      html =
+        render_component(Combobox,
+          id: "cb",
+          name: "user[owner_id]",
+          value: "42",
+          options: [{"Alice", "42"}],
+          form: "signup-form"
+        )
+
+      assert submitted_control(html) =~ ~s(form="signup-form")
+    end
+
+    test "form associates the hidden select with an external form" do
+      html =
+        render_component(Combobox,
+          id: "cb",
+          name: "user[skill_ids][]",
+          multiple: true,
+          value: ["ex"],
+          options: [{"Elixir", "ex"}],
+          form: "signup-form"
+        )
+
+      assert submitted_control(html) =~ ~s(form="signup-form")
+    end
+
+    # Implicit submission: Enter in a query input associated with an external
+    # form only reaches that form if the input itself is associated too.
+    test "form also associates the query input" do
+      html = render_component(Combobox, id: "cb", options: [], form: "signup-form")
+
+      assert html =~ ~r/<input[^>]*role="combobox"[^>]*form="signup-form"/
+    end
+  end
+
   describe "combobox/1" do
     import Phoenix.Component
     import Phoenix.LiveViewTest
@@ -328,6 +441,21 @@ defmodule Pulsar.Components.ComboboxTest do
       assert_raise ArgumentError, ~r/requires an :id/, fn ->
         render_component(&Combobox.combobox/1, options: [])
       end
+    end
+
+    # The wrapper names every assign it hands to live_component, so an attr the
+    # LiveComponent honors is still dropped unless it is listed here too.
+    test "hands form through to the live component" do
+      field = to_form(%{"owner_id" => "42"}, as: :user)[:owner_id]
+
+      html =
+        render_component(&Combobox.combobox/1,
+          field: field,
+          options: [{"Alice", "42"}],
+          form: "signup-form"
+        )
+
+      assert submitted_control(html) =~ ~s(form="signup-form")
     end
   end
 

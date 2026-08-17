@@ -251,6 +251,7 @@ defp badge_size(size), do: @badge_size[size] || "sm"
 attr(:id, :string, doc: "Derived from the bound field if omitted; required when no field is bound")
 attr(:field, FormField, default: nil, doc: "Form field to bind")
 attr(:name, :string, default: nil, doc: "Input name. Derived from the bound field if omitted.")
+attr(:form, :string, default: nil, doc: "ID of the form this field belongs to")
 
 attr(:value, :any,
   default: nil,
@@ -354,6 +355,7 @@ def combobox(assigns) do
     id={@id}
     field={@field}
     name={@name}
+    form={@form}
     value={@value}
     multiple={@multiple}
     options={@options}
@@ -410,6 +412,7 @@ def update(assigns, socket) do
     socket
     |> assign(assigns)
     |> assign_new(:field, fn -> nil end)
+    |> assign_new(:form, fn -> nil end)
     |> assign_new(:multiple, fn -> false end)
     |> assign_new(:options, fn -> [] end)
     |> assign_new(:filter, fn -> nil end)
@@ -586,7 +589,11 @@ def render(assigns) do
         size={badge_size(@size)}
         data-combobox-badge
         data-value={option.value}
-        on_remove={JS.dispatch("pulsar:combobox-remove", to: "#" <> @id <> "-cb", detail: %{value: option.value})}
+        on_remove={
+          if @disabled,
+            do: %JS{},
+            else: JS.dispatch("pulsar:combobox-remove", to: "#" <> @id <> "-cb", detail: %{value: option.value})
+        }
         remove_label={"#{@remove_label} #{option.label}"}
       >
         {option.label}
@@ -602,6 +609,7 @@ def render(assigns) do
         aria-required={(@required && "true") || "false"}
         aria-describedby={assigns[:"aria-describedby"]}
         autocomplete="off"
+        form={@form}
         disabled={@disabled}
         value={@display_value}
         placeholder={@placeholder}
@@ -697,9 +705,25 @@ def render(assigns) do
       </div>
     </Popover.popover>
 
-    <input :if={!@multiple and @name} type="hidden" name={@name} value={hd(@selected ++ [""])} data-combobox-value />
+    <input
+      :if={!@multiple and @name}
+      type="hidden"
+      name={@name}
+      value={hd(@selected ++ [""])}
+      form={@form}
+      disabled={@disabled}
+      data-combobox-value
+    />
 
-    <select :if={@multiple and @name} hidden multiple name={@name} data-combobox-value>
+    <select
+      :if={@multiple and @name}
+      hidden
+      multiple
+      name={@name}
+      form={@form}
+      disabled={@disabled}
+      data-combobox-value
+    >
       <option :for={option <- @selected_options} value={option.value} selected>{option.label}</option>
     </select>
 

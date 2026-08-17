@@ -622,7 +622,9 @@ defmodule Pulsar.Components.FieldTest do
           {"textarea", "textarea", [], true},
           {"otp", "input", [], true},
           {"checkbox", "input", [], false},
-          {"switch", "input", [], false}
+          {"switch", "input", [], false},
+          {"radio", "input", [{"Small", "s"}], false},
+          {"date", "input", [], false}
         ] do
       test "type=#{type} forwards form to its control" do
         type = unquote(type)
@@ -1022,6 +1024,26 @@ defmodule Pulsar.Components.FieldTest do
       assert html =~ ~s(name="trip[to]")
     end
 
+    # daterange binds two fields, so it cannot join the shared `forwards form`
+    # loop above — but it drops `form` in exactly the same way if the branch
+    # forgets it, and here that would strand both submitted inputs.
+    test "type=daterange forwards form to both submitted inputs" do
+      form = to_form(%{"from" => "2026-06-10", "to" => "2026-06-20"}, as: :trip)
+      assigns = %{form: form}
+
+      html =
+        rendered_to_string(~H"""
+        <Field.field field={@form[:from]} type="daterange" end_field={@form[:to]} form="signup-form">
+          <:label>Dates</:label>
+        </Field.field>
+        """)
+
+      submitted = Regex.scan(~r/<input[^>]*data-dp-value[^>]*>/, html) |> Enum.map(&hd/1)
+
+      assert length(submitted) == 2
+      assert Enum.all?(submitted, &(&1 =~ ~s(form="signup-form"))), "not every submitted input carries form="
+    end
+
     test "the picker input is named by the field <label>, not a shadowing aria-label" do
       form = to_form(%{"starts_on" => ""}, as: :ev)
       assigns = %{field: form[:starts_on]}
@@ -1111,6 +1133,31 @@ defmodule Pulsar.Components.FieldTest do
         )
 
       assert html =~ ~s(aria-multiselectable="true")
+    end
+
+    # The shared `forwards form to its control` loop above cannot cover combobox
+    # for the same reason: it renders through rendered_to_string/1. Declaring
+    # `form` on Field removes it from `@rest`, so this branch has to forward it
+    # explicitly or an externally-associated combobox submits nothing.
+    test "forwards form to the control Combobox submits" do
+      form = to_form(%{"owner_id" => nil}, as: :user)
+
+      html =
+        render_component(
+          fn assigns ->
+            ~H"""
+            <Field.field field={@field} type="combobox" options={[{"Alice", "1"}]} form="signup-form">
+              <:label>Owner</:label>
+            </Field.field>
+            """
+          end,
+          %{field: form[:owner_id]}
+        )
+
+      [submitted] = Regex.run(~r/<input[^>]*data-combobox-value[^>]*>/, html)
+
+      assert submitted =~ ~s(form="signup-form"),
+             "the hidden input the form submits does not carry form=: #{submitted}"
     end
   end
 

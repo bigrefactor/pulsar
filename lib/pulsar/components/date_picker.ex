@@ -68,6 +68,7 @@ defmodule Pulsar.Components.DatePicker do
   attr(:disabled, :boolean, default: false)
   attr(:invalid, :boolean, default: false)
   attr(:required, :boolean, default: false, doc: "Mark the date field as required")
+  attr(:form, :string, default: nil, doc: "ID of the form this field belongs to")
   attr(:on_change, JS, default: %JS{})
   attr(:"aria-describedby", :string, default: nil)
 
@@ -191,9 +192,33 @@ defmodule Pulsar.Components.DatePicker do
         </Popover.popover>
       </div>
 
-      <input :if={@single_name} type="hidden" name={@single_name} value={@single_value} data-dp-value="single" />
-      <input :if={@start_name} type="hidden" name={@start_name} value={@start_value} data-dp-value="start" />
-      <input :if={@end_name} type="hidden" name={@end_name} value={@end_value} data-dp-value="end" />
+      <input
+        :if={@single_name}
+        type="hidden"
+        name={@single_name}
+        value={@single_value}
+        form={@form}
+        disabled={@disabled}
+        data-dp-value="single"
+      />
+      <input
+        :if={@start_name}
+        type="hidden"
+        name={@start_name}
+        value={@start_value}
+        form={@form}
+        disabled={@disabled}
+        data-dp-value="start"
+      />
+      <input
+        :if={@end_name}
+        type="hidden"
+        name={@end_name}
+        value={@end_value}
+        form={@form}
+        disabled={@disabled}
+        data-dp-value="end"
+      />
 
       <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarDatePicker">
         export default {
