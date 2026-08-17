@@ -101,11 +101,13 @@ defmodule Pulsar.DevApp.ComboboxLiveTest do
     test "removing drops the value's badge and updates the selected count", %{conn: conn} do
       {:ok, view, _html} = live(conn, "/components/combobox")
       assert render(element(view, "#cb-multiple-field")) =~ "Alpha"
+      assert render(element(view, "#cb-multiple-field")) =~ "data-combobox-badge"
       assert render(element(view, "#cb-multiple-cb")) =~ "1 selected"
 
       render_hook(element(view, "#cb-multiple-cb"), "remove", %{"value" => "alpha"})
 
       refute render(element(view, "#cb-multiple-field")) =~ "Alpha"
+      refute render(element(view, "#cb-multiple-field")) =~ "data-combobox-badge"
       refute render(element(view, "#cb-multiple-cb")) =~ "1 selected"
     end
 

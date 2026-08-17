@@ -259,6 +259,59 @@ defmodule Pulsar.Components.ComboboxTest do
     end
   end
 
+  describe "multiple" do
+    import Phoenix.LiveViewTest
+
+    test "binds a hidden multiple select with an array name" do
+      html =
+        render_component(Combobox,
+          id: "cb",
+          multiple: true,
+          name: "user[skill_ids][]",
+          value: ["ex"],
+          options: [{"Elixir", "ex"}, {"Phoenix", "px"}]
+        )
+
+      assert html =~ ~s(<select)
+      assert html =~ "multiple"
+      assert html =~ ~s(name="user[skill_ids][]")
+      assert html =~ ~s(<option value="ex" selected)
+      refute html =~ ~s(<option value="px" selected)
+    end
+
+    test "renders a removable badge per selected value" do
+      html =
+        render_component(Combobox,
+          id: "cb",
+          multiple: true,
+          value: ["ex"],
+          options: [{"Elixir", "ex"}]
+        )
+
+      assert html =~ "Elixir"
+      assert html =~ "Remove Elixir"
+      assert html =~ "data-combobox-badge"
+    end
+
+    test "marks the listbox multiselectable" do
+      html = render_component(Combobox, id: "cb", multiple: true, options: [])
+
+      assert html =~ ~s(aria-multiselectable="true")
+    end
+
+    test "renders no badges and no select when nothing is selected" do
+      html = render_component(Combobox, id: "cb", multiple: true, options: [{"Elixir", "ex"}])
+
+      refute html =~ "data-combobox-badge"
+    end
+
+    test "single mode renders no multiple select" do
+      html = render_component(Combobox, id: "cb", name: "user[owner_id]", options: [])
+
+      refute html =~ "<select"
+    end
+  end
+
   describe "combobox/1" do
     import Phoenix.Component
     import Phoenix.LiveViewTest

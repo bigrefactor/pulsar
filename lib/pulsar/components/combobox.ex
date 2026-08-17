@@ -580,8 +580,13 @@ defmodule Pulsar.Components.Combobox do
         <Badge.badge
           :for={option <- @selected_options}
           :if={@multiple}
+          variant="solid"
           color={@color}
           size={badge_size(@size)}
+          data-combobox-badge
+          data-value={option.value}
+          on_remove={JS.dispatch("pulsar:combobox-remove", to: "#" <> @id <> "-cb", detail: %{value: option.value})}
+          remove_label={"#{@remove_label} #{option.label}"}
         >
           {option.label}
         </Badge.badge>
@@ -697,6 +702,10 @@ defmodule Pulsar.Components.Combobox do
       </Popover.popover>
 
       <input :if={!@multiple and @name} type="hidden" name={@name} value={hd(@selected ++ [""])} data-combobox-value />
+
+      <select :if={@multiple and @name} hidden multiple name={@name} data-combobox-value>
+        <option :for={option <- @selected_options} value={option.value} selected>{option.label}</option>
+      </select>
 
       <div role="status" aria-live="polite" class="sr-only">{announcement(assigns)}</div>
     </div>
