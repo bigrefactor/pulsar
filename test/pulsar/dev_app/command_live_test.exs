@@ -12,6 +12,15 @@ defmodule Pulsar.DevApp.CommandLiveTest do
     {:ok, conn: build_conn()}
   end
 
+  # Mounts the fixture with this test as the async filter's probe, so the filter
+  # blocks in `receive` and the in-flight state stays observable until released
+  # rather than for however long a sleep survives on the machine at hand.
+  defp probed_live(conn) do
+    conn
+    |> put_connect_params(%{"probe" => self()})
+    |> live("/components/command")
+  end
+
   describe "query event" do
     test "filtering drops non-matching rows from the listbox", %{conn: conn} do
       {:ok, view, _html} = live(conn, "/components/command")
@@ -84,23 +93,33 @@ defmodule Pulsar.DevApp.CommandLiveTest do
   end
 
   describe "async filtering" do
+    # Reading the in-flight state means catching the component between the
+    # keystroke and the result. A sleeping filter loses that race whenever the
+    # machine is loaded enough to outrun it, so hold the task open instead:
+    # the probe's filter blocks until this test releases it.
     test "marks its own listbox busy in flight, keeps prior rows, and shows a spinner", %{conn: conn} do
-      {:ok, view, _html} = live(conn, "/components/command")
+      {:ok, view, _html} = probed_live(conn)
 
       render_hook(element(view, "#cmd-async"), "query", %{"query" => "r"})
+      assert_receive {:filtering, task}
       in_flight = render(element(view, "#cmd-async"))
 
       assert in_flight =~ ~s(aria-busy="true")
       assert in_flight =~ "Cormorant"
       assert in_flight =~ "animate-spin"
+
+      send(task, :release)
     end
 
     test "a sync sibling is not marked busy by an async neighbour", %{conn: conn} do
-      {:ok, view, _html} = live(conn, "/components/command")
+      {:ok, view, _html} = probed_live(conn)
 
       render_hook(element(view, "#cmd-async"), "query", %{"query" => "r"})
+      assert_receive {:filtering, task}
 
       refute render(element(view, "#cmd-filter")) =~ ~s(aria-busy="true")
+
+      send(task, :release)
     end
 
     test "replaces rows and clears busy when the filter resolves", %{conn: conn} do
@@ -169,9 +188,10 @@ defmodule Pulsar.DevApp.CommandLiveTest do
     end
 
     test "an async filter still in flight is cancelled rather than applied", %{conn: conn} do
-      {:ok, view, _html} = live(conn, "/components/command")
+      {:ok, view, _html} = probed_live(conn)
 
       render_hook(element(view, "#cmd-async"), "query", %{"query" => "r"})
+      assert_receive {:filtering, _task}
       assert render(element(view, "#cmd-async")) =~ ~s(aria-busy="true")
 
       render_hook(element(view, "#cmd-async"), "select", %{"value" => "Cormorant"})

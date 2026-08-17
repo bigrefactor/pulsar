@@ -15,18 +15,33 @@ defmodule Pulsar.DevApp.CommandLive do
   @async_options ["Cormorant", "Dugong"]
   @async_error_options ["Egret", "Flamingo"]
 
-  # Deliberately slow, so a test can observe the in-flight state before it
-  # resolves; and deliberately raising, to exercise the failure branch.
-  defp slow_filter do
+  # Slow enough that a browser passes through the in-flight state, and
+  # deliberately raising, to exercise the failure branch. A test that needs to
+  # *observe* the in-flight state cannot rely on the delay outrunning it — on a
+  # loaded machine it does not — so a test may pass its own pid as the `probe`
+  # connect param and get a filter that blocks until released instead.
+  defp slow_filter(nil) do
     fn _query, _options ->
       Process.sleep(50)
       [{"Remote result", "remote"}]
     end
   end
 
+  defp slow_filter(probe) when is_pid(probe) do
+    fn _query, _options ->
+      send(probe, {:filtering, self()})
+
+      receive do
+        :release -> [{"Remote result", "remote"}]
+      end
+    end
+  end
+
   defp failing_filter, do: fn _query, _options -> raise "upstream down" end
 
   def mount(_params, _session, socket) do
+    probe = if connected?(socket), do: (get_connect_params(socket) || %{})["probe"]
+
     {:ok,
      assign(socket,
        flat: @flat,
@@ -34,7 +49,7 @@ defmodule Pulsar.DevApp.CommandLive do
        decorated: @decorated,
        slotted: @slotted,
        filterable: @filterable,
-       slow: slow_filter(),
+       slow: slow_filter(probe),
        failing: failing_filter(),
        async_options: @async_options,
        async_error_options: @async_error_options
