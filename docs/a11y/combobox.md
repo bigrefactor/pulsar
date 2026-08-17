@@ -327,8 +327,7 @@ their own (icon-only), so there is no visible label text to contradict —
 (24×24 CSS px) — `render/1` — the same house rule already established for
 Badge's addon buttons, Alert's close button, and Flash's close button
 (see [`badge.md`](badge.md), [`alert.md`](alert.md), [`flash.md`](flash.md)).
-This was found and fixed during review; it ships as conformance, not as a
-pending fix. Badge's own remove buttons (rendered per selected value in
+Badge's own remove buttons (rendered per selected value in
 `multiple` mode) inherit the same 24×24 floor from Badge's own audit — see
 [`badge.md`](badge.md) — rather than being re-derived here. Row height
 across every `@row_size` meets or exceeds 24px (`xs` 24px through `xl`
