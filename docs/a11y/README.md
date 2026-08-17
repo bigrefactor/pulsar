@@ -1,7 +1,7 @@
 # Pulsar accessibility audit — WCAG 2.2 Level AA
 
 This directory holds Pulsar's first formal accessibility audit. It covers
-every applicable WCAG 2.2 Level A and AA success criterion across all 47
+every applicable WCAG 2.2 Level A and AA success criterion across all 48
 components in `lib/pulsar/components/`. Original audit method was
 **code-only**; the browser-verification follow-up has
 since populated measured contrast, focus-ring, target-size, text-spacing,
@@ -150,6 +150,7 @@ not-applicable). Detailed per-criterion grids follow.
 | [calendar](calendar.md) | 10/0/10 | 11/0/9 | 2/0/11 | 2/0/0 |
 | [date_picker](date_picker.md) | 11/0/9 | 11/0/9 | 5/0/8 | 2/0/0 |
 | [dropzone](dropzone.md) | 10/0/10 | 12/0/8 | 5/0/8 | 2/0/0 |
+| [combobox](combobox.md) | 11/0/9 | 11/0/9 | 5/0/8 | 2/0/0 |
 | [command](command.md) | 10/0/10 | 11/0/9 | 3/0/10 | 2/0/0 |
 | **Action / navigation** | | | | |
 | [button](button.md) | 10/0/10 | 12/0/8 | 1/0/12 | 2/0/0 |
@@ -209,6 +210,7 @@ not-applicable). Detailed per-criterion grids follow.
 | calendar | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | date_picker | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | dropzone | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
+| combobox | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | ✓ |
 | command | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | button | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
 | link | ✓ | — | — | — | — | — | ✓ | ✓ | ✓ | — | — | ✓ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — |
@@ -261,6 +263,7 @@ not-applicable). Detailed per-criterion grids follow.
 | calendar | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | date_picker | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | dropzone | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | ✓ | ✓ |
+| combobox | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | command | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | — | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | button | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
 | link | ✓ | ✓ | — | — | ✓ | ✓ | — | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | — | ✓ |
@@ -313,6 +316,7 @@ not-applicable). Detailed per-criterion grids follow.
 | calendar | — | — | ✓ | ✓ | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
 | date_picker | — | — | ✓ | ✓ | — | — | — | ✓ | ✓ | ✓ | — | — | — | ✓ | ✓ |
 | dropzone | — | — | ✓ | ✓ | — | — | — | ✓ | ✓ | ✓ | — | — | — | ✓ | ✓ |
+| combobox | — | — | ✓ | ✓ | — | — | — | ✓ | ✓ | ✓ | — | — | — | ✓ | ✓ |
 | command | — | — | ✓ | ✓ | — | — | — | — | ✓ | — | — | — | — | ✓ | ✓ |
 | button | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
 | link | — | — | ✓ | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ |
