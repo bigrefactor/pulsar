@@ -77,10 +77,142 @@ defmodule Pulsar.Components.ComboboxTest do
       assert ["Beta", "Xylophone Beta"] = labels(Combobox.default_filter("beta", options))
     end
 
+    test "position breaks a contiguity tie against alphabetical order" do
+      options = Combobox.options(["Alpha Cat", "Cat Zoo"])
+      assert ["Cat Zoo", "Alpha Cat"] = labels(Combobox.default_filter("cat", options))
+    end
+
     test "drops non-matches", %{options: options} do
       assert [] = Combobox.default_filter("zzzz", options)
     end
 
     defp labels(options), do: Enum.map(options, & &1.label)
+  end
+
+  describe "rendering" do
+    import Phoenix.LiveViewTest
+
+    test "renders a combobox input wired to its listbox" do
+      html = render_component(Combobox, id: "cb", options: ["Alpha", "Beta"])
+
+      assert html =~ ~s(role="combobox")
+      assert html =~ ~s(id="cb")
+      assert html =~ ~s(role="listbox")
+      assert html =~ ~s(aria-controls="cb-listbox")
+      assert html =~ ~s(aria-autocomplete="list")
+      assert html =~ ~s(autocomplete="off")
+      assert html =~ "Alpha"
+      assert html =~ "Beta"
+    end
+
+    test "the input has an accessible name from a real label element" do
+      html = render_component(Combobox, id: "cb", label: "Owner", options: [])
+
+      assert html =~ ~s(<label for="cb")
+      assert html =~ "Owner"
+    end
+
+    test "option rows carry sequential ids and option roles" do
+      html = render_component(Combobox, id: "cb", options: ["Alpha", "Beta"])
+
+      assert html =~ ~s(id="cb-option-0")
+      assert html =~ ~s(id="cb-option-1")
+      assert html =~ ~s(role="option")
+    end
+
+    test "aria-selected reflects the selected value, not the active row" do
+      html = render_component(Combobox, id: "cb", options: [{"Alpha", "a"}, {"Beta", "b"}], value: "b")
+
+      assert option_tag(html, "cb-option-1") =~ ~s(aria-selected="true")
+      assert option_tag(html, "cb-option-0") =~ ~s(aria-selected="false")
+    end
+
+    test "groups options under a labelled group role" do
+      html = render_component(Combobox, id: "cb", options: [{"Europe", ["UK"]}])
+
+      assert html =~ ~s(role="group")
+      assert html =~ ~s(id="cb-group-0")
+      assert html =~ "Europe"
+    end
+
+    test "renders a disabled row as aria-disabled" do
+      html = render_component(Combobox, id: "cb", options: [[key: "Alpha", value: "a", disabled: true]])
+
+      assert html =~ ~s(aria-disabled="true")
+    end
+
+    test "renders the empty state as a single unreachable option row" do
+      html = render_component(Combobox, id: "cb", options: [])
+
+      assert html =~ "No results found"
+      refute html =~ "data-combobox-option"
+    end
+
+    test "announces the result count in a polite status region" do
+      html = render_component(Combobox, id: "cb", options: ["Alpha"])
+
+      assert html =~ ~s(role="status")
+      assert html =~ ~s(aria-live="polite")
+      assert html =~ "1 result"
+    end
+
+    test "binds a hidden input carrying the field value" do
+      html = render_component(Combobox, id: "cb", name: "user[owner_id]", value: "42", options: [{"Alice", "42"}])
+
+      assert html =~ ~s(type="hidden")
+      assert html =~ ~s(name="user[owner_id]")
+      assert html =~ ~s(value="42")
+    end
+
+    test "the input displays the selected label" do
+      html = render_component(Combobox, id: "cb", options: [{"Alice Chen", "42"}], value: "42")
+
+      assert html =~ ~s(value="Alice Chen")
+    end
+
+    test "display resolves a label that options cannot" do
+      html = render_component(Combobox, id: "cb", options: [], value: "42", display: [{"Alice Chen", "42"}])
+
+      assert html =~ ~s(value="Alice Chen")
+    end
+
+    test "an unresolvable value falls back to the raw value" do
+      html = render_component(Combobox, id: "cb", options: [], value: "42")
+
+      assert html =~ ~s(value="42")
+    end
+
+    test "renders the chevron outside the tab sequence and the clear button in it" do
+      html = render_component(Combobox, id: "cb", options: [{"Alice", "42"}], value: "42")
+
+      assert html =~ ~s(tabindex="-1")
+      assert html =~ "Show options"
+      assert html =~ "Clear"
+    end
+
+    test "hides the clear button when nothing is selected" do
+      html = render_component(Combobox, id: "cb", options: [{"Alice", "42"}])
+
+      refute html =~ "Clear"
+    end
+
+    test "applies variant, color, and size classes" do
+      html = render_component(Combobox, id: "cb", options: ["Alpha"], variant: "solid", color: "success", size: "lg")
+
+      assert html =~ "bg-surface-2"
+      assert html =~ "data-[active=true]:bg-success/10"
+      assert html =~ "h-10"
+    end
+
+    test "marks invalid and required state on the input" do
+      html = render_component(Combobox, id: "cb", options: [], invalid: true, required: true)
+
+      assert html =~ ~s(aria-invalid="true")
+      assert html =~ ~s(aria-required="true")
+    end
+
+    defp option_tag(html, id) do
+      ~r/<div[^>]*id="#{id}"[^>]*>/ |> Regex.run(html) |> List.first()
+    end
   end
 end

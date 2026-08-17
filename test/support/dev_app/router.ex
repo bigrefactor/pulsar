@@ -47,6 +47,7 @@ defmodule Pulsar.DevApp.Router do
     live "/components/date_picker/single", DatePickerLive, :single
     live "/components/date_picker/range", DatePickerLive, :range
     live "/components/checkbox", CheckboxLive, :index
+    live "/components/combobox", ComboboxLive, :index
     live "/components/command", CommandLive, :index
     live "/components/collapsible", CollapsibleLive, :index
     live "/components/divider", DividerLive, :index
