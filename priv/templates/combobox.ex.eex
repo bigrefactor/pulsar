@@ -704,6 +704,273 @@ def render(assigns) do
     </select>
 
     <div role="status" aria-live="polite" class="sr-only">{announcement(assigns)}</div>
+
+    <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarCombobox">
+      export default {
+        mounted() {
+          this.input = this.el.querySelector("input[role='combobox']")
+          this.panel = document.getElementById(this.el.dataset.panel)
+          this.timer = null
+          this.open = false
+
+          this._onInput = () => this.handleInput()
+          this._onKeydown = (e) => this.handleKeydown(e)
+          this._onClick = (e) => this.handleClick(e)
+          this._onFocus = () => this.openList()
+          this._onBlur = () => this.restoreDisplay()
+          this._onRemove = (e) => this.remove(e.detail && e.detail.value)
+          this._onDocPointer = (e) => { if (!this.el.contains(e.target)) this.closeList() }
+
+          this.input.addEventListener("input", this._onInput)
+          this.input.addEventListener("focus", this._onFocus)
+          this.input.addEventListener("blur", this._onBlur)
+          this.el.addEventListener("keydown", this._onKeydown)
+          this.el.addEventListener("click", this._onClick)
+          this.el.addEventListener("pulsar:combobox-remove", this._onRemove)
+        },
+
+        destroyed() {
+          clearTimeout(this.timer)
+          document.removeEventListener("pointerdown", this._onDocPointer, true)
+        },
+
+        updated() {
+          this.input = this.el.querySelector("input[role='combobox']")
+          this.panel = document.getElementById(this.el.dataset.panel)
+          // The server owns the resting display; never fight the caret.
+          if (document.activeElement !== this.input) this.restoreDisplay()
+          // The server always renders the closed state, so a patch that reaches
+          // the input clears the open state; re-assert it after every render.
+          this.input.setAttribute("aria-expanded", this.open ? "true" : "false")
+          this.syncActiveDescendant()
+          this.scrollActiveIntoView()
+        },
+
+        multiple() { return this.el.dataset.multiple === "true" },
+        hidden() { return this.el.querySelector("[data-combobox-value]") },
+        displayValue() { return this.input.getAttribute("value") || "" },
+
+        options() {
+          return Array.from(this.el.querySelectorAll("[data-combobox-option]"))
+            .filter((el) => el.getAttribute("aria-disabled") !== "true")
+        },
+
+        activeIndex(options) {
+          return options.findIndex((el) => el.dataset.active === "true")
+        },
+
+        signalPanel(event) {
+          if (!this.panel) return
+          this.panel.dispatchEvent(new CustomEvent(event, { bubbles: true }))
+        },
+
+        openList() {
+          if (this.open) return
+          this.open = true
+          this.input.setAttribute("aria-expanded", "true")
+          this.signalPanel("pulsar:popover-show")
+          this.syncActiveDescendant()
+          // Select the resting label so the first keystroke replaces it rather
+          // than appending to it.
+          if (!this.multiple()) this.input.select()
+          document.addEventListener("pointerdown", this._onDocPointer, true)
+        },
+
+        closeList() {
+          if (!this.open) return
+          this.open = false
+          this.input.setAttribute("aria-expanded", "false")
+          this.input.removeAttribute("aria-activedescendant")
+          this.signalPanel("pulsar:popover-hide")
+          document.removeEventListener("pointerdown", this._onDocPointer, true)
+          this.restoreDisplay()
+        },
+
+        // Whatever was typed and not chosen is not the value, so it never survives
+        // a close.
+        restoreDisplay() {
+          if (!this.multiple()) this.input.value = this.displayValue()
+          else this.input.value = ""
+        },
+
+        handleInput() {
+          this.openList()
+          const wait = parseInt(this.el.dataset.debounce || "0", 10)
+          clearTimeout(this.timer)
+          const push = () => this.pushEventTo(this.el, "query", { query: this.input.value })
+          wait > 0 ? (this.timer = setTimeout(push, wait)) : push()
+        },
+
+        handleClick(e) {
+          if (e.target.closest("[data-combobox-toggle]")) {
+            this.open ? this.closeList() : (this.input.focus(), this.openList())
+            return
+          }
+          if (e.target.closest("[data-combobox-clear]")) {
+            this.clear()
+            return
+          }
+          const row = e.target.closest("[data-combobox-option]")
+          if (row && row.getAttribute("aria-disabled") !== "true") this.pick(row)
+        },
+
+        handleKeydown(e) {
+          const options = this.options()
+
+          switch (e.key) {
+            case "ArrowDown":
+              e.preventDefault()
+              if (!this.open) { this.openList(); return }
+              if (options.length) this.activate(options, (this.activeIndex(options) + 1) % options.length)
+              break
+            case "ArrowUp": {
+              e.preventDefault()
+              if (!this.open) { this.openList(); return }
+              if (!options.length) break
+              const previous = this.activeIndex(options) - 1
+              this.activate(options, previous < 0 ? options.length - 1 : previous)
+              break
+            }
+            // Enter only belongs to the list while the list is open; closed, it
+            // falls through so the enclosing form still submits.
+            case "Enter": {
+              if (!this.open) break
+              e.preventDefault()
+              const active = options[this.activeIndex(options)]
+              if (active) this.pick(active)
+              break
+            }
+            case "Escape":
+              // Deliberately not preventDefault: an enclosing dialog still gets to
+              // close itself.
+              this.closeList()
+              break
+            case "Tab":
+              this.closeList()
+              break
+            case "Backspace": {
+              if (!this.multiple() || this.input.value !== "") break
+              const badges = this.el.querySelectorAll("[data-combobox-badge]")
+              const last = badges[badges.length - 1]
+              if (last) this.remove(last.dataset.value)
+              break
+            }
+          }
+        },
+
+        activate(options, index) {
+          options.forEach((el) => {
+            el.dataset.active = "false"
+          })
+          const next = options[index]
+          if (!next) return
+          next.dataset.active = "true"
+          this.input.setAttribute("aria-activedescendant", next.id)
+          next.scrollIntoView({ block: "nearest" })
+        },
+
+        // The active row is marked in the server's markup too, so read it back
+        // rather than remembering it: a re-render moves it and the input has to
+        // point at wherever it landed.
+        syncActiveDescendant() {
+          const active = this.el.querySelector("[data-combobox-option][data-active='true']")
+          if (this.open && active) this.input.setAttribute("aria-activedescendant", active.id)
+          else this.input.removeAttribute("aria-activedescendant")
+        },
+
+        scrollActiveIntoView() {
+          const active = this.el.querySelector("[data-combobox-option][data-active='true']")
+          if (active && this.open) active.scrollIntoView({ block: "nearest" })
+        },
+
+        pick(row) {
+          const value = row.dataset.value
+          const label = row.dataset.label
+          clearTimeout(this.timer)
+          this.writeValue(value, true)
+          if (this.multiple()) {
+            this.input.value = ""
+          } else {
+            // Close first: closing restores the resting display, and the picked
+            // label is what that display now is.
+            this.setDisplay(label)
+            this.closeList()
+          }
+          this.pushEventTo(this.el, "select", { value })
+          this.runChange()
+        },
+
+        remove(value) {
+          if (value == null) return
+          this.writeValue(value, false)
+          this.pushEventTo(this.el, "remove", { value })
+          this.runChange()
+        },
+
+        clear() {
+          const hidden = this.hidden()
+          if (hidden && this.multiple()) {
+            Array.from(hidden.options).forEach((o) => { o.selected = false })
+            this.notify(hidden)
+          } else if (hidden) {
+            this.setInput(hidden, "")
+          }
+          this.setDisplay("")
+          this.pushEventTo(this.el, "clear", {})
+          this.runChange()
+        },
+
+        // A focused input keeps its `value` attribute across a patch, so the
+        // resting display has to be written to the attribute as well or the next
+        // close reverts to the label from before this pick.
+        setDisplay(label) {
+          this.input.value = label
+          this.input.setAttribute("value", label)
+        },
+
+        writeValue(value, on) {
+          const hidden = this.hidden()
+          if (!hidden) return
+          if (!this.multiple()) {
+            this.setInput(hidden, on ? value : "")
+            return
+          }
+          let option = Array.from(hidden.options).find((o) => o.value === String(value))
+          // An async source can hand back a value the server has not rendered yet;
+          // create it now and let the next patch supersede it.
+          if (!option && on) {
+            option = new Option(String(value), String(value))
+            hidden.add(option)
+          }
+          if (option) {
+            option.selected = on
+            this.notify(hidden)
+          }
+        },
+
+        // A bare `.value =` fires nothing, so the enclosing form's phx-change never
+        // sees it. Set the attribute too, or a re-render reverts the value.
+        setInput(input, value) {
+          if (input.value === value) return
+          input.value = value
+          input.setAttribute("value", value)
+          this.notify(input)
+        },
+
+        notify(el) {
+          el.dispatchEvent(new Event("input", { bubbles: true }))
+          el.dispatchEvent(new Event("change", { bubbles: true }))
+        },
+
+        // Run from the input, not this.el: the root carries phx-target, and
+        // execJS inherits it from whatever element it runs on, so an untargeted
+        // on_change push would be misrouted back into this component.
+        runChange() {
+          const encoded = this.el.dataset.onChange
+          if (encoded && encoded !== "[]" && this.liveSocket) this.liveSocket.execJS(this.input, encoded)
+        }
+      }
+    </script>
   </div>
   """
 end
