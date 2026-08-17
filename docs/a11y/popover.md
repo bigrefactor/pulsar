@@ -11,6 +11,14 @@ the browser handles light-dismiss (outside click + Escape); Escape returns focus
 and so does a programmatic close through `hide/1`.
 The panel imposes no role; callers pass `role="dialog"` and a name when needed.
 
+In `trigger_mode="manual"` the panel has no trigger element at all — it opens
+and closes only through `show/1`/`hide/1`, is positioned against the required
+`:anchor` selector, and `validate_trigger!/1` in `popover.ex` (`popover/1`)
+raises if `:anchor` is omitted. With no trigger, the panel exposes no
+`aria-expanded`/`aria-controls` relationship of its own; the component that
+owns the anchor element is responsible for that relationship and for
+dismissal.
+
 ## Applicable criteria
 
 ### 1.3.1 Info and Relationships (A) — ✓ PASS
