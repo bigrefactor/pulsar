@@ -303,6 +303,7 @@ defmodule Pulsar.Components.ComboboxTest do
       html = render_component(Combobox, id: "cb", multiple: true, options: [{"Elixir", "ex"}])
 
       refute html =~ "data-combobox-badge"
+      refute html =~ "<select"
     end
 
     test "single mode renders no multiple select" do
