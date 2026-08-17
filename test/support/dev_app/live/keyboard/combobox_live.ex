@@ -21,22 +21,34 @@ defmodule Pulsar.DevApp.Keyboard.ComboboxLive do
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign(:form, to_form(%{"owner" => ""}, as: :picked))
+     |> assign(:validations, 0)
+     |> assign(:form, build_form("", 0))
      |> assign(:received, "")
      |> assign(:received_tags, "")}
   end
 
+  # Every validate rebuilds the form with a changed revision, the way a
+  # changeset-backed host does: the rebuilt form is a genuinely new assign, so
+  # the change reaches the combobox's `update/2` instead of being skipped as
+  # structurally equal.
   def handle_event("validate", %{"picked" => %{"owner" => owner}}, socket) do
+    validations = socket.assigns.validations + 1
+
     {:noreply,
      socket
      |> assign(:received, owner)
-     |> assign(:form, to_form(%{"owner" => owner}, as: :picked))}
+     |> assign(:validations, validations)
+     |> assign(:form, build_form(owner, validations))}
   end
 
   # The multi-select writes into a hidden <select multiple>, so an empty
   # selection drops the key from the params entirely.
   def handle_event("validate_tags", params, socket) do
     {:noreply, assign(socket, :received_tags, params |> Map.get("tags", []) |> Enum.join(" "))}
+  end
+
+  defp build_form(owner, revision) do
+    to_form(%{"owner" => owner, "revision" => to_string(revision)}, as: :picked)
   end
 
   def render(assigns) do
@@ -54,6 +66,7 @@ defmodule Pulsar.DevApp.Keyboard.ComboboxLive do
           />
         </.form>
         <p id="kbd-form-received">{@received}</p>
+        <p id="kbd-form-validations">{@validations}</p>
       </.fixture_section>
 
       <.fixture_section name="standalone" title="Single-select with no form">

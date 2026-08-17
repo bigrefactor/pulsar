@@ -451,7 +451,7 @@ defmodule Pulsar.Components.Combobox do
       if socket.assigns.async and Map.has_key?(socket.assigns, :results) do
         socket
       else
-        assign_results(socket, initial_results(socket.assigns))
+        assign_results(socket, initial_results(socket.assigns, socket.assigns.query))
       end
 
     {:ok, socket}
@@ -511,8 +511,8 @@ defmodule Pulsar.Components.Combobox do
     end
   end
 
-  defp initial_results(assigns) do
-    run_filter(initial_filter(assigns), "", assigns.normalized)
+  defp initial_results(assigns, query) do
+    run_filter(initial_filter(assigns), query, assigns.normalized)
   end
 
   defp initial_filter(%{async: true}), do: nil
@@ -780,7 +780,10 @@ defmodule Pulsar.Components.Combobox do
             document.addEventListener("pointerdown", this._onDocPointer, true)
           },
 
-          closeList() {
+          // A pick resets the server's query itself, so it closes with
+          // `{ reset: false }`; every other close has to send the reset, or the
+          // next open shows the abandoned query's results.
+          closeList({ reset = true } = {}) {
             if (!this.open) return
             this.open = false
             this.input.setAttribute("aria-expanded", "false")
@@ -788,6 +791,10 @@ defmodule Pulsar.Components.Combobox do
             this.signalPanel("pulsar:popover-hide")
             document.removeEventListener("pointerdown", this._onDocPointer, true)
             this.restoreDisplay()
+            if (reset) {
+              clearTimeout(this.timer)
+              this.pushEventTo(this.el, "query", { query: "" })
+            }
           },
 
           // Whatever was typed and not chosen is not the value, so it never survives
@@ -898,7 +905,7 @@ defmodule Pulsar.Components.Combobox do
               // Write the display before closing: closing restores the resting
               // display, and the picked label is what that display now is.
               this.setDisplay(label)
-              this.closeList()
+              this.closeList({ reset: false })
             }
             this.pushEventTo(this.el, "select", { value })
             this.runChange()
@@ -1026,7 +1033,7 @@ defmodule Pulsar.Components.Combobox do
         socket
       end
 
-    assign_results(socket, initial_results(socket.assigns))
+    assign_results(socket, initial_results(socket.assigns, socket.assigns.query))
   end
 
   @impl Phoenix.LiveComponent

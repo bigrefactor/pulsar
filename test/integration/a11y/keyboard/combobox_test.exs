@@ -157,6 +157,25 @@ defmodule Pulsar.Integration.A11y.Keyboard.ComboboxTest do
     end
   end
 
+  describe "host re-renders" do
+    # LiveView pushes an enclosing form's phx-change for any input inside it, so
+    # every keystroke in the query field also runs the host's `validate`. The
+    # fixture's validate rebuilds the form with a changed revision, so the
+    # rebuilt `field` really does reach the component's `update/2`.
+    test "the open filtered list survives the host's validate", %{conn: conn} do
+      conn
+      |> visit("/keyboard/combobox")
+      |> A11y.await_live_connected()
+      |> fill_in("Pick an owner", with: "beta")
+      |> A11y.assert_visible("kbd-form-listbox")
+      |> assert_has("#kbd-form-listbox", text: "Betamax")
+      # The counter proves the host re-render landed before the list is checked;
+      # without it the refute below can pass on the pre-validate render.
+      |> assert_has("#kbd-form-validations", text: "1")
+      |> refute_has("#kbd-form-listbox", text: "Alpha")
+    end
+  end
+
   describe "positioning" do
     # `trigger_mode="manual"` leaves the popover hook's `this.trigger` null, so a
     # panel positioned off the trigger alone would silently stay at the viewport
@@ -234,6 +253,23 @@ defmodule Pulsar.Integration.A11y.Keyboard.ComboboxTest do
       |> press("#kbd-multi", "Backspace")
       |> refute_has("#kbd-multi-field", text: "Alpha")
       |> refute_has("#kbd-multi-received", text: "alpha")
+    end
+  end
+
+  describe "reopening" do
+    test "a list closed without a pick reopens on the full list", %{conn: conn} do
+      conn
+      |> visit("/keyboard/combobox")
+      |> A11y.await_live_connected()
+      |> click("#kbd-solo")
+      |> fill_in("Pick a value", with: "zzz")
+      |> assert_has("#kbd-solo-listbox", text: "No results found")
+      |> press("#kbd-solo", "Escape")
+      |> A11y.refute_visible("kbd-solo-listbox")
+      |> click(~s|#kbd-solo-field [data-combobox-toggle]|)
+      |> A11y.assert_visible("kbd-solo-listbox")
+      |> assert_has("#kbd-solo-listbox", text: "Alpha")
+      |> refute_has("#kbd-solo-listbox", text: "No results found")
     end
   end
 
