@@ -184,7 +184,10 @@ its listbox as a real `popover="manual"` panel
 (`Pulsar.Components.Popover`), triggered on **focus**, not hover —
 `render/1` (`openList()` runs from the input's `focus` listener). The
 panel is dismissable by keyboard (Escape) and by clicking outside
-(`_onDocPointer`, added only while open) — `render/1`. It is persistent:
+(`_onDocPointer`, added only while open), and closes with the window
+itself losing focus (`_onWindowBlur`, likewise added only while open, so
+an unfocused window never leaves a list open under a resting label) —
+`render/1`. It is persistent:
 nothing closes it merely because the pointer moves over it, and it stays
 open across re-renders (`updated()` re-asserts `aria-expanded` from the
 hook's own `this.open` state rather than trusting the server's always-closed
@@ -494,14 +497,16 @@ CI's axe-core browser gate (`test/integration/a11y/axe_clean_test.exs`),
 the target-size gate (`test/integration/a11y/target_size_test.exs`), and
 the reflow gate (`test/integration/a11y/reflow_test.exs`). All three ran
 clean for Combobox in both themes as part of the full `mix test --only
-integration` run (585 tests, 0 failures). The listbox is closed at rest
+integration` run (589 tests, 0 failures). The listbox is closed at rest
 (`popover="manual"`, `display: none`), so a default scan exercises the
 visible field, badges, and buttons; it does not scan the listbox's
 contents, which is why the per-color note under 1.4.3 above matters.
 
-The 16 real-browser keyboard tests in
+The 20 real-browser keyboard tests in
 `test/integration/a11y/keyboard/combobox_test.exs` all pass independently,
 covering typing/filtering, arrow navigation with wrapping and
 disabled-row skipping, Enter-to-pick, Escape-to-close, Tab-closes-without-
-picking, the chevron and clear affordances, and `multiple` mode's badge
-accumulation, phx-change propagation, and Backspace-removes-last-badge.
+picking, the window losing focus closing the list, the chevron and clear
+affordances, an async source behind the debounce, and `multiple` mode's
+badge accumulation, phx-change propagation, and
+Backspace-removes-last-badge.

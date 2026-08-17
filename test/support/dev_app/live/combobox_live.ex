@@ -10,7 +10,10 @@ defmodule Pulsar.DevApp.ComboboxLive do
 
   @options [{"Alpha", "alpha"}, {"Beta", "beta"}, {"Betamax", "betamax"}]
 
-  def mount(_params, _session, socket), do: {:ok, socket}
+  def mount(_params, _session, socket) do
+    params = if connected?(socket), do: get_connect_params(socket) || %{}, else: %{}
+    {:ok, assign(socket, :filter, filter_fun(params["probe"]))}
+  end
 
   # Returns values deliberately absent from `options`, so the async path and
   # the hook's option-creation branch are both exercised.
@@ -20,6 +23,21 @@ defmodule Pulsar.DevApp.ComboboxLive do
       fn {label, _value} -> String.contains?(String.downcase(label), String.downcase(query)) end
     )
   end
+
+  # A test that passes its own pid as the `probe` connect param gets a filter it
+  # controls: the task announces itself and then blocks, so the test can observe
+  # whether a second query kills the first task or leaves it running.
+  defp filter_fun(probe) when is_pid(probe) do
+    fn query, options ->
+      send(probe, {:filtering, query, self()})
+
+      receive do
+        :release -> remote_search(query, options)
+      end
+    end
+  end
+
+  defp filter_fun(_probe), do: &__MODULE__.remote_search/2
 
   def render(assigns) do
     assigns = assign(assigns, :options, @options)
@@ -69,7 +87,7 @@ defmodule Pulsar.DevApp.ComboboxLive do
           id="cb-async"
           label="Search remotely"
           options={[]}
-          filter={&__MODULE__.remote_search/2}
+          filter={@filter}
           async
           debounce={0}
         />

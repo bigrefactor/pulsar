@@ -51,6 +51,28 @@ defmodule Pulsar.DevApp.ComboboxLiveTest do
 
       assert render(element(view, "#cb-async-listbox")) =~ "Remote One"
     end
+
+    # `start_async` under an existing name only discards the old task's result;
+    # the task itself keeps running. Only the process's death distinguishes a
+    # cancelled filter from an abandoned one, so watch for it directly.
+    test "a new query kills the in-flight async filter", %{conn: conn} do
+      {:ok, view, _html} =
+        conn
+        |> put_connect_params(%{"probe" => self()})
+        |> live("/components/combobox")
+
+      render_hook(element(view, "#cb-async-cb"), "query", %{"query" => "one"})
+      assert_receive {:filtering, "one", first}
+      ref = Process.monitor(first)
+
+      render_hook(element(view, "#cb-async-cb"), "query", %{"query" => "two"})
+      assert_receive {:filtering, "two", second}
+      assert second != first
+
+      assert_receive {:DOWN, ^ref, :process, ^first, _reason}
+
+      send(second, :release)
+    end
   end
 
   describe "select event" do

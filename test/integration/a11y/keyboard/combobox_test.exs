@@ -13,10 +13,11 @@ defmodule Pulsar.Integration.A11y.Keyboard.ComboboxTest do
 
   @moduletag :integration
 
-  # The fixture at `/keyboard/combobox` renders three comboboxes over
+  # The fixture at `/keyboard/combobox` renders four comboboxes. Three run over
   # Alpha / Beta / Gamma [disabled] / Betamax: `kbd-form` bound to a form with
   # phx-change (echoing into `#kbd-form-received`), `kbd-solo` standalone with
-  # no form, and `kbd-multi` in multiple mode.
+  # no form, and `kbd-multi` in multiple mode. `kbd-async` has no options of its
+  # own and reaches a deliberately slow source behind the default debounce.
   #
   # Verification: comment out the ArrowDown branch of the hook's keydown
   # handler (see `lib/pulsar/components/combobox.ex`), run
@@ -253,6 +254,44 @@ defmodule Pulsar.Integration.A11y.Keyboard.ComboboxTest do
       |> press("#kbd-multi", "Backspace")
       |> refute_has("#kbd-multi-field", text: "Alpha")
       |> refute_has("#kbd-multi-received", text: "alpha")
+    end
+  end
+
+  describe "losing focus" do
+    # Tab and an outside click each close through their own handler. The window
+    # losing focus reaches neither, and left the filtered list open underneath a
+    # restored resting label.
+    test "the window losing focus closes the list", %{conn: conn} do
+      conn =
+        conn
+        |> visit("/keyboard/combobox")
+        |> A11y.await_live_connected()
+        |> click("#kbd-solo")
+        |> fill_in("Pick a value", with: "beta")
+        |> A11y.assert_visible("kbd-solo-listbox")
+        |> PhoenixTest.Playwright.evaluate("window.dispatchEvent(new Event('blur'))")
+        |> A11y.refute_visible("kbd-solo-listbox")
+
+      PhoenixTest.Playwright.evaluate(
+        conn,
+        "document.querySelector('#kbd-solo').value",
+        fn value -> assert value == "" end
+      )
+    end
+  end
+
+  describe "async source" do
+    # The only cell with a non-zero debounce, so it is the only test that runs
+    # the hook's timer branch end to end: keystroke -> debounce -> push ->
+    # start_async -> handle_async -> rows the client never had.
+    test "a debounced query fills the list from the async source", %{conn: conn} do
+      conn
+      |> visit("/keyboard/combobox")
+      |> A11y.await_live_connected()
+      |> fill_in("Search remotely", with: "remote")
+      |> assert_has("#kbd-async-listbox", text: "Remote One")
+      |> assert_has("#kbd-async-listbox", text: "Remote Two")
+      |> assert_has(~s|#kbd-async-listbox[aria-busy="false"]|)
     end
   end
 

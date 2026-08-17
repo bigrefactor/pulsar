@@ -41,7 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ships with a generator (`mix pulsar.gen.combobox`), a Storybook story, and a
   WCAG 2.2 AA audit at `docs/a11y/combobox.md`.
 
-### Changed - `popover` Gains a Trigger-Less `"manual"` Mode, and Validates Its Trigger
+### Changed (Breaking) - `popover` Gains a Trigger-Less `"manual"` Mode, and Validates Its Trigger
 
 - **`trigger_mode="manual"` renders a panel with no trigger at all**, positioned
   against whatever `anchor` points at and opened and closed entirely through

@@ -2,10 +2,10 @@ defmodule Pulsar.DevApp.Keyboard.ComboboxLive do
   @moduledoc """
   Interaction-test fixture for `Pulsar.Components.Combobox`.
 
-  Three comboboxes: one single-select inside a form with `phx-change`, one
-  single-select standalone with no form at all, and one multi-select also inside
-  a form with `phx-change`. Behavior comes from the `.PulsarCombobox` colocated
-  hook.
+  Four comboboxes: one single-select inside a form with `phx-change`, one
+  single-select standalone with no form at all, one multi-select also inside a
+  form with `phx-change`, and one whose options come from a slow async source
+  behind a debounce. Behavior comes from the `.PulsarCombobox` colocated hook.
   """
   use Pulsar.DevApp.Web, :live_view
 
@@ -51,6 +51,18 @@ defmodule Pulsar.DevApp.Keyboard.ComboboxLive do
     to_form(%{"owner" => owner, "revision" => to_string(revision)}, as: :picked)
   end
 
+  # Slow enough that the results cannot arrive in the same round trip as the
+  # query, and returning values `options` never held so they can only have come
+  # from here.
+  def slow_search(query, _options) do
+    Process.sleep(150)
+
+    Enum.filter(
+      [{"Remote One", "r1"}, {"Remote Two", "r2"}],
+      fn {label, _value} -> String.contains?(String.downcase(label), String.downcase(query)) end
+    )
+  end
+
   def render(assigns) do
     assigns = assign(assigns, :options, @options)
 
@@ -84,6 +96,16 @@ defmodule Pulsar.DevApp.Keyboard.ComboboxLive do
           />
         </.form>
         <p id="kbd-multi-received">{@received_tags}</p>
+      </.fixture_section>
+
+      <.fixture_section name="async" title="Async source behind a debounce">
+        <Combobox.combobox
+          id="kbd-async"
+          label="Search remotely"
+          options={[]}
+          filter={&__MODULE__.slow_search/2}
+          async
+        />
       </.fixture_section>
     </.fixture_page>
     """

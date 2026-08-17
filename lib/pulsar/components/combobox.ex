@@ -724,6 +724,11 @@ defmodule Pulsar.Components.Combobox do
             this._onBlur = () => this.restoreDisplay()
             this._onRemove = (e) => this.remove(e.detail && e.detail.value)
             this._onDocPointer = (e) => { if (!this.el.contains(e.target)) this.closeList() }
+            // Every in-page way of leaving closes through its own handler, but the
+            // window losing focus reaches none of them and would strand an open
+            // list under a restored resting label. `blur` does not bubble, so this
+            // fires for the window alone and never for the query input.
+            this._onWindowBlur = () => this.closeList()
 
             this.input.addEventListener("input", this._onInput)
             this.input.addEventListener("focus", this._onFocus)
@@ -736,6 +741,7 @@ defmodule Pulsar.Components.Combobox do
           destroyed() {
             clearTimeout(this.timer)
             document.removeEventListener("pointerdown", this._onDocPointer, true)
+            window.removeEventListener("blur", this._onWindowBlur)
           },
 
           updated() {
@@ -778,6 +784,7 @@ defmodule Pulsar.Components.Combobox do
             // than appending to it.
             if (!this.multiple()) this.input.select()
             document.addEventListener("pointerdown", this._onDocPointer, true)
+            window.addEventListener("blur", this._onWindowBlur)
           },
 
           // A pick resets the server's query itself, so it closes with
@@ -790,6 +797,7 @@ defmodule Pulsar.Components.Combobox do
             this.input.removeAttribute("aria-activedescendant")
             this.signalPanel("pulsar:popover-hide")
             document.removeEventListener("pointerdown", this._onDocPointer, true)
+            window.removeEventListener("blur", this._onWindowBlur)
             this.restoreDisplay()
             if (reset) {
               clearTimeout(this.timer)
