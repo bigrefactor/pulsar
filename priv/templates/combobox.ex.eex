@@ -698,3 +698,34 @@ def render(assigns) do
   </div>
   """
 end
+
+@impl Phoenix.LiveComponent
+def handle_event("query", %{"query" => query}, socket) do
+  socket = assign(socket, :query, query)
+  %{filter: filter, normalized: options} = socket.assigns
+
+  if socket.assigns.async do
+    {:noreply,
+     socket
+     |> assign(:loading, true)
+     |> cancel_async(:filter)
+     |> start_async(:filter, fn -> run_filter(filter, query, options) end)}
+  else
+    {:noreply, assign_results(socket, run_filter(filter, query, options))}
+  end
+end
+
+@impl Phoenix.LiveComponent
+def handle_async(:filter, {:ok, results}, socket) do
+  {:noreply, socket |> assign(:loading, false) |> assign_results(results)}
+end
+
+# A cancelled filter is one the next keystroke replaced, so its results are
+# simply dropped. Only a genuine failure falls through to the empty state.
+def handle_async(:filter, {:exit, {:shutdown, :cancel}}, socket) do
+  {:noreply, socket}
+end
+
+def handle_async(:filter, {:exit, _reason}, socket) do
+  {:noreply, socket |> assign(:loading, false) |> assign_results([])}
+end

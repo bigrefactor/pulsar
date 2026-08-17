@@ -1,6 +1,8 @@
 defmodule Pulsar.Components.ComboboxTest do
   use ExUnit.Case, async: true
 
+  import Phoenix.LiveViewTest
+
   alias Pulsar.Components.Combobox
   alias Pulsar.Components.Combobox.Option
 
@@ -273,5 +275,17 @@ defmodule Pulsar.Components.ComboboxTest do
         render_component(&Combobox.combobox/1, options: [])
       end
     end
+  end
+
+  test "a custom filter replaces the built-in matcher" do
+    html =
+      render_component(Combobox,
+        id: "cb",
+        options: ["Alpha"],
+        filter: fn _query, _options -> [{"Only", "only"}] end
+      )
+
+    assert html =~ "Only"
+    refute html =~ "Alpha"
   end
 end
