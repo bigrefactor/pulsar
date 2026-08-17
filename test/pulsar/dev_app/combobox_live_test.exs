@@ -98,12 +98,15 @@ defmodule Pulsar.DevApp.ComboboxLiveTest do
   end
 
   describe "remove and clear events" do
-    test "removing drops the value and its badge", %{conn: conn} do
+    test "removing drops the value's badge and updates the selected count", %{conn: conn} do
       {:ok, view, _html} = live(conn, "/components/combobox")
+      assert render(element(view, "#cb-multiple-field")) =~ "Alpha"
+      assert render(element(view, "#cb-multiple-cb")) =~ "1 selected"
 
       render_hook(element(view, "#cb-multiple-cb"), "remove", %{"value" => "alpha"})
 
-      refute render(element(view, "#cb-multiple-cb")) =~ "data-combobox-badge"
+      refute render(element(view, "#cb-multiple-field")) =~ "Alpha"
+      refute render(element(view, "#cb-multiple-cb")) =~ "1 selected"
     end
 
     test "clearing empties a single-select value", %{conn: conn} do
