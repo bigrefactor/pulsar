@@ -158,6 +158,7 @@ alias Phoenix.LiveView.Rendered
 
 # Import all the Pulsar components we'll be rendering
 alias <%= @component_namespace %>.Checkbox
+alias <%= @component_namespace %>.Combobox
 alias <%= @component_namespace %>.DatePicker
 alias <%= @component_namespace %>.Icon
 alias <%= @component_namespace %>.Input
@@ -304,6 +305,11 @@ attr(:disabled_dates, :list, default: [], doc: "Un-selectable dates (date types)
 attr(:disable_weekends, :boolean, default: false, doc: "Disable weekend days (date types)")
 attr(:locale, :string, default: nil, doc: "BCP-47 locale for date display")
 attr(:on_change, JS, default: %JS{}, doc: "JS run when a date changes")
+
+# Combobox-specific attributes
+attr(:filter, :any, default: nil, doc: "Combobox: 2-arity fun `(query, options)` returning options")
+attr(:async, :boolean, default: false, doc: "Combobox: run `filter` off-process")
+attr(:display, :any, default: nil, doc: "Combobox: options used only to resolve selected labels")
 
 # Global attributes passed through to inputs
 attr(:rest, :global, doc: "Additional HTML attributes passed to the input")
@@ -545,6 +551,30 @@ defp render_input(%{type: "radio"} = assigns) do
   >
     <:option :for={{label, value} <- @options || []} value={value}>{label}</:option>
   </RadioGroup.radio_group>
+  """
+end
+
+defp render_input(%{type: "combobox"} = assigns) do
+  ~H"""
+  <Combobox.combobox
+    field={@field}
+    id={@field_id}
+    multiple={@multiple}
+    options={@options}
+    filter={@filter}
+    async={@async}
+    display={@display}
+    labelled_externally
+    variant={@variant}
+    color={@color}
+    size={@size}
+    required={@required}
+    disabled={@disabled}
+    invalid={@has_errors}
+    on_change={@on_change}
+    aria-describedby={@aria_describedby}
+    {@rest}
+  />
   """
 end
 

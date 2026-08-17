@@ -23,6 +23,7 @@ defmodule Pulsar.ComponentDeps do
     card: [],
     checkbox: [],
     collapsible: [:icon],
+    combobox: [:badge, :icon, :popover, :spinner],
     command: [:icon, :spinner],
     date_picker: [:calendar, :popover, :icon],
     divider: [],
@@ -31,6 +32,7 @@ defmodule Pulsar.ComponentDeps do
     dropzone: [:icon, :progress],
     field: [
       :checkbox,
+      :combobox,
       :date_picker,
       :icon,
       :input,

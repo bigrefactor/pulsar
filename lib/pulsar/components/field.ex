@@ -159,6 +159,7 @@ defmodule Pulsar.Components.Field do
 
   # Import all the Pulsar components we'll be rendering
   alias Pulsar.Components.Checkbox
+  alias Pulsar.Components.Combobox
   alias Pulsar.Components.DatePicker
   alias Pulsar.Components.Icon
   alias Pulsar.Components.Input
@@ -306,6 +307,11 @@ defmodule Pulsar.Components.Field do
   attr(:disable_weekends, :boolean, default: false, doc: "Disable weekend days (date types)")
   attr(:locale, :string, default: nil, doc: "BCP-47 locale for date display")
   attr(:on_change, JS, default: %JS{}, doc: "JS run when a date changes")
+
+  # Combobox-specific attributes
+  attr(:filter, :any, default: nil, doc: "Combobox: 2-arity fun `(query, options)` returning options")
+  attr(:async, :boolean, default: false, doc: "Combobox: run `filter` off-process")
+  attr(:display, :any, default: nil, doc: "Combobox: options used only to resolve selected labels")
 
   # Global attributes passed through to inputs
   attr(:rest, :global, doc: "Additional HTML attributes passed to the input")
@@ -547,6 +553,30 @@ defmodule Pulsar.Components.Field do
     >
       <:option :for={{label, value} <- @options || []} value={value}>{label}</:option>
     </RadioGroup.radio_group>
+    """
+  end
+
+  defp render_input(%{type: "combobox"} = assigns) do
+    ~H"""
+    <Combobox.combobox
+      field={@field}
+      id={@field_id}
+      multiple={@multiple}
+      options={@options}
+      filter={@filter}
+      async={@async}
+      display={@display}
+      labelled_externally
+      variant={@variant}
+      color={@color}
+      size={@size}
+      required={@required}
+      disabled={@disabled}
+      invalid={@has_errors}
+      on_change={@on_change}
+      aria-describedby={@aria_describedby}
+      {@rest}
+    />
     """
   end
 

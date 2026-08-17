@@ -1068,6 +1068,52 @@ defmodule Pulsar.Components.FieldTest do
     end
   end
 
+  describe "type=\"combobox\"" do
+    # Combobox is a Phoenix.LiveComponent (unlike every other dispatch target
+    # in this file, which are plain function components). rendered_to_string/1
+    # cannot resolve a nested live_component -- it has no diff/cid context --
+    # so these two tests go through render_component/2, which does.
+    test "dispatches to Combobox and lets the field label name the input" do
+      form = to_form(%{"owner_id" => nil}, as: :user)
+
+      html =
+        render_component(
+          fn assigns ->
+            ~H"""
+            <Field.field field={@field} type="combobox" options={[{"Alice", "1"}]}>
+              <:label>Owner</:label>
+            </Field.field>
+            """
+          end,
+          %{field: form[:owner_id]}
+        )
+
+      assert html =~ ~s(role="combobox")
+      assert html =~ "Owner"
+      # Combobox's own visually-hidden <label> (default text "Search") must be
+      # suppressed by labelled_externally, or the input gets two accessible names.
+      refute html =~ ~s(sr-only">Search)
+    end
+
+    test "forwards multiple to Combobox" do
+      form = to_form(%{"skill_ids" => []}, as: :user)
+
+      html =
+        render_component(
+          fn assigns ->
+            ~H"""
+            <Field.field field={@field} type="combobox" multiple options={[{"Elixir", "ex"}]}>
+              <:label>Skills</:label>
+            </Field.field>
+            """
+          end,
+          %{field: form[:skill_ids]}
+        )
+
+      assert html =~ ~s(aria-multiselectable="true")
+    end
+  end
+
   describe "show_errors attribute" do
     test "show_errors=:never hides errors" do
       field = create_field(:email, "", [{"is required", []}])
