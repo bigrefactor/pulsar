@@ -123,8 +123,8 @@ defmodule Pulsar.Components.ComboboxTest do
     test "aria-selected reflects the selected value, not the active row" do
       html = render_component(Combobox, id: "cb", options: [{"Alpha", "a"}, {"Beta", "b"}], value: "b")
 
-      assert option_tag(html, "cb-option-1") =~ ~s(aria-selected="true")
-      assert option_tag(html, "cb-option-0") =~ ~s(aria-selected="false")
+      assert element_by_id(html, "cb-option-1") =~ ~s(aria-selected="true")
+      assert element_by_id(html, "cb-option-0") =~ ~s(aria-selected="false")
     end
 
     test "groups options under a labelled group role" do
@@ -211,8 +211,67 @@ defmodule Pulsar.Components.ComboboxTest do
       assert html =~ ~s(aria-required="true")
     end
 
-    defp option_tag(html, id) do
-      ~r/<div[^>]*id="#{id}"[^>]*>/ |> Regex.run(html) |> List.first()
+    test "renders the data attributes the colocated hook reads" do
+      html =
+        render_component(Combobox,
+          id: "cb",
+          name: "owner_id",
+          options: [{"Alpha", "a"}],
+          value: "a"
+        )
+
+      root = element_by_id(html, "cb-cb")
+      assert root =~ ~s(data-panel="cb-pop")
+      assert root =~ ~s(data-multiple="false")
+      assert root =~ ~s(data-debounce="0")
+      assert root =~ ~s(data-on-change="[]")
+
+      row = element_by_id(html, "cb-option-0")
+      assert row =~ "data-combobox-option"
+      assert row =~ ~s(data-active="true")
+      assert row =~ ~s(data-value="a")
+      assert row =~ ~s(data-label="Alpha")
+
+      assert html =~ "data-combobox-value"
+      assert html =~ "data-combobox-toggle"
+      assert html =~ "data-combobox-clear"
+    end
+
+    test "the root and the input carry distinct ids, and no id repeats" do
+      html =
+        render_component(Combobox,
+          id: "cb",
+          options: [{"Europe", ["UK", "Sweden"]}],
+          value: "uk"
+        )
+
+      assert element_by_id(html, "cb-cb") =~ ~s(id="cb-cb")
+      assert element_by_id(html, "cb") =~ ~s(id="cb")
+
+      ids = Regex.scan(~r/\sid="([^"]*)"/, html) |> Enum.map(fn [_match, id] -> id end)
+      assert ids == Enum.uniq(ids)
+    end
+
+    defp element_by_id(html, id) do
+      ~r/<[a-zA-Z]+[^>]*\sid="#{id}"[^>]*>/ |> Regex.run(html) |> List.first()
+    end
+  end
+
+  describe "combobox/1" do
+    import Phoenix.Component
+    import Phoenix.LiveViewTest
+
+    test "derives its id from a bound field" do
+      field = to_form(%{"owner_id" => "42"}, as: :user)[:owner_id]
+      html = render_component(&Combobox.combobox/1, field: field, options: [{"Alice", "42"}])
+
+      assert html =~ ~s(id="user_owner_id")
+    end
+
+    test "raises without an id or a bound field" do
+      assert_raise ArgumentError, ~r/requires an :id/, fn ->
+        render_component(&Combobox.combobox/1, options: [])
+      end
     end
   end
 end

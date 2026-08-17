@@ -599,19 +599,20 @@ defmodule Pulsar.Components.Combobox do
           disabled={@disabled}
           value={@display_value}
           placeholder={@placeholder}
+          data-loading={to_string(@loading)}
           class={input_classes(@size)}
         />
         <Spinner.spinner
           decorative
           size="sm"
-          class="hidden shrink-0 peer-data-[loading=true]:block"
+          class="hidden shrink-0 peer-data-[loading=true]:inline-flex"
         />
         <button
           :if={@selected != [] and not @required and not @disabled}
           type="button"
           data-combobox-clear
           aria-label={@clear_label}
-          class="flex shrink-0 items-center rounded-field text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          class="flex min-h-6 min-w-6 shrink-0 items-center justify-center rounded-field text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <Icon.icon name="hero-x-mark" size="sm" />
         </button>
@@ -621,7 +622,7 @@ defmodule Pulsar.Components.Combobox do
           data-combobox-toggle
           aria-label={@open_label}
           disabled={@disabled}
-          class="flex shrink-0 items-center text-muted-foreground hover:text-foreground"
+          class="flex min-h-6 min-w-6 shrink-0 items-center justify-center text-muted-foreground hover:text-foreground"
         >
           <Icon.icon name="hero-chevron-down" size="sm" />
         </button>

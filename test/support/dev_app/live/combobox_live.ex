@@ -36,7 +36,13 @@ defmodule Pulsar.DevApp.ComboboxLive do
       </.fixture_section>
 
       <.fixture_section name="selected" title="With a value">
-        <Combobox.combobox id="cb-selected" label="Pick an owner" options={@options} value="beta" />
+        <Combobox.combobox
+          id="cb-selected"
+          label="Pick an owner"
+          name="owner_id"
+          options={@options}
+          value="beta"
+        />
       </.fixture_section>
 
       <.fixture_section name="multiple" title="Multiple">
