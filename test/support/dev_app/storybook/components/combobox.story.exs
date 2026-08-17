@@ -1,0 +1,50 @@
+defmodule Pulsar.DevApp.Storybook.Components.Combobox do
+  use PhoenixStorybook.Story, :live_component
+
+  alias Pulsar.Components.Combobox
+
+  def component, do: Combobox
+  def render_source, do: :module
+
+  def attributes do
+    [
+      %Attr{id: :variant, type: :string, values: ~w(outline solid ghost), default: "outline", doc: "Field surface"},
+      %Attr{
+        id: :color,
+        type: :string,
+        values: ~w(neutral primary secondary success danger warning info),
+        default: "primary",
+        doc: "Active-row accent"
+      },
+      %Attr{id: :size, type: :string, values: ~w(xs sm md lg xl), default: "md", doc: "Field and row scale"},
+      %Attr{id: :multiple, type: :boolean, default: false, doc: "Collect several values"}
+    ]
+  end
+
+  def variations do
+    [
+      %Variation{
+        id: :default,
+        attributes: %{id: "sb-combobox-default", label: "Owner", options: ["Alpha", "Beta", "Betamax"]}
+      },
+      %Variation{
+        id: :grouped,
+        attributes: %{
+          id: "sb-combobox-grouped",
+          label: "Region",
+          options: [{"Europe", ["UK", "Sweden"]}, {"Asia", ["Japan"]}]
+        }
+      },
+      %Variation{
+        id: :multiple,
+        attributes: %{
+          id: "sb-combobox-multiple",
+          label: "Skills",
+          name: "skills[]",
+          multiple: true,
+          options: ["Elixir", "Phoenix", "LiveView"]
+        }
+      }
+    ]
+  end
+end
