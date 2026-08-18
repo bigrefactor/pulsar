@@ -41,9 +41,10 @@ defmodule Pulsar.Components.InputOtp do
 
   These count the slot row alone, so subtract whatever padding the surrounding
   layout adds. A group never breaks internally, so a grouped code needs its
-  largest group to fit the row, plus the separator that trails every group but
-  the last: `groups={[5, 5]}` works at every size through `lg`, while `xl` fits
-  four and overflows.
+  largest group plus one separator to fit the row: `groups={[5, 5]}` works at
+  every size through `lg`, while `xl` fits four and overflows. Every group is
+  laid out with room for a separator, whether or not it draws one, so the rows
+  of a wrapped code line up in columns.
 
   ## Length and validation
 
@@ -289,7 +290,12 @@ defmodule Pulsar.Components.InputOtp do
         gap_class={@gap_class}
         disabled={@disabled}
       />
-      <span :if={@separator?} aria-hidden="true" class="select-none px-1 text-muted-foreground">-</span>
+      <span
+        aria-hidden="true"
+        class={["select-none px-1 text-muted-foreground", !@separator? && "invisible"]}
+      >
+        -
+      </span>
     </div>
     """
   end

@@ -8,8 +8,9 @@ defmodule Pulsar.Integration.A11y.InputOtpReflowTest do
   mid-group, or a separator stranded on a row of its own, is just as wide as
   one that breaks cleanly, so the gate sees nothing wrong with either.
 
-  This measures that a `groups={[5, 5]}` code puts one group per row and keeps
-  each separator on its group's row.
+  This measures that a `groups={[5, 5]}` code puts one group per row, keeps
+  each separator on its group's row, and lands both rows' slots on the same
+  columns.
 
   Dev_app fixture chrome is neutralised with `A11y.chrome_neutralising_css/0`,
   the same block `reflow_test.exs` injects. Without it the content column
@@ -24,6 +25,11 @@ defmodule Pulsar.Integration.A11y.InputOtpReflowTest do
   Move the separator back out of the group row (its own top-level cell between
   two groups) in `priv/templates/input_otp.ex.eex`, run `mix pulsar.sync`, and
   re-run: the separator lands on a row by itself between the two groups.
+
+  Render the separator on the separating groups alone — drop the trailing one
+  the last group reserves — and re-run: the row that ends with a separator
+  measures wider than the row that does not, and centring pushes the second
+  row's slots off the first row's columns.
   """
 
   use PhoenixTest.Playwright.Case, async: true
@@ -57,12 +63,19 @@ defmodule Pulsar.Integration.A11y.InputOtpReflowTest do
       // bug this guards; one nested in its group's row cannot.
       const items = Array.from(row.children);
 
+      // Every group reserves the separator's width, whether or not it draws
+      // one, so no line is wider than another and centring lands each group's
+      // first slot on the same column.
+      const lefts = items.map((el) => el.querySelector('[data-slot]').getBoundingClientRect().left);
+
       const result = {
         width: Math.round(wrapper.getBoundingClientRect().width),
         available: Math.round(wrapper.parentElement.getBoundingClientRect().width),
         rows: new Set(items.map(top)).size,
         nonGroupItems: items.filter((el) => !el.hasAttribute('data-otp-group')).length,
-        separators: row.querySelectorAll('[data-otp-group] > span').length
+        separators: row.querySelectorAll('[data-otp-group] > span').length,
+        visibleSeparators: row.querySelectorAll('[data-otp-group] > span:not(.invisible)').length,
+        columnOffset: Math.max(...lefts) - Math.min(...lefts)
       };
 
       style.remove();
@@ -76,11 +89,19 @@ defmodule Pulsar.Integration.A11y.InputOtpReflowTest do
         "available" => available,
         "rows" => rows,
         "nonGroupItems" => non_group_items,
-        "separators" => separators
+        "separators" => separators,
+        "visibleSeparators" => visible_separators,
+        "columnOffset" => column_offset
       } = Jason.decode!(json)
 
-      assert separators == 1,
-             "expected the one separator of a groups={[5, 5]} code to render inside a group row, found #{separators}"
+      assert column_offset < 0.5,
+             "the two rows' first slots are #{Float.round(column_offset / 1, 1)} px apart; a line that ends with a separator is wider than one that does not, and centring offsets the rows against each other"
+
+      assert separators == 2,
+             "expected each group of a groups={[5, 5]} code to reserve a separator's width, found #{separators} of 2"
+
+      assert visible_separators == 1,
+             "expected only the separator between the two groups to be drawn, found #{visible_separators}"
 
       assert non_group_items == 0,
              "#{non_group_items} item(s) on the wrapping row are not whole groups; a separator that is its own flex item can wrap onto a line alone"

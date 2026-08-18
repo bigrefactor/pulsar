@@ -115,7 +115,10 @@ Where the row *breaks* is measured separately, in
 `test/integration/a11y/input_otp_reflow_test.exs`, test "a ten-slot grouped
 code puts one group per row, separator included" — a code that wraps mid-group
 or strands a separator on its own row is no wider than one that breaks
-cleanly, so the width gate cannot tell them apart.
+cleanly, so the width gate cannot tell them apart. That test also measures
+that the rows share their slot columns: every group reserves a separator's
+width whether or not it draws one, so no line is wider than another and
+centring cannot offset them against each other.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
