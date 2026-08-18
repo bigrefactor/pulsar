@@ -126,6 +126,24 @@ defmodule Pulsar.Components.InputOtpTest do
       refute flat =~ "data-otp-group"
     end
 
+    # A separator that is its own item on the wrapping row can be pushed onto a
+    # line by itself, stranded between the two groups it separates. Nested in
+    # the preceding group's row it wraps with that group or not at all.
+    test "the separator renders inside its group's row, not as a sibling of it" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <InputOtp.input_otp id="otp" length={10} groups={[5, 5]} />
+        """)
+
+      [_, after_separator] = String.split(html, ~s(px-1 text-muted-foreground))
+
+      # The separator's group row closes after it; a sibling separator would
+      # have to open the next group row instead.
+      assert after_separator =~ ~r{\A[^<]*</span>\s*</div>}
+    end
+
     test "numeric mode sets inputmode numeric; alphanumeric sets text" do
       assigns = %{}
       num = rendered_to_string(~H|<InputOtp.input_otp id="n" mode="numeric" />|)

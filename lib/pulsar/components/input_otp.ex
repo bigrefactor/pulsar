@@ -41,8 +41,9 @@ defmodule Pulsar.Components.InputOtp do
 
   These count the slot row alone, so subtract whatever padding the surrounding
   layout adds. A group never breaks internally, so a grouped code needs its
-  largest group to fit the row: `groups={[5, 5]}` works at every size through
-  `lg`, while `xl` fits four and overflows.
+  largest group to fit the row, plus the separator that trails every group but
+  the last: `groups={[5, 5]}` works at every size through `lg`, while `xl` fits
+  four and overflows.
 
   ## Callbacks
 
@@ -261,14 +262,13 @@ defmodule Pulsar.Components.InputOtp do
   attr(:gap_class, :string, required: true)
   attr(:disabled, :boolean, required: true)
 
-  defp otp_cell(%{cell: :separator} = assigns) do
-    ~H"""
-    <span aria-hidden="true" class="select-none px-1 text-muted-foreground">-</span>
-    """
-  end
+  defp otp_cell(%{cell: {:group, _slots, _separator?}} = assigns) do
+    {:group, slots, separator?} = assigns.cell
 
-  defp otp_cell(%{cell: {:group, _slots}} = assigns) do
-    assigns = assign(assigns, :slots, elem(assigns.cell, 1))
+    assigns =
+      assigns
+      |> assign(:slots, slots)
+      |> assign(:separator?, separator?)
 
     ~H"""
     <div data-otp-group class={merge(["flex items-center", @gap_class])}>
@@ -280,6 +280,7 @@ defmodule Pulsar.Components.InputOtp do
         gap_class={@gap_class}
         disabled={@disabled}
       />
+      <span :if={@separator?} aria-hidden="true" class="select-none px-1 text-muted-foreground">-</span>
     </div>
     """
   end
@@ -315,10 +316,12 @@ defmodule Pulsar.Components.InputOtp do
         {acc ++ [slots_for(start, stop)], start + size}
       end)
 
+    chunks = Enum.reject(chunks, &(&1 == []))
+    last = Enum.count(chunks) - 1
+
     chunks
-    |> Enum.reject(&(&1 == []))
-    |> Enum.map(&{:group, &1})
-    |> Enum.intersperse(:separator)
+    |> Enum.with_index()
+    |> Enum.map(fn {slots, index} -> {:group, slots, index < last} end)
   end
 
   defp slots_for(start, stop) when stop >= start, do: for(i <- start..stop, do: {:slot, i})

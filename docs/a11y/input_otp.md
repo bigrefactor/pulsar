@@ -98,16 +98,19 @@ slots-per-row capacity at 320 CSS px is documented under "Fitting a long code"
 in the module doc, so callers can size a long code before it reaches a
 viewport.
 
-**Gate:** `test/integration/a11y/input_otp_reflow_test.exs`, test
-"a ten-slot grouped code wraps at the separator instead of overflowing".
-Measured at 320 × 640 on a `length={10} groups={[5, 5]}` cell: the row is
-252 px and the two groups sit on separate rows.
+**Gate:** `test/integration/a11y/reflow_test.exs` measures every
+`/components/input_otp/*` route at 320 × 640. The fixture
+(`test/support/dev_app/live/input_otp_live.ex`) carries a `length={10}
+groups={[5, 5]}` cell — without a cell longer than six slots the gate had
+nothing wide enough to fail on, which is why it stayed green while the row
+could not wrap. With `flex-wrap` removed, all six routes fail at
+`documentElement.scrollWidth` 552.
 
-The shared `test/integration/a11y/reflow_test.exs` gate does not cover this.
-It asserts on `document.documentElement.scrollWidth`, and dev_app's layout
-column is `overflow-x-auto`, so a slot row wider than the viewport is absorbed
-there rather than widening the document — the same clipping that hid the
-overflow in a host app. Hence the direct measurement above.
+Where the row *breaks* is measured separately, in
+`test/integration/a11y/input_otp_reflow_test.exs`, test "a ten-slot grouped
+code puts one group per row, separator included" — a code that wraps mid-group
+or strands a separator on its own row is no wider than one that breaks
+cleanly, so the width gate cannot tell them apart.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 
