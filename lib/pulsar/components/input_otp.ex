@@ -22,6 +22,37 @@ defmodule Pulsar.Components.InputOtp do
   (filled boxes), `ghost` (underline). `color` tints the active slot's focus ring;
   `size` scales the slot box and text (`xs`–`xl`).
 
+  ## Fitting a long code
+
+  Slots keep the width their `size` gives them; the row wraps instead. With
+  `groups` set the row only breaks at a separator, so a group is never split
+  across lines — otherwise it breaks between any two slots.
+
+  How many slots fit on one row at 320 CSS px, the narrowest width WCAG asks a
+  page to reflow to:
+
+  | size | slots per row |
+  | ---- | ------------- |
+  | `xs` | 9 |
+  | `sm` | 7 |
+  | `md` | 6 |
+  | `lg` | 5 |
+  | `xl` | 4 |
+
+  These count the slot row alone, so subtract whatever padding the surrounding
+  layout adds. A group never breaks internally, so a grouped code needs its
+  largest group to fit the row, plus the separator that trails every group but
+  the last: `groups={[5, 5]}` works at every size through `lg`, while `xl` fits
+  four and overflows.
+
+  ## Length and validation
+
+  Typing and pasting are never truncated, so a code that arrives formatted —
+  `ABCDE-FGHJK` — lands whole and keeps only the characters `mode` allows.
+  The field carries a `pattern` of exactly `length` characters from that
+  alphabet, so a browser refuses to submit a short or over-long code. Validate
+  the length on the server as well.
+
   ## Callbacks
 
   `on_complete` is a `%JS{}` command run once every character is entered. Use it to
@@ -139,7 +170,7 @@ defmodule Pulsar.Components.InputOtp do
         id={@id}
         name={@name}
         value={@value}
-        maxlength={@length}
+        pattern={value_pattern(@mode, @length)}
         inputmode={input_mode(@mode)}
         autocomplete={@autocomplete}
         autocorrect="off"
@@ -153,8 +184,15 @@ defmodule Pulsar.Components.InputOtp do
         class="absolute inset-0 h-full w-full cursor-text bg-transparent text-center text-transparent caret-transparent outline-none disabled:cursor-not-allowed"
         {@rest}
       />
-      <div aria-hidden="true" class={merge(["pointer-events-none flex items-center", @gap_class])}>
-        <.otp_cell :for={cell <- @cells} cell={cell} slot_class={@slot_class} size={@size} disabled={@disabled} />
+      <div aria-hidden="true" class={merge(["pointer-events-none flex flex-wrap items-center justify-center", @gap_class])}>
+        <.otp_cell
+          :for={cell <- @cells}
+          cell={cell}
+          slot_class={@slot_class}
+          size={@size}
+          gap_class={@gap_class}
+          disabled={@disabled}
+        />
       </div>
       <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarInputOtp">
         export default {
@@ -230,11 +268,29 @@ defmodule Pulsar.Components.InputOtp do
   attr(:cell, :any, required: true)
   attr(:slot_class, :string, required: true)
   attr(:size, :string, required: true)
+  attr(:gap_class, :string, required: true)
   attr(:disabled, :boolean, required: true)
 
-  defp otp_cell(%{cell: :separator} = assigns) do
+  defp otp_cell(%{cell: {:group, _slots, _separator?}} = assigns) do
+    {:group, slots, separator?} = assigns.cell
+
+    assigns =
+      assigns
+      |> assign(:slots, slots)
+      |> assign(:separator?, separator?)
+
     ~H"""
-    <span aria-hidden="true" class="select-none px-1 text-muted-foreground">-</span>
+    <div data-otp-group class={merge(["flex items-center", @gap_class])}>
+      <.otp_cell
+        :for={cell <- @slots}
+        cell={cell}
+        slot_class={@slot_class}
+        size={@size}
+        gap_class={@gap_class}
+        disabled={@disabled}
+      />
+      <span :if={@separator?} aria-hidden="true" class="select-none px-1 text-muted-foreground">-</span>
+    </div>
     """
   end
 
@@ -257,6 +313,9 @@ defmodule Pulsar.Components.InputOtp do
   defp input_mode("numeric"), do: "numeric"
   defp input_mode(_), do: "text"
 
+  defp value_pattern("alphanumeric", length), do: "[A-Za-z0-9]{#{length}}"
+  defp value_pattern(_mode, length), do: "[0-9]{#{length}}"
+
   defp build_cells(length, nil), do: for(i <- 0..(length - 1)//1, do: {:slot, i})
 
   defp build_cells(length, groups) when is_list(groups) do
@@ -269,10 +328,12 @@ defmodule Pulsar.Components.InputOtp do
         {acc ++ [slots_for(start, stop)], start + size}
       end)
 
+    chunks = Enum.reject(chunks, &(&1 == []))
+    last = Enum.count(chunks) - 1
+
     chunks
-    |> Enum.reject(&(&1 == []))
-    |> Enum.intersperse([:separator])
-    |> List.flatten()
+    |> Enum.with_index()
+    |> Enum.map(fn {slots, index} -> {:group, slots, index < last} end)
   end
 
   defp slots_for(start, stop) when stop >= start, do: for(i <- start..stop, do: {:slot, i})

@@ -11,10 +11,11 @@ defmodule Pulsar.Integration.A11y.ReflowTest do
   viewport. Async-safe; viewport is module-scoped and doesn't bleed
   into other a11y tests.
 
-  Dev_app fixture chrome (the `<aside>` navigation sidebar and `<main>`
-  padding) is hidden during the gate via injected CSS — it's not part
-  of Pulsar's shipping surface, and at 320 px it would dominate the
-  viewport. With chrome hidden, the gate measures whether Pulsar
+  Dev_app fixture chrome (the `<aside>` navigation sidebar, the content
+  column's scroll wrapper and `<main>` padding) is hidden during the
+  gate via CSS injected from `A11y.chrome_neutralising_css/0`, which
+  carries the rationale and is shared with every other narrow-viewport
+  measurement. With chrome hidden, the gate measures whether Pulsar
   components reflow at 320 px, not whether the dev_app's test
   scaffolding does.
 
@@ -76,32 +77,7 @@ defmodule Pulsar.Integration.A11y.ReflowTest do
           if (prev) prev.remove();
           const style = document.createElement('style');
           style.id = id;
-          style.textContent = `
-            /* Dev_app fixture chrome — not part of Pulsar's shipping
-               surface. Hidden during the reflow gate so the assertion
-               measures whether Pulsar components reflow at 320 CSS px,
-               not whether the dev_app navigation sidebar / scroll
-               wrapper do.
-
-               The flex-1 content wrapper has overflow-x-auto for
-               developer ergonomics — without overriding it, any
-               component that exceeds 320 px would scroll inside that
-               wrapper, hiding the reflow failure from
-               documentElement.scrollWidth. */
-            aside { display: none !important; }
-            /* The dev_app flex-1 wrapper inherits min-width: auto (the
-               flex default), which prevents it from shrinking below
-               its content's intrinsic min-width. That's dev_app
-               scaffolding behavior; real consumers control their own
-               layout. We force min-width: 0 so the wrapper genuinely
-               sits at the viewport's 320 px, and the test measures
-               whether Pulsar components reflow at that width. */
-            .overflow-x-auto.flex-1 {
-              overflow-x: visible !important;
-              min-width: 0 !important;
-            }
-            main[data-fixture] { padding: 0 !important; }
-          `;
+          style.textContent = `#{A11y.chrome_neutralising_css()}`;
           document.head.appendChild(style);
           void document.documentElement.offsetWidth;
 

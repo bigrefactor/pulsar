@@ -85,10 +85,37 @@ content is never clipped.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
-**Evidence:** The outer container is `inline-flex items-center` with a `gap-*`
-class — `lib/pulsar/components/input_otp.ex`, `input_otp/1`. No `min-width` or fixed
-container width is imposed; the slot row wraps to the natural width of its
-content. The component does not force horizontal scrolling at 320 CSS px.
+**Evidence:** The slot row is `flex flex-wrap`, so a code too wide for the
+viewport breaks onto another row instead of overflowing —
+`lib/pulsar/components/input_otp.ex`, `input_otp/1`. With `groups` set, each group
+renders as its own non-wrapping row (`data-otp-group`) — `otp_cell/1` — so the
+break lands at a separator and never splits a group. No `min-width` or fixed
+container width is imposed on the outer `inline-flex` container, which
+shrink-to-fits the available width.
+
+Slots themselves keep the width their `size` gives them; the per-size
+slots-per-row capacity at 320 CSS px is documented under "Fitting a long code"
+in the module doc, so callers can size a long code before it reaches a
+viewport.
+
+**Gate:** `test/integration/a11y/reflow_test.exs` measures the three
+`/components/input_otp/*` routes at 320 × 640, each in both themes. It raises
+on `document.documentElement.scrollWidth` alone — the per-cell widths it
+prints are diagnostics inside that check, not assertions of their own — so a
+cell fails the gate only when its overflow reaches the page. Every fixture
+cell used to sit in an `overflow-x-auto` wrapper, which contains horizontal
+overflow before it gets there: the `xl` sizes cell already rendered 396 px
+wide at a 320 px viewport and the gate still passed. Dropping those wrappers
+(`test/support/dev_app/live/input_otp_live.ex`) is what armed the gate, and
+the `length={10} groups={[5, 5]}` cell added alongside them is what it now
+catches — with `flex-wrap` removed, all six route × theme tests fail at
+`documentElement.scrollWidth` 552.
+
+Where the row *breaks* is measured separately, in
+`test/integration/a11y/input_otp_reflow_test.exs`, test "a ten-slot grouped
+code puts one group per row, separator included" — a code that wraps mid-group
+or strands a separator on its own row is no wider than one that breaks
+cleanly, so the width gate cannot tell them apart.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 

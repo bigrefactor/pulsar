@@ -19,7 +19,6 @@ defmodule Pulsar.Components.InputOtpTest do
       # exactly one real <input>
       assert html |> String.split("<input") |> length() == 2
       assert html =~ ~s(autocomplete="one-time-code")
-      assert html =~ ~s(maxlength="6")
       assert html =~ ~s(phx-hook="Pulsar.Components.InputOtp.PulsarInputOtp")
       assert html =~ ~s(inputmode="numeric")
     end
@@ -72,6 +71,46 @@ defmodule Pulsar.Components.InputOtpTest do
       assert html =~ ~s(name="user[otp]")
       assert html =~ ~s(value="12")
     end
+
+    # `maxlength` counts code characters only, so on a grouped code the browser
+    # clips a pasted "ABCDE-FGHJK" to 10 characters *before* the hook strips the
+    # separator, silently losing the last one. The hook's own
+    # `v.slice(0, this.length)` runs after normalisation and is the real bound.
+    test "sets no maxlength, so a separator-bearing paste reaches the hook intact" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <InputOtp.input_otp id="otp" length={10} groups={[5, 5]} mode="alphanumeric" />
+        """)
+
+      refute html =~ "maxlength"
+    end
+
+    # Without `maxlength` the hook's `slice` is the only client-side bound, and
+    # it is gone on a dead render or in a host app that never wired the
+    # colocated hook. `pattern` rejects a wrong-length code at submit instead of
+    # truncating it, so it bounds the value without clipping a formatted paste.
+    test "sets a pattern of exactly length characters for the mode's alphabet" do
+      assigns = %{}
+
+      numeric = rendered_to_string(~H|<InputOtp.input_otp id="n" length={6} />|)
+
+      alnum =
+        rendered_to_string(~H"""
+        <InputOtp.input_otp id="a" length={10} groups={[5, 5]} mode="alphanumeric" />
+        """)
+
+      assert numeric =~ ~s(pattern="[0-9]{6}")
+      assert alnum =~ ~s(pattern="[A-Za-z0-9]{10}")
+    end
+
+    test "the slot row wraps" do
+      assigns = %{}
+      html = rendered_to_string(~H|<InputOtp.input_otp id="otp" length={10} />|)
+
+      assert html =~ "flex-wrap"
+    end
   end
 
   describe "input_otp/1 options" do
@@ -87,6 +126,40 @@ defmodule Pulsar.Components.InputOtpTest do
       assert html |> String.split(~s(data-slot=)) |> length() == 7
       # one separator between the two groups
       assert html |> String.split(~s(px-1 text-muted-foreground)) |> length() == 2
+    end
+
+    # Each group is its own non-wrapping row inside the wrapping outer row, so a
+    # code that cannot fit breaks at a separator rather than mid-group.
+    test "each group is its own row; ungrouped codes render no group rows" do
+      assigns = %{}
+
+      grouped =
+        rendered_to_string(~H"""
+        <InputOtp.input_otp id="otp" length={10} groups={[5, 5]} />
+        """)
+
+      flat = rendered_to_string(~H|<InputOtp.input_otp id="flat" length={10} />|)
+
+      assert grouped |> String.split(~s(data-otp-group)) |> length() == 3
+      refute flat =~ "data-otp-group"
+    end
+
+    # A separator that is its own item on the wrapping row can be pushed onto a
+    # line by itself, stranded between the two groups it separates. Nested in
+    # the preceding group's row it wraps with that group or not at all.
+    test "the separator renders inside its group's row, not as a sibling of it" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <InputOtp.input_otp id="otp" length={10} groups={[5, 5]} />
+        """)
+
+      [_, after_separator] = String.split(html, ~s(px-1 text-muted-foreground))
+
+      # The separator's group row closes after it; a sibling separator would
+      # have to open the next group row instead.
+      assert after_separator =~ ~r{\A[^<]*</span>\s*</div>}
     end
 
     test "numeric mode sets inputmode numeric; alphanumeric sets text" do
