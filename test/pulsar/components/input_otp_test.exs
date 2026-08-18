@@ -124,8 +124,28 @@ defmodule Pulsar.Components.InputOtpTest do
 
       # still 6 slots
       assert html |> String.split(~s(data-slot=)) |> length() == 7
-      # one separator between the two groups
-      assert html |> String.split(~s(px-1 text-muted-foreground)) |> length() == 2
+      # one separator lane per group: the one drawn between the two groups, and
+      # the one the last group reserves without drawing
+      assert html |> String.split(~s(px-1 text-muted-foreground)) |> length() == 3
+      assert html |> String.split(~s(text-muted-foreground invisible)) |> length() == 2
+    end
+
+    # A group that ends a line and draws a separator is wider than one that does
+    # not, and centring the wrapping row offsets the lines against each other by
+    # half that difference — so a wrapped code's slots stop lining up in columns.
+    # Reserving the lane on every group keeps every line the same width.
+    test "the last group reserves the separator's width without drawing it" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <InputOtp.input_otp id="otp" length={10} groups={[5, 5]} />
+        """)
+
+      [_, first_group, last_group] = String.split(html, ~s(data-otp-group))
+
+      refute first_group =~ "invisible"
+      assert last_group =~ ~s(text-muted-foreground invisible)
     end
 
     # Each group is its own non-wrapping row inside the wrapping outer row, so a
@@ -155,11 +175,12 @@ defmodule Pulsar.Components.InputOtpTest do
         <InputOtp.input_otp id="otp" length={10} groups={[5, 5]} />
         """)
 
-      [_, after_separator] = String.split(html, ~s(px-1 text-muted-foreground))
+      [_, between_groups, after_last] = String.split(html, ~s(px-1 text-muted-foreground))
 
-      # The separator's group row closes after it; a sibling separator would
+      # Each separator's group row closes after it; a sibling separator would
       # have to open the next group row instead.
-      assert after_separator =~ ~r{\A[^<]*</span>\s*</div>}
+      assert between_groups =~ ~r{\A[^<]*</span>\s*</div>}
+      assert after_last =~ ~r{\A[^<]*</span>\s*</div>}
     end
 
     test "numeric mode sets inputmode numeric; alphanumeric sets text" do
