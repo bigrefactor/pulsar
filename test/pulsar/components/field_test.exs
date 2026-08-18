@@ -968,7 +968,9 @@ defmodule Pulsar.Components.FieldTest do
         """)
 
       assert html =~ ~s(phx-hook="Pulsar.Components.InputOtp.PulsarInputOtp")
-      assert html =~ ~s(maxlength="6")
+      # `length` reaches the hook as data-length; InputOtp sets no maxlength,
+      # which would clip a grouped paste before the separator is stripped.
+      assert html =~ ~s(data-length="6")
       assert html =~ ~s(name="user[otp]")
       # label points at the single real input
       assert html =~ ~s(for="user_otp")

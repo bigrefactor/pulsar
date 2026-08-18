@@ -109,4 +109,41 @@ defmodule Pulsar.Integration.A11y.Keyboard.InputOtpTest do
       |> A11y.assert_focused("kbd-otp")
     end
   end
+
+  describe "InputOTP paste" do
+    # Regression: a `maxlength` sized to the code length clipped a grouped
+    # paste before the hook could strip the separator, so `ABCDE-FGHJK` landed
+    # as nine characters and the field looked full.
+    #
+    # This has to go through `execCommand("insertText")`: it routes the value
+    # through the browser's insertion path, which is where the truncation
+    # happened. `fill_in` assigns `.value` directly and sails past any
+    # `maxlength`, so it would pass against the broken component.
+    test "a separator-bearing paste keeps every code character", %{conn: conn} do
+      session =
+        conn
+        |> visit("/keyboard/input_otp")
+        |> A11y.await_live_connected()
+
+      paste = """
+      (() => {
+        const input = document.querySelector('#kbd-otp-grouped');
+        input.focus();
+        input.setSelectionRange(0, input.value.length);
+        document.execCommand('insertText', false, 'ABCDE-FGHJK');
+        return input.value;
+      })()
+      """
+
+      PhoenixTest.Playwright.evaluate(session, paste, fn value ->
+        assert value == "ABCDEFGHJK",
+               "expected the hook to strip the separator and keep all ten code characters, got #{inspect(value)}"
+      end)
+
+      session
+      |> assert_has(~s|#kbd-otp-grouped-otp [data-slot="0"][data-filled="true"]|, text: "A")
+      |> assert_has(~s|#kbd-otp-grouped-otp [data-slot="5"][data-filled="true"]|, text: "F")
+      |> assert_has(~s|#kbd-otp-grouped-otp [data-slot="9"][data-filled="true"]|, text: "K")
+    end
+  end
 end

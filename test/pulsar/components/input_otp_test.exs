@@ -19,7 +19,6 @@ defmodule Pulsar.Components.InputOtpTest do
       # exactly one real <input>
       assert html |> String.split("<input") |> length() == 2
       assert html =~ ~s(autocomplete="one-time-code")
-      assert html =~ ~s(maxlength="6")
       assert html =~ ~s(phx-hook="Pulsar.Components.InputOtp.PulsarInputOtp")
       assert html =~ ~s(inputmode="numeric")
     end
@@ -72,6 +71,28 @@ defmodule Pulsar.Components.InputOtpTest do
       assert html =~ ~s(name="user[otp]")
       assert html =~ ~s(value="12")
     end
+
+    # `maxlength` counts code characters only, so on a grouped code the browser
+    # clips a pasted "ABCDE-FGHJK" to 10 characters *before* the hook strips the
+    # separator, silently losing the last one. The hook's own
+    # `v.slice(0, this.length)` runs after normalisation and is the real bound.
+    test "sets no maxlength, so a separator-bearing paste reaches the hook intact" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <InputOtp.input_otp id="otp" length={10} groups={[5, 5]} mode="alphanumeric" />
+        """)
+
+      refute html =~ "maxlength"
+    end
+
+    test "the slot row wraps" do
+      assigns = %{}
+      html = rendered_to_string(~H|<InputOtp.input_otp id="otp" length={10} />|)
+
+      assert html =~ "flex-wrap"
+    end
   end
 
   describe "input_otp/1 options" do
@@ -87,6 +108,22 @@ defmodule Pulsar.Components.InputOtpTest do
       assert html |> String.split(~s(data-slot=)) |> length() == 7
       # one separator between the two groups
       assert html |> String.split(~s(px-1 text-muted-foreground)) |> length() == 2
+    end
+
+    # Each group is its own non-wrapping row inside the wrapping outer row, so a
+    # code that cannot fit breaks at a separator rather than mid-group.
+    test "each group is its own row; ungrouped codes render no group rows" do
+      assigns = %{}
+
+      grouped =
+        rendered_to_string(~H"""
+        <InputOtp.input_otp id="otp" length={10} groups={[5, 5]} />
+        """)
+
+      flat = rendered_to_string(~H|<InputOtp.input_otp id="flat" length={10} />|)
+
+      assert grouped |> String.split(~s(data-otp-group)) |> length() == 3
+      refute flat =~ "data-otp-group"
     end
 
     test "numeric mode sets inputmode numeric; alphanumeric sets text" do

@@ -1,5 +1,12 @@
 defmodule Pulsar.DevApp.InputOtpLive do
-  @moduledoc false
+  @moduledoc """
+  A11y fixture for `Pulsar.Components.InputOtp`.
+
+  The cells are deliberately unwrapped by any scroll container: an
+  `overflow-x-auto` ancestor exempts a component from the 320 px reflow gate,
+  so the gate would pass without measuring whether the slot row itself
+  reflows. The ten-slot grouped cell is the one that needs the row to wrap.
+  """
   use Pulsar.DevApp.Web, :live_view
 
   alias Pulsar.Components.InputOtp
@@ -13,7 +20,7 @@ defmodule Pulsar.DevApp.InputOtpLive do
     ~H"""
     <.fixture_page name={"input-otp-#{@variant}"} title={"Input OTP (#{@variant})"}>
       <.fixture_section name={"#{@variant}-sizes"} title={"#{@variant} · sizes"}>
-        <div :for={size <- @sizes} class="min-w-0 max-w-full overflow-x-auto py-1">
+        <div :for={size <- @sizes} class="py-1">
           <InputOtp.input_otp
             id={"otp-#{@variant}-#{size}"}
             variant={@variant}
@@ -26,7 +33,7 @@ defmodule Pulsar.DevApp.InputOtpLive do
       </.fixture_section>
 
       <.fixture_section name={"#{@variant}-options"} title={"#{@variant} · options"}>
-        <div class="min-w-0 max-w-full overflow-x-auto py-1">
+        <div class="py-1">
           <InputOtp.input_otp
             id={"otp-#{@variant}-grouped"}
             variant={@variant}
@@ -36,7 +43,7 @@ defmodule Pulsar.DevApp.InputOtpLive do
             data-fixture-cell={"#{@variant}-grouped"}
           />
         </div>
-        <div class="min-w-0 max-w-full overflow-x-auto py-1">
+        <div class="py-1">
           <InputOtp.input_otp
             id={"otp-#{@variant}-masked"}
             variant={@variant}
@@ -46,7 +53,7 @@ defmodule Pulsar.DevApp.InputOtpLive do
             data-fixture-cell={"#{@variant}-masked"}
           />
         </div>
-        <div class="min-w-0 max-w-full overflow-x-auto py-1">
+        <div class="py-1">
           <InputOtp.input_otp
             id={"otp-#{@variant}-invalid"}
             variant={@variant}
@@ -54,6 +61,17 @@ defmodule Pulsar.DevApp.InputOtpLive do
             invalid
             aria-label={"#{@variant} invalid one-time code"}
             data-fixture-cell={"#{@variant}-invalid"}
+          />
+        </div>
+        <div class="py-1">
+          <InputOtp.input_otp
+            id={"otp-#{@variant}-long"}
+            variant={@variant}
+            length={10}
+            groups={[5, 5]}
+            mode="alphanumeric"
+            aria-label={"#{@variant} long grouped recovery code"}
+            data-fixture-cell={"#{@variant}-long"}
           />
         </div>
       </.fixture_section>

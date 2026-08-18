@@ -85,10 +85,29 @@ content is never clipped.
 
 ### 1.4.10 Reflow (AA) — ✓ PASS
 
-**Evidence:** The outer container is `inline-flex items-center` with a `gap-*`
-class — `lib/pulsar/components/input_otp.ex`, `input_otp/1`. No `min-width` or fixed
-container width is imposed; the slot row wraps to the natural width of its
-content. The component does not force horizontal scrolling at 320 CSS px.
+**Evidence:** The slot row is `flex flex-wrap`, so a code too wide for the
+viewport breaks onto another row instead of overflowing —
+`lib/pulsar/components/input_otp.ex`, `input_otp/1`. With `groups` set, each group
+renders as its own non-wrapping row (`data-otp-group`) — `otp_cell/1` — so the
+break lands at a separator and never splits a group. No `min-width` or fixed
+container width is imposed on the outer `inline-flex` container, which
+shrink-to-fits the available width.
+
+Slots themselves keep the width their `size` gives them; the per-size
+slots-per-row capacity at 320 CSS px is documented under "Fitting a long code"
+in the module doc, so callers can size a long code before it reaches a
+viewport.
+
+**Gate:** `test/integration/a11y/input_otp_reflow_test.exs`, test
+"a ten-slot grouped code wraps at the separator instead of overflowing".
+Measured at 320 × 640 on a `length={10} groups={[5, 5]}` cell: the row is
+252 px and the two groups sit on separate rows.
+
+The shared `test/integration/a11y/reflow_test.exs` gate does not cover this.
+It asserts on `document.documentElement.scrollWidth`, and dev_app's layout
+column is `overflow-x-auto`, so a slot row wider than the viewport is absorbed
+there rather than widening the document — the same clipping that hid the
+overflow in a host app. Hence the direct measurement above.
 
 ### 1.4.11 Non-text Contrast (AA) — ✓ PASS
 

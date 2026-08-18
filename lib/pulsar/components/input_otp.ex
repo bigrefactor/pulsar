@@ -22,6 +22,28 @@ defmodule Pulsar.Components.InputOtp do
   (filled boxes), `ghost` (underline). `color` tints the active slot's focus ring;
   `size` scales the slot box and text (`xs`–`xl`).
 
+  ## Fitting a long code
+
+  Slots keep the width their `size` gives them; the row wraps instead. With
+  `groups` set the row only breaks at a separator, so a group is never split
+  across lines — otherwise it breaks between any two slots.
+
+  How many slots fit on one row at 320 CSS px, the narrowest width WCAG asks a
+  page to reflow to:
+
+  | size | slots per row |
+  | ---- | ------------- |
+  | `xs` | 9 |
+  | `sm` | 7 |
+  | `md` | 6 |
+  | `lg` | 5 |
+  | `xl` | 4 |
+
+  These count the slot row alone, so subtract whatever padding the surrounding
+  layout adds. A group never breaks internally, so a grouped code needs its
+  largest group to fit the row: `groups={[5, 5]}` works at every size through
+  `lg`, while `xl` fits four and overflows.
+
   ## Callbacks
 
   `on_complete` is a `%JS{}` command run once every character is entered. Use it to
@@ -139,7 +161,6 @@ defmodule Pulsar.Components.InputOtp do
         id={@id}
         name={@name}
         value={@value}
-        maxlength={@length}
         inputmode={input_mode(@mode)}
         autocomplete={@autocomplete}
         autocorrect="off"
@@ -153,8 +174,15 @@ defmodule Pulsar.Components.InputOtp do
         class="absolute inset-0 h-full w-full cursor-text bg-transparent text-center text-transparent caret-transparent outline-none disabled:cursor-not-allowed"
         {@rest}
       />
-      <div aria-hidden="true" class={merge(["pointer-events-none flex items-center", @gap_class])}>
-        <.otp_cell :for={cell <- @cells} cell={cell} slot_class={@slot_class} size={@size} disabled={@disabled} />
+      <div aria-hidden="true" class={merge(["pointer-events-none flex flex-wrap items-center justify-center", @gap_class])}>
+        <.otp_cell
+          :for={cell <- @cells}
+          cell={cell}
+          slot_class={@slot_class}
+          size={@size}
+          gap_class={@gap_class}
+          disabled={@disabled}
+        />
       </div>
       <script :type={Phoenix.LiveView.ColocatedHook} name=".PulsarInputOtp">
         export default {
@@ -230,11 +258,29 @@ defmodule Pulsar.Components.InputOtp do
   attr(:cell, :any, required: true)
   attr(:slot_class, :string, required: true)
   attr(:size, :string, required: true)
+  attr(:gap_class, :string, required: true)
   attr(:disabled, :boolean, required: true)
 
   defp otp_cell(%{cell: :separator} = assigns) do
     ~H"""
     <span aria-hidden="true" class="select-none px-1 text-muted-foreground">-</span>
+    """
+  end
+
+  defp otp_cell(%{cell: {:group, _slots}} = assigns) do
+    assigns = assign(assigns, :slots, elem(assigns.cell, 1))
+
+    ~H"""
+    <div data-otp-group class={merge(["flex items-center", @gap_class])}>
+      <.otp_cell
+        :for={cell <- @slots}
+        cell={cell}
+        slot_class={@slot_class}
+        size={@size}
+        gap_class={@gap_class}
+        disabled={@disabled}
+      />
+    </div>
     """
   end
 
@@ -271,8 +317,8 @@ defmodule Pulsar.Components.InputOtp do
 
     chunks
     |> Enum.reject(&(&1 == []))
-    |> Enum.intersperse([:separator])
-    |> List.flatten()
+    |> Enum.map(&{:group, &1})
+    |> Enum.intersperse(:separator)
   end
 
   defp slots_for(start, stop) when stop >= start, do: for(i <- start..stop, do: {:slot, i})
