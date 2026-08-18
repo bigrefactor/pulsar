@@ -98,12 +98,17 @@ slots-per-row capacity at 320 CSS px is documented under "Fitting a long code"
 in the module doc, so callers can size a long code before it reaches a
 viewport.
 
-**Gate:** `test/integration/a11y/reflow_test.exs` measures every
-`/components/input_otp/*` route at 320 × 640. The fixture
-(`test/support/dev_app/live/input_otp_live.ex`) carries a `length={10}
-groups={[5, 5]}` cell — without a cell longer than six slots the gate had
-nothing wide enough to fail on, which is why it stayed green while the row
-could not wrap. With `flex-wrap` removed, all six routes fail at
+**Gate:** `test/integration/a11y/reflow_test.exs` measures the three
+`/components/input_otp/*` routes at 320 × 640, each in both themes. It raises
+on `document.documentElement.scrollWidth` alone — the per-cell widths it
+prints are diagnostics inside that check, not assertions of their own — so a
+cell fails the gate only when its overflow reaches the page. Every fixture
+cell used to sit in an `overflow-x-auto` wrapper, which contains horizontal
+overflow before it gets there: the `xl` sizes cell already rendered 396 px
+wide at a 320 px viewport and the gate still passed. Dropping those wrappers
+(`test/support/dev_app/live/input_otp_live.ex`) is what armed the gate, and
+the `length={10} groups={[5, 5]}` cell added alongside them is what it now
+catches — with `flex-wrap` removed, all six route × theme tests fail at
 `documentElement.scrollWidth` 552.
 
 Where the row *breaks* is measured separately, in

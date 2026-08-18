@@ -11,11 +11,10 @@ defmodule Pulsar.Integration.A11y.InputOtpReflowTest do
   This measures that a `groups={[5, 5]}` code puts one group per row and keeps
   each separator on its group's row.
 
-  Dev_app fixture chrome is neutralised the same way `reflow_test.exs`
-  neutralises it — the sidebar hidden, the layout column's `overflow-x-auto`
-  and `min-width: auto` overridden. Without that the content column measures
-  252 px at a 320 px viewport, and the geometry under test is dev_app's, not
-  the component's.
+  Dev_app fixture chrome is neutralised with `A11y.chrome_neutralising_css/0`,
+  the same block `reflow_test.exs` injects. Without it the content column
+  measures 252 px at a 320 px viewport, and the geometry under test is
+  dev_app's, not the component's — so the two must not drift apart.
 
   Tagged `:integration`; excluded from `mix test` by default. Run with
   `mix test --only integration`.
@@ -45,11 +44,7 @@ defmodule Pulsar.Integration.A11y.InputOtpReflowTest do
     probe = """
     (() => {
       const style = document.createElement('style');
-      style.textContent = `
-        aside { display: none !important; }
-        .overflow-x-auto.flex-1 { overflow-x: visible !important; min-width: 0 !important; }
-        main[data-fixture] { padding: 0 !important; }
-      `;
+      style.textContent = `#{A11y.chrome_neutralising_css()}`;
       document.head.appendChild(style);
       void document.documentElement.offsetWidth;
 

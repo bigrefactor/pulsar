@@ -87,6 +87,24 @@ defmodule Pulsar.Components.InputOtpTest do
       refute html =~ "maxlength"
     end
 
+    # Without `maxlength` the hook's `slice` is the only client-side bound, and
+    # it is gone on a dead render or in a host app that never wired the
+    # colocated hook. `pattern` rejects a wrong-length code at submit instead of
+    # truncating it, so it bounds the value without clipping a formatted paste.
+    test "sets a pattern of exactly length characters for the mode's alphabet" do
+      assigns = %{}
+
+      numeric = rendered_to_string(~H|<InputOtp.input_otp id="n" length={6} />|)
+
+      alnum =
+        rendered_to_string(~H"""
+        <InputOtp.input_otp id="a" length={10} groups={[5, 5]} mode="alphanumeric" />
+        """)
+
+      assert numeric =~ ~s(pattern="[0-9]{6}")
+      assert alnum =~ ~s(pattern="[A-Za-z0-9]{10}")
+    end
+
     test "the slot row wraps" do
       assigns = %{}
       html = rendered_to_string(~H|<InputOtp.input_otp id="otp" length={10} />|)

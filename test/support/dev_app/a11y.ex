@@ -12,6 +12,35 @@ defmodule Pulsar.DevApp.A11y do
   # complex fixture can override per-test with `@tag timeout: …`.
   @axe_timeout 10_000
 
+  @chrome_neutralising_css """
+  aside { display: none !important; }
+  .overflow-x-auto.flex-1 { overflow-x: visible !important; min-width: 0 !important; }
+  main[data-fixture] { padding: 0 !important; }
+  """
+
+  @doc """
+  CSS that hides dev_app fixture chrome, for measurements taken at a narrow
+  viewport.
+
+  The navigation sidebar, the content column's scroll wrapper and `<main>`
+  padding are dev_app scaffolding rather than part of Pulsar's shipping
+  surface, and at 320 CSS px they dominate the page. Two of them would mask a
+  component's reflow failure outright: the content column's `overflow-x-auto`
+  contains horizontal overflow, so an over-wide component never reaches
+  `document.documentElement.scrollWidth`, and its `min-width: auto` (the flex
+  default) stops it shrinking to the viewport, leaving a 252 px column to
+  measure instead of 320.
+
+  Every narrow-viewport measurement injects this same block, so the selectors
+  live here — a dev_app layout change is then one edit rather than a silent
+  divergence between one gate and another that keeps measuring dev_app's
+  geometry instead of the component's.
+
+  Returns the rule text, for interpolation into a `<style>` element's
+  `textContent`.
+  """
+  def chrome_neutralising_css, do: @chrome_neutralising_css
+
   @doc """
   Sets `document.documentElement.dataset.theme` on the current page.
 

@@ -45,6 +45,14 @@ defmodule Pulsar.Components.InputOtp do
   the last: `groups={[5, 5]}` works at every size through `lg`, while `xl` fits
   four and overflows.
 
+  ## Length and validation
+
+  Typing and pasting are never truncated, so a code that arrives formatted —
+  `ABCDE-FGHJK` — lands whole and keeps only the characters `mode` allows.
+  The field carries a `pattern` of exactly `length` characters from that
+  alphabet, so a browser refuses to submit a short or over-long code. Validate
+  the length on the server as well.
+
   ## Callbacks
 
   `on_complete` is a `%JS{}` command run once every character is entered. Use it to
@@ -162,6 +170,7 @@ defmodule Pulsar.Components.InputOtp do
         id={@id}
         name={@name}
         value={@value}
+        pattern={value_pattern(@mode, @length)}
         inputmode={input_mode(@mode)}
         autocomplete={@autocomplete}
         autocorrect="off"
@@ -303,6 +312,9 @@ defmodule Pulsar.Components.InputOtp do
 
   defp input_mode("numeric"), do: "numeric"
   defp input_mode(_), do: "text"
+
+  defp value_pattern("alphanumeric", length), do: "[A-Za-z0-9]{#{length}}"
+  defp value_pattern(_mode, length), do: "[0-9]{#{length}}"
 
   defp build_cells(length, nil), do: for(i <- 0..(length - 1)//1, do: {:slot, i})
 
