@@ -57,4 +57,21 @@ defmodule Pulsar.Integration.A11y.Keyboard.ModalTest do
       |> A11y.assert_modal("kbd-modal-locked")
     end
   end
+
+  describe "Modal typography is independent of its mount point" do
+    # A `<dialog>` opened with `showModal()` renders in the top layer but
+    # still inherits computed CSS from its DOM parent. The fixture mounts
+    # `kbd-modal-aligned` inside a `text-right cursor-pointer` wrapper (the
+    # shape of a table's clickable action cell); the panel must read
+    # start-aligned with a default cursor regardless.
+    test "the panel resets inherited text-align and cursor", %{conn: conn} do
+      conn
+      |> visit("/keyboard/modal")
+      |> A11y.await_live_connected()
+      |> press("#kbd-modal-aligned-open", "Enter")
+      |> assert_has(~s|#kbd-modal-aligned[data-state="open"]|)
+      |> A11y.assert_computed_style("kbd-modal-aligned", "text-align", "start")
+      |> A11y.assert_computed_style("kbd-modal-aligned", "cursor", "auto")
+    end
+  end
 end

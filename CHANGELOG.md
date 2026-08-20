@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - Overlay Panels No Longer Inherit Alignment and Cursor From Where They Are Mounted
+
+- **`modal`, `alert_dialog`, `drawer`, `popover`, `tooltip`, `dropdown_menu`,
+  `menu`, `combobox`, `date_picker`**: a `<dialog>` or `[popover]` panel
+  renders in the top layer but still inherits computed CSS from its DOM parent,
+  so one mounted inside a right-aligned table cell or a clickable
+  `cursor-pointer` row rendered its body flush right under a hand cursor. The
+  panel now carries `text-start` and `cursor-auto` of its own, so it reads the
+  same from any container. Pass `class="text-center"` (or any alignment) on
+  the component to override, as before.
+
 ### Added - Combobox: A Typeahead Form Control
 
 - **New `combobox` component**: a text input that filters a list of options as

@@ -38,6 +38,16 @@ defmodule Pulsar.DevApp.Keyboard.ModalLive do
           </button>
         </:footer>
       </Modal.modal>
+
+      <div class="text-right cursor-pointer">
+        <button id="kbd-modal-aligned-open" type="button" phx-click={Modal.open("kbd-modal-aligned")}>
+          Open modal from an aligned cell
+        </button>
+
+        <Modal.modal id="kbd-modal-aligned" title="Delete?">
+          This cannot be undone.
+        </Modal.modal>
+      </div>
     </main>
     """
   end

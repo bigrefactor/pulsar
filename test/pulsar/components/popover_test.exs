@@ -171,6 +171,21 @@ defmodule Pulsar.Components.PopoverTest do
       assert html =~ "z-popover"
       assert html =~ "min-w-48"
     end
+
+    test "panel owns its text alignment and cursor rather than inheriting them" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Popover.popover id="pop">
+          <:trigger><button>Open</button></:trigger>
+          Body
+        </Popover.popover>
+        """)
+
+      assert html =~ "text-start"
+      assert html =~ "cursor-auto"
+    end
   end
 
   describe "popover/1 trigger mode" do
