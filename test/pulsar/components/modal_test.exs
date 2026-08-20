@@ -267,6 +267,18 @@ defmodule Pulsar.Components.ModalTest do
       assert html =~ "z-modal"
       assert html =~ "backdrop:bg-foreground/50"
     end
+
+    test "panel owns its text alignment and cursor rather than inheriting them" do
+      assigns = %{}
+
+      html =
+        rendered_to_string(~H"""
+        <Modal.modal id="m">Body</Modal.modal>
+        """)
+
+      assert html =~ "text-start"
+      assert html =~ "cursor-auto"
+    end
   end
 
   describe "modal/1 callbacks and passthrough" do

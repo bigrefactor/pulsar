@@ -56,6 +56,15 @@ defmodule Pulsar.DevApp.Keyboard.PopoverLive do
       </Popover.popover>
 
       <p id="kbd-pop-form-applied">{@applied}</p>
+
+      <div class="text-right cursor-pointer">
+        <Popover.popover id="kbd-pop-aligned">
+          <:trigger>
+            <button id="kbd-pop-aligned-trigger" type="button">Open aligned popover</button>
+          </:trigger>
+          Popover body
+        </Popover.popover>
+      </div>
     </main>
     """
   end

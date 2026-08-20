@@ -72,10 +72,12 @@ alias Phoenix.LiveView.Rendered
 
 # Layout + the overlay contract shared by every modal. The dialog is the panel:
 # it centers itself in the viewport and dims the page through its `::backdrop`.
-# The entrance animation is extracted to `panel_animation` so wrappers such as
-# Drawer can substitute a directional slide.
+# A top-layer dialog still inherits text styling from its DOM parent, so the
+# panel states its own color, alignment and cursor. The entrance animation is
+# extracted to `panel_animation` so wrappers such as Drawer can substitute a
+# directional slide.
 @panel_base_classes "z-modal m-auto w-[calc(100%-2rem)] max-h-[85vh] overflow-y-auto " <>
-                      "rounded-box text-foreground focus:outline-none " <>
+                      "rounded-box text-foreground text-start cursor-auto focus:outline-none " <>
                       "backdrop:bg-foreground/50"
 
 @valid_variants ~w(solid outline ghost elevated)

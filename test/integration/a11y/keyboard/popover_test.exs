@@ -139,4 +139,20 @@ defmodule Pulsar.Integration.A11y.Keyboard.PopoverTest do
       |> A11y.refute_focused_within("#kbd-pop")
     end
   end
+
+  describe "Popover typography is independent of its mount point" do
+    # A `[popover]` panel renders in the top layer but still inherits computed
+    # CSS from its DOM parent. The fixture mounts `kbd-pop-aligned` inside a
+    # `text-right cursor-pointer` wrapper; the panel must read start-aligned
+    # with a default cursor regardless.
+    test "the panel resets inherited text-align and cursor", %{conn: conn} do
+      conn
+      |> visit("/keyboard/popover")
+      |> A11y.await_live_connected()
+      |> press("#kbd-pop-aligned-trigger", "Enter")
+      |> assert_has(~s|#kbd-pop-aligned[data-state="open"]|)
+      |> A11y.assert_computed_style("kbd-pop-aligned", "text-align", "start")
+      |> A11y.assert_computed_style("kbd-pop-aligned", "cursor", "auto")
+    end
+  end
 end

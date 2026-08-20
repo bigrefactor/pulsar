@@ -104,6 +104,26 @@ defmodule Pulsar.DevApp.A11y do
   end
 
   @doc """
+  Asserts that the computed value of CSS `property` on the element with the
+  given `id` equals `expected` (as `getComputedStyle` reports it). Used to
+  verify a panel's own styling wins over what its mount point would have it
+  inherit.
+  """
+  def assert_computed_style(conn, id, property, expected)
+      when is_binary(id) and is_binary(property) and is_binary(expected) do
+    expr =
+      "(function(){var el=document.getElementById(#{Jason.encode!(id)});" <>
+        "return el ? getComputedStyle(el).getPropertyValue(#{Jason.encode!(property)}) : null})()"
+
+    PhoenixTest.Playwright.evaluate(conn, expr, fn actual ->
+      if actual != expected do
+        raise ExUnit.AssertionError,
+          message: "expected ##{id} computed #{property} to be #{inspect(expected)}, was #{inspect(actual)}"
+      end
+    end)
+  end
+
+  @doc """
   Asserts that the element with the given `id` is an open *modal* dialog
   (`:modal` matches). Distinguishes a `showModal()` dialog — which traps focus
   and is dismissable by Escape — from a non-modal `<dialog open>`.
